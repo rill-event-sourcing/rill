@@ -6,7 +6,8 @@
                  [cheshire "5.3.1"]
                  [org.clojure/tools.logging "0.2.6"]
                  [environ "0.5.0"]]
-  :dev-dependencies [[org.clojure/tools.trace "0.7.5"]]
+  :profiles {:dev
+             {:dependencies
+              [[org.clojure/tools.trace "0.7.5"]
+               [midje "1.6.3"]]}}
   :plugins [[cider/cider-nrepl "0.7.0-SNAPSHOT"]])
-
-
