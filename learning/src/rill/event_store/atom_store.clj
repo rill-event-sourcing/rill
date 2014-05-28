@@ -6,6 +6,7 @@ https://github.com/jankronquist/rock-paper-scissors-in-clojure/tree/master/event
 "
   (:require [rill.event-store :as store]
             [rill.message :as msg]
+            [rill.event-stream :as stream]
             [clj-http.client :as client]
             [cheshire.core :as json]))
 
@@ -38,8 +39,6 @@ https://github.com/jankronquist/rock-paper-scissors-in-clojure/tree/master/event
 (defn load-events [uri message-constructor]
   (load-events-from-list (client/get uri {:as :json}) message-constructor))
 
-(def empty-stream {:version (fn [] -1) :events []})
-
 ;; three cases:
 ;; 1) stream does not exist
 ;; 2) stream exists, but has only a single page
@@ -48,15 +47,19 @@ https://github.com/jankronquist/rock-paper-scissors-in-clojure/tree/master/event
 (defn load-events-from-feed [uri message-constructor]
   (let [response (client/get uri {:as :json :throw-exceptions false})]
     (if-not (= 200 (:status response))
-      empty-stream ; case 1
+      stream/empty-stream ; case 1
       (let [body (:body response)
             links (:links body)
             last-link (uri-for-relation "last" links)
             events (if last-link
                      (load-events last-link message-constructor) ; case 3
                      (load-events-from-list response message-constructor))] ; case 2
-        {:version (fn [] (dec (count events)))
-         :events events}))))
+        (stream/->EventStream (dec (count events)) ;; TODO: improve
+                                                   ;; efficiency of
+                                                   ;; this - get
+                                                   ;; version from
+                                                   ;; latest event
+                              events)))))
 
 (defn atom-event-store
   ([uri message-constructor]
@@ -70,7 +73,7 @@ https://github.com/jankronquist/rock-paper-scissors-in-clojure/tree/master/event
            (client/post (stream-uri aggregate-id)
                         {:body (json/generate-string (map to-eventstore-format events))
                          :content-type :json
-                         :headers {"ES-ExpectedVersion" (str ((:version (or previous-event-stream empty-stream))))}})))))
+                         :headers {"ES-ExpectedVersion" (str (:version (or previous-event-stream stream/empty-stream)))}})))))
   ([uri]
      (atom-event-store uri msg/map->Message)))
 
