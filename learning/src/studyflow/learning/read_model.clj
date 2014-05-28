@@ -91,9 +91,10 @@
 
 (defn course-tree
   [model id]
-  (let [course (get-course model id)] {:title (:title course)
-           :id id
-           :chapters (mapv (partial chapter-tree model) (:chapter-ids course))}))
+  (let [course (get-course model id)]
+    {:title (:title course)
+     :id id
+     :chapters (mapv (partial chapter-tree model) (:chapter-ids course))}))
 
 (defn get-course-tree
   [model id]
