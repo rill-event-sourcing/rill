@@ -5,7 +5,7 @@ class ChaptersController < ApplicationController
   # GET /chapters
   # GET /chapters.json
   def index
-    @chapters = Course.chapters
+    @chapters = @course ? @course.chapters : []
   end
 
   # GET /chapters/1
@@ -64,7 +64,7 @@ class ChaptersController < ApplicationController
 
   private
     def set_course
-      @course = Course.find(params[:course_id])
+      @course = Course.current
     end
 
     # Use callbacks to share common setup or constraints between actions.

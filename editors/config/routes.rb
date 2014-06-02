@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
 
   resources :courses do
-    member do
+    collection do
       post 'select'
     end
   end
