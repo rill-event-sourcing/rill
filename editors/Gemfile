@@ -39,3 +39,10 @@ gem 'spring',        group: :development
 # gem 'debugger', group: [:development, :test]
 
 gem 'sprockets', '~> 2.11.0'
+
+group :test, :development do
+  gem 'rspec'
+  gem 'rspec-rails'
+  gem 'fabrication'
+  gem 'capybara'
+end

@@ -3,8 +3,6 @@ class Course < ActiveRecord::Base
 
   validates :name, :presence => true
 
-  attr_accessor :selected
-
   def self.current=(course)
     Thread.current[:course] = course
   end
