@@ -6,7 +6,8 @@ class ApplicationController < ActionController::Base
   before_action :get_my_course
 
   def get_my_course
-    @my_course = Course.new
+    Course.current = Course.find(session[:course_id]) if session[:course_id].to_i > 0
+    @my_course = Course.current || Course.new
   end
 
 end
