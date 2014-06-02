@@ -1,5 +1,5 @@
 class ChaptersController < ApplicationController
-  before_action :set_course
+  #before_action :set_course
   before_action :set_chapter, only: [:show, :edit, :update, :destroy]
 
   # GET /chapters
@@ -29,7 +29,7 @@ class ChaptersController < ApplicationController
 
     respond_to do |format|
       if @chapter.save
-        format.html { redirect_to [@course, @chapter], notice: 'Chapter was successfully created.' }
+        format.html { redirect_to @course, notice: 'Chapter was successfully created.' }
         format.json { render :show, status: :created, location: @chapter }
       else
         format.html { render :new }

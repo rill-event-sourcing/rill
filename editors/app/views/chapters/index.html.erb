@@ -11,16 +11,16 @@
   </thead>
 
   <tbody>
-    <% @chapters.each do |chapter| %>
-      <tr>
-        <td><%= chapter.name %></td>
-        <td><%= chapter.description %></td>
-        <td><%= chapter.course %></td>
-        <td><%= link_to 'Show', chapter %></td>
-        <td><%= link_to 'Edit', edit_chapter_path(chapter) %></td>
-        <td><%= link_to 'Destroy', chapter, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
+      <% @course.chapters.each do |chapter| %>
+        <tr>
+          <td><%= chapter.name %></td>
+          <td><%= chapter.description %></td>
+          <td><%= chapter.course %></td>
+          <td><%= link_to 'Show', chapter %></td>
+          <td><%= link_to 'Edit', edit_chapter_path(chapter) %></td>
+          <td><%= link_to 'Destroy', chapter, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        </tr>
+      <% end %>
   </tbody>
 </table>
 
