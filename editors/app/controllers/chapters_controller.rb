@@ -1,5 +1,5 @@
 class ChaptersController < ApplicationController
-  #before_action :set_course
+  before_action :set_course
   before_action :set_chapter, only: [:show, :edit, :update, :destroy]
 
   # GET /chapters

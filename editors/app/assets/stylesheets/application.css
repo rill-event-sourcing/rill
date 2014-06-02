@@ -13,6 +13,11 @@
  *= require_tree .
  *= require_self
  */
+
+form {
+  float: left;
+}
+
 #menu {
   list-style-type: none;
   margin: 0;

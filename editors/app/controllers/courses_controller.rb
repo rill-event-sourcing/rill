@@ -2,8 +2,8 @@ class CoursesController < ApplicationController
   before_action :set_course, only: [:show, :edit, :update, :destroy]
 
   def select
-    if params[:course] && params[:course][:selected].to_i > 0
-      @course = Course.find(params[:course][:selected])
+    if params[:course] && params[:course][:id].to_i > 0
+      @course = Course.find(params[:course][:id])
       Course.current = @course
       session[:course_id] = @course.id
     else
@@ -76,7 +76,6 @@ class CoursesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_course
-      #@course = Course.find(params[:course][:selected])
       @course = Course.find(params[:id])
     end
 

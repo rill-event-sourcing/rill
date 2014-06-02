@@ -1,14 +1,14 @@
-<%= form_for(@my_course, url: select_courses_path) do |f| %>
-  <%= f.collection_select(:selected, Course.all, :id, :name,
+<%= form_for(Course.current||Course.new, url: select_courses_path, method: :post) do |f| %>
+  <%= f.collection_select(:id, Course.all, :id, :name,
     {include_blank: 'Choose course'},
     {onchange: "submit()"}) %>
 <% end %>
 
-
 <ul id="menu">
-  <li><%= link_to('courses', courses_path) %></li>
   <li><%= link_to('chapters', chapters_path) %></li>
   <li>tasks</li>
   <li>assessments</li>
+  <li>&nbsp;&nbsp;&nbsp;&nbsp;</li>
   <li>domains</li>
+  <li><%= link_to('courses', courses_path) %></li>
 </ul>
