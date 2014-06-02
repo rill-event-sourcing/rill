@@ -1,8 +1,8 @@
 <ul id="menu">
+  <li><%= collection_select(@my_course, :select, Course.all, :id, :name, {include_blank: 'choose course'}) %></li>
   <li><%= link_to('courses', courses_path) %></li>
-  <li>chapters</li>
-  <li>steps</li>
-  <li>questions</li>
+  <li><%= link_to('chapters', chapters_path) %></li>
+  <li>tasks</li>
   <li>assessments</li>
   <li>domains</li>
 </ul>

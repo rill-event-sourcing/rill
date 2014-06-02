@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @learning_step.name %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @learning_step.description %>
+</p>
+
+<p>
+  <strong>Chapter:</strong>
+  <%= @learning_step.chapter %>
+</p>
+
+<%= link_to 'Edit', edit_learning_step_path(@learning_step) %> |
+<%= link_to 'Back', learning_steps_path %>

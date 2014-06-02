@@ -1,6 +1,15 @@
 Rails.application.routes.draw do
+
   resources :courses do
-    resources :chapters
+    member do
+      post 'select'
+    end
+  end
+
+  resources :chapters do
+    resources :learning_steps do
+      # resources :tasks
+    end
   end
 
   root 'dashboard#index'
