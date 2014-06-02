@@ -1,7 +1,7 @@
 class Course < ActiveRecord::Base
   has_many :chapters
 
-  validates_presence_of :name
+  validates :name, :presence => true
 
   def to_s
     "#{name}"

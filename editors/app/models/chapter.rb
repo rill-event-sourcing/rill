@@ -1,7 +1,8 @@
 class Chapter < ActiveRecord::Base
   belongs_to :course
 
-  validates_presence_of :name
+  validates :course, :presence => true
+  validates :name, :presence => true
 
   def to_s
     "#{name}"

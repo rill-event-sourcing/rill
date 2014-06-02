@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
-  resources :chapters
-
-  resources :courses
+  resources :courses do
+    resources :chapters
+  end
 
   root 'dashboard#index'
 
