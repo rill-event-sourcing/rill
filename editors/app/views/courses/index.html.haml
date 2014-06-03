@@ -4,14 +4,12 @@
   %thead
     %tr
       %th Name
-      %th Description
       %th
 
   %tbody
     -@courses.each do |course|
       %tr
         %td= course.name
-        %td= course.description
         %td= link_to 'Show', course
 
 %br
