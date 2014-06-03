@@ -21,7 +21,7 @@ feature "SelectCourses", :type => :feature do
 
   scenario 'Course list' do
     visit courses_path
-    expect(page).to have_content('Listing courses')
+    expect(page).to have_content('Courses')
     expect(page).to have_content('New Course')
   end
 

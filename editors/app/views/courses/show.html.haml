@@ -1,0 +1,35 @@
+%p.notice= notice
+
+%p
+  %strong Name:
+  = @course.name
+
+%p
+  %strong Description:
+  = @course.description
+
+= link_to 'Edit', edit_course_path(@course), class: "btn btn-primary"
+= link_to 'Destroy', @course, method: :delete, data: { confirm: "Are you sure you want to delete course `#{ @course }`?" }, class: "btn btn-danger"
+
+-if false
+  %h1 Listing chapters
+
+  %table
+    %thead
+      %tr
+        %th Name
+        %th Description
+        %th Course
+        %th{colspan: "3"}
+
+    %tbody
+      - @course.chapters.each do |chapter|
+        %tr
+          %td= chapter.name
+          %td= chapter.description
+          %td= chapter.course
+          %td= link_to 'Show', chapter
+          %td= link_to 'Edit', edit_chapter_path(chapter)
+          %td= link_to 'Destroy', chapter, method: :delete, data: { confirm: 'Are you sure?' }
+
+%br
