@@ -5,12 +5,18 @@
     %tr
       %th Title
       %th
+      %th Status
 
   %tbody
     -@course.chapters.each do |chapter|
       %tr
         %td= chapter.title
         %td= link_to 'Show', chapter
+        %td
+          -if chapter.active?
+            %span.glyphicon.glyphicon-ok
+          -else
+            %span.glyphicon.glyphicon-remove
 
 %br
 = link_to 'New Chapter', new_chapter_path, class: "btn btn-success"
