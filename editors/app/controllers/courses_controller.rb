@@ -1,17 +1,5 @@
 class CoursesController < ApplicationController
-  before_action :set_course, only: [:show, :edit, :update, :destroy]
-
-  def select
-    if params[:course] && params[:course][:id].to_i > 0
-      @course = Course.find(params[:course][:id])
-      Course.current = @course
-      session[:course_id] = @course.id
-    else
-      Course.current = nil
-      session[:course_id] = nil
-    end
-    redirect_to root_path
-  end
+  before_action :set_course, only: [:show, :edit, :update, :destroy, :activate, :deactivate]
 
   def index
     @courses = Course.all
@@ -47,6 +35,28 @@ class CoursesController < ApplicationController
   def destroy
     @course.trash
     redirect_to courses_url, notice: 'Course was successfully destroyed.'
+  end
+
+  def activate
+    @course.activate
+    redirect_to @course, notice: 'Course was successfully activated.'
+  end
+
+  def deactivate
+    @course.deactivate
+    redirect_to @course, notice: 'Course was successfully deactivated.'
+  end
+
+  def select
+    if params[:course] && params[:course][:id].to_i > 0
+      @course = Course.find(params[:course][:id])
+      Course.current = @course
+      session[:course_id] = @course.id
+    else
+      Course.current = nil
+      session[:course_id] = nil
+    end
+    redirect_to root_path
   end
 
 private

@@ -3,6 +3,10 @@ Rails.application.routes.draw do
     collection do
       post 'select'
     end
+    member do
+      post 'activate'
+      post 'deactivate'
+    end
   end
 
   root to: 'home#index'

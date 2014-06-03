@@ -1,5 +1,5 @@
 class Course < ActiveRecord::Base
-  include Trashable
+  include Trashable, Activateable
 
   has_many :chapters
 
