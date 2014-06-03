@@ -38,8 +38,18 @@ class ChaptersController < ApplicationController
   end
 
   def destroy
-    @chapter.destroy
-    redirect_to @course, notice: 'Chapter was successfully destroyed.'
+    @chapter.trash
+    redirect_to chapters_path, notice: 'Chapter was successfully destroyed.'
+  end
+
+  def activate
+    @chapter.activate
+    redirect_to @chapter, notice: 'Chapter was successfully activated.'
+  end
+
+  def deactivate
+    @chapter.deactivate
+    redirect_to @chapter, notice: 'Chapter was successfully deactivated.'
   end
 
 private
@@ -55,7 +65,5 @@ private
   def chapter_params
     params.require(:chapter).permit(:title, :description, :course_id)
   end
-
-
 
 end

@@ -1,6 +1,7 @@
 class Chapter < ActiveRecord::Base
-  belongs_to :course
+  include Trashable, Activateable
 
+  belongs_to :course
   validates :course, :presence => true
   validates :title, :presence => true
 

@@ -9,7 +9,12 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :chapters
+  resources :chapters do
+    member do
+      post 'activate'
+      post 'deactivate'
+    end
+  end
 
   root to: 'home#index'
 end
