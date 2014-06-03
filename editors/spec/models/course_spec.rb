@@ -19,4 +19,22 @@ RSpec.describe Course, :type => :model do
 
   it {is_expected.to have_many :chapters}
 
+  it "should not list trashed courses" do
+    create(:course, name: 'B')
+    create(:course, name: 'C')
+    @course = create(:course, name: 'A')
+    @course.trash
+    expect(Course.all.map(&:to_s)).to eq ['B', 'C']
+    expect(Course.trashed.first).to eq @course
+  end
+
+  it "should be activateable" do
+    @course = build(:course)
+    expect(@course.active).to eq false
+    @course.activate
+    expect(@course.active).to eq true
+    @course.deactivate
+    expect(@course.active).to eq false
+  end
+
 end
