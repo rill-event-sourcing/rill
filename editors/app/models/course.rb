@@ -1,5 +1,5 @@
 class Course < ActiveRecord::Base
-  # has_many :chapters
+  has_many :chapters
 
   validates :name, :presence => true
 

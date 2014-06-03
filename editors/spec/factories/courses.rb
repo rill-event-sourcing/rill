@@ -2,7 +2,7 @@
 
 FactoryGirl.define do
   factory :course do
-    name "MyString"
-    description "MyText"
+    name "Default course name"
+    description "Default course description"
   end
 end
