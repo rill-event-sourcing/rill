@@ -1,2 +1,10 @@
 %li
-  %a test
+  =link_to 'Courses', courses_path
+
+%li
+  %form.navbar-form.form-inline
+    
+    %select{style: "margin-left: 5px;", class: "input-medium"}
+      %option choose course
+      - Course.all.each do |course|
+        %option= course
