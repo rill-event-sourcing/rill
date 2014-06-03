@@ -1,0 +1,5 @@
+%li
+  =form_for(Course.current||Course.new, url: select_courses_path, method: :post, html: {id: "course_select", class: "navbar-form form-inline"}) do |f|
+    =f.collection_select(:id, Course.all, :id, :name, {include_blank: 'choose course'}, {onchange: "submit()", class: "form-control"})
+%li
+  =link_to 'logout'
