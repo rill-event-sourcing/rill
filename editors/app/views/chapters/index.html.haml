@@ -1,0 +1,16 @@
+%h1 Chapters
+
+%table
+  %thead
+    %tr
+      %th Title
+      %th
+
+  %tbody
+    -@course.chapters.each do |chapter|
+      %tr
+        %td= chapter.title
+        %td= link_to 'Show', chapter
+
+%br
+= link_to 'New Chapter', new_chapter_path, class: "btn btn-success"

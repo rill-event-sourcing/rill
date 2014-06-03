@@ -1,0 +1,23 @@
+=form_for(@chapter) do |f|
+  - if @chapter.errors.any?
+    %div.error_explanation
+      %h2= #{ pluralize(@chapter.errors.count, "error") } prohibited this chapter from being saved:
+      %ul
+        -@chapter.errors.full_messages.each do |message|
+          %li= message
+
+  %div.field
+    = f.label :title
+    = f.text_field :title
+    %br
+    = f.label :description
+    = f.text_area :description
+
+  - if @chapter.id
+    %div.actions
+      = link_to 'cancel', @chapter, class: "btn btn-default"
+      = submit_tag('update', class: "btn btn-primary")
+  - else
+    %div.actions
+      = link_to 'cancel', chapters_path, class: "btn btn-default"
+      = submit_tag('save', class: "btn btn-primary")

@@ -9,5 +9,7 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :chapters
+
   root to: 'home#index'
 end
