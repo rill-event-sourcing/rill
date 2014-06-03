@@ -1,7 +1,7 @@
--if @course.active?
-  = link_to 'Deactivate', deactivate_course_path(@course), method: :post, class: "btn btn-warning"
+-if @chapter.active?
+  = link_to 'Deactivate', deactivate_chapter_path(@chapter), method: :post, class: "btn btn-warning"
 - else
-  = link_to 'Activate', activate_course_path(@course), method: :post, class: "btn btn-info"
+  = link_to 'Activate', activate_chapter_path(@chapter), method: :post, class: "btn btn-info"
 
 %p
   %strong Title:

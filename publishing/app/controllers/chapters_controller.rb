@@ -1,6 +1,6 @@
 class ChaptersController < ApplicationController
   before_action :set_course
-  before_action :set_chapter, only: [:show, :edit, :update, :destroy]
+  before_action :set_chapter, only: [:show, :edit, :update, :destroy, :activate, :deactivate]
 
   def index
     if @course
