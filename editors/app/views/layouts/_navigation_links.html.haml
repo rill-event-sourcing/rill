@@ -1,14 +1,6 @@
 %li
   =link_to 'Courses', courses_path
 
-  =form_for(Course.current||Course.new, url: select_courses_path, method: :post) do |f|
-    = f.collection_select(:id, Course.all, :id, :name,
-    {include_blank: 'Choose course'},
-    {onchange: "submit()"}) %>
-
 %li
-  %form.navbar-form.form-inline
-    %select{style: "margin-left: 5px;", class: "input-medium"}
-      %option choose course
-      - Course.all.each do |course|
-        %option= course
+  =form_for(Course.current||Course.new, url: select_courses_path, method: :post, html: {class: "navbar-form form-inline"}) do |f|
+    = f.collection_select(:id, Course.all, :id, :name, {include_blank: 'choose course'}, {onchange: "submit()"})
