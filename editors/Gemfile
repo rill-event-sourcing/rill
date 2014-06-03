@@ -42,9 +42,9 @@ end
 
 group :test do
   gem 'capybara'
+  gem 'capybara-webkit'
   gem 'database_cleaner'
   gem 'faker'
   gem 'launchy'
-  gem 'selenium-webdriver'
   gem 'shoulda-matchers'
 end
