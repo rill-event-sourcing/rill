@@ -4,10 +4,6 @@
   %strong Name:
   = @course.name
 
-%p
-  %strong Description:
-  = @course.description
-
 = link_to 'Edit', edit_course_path(@course), class: "btn btn-primary"
 = link_to 'Destroy', @course, method: :delete, data: { confirm: "Are you sure you want to delete course `#{ @course }`?" }, class: "btn btn-danger"
 
