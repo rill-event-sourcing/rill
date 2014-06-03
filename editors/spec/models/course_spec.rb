@@ -10,6 +10,13 @@ RSpec.describe Course, :type => :model do
     expect(@course.to_s).to eq @course.name
   end
 
+  it "should list courses in order of name" do
+    create(:course, name: 'B')
+    create(:course, name: 'C')
+    create(:course, name: 'A')
+    expect(Course.all.map(&:to_s)).to eq ['A', 'B', 'C']
+  end
+
   it {is_expected.to have_many :chapters}
 
 end

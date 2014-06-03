@@ -3,6 +3,8 @@ class Course < ActiveRecord::Base
 
   validates :name, :presence => true, :uniqueness => true
 
+  default_scope { order(:name) }
+
   def self.current=(course)
     Thread.current[:course] = course
   end
