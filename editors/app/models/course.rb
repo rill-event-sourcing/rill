@@ -1,4 +1,6 @@
 class Course < ActiveRecord::Base
+  include Trashable
+
   has_many :chapters
 
   validates :name, :presence => true, :uniqueness => true
