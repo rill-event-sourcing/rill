@@ -30,7 +30,7 @@ class CoursesController < ApplicationController
   def create
     @course = Course.new(course_params)
     if @course.save
-      redirect_to @course, notice: 'Course was successfully created.'
+      redirect_to courses_path, notice: 'Course was successfully created.'
     else
       render :new
     end
