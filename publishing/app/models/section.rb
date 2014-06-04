@@ -19,4 +19,5 @@ class Section < ActiveRecord::Base
       title: title
     }
   end
+
 end

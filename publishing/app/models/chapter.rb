@@ -22,5 +22,5 @@ class Chapter < ActiveRecord::Base
       sections: sections.map(&:as_json)
     }
   end
-  
+
 end

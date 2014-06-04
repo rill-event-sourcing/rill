@@ -1,8 +1,3 @@
--if @section.active?
-  = link_to 'Deactivate', deactivate_chapter_section_path(@chapter,@section), method: :post, class: "btn btn-warning"
-- else
-  = link_to 'Activate', activate_chapter_section_path(@chapter,@section), method: :post, class: "btn btn-info"
-
 %p
   %strong Title:
   = @section.title
