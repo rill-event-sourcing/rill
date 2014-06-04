@@ -8,11 +8,11 @@
       %ul
         -course.chapters.each do |chapter|
           %li
-            = chapter.title
+            =link_to chapter.title, chapter
             %small= chapter.description
             = "(#{ chapter.sections.length })"
             %ul
               -chapter.sections.each do |section|
                 %li
-                  = section.title
+                  = link_to section.title, [chapter, section]
                   %small= section.description
