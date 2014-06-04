@@ -1,7 +1,7 @@
 class CoursesController < ApplicationController
 
   def select
-    if params[:course] && params[:course][:id].to_i > 0
+    if params[:course] && params[:course][:id]
       @course = Course.find(params[:course][:id])
       Course.current = @course
       session[:course_id] = @course.id
