@@ -10,38 +10,39 @@ namespace :importer do
 
     ###################################################################
     ActiveRecord::Base.establish_connection :prev_development
-    chapters = ActiveRecord::Base.connection.select_all(
-      "SELECT id, name, description, active, position from chapters"
-    )
-    topics = ActiveRecord::Base.connection.select_all(
-      "SELECT id, chapter_id, name, description, active, position from topics"
-    )
+    learning_tree = {}
+    ActiveRecord::Base.connection.select_all(
+      "SELECT id, name, description, active, position FROM chapters"
+    ).each do |chapter|
+      learning_tree[chapter] = ActiveRecord::Base.connection.select_all(
+        "SELECT id, chapter_id, name, description, active, position FROM topics"+
+        " WHERE chapter_id=#{ chapter['id'] }"
+      )
+    end
 
     ###################################################################
     ActiveRecord::Base.establish_connection :development
     course_id = Course.first.id
 
-    chapters.each do |result|
-      Chapter.create!(
-        id: result['id'],
+    learning_tree.each do |chapter, topics|
+      new_chapter = Chapter.create!(
         course_id: course_id,
-        title: result['name'],
-        description: result['description'],
-        active: result['active'],
-        position: result['position']
+        title: chapter['name'],
+        description: chapter['description'],
+        active: chapter['active'],
+        position: chapter['position']
       )
+      topics.each do |topic|
+        Section.create(
+          chapter: new_chapter,
+          title: topic['name'],
+          description: topic['description'],
+          active: topic['active'],
+          position: topic['position']
+        )
+      end
     end
 
-    topics.each do |result|
-      Section.create(
-        id: result['id'],
-        chapter_id: result['chapter_id'],
-        title: result['name'],
-        description: result['description'],
-        active: result['active'],
-        position: result['position']
-      )
-    end
     ###################################################################
   end
 
