@@ -50,7 +50,7 @@ class SectionsController < ApplicationController
 
   def moveup
     @section.move_higher
-    redirect_to
+    redirect_to chapter_sections_path(@chapter)
   end
 
   def movedown
