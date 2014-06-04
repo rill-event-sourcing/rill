@@ -15,9 +15,10 @@ ActiveRecord::Schema.define(version: 20140604083402) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "uuid-ossp"
 
-  create_table "chapters", force: true do |t|
-    t.integer  "course_id"
+  create_table "chapters", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
+    t.uuid     "course_id"
     t.string   "title"
     t.text     "description"
     t.datetime "deleted_at"
@@ -27,9 +28,9 @@ ActiveRecord::Schema.define(version: 20140604083402) do
     t.datetime "updated_at"
   end
 
-  add_index "chapters", ["course_id"], name: "index_chapters_on_course_id", using: :btree
+  add_index "chapters", ["created_at"], name: "index_chapters_on_created_at", using: :btree
 
-  create_table "courses", force: true do |t|
+  create_table "courses", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
     t.string   "name"
     t.datetime "deleted_at"
     t.boolean  "active",     default: false
@@ -37,8 +38,10 @@ ActiveRecord::Schema.define(version: 20140604083402) do
     t.datetime "updated_at"
   end
 
-  create_table "sections", force: true do |t|
-    t.integer  "chapter_id"
+  add_index "courses", ["created_at"], name: "index_courses_on_created_at", using: :btree
+
+  create_table "sections", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
+    t.uuid     "chapter_id"
     t.string   "title"
     t.text     "description"
     t.datetime "deleted_at"
@@ -48,6 +51,6 @@ ActiveRecord::Schema.define(version: 20140604083402) do
     t.datetime "updated_at"
   end
 
-  add_index "sections", ["chapter_id"], name: "index_sections_on_chapter_id", using: :btree
+  add_index "sections", ["created_at"], name: "index_sections_on_created_at", using: :btree
 
 end

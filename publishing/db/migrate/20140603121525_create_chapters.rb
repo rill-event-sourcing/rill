@@ -1,7 +1,7 @@
 class CreateChapters < ActiveRecord::Migration
   def change
-    create_table :chapters do |t|
-      t.references :course, index: true
+    create_table :chapters, id: :uuid do |t|
+      t.uuid :course_id, index: true
       t.string :title
       t.text :description
       t.datetime :deleted_at
@@ -9,5 +9,6 @@ class CreateChapters < ActiveRecord::Migration
       t.integer :position, limit: 3
       t.timestamps
     end
+    add_index :chapters, :created_at
   end
 end
