@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     end
   end
 
+
   resources :chapters do
     member do
       post 'activate'
@@ -16,7 +17,19 @@ Rails.application.routes.draw do
       post 'moveup'
       post 'movedown'
     end
+
+    resources :sections do
+      member do
+        post 'activate'
+        post 'deactivate'
+        post 'moveup'
+        post 'movedown'
+      end
+    end
+
   end
+
+
 
   root to: 'home#index'
 end
