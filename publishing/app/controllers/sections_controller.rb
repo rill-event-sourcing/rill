@@ -65,11 +65,11 @@ private
    end
 #
    def set_chapter
-     @chapter = @course.chapters.find(params[:chapter_id])
+     @chapter = @course.chapters.find_by_uuid(params[:chapter_id])
    end
 
    def set_section
-     @section = @chapter.sections.find(params[:id])
+     @section = @chapter.sections.find_by_uuid(params[:id])
    end
 
    def section_params
