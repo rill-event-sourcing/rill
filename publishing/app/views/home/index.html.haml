@@ -1,0 +1,9 @@
+%h1 Overview
+
+%ul
+  - Course.all.each do |course|
+    %li
+      = course.name
+      %ul
+        -course.chapters.each do |chapter|
+          %li= chapter.title
