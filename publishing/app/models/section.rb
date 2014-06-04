@@ -2,6 +2,8 @@ class Section < ActiveRecord::Base
   include Trashable, Activateable
 
   belongs_to :chapter
+  has_many :subsections, -> { order(:position) }
+
   acts_as_list :scope => :chapter
 
   validates :chapter, :presence => true
