@@ -19,4 +19,11 @@ class Course < ActiveRecord::Base
     "#{name}"
   end
 
+  def as_json
+    {
+      id: id,
+      name: name,
+      chapters: chapters.map(&:as_json)
+    }
+  end
 end

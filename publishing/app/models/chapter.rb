@@ -15,4 +15,12 @@ class Chapter < ActiveRecord::Base
     "#{title}"
   end
 
+  def as_json
+    {
+      id: id,
+      title: title,
+      sections: sections.map(&:as_json)
+    }
+  end
+  
 end

@@ -12,4 +12,11 @@ class Section < ActiveRecord::Base
   def to_s
     "#{title}"
   end
+
+  def as_json
+    {
+      id: id,
+      title: title
+    }
+  end
 end
