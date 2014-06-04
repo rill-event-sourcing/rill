@@ -1,6 +1,6 @@
 class CreateSubsections < ActiveRecord::Migration
   def change
-    create_table :subsections do |t|
+    create_table :subsections, id: :uuid  do |t|
       t.uuid :section_id, index: true
       t.string :title
       t.text :description

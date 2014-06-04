@@ -37,7 +37,7 @@ class SectionsController < ApplicationController
   end
 
   def destroy
-    @chapter.trash
+    @section.trash
     redirect_to chapter_sections_path(@chapter), notice: 'Section was successfully destroyed.'
   end
 
@@ -80,7 +80,7 @@ private
   end
 
   def section_params
-    params.require(:section).permit(:title, :description, :chapter_id)
+    params.require(:section).permit(:title, :description)
   end
 
 end

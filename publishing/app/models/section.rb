@@ -6,6 +6,8 @@ class Section < ActiveRecord::Base
 
   acts_as_list :scope => :chapter
 
+  has_many :subsections, -> { order(:position) }
+
   validates :chapter, :presence => true
   validates :title, :presence => true
 
