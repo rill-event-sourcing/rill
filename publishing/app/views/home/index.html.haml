@@ -1,12 +1,12 @@
-%h1 Overview
-
-%ul
-  - Course.all.each do |course|
+-if Course.current
+  - @course = Course.current
+  %h1 Overview
+  %ul
     %li
-      = course.name
-      = "(#{ course.chapters.length })"
+      = @course.name
+      = "(#{ @course.chapters.length })"
       %ul
-        -course.chapters.each do |chapter|
+        -@course.chapters.each do |chapter|
           %li
             =link_to chapter.title, chapter
             %small= chapter.description
@@ -19,7 +19,7 @@
                   %ul
                     -section.subsections.each do |subsection|
                       %li
-                        =subsection.title
+                        =link_to subsection.title, [chapter, section, subsection]
                         %small= subsection.description
                         - subsection.level.times do
                           %span.glyphicon.glyphicon-star

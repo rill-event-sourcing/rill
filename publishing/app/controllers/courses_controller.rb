@@ -9,7 +9,7 @@ class CoursesController < ApplicationController
       Course.current = nil
       session[:course_id] = nil
     end
-    redirect_to chapters_path
+    redirect_to root_path
   end
 
 end

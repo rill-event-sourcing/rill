@@ -10,6 +10,7 @@
     %tr
       %th Title
       %th Description
+      %th Level
       %th Order
       %th Status
 
@@ -18,6 +19,9 @@
       %tr
         %td= link_to subsection.title, [@chapter, @section, subsection]
         %td= subsection.description
+        %td
+          - subsection.level.times do
+            %span.glyphicon.glyphicon-star
         %td
           =link_to movedown_chapter_section_subsection_path(@chapter, @section, subsection), method: :post do
             %span.glyphicon.glyphicon-arrow-down
