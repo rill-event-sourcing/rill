@@ -1,8 +1,10 @@
-%h1 Sections
+
 
 %div.row
-  %div.col-md-3.col-md-offset-9
-    = link_to "Back", chapters_path, class: "btn btn-default"
+  %div.col-md-10
+    %h2
+      %strong Sections
+  %div.col-md-1
     = link_to 'New Section', new_chapter_section_path(@chapter), class: "btn btn-success"
 
 %table.table.table-striped

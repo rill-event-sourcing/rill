@@ -5,8 +5,8 @@
   %strong Description:
   = @section.description
 
-= link_to 'Back', chapter_sections_path(@chapter), class: "btn btn-default"
+= link_to 'Back', @chapter, class: "btn btn-default"
 = link_to 'Edit', edit_chapter_section_path(@chapter,@section), class: "btn btn-primary"
-= link_to 'Destroy', chapter_sections_path(@chapter), method: :delete, data: { confirm: "Are you sure you want to delete section `#{ @section }`?" }, class: "btn btn-danger"
+= link_to 'Destroy', @chapter, method: :delete, data: { confirm: "Are you sure you want to delete section `#{ @section }`?" }, class: "btn btn-danger"
 
 %br

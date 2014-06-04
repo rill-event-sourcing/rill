@@ -1,9 +1,12 @@
 class SectionsController < ApplicationController
+
   before_action :set_course
   before_action :set_chapter
   before_action :set_section, except: [:index, :new, :create]
+  before_action :set_breadcrumb
 
   def index
+    redirect_to @chapter
   end
 
   def show
@@ -59,6 +62,10 @@ class SectionsController < ApplicationController
   end
 
 private
+
+  def set_breadcrumb
+    set_crumb({name: @chapter.title, url: chapter_sections_path(@chapter)})
+  end
 
    def set_course
      @course = Course.current
