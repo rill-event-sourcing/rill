@@ -75,7 +75,7 @@ private
   end
 
   def set_chapter
-    @chapter = @course.chapters.find(params[:id])
+    @chapter = @course.chapters.find_by_uuid(params[:id])
   end
 
   def chapter_params
