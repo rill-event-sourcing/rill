@@ -1,44 +1,51 @@
 (ns studyflow.learning.course-material
   "This is the hierarchical, normalized model for the course material"
-  (:require [schema.macros :as sm]
-            [schema.core :as s]))
+  (:require [schema.core :as s]
+            [schema.coerce :as coerce]
+            [studyflow.util :as util]))
 
 (def RichText s/Str)
-
 (def PlainText s/Str)
+(def Id s/Uuid)
 
-(sm/defrecord SubSection
-    [id :- s/Uuid
-     title :- PlainText
-     text :- RichText])
+(def SubSection
+  {:id Id
+   :title PlainText
+   :text RichText})
 
 (def Hint RichText)
 
 (def Answer PlainText)
 
-(sm/defrecord SectionEndTestQuestion
-    [id :- s/Uuid
-     text :- RichText
-     hints :- #{Hint}
-     choices :- {Answer RichText}
-     correct-answers :- #{Answer}
-     incorrect-answers :- #{Answer}])
+(def SectionEndTestQuestion
+  {:id Id
+   :text RichText
+   :hints #{Hint}
+   :choices {Answer RichText}
+   :correct-answers #{Answer}
+   :incorrect-answers #{Answer}})
 
 (def ContentLevel s/Int)
 
-(sm/defrecord Section
-    [id :- s/Uuid
-     title :- PlainText
-     end-test-questions :- #{SectionEndTestQuestion}
-     subsections-for-level :- {ContentLevel [SubSection]}])
+(def Section
+  {:id Id
+   :title PlainText
+   :subsections-for-level {ContentLevel [SubSection]}})
 
-(sm/defrecord Chapter
-    [id :- s/Uuid
-     title :- PlainText])
+(def Chapter
+  {:id Id
+   :title PlainText})
 
-(sm/defrecord CourseMaterial
-    [id :- s/Uuid
-     name :- PlainText
-     chapters :- [Chapter]])
+(def CourseMaterial
+  {:id Id
+   :name PlainText
+   :chapters [Chapter]})
+
+(def parse-course-material
+  (coerce/coercer CourseMaterial (fn [s]
+                                   (if-let [coercers (keep (fn [c] (c s))
+                                                           [coerce/json-coercion-matcher
+                                                            util/uuid-coercion-matcher])]
+                                     (apply comp coercers)))))
 
 
