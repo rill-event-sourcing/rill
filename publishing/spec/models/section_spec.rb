@@ -15,7 +15,7 @@ RSpec.describe Section, :type => :model do
     expect(@section.to_s).to eq @section.title
   end
 
-  it "should list sections in order of order" do
+  it "should list sections in the right order" do
     expect(Section.all.map(&:to_s)).to eq ['A', 'B', 'C']
   end
 
