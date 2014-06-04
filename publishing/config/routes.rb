@@ -16,8 +16,15 @@ Rails.application.routes.draw do
         post 'moveup'
         post 'movedown'
       end
+      resources :subsections do
+        member do
+          post 'activate'
+          post 'deactivate'
+          post 'moveup'
+          post 'movedown'
+        end
+      end
     end
-
   end
 
   root to: 'home#index'
