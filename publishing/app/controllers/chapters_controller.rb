@@ -6,7 +6,7 @@ class ChaptersController < ApplicationController
     if @course
       @chapters = @course.chapters
     else
-      redirect_to root_path, alert: 'Please select a course first'
+      flash.now[:alert] = 'Please select a course first'
     end
   end
 
