@@ -39,4 +39,4 @@ adding_large_numbers = Subsection.create(title: 'Adding large numbers', descript
 
 subtracting_small_numbers = Subsection.create(title: 'Subtracting small numbers', description: 'This looks easy', level: 1, section: subtraction)
 subtracting_large_numbers = Subsection.create(title: 'Subtracting medium numbers', description: 'This looks hard enough already', level: 2, section: subtraction)
-going_negative = Subsection.create(title: 'Going negative', description: 'This looksw weird', level: 3, section: subtraction)
+going_negative = Subsection.create(title: 'Going negative', description: 'This looks weird', level: 3, section: subtraction)
