@@ -1,0 +1,12 @@
+%p
+  %strong Title:
+  = @chapter.title
+%p
+  %strong Description:
+  = @chapter.description
+
+= link_to 'Back', chapters_path, class: "btn btn-default"
+= link_to 'Edit', edit_chapter_path(@chapter), class: "btn btn-primary"
+= link_to 'Destroy', @chapter, method: :delete, data: { confirm: "Are you sure you want to delete chapter `#{ @chapter }`?" }, class: "btn btn-danger"
+
+%br

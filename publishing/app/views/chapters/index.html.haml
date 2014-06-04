@@ -1,0 +1,34 @@
+- if @course
+  %h1 Chapters
+
+  %div.row
+    %div.col-md-2.col-md-offset-10
+      = link_to 'New Chapter', new_chapter_path, class: "btn btn-success"
+
+  %table.table.table-striped
+    %thead
+      %tr
+        %th Title
+        %th Description
+        %th Order
+        %th Status
+        %th Sections
+
+    %tbody
+      -@chapters.each do |chapter|
+        %tr
+          %td= link_to chapter.title, chapter
+          %td= chapter.description
+          %td
+            =link_to movedown_chapter_path(chapter), method: :post do
+              %span.glyphicon.glyphicon-arrow-down
+            =link_to moveup_chapter_path(chapter), method: :post do
+              %span.glyphicon.glyphicon-arrow-up
+          %td
+            -if chapter.active?
+              =link_to deactivate_chapter_path(chapter), method: :post do
+                %span.glyphicon.glyphicon-ok
+            -else
+              =link_to activate_chapter_path(chapter), method: :post do
+                %span.glyphicon.glyphicon-remove
+          %td= link_to "Show", chapter_sections_path(chapter)

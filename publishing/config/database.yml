@@ -1,0 +1,20 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+
+development:
+  <<: *default
+  database: editors_development
+
+test:
+  <<: *default
+  database: editors_test
+
+production:
+  <<: *default
+  database: editors_production
+
+prev_development:
+  <<: *default
+  database: studyflow_dev

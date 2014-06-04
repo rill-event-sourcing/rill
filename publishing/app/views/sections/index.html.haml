@@ -1,0 +1,31 @@
+%h1 Sections
+
+%div.row
+  %div.col-md-2.col-md-offset-10
+    = link_to 'New Section', new_chapter_section_path(@chapter), class: "btn btn-success"
+
+%table.table.table-striped
+  %thead
+    %tr
+      %th Title
+      %th Description
+      %th Order
+      %th Status
+
+  %tbody
+    -@chapter.sections.each do |section|
+      %tr
+        %td= link_to section.title, [@chapter,section]
+        %td= section.description
+        %td
+          =link_to movedown_chapter_section_path(@chapter,section), method: :post do
+            %span.glyphicon.glyphicon-arrow-down
+          =link_to moveup_chapter_section_path(@chapter,section), method: :post do
+            %span.glyphicon.glyphicon-arrow-up
+        %td
+          -if section.active?
+            =link_to deactivate_chapter_section_path(@chapter,section), method: :post do
+              %span.glyphicon.glyphicon-ok
+          -else
+            =link_to activate_chapter_section_path(@chapter,section), method: :post do
+              %span.glyphicon.glyphicon-remove
