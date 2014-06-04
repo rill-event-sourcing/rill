@@ -4,5 +4,6 @@ FactoryGirl.define do
   factory :chapter do
     title "Default chapter name"
     description "Default chapter description"
+    course
   end
 end

@@ -19,10 +19,10 @@ feature "SelectCourses", :type => :feature do
     expect(page).to have_select('course_id', :selected => 'Math')
   end
 
-  scenario 'Course list' do
-    visit courses_path
-    expect(page).to have_content('Courses')
-    expect(page).to have_content('New Course')
-  end
+  # scenario 'Course list' do
+  #   visit courses_path
+  #   expect(page).to have_content('Courses')
+  #   expect(page).to have_content('New Course')
+  # end
 
 end
