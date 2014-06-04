@@ -35,18 +35,21 @@
 
 (def Chapter
   {:id Id
-   :title PlainText})
+   :title PlainText
+   :sections [Section]})
 
 (def CourseMaterial
   {:id Id
    :name PlainText
    :chapters [Chapter]})
 
-(def parse-course-material
-  (coerce/coercer CourseMaterial (fn [s]
-                                   (if-let [coercers (keep (fn [c] (c s))
-                                                           [coerce/json-coercion-matcher
-                                                            util/uuid-coercion-matcher])]
-                                     (apply comp coercers)))))
+(defn material-coercer
+  [schema]
+  (if-let [coercers (keep (fn [c] (c schema))
+                          [coerce/json-coercion-matcher
+                           util/uuid-coercion-matcher])]
+    (apply comp coercers)))
 
+(def parse-course-material
+  (coerce/coercer CourseMaterial material-coercer))
 
