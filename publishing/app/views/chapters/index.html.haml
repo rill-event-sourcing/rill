@@ -12,7 +12,6 @@
         %th Description
         %th Order
         %th Status
-        %th Sections
 
     %tbody
       -@chapters.each do |chapter|
@@ -31,4 +30,3 @@
             -else
               =link_to activate_chapter_path(chapter), method: :post do
                 %span.glyphicon.glyphicon-remove
-          %td= link_to "Show", chapter_sections_path(chapter), class: "btn btn-default"
