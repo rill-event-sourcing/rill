@@ -28,7 +28,6 @@
   [event-store id]
   (let [stream (store/retrieve-event-stream event-store id)
         aggregate (aggregate/load-aggregate (:events stream))]
-    (pr stream)
     [aggregate stream]))
 
 (defn fetch-aggregate

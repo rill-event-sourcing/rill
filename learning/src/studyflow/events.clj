@@ -1,41 +1,22 @@
 (ns studyflow.events
-  (:require [rill.message :refer [defevent]]))
+  (:require [rill.message :refer [defevent]]
+            [studyflow.learning.course-material]
+            [schema.core :as s])
+  (:import (studyflow.learning.course_material CourseMaterial Chapter Section SubSection)))
 
 (defevent CoursePublished
-  [course-id publisher-id title chapter-ids])
+  [course-id :- s/Uuid
+   publisher-id :- s/Uuid
+   material :- CourseMaterial])
 
 (defevent CourseUpdated
-  [course-id publisher-id title chapter-ids])
+  [course-id :- s/Uuid
+   publisher-id :- s/Uuid
+   material :- CourseMaterial])
 
-(defevent CourseArchived
-  [course-id])
-
-(defevent ChapterPublished
-  [chapter-id publisher-id title description learning-step-ids])
-
-(defevent ChapterArchived
-  [chapter-id publisher-id])
-
-(defevent ChapterUpdated
-  [chapter-id publisher-id title description learning-step-ids])
-
-(defevent LearningStepPublished
-  [learning-step-id publisher-id title task-ids])
-
-(defevent LearningStepArchived
-  [learning-step-id publisher-id])
-
-(defevent LearningStepUpdated
-  [learning-step-id publisher-id title task-ids])
-
-(defevent TaskPublished
-  [task-id publisher-id title])
-
-(defevent TaskArchived
-  [task-id publisher-id])
-
-(defevent TaskUpdated
-  [task-id publisher-id title])
+(defevent CourseDeleted
+  [course-id :- s/Uuid
+   publisher-id :- s/Uuid])
 
 
 

@@ -6,7 +6,9 @@
                  [cheshire "5.3.1"]
                  [org.clojure/tools.logging "0.2.6"]
                  [environ "0.5.0"]
-                 [slingshot "0.10.3"]]
+                 [slingshot "0.10.3"]
+                 [prismatic/schema "0.2.2"]
+                 [com.stuartsierra/component "0.2.1"]]
   :profiles {:dev
              {:dependencies
               [[org.clojure/tools.trace "0.7.5"]

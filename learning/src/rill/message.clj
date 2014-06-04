@@ -1,5 +1,7 @@
 (ns rill.message
-  (:refer-clojure :exclude [type]))
+  (:refer-clojure :exclude [type])
+  (:require [schema.macros :as sm]
+            [schema.core]))
 
 (defprotocol Message
   (id [this] "The unique id of the message")
@@ -10,25 +12,25 @@
 (defprotocol SpansAggregates
   (aggregate-ids [this] "Seq of ids for commands that need additional aggregates to complete"))
 
-(defmulti map->Message
+(defmulti strict-map->Message
   (fn [s m]
     s))
 
 (defmacro defmessage
   [name params]
-  `(do (defrecord ~name ~(into '[id] params)
+  `(do (sm/defrecord ~name ~(into '[id :- schema.core/Uuid] params)
          Message
          ~'(id [this] (:id this))
          ~(list 'aggregate-id ['this]  (list (keyword (first params)) 'this))
          ~(list 'type '[this] (str name))
          ~'(data [this] (dissoc this :id)))
 
-       (defmethod map->Message ~(str name)
+       (defmethod strict-map->Message ~(str name)
          [~'_ map#]
-         (~(symbol (str "map->" name)) map#))))
+         (~(symbol (str "strict-map->" name)) map#))))
 
 (defmacro defcommand
-  [name params]
+  [name docstring? params]
   `(defmessage ~name ~params))
 
 (defmacro defevent
