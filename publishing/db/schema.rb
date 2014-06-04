@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 20140603121525) do
     t.text     "description"
     t.datetime "deleted_at"
     t.boolean  "active",      default: false
-    t.integer  "order"
+    t.integer  "position"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

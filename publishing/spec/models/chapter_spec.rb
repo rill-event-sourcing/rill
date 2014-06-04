@@ -6,9 +6,9 @@ RSpec.describe Chapter, :type => :model do
   # it {is_expected.to have_many :sections}
 
   before do
-    create(:chapter, title: 'B', order: 2)
-    create(:chapter, title: 'C', order: 3)
-    @chapter = create(:chapter, title: 'A', order: 1)
+    create(:chapter, title: 'B', position: 2)
+    create(:chapter, title: 'C', position: 3)
+    @chapter = create(:chapter, title: 'A', position: 1)
   end
 
   it "should return title when asked for its string" do

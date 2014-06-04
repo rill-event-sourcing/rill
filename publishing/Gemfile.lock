@@ -27,6 +27,8 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.1)
       tzinfo (~> 1.1)
+    acts_as_list (0.4.0)
+      activerecord (>= 3.0)
     addressable (2.3.6)
     arel (5.0.1.20140414130214)
     better_errors (1.1.0)
@@ -212,6 +214,7 @@ GEM
       rdoc (~> 4.0, < 5.0)
     sendgrid (1.2.0)
       json
+      json
     sexp_processor (4.4.3)
     shoulda-matchers (2.6.1)
       activesupport (>= 3.0.0)
@@ -255,6 +258,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  acts_as_list
   better_errors
   binding_of_caller
   bootstrap-sass

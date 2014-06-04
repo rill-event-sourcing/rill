@@ -6,7 +6,7 @@ class CreateChapters < ActiveRecord::Migration
       t.text :description
       t.datetime :deleted_at
       t.boolean :active, default: false
-      t.integer :order, limit: 3
+      t.integer :position, limit: 3
       t.timestamps
     end
   end

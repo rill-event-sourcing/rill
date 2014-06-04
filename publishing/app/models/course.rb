@@ -1,7 +1,7 @@
 class Course < ActiveRecord::Base
   include Trashable, Activateable
 
-  has_many :chapters
+  has_many :chapters, -> { order(:position) }
 
   validates :name, :presence => true, :uniqueness => true
 
