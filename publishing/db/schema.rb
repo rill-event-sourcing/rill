@@ -53,7 +53,7 @@ ActiveRecord::Schema.define(version: 20140604145237) do
 
   add_index "sections", ["created_at"], name: "index_sections_on_created_at", using: :btree
 
-  create_table "subsections", force: true do |t|
+  create_table "subsections", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
     t.uuid     "section_id"
     t.string   "title"
     t.text     "description"

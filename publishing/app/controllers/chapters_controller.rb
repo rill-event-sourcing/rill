@@ -74,7 +74,7 @@ private
   end
 
   def chapter_params
-    params.require(:chapter).permit(:title, :description, :course_id)
+    params.require(:chapter).permit(:title, :description)
   end
 
 end
