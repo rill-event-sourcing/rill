@@ -16,9 +16,9 @@ RSpec.describe Chapter, :type => :model do
     expect(@chapter.to_s).to eq @chapter.title
   end
 
-  # it "should list chapters in order of order" do
-  #   expect(Chapter.all.map(&:to_s)).to eq ['A', 'B', 'C']
-  # end
+  it "should list chapters in order of order" do
+    expect(Chapter.all.map(&:to_s)).to eq ['A', 'B', 'C']
+  end
 
   it "should not list trashed chapters" do
     @chapter.trash
