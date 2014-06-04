@@ -67,19 +67,20 @@ private
     set_crumb({name: @chapter.title, url: chapter_sections_path(@chapter)})
   end
 
-   def set_course
-     @course = Course.current
-   end
-#
-   def set_chapter
-     @chapter = @course.chapters.find_by_uuid(params[:chapter_id])
-   end
+  def set_course
+    @course = Course.current
+  end
 
-   def set_section
-     @section = @chapter.sections.find_by_uuid(params[:id])
-   end
+  def set_chapter
+    @chapter = @course.chapters.find_by_uuid(params[:chapter_id])
+  end
 
-   def section_params
-     params.require(:section).permit(:title, :description, :chapter_id)
-   end
+  def set_section
+    @section = @chapter.sections.find_by_uuid(params[:id])
+  end
+
+  def section_params
+    params.require(:section).permit(:title, :description, :chapter_id)
+  end
+
 end
