@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140604083402) do
+ActiveRecord::Schema.define(version: 20140604145237) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -52,5 +52,19 @@ ActiveRecord::Schema.define(version: 20140604083402) do
   end
 
   add_index "sections", ["created_at"], name: "index_sections_on_created_at", using: :btree
+
+  create_table "subsections", force: true do |t|
+    t.uuid     "section_id"
+    t.string   "title"
+    t.text     "description"
+    t.integer  "level",       limit: 2
+    t.datetime "deleted_at"
+    t.boolean  "active",                default: false
+    t.integer  "position"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "subsections", ["created_at"], name: "index_subsections_on_created_at", using: :btree
 
 end

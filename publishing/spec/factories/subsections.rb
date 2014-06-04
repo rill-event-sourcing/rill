@@ -2,5 +2,9 @@
 
 FactoryGirl.define do
   factory :subsection do
+      title "Default subsection title"
+      description "Default subsection description"
+      level 2
+      section
   end
 end
