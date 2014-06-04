@@ -19,7 +19,7 @@ class SectionsController < ApplicationController
   def create
     @section = @chapter.sections.build(section_params)
     if @section.save
-      redirect_to chapters_sections_path(@chapter), notice: 'Section was successfully created.'
+      redirect_to chapter_sections_path(@chapter), notice: 'Section was successfully created.'
     else
       render :new
     end
@@ -35,7 +35,7 @@ class SectionsController < ApplicationController
 
   def destroy
     @chapter.trash
-    redirect_to chapters_sections_path(@chapter), notice: 'Section was successfully destroyed.'
+    redirect_to chapter_sections_path(@chapter), notice: 'Section was successfully destroyed.'
   end
 
   def activate
@@ -50,12 +50,12 @@ class SectionsController < ApplicationController
 
   def moveup
     @section.move_higher
-    redirect_to chapters_sections_path(@chapter)
+    redirect_to chapter_sections_path(@chapter)
   end
 
   def movedown
     @section.move_lower
-    redirect_to chapters_sections_path(@chapter)
+    redirect_to chapter_sections_path(@chapter)
   end
 
 private

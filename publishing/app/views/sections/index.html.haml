@@ -10,7 +10,7 @@
   %tbody
     -@chapter.sections.each do |section|
       %tr
-        %td= link_to section.title, section
+        %td= link_to section.title, [@chapter,section]
         %td
           =link_to movedown_chapter_section_path(@chapter,section), method: :post do
             %span.glyphicon.glyphicon-arrow-down
@@ -18,9 +18,11 @@
             %span.glyphicon.glyphicon-arrow-up
         %td
           -if section.active?
-            %span.glyphicon.glyphicon-ok
+            =link_to deactivate_chapter_section_path(@chapter,section), method: :post do
+              %span.glyphicon.glyphicon-ok
           -else
-            %span.glyphicon.glyphicon-remove
+            =link_to activate_chapter_section_path(@chapter,section), method: :post do
+              %span.glyphicon.glyphicon-remove
 
 %br
 = link_to 'New section', new_chapter_section_path(@chapter), class: "btn btn-success"
