@@ -1,5 +1,9 @@
 %h1 Sections
 
+%div.row
+  %div.col-md-2.col-md-offset-10
+    = link_to 'New Section', new_chapter_section_path(@chapter), class: "btn btn-success"
+
 %table.table.table-striped
   %thead
     %tr
@@ -25,6 +29,3 @@
           -else
             =link_to activate_chapter_section_path(@chapter,section), method: :post do
               %span.glyphicon.glyphicon-remove
-
-%br
-= link_to 'New section', new_chapter_section_path(@chapter), class: "btn btn-success"
