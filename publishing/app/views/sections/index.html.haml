@@ -4,6 +4,7 @@
   %thead
     %tr
       %th Title
+      %th Description
       %th Order
       %th Status
 
@@ -11,6 +12,7 @@
     -@chapter.sections.each do |section|
       %tr
         %td= link_to section.title, [@chapter,section]
+        %td= section.description
         %td
           =link_to movedown_chapter_section_path(@chapter,section), method: :post do
             %span.glyphicon.glyphicon-arrow-down
