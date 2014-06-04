@@ -30,7 +30,8 @@
 (def Section
   {:id Id
    :title PlainText
-   :subsections-for-level {ContentLevel [SubSection]}})
+   ;;:subsections-for-level {ContentLevel [SubSection]}
+   })
 
 (def Chapter
   {:id Id
