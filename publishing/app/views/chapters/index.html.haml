@@ -31,4 +31,4 @@
             -else
               =link_to activate_chapter_path(chapter), method: :post do
                 %span.glyphicon.glyphicon-remove
-          %td= link_to "Show", chapter_sections_path(chapter)
+          %td= link_to "Show", chapter_sections_path(chapter), class: "btn btn-default"

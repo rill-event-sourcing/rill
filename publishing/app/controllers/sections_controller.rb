@@ -40,22 +40,22 @@ class SectionsController < ApplicationController
 
   def activate
     @section.activate
-    redirect_to chapter_sections_path(@chapter), notice: 'Section was successfully activated.'
+    redirect_to chapter_sections_path(@chapter)
   end
 
   def deactivate
     @section.deactivate
-    redirect_to chapter_sections_path(@chapter), notice: 'Section was successfully deactivated.'
+    redirect_to chapter_sections_path(@chapter)
   end
 
   def moveup
     @section.move_higher
-    redirect_to chapter_sections_path(@chapter)
+    redirect_to chapter_sections_path(@chapter), notice: 'Section was successfully moved up.'
   end
 
   def movedown
     @section.move_lower
-    redirect_to chapter_sections_path(@chapter)
+    redirect_to chapter_sections_path(@chapter), notice: 'Section was successfully moved down.'
   end
 
 private

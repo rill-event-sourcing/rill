@@ -54,12 +54,12 @@ class ChaptersController < ApplicationController
 
   def moveup
     @chapter.move_higher
-    redirect_to chapters_path
+    redirect_to chapters_path, notice: 'Chapter was successfully moved up.'
   end
 
   def movedown
     @chapter.move_lower
-    redirect_to chapters_path
+    redirect_to chapters_path, notice: 'Chapter was successfully moved down.'
   end
 
 private
