@@ -4,14 +4,12 @@
   %thead
     %tr
       %th Title
-      %th
       %th Status
 
   %tbody
     -@course.chapters.each do |chapter|
       %tr
-        %td= chapter.title
-        %td= link_to 'Show', chapter
+        %td= link_to chapter.title, chapter
         %td
           -if chapter.active?
             %span.glyphicon.glyphicon-ok

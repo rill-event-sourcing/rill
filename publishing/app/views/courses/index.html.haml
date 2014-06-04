@@ -4,13 +4,12 @@
   %thead
     %tr
       %th Name
-      %th
 
   %tbody
     -@courses.each do |course|
       %tr
         %td= course.name
-        //%td= link_to 'Show', course
+        //%td= link_to course.name, course
 
 %br
 //= link_to 'New Course', new_course_path, class: "btn btn-success"
