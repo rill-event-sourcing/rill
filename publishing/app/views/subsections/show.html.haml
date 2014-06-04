@@ -5,6 +5,11 @@
   %strong Description:
   = @subsection.description
 
+%p
+  %strong Level:
+  - @subsection.level.times do
+    %span.glyphicon.glyphicon-star
+
 = link_to 'Back', chapter_section_path(@chapter, @section), class: "btn btn-default"
 = link_to 'Edit', edit_chapter_section_subsection_path(@chapter, @section, @subsection), class: "btn btn-primary"
 = link_to 'Destroy', chapter_section_subsection_path(@chapter, @section, @subsection), method: :delete, data: { confirm: "Are you sure you want to delete section `#{ @section }`?" }, class: "btn btn-danger"

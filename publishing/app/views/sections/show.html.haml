@@ -11,7 +11,7 @@
     = link_to 'Destroy', chapter_section_path(@chapter, @section), method: :delete, data: { confirm: "Are you sure you want to delete chapter `#{ @chapter }`?" }, class: "btn btn-danger"
 
 %p
-  = @chapter.description
+  = @section.description
 
 
 =render 'subsections/index'
