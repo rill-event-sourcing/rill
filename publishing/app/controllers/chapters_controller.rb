@@ -44,12 +44,12 @@ class ChaptersController < ApplicationController
 
   def activate
     @chapter.activate
-    redirect_to @chapter, notice: 'Chapter was successfully activated.'
+    redirect_to chapters_path
   end
 
   def deactivate
     @chapter.deactivate
-    redirect_to @chapter, notice: 'Chapter was successfully deactivated.'
+    redirect_to chapters_path
   end
 
   def moveup

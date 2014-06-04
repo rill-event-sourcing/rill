@@ -1,9 +1,14 @@
 %h1 Chapters
 
+%div.row
+  %div.col-md-2.col-md-offset-10
+    = link_to 'New Chapter', new_chapter_path, class: "btn btn-success"
+
 %table.table.table-striped
   %thead
     %tr
       %th Title
+      %th Description
       %th Order
       %th Status
 
@@ -11,6 +16,7 @@
     -@course.chapters.each do |chapter|
       %tr
         %td= link_to chapter.title, chapter
+        %td= chapter.description
         %td
           =link_to movedown_chapter_path(chapter), method: :post do
             %span.glyphicon.glyphicon-arrow-down
@@ -18,9 +24,8 @@
             %span.glyphicon.glyphicon-arrow-up
         %td
           -if chapter.active?
-            %span.glyphicon.glyphicon-ok
+            =link_to deactivate_chapter_path(chapter), method: :post do
+              %span.glyphicon.glyphicon-ok
           -else
-            %span.glyphicon.glyphicon-remove
-
-%br
-= link_to 'New Chapter', new_chapter_path, class: "btn btn-success"
+            =link_to activate_chapter_path(chapter), method: :post do
+              %span.glyphicon.glyphicon-remove
