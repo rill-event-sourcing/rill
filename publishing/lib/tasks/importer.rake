@@ -2,12 +2,13 @@ namespace :importer do
 
   desc 'Import all learning material'
   task :import => :environment do
+    ###################################################################
     ActiveRecord::Base.connection.execute("TRUNCATE TABLE courses")
     ActiveRecord::Base.connection.execute("TRUNCATE TABLE chapters")
     ActiveRecord::Base.connection.execute("TRUNCATE TABLE sections")
-
     math = Course.create(name: 'Math')
 
+    ###################################################################
     ActiveRecord::Base.establish_connection :prev_development
     chapters = ActiveRecord::Base.connection.select_all(
       "SELECT id, name, description, active, position from chapters"
@@ -16,6 +17,7 @@ namespace :importer do
       "SELECT id, chapter_id, name, description, active, position from topics"
     )
 
+    ###################################################################
     ActiveRecord::Base.establish_connection :development
     course_id = Course.first.id
 
@@ -40,8 +42,7 @@ namespace :importer do
         position: result['position']
       )
     end
-
-
+    ###################################################################
   end
 
 end

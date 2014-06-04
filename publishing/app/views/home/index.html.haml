@@ -4,6 +4,15 @@
   - Course.all.each do |course|
     %li
       = course.name
+      = "(#{ course.chapters.length })"
       %ul
         -course.chapters.each do |chapter|
-          %li= chapter.title
+          %li
+            = chapter.title
+            %small= chapter.description
+            = "(#{ chapter.sections.length })"
+            %ul
+              -chapter.sections.each do |section|
+                %li
+                  = section.title
+                  %small= section.description
