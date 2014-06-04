@@ -1,14 +1,5 @@
 Rails.application.routes.draw do
-  resources :courses do
-    collection do
-      post 'select'
-    end
-    member do
-      post 'activate'
-      post 'deactivate'
-    end
-  end
-
+  match 'select_course', to: 'courses#select', via: :post
 
   resources :chapters do
     member do
@@ -28,8 +19,6 @@ Rails.application.routes.draw do
     end
 
   end
-
-
 
   root to: 'home#index'
 end
