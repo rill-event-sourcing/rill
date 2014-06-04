@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Chapter, :type => :model do
   it {is_expected.to validate_presence_of :title }
   it {is_expected.to validate_presence_of :course }
-  # it {is_expected.to have_many :sections}
+  it {is_expected.to have_many :sections}
 
   before do
     create(:chapter, title: 'B', position: 2)
