@@ -14,3 +14,7 @@ test:
 production:
   <<: *default
   database: editors_production
+
+prev_development:
+  <<: *default
+  database: studyflow_dev
