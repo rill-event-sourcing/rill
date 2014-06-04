@@ -4,12 +4,18 @@
   %thead
     %tr
       %th Title
+      %th Order
       %th Status
 
   %tbody
     -@course.chapters.each do |chapter|
       %tr
         %td= link_to chapter.title, chapter
+        %td
+          =link_to movedown_chapter_path(chapter), method: :post do
+            %span.glyphicon.glyphicon-arrow-down
+          =link_to moveup_chapter_path(chapter), method: :post do
+            %span.glyphicon.glyphicon-arrow-up
         %td
           -if chapter.active?
             %span.glyphicon.glyphicon-ok

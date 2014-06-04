@@ -13,6 +13,8 @@ Rails.application.routes.draw do
     member do
       post 'activate'
       post 'deactivate'
+      post 'moveup'
+      post 'movedown'
     end
   end
 

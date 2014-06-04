@@ -1,6 +1,6 @@
 class ChaptersController < ApplicationController
   before_action :set_course
-  before_action :set_chapter, only: [:show, :edit, :update, :destroy, :activate, :deactivate]
+  before_action :set_chapter, except: [:index, :new, :create]
 
   def index
     if @course
@@ -50,6 +50,16 @@ class ChaptersController < ApplicationController
   def deactivate
     @chapter.deactivate
     redirect_to @chapter, notice: 'Chapter was successfully deactivated.'
+  end
+
+  def moveup
+    @chapter.move_higher
+    redirect_to chapters_path
+  end
+
+  def movedown
+    @chapter.move_lower
+    redirect_to chapters_path
   end
 
 private
