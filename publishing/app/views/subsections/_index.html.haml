@@ -12,7 +12,7 @@
         - star.times do
           %span.glyphicon.glyphicon-star
         -if @subsections_count[star].to_i > 0
-          ="(#{@subsections_count[star].to_i })"
+          %span.badge= @subsections_count[star].to_i
         -else
           %span.glyphicon.glyphicon-exclamation-sign
 
