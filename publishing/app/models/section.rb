@@ -12,7 +12,15 @@ class Section < ActiveRecord::Base
   validates :title, :presence => true
 
   default_scope { order(:position) }
-  scope :find_by_uuid, ->(id) { where(["SUBSTRING(CAST(id AS VARCHAR), 1, 8) = ?", id]).first }
+
+  scope :for_short_uuid, ->(id) { where(["SUBSTRING(CAST(id AS VARCHAR), 1, 8) = ?", id]) }
+
+  def self.find_by_uuid(id)
+    sections = for_short_uuid(id)
+    raise ActiveRecord::RecordNotFound if sections.empty?
+    raise StudyflowPublishing::ShortUuidDoubleError.new("Multiple sections found for uuid: #{id}") if sections.length > 1
+    sections.first
+  end
 
   def to_s
     "#{title}"

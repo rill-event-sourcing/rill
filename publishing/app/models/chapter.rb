@@ -10,7 +10,15 @@ class Chapter < ActiveRecord::Base
   validates :title, :presence => true
 
   default_scope { order(:position) }
-  scope :find_by_uuid, ->(id) { where(["SUBSTRING(CAST(id AS VARCHAR), 1, 8) = ?", id]).first }
+
+  scope :for_short_uuid, ->(id) { where(["SUBSTRING(CAST(id AS VARCHAR), 1, 8) = ?", id]) }
+
+  def self.find_by_uuid(id)
+    chapters = for_short_uuid(id)
+    raise ActiveRecord::RecordNotFound if chapters.empty?
+    raise StudyflowPublishing::ShortUuidDoubleError.new("Multiple chapters found for uuid: #{id}") if chapters.length > 1
+    chapters.first
+  end
 
   def to_s
     "#{title}"

@@ -6,7 +6,7 @@ require 'rails/all'
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-module RailsBootstrap
+module StudyflowPublishing
   class Application < Rails::Application
 
     config.generators do |g|
@@ -37,5 +37,10 @@ module RailsBootstrap
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
+  end
+end
+
+module Exceptions
+  class StudyflowPublishing::ShortUuidDoubleError < StandardError
   end
 end
