@@ -1,22 +1,22 @@
 (ns studyflow.events
   (:require [rill.message :refer [defevent]]
-            [studyflow.learning.course-material]
-            [schema.core :as s])
-  (:import (studyflow.learning.course_material CourseMaterial Chapter Section SubSection)))
+            [studyflow.learning.course-material :as material]
+            [schema.core :as s]))
 
 (defevent CoursePublished
-  [course-id :- s/Uuid
-   publisher-id :- s/Uuid
-   material :- CourseMaterial])
+  [course-id :- material/Id
+   publisher-id :- material/Id
+   material :- material/CourseMaterial])
 
 (defevent CourseUpdated
-  [course-id :- s/Uuid
-   publisher-id :- s/Uuid
-   material :- CourseMaterial])
+  [course-id :- material/Id
+   publisher-id :- material/Id
+   material :- material/CourseMaterial])
 
 (defevent CourseDeleted
-  [course-id :- s/Uuid
-   publisher-id :- s/Uuid])
+  [course-id :- material/Id
+   publisher-id :- material/Id])
+
 
 
 

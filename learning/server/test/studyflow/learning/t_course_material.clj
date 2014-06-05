@@ -1,9 +1,13 @@
 (ns studyflow.learning.t-course-material
   (:require [studyflow.learning.course-material :as material]
-            [rill.uuid :refer [new-id]]))
+            [midje.sweet :refer :all]
+            [rill.uuid :refer [new-id]]
+            [cheshire.core :as json]))
 
-(defn test-parser
+(defn read-example-json
   []
-  (material/parse-course-material  {:id (new-id) :name "foo" :chapters
-                                    [{:id (new-id) :title "bla"}]}))
+  (json/parse-string (slurp "../../material.json")))
+
+(facts "We can parse the example json"
+       (:name (material/parse-course-material (read-example-json))) => "Math")
 

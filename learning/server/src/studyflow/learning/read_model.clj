@@ -2,7 +2,7 @@
 
 (def empty-model {})
 
-(defn set-course-material
+(defn set-course
   [model id material]
   (assoc-in model [:courses id] material))
 

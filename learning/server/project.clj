@@ -9,9 +9,17 @@
                  [slingshot "0.10.3"]
                  [prismatic/schema "0.2.2"]
                  [com.stuartsierra/component "0.2.1"]
-                 [ring/ring-json "0.3.1"]]
+                 [ring/ring-json "0.3.1"]
+                 [compojure "1.1.8"]
+                 [ring/ring-jetty-adapter "1.3.0"]
+                 [clout-link "0.0.6"]
+                 [org.clojure/tools.logging "0.2.6"]
+                 [ring.middleware.logger "0.4.0"]]
   :profiles {:dev
              {:dependencies
               [[org.clojure/tools.trace "0.7.5"]
                [midje "1.6.3"]]}}
-  :plugins [[cider/cider-nrepl "0.7.0-SNAPSHOT"]])
+  :plugins [[cider/cider-nrepl "0.7.0-SNAPSHOT"]
+            [lein-ring "0.8.10"]]
+  :ring {:handler studyflow.system/web-handler})
+

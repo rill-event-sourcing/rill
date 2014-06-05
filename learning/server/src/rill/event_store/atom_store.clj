@@ -75,5 +75,5 @@ https://github.com/jankronquist/rock-paper-scissors-in-clojure/tree/master/event
                          :content-type :json
                          :headers {"ES-ExpectedVersion" (str (:version (or previous-event-stream stream/empty-stream)))}})))))
   ([uri]
-     (atom-event-store uri msg/map->Message)))
+     (atom-event-store uri msg/strict-map->Message)))
 

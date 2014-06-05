@@ -43,12 +43,7 @@
    :name PlainText
    :chapters [Chapter]})
 
-(defn material-coercer
-  [schema]
-  (if-let [coercers (keep (fn [c] (c schema))
-                          [coerce/json-coercion-matcher
-                           util/uuid-coercion-matcher])]
-    (apply comp coercers)))
+
 
 (def parse-course-material
   (coerce/coercer CourseMaterial material-coercer))

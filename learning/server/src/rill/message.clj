@@ -30,7 +30,7 @@
          (~(symbol (str "strict-map->" name)) map#))))
 
 (defmacro defcommand
-  [name docstring? params]
+  [name params]
   `(defmessage ~name ~params))
 
 (defmacro defevent
