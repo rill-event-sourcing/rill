@@ -1,28 +1,5 @@
 -@subsections.each do |subsection|
   %div.col-md-6
-    %div.panel.panel-default
-      %div.panel-heading
-        %div.pull-right
-          %span
-            =link_to movedown_chapter_section_subsection_path(@chapter, @section, subsection), method: :post do
-              %span.glyphicon.glyphicon-arrow-down
-            =link_to moveup_chapter_section_subsection_path(@chapter, @section, subsection), method: :post do
-              %span.glyphicon.glyphicon-arrow-up
-          %span
-            -if subsection.active?
-              =link_to deactivate_chapter_section_subsection_path(@chapter, @section, subsection), method: :post do
-                %span.glyphicon.glyphicon-ok
-            -else
-              =link_to activate_chapter_section_subsection_path(@chapter, @section, subsection), method: :post do
-                %span.glyphicon.glyphicon-remove
-        %h3.panel-title
-          = "#{subsection.position}:"
-          = subsection.title
-
-      %div.panel-body= subsection.description
-
+    = render partial: 'show', locals: { subsection: subsection }
   %div.col-md-6
-    %div.panel.panel-default
-      %div.panel-heading
-        %h3.panel-title= subsection.title
-      %div.panel-body= subsection.description
+    = render partial: 'edit', locals: { subsection: subsection }
