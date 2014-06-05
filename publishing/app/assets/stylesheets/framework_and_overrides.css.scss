@@ -1,11 +1,15 @@
 // import the CSS framework
 @import "bootstrap";
 
+.navbar {
+  border-radius: 0;
+  margin-bottom: 0;
+}
+
 main {
   @extend .container;
   padding-bottom: 80px;
   width: 100%;
-  margin-top: 51px; // accommodate the navbar
   }
 section {
   @extend .row;
