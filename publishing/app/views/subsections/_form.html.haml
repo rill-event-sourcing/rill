@@ -17,12 +17,12 @@
       = f.text_area :description, cols: 120, rows: 20
 
   %div.form-group
-    = f.label :level, class: "col-sm-2 control-label"
-    -3.times do |star|
+    = f.label :stars, class: "col-sm-2 control-label"
+    -Star.all.each do |star|
       %div.col-sm-1
-        -(star+1).times do
+        -star.times do
           %span.glyphicon.glyphicon-star
-        = f.radio_button :level, star+1
+        = f.radio_button :stars, star
 
   - if @section.id
     %div.form-group

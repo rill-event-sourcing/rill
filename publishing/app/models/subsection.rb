@@ -6,10 +6,18 @@ class Subsection < ActiveRecord::Base
 
   validates :section, :presence => true
   validates :title, :presence => true
-  validates :level, :presence => true
+  validates :stars, :presence => true
 
   default_scope { order(:position) }
-  scope :find_by_uuid, ->(id) { where(["SUBSTRING(CAST(id AS VARCHAR), 1, 8) = ?", id]).first }
+
+  scope :for_short_uuid, ->(id) { where(["SUBSTRING(CAST(id AS VARCHAR), 1, 8) = ?", id]) }
+
+  def self.find_by_uuid(id)
+    subsections = for_short_uuid(id)
+    raise ActiveRecord::RecordNotFound if subsections.empty?
+    raise StudyflowPublishing::ShortUuidDoubleError.new("Multiple subsections found for uuid: #{id}") if subsections.length > 1
+    subsections.first
+  end
 
   def to_s
     "#{title}"

@@ -66,14 +66,14 @@ namespace :importer do
           active: topic['active'],
           position: topic['position']
         )
-        contents.each do |content|
-          Subsection.create!(
-            section: new_topic,
-            title: content['body'][0,20],
-            description: content['body'],
-            level: 2
-          )
-        end
+        # contents.each do |content|
+        #   Subsection.create!(
+        #     section: new_topic,
+        #     title: content['body'][0,20],
+        #     description: content['body'],
+        #     level: 2
+        #   )
+        # end
       end
     end
 

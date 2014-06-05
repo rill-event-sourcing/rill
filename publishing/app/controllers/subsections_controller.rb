@@ -86,7 +86,7 @@ private
   end
 
   def subsection_params
-    params.require(:subsection).permit(:title, :description, :level)
+    params.require(:subsection).permit(:title, :description, :stars)
   end
 
 end

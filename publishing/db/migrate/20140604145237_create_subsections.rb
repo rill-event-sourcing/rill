@@ -4,7 +4,7 @@ class CreateSubsections < ActiveRecord::Migration
       t.uuid :section_id, index: true
       t.string :title
       t.text :description
-      t.integer :level, limit: 1
+      t.integer :stars, limit: 1
       t.datetime :deleted_at
       t.boolean :active, default: false
       t.integer :position, limit: 3
