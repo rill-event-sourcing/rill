@@ -1,13 +1,12 @@
 -# navigation styled for Bootstrap 3.0
 %nav.navbar.navbar-inverse.navbar-default
   .navbar-header
-    = image_tag "studyflow_logo.png", height: 50, style: "float:left;margin-right:20px;  "
+    =link_to image_tag("studyflow_logo.png", height: 50, style: "float:left;margin-right:20px"), root_path
     %button.navbar-toggle{"data-target" => ".navbar-collapse", "data-toggle" => "collapse", :type => "button"}
       %span.sr-only Toggle navigation
       %span.icon-bar
       %span.icon-bar
       %span.icon-bar
-    = link_to 'Home', root_path, class: 'navbar-brand'
   .collapse.navbar-collapse
     %ul.nav.navbar-nav
       = render 'layouts/navigation_links'
