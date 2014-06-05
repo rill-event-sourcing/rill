@@ -1,11 +1,6 @@
 // import the CSS framework
 @import "bootstrap";
 
-.navbar {
-  border-radius: 0;
-  margin-bottom: 0;
-}
-
 main {
   @extend .container;
   padding-bottom: 80px;
@@ -16,6 +11,14 @@ section {
   margin-top: 20px;
   }
 
+.navbar {
+  border-radius: 0;
+  margin-bottom: 0;
+}
+.logo {
+  height: 50px;
+  margin: 0 20px 0 10px;
+}
 .glyphicon-ok {
   color: green;
   }

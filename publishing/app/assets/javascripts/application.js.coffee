@@ -15,8 +15,3 @@
 #= require turbolinks
 #= require bootstrap
 #= require_tree .
-
-$ ->
-    $('#red').bind('ajax:before', ->
-        $(this).data('params', { foo: 'bar' })
-    )
