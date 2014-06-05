@@ -1,25 +1,31 @@
 -if Course.current
   - @course = Course.current
-  %h1 Overview
-  %ul
-    %li
+  %div.page-header
+    %h1
       = @course.name
-      = "(#{ @course.chapters.length })"
-      %ul
-        -@course.chapters.each do |chapter|
-          %li
-            =link_to chapter.title, chapter
-            %small= chapter.description
-            = "(#{ chapter.sections.length })"
-            %ul
-              -chapter.sections.each do |section|
-                %li
-                  = link_to section.title, [chapter, section]
-                  %small= section.description
-                  %ul
-                    -section.subsections.each do |subsection|
-                      %li
-                        =link_to subsection.title, [chapter, section, subsection]
-                        %small= subsection.description
-                        - subsection.stars.times do
-                          %span.glyphicon.glyphicon-star
+      %small= "(#{ @course.chapters.length })"
+  -@course.chapters.each do |chapter|
+    %div.panel.panel-default
+      %div.panel-heading
+        %h4
+          =link_to chapter.title, chapter
+          %span.badge= chapter.sections.length
+      %div.panel-body
+        -chapter.sections.each do |section|
+          %div.panel.panel-default
+            %div.panel-heading
+              = link_to section.title, [chapter, section]
+            %div.panel-body
+              -sub_hash = section.subsections.group_by(&:stars)
+              -Star.all.each do |star|
+                %dl.dl-horizontal
+                  %dt
+                    -star.times do
+                      %span.glyphicon.glyphicon-star
+                    %span.badge= (sub_hash[star] || []).length
+                  %dd
+                    %ul.list-unstyled
+                      -subsections = sub_hash[star] || []
+                      -subsections.each do |subsection|
+                        %li
+                          =subsection.title
