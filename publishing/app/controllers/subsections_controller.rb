@@ -12,7 +12,6 @@ class SubsectionsController < ApplicationController
   end
 
   def index
-    redirect_to @section
   end
 
   def show

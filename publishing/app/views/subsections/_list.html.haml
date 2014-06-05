@@ -15,7 +15,9 @@
             -else
               =link_to activate_chapter_section_subsection_path(@chapter, @section, subsection), method: :post do
                 %span.glyphicon.glyphicon-remove
-        %h3.panel-title= subsection.title
+        %h3.panel-title
+          = "#{subsection.position}:"
+          = subsection.title
 
       %div.panel-body= subsection.description
 
