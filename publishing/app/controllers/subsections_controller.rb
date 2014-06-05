@@ -4,7 +4,7 @@ class SubsectionsController < ApplicationController
   before_action :set_chapter
   before_action :set_section
   before_action :set_subsection, except: [:index, :new, :create]
-  before_action :set_breadcrumb
+  before_action :set_breadcrumb, except: [:index, :new, :create]
 
   def index
     redirect_to @section
@@ -67,6 +67,7 @@ private
   def set_breadcrumb
     set_crumb({name: @chapter.title, url: chapter_sections_path(@chapter)})
     set_crumb({name: @section.title, url: chapter_section_path(@chapter, @section)})
+    set_crumb({name: @subsection.title, url: chapter_section_subsection_path(@chapter, @section,@subsection)})
   end
 
   def set_course
