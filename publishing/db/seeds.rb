@@ -40,3 +40,22 @@ adding_large_numbers = Subsection.create(title: 'Adding large numbers', descript
 subtracting_small_numbers = Subsection.create(title: 'Subtracting small numbers', description: 'This looks easy', stars: 1, section: subtraction)
 subtracting_large_numbers = Subsection.create(title: 'Subtracting medium numbers', description: 'This looks hard enough already', stars: 2, section: subtraction)
 going_negative = Subsection.create(title: 'Going negative', description: 'This looks weird', stars: 3, section: subtraction)
+
+# more to work with
+
+counting_to_100 = Subsection.create(title: 'Counting to 100', description: '1+1+1+... = 100', stars: 3, section: grouping_by_10)
+summing_up_in_big_groups = Subsection.create(title: 'Summing up in big groups', description: 'Keep adding!', stars: 2, section: grouping_by_10)
+adding_up_again = Subsection.create(title: 'Adding up everything again', description: 'Moar additions', stars: 2, section: grouping_by_10)
+
+one_to_the_left = Subsection.create(title: '1 to the left', description: 'It does not matter!', stars: 1, section: position_of_0)
+one_to_the_right = Subsection.create(title: '1 to the right', description: 'Hey, I multiply by 10!', stars: 1, section: position_of_0)
+one_to_the_center = Subsection.create(title: '1 in the center', description: 'What now?', stars: 2, section: position_of_0)
+
+adding_smallish_numbers = Subsection.create(title: 'Adding smallish numbers', description: 'This looks easy', stars: 1, section: addition)
+adding_mediumish_numbers = Subsection.create(title: 'Adding mediumish numbers', description: 'This looks average', stars: 3, section: addition)
+adding_largish_numbers = Subsection.create(title: 'Adding largish numbers', description: 'This looks hard!', stars: 3, section: addition)
+
+
+subtracting_smallish_numbers = Subsection.create(title: 'Subtracting smallish numbers', description: 'This looks easy', stars: 1, section: subtraction)
+subtracting_largish_numbers = Subsection.create(title: 'Subtracting mediumish numbers', description: 'This looks hard enough already', stars: 3, section: subtraction)
+going_negativish = Subsection.create(title: 'Going negativish', description: 'This looks weird', stars: 1, section: subtraction)
