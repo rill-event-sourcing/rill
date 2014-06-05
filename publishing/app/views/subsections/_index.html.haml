@@ -11,7 +11,9 @@
     %li{class: index == 0 ? "active" : ""}
       %a{href: "#star-#{star}", data: {toggle: "tab", url: list_chapter_section_subsections_path(@chapter, @section, star: star)} }
         - star.times do
-          x
-          //%span.glyphicon.glyphicon-star
+          %span.glyphicon.glyphicon-star
 
 %div.tab-content#subsection-list
+
+:javascript
+  var firstTabUrl = '#{ list_chapter_section_subsections_path(@chapter, @section, star: 1) }';
