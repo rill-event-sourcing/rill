@@ -3,8 +3,13 @@ class SubsectionsController < ApplicationController
   before_action :set_course
   before_action :set_chapter
   before_action :set_section
-  before_action :set_subsection, except: [:index, :new, :create]
-  before_action :set_breadcrumb, except: [:index, :new, :create]
+  before_action :set_subsection, except: [:list, :index, :new, :create]
+  before_action :set_breadcrumb, except: [:list, :index, :new, :create]
+
+  def list
+    @subsections = @section.subsections.find_by_star(params[:star])
+    render partial: 'list'
+  end
 
   def index
     redirect_to @section

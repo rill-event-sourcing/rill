@@ -4,13 +4,5 @@
 
 $ ->
   $('#subsection-tabs a').bind 'click', (event, data) ->
-    event.stopPropagation()
-    clickedEl = $(event.target)
-    console.log(clickedEl)
-    $.ajax '/chapters',
-      type: 'GET'
-      dataType: 'html'
-      error: (jqXHR, textStatus, errorThrown) ->
-        console.log textStatus
-      success: (res) ->
-        #console.log "Card name: " + res
+    url = $(event.target).data('url')
+    $("#subsection-list").load(url);

@@ -7,10 +7,11 @@
     = link_to 'New Subsection', new_chapter_section_subsection_path(@chapter, @section), class: "btn btn-success"
 
 %ul.nav.nav-tabs#subsection-tabs
-  - Star.all.each_with_index do |star,index|
+  - Star.all.each_with_index do |star, index|
     %li{class: index == 0 ? "active" : ""}
-      %a{href: "#star-#{star}", "data-target" => "#star-#{star}", "data-toggle" => "tab"}
+      %a{href: "#star-#{star}", data: {toggle: "tab", url: list_chapter_section_subsections_path(@chapter, @section, star: star)} }
         - star.times do
-          %span.glyphicon.glyphicon-star
+          x
+          //%span.glyphicon.glyphicon-star
 
-%div.tab-content
+%div.tab-content#subsection-list

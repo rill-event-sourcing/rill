@@ -17,6 +17,9 @@ Rails.application.routes.draw do
         post 'movedown'
       end
       resources :subsections do
+        collection do
+          get 'list'
+        end
         member do
           post 'activate'
           post 'deactivate'
