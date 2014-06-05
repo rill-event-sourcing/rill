@@ -2,6 +2,7 @@ class ChaptersController < ApplicationController
 
   before_action :set_course
   before_action :set_chapter, except: [:index, :new, :create]
+  before_action :set_breadcrumb, except: [:index, :new, :create]
 
   def index
     if @course
@@ -67,6 +68,10 @@ private
 
   def set_course
     @course = Course.current
+  end
+
+  def set_breadcrumb
+    set_crumb({name: @chapter.title, url: chapter_sections_path(@chapter)})
   end
 
   def set_chapter
