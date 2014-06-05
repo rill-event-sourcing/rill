@@ -12,6 +12,10 @@
       %a{href: "#star-#{star}", data: {toggle: "tab", url: list_chapter_section_subsections_path(@chapter, @section, star: star)} }
         - star.times do
           %span.glyphicon.glyphicon-star
+        -if @subsections_count[star].to_i > 0
+          ="(#{@subsections_count[star].to_i })"
+        -else
+          %span.glyphicon.glyphicon-exclamation-sign
 
 %div.tab-content#subsection-list
 
