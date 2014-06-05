@@ -1,24 +1,26 @@
-%table.table.table-striped
-  %thead
-    %tr
-      %th Title
-      %th Description
-      %th Order
-      %th Status
-  %tbody
-    -@subsections.each do |subsection|
-      %tr
-        %td= link_to subsection.title, [@chapter, @section, subsection]
-        %td= subsection.description
-        %td
-          =link_to movedown_chapter_section_subsection_path(@chapter, @section, subsection), method: :post do
-            %span.glyphicon.glyphicon-arrow-down
-          =link_to moveup_chapter_section_subsection_path(@chapter, @section, subsection), method: :post do
-            %span.glyphicon.glyphicon-arrow-up
-        %td
-          -if subsection.active?
-            =link_to deactivate_chapter_section_subsection_path(@chapter, @section, subsection), method: :post do
-              %span.glyphicon.glyphicon-ok
-          -else
-            =link_to activate_chapter_section_subsection_path(@chapter, @section, subsection), method: :post do
-              %span.glyphicon.glyphicon-remove
+-@subsections.each do |subsection|
+  %div.col-md-6
+    %div.panel.panel-default
+      %div.panel-heading
+        %div.pull-right
+          %span
+            =link_to movedown_chapter_section_subsection_path(@chapter, @section, subsection), method: :post do
+              %span.glyphicon.glyphicon-arrow-down
+            =link_to moveup_chapter_section_subsection_path(@chapter, @section, subsection), method: :post do
+              %span.glyphicon.glyphicon-arrow-up
+          %span
+            -if subsection.active?
+              =link_to deactivate_chapter_section_subsection_path(@chapter, @section, subsection), method: :post do
+                %span.glyphicon.glyphicon-ok
+            -else
+              =link_to activate_chapter_section_subsection_path(@chapter, @section, subsection), method: :post do
+                %span.glyphicon.glyphicon-remove
+        %h3.panel-title= subsection.title
+
+      %div.panel-body= subsection.description
+
+  %div.col-md-6
+    %div.panel.panel-default
+      %div.panel-heading
+        %h3.panel-title= subsection.title
+      %div.panel-body= subsection.description
