@@ -2,7 +2,7 @@ class Subsection < ActiveRecord::Base
   include Trashable, Activateable
 
   belongs_to :section
-  acts_as_list :scope => :section
+  acts_as_list :scope => [:section, :stars]
 
   validates :section, :presence => true
   validates :title, :presence => true

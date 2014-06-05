@@ -10,6 +10,7 @@ class SectionsController < ApplicationController
   end
 
   def show
+    @subsections_count = Subsection.unscoped.where(section: @section).group(:stars).count
   end
 
   def new
