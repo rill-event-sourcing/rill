@@ -1,0 +1,26 @@
+- Star.all.each_with_index do |star,index|
+  %div{class: index == 0 ? "tab-pane active" : "tab-pane", id: "star-#{star}"}
+    %table.table.table-striped
+      %thead
+        %tr
+          %th Title
+          %th Description
+          %th Order
+          %th Status
+      %tbody
+        -@section.subsections.find_by_star(star).each do |subsection|
+          %tr
+            %td= link_to subsection.title, [@chapter, @section, subsection]
+            %td= subsection.description
+            %td
+              =link_to movedown_chapter_section_subsection_path(@chapter, @section, subsection), method: :post do
+                %span.glyphicon.glyphicon-arrow-down
+              =link_to moveup_chapter_section_subsection_path(@chapter, @section, subsection), method: :post do
+                %span.glyphicon.glyphicon-arrow-up
+            %td
+              -if subsection.active?
+                =link_to deactivate_chapter_section_subsection_path(@chapter, @section, subsection), method: :post do
+                  %span.glyphicon.glyphicon-ok
+              -else
+                =link_to activate_chapter_section_subsection_path(@chapter, @section, subsection), method: :post do
+                  %span.glyphicon.glyphicon-remove
