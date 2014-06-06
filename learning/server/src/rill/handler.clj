@@ -44,7 +44,7 @@
 (defmacro defaggregate-ids [klass & ks]
   `(defmethod aggregate-ids ~klass
      [command#]
-     (map command# ~(mapv keyword ks))))
+     (map (partial get command#) ~(mapv keyword ks))))
 
 (defmulti handle-command
   "handle command given aggregates. returns a seq of events"

@@ -12,8 +12,8 @@
 (def input (fixture/read-example-json))
 (def parsed-input (material/parse-course-material input))
 
-(deftest web-ap
-  (testing "update-course-material web handler"
+(deftest web-api
+  (testing "command handler"
     (let [cmd (api/command-ring-handler
                (-> (request :put (uri-for routes/update-course-material (:id input)))
                    (assoc :body input)))]
@@ -23,5 +23,6 @@
              (:course-id cmd)))
       (is (= (:material cmd) parsed-input)
           "Command has material in correct format"))))
+
 
 

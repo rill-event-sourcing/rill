@@ -6,7 +6,7 @@
             [studyflow.web.routes :as routes]
             [clout-link.route :refer [handle]]
             [rill.handler :as es-dispatcher]
-            [ring.middleware.logger :as logger :refer [wrap-with-plaintext-logger]]
+            [studyflow.web.logging :refer [wrap-logging]]
             [clojure.tools.logging :as log]
             [rill.uuid :refer [new-id]]))
 
@@ -16,7 +16,7 @@
   [ring-handler event-store]
   (fn [request]
     (when-let [command (ring-handler request)]
-      (log/info ["Executing command" command])
+      (log/info ["Executing command" (class command)])
       (if (= :es-dispatcher/error (es-dispatcher/try-command event-store command))
         {:status 500}
         {:status 200}))))
@@ -25,8 +25,8 @@
   [f]
   (-> f
       wrap-json-response
-      (wrap-json-body :keywords? true)
-      wrap-with-plaintext-logger))
+      (wrap-json-body {:keywords? true})
+      wrap-logging))
 
 (defn combine-ring-handlers
   [& handlers]
@@ -34,6 +34,9 @@
     (some #(% r) handlers)))
 
 (def command-ring-handler
+  "This handler matches ring requests and returns a command (or nil) for the given request.
+Intended to be wrapped by `wrap-command-executor` to actually run the
+commands."
   (combine-ring-handlers
    (handle routes/update-course-material
            (fn [{{:keys [course-id]} :params body :body :as request}]
@@ -41,6 +44,6 @@
 
 (defn make-request-handler
   [event-store]
-  (-> command-ring-handler
+  (-> #'command-ring-handler
       (wrap-command-executor event-store)
       wrap-middleware))

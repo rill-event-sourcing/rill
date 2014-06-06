@@ -15,7 +15,8 @@
                  [clout-link "0.0.6"]
                  [org.clojure/tools.logging "0.2.6"]
                  [ring.middleware.logger "0.4.0"]
-                 [ring-mock "0.1.5"]]
+                 [ring-mock "0.1.5"]
+                 [ring/ring-devel "1.1.0"]]
   :profiles {:dev
              {:dependencies
               [[org.clojure/tools.trace "0.7.5"]

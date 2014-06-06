@@ -1,9 +1,7 @@
 (ns studyflow.system
   (:require [rill.event-store.atom-store :as atom-store]
             [studyflow.web.api :as web-api]
-            [environ.core :refer [env]]
-            [ring.middleware.logger :as logger]))
-
+            [environ.core :refer [env]]))
 
 (defonce event-store nil)
 (defonce web-handler nil)
