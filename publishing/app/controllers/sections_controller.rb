@@ -5,6 +5,11 @@ class SectionsController < ApplicationController
   before_action :set_section, except: [:index, :new, :create]
   before_action :set_breadcrumb, except: [:index, :new, :create]
 
+  def preview
+    subsections = @section.subsections.find_by_star(params[:star])
+    render text: subsections.map(&:description).join('<hr>')
+  end
+
   def index
     redirect_to @chapter
   end
