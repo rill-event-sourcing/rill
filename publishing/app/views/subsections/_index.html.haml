@@ -1,9 +1,7 @@
-%div.row
-  %div.col-md-10
-    %h2
-      %strong Subsections
-  %div.col-md-1
-    = link_to 'New Subsection', new_chapter_section_subsection_path(@chapter, @section), class: "btn btn-success"
+-# %div.row
+-#   %div.col-md-10
+-#   %div.col-md-2
+-#     = link_to 'New Subsection', new_chapter_section_subsection_path(@chapter, @section), class: "btn btn-success"
 
 %ul.nav.nav-tabs#subsection-tabs
   - Star.all.each_with_index do |star, index|

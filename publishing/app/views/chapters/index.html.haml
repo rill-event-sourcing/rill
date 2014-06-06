@@ -11,7 +11,8 @@
         %th Title
         %th Description
         %th Order
-        %th Status
+        %th Published
+        %th Actions
 
     %tbody
       -@chapters.each do |chapter|
@@ -26,7 +27,12 @@
           %td
             -if chapter.active?
               =link_to deactivate_chapter_path(chapter), method: :post do
-                %span.glyphicon.glyphicon-ok
+                %span.glyphicon.glyphicon-eye-open
             -else
               =link_to activate_chapter_path(chapter), method: :post do
-                %span.glyphicon.glyphicon-remove
+                %span.glyphicon.glyphicon-ban-circle
+          %td
+            = link_to edit_chapter_path(chapter) do
+              %span.glyphicon.glyphicon-pencil
+            =link_to chapter_path(chapter), method: :delete, data: { confirm: "Are you sure you want to delete chapter `#{ chapter }`?" } do
+              %span.glyphicon.glyphicon-trash
