@@ -5,12 +5,6 @@ $ ->
     saveSection(url)
     refreshPreview()
 
-  $.fn.editable.defaults.mode = 'inline'
-  $.fn.editable.defaults.showbuttons = false
-  $.fn.editable.defaults.clear = false
-  $.fn.editable.defaults.onblur = 'submit'
-  $('.editable').editable()
-
 ################################################################################
 
 saveSection = (url) ->
