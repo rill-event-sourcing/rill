@@ -4,10 +4,15 @@ $ ->
     url = $(event.currentTarget).data('url')
     $("#subsection-list").html('<img src="/assets/spinner.gif" alt="Wait" />')
     $("#subsection-list").load url, ->
-      refreshPreview()
       setSaveBtnHandler()
 
   clickFirstTab()
+
+  $.fn.editable.defaults.mode = 'inline'
+  $.fn.editable.defaults.showbuttons = false
+  $.fn.editable.defaults.clear = false
+  $.fn.editable.defaults.onblur = 'submit'
+  $('.editable').editable()
 
 ################################################################################
 

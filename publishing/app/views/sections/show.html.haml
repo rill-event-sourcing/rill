@@ -1,8 +1,10 @@
 %div.row
   %div.col-md-12
     %h2
-      = @section.title
+      %a.editable#title{data: {type: 'text', title: 'enter title'} }
+        = @section.title
 %p
-  = @section.description
+  %a.editable#description{data: {type: 'textarea', title: 'enter description'} }
+    = @section.description
 
 =render 'subsections/index'
