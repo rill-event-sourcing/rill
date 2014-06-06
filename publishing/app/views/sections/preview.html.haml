@@ -1,0 +1,4 @@
+%div= DateTime.now
+%hr
+-@subsections.each do |subsection|
+  %div= subsection.description.html_safe
