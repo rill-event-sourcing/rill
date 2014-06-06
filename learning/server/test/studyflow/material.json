@@ -1,0 +1,654 @@
+{
+  "id": "1f8e2f2b-ed71-4788-8f08-5529949f2188",
+  "name": "Math",
+  "chapters": [
+    {
+      "id": "62cf2300-5e84-4c07-9275-93d8d07c5b6d",
+      "title": "Het positie stelsel",
+      "sections": [
+        {
+          "id": "8117bf7b-8025-43ea-b6d3-aa636d6b6042",
+          "title": "Groeperen per 10"
+        },
+        {
+          "id": "92dc9cd8-07a9-46bd-8dcf-40bbbae0a04d",
+          "title": "Positie en de 0"
+        },
+        {
+          "id": "4a66414c-06ed-461c-93ad-c2a62b40bb94",
+          "title": "Over de 10 heengaan"
+        },
+        {
+          "id": "bd9ed269-b764-4a22-a2fe-813978dd103c",
+          "title": "Splitsen van getallen en grote getallen uitspreken"
+        },
+        {
+          "id": "e5313982-c5ec-4610-96f7-f8a2bb887a68",
+          "title": "Ordenen en de getallenlijn"
+        }
+      ]
+    },
+    {
+      "id": "8ea2f66d-4d8c-49d0-9932-893878d2e2c2",
+      "title": "Basisbewerkingen",
+      "sections": [
+        {
+          "id": "881eb224-f07f-4481-89d2-86b0b4e540c3",
+          "title": "Optellen"
+        },
+        {
+          "id": "fcc5c9f0-ca8a-474f-9357-305140b53add",
+          "title": "Aftrekken"
+        },
+        {
+          "id": "75b76d45-807f-41a0-9721-199092496476",
+          "title": "Vermenigvuldigen"
+        },
+        {
+          "id": "df95a61e-d71e-47c0-b2ad-44a21d470b8c",
+          "title": "Delen"
+        },
+        {
+          "id": "48798c08-b39d-4b39-bb17-f50518aa5983",
+          "title": "Volgorde van bewerkingen"
+        }
+      ]
+    },
+    {
+      "id": "9ed6e2ad-6c45-4c9a-8482-67eef2a57bda",
+      "title": "Handig rekenen & rekenregels",
+      "sections": [
+        {
+          "id": "e4b1416e-c059-411f-a488-ad6aa5ad7daf",
+          "title": "Rekenen met nullen"
+        },
+        {
+          "id": "d22bc50b-4a1b-43e3-b859-14f835166371",
+          "title": "Samen nemen en combineren"
+        },
+        {
+          "id": "fca5cd77-5552-4747-9eeb-fec0d37090d5",
+          "title": "Compenseren"
+        },
+        {
+          "id": "4d66d4c3-a4c6-4154-8142-d9847a9ffe7d",
+          "title": "Splitsen en verdelen"
+        }
+      ]
+    },
+    {
+      "id": "7e07d64c-2645-4a3e-bee7-6fa06c6d04f4",
+      "title": "Grote basisbewerkingen",
+      "sections": [
+        {
+          "id": "2031e641-068d-4166-b7bb-676110ee26a8",
+          "title": "Cijferend optellen"
+        },
+        {
+          "id": "5bb9b5ab-ab51-4802-9095-f690a7d8e2c3",
+          "title": "Cijferend aftrekken"
+        },
+        {
+          "id": "04a85775-6e15-42fb-aabe-f1297dc03880",
+          "title": "Cijferend delen"
+        },
+        {
+          "id": "ad0a16b8-ab2b-4105-aca0-7295500af1c6",
+          "title": "Cijferend vermenigvuldigen"
+        },
+        {
+          "id": "e23719e9-da60-478f-bb11-d70d89e316f2",
+          "title": "Delen met rest"
+        }
+      ]
+    },
+    {
+      "id": "83e9c74b-af9e-400f-9106-36cc4b6c01fa",
+      "title": "Klokkijken en rekenen met tijd",
+      "sections": [
+        {
+          "id": "8609d32d-aebe-4d4a-af41-4b760c9c4856",
+          "title": "De kleine wijzer"
+        },
+        {
+          "id": "8d2db3ae-fd5f-4566-906c-4f07b1b1de1e",
+          "title": "Rekenen met tijd"
+        },
+        {
+          "id": "3c4d3d0f-e2c8-4446-bbd0-f2c9581d1bc9",
+          "title": "De grote wijzer"
+        }
+      ]
+    },
+    {
+      "id": "503ec8db-ade1-41dd-a8b7-36b02731931a",
+      "title": "Rekenen met geld",
+      "sections": [
+        {
+          "id": "af31900a-5553-44ac-8334-f9749a269299",
+          "title": "Optellen en aftrekken"
+        },
+        {
+          "id": "2d4f5e5b-7571-4777-9fc1-208e229d8437",
+          "title": "Wisselgeld"
+        }
+      ]
+    },
+    {
+      "id": "ebbb9175-f45c-4202-958c-cf0598a12a9f",
+      "title": "Namen van figuren",
+      "sections": [
+        {
+          "id": "e93a5fd1-12c3-465e-875d-6ffca9e3e094",
+          "title": "Driehoeken"
+        },
+        {
+          "id": "304df8dc-48af-4685-8ddb-60cef34f0172",
+          "title": "Ronde figuren en n-hoeken"
+        },
+        {
+          "id": "b70ac1ba-a612-4ecc-94c8-b706d15c11c3",
+          "title": "Vierhoeken"
+        },
+        {
+          "id": "00bbd5e4-365a-40bd-a474-50ae9f6c8908",
+          "title": "Ruimtefiguren"
+        }
+      ]
+    },
+    {
+      "id": "10fdb458-3c98-4903-95af-19e45a41372f",
+      "title": "Breuken basis",
+      "sections": [
+        {
+          "id": "35a1271b-19e3-4690-b173-0682a993b819",
+          "title": "Wat is een breuk?"
+        },
+        {
+          "id": "2e2d1a33-2497-43a6-b1e4-f8f4cb976866",
+          "title": "Equivalentie (breuken basis)"
+        },
+        {
+          "id": "b4ac9283-535c-4889-a16e-a447fdcdd0be",
+          "title": "Verdelen = delen"
+        },
+        {
+          "id": "2041be8c-5e94-4bc0-b31f-6d504f6247ea",
+          "title": "Breuken groter dan 1"
+        },
+        {
+          "id": "f4577e6e-79b1-46f0-a8ba-86504fa345c1",
+          "title": "De getallenlijn (breuken basis)"
+        }
+      ]
+    },
+    {
+      "id": "b2f4b6c2-32e3-4134-b782-b9adcedaa0f4",
+      "title": "Eigenschappen van getallen",
+      "sections": [
+        {
+          "id": "444f5762-0354-42bb-9b8c-aa054535946f",
+          "title": "Samengestelde getallen en priemgetallen"
+        },
+        {
+          "id": "88115d18-855d-436a-9ce0-2744256f1e84",
+          "title": "Priemontbinding"
+        },
+        {
+          "id": "78d68584-e978-4857-a344-86993bd37083",
+          "title": "KGV en GGD"
+        },
+        {
+          "id": "f5e298d7-3862-4759-b7bd-c818af54eb58",
+          "title": "Deelbaarheid"
+        },
+        {
+          "id": "f85f94ae-ea6f-4190-b5c2-2129a936943b",
+          "title": "Gemiddelde"
+        }
+      ]
+    },
+    {
+      "id": "5c78fe67-f2a3-4705-ada7-8e8e0f30f074",
+      "title": "Procenten basis",
+      "sections": [
+        {
+          "id": "01538c18-2e9c-40c4-8719-cbfa93ccdaac",
+          "title": "Absoluut en relatief"
+        },
+        {
+          "id": "4cbde54e-0835-4532-a65a-03d7f7083db5",
+          "title": "Wat is een procent?"
+        },
+        {
+          "id": "b79bbe3d-764e-4661-b358-0ee03df5bd19",
+          "title": "Van aantal naar procent en andersom"
+        },
+        {
+          "id": "64f61a0d-d31b-49c4-8a9d-9ec10d24fd77",
+          "title": "Percentage erbij of eraf omrekenen naar een aantal"
+        },
+        {
+          "id": "c56e34b7-6131-42cf-a0de-d9356a8ba5a7",
+          "title": "Aantal erbij of eraf omrekenen naar een percentage"
+        },
+        {
+          "id": "edd436d5-27e1-42c2-9524-bb80db444bc7",
+          "title": "Terugrekenen naar 100%"
+        }
+      ]
+    },
+    {
+      "id": "9c11dfe6-0390-4d74-b7f0-eddfe060e0cd",
+      "title": "Verhoudingen basis",
+      "sections": [
+        {
+          "id": "8f8c7f53-de3b-4234-b817-9cace5f4099b",
+          "title": "Wat is schaal?"
+        },
+        {
+          "id": "b28d40ed-149a-4128-9385-1997ff02b1e4",
+          "title": "Rekenen met schaal"
+        },
+        {
+          "id": "2208e275-0de3-4bb6-ad17-9d285a5f4fc2",
+          "title": "'Staat tot' en 'op de'"
+        }
+      ]
+    },
+    {
+      "id": "65e86b6c-e0e1-4288-9607-0fe2e0fb6841",
+      "title": "Omtrek en oppervlakte",
+      "sections": [
+        {
+          "id": "94cab287-45e6-40fc-b05a-7eade1a33f47",
+          "title": "Omtrek en oppervlakte van rechthoeken"
+        },
+        {
+          "id": "187c649d-4423-40b4-8673-76393dc55f34",
+          "title": "Oppervlakte van driehoeken"
+        },
+        {
+          "id": "d3df149e-e553-42f6-b212-47df8e955b5c",
+          "title": "Oppervlakte parallellogram en trapezium"
+        },
+        {
+          "id": "a2820133-66f6-4817-bf98-a79899ebd2a8",
+          "title": "Oppervlakte van vlieger en ruit"
+        },
+        {
+          "id": "ee8fec84-bb08-4588-a50f-48d6c9fdc862",
+          "title": "Omtrek en oppervlakte van een cirkel"
+        }
+      ]
+    },
+    {
+      "id": "5ce5271d-faf9-4cb6-bb96-d5835177f5ea",
+      "title": "Rekenen met breuken basis",
+      "sections": [
+        {
+          "id": "be846178-7a91-4c54-8b20-fcfe3d45f7c5",
+          "title": "Breuken ordenen"
+        },
+        {
+          "id": "5a523234-5767-4e47-ad6c-b6147e542e8e",
+          "title": "Gelijknamig maken om op te tellen en af te trekken"
+        },
+        {
+          "id": "c1d9031b-d83b-4930-9546-4d249b49f514",
+          "title": "Gelijknamige breuken optellen en aftrekken"
+        },
+        {
+          "id": "45f564d2-83b1-43c2-afc7-6ba92da3a48b",
+          "title": "Wat is de hele strook?"
+        },
+        {
+          "id": "23d53b79-ceb8-4bda-b75f-7b61ffac9f6b",
+          "title": "Gemengde getallen optellen en aftrekken"
+        },
+        {
+          "id": "1f18ae54-f757-4e05-ae69-f7ec7bd12e17",
+          "title": "Een deel van iets nemen"
+        },
+        {
+          "id": "93e14f4c-8257-4981-8d68-13cb9731edbe",
+          "title": "Afpassen"
+        }
+      ]
+    },
+    {
+      "id": "0afb80b0-fa9e-4a47-b57e-11a568b95e63",
+      "title": "Kommagetallen de basis",
+      "sections": [
+        {
+          "id": "7d08e855-caf2-49c1-81fd-78ad6f659633",
+          "title": "Verfijnen & posities achter de komma"
+        },
+        {
+          "id": "11db2d0a-1a74-44ed-93c5-7af240a3264c",
+          "title": "Ordenen en de getallenlijn (kommagetallen basis)"
+        },
+        {
+          "id": "a55889df-da1c-4926-9b50-e77b0a8444bb",
+          "title": "Kommagetallen in de context van geld"
+        }
+      ]
+    },
+    {
+      "id": "0e476f42-ac0d-49e8-97d7-4142383744bf",
+      "title": "Rekenen met kommagetallen",
+      "sections": [
+        {
+          "id": "3a04dfd8-82e8-47be-b7d4-009dcc9a94d1",
+          "title": "+ en –"
+        },
+        {
+          "id": "a2c9bcf9-0fb8-4521-afa4-9c092f91130b",
+          "title": "Breuken en kommagetallen"
+        },
+        {
+          "id": "2ced1bc9-d56b-4ae3-9b60-e02a40b31c12",
+          "title": "x (informeel)"
+        },
+        {
+          "id": "c7645ddd-f108-4406-8d00-2f14e399d03c",
+          "title": ": (informeel)"
+        },
+        {
+          "id": "19c59480-e0dd-4bd8-ad14-0442e59f1fe3",
+          "title": "Afronden (kommagetallen)"
+        },
+        {
+          "id": "e76585d4-10bd-43ad-b5b0-59aaf2662766",
+          "title": "Schatten en handig rekenen met decimalen"
+        }
+      ]
+    },
+    {
+      "id": "c211d585-bd71-445c-b535-b6c0c8907da8",
+      "title": "Metriek stelsel",
+      "sections": [
+        {
+          "id": "2cabcfad-c8a9-4f40-9524-4067a31bb01c",
+          "title": "Maatverfijning"
+        },
+        {
+          "id": "12ef2e8d-0c63-4667-9b0c-a1611cd90aee",
+          "title": "Eenheden en grootheden"
+        },
+        {
+          "id": "75b3eda5-34f4-4b4c-9ecf-efa0326a4b05",
+          "title": "Samengestelde eenheden: snelheid"
+        },
+        {
+          "id": "75b397ac-0f24-4fce-9906-679184d9b4f6",
+          "title": "Contexten en bijzondere namen voor eenheden"
+        },
+        {
+          "id": "e52c7a80-6cc5-4ee1-9505-7c5b07401068",
+          "title": "Systeem van voorvoegsels"
+        }
+      ]
+    },
+    {
+      "id": "466bafc2-5a55-42ce-8bcf-7ce1d7e1fd53",
+      "title": "Verbanden basis",
+      "sections": [
+        {
+          "id": "58513733-c54b-4e3c-b1ea-deaa7e11b8ad",
+          "title": "Wat is een verband?"
+        },
+        {
+          "id": "766e9b3a-5586-4d97-9f78-e8e268ed4dd3",
+          "title": "Assenstelsel"
+        },
+        {
+          "id": "3867ac06-7706-4bb3-81ea-5f4d7231781d",
+          "title": "Een tabel maken en uitlezen"
+        },
+        {
+          "id": "3b6027f1-cb81-410d-9791-a0fc220a5b41",
+          "title": "Naar formules kijken en betekenis geven"
+        },
+        {
+          "id": "b63830f6-9ece-49de-8ae9-fe8f1ecab8a6",
+          "title": "Naar een grafiek kijken"
+        }
+      ]
+    },
+    {
+      "id": "528a2c91-c8d0-40ec-9b1a-700973b8031e",
+      "title": "Toetsvoorbereiding 2F",
+      "sections": [
+        {
+          "id": "a181337a-6b84-47f4-95fe-e002b9a88a82",
+          "title": "Gegevens ordenen 2F"
+        },
+        {
+          "id": "053a6d23-1979-4912-9803-d16ec25da5dd",
+          "title": "Tekenen 2F"
+        },
+        {
+          "id": "49388da4-bdb0-400b-8208-8618f5be1e60",
+          "title": "Wat wordt er gevraagd? 2F"
+        }
+      ]
+    },
+    {
+      "id": "baf996b8-4806-4ba9-afda-08039018b580",
+      "title": "Oppervlakte- en inhoudsmaten",
+      "sections": [
+        {
+          "id": "672fd344-a7ae-4175-b495-e675434b2803",
+          "title": "Omtrek, oppervlakte en inhoud"
+        },
+        {
+          "id": "bc04f7cc-bd20-41ae-922c-e87c545f5676",
+          "title": "Samengestelde eenheden (oppervlakte- en inhoudsmaten)"
+        },
+        {
+          "id": "4a4e137d-e3e5-40fe-a9a9-8d86e9a6c241",
+          "title": "Vergroten en verkleinen"
+        },
+        {
+          "id": "cb91b7ad-003f-4987-8782-aeb8e51c46cf",
+          "title": "Alternatieve benamingen oppervlakte"
+        },
+        {
+          "id": "8f6b46be-aaa7-4ea1-be57-82ddc2443f5b",
+          "title": "Alternatieve benamingen inhoud"
+        }
+      ]
+    },
+    {
+      "id": "d5e7b34d-ae1c-49b7-b9de-d0eb9091c6ed",
+      "title": "Inhoud",
+      "sections": [
+        {
+          "id": "152fb410-4c49-4936-822d-2284735505fd",
+          "title": "Inhoud prisma en cilinder"
+        },
+        {
+          "id": "00cabdc4-4b45-4df5-971e-ca65849cf398",
+          "title": "Inhoud kegel en piramide"
+        },
+        {
+          "id": "717ba50b-99c6-4294-ab13-38551d4e56a5",
+          "title": "De inhoud van een bol"
+        }
+      ]
+    },
+    {
+      "id": "24352656-65f9-4cdf-a26e-6212b5c1d85e",
+      "title": "Grafische weergave van data",
+      "sections": [
+        {
+          "id": "ad456c4b-3b5f-4b1f-87e8-edb059ed0d66",
+          "title": "Data clusteren in een tabel"
+        },
+        {
+          "id": "3d71f7f5-ce11-45d0-b688-27123a418da5",
+          "title": "Cirkeldiagrammen"
+        },
+        {
+          "id": "dff74613-4cb1-4c3c-b0f1-4ee519a0cd87",
+          "title": "Staafdiagrammen & histogrammen"
+        },
+        {
+          "id": "3dc10091-1602-491b-b4a2-481f23dcddf9",
+          "title": "Lijngrafieken"
+        }
+      ]
+    },
+    {
+      "id": "8084a6e6-52d9-4997-8959-6c33b23939cc",
+      "title": "Toetsvoorbereiding 3F",
+      "sections": [
+        {
+          "id": "3ef4f52f-db1d-4521-8bed-139fa60ec521",
+          "title": "Gegevens ordenen 3F"
+        }
+      ]
+    },
+    {
+      "id": "7d31b281-9e7f-4cc9-ab11-d158919440ef",
+      "title": "Verhoudingen 2",
+      "sections": [
+        {
+          "id": "0861e0cf-36e2-425d-ac69-03a90462ee5b",
+          "title": "De verhoudingstabel & equivalentie"
+        },
+        {
+          "id": "f511c14e-95d9-45b4-9134-b537d7888305",
+          "title": "Samenhang tussen breuken, procenten en kommagetallen"
+        },
+        {
+          "id": "f1f0fc4e-131e-4101-a781-ab7cb151056d",
+          "title": "Samengestelde eenheden (verhoudingen 2)"
+        }
+      ]
+    },
+    {
+      "id": "30ed1d85-f57d-4dce-a706-a13296df2c89",
+      "title": "Procenten 2",
+      "sections": [
+        {
+          "id": "51776ce2-54fb-465c-88a1-1405d6f4d24e",
+          "title": "Het cirkeldiagram"
+        },
+        {
+          "id": "c352935a-1525-4af2-b56c-a5d888131b15",
+          "title": "Groei en rente"
+        },
+        {
+          "id": "eb87a6be-43dd-47df-84c1-98438523428a",
+          "title": "Procenten combineren"
+        },
+        {
+          "id": "ff733b50-6f60-4f2b-a1e5-b328465873b5",
+          "title": "Toepassen"
+        }
+      ]
+    },
+    {
+      "id": "cc082fc6-6368-4b9d-ad43-6767224108a2",
+      "title": "Rekenen met decimale getallen",
+      "sections": [
+        {
+          "id": "09fb992e-f41b-401a-8f09-54bb204d8592",
+          "title": "Vermenigvuldigen als oppervlakte"
+        },
+        {
+          "id": "f954d42c-4159-4292-a412-4eb06a3dab69",
+          "title": "Vermenigvuldigen formeel"
+        },
+        {
+          "id": "912ddc31-8351-482f-9afd-2948a57da800",
+          "title": "Delen formeel"
+        },
+        {
+          "id": "656651ab-5f1a-47da-b969-81f317746042",
+          "title": "Betekenis van delen"
+        }
+      ]
+    },
+    {
+      "id": "706c0684-0710-42cc-9c7e-bf246c71f0b1",
+      "title": "Negatieve getallen",
+      "sections": [
+        {
+          "id": "c2fc7dda-0300-4313-af6b-ec63f4c31d19",
+          "title": "Wat is een negatief getal?"
+        },
+        {
+          "id": "2bd0cbb1-0dbb-4b20-bb31-8249b681623c",
+          "title": "Ordenen negatieve getallen en kleiner/groter dan"
+        },
+        {
+          "id": "c5666f13-c945-4825-bbc7-424a7a042546",
+          "title": "Negatieve getallen op de getallenlijn"
+        },
+        {
+          "id": "40a92529-4a2b-4cb9-9cd4-a65b9ccb2bf2",
+          "title": "Vermenigvuldigen en delen met negatieve getallen"
+        },
+        {
+          "id": "4d4b07ab-8a7c-40a7-9fcb-4b4cf3cae094",
+          "title": "Optellen en aftrekken met negatieve getallen"
+        }
+      ]
+    },
+    {
+      "id": "4af85d2b-1533-4dc6-ae35-3e79a19821fc",
+      "title": "Rekenen breuken standaard procedures",
+      "sections": [
+        {
+          "id": "c39976f8-4cb5-4c50-ae3a-4829f2375dca",
+          "title": "Vermenigvuldigen van breuken"
+        },
+        {
+          "id": "6798a909-1328-4537-9816-f60785313303",
+          "title": "Delen met rest = breuk"
+        },
+        {
+          "id": "1d3d0242-2bee-4d74-92dd-ae974d6a82e5",
+          "title": "Delen met breuken"
+        },
+        {
+          "id": "5ca9e155-48d0-47b6-b3c0-a2fc4fe23f90",
+          "title": "Het omkeren van breuken"
+        },
+        {
+          "id": "2bd03c1a-b1ec-4c8c-a408-da148a100fc3",
+          "title": "Bij het vermenigvuldigen tussentijds vereenvoudigen"
+        }
+      ]
+    },
+    {
+      "id": "41260c87-f7de-48ab-ab6a-42e1aa0186ae",
+      "title": "Machten en wortels",
+      "sections": [
+        {
+          "id": "a4114225-cc67-4616-b203-a9bc2b838b8e",
+          "title": "Wat is een macht?"
+        },
+        {
+          "id": "88d40b9f-fa4f-49ce-bf93-0f88aa70c295",
+          "title": "Rekenen met machten"
+        },
+        {
+          "id": "fc0ab5ce-e8c1-4bad-bc9a-a55d4e762474",
+          "title": "Wat is een wortel?"
+        },
+        {
+          "id": "445295a7-c4f6-46a6-8f33-66fdcca72193",
+          "title": "Volgorde van bewerkingen met wortel en macht"
+        },
+        {
+          "id": "867fb902-23a8-45d0-982d-7a693c2625a6",
+          "title": "Wetenschappelijke notatie"
+        }
+      ]
+    }
+  ]
+}

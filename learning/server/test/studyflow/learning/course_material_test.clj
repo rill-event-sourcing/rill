@@ -6,7 +6,7 @@
 
 (defn read-example-json
   []
-  (json/parse-string (slurp "../../material.json") true))
+  (json/parse-string (slurp "test/studyflow/material.json") true))
 
 (deftest parsing-example-json
   (is (= (:name (material/parse-course-material (read-example-json)))

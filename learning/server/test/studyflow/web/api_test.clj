@@ -16,10 +16,12 @@
   (testing "update-course-material web handler"
     (let [cmd (api/command-ring-handler
                (-> (request :put (uri-for routes/update-course-material (:id input)))
-                   (body input)))]
+                   (assoc :body input)))]
       (is (= (class cmd) UpdateCourse!)
           "generates a command")
-      (pr cmd)
       (is (= (:id input)
-             (:course-id cmd))))))
+             (:course-id cmd)))
+      (is (= (:material cmd) parsed-input)
+          "Command has material in correct format"))))
+
 
