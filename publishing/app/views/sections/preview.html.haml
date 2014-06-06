@@ -1,4 +1,8 @@
-%div= DateTime.now
-%hr
--@subsections.each do |subsection|
-  %div= subsection.description.html_safe
+%div.panel.panel-default
+  %div.panel-heading
+    %div.panel-title
+      Last saved on:
+      = l DateTime.now
+  %div.panel-body
+    -@subsections.each do |subsection|
+      %div= subsection.description.html_safe
