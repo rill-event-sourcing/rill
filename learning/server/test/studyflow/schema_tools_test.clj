@@ -29,3 +29,9 @@
            {:an-id #uuid "9dd02654-1fd8-43f4-8de4-25a821eadf0d"
             :a-number 1234
             :a-key :keyw}))))
+
+(def strict-coercer (tools/strict-coercer IdSchema id-coercer))
+
+(deftest strict-coercion-test
+  (is (thrown? RuntimeException (strict-coercer {"invalid" "foo"}))))
+

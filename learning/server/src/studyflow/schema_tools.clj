@@ -1,6 +1,8 @@
 (ns studyflow.schema-tools
   (:require [schema.core :as s]
-            [schema.coerce :as coerce])
+            [schema.coerce :as coerce]
+            [schema.utils]
+            [slingshot.slingshot :refer [throw+]])
   (:import (java.util UUID)))
 
 (defn uuid-coercion-matcher
@@ -16,3 +18,12 @@
   strings, and longs and doubles from numbers (without losing precision)"
   [schema]
   (some #(% schema) [uuid-coercion-matcher coerce/json-coercion-matcher]))
+
+(defn strict-coercer
+  [schema matcher]
+  (let [coercer (coerce/coercer schema matcher)]
+    (fn [raw]
+      (let [v (coercer raw)]
+        (if (schema.utils/error? v)
+          (throw+ (:error v))
+          v)))))

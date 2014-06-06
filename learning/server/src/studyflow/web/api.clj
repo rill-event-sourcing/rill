@@ -13,7 +13,7 @@
 (defn wrap-command-executor
   "Given a set of ring handler that returns a command (or nil), execute
   the command with the given event store and return status 500 or 200"
-  [event-store ring-handler]
+  [ring-handler event-store]
   (fn [request]
     (when-let [command (ring-handler request)]
       (log/info ["Executing command" command])
@@ -42,5 +42,5 @@
 (defn make-request-handler
   [event-store]
   (-> command-ring-handler
-      wrap-command-executor
+      (wrap-command-executor event-store)
       wrap-middleware))
