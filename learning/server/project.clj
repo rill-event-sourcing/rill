@@ -14,12 +14,15 @@
                  [ring/ring-jetty-adapter "1.3.0"]
                  [clout-link "0.0.6"]
                  [org.clojure/tools.logging "0.2.6"]
-                 [ring.middleware.logger "0.4.0"]]
+                 [ring.middleware.logger "0.4.0"]
+                 [ring-mock "0.1.5"]]
   :profiles {:dev
              {:dependencies
               [[org.clojure/tools.trace "0.7.5"]
-               [midje "1.6.3"]]}}
+               [speclj "3.0.0"]]}}
   :plugins [[cider/cider-nrepl "0.7.0-SNAPSHOT"]
-            [lein-ring "0.8.10"]]
+            [lein-ring "0.8.10"]
+            [speclj "3.0.0"]]
+  :test-paths ["test"]
   :ring {:handler studyflow.system/web-handler})
 

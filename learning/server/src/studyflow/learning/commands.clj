@@ -4,16 +4,13 @@
 
 (defcommand PublishCourse!
   [course-id :- material/Id
-   publisher-id :- material/Id
    material :- material/CourseMaterial])
 
 (defcommand UpdateCourse!
   [course-id :- material/Id
-   publisher-id :- material/Id
    material :- material/CourseMaterial])
 
 (defcommand DeleteCourse!
-  [course-id :- material/Id
-   publisher-id :- material/Id])
+  [course-id :- material/Id])
 
 

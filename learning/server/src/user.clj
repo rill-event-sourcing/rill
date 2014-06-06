@@ -1,7 +1,7 @@
 (ns user
   (:require [studyflow.system :as sys]
             [ring.adapter.jetty :refer [run-jetty]]
-            [midje.repl :refer [autotest]]))
+            [clojure.test :as test :refer [run-all-tests]]))
 
 (defonce web-server nil)
 

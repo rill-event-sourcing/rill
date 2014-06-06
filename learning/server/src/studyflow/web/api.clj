@@ -10,13 +10,13 @@
             [clojure.tools.logging :as log]
             [rill.uuid :refer [new-id]]))
 
-
-
-(defn command-routes
-  [event-store & route-command-matchers]
+(defn wrap-command-executor
+  "Given a set of ring handler that returns a command (or nil), execute
+  the command with the given event store and return status 500 or 200"
+  [event-store ring-handler]
   (fn [request]
-    (when-let [command (some #(% request) route-command-matchers)]
-      (log/info [:command command])
+    (when-let [command (ring-handler request)]
+      (log/info ["Executing command" command])
       (if (= :es-dispatcher/error (es-dispatcher/try-command event-store command))
         {:status 500}
         {:status 200}))))
@@ -25,13 +25,22 @@
   [f]
   (-> f
       wrap-json-response
-      wrap-json-body
-     wrap-with-plaintext-logger))
+      (wrap-json-body :keywords? true)
+      wrap-with-plaintext-logger))
+
+(defn combine-ring-handlers
+  [& handlers]
+  (fn [r]
+    (some #(% r) handlers)))
+
+(def command-ring-handler
+  (combine-ring-handlers
+   (handle routes/update-course-material
+           (fn [{{:keys [course-id]} :params body :body :as request}]
+             (studyflow.learning.commands/->UpdateCourse! (new-id) course-id (material/parse-course-material body))))))
 
 (defn make-request-handler
   [event-store]
-  (-> (command-routes event-store
-                      (handle routes/update-course-material
-                              (fn [{{:keys [course-id]} :params body :body}]
-                                (studyflow.learning.commands/->UpdateCourse! (new-id) course-id nil (material/parse-course-material body)))))
+  (-> command-ring-handler
+      wrap-command-executor
       wrap-middleware))

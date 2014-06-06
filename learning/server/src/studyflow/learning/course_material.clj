@@ -2,7 +2,7 @@
   "This is the hierarchical, normalized model for the course material"
   (:require [schema.core :as s]
             [schema.coerce :as coerce]
-            [studyflow.util :as util]))
+            [studyflow.schema-tools :as schema-tools]))
 
 (def RichText s/Str)
 (def PlainText s/Str)
@@ -43,8 +43,6 @@
    :name PlainText
    :chapters [Chapter]})
 
-
-
 (def parse-course-material
-  (coerce/coercer CourseMaterial material-coercer))
+  (coerce/coercer CourseMaterial schema-tools/schema-coercion-matcher))
 
