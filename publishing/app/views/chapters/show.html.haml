@@ -1,8 +1,9 @@
 %div.row
-  %div.col-md-12
+  %div.col-md-10
     %h2
-      %strong Title:
       = @chapter.title
+  %div.col-md-2
+    = link_to 'New Section', new_chapter_section_path(@chapter), class: "btn btn-success"
 %p
   = @chapter.description
 

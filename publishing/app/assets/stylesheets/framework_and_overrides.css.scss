@@ -10,6 +10,9 @@ section {
   @extend .row;
   margin-top: 20px;
   }
+iframe {
+  border: 0;
+  }
 
 .navbar {
   border-radius: 0;
@@ -22,6 +25,9 @@ section {
 .glyphicon-ok {
   color: green;
   }
+.glyphicon-remove {
+  color: red;
+  }
 .glyphicon-trash {
   color: red;
   }
@@ -30,6 +36,9 @@ section {
   }
 .glyphicon-exclamation-sign {
   color: red;
+  }
+.glyphicon-plus {
+  color: green;
   }
 .glyphicon-eye-open {
   color: green;
