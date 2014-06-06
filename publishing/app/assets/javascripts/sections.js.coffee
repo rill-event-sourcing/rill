@@ -5,17 +5,18 @@ $ ->
     $("#subsection-list").html('<img src="/assets/spinner.gif" alt="Wait" />')
     $("#subsection-list").load url, ->
       refreshPreview()
-      setSave()
-  firstTab()
-  refreshPreview()
+      setSaveBtnHandler()
+
+  clickFirstTab()
 
 ################################################################################
 
-firstTab = ->
-  $("#subsection-list").load firstTabUrl, ->
-    setSave()
+clickFirstTab = ->
+  firstTab = $('#subsection-tabs a').first()
+  if firstTab
+    firstTab.click()
 
-setSave = ->
+setSaveBtnHandler = ->
   $('.save').bind 'click', (event) ->
     refreshPreview()
 
