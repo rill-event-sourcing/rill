@@ -5,12 +5,6 @@ $ ->
     saveSection(url)
     refreshPreview()
 
-  # $('#subsection-tabs a').bind 'click', (event) ->
-  #   url = $(event.currentTarget).data('url')
-  #   $("#subsection-list").html('<img src="/assets/spinner.gif" alt="Wait" />')
-  #   $("#subsection-list").load url, ->
-  #     setSaveBtnHandler()
-
   $.fn.editable.defaults.mode = 'inline'
   $.fn.editable.defaults.showbuttons = false
   $.fn.editable.defaults.clear = false
