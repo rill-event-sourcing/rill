@@ -3,37 +3,6 @@
             [rill.aggregate :as aggregate]
             [rill.event-store :as store]))
 
-(defn valid-commit?
-  [[event & events]]
-  ;; Every event must apply to the same aggregate root
-  (and event
-       (every? #(= (msg/aggregate-id event) (msg/aggregate-id %)) events)))
-
-(defn validate-commit
-  [events]
-  (when-not (valid-commit? events)
-    (throw (Exception. "Transactions must apply to exactly one aggregate"))))
-
-(defn commit-events
-  [store aggregate-id stream events]
-  (validate-commit events)
-  (let [aggregate-id-from-event (msg/aggregate-id (first events))]
-    (if (= aggregate-id aggregate-id-from-event)
-                                        ; events apply to current aggregate
-      (store/append-events store aggregate-id stream events)
-                                        ; events apply to newly created aggregate
-      (store/append-events store aggregate-id-from-event nil events))))
-
-(defn fetch-aggregate-and-stream
-  [event-store id]
-  (let [stream (store/retrieve-event-stream event-store id)
-        aggregate (aggregate/load-aggregate (:events stream))]
-    [aggregate stream]))
-
-(defn fetch-aggregate
-  [event-store id]
-  (first (fetch-aggregate-and-stream event-store id)))
-
 (defmulti aggregate-ids
   "given a command, return the ids of the aggregates that should be
   fetched before calling handle-command. The first aggregate should be
@@ -46,18 +15,62 @@
      [command#]
      (map (partial get command#) ~(mapv keyword ks))))
 
+(defn target-aggregate-id
+  [command]
+  (first (aggregate-ids command)))
+
+(defn valid-commit?
+  [[event & events]]
+  ;; Every event must apply to the same aggregate root
+  (and event
+       (let [id (msg/stream-id event)]
+         (every? #(= id (msg/stream-id %)) events))))
+
+(defn validate-commit
+  [events]
+  (when-not (valid-commit? events)
+    (throw (Exception. "Transactions must apply to exactly one aggregate"))))
+
+(defn commit-events
+  [store stream-id stream events]
+  (validate-commit events)
+  (let [stream-id-from-event (msg/stream-id (first events))]
+    (if (= stream-id stream-id-from-event)
+                                        ; events apply to current aggregate
+      (store/append-events store stream-id stream events)
+                                        ; events apply to newly created aggregate
+      (store/append-events store stream-id-from-event nil events))))
+
+(defn fetch-aggregate-and-stream
+  [event-store id]
+  (let [stream (store/retrieve-event-stream event-store id)
+        aggregate (aggregate/load-aggregate (:events stream))]
+    [aggregate stream]))
+
+(defn fetch-aggregate
+  [event-store id]
+  (first (fetch-aggregate-and-stream event-store id)))
+
 (defmulti handle-command
   "handle command given aggregates. returns a seq of events"
   (fn [command & aggregates]
     (class command)))
 
-(defn try-command
+(defn prepare-aggregates
+  "fetch the primary event stream and aggregates for `command`"
   [event-store command]
   (let [[id & additional-ids] (aggregate-ids command)
         [aggregate stream] (fetch-aggregate-and-stream event-store id)
-        additional-aggregates (map (fn [id] (fetch-aggregate event-store id)) additional-ids)]
-    (if-let [events (apply handle-command command (cons aggregate additional-aggregates))]
-      (commit-events event-store id stream events)
+        additional-aggregates (map (partial fetch-aggregate event-store) additional-ids)]
+    (into [id stream aggregate] additional-aggregates)))
+
+(defn try-command
+  [event-store command]
+  (let [[id stream & aggregates] (prepare-aggregates event-store command)]
+    (if-let [events (apply handle-command command aggregates)]
+      (if (commit-events event-store id stream events)
+        true
+        ::out-of-date)
       ::error)))
 
 (defn make-handler [event-store]
