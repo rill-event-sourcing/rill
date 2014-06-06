@@ -33,6 +33,15 @@ class Section < ActiveRecord::Base
     }
   end
 
+  def as_full_json
+    {
+      id: id,
+      title: title,
+      description: description,
+      updated_at: I18n.l(updated_at, format: :long)
+    }
+  end
+
   def to_param
     "#{id[0,8]}"
   end

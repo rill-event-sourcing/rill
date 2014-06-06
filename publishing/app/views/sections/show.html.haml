@@ -1,8 +1,14 @@
 %div.row
-  %div.col-md-12
+  %div.col-md-10
     %h2
       %a.editable#title{data: {type: 'text', title: 'enter title'} }
         = @section.title
+  %div.col-md-2
+    %small
+      Saved on:
+      %div#edit-time= l @section.updated_at, format: :long
+      %div.save.btn.btn-default{href: '#', data: {url: chapter_section_path(@chapter, @section) } } Save
+
 %p
   %a.editable#description{data: {type: 'textarea', title: 'enter description'} }
     = @section.description

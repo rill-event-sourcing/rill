@@ -15,30 +15,32 @@ class SectionsController < ApplicationController
   end
 
   def show
-    @subsections_count = Subsection.unscoped.where(section: @section).group(:stars).count
+    @subsections = @section.subsections.group_by(&:stars)
   end
 
-  def new
-    @section = @chapter.sections.build
-  end
+  # def new
+  #   @section = @chapter.sections.build
+  # end
 
-  def edit
-  end
+  # def edit
+  # end
 
-  def create
-    @section = @chapter.sections.build(section_params)
-    if @section.save
-      redirect_to chapter_sections_path(@chapter), notice: 'Section was successfully created.'
-    else
-      render :new
-    end
-  end
+  # def create
+  #   @section = @chapter.sections.build(section_params)
+  #   if @section.save
+  #     redirect_to chapter_sections_path(@chapter), notice: 'Section was successfully created.'
+  #   else
+  #     render :new
+  #   end
+  # end
 
   def update
-    if @section.update(section_params)
-      redirect_to [@chapter, @section], notice: 'Section was successfully updated.'
-    else
-      render :edit
+    respond_to do |format|
+      if @section.update(section_params)
+        format.json { render json: @section.as_full_json, status: :ok }
+      else
+        format.json { render json: @section.errors, status: :unprocessable_entity }
+      end
     end
   end
 

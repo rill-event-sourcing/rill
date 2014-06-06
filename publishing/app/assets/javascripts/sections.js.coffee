@@ -1,12 +1,15 @@
 # on load run:
 $ ->
-  $('#subsection-tabs a').bind 'click', (event) ->
+  $('.save').bind 'click', (event) ->
     url = $(event.currentTarget).data('url')
-    $("#subsection-list").html('<img src="/assets/spinner.gif" alt="Wait" />')
-    $("#subsection-list").load url, ->
-      setSaveBtnHandler()
+    saveSection(url)
+    refreshPreview()
 
-  clickFirstTab()
+  # $('#subsection-tabs a').bind 'click', (event) ->
+  #   url = $(event.currentTarget).data('url')
+  #   $("#subsection-list").html('<img src="/assets/spinner.gif" alt="Wait" />')
+  #   $("#subsection-list").load url, ->
+  #     setSaveBtnHandler()
 
   $.fn.editable.defaults.mode = 'inline'
   $.fn.editable.defaults.showbuttons = false
@@ -16,14 +19,15 @@ $ ->
 
 ################################################################################
 
-clickFirstTab = ->
-  firstTab = $('#subsection-tabs a').first()
-  if firstTab
-    firstTab.click()
-
-setSaveBtnHandler = ->
-  $('.save').bind 'click', (event) ->
-    refreshPreview()
+saveSection = (url) ->
+  values = $('.editable').editable('getValue')
+  $("#edit-time").html('<img src="/assets/spinner.gif" alt="Wait" />')
+  $.ajax url,
+      type: 'PUT'
+      dataType: 'json'
+      data: { section: values }
+      success: (data, textStatus, jqXHR) ->
+        $("#edit-time").html(data.updated_at)
 
 refreshPreview = ->
   $('#preview').attr("src", $('#preview').attr("src"))
