@@ -1,8 +1,8 @@
 %div.col-md-6
-  = render partial: 'new', locals: { subsection: Subsection.new }
-  -@subsections.each do |subsection|
-    = render partial: 'editor', locals: { subsection: subsection }
-    = render partial: 'new', locals: { subsection: subsection }
+  = render partial: 'subsections/new', locals: { subsection: Subsection.new }
+  -subsections.each do |subsection|
+    = render partial: 'subsections/editor', locals: { subsection: subsection }
+    = render partial: 'subsections/new', locals: { subsection: subsection }
 
 %div.col-md-6
-  = render partial: 'preview', locals: { star: @star }
+  = render partial: 'subsections/preview', locals: { star: star }

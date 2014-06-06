@@ -17,17 +17,14 @@ Rails.application.routes.draw do
         post 'movedown'
         get 'preview'
       end
-      resources :subsections do
-        collection do
-          get 'list'
-        end
-        member do
-          post 'activate'
-          post 'deactivate'
-          post 'moveup'
-          post 'movedown'
-        end
-      end
+      # resources :subsections do
+      #   member do
+      #     post 'activate'
+      #     post 'deactivate'
+      #     post 'moveup'
+      #     post 'movedown'
+      #   end
+      # end
     end
   end
 
