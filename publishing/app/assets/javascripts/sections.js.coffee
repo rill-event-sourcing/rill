@@ -2,24 +2,10 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
-# oldVals = []
-#
-# setPreview = (subsection_id) ->
-#   $("subsection_preview_" + subsection_id).contents().find('html').html(oldVals[subsection_id]);
-#
-# syncPreview = (subsection_id) ->
-#   # alert 'ok'
-#   console.log $("subsection_editor_" + subsection_id)
-#   oldVals[subsection_id] = $("subsection_editor_" + subsection_id).text()
-#   alert oldVals
 
-  # setPreview(subsection_id)
-  # $("subsection_editor_" + subsection_id).bind "change keyup paste", (event) ->
-  #   currentVal = $(this).val()
-  #   if(currentVal == oldVals[subsection_id])
-  #     return
-  #   oldVals[subsection_id] = currentVal
-  #   setPreview(subsection_id)
+updatePreview = ->
+  $.get previewUrl, (data) ->
+    $("#preview").contents().find('html').html(data)
 
 
 firstTab = ->
@@ -30,6 +16,8 @@ $ ->
   $('#subsection-tabs a').bind 'click', (event) ->
     url = $(event.currentTarget).data('url')
     $("#subsection-list").html('<img src="/assets/spinner.gif" alt="Wait" />')
-    $("#subsection-list").load(url)
+    $("#subsection-list").load url, ->
+      updatePreview()
 
   firstTab()
+  updatePreview()

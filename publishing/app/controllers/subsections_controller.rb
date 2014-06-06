@@ -7,7 +7,8 @@ class SubsectionsController < ApplicationController
   before_action :set_breadcrumb, except: [:list, :index, :new, :create]
 
   def list
-    @subsections = @section.subsections.find_by_star(params[:star])
+    @star = params[:star]
+    @subsections = @section.subsections.find_by_star(@star)
     render partial: 'list'
   end
 

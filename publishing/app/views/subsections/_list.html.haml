@@ -5,4 +5,7 @@
     = render partial: 'new', locals: { subsection: subsection }
 
 %div.col-md-6
-  = render partial: 'preview', locals: { subsection: Subsection.new }
+  = render partial: 'preview'
+
+:javascript
+  var previewUrl = '#{ preview_chapter_section_path(@chapter, @section, star: @star) }';
