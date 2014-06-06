@@ -6,8 +6,8 @@ class SectionsController < ApplicationController
   before_action :set_breadcrumb, except: [:index, :new, :create]
 
   def preview
-    subsections = @section.subsections.find_by_star(params[:star])
-    render text: subsections.map(&:description).join('<hr>')
+    @subsections = @section.subsections.find_by_star(params[:star])
+    render layout: 'preview'
   end
 
   def index
