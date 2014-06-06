@@ -5,17 +5,14 @@
 
 (defevent CoursePublished
   [course-id :- material/Id
-   publisher-id :- material/Id
    material :- material/CourseMaterial])
 
 (defevent CourseUpdated
   [course-id :- material/Id
-   publisher-id :- material/Id
    material :- material/CourseMaterial])
 
 (defevent CourseDeleted
-  [course-id :- material/Id
-   publisher-id :- material/Id])
+  [course-id :- material/Id])
 
 
 

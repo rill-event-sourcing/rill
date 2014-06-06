@@ -12,6 +12,7 @@
   (testing "parsing example json"
     (is (= (:name (material/parse-course-material (read-example-json)))
            "Math")))
+  
   (testing "throws exceptions when not valid"
     (is (thrown? RuntimeException (material/parse-course-material {:id "invalid" :name "Math"})))))
 

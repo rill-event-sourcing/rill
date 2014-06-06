@@ -1,7 +1,8 @@
 (ns studyflow.learning.command-handler
   (:require [studyflow.events :as evt]
             [studyflow.learning.commands]
-            [rill.handler :refer [handle-command defaggregate-ids]])
+            [rill.handler :refer [handle-command defaggregate-ids]]
+            [rill.uuid :refer [new-id]])
   (:import (studyflow.learning.commands PublishCourse! UpdateCourse! DeleteCourse!)))
 
 
@@ -12,17 +13,23 @@
 (defmethod handle-command PublishCourse!
   [command course]
   (when-not course
-    [(evt/strict-map->CoursePublished (select-keys command [:course-id :publisher-id :material]))]))
+    [(evt/strict-map->CoursePublished (-> command
+                                          (select-keys [:course-id :material])
+                                          (assoc :id (new-id))))]))
 
 (defmethod handle-command UpdateCourse!
   [command course]
   (when course
-    [(evt/strict-map->CourseUpdated (select-keys command [:course-id :publisher-id :material]))]))
+    [(evt/strict-map->CourseUpdated (-> command
+                                        (select-keys [:course-id :material])
+                                        (assoc :id (new-id))))]))
 
 (defmethod handle-command DeleteCourse!
   [command course]
   (when course
-    [(evt/strict-map->CourseDeleted (select-keys command [:course-id :publisher-id]))]))
+    [(evt/strict-map->CourseDeleted (-> command
+                                        (select-keys [:course-id])
+                                        (assoc :id (new-id))))]))
 
 ;; (defmethod aggregates StartLearningStep!
 ;;   [command]

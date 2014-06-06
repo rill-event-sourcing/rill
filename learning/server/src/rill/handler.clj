@@ -56,7 +56,7 @@
   (let [[id & additional-ids] (aggregate-ids command)
         [aggregate stream] (fetch-aggregate-and-stream event-store id)
         additional-aggregates (map (fn [id] (fetch-aggregate event-store id)) additional-ids)]
-    (if-let [events (handle-command command (cons aggregate additional-aggregates))]
+    (if-let [events (apply handle-command command (cons aggregate additional-aggregates))]
       (commit-events event-store id stream events)
       ::error)))
 
