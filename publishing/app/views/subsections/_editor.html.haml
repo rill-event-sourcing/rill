@@ -1,21 +1,15 @@
-%div.panel.panel-default
-  %div.panel-heading
-    %div.pull-right
-      -# %span
-      -#   =link_to movedown_chapter_section_subsection_path(@chapter, @section, subsection), method: :post do
-      -#     %span.glyphicon.glyphicon-arrow-down
-      -#   =link_to moveup_chapter_section_subsection_path(@chapter, @section, subsection), method: :post do
-      -#     %span.glyphicon.glyphicon-arrow-up
-      -# %span
-      -#   -if subsection.active?
-      -#     =link_to deactivate_chapter_section_subsection_path(@chapter, @section, subsection), method: :post do
-      -#       %span.glyphicon.glyphicon-ok
-      -#   -else
-      -#     =link_to activate_chapter_section_subsection_path(@chapter, @section, subsection), method: :post do
-      -#       %span.glyphicon.glyphicon-remove
+%div{id: "subsection_panel_#{subsection.id}" }
+  %div.panel.panel-default
+    %div.panel-heading
+      %div.pull-right
+        %a{href: "javascript: $('#subsection_panel_#{subsection.id}').remove()"}
+          %span.glyphicon.glyphicon-minus
+      %h3.panel-title
+        = hidden_field_tag "section[subsections][#{star}][#{index}][id]", subsection.id
+        = hidden_field_tag "section[subsections][#{star}][#{index}][position]", subsection.position
+        = hidden_field_tag "section[subsections][#{star}][#{index}][stars]", subsection.stars
+        = text_field_tag "section[subsections][#{star}][#{index}][title]", subsection.title
+    %div.panel-body
+      = text_area_tag "section[subsections][#{star}][#{index}][description]", subsection.description, style: 'width: 100%; min-height: 100px;'
 
-    %h3.panel-title
-      = subsection_form.text_field :title
-
-  %div.panel-body
-    = subsection_form.text_area :description, style: 'width: 100%; min-height: 100px;'
+  = render partial: 'subsections/new', locals: { subsection: Subsection.new, star: star  }

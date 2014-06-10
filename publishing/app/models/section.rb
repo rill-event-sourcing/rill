@@ -13,7 +13,7 @@ class Section < ActiveRecord::Base
 
   scope :for_short_uuid, ->(id) { where(["SUBSTRING(CAST(id AS VARCHAR), 1, 8) = ?", id]) }
 
-  accepts_nested_attributes_for :subsections, allow_destroy: true
+  # accepts_nested_attributes_for :subsections, allow_destroy: true
 
   def self.find_by_uuid(id)
     sections = for_short_uuid(id)
@@ -33,17 +33,16 @@ class Section < ActiveRecord::Base
     }
   end
 
-  def as_full_json
-    {
-      id: id,
-      title: title,
-      description: description,
-      updated_at: I18n.l(updated_at, format: :long)
-    }
-  end
-
   def to_param
     "#{id[0,8]}"
+  end
+
+  def subsections=(subsection_hash)
+    subsection_hash.each do |stars, subsections|
+      subsections.each do |fake_key, subsection|
+        Rails.logger.debug "xxxxx #{subsection}"
+      end
+    end
   end
 
 end
