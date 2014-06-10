@@ -17,7 +17,7 @@
           - star.times do
             %span.glyphicon.glyphicon-star
           -if @star_subsections.length > 0
-            %span.badge= @star_subsections.length
+            %span.badge{id: "badge_#{star}"}= @star_subsections.length
           -else
             %span.glyphicon.glyphicon-exclamation-sign
 

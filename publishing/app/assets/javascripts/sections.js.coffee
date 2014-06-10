@@ -10,6 +10,7 @@ $ ->
           dataType: 'json'
           success: (data, textStatus, jqXHR) ->
             $(deleteItem).remove()
+            $('#badge_' + star).html(data.count)
             refreshPreview(star)
 
   $('.save').bind 'click', (event) ->

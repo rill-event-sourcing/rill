@@ -7,7 +7,7 @@ class SubsectionsController < ApplicationController
 
   def destroy
     if @subsection.destroy
-      render json: { status: :ok }
+      render json: { status: :ok, count: @section.subsections.find_by_star(@subsection.stars).count }
     else
       return head :unprocessable_entity
     end
