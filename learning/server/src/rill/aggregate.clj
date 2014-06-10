@@ -1,10 +1,5 @@
 (ns rill.aggregate)
 
-(defmulti handle-command
-  "Take a command and return a seq of events or nil on error"
-  (fn [command & _]
-    (class command)))
-
 (defmulti handle-event
   "Take an event and return the new state of the aggregate"
   (fn [aggregate event]
@@ -21,6 +16,4 @@
 (defmacro defaggregate [name attrs]
   `(defrecord ~name ~(into '[id] attrs)))
 
-(defmacro on-command [[aggregate-class command-class] & body]
-  `(defmethod handle-command [~aggregate-class ~command-class] [~'this ~'command]
-     ~@body))
+
