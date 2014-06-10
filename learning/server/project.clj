@@ -25,5 +25,7 @@
             [lein-ring "0.8.10"]
             [speclj "3.0.0"]]
   :test-paths ["test"]
-  :ring {:handler studyflow.system/web-handler})
+  :ring {:handler studyflow.system/web-handler}
+  :aliases {"validate-course-material" ["run" "-m" "studyflow.cli.validate-course-material-json"]})
+
 

@@ -43,7 +43,11 @@
    :name PlainText
    :chapters [Chapter]})
 
+(def parse-course-material*
+  (coerce/coercer CourseMaterial schema-tools/schema-coercion-matcher))
+
 (def parse-course-material
-  (schema-tools/strict-coercer CourseMaterial schema-tools/schema-coercion-matcher))
+  (schema-tools/strict-coercer parse-course-material*))
+
 
 

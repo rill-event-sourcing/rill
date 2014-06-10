@@ -20,10 +20,9 @@
   (some #(% schema) [uuid-coercion-matcher coerce/json-coercion-matcher]))
 
 (defn strict-coercer
-  [schema matcher]
-  (let [coercer (coerce/coercer schema matcher)]
-    (fn [raw]
-      (let [v (coercer raw)]
-        (if (schema.utils/error? v)
-          (throw+ (:error v))
-          v)))))
+  [coercer]
+  (fn [raw]
+    (let [v (coercer raw)]
+      (if (schema.utils/error? v)
+        (throw+ (:error v))
+        v))))

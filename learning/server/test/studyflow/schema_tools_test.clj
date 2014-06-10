@@ -30,7 +30,7 @@
             :a-number 1234
             :a-key :keyw}))))
 
-(def strict-coercer (tools/strict-coercer IdSchema id-coercer))
+(def strict-coercer (tools/strict-coercer (coerce/coercer IdSchema id-coercer)))
 
 (deftest strict-coercion-test
   (is (thrown? RuntimeException (strict-coercer {"invalid" "foo"}))))
