@@ -1,25 +1,14 @@
 (ns studyflow.web.api
-  (:require [studyflow.learning.read-model :as model]
+  (:require [clout-link.route :refer [handle]]
+            [rill.uuid :refer [new-id]]
+            [ring.middleware.json :refer [wrap-json-body
+                                          wrap-json-response]]
             [studyflow.learning.course-material :as material]
-            [studyflow.learning.command-handler :as cmd]
-            [ring.middleware.json :refer [wrap-json-response wrap-json-body]]
-            [studyflow.web.routes :as routes]
-            [clout-link.route :refer [handle]]
-            [rill.handler :as es-dispatcher]
+            [studyflow.learning.read-model :as read-model]
+            [studyflow.web.command-executor :refer [wrap-command-executor]]
             [studyflow.web.logging :refer [wrap-logging]]
-            [clojure.tools.logging :as log]
-            [rill.uuid :refer [new-id]]))
-
-(defn wrap-command-executor
-  "Given a set of ring handler that returns a command (or nil), execute
-  the command with the given event store and return status 500 or 200"
-  [ring-handler event-store]
-  (fn [request]
-    (when-let [command (ring-handler request)]
-      (log/info ["Executing command" (class command)])
-      (if (= :es-dispatcher/error (es-dispatcher/try-command event-store command))
-        {:status 500}
-        {:status 200}))))
+            [studyflow.web.routes :as routes]
+            [studyflow.learning.commands :as commands]))
 
 (defn wrap-middleware
   [f]
@@ -40,10 +29,18 @@ commands."
   (combine-ring-handlers
    (handle routes/update-course-material
            (fn [{{:keys [course-id]} :params body :body :as request}]
-             (studyflow.learning.commands/->UpdateCourse! (new-id) course-id (material/parse-course-material body))))))
+             (commands/->UpdateCourse! (new-id) course-id (material/parse-course-material body))))))
+
+(def query-handler
+  "This handler returns data for the json api (or nil)"
+  (combine-ring-handlers
+   (handle routes/query-course-material
+           (fn [{model :read-model {course-id :course-id} :params}]
+             (read-model/course-tree model course-id)))))
 
 (defn make-request-handler
   [event-store]
   (-> #'command-ring-handler
       (wrap-command-executor event-store)
+      query-handler
       wrap-middleware))

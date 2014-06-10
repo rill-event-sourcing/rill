@@ -1,5 +1,10 @@
 (ns rill.event-store)
 
 (defprotocol EventStore
-  (retrieve-event-stream [this aggregate-id])
-  (append-events [this aggregate-id previous-event-stream events]))
+  (retrieve-events-since [this stream-id from-version wait-for-seconds])
+  (append-events [this stream-id from-version events]))
+
+(defn retrieve-events
+  [store stream-id]
+  (retrieve-events-since store stream-id -1 0))
+

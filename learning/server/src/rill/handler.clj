@@ -1,7 +1,8 @@
 (ns rill.handler
-  (:require [rill.message :as msg]
-            [rill.aggregate :as aggregate]
-            [rill.event-store :as store]))
+  (:require [rill.aggregate :as aggregate]
+            [rill.event-store :as store]
+            [rill.event-stream :as stream]
+            [rill.message :as msg]))
 
 (defmulti aggregate-ids
   "given a command, return the ids of the aggregates that should be
@@ -32,43 +33,44 @@
     (throw (Exception. "Transactions must apply to exactly one aggregate"))))
 
 (defn commit-events
-  [store stream-id stream events]
+  [store stream-id from-version events]
   (validate-commit events)
   (let [stream-id-from-event (msg/stream-id (first events))]
     (if (= stream-id stream-id-from-event)
                                         ; events apply to current aggregate
-      (store/append-events store stream-id stream events)
+      (store/append-events store stream-id from-version events)
                                         ; events apply to newly created aggregate
-      (store/append-events store stream-id-from-event nil events))))
-
-(defn fetch-aggregate-and-stream
-  [event-store id]
-  (let [stream (store/retrieve-event-stream event-store id)
-        aggregate (aggregate/load-aggregate (:events stream))]
-    [aggregate stream]))
-
-(defn fetch-aggregate
-  [event-store id]
-  (first (fetch-aggregate-and-stream event-store id)))
+      (store/append-events store stream-id-from-event stream/empty-stream-version events))))
 
 (defmulti handle-command
   "handle command given aggregates. returns a seq of events"
   (fn [command & aggregates]
     (class command)))
 
+(defn update-aggregate-and-version
+  [aggregate version events]
+  (reduce (fn [[aggregate version] event]
+            [(aggregate/handle-event aggregate event) (inc version)])
+          [aggregate version]
+          events))
+
+(defn load-aggregate-and-version
+  [events]
+  (update-aggregate-and-version nil stream/empty-stream-version events))
+
 (defn prepare-aggregates
-  "fetch the primary event stream and aggregates for `command`"
+  "fetch the primary event stream id and version and aggregates for `command`"
   [event-store command]
   (let [[id & additional-ids] (aggregate-ids command)
-        [aggregate stream] (fetch-aggregate-and-stream event-store id)
-        additional-aggregates (map (partial fetch-aggregate event-store) additional-ids)]
-    (into [id stream aggregate] additional-aggregates)))
+        [aggregate current-version] (load-aggregate-and-version (store/retrieve-events event-store id))
+        additional-aggregates (map #(aggregate/load-aggregate (store/retrieve-events event-store %)) additional-ids)]
+    (into [id current-version aggregate] additional-aggregates)))
 
 (defn try-command
   [event-store command]
-  (let [[id stream & aggregates] (prepare-aggregates event-store command)]
+  (let [[id version & aggregates] (prepare-aggregates event-store command)]
     (if-let [events (apply handle-command command aggregates)]
-      (if (commit-events event-store id stream events)
+      (if (commit-events event-store id version events)
         true
         ::out-of-date)
       ::error)))

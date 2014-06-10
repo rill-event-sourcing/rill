@@ -3,8 +3,8 @@
             [rill.message :refer [defcommand defevent stream-id]]
             [clojure.test :refer [deftest testing is]]
             [rill.uuid :refer [new-id]]
-            [rill.event-store :refer [retrieve-event-stream]]
-            [rill.event-stream :refer [empty-stream]]
+            [rill.event-store :refer [retrieve-events]]
+            [rill.event-stream :refer [empty-stream empty-stream-version]]
             [rill.event-store.memory :refer [memory-store]]))
 
 (defcommand TestCommand1 [something my-id other-thing])
@@ -42,12 +42,12 @@
 
   (testing "preparation of command"
     (is (handler/prepare-aggregates (memory-store) (->HandlerCommand (new-id) :my-id))
-        [:my-id empty-stream nil]))
+        [:my-id empty-stream-version nil]))
   
   (testing "the events from a command handler get stored in the relevant aggregate stream"
     (let [store (memory-store)]
-      (is (= (retrieve-event-stream store my-aggregate-id) empty-stream))
+      (is (= (retrieve-events store my-aggregate-id) empty-stream))
       (is (true? (try-command store (->HandlerCommand (new-id) my-aggregate-id))))
-      (is (not= (retrieve-event-stream store my-aggregate-id) empty-stream))
-      (is (= (map class (:events (retrieve-event-stream store my-aggregate-id)))
+      (is (not= (retrieve-events store my-aggregate-id) empty-stream))
+      (is (= (map class (retrieve-events store my-aggregate-id))
              [TestEvent])))))

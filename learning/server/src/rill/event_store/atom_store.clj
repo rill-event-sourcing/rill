@@ -36,44 +36,50 @@ https://github.com/jankronquist/rock-paper-scissors-in-clojure/tree/master/event
     (lazy-cat (map #(load-event % message-constructor) event-uris)
               (if previous-uri (lazy-seq (load-events previous-uri message-constructor))))))
 
+(defn load-events-from-page [page message-constructor]
+  (let [links (:links page)
+        event-uris (reverse (map :id (:entries page)))]
+    (map #(load-event % message-constructor) event-uris)))
+
 (defn load-events [uri message-constructor]
   (load-events-from-list (client/get uri {:as :json}) message-constructor))
 
-;; three cases:
-;; 1) stream does not exist
-;; 2) stream exists, but has only a single page
-;; 3) stream exists and has multiple pages
+(defn forward-page-uri
+  [feed-uri from page-size]
+  (format "%s/%d/forward/%d" feed-uri from page-size))
 
-(defn load-events-from-feed [uri message-constructor]
-  (let [response (client/get uri {:as :json :throw-exceptions false})]
+(defn load-event-page
+  [feed-uri from page-size poll-seconds]
+  (let [response (client/get (forward-page-uri feed-uri from page-size)
+                             (merge {:as :json
+                                     :throw-exceptions false}
+                                    (if (and poll-seconds
+                                             (< 0 poll-seconds))
+                                      {"ES-LongPoll" (str poll-seconds)})))]
     (if-not (= 200 (:status response))
-      stream/empty-stream ; case 1
-      (let [body (:body response)
-            links (:links body)
-            last-link (uri-for-relation "last" links)
-            events (if last-link
-                     (load-events last-link message-constructor) ; case 3
-                     (load-events-from-list response message-constructor))] ; case 2
-        (stream/->EventStream (dec (count events)) ;; TODO: improve
-                                                   ;; efficiency of
-                                                   ;; this - get
-                                                   ;; version from
-                                                   ;; latest event
-                              events)))))
+      nil
+      (:body response))))
+
+(defn load-events-from-feed [uri message-constructor from-version wait-for-seconds]
+  (let [page (load-event-page uri from-version 20 wait-for-seconds)]
+    (if-not page
+      stream/empty-stream
+      (if-let [previous-uri (uri-for-relation "previous" (:links page))]
+        (concat (load-events-from-page page message-constructor) (load-events previous-uri message-constructor))
+        (load-events-from-page page message-constructor)))))
 
 (defn atom-event-store
   ([uri message-constructor]
-     (letfn [(stream-uri [aggregate-id] (str uri "/streams/" aggregate-id))]
+     (letfn [(stream-uri [stream-id] (str uri "/streams/" stream-id))]
        (reify store/EventStore
-         (retrieve-event-stream [this aggregate-id]
-           (load-events-from-feed (stream-uri aggregate-id) message-constructor))
+         (retrieve-events-since [this stream-id from-version wait-for-seconds]
+           (load-events-from-feed (stream-uri stream-id) from-version message-constructor))
 
          (append-events
-           [this aggregate-id previous-event-stream events]
-           (client/post (stream-uri aggregate-id)
+           [this stream-id from-version events]
+           (client/post (stream-uri stream-id)
                         {:body (json/generate-string (map to-eventstore-format events))
                          :content-type :json
-                         :headers {"ES-ExpectedVersion" (str (:version (or previous-event-stream stream/empty-stream)))}})))))
+                         :headers {"ES-ExpectedVersion" (str (:version (or from-version stream/empty-stream-version)))}})))))
   ([uri]
      (atom-event-store uri msg/strict-map->Message)))
-

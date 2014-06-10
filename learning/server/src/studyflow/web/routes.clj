@@ -3,4 +3,7 @@
 
 (defroute update-course-material :put "/api/internal/course/:course-id")
 
+(defroute query-course-material :get "/api/course-material/:course-id")
+
+
 

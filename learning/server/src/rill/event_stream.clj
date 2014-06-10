@@ -1,8 +1,7 @@
 (ns rill.event-stream)
 
-(defrecord EventStream [version events])
+(def empty-stream [])
 
-(def empty-stream (->EventStream -1 []))
-
+(def empty-stream-version -1)
 
 

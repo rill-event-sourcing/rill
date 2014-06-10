@@ -4,20 +4,23 @@
             [rill.event-stream :as stream]
             [slingshot.slingshot :refer [try+ throw+]]))
 
-
-(defn add-to-stream
-  [{:keys [version events]} new-events]
-  (stream/->EventStream (inc version) (into events new-events)))
-
 (deftype MemoryStore [state]
   store/EventStore
-  (retrieve-event-stream [this aggregate-id]
-    (get @state aggregate-id stream/empty-stream))
-  (append-events [this aggregate-id previous-event-stream events]
+  (retrieve-events-since [this stream-id from-version wait-for-seconds]
+    (loop [wait wait-for-seconds]
+      (let [substream (subvec (get @state stream-id stream/empty-stream) (inc from-version))]
+        (if (empty? substream)
+          (if (< 0 wait-for-seconds)
+            (do (Thread/sleep 200)
+                (recur (dec wait)))
+            substream)
+          substream))))
+
+  (append-events [this stream-id from-version events]
     (try+ (swap! state (fn [old-state]
-                         (let [current-stream (get old-state aggregate-id stream/empty-stream)]
-                           (if (= current-stream previous-event-stream)
-                             (assoc old-state aggregate-id (add-to-stream current-stream events))
+                         (let [current-stream (get old-state stream-id stream/empty-stream)]
+                           (if (= (dec (count current-stream)) from-version)
+                             (assoc old-state stream-id (into current-stream events))
                              (throw+ ::out-of-date)))))
           true
           (catch #(= % ::out-of-date) err
