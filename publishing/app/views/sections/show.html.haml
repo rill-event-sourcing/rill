@@ -27,10 +27,9 @@
       %div.tab-pane{id: "star-#{ star }", class: index == 0 ? "active" : ""}
 
         %div.col-md-6
-          = render partial: 'subsections/new', locals: { subsection: Subsection.new }
-          = form.fields_for :subsections, @star_subsections do |subsection_form|
-            = render partial: 'subsections/editor', locals: { subsection_form: subsection_form }
-            = render partial: 'subsections/new', locals: { subsection_form: subsection_form }
+          = render partial: 'subsections/new', locals: { subsection: Subsection.new, star: star }
+          - @star_subsections.each_with_index do |subsection, index|
+            = render partial: 'subsections/editor', locals: { subsection: subsection, index: index, star: star  }
 
         %div.col-md-6
           = render partial: 'subsections/preview', locals: { star: star }

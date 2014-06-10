@@ -18,53 +18,13 @@ class SectionsController < ApplicationController
     @all_subsections = @section.subsections.group_by(&:stars)
   end
 
-  # def new
-  #   @section = @chapter.sections.build
-  # end
-
-  # def edit
-  # end
-
-  # def create
-  #   @section = @chapter.sections.build(section_params)
-  #   if @section.save
-  #     redirect_to chapter_sections_path(@chapter), notice: 'Section was successfully created.'
-  #   else
-  #     render :new
-  #   end
-  # end
-
   def update
     if @section.update(section_params)
+      @section.update_attribute :updated_at, Time.now
       redirect_to chapter_section_path(@chapter, @section), notice: 'Section was successfully updated.'
     else
       render :show
     end
-  end
-
-  def destroy
-    @section.trash
-    redirect_to chapter_sections_path(@chapter), notice: 'Section was successfully destroyed.'
-  end
-
-  def activate
-    @section.activate
-    redirect_to chapter_sections_path(@chapter)
-  end
-
-  def deactivate
-    @section.deactivate
-    redirect_to chapter_sections_path(@chapter)
-  end
-
-  def moveup
-    @section.move_higher
-    redirect_to chapter_sections_path(@chapter), notice: 'Section was successfully moved up.'
-  end
-
-  def movedown
-    @section.move_lower
-    redirect_to chapter_sections_path(@chapter), notice: 'Section was successfully moved down.'
   end
 
 private
@@ -87,9 +47,9 @@ private
   end
 
   def section_params
-    params.require(:section).permit(:title, :description,
-      subsections_attributes: [:id, :title, :description]
-    )
+    params.require(:section).permit! #(:title, :description,
+    #   subsections: {star: []}
+    # )
   end
 
 end
