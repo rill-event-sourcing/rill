@@ -19,11 +19,14 @@ class SectionsController < ApplicationController
   end
 
   def update
-    if @section.update(section_params)
-      @section.update_attribute :updated_at, Time.now
-      redirect_to chapter_section_path(@chapter, @section), notice: 'Section was successfully updated.'
-    else
-      render :show
+    respond_to do |format|
+      if @section.update(section_params)
+        format.html { redirect_to chapter_section_path(@chapter, @section), notice: 'Section was successfully updated.' }
+        format.json { render json: @section.as_full_json }
+      else
+        format.html { render :show }
+        format.json { render json: @section.errors, status: :unprocessable_entity }
+      end
     end
   end
 

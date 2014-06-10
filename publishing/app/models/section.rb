@@ -33,14 +33,28 @@ class Section < ActiveRecord::Base
     }
   end
 
+  def as_full_json
+    {
+      id: id,
+      title: title,
+      description: description,
+      updated_at: I18n.l(updated_at, format: :long)
+    }
+  end
+
   def to_param
     "#{id[0,8]}"
   end
 
   def subsections=(subsection_hash)
-    subsection_hash.each do |stars, subsections|
-      subsections.each do |fake_key, subsection|
-        Rails.logger.debug "xxxxx #{subsection}"
+    subsection_hash.each do |stars, new_subsections|
+      new_subsections.values.each_with_index do |new_subsection, index|
+        my_subsection = subsections.find(new_subsection['id'])
+        my_subsection.update_attributes(
+          title: new_subsection['title'],
+          description: new_subsection['description'],
+          position: index
+        )
       end
     end
   end

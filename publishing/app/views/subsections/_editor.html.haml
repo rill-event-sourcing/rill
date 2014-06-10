@@ -1,9 +1,8 @@
-%div{id: "subsection_panel_#{subsection.id}" }
+%div{id: "subsection-panel-#{subsection.id}" }
   %div.panel.panel-default
     %div.panel-heading
       %div.pull-right
-        %a{href: "javascript: $('#subsection_panel_#{subsection.id}').remove()"}
-          %span.glyphicon.glyphicon-minus
+        %span.glyphicon.glyphicon-minus{class: 'delete_panel', data: {star: star, item: "#subsection-panel-#{subsection.id}", url: chapter_section_subsection_path(@chapter, @section, subsection) }}
       %h3.panel-title
         = hidden_field_tag "section[subsections][#{star}][#{index}][id]", subsection.id
         = hidden_field_tag "section[subsections][#{star}][#{index}][position]", subsection.position
