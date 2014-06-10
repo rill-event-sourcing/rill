@@ -1,12 +1,12 @@
-= form_for([@chapter, @section]) do |form|
+= form_for([@chapter, @section], html:{ id: "section-form" }) do |form|
   %div.row
     %div.col-md-10
       %h2= form.text_field :title
     %div.col-md-2
       %small
         Saved on:
-        = l @section.updated_at, format: :long
-        = submit_tag 'Save', class: "btn btn-default"
+        %div#edit-time= l @section.updated_at, format: :long
+        %span.btn.btn-default.save Save
   %p= form.text_area :description, cols: 60, rows: 4
 
   %ul.nav.nav-tabs#subsection-tabs
