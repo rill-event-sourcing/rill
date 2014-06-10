@@ -14,11 +14,4 @@
 #= require jquery_ujs
 #= require turbolinks
 #= require bootstrap
-#= require bootstrap-editable.min
 #= require_tree .
-
-$.fn.editable.defaults.mode = 'inline'
-$.fn.editable.defaults.showbuttons = false
-$.fn.editable.defaults.clear = false
-$.fn.editable.defaults.onblur = 'submit'
-$('.editable').editable()
