@@ -13,9 +13,9 @@
       -#   -else
       -#     =link_to activate_chapter_section_subsection_path(@chapter, @section, subsection), method: :post do
       -#       %span.glyphicon.glyphicon-remove
+
     %h3.panel-title
-      = "#{subsection.position}:"
-      = subsection.title
+      = subsection_form.text_field :title
 
   %div.panel-body
-    %textarea.col-md-12{rows: 7, id: "subsection_editor_#{ subsection.id[0,8] }", class: "editor", data: {subsection_id: subsection.id[0,8] } }= subsection.description
+    = subsection_form.text_area :description, style: 'width: 100%; min-height: 100px;'

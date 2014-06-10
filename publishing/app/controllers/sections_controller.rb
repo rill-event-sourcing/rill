@@ -15,7 +15,7 @@ class SectionsController < ApplicationController
   end
 
   def show
-    @subsections = @section.subsections.group_by(&:stars)
+    @all_subsections = @section.subsections.group_by(&:stars)
   end
 
   # def new
@@ -35,12 +35,10 @@ class SectionsController < ApplicationController
   # end
 
   def update
-    respond_to do |format|
-      if @section.update(section_params)
-        format.json { render json: @section.as_full_json, status: :ok }
-      else
-        format.json { render json: @section.errors, status: :unprocessable_entity }
-      end
+    if @section.update(section_params)
+      redirect_to chapter_section_path(@chapter, @section), notice: 'Section was successfully updated.'
+    else
+      render :show
     end
   end
 
@@ -89,7 +87,9 @@ private
   end
 
   def section_params
-    params.require(:section).permit(:title, :description)
+    params.require(:section).permit(:title, :description,
+      subsections_attributes: [:id, :title, :description]
+    )
   end
 
 end

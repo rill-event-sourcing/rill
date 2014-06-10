@@ -2,8 +2,6 @@ class Section < ActiveRecord::Base
   include Trashable, Activateable
 
   belongs_to :chapter
-  has_many :subsections, -> { order(:position) }
-
   acts_as_list :scope => :chapter
 
   has_many :subsections, -> { order(:position) }
@@ -14,6 +12,8 @@ class Section < ActiveRecord::Base
   default_scope { order(:position) }
 
   scope :for_short_uuid, ->(id) { where(["SUBSTRING(CAST(id AS VARCHAR), 1, 8) = ?", id]) }
+
+  accepts_nested_attributes_for :subsections, allow_destroy: true
 
   def self.find_by_uuid(id)
     sections = for_short_uuid(id)
