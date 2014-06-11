@@ -3,12 +3,7 @@ require 'rails_helper'
 feature "SelectCourses", :type => :feature do
   before do
     create(:course, name: 'Math', active: true)
-    create(:course, name: 'Engels, active: true')
-  end
-
-  scenario 'Visit home page' do
-    visit root_path
-    expect(page).to have_content('Home')
+    create(:course, name: 'Engels', active: true)
   end
 
   scenario 'Course selection', js: true do
@@ -18,11 +13,5 @@ feature "SelectCourses", :type => :feature do
     visit root_path
     expect(page).to have_select('course_id', :selected => 'Math')
   end
-
-  # scenario 'Course list' do
-  #   visit courses_path
-  #   expect(page).to have_content('Courses')
-  #   expect(page).to have_content('New Course')
-  # end
 
 end
