@@ -11,6 +11,10 @@ test:
   <<: *default
   database: editors_test
 
+staging:
+  <<: *default
+  database: editors_staging
+
 production:
   <<: *default
   database: editors_production

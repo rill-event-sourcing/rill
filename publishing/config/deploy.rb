@@ -1,9 +1,9 @@
 set :application, 'my_app_name'
-set :repo_url, 'git@example.com:me/my_repo.git'
+set :repo_url, 'git@github.com:StudyFlow/Gibbon.git'
 
 # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }
 
-# set :deploy_to, '/var/www/my_app'
+set :deploy_to, '/rails'
 # set :scm, :git
 
 # set :format, :pretty
@@ -35,6 +35,16 @@ namespace :deploy do
     end
   end
 
+  # We have the Rails application in a subdirectory rails_app
+  # Capistrano doesn't provide an elegant way to deal with that
+  # for the git case. (For subversion it is straightforward.)
+  task :mv_rails_app_dir do
+    on roles(:app) do
+      execute "mv #{release_path}/publishing/* #{release_path}/ "
+    end
+  end
+
   after :finishing, 'deploy:cleanup'
+  after 'deploy:updating', 'deploy:mv_rails_app_dir'
 
 end
