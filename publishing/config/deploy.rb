@@ -1,7 +1,7 @@
 set :application, 'my_app_name'
 set :repo_url, 'git@github.com:StudyFlow/Gibbon.git'
 
-# ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }
+ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }
 
 set :deploy_to, '/rails'
 # set :scm, :git
