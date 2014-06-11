@@ -69,9 +69,9 @@ refreshPreview = (star) ->
     error: (jqXHR, textStatus, errorThrown) ->
       console.log "AJAX Error: #{ textStatus }"
     success: (data, textStatus, jqXHR) ->
-      setPreview(data)
+      setPreview(star, data)
 
-setPreview = (data) ->
+setPreview = (star, data) ->
   $('#preview_' + star).contents().find('body').html(data)
   height = $('#preview_' + star)[0].contentWindow.document.body.scrollHeight
   $('#preview_' + star).css('height', height)
