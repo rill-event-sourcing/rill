@@ -27,7 +27,7 @@ RSpec.describe Chapter, :type => :model do
   end
 
   it "should be activateable" do
-    @chapter = build(:chapter)
+    @chapter = build(:chapter, active: false)
     expect(@chapter.active).to eq false
     @chapter.activate
     expect(@chapter.active).to eq true

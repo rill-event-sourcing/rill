@@ -28,7 +28,7 @@ RSpec.describe Course, :type => :model do
   end
 
   it "should be activateable" do
-    @course = build(:course)
+    @course = build(:course, active: false)
     expect(@course.active).to eq false
     @course.activate
     expect(@course.active).to eq true
