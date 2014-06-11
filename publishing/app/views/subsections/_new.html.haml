@@ -1,4 +1,4 @@
-%div.panel.panel-default{id: "panel_#{ @subsection ? @subsection.id : 'new' }"}
+%div.panel.panel-default{id: "panel_#{ @index }"}
   %div.panel-body
     %div.pull-right
-      %span.glyphicon.glyphicon-plus.add-subsection{data: { after: "panel_#{ @subsection ? @subsection.id : 'new' }", star: @star, url: chapter_section_subsections_path(@chapter, @section, stars: @star) } }
+      %span.glyphicon.glyphicon-plus.add-subsection{data: { after: "panel_#{ @index }", star: @star, url: chapter_section_subsections_path(@chapter, @section, stars: @star) } }
