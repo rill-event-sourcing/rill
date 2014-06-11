@@ -31,6 +31,16 @@ class Subsection < ActiveRecord::Base
     }
   end
 
+  def as_full_json
+    {
+      id: id,
+      position: position,
+      stars: stars,
+      title: title,
+      description: description
+    }
+  end
+
   def to_param
     "#{id[0,8]}"
   end
