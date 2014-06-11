@@ -18,6 +18,19 @@ class SectionsController < ApplicationController
     @all_subsections = @section.subsections.group_by(&:stars)
   end
 
+  def new
+    @section = Section.new
+  end
+
+  def create
+    @section = @chapter.sections.build(section_params)
+    if @section.save
+      redirect_to [@chapter, @section]
+    else
+      render 'new'
+    end
+  end
+
   def update
     respond_to do |format|
       if @section.update(section_params)
@@ -50,7 +63,8 @@ private
   end
 
   def section_params
-    params.require(:section).permit! #(:title, :description,
+    params.require(:section).permit!
+    #(:title, :description,
     #   subsections: {star: []}
     # )
   end
