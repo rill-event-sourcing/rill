@@ -25,6 +25,8 @@ bindAddButtons = ->
         error: (jqXHR, textStatus, errorThrown) ->
           console.log "AJAX Error: #{ textStatus }"
         success: (data, textStatus, jqXHR) ->
+          console.log 'after: #' + after
+          console.log 'data:' + data
           $('#' + after).after(data)
           bindAddButtons()
           bindDeleteButtons()
@@ -44,7 +46,7 @@ bindDeleteButtons = ->
           error: (jqXHR, textStatus, errorThrown) ->
             console.log "AJAX Error: #{ textStatus }"
           success: (data, textStatus, jqXHR) ->
-            $(deleteItem).remove()
+            $('#' + deleteItem).remove()
             updateCounter(star)
             refreshPreview(star)
 

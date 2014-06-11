@@ -12,6 +12,7 @@ class SubsectionsController < ApplicationController
       title: '',
       description: ''
     )
+    @star = @subsection.stars
     if @subsection.save
       render partial: 'edit'
     else
