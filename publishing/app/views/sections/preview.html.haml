@@ -4,4 +4,7 @@
       = l DateTime.now
   %div.panel-body
     -@subsections.each do |subsection|
+      %div
+        %strong= subsection.title.html_safe
       %div= subsection.description.html_safe
+      %br

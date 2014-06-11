@@ -12,34 +12,27 @@ $ ->
             $(deleteItem).remove()
             $('#badge_' + star).html(data.count)
             refreshPreview(star)
-
   $('.save').bind 'click', (event) ->
-    form =$("#section-form")
-    url = form.context.URL
-    $("#edit-time").html('<img src="/assets/spinner.gif" alt="Wait" />')
-    $.ajax url,
-        type: 'POST'
-        dataType: 'json'
-        data: form.serialize()
-        success: (data, textStatus, jqXHR) ->
-          $("#edit-time").html(data.updated_at)
-          refreshPreview(1)
-          refreshPreview(2)
-          refreshPreview(3)
-
-
-
+    save()
+  setTimeout(save,100)
+  setInterval(save,25000)
 #################################################################################
-#
-# saveSection = (url) ->
-#   values = $('.editable').editable('getValue')
-#   $("#edit-time").html('<img src="/assets/spinner.gif" alt="Wait" />')
-#   $.ajax url,
-#       type: 'PUT'
-#       dataType: 'json'
-#       data: { section: values }
-#       success: (data, textStatus, jqXHR) ->
-#         $("#edit-time").html(data.updated_at)
+
+save = ->
+  form =$("#section-form")
+  url = form.context.URL
+  $("#edit-time").html('<img src="/assets/spinner.gif" alt="Wait" />')
+  $.ajax url,
+    type: 'POST'
+    dataType: 'json'
+    data: form.serialize()
+    success: (data, textStatus, jqXHR) ->
+      $("#edit-time").html(data.updated_at)
+      refreshPreview(1)
+      refreshPreview(2)
+      refreshPreview(3)
 
 refreshPreview = (star) ->
   $('#preview_' + star).attr("src", $('#preview_' + star).attr("src"))
+  height = $('#preview_' + star)[0].contentWindow.document.body.scrollHeight
+  $('#preview_' + star).css('height', height)
