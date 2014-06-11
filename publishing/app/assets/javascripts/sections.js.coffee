@@ -55,6 +55,8 @@ save = ->
     type: 'POST'
     dataType: 'json'
     data: form.serialize()
+    error: (jqXHR, textStatus, errorThrown) ->
+      console.log "AJAX Error: #{ textStatus }"
     success: (data, textStatus, jqXHR) ->
       $("#edit-time").html(data.updated_at)
       refreshPreview(1)
