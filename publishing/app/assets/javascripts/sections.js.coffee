@@ -1,5 +1,3 @@
-################################################################################
-
 updateCounter = (star) ->
   nr_of_subsections = $('.subsection-panel.star-' + star).length
   $('#badge_' + star).html(nr_of_subsections)
@@ -59,12 +57,16 @@ save = ->
       console.log "AJAX Error: #{ textStatus }"
     success: (data, textStatus, jqXHR) ->
       $("#edit-time").html(data.updated_at)
-      refreshPreview(1)
-      refreshPreview(2)
-      refreshPreview(3)
+      refreshAllPreviews()
+
+refreshAllPreviews = ->
+  refreshPreview(1)
+  refreshPreview(2)
+  refreshPreview(3)
 
 refreshPreview = (star) ->
   url =  $('#preview_' + star).data('url')
+  console.log url
   $.get url, (data) ->
     $('#preview_' + star).contents().find('body').html(data)
   height = $('#preview_' + star)[0].contentWindow.document.body.scrollHeight
@@ -80,3 +82,4 @@ $ ->
   bindSaveButton()
   setTimeout(save,100)
   setInterval(save,10000)
+  refreshAllPreviews()
