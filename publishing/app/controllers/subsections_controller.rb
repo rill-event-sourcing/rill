@@ -3,29 +3,31 @@ class SubsectionsController < ApplicationController
   before_action :set_course
   before_action :set_chapter
   before_action :set_section
-  before_action :set_subsection
+  before_action :set_subsection, except: [:index, :new, :create]
 
-  def destroy
-    if @subsection.destroy
-      render json: { status: :ok, count: @section.subsections.find_by_star(@subsection.stars).count }
+  def create
+    Rails.logger.debug "xxxxxx #{ params }"
+    @subsection = @section.subsections.build(
+      stars: params[:stars],
+      title: '',
+      description: ''
+    )
+    if @subsection.save
+      render partial: 'edit'
     else
+      Rails.logger.debug 'xxxxxx'+ @subsection.errors.full_messages.join(', ')
       return head :unprocessable_entity
     end
   end
 
-
-def update
-  respond_to do |format|
-    if @section.update(section_params)
-      format.html { redirect_to chapter_section_path(@chapter, @section), notice: 'Section was successfully updated.' }
-      format.json { render json: @section.as_full_json }
-    else
-      format.html { render :show }
-      format.json { render json: @section.errors, status: :unprocessable_entity }
-    end
+  def destroy
+    @subsection.destroy if @subsection
+    # if @subsection.destroy
+      render json: { status: :ok } #, count: @section.subsections.find_by_star(@subsection.stars).count }
+    # else
+    #   return head :unprocessable_entity
+    # end
   end
-end
-
 
 private
 
@@ -42,7 +44,7 @@ private
   end
 
   def set_subsection
-    @subsection = @section.subsections.find_by_uuid(params[:id])
+    @subsection = @section.subsections.find_by_uuid(params[:id], false)
   end
 
 end

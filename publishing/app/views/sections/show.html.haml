@@ -23,13 +23,16 @@
 
   %div.tab-content
     - Star.all.each_with_index do |star, index|
-      -@star_subsections = @all_subsections[star]||[]
+      -@star = star
+      -@star_subsections = @all_subsections[@star]||[]
       %div.tab-pane{id: "star-#{ star }", class: index == 0 ? "active" : ""}
 
-        %div.col-md-6{id: "content_col_#{star}"}
-          = render partial: 'subsections/new', locals: { subsection: Subsection.new, star: star }
+        %div.col-md-6
+          -@index = 'new'
+          = render partial: 'subsections/new'
           - @star_subsections.each_with_index do |subsection, index|
-            = render partial: 'subsections/editor', locals: { subsection: subsection, index: index, star: star  }
+            -@subsection, @index = subsection, index
+            = render partial: 'subsections/edit'
 
-        %div.col-md-6{id: "preview_col_#{star}"}
-          = render partial: 'subsections/preview', locals: { star: star }
+        %div.col-md-6
+          = render partial: 'subsections/preview'

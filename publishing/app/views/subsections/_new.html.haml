@@ -1,5 +1,4 @@
-%div.panel.panel-default
+%div.panel.panel-default{id: "panel_#{ @index }"}
   %div.panel-body
-    = link_to chapter_section_path(@chapter, @section) do
-      %div.pull-right
-        %span.glyphicon.glyphicon-plus
+    %div.pull-right
+      %span.glyphicon.glyphicon-plus.add-subsection{data: { after: "panel_#{ @index }", star: @star, url: chapter_section_subsections_path(@chapter, @section, stars: @star) } }

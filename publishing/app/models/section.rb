@@ -15,9 +15,9 @@ class Section < ActiveRecord::Base
 
   # accepts_nested_attributes_for :subsections, allow_destroy: true
 
-  def self.find_by_uuid(id)
+  def self.find_by_uuid(id, with_404 = true)
     sections = for_short_uuid(id)
-    raise ActiveRecord::RecordNotFound if sections.empty?
+    raise ActiveRecord::RecordNotFound if sections.empty? && with_404
     raise StudyflowPublishing::ShortUuidDoubleError.new("Multiple sections found for uuid: #{id}") if sections.length > 1
     sections.first
   end
