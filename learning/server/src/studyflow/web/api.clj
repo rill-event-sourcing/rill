@@ -38,6 +38,12 @@ commands."
            (fn [{model :read-model {course-id :course-id} :params}]
              (read-model/course-tree model course-id)))))
 
+
+(defn wrap-read-model
+  [event-store]
+  ()
+  )
+
 (defn make-request-handler
   [event-store]
   (-> #'command-ring-handler
