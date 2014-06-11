@@ -2,12 +2,14 @@
   %div.row
     %div.col-md-10
       %h2= form.text_field :title
+      %p= form.text_area :description, cols: 60, rows: 4
     %div.col-md-2
+      %span.btn.btn-default.save Save
+      %br
       %small
         Saved on:
         %div#edit-time= l @section.updated_at, format: :long
-        %span.btn.btn-default.save Save
-  %p= form.text_area :description, cols: 60, rows: 4
+
 
   %ul.nav.nav-tabs#subsection-tabs
     - Star.all.each_with_index do |star, index|
