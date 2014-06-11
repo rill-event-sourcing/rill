@@ -3,6 +3,8 @@ $ ->
   bindAddButtons()
   bindDeleteButtons()
   bindSaveButton()
+  setTimeout(save,100)
+  setInterval(save,25000)
 
 #################################################################################
 
@@ -40,12 +42,10 @@ bindDeleteButtons = ->
             $(deleteItem).remove()
             $('#badge_' + star).html(data.count)
             refreshPreview(star)
-<<<<<<< HEAD
+
+bindSaveButton = ->
   $('.save').bind 'click', (event) ->
     save()
-  setTimeout(save,100)
-  setInterval(save,25000)
-#################################################################################
 
 save = ->
   form =$("#section-form")
@@ -60,23 +60,6 @@ save = ->
       refreshPreview(1)
       refreshPreview(2)
       refreshPreview(3)
-=======
-
-bindSaveButton = ->
-  $('.save').bind 'click', (event) ->
-    form =$("#section-form")
-    url = form.context.URL
-    $("#edit-time").html('<img src="/assets/spinner.gif" alt="Wait" />')
-    $.ajax url,
-        type: 'PUT'
-        dataType: 'json'
-        data: form.serialize()
-        error: (jqXHR, textStatus, errorThrown) ->
-          console.log "AJAX Error: #{ textStatus }"
-        success: (data, textStatus, jqXHR) ->
-          $('#edit-time').html(data.updated_at)
-          refreshPreview(star)
->>>>>>> added add button
 
 refreshPreview = (star) ->
   $('#preview_' + star).attr("src", $('#preview_' + star).attr("src"))
