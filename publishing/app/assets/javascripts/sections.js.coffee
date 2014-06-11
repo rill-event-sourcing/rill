@@ -4,7 +4,7 @@ $ ->
   bindDeleteButtons()
   bindSaveButton()
   setTimeout(save,100)
-  setInterval(save,25000)
+  setInterval(save,10000)
 
 ################################################################################
 
@@ -68,6 +68,8 @@ save = ->
       refreshPreview(3)
 
 refreshPreview = (star) ->
-  $('#preview_' + star).attr("src", $('#preview_' + star).attr("src"))
+  url =  $('#preview_' + star).data('url')
+  $.get url, (data) ->
+    $('#preview_' + star).contents().find('body').html(data)
   height = $('#preview_' + star)[0].contentWindow.document.body.scrollHeight
   $('#preview_' + star).css('height', height)
