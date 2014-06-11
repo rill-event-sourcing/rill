@@ -2,7 +2,7 @@
   %div.panel.panel-default
     %div.panel-heading
       %div.pull-right
-        %span.glyphicon.glyphicon-minus.delete-subsection{data: {star: @star, item: "#subsection-panel-#{ @subsection.id }", url: chapter_section_subsection_path(@chapter, @section, @subsection) } }
+        %span.glyphicon.glyphicon-minus.delete-subsection{data: {star: @star, item: "subsection-panel-#{ @subsection.id }", url: chapter_section_subsection_path(@chapter, @section, @subsection) } }
       %h3.panel-title
         = @subsection.id[0,8]
         = hidden_field_tag "section[subsections][#{@star}][#{@index}][id]", @subsection.id

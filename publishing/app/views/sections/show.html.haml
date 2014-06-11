@@ -30,7 +30,6 @@
       %div.tab-pane{id: "star-#{ star }", class: index == 0 ? "active" : ""}
 
         %div.col-md-6
-          -@index = 'new'
           = render partial: 'subsections/new'
           - @star_subsections.each_with_index do |subsection, index|
             -@subsection, @index = subsection, index
