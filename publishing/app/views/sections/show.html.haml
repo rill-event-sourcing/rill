@@ -18,10 +18,7 @@
         %a{href: "#star-#{star}", data: {toggle: "tab"} }
           - star.times do
             %span.glyphicon.glyphicon-star
-          -if @star_subsections.length > 0
-            %span.badge{id: "badge_#{star}"}= @star_subsections.length
-          -else
-            %span.glyphicon.glyphicon-exclamation-sign
+          %span.badge{id: "badge_#{star}"}= @star_subsections.length
 
   %div.tab-content
     - Star.all.each_with_index do |star, index|
