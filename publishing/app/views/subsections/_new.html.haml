@@ -1,4 +1,4 @@
-%div.panel.panel-default{id: @subsection ? "" : "panel-new"}
+%div.panel.panel-default{id: @subsection ? "" : "panel-new-#{ @star }"}
   %div.panel-body
     %div.pull-right
-      %span.glyphicon.glyphicon-plus.add-subsection{data: { after: @subsection ? "subsection-panel-#{ @subsection.id }" : "panel-new", star: @star, url: chapter_section_subsections_path(@chapter, @section, stars: @star) } }
+      %span.glyphicon.glyphicon-plus.add-subsection{data: { after: @subsection ? "subsection-panel-#{ @subsection.id }" : "panel-new-#{ @star }", star: @star, url: chapter_section_subsections_path(@chapter, @section, stars: @star) } }
