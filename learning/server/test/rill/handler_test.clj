@@ -7,35 +7,35 @@
             [rill.event-stream :refer [empty-stream empty-stream-version]]
             [rill.event-store.memory :refer [memory-store]]))
 
-(defcommand TestCommand1 [something my-id other-thing])
-(defaggregate-ids TestCommand1 my-id)
+(defcommand HandlerTestCommand1 [something my-id other-thing])
+(defaggregate-ids HandlerTestCommand1 my-id)
 
-(defcommand TestCommand2 [id-one something id-two other-thing])
-(defaggregate-ids TestCommand2 id-one id-two)
+(defcommand HandlerTestCommand2 [id-one something id-two other-thing])
+(defaggregate-ids HandlerTestCommand2 id-one id-two)
 
 (deftest aggregate-ids-test
-  (is (= (aggregate-ids (->TestCommand1 12345 :a :b :c))
+  (is (= (aggregate-ids (->HandlerTestCommand1 12345 :a :b :c))
          [:b]))
-  (is (= (aggregate-ids (->TestCommand2 12345 :a :b :c :d))
+  (is (= (aggregate-ids (->HandlerTestCommand2 12345 :a :b :c :d))
          [:a :c])))
 
 (defcommand HandlerCommand [agg-id])
 (defaggregate-ids HandlerCommand agg-id)
 
-(defevent TestEvent [agg-id given-aggregate])
+(defevent HandlerTestEvent [agg-id given-aggregate])
 (defmethod handle-command HandlerCommand
   [command my-aggregate]
-  [(->TestEvent (new-id) (:agg-id command) my-aggregate)])
+  [(->HandlerTestEvent (new-id) (:agg-id command) my-aggregate)])
 
 (def my-aggregate-id 2798)
 
 (deftest test-try-command
   (testing "we get events out of the command"
     (is (= (map class (handle-command (->HandlerCommand (new-id) :my-id) :foo))
-           [TestEvent]))
+           [HandlerTestEvent]))
     (is (= (:given-aggregate (first (handle-command (->HandlerCommand (new-id) :my-id) :foo)))
            :foo))
-    (is (= (stream-id (->TestEvent (new-id) my-aggregate-id :foo))
+    (is (= (stream-id (->HandlerTestEvent (new-id) my-aggregate-id :foo))
            my-aggregate-id))
     (is (= (stream-id (first (handle-command (->HandlerCommand (new-id) my-aggregate-id) :foo)))
            my-aggregate-id)))
@@ -50,4 +50,4 @@
       (is (true? (try-command store (->HandlerCommand (new-id) my-aggregate-id))))
       (is (not= (retrieve-events store my-aggregate-id) empty-stream))
       (is (= (map class (retrieve-events store my-aggregate-id))
-             [TestEvent])))))
+             [HandlerTestEvent])))))

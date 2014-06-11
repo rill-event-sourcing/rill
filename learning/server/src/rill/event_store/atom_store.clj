@@ -13,7 +13,7 @@ https://github.com/jankronquist/rock-paper-scissors-in-clojure/tree/master/event
 (defn to-eventstore-format [event]
   {:eventId (msg/id event)
    :eventType (.replace (name (msg/type event)) \. \_)
-   :data (msg/data event)})
+   :data (assoc (msg/data event) :id (msg/id event))})
 
 (defn uri-for-relation [relation links]
   (:uri (first (filter #(= relation (:relation %)) links))))
@@ -46,7 +46,7 @@ https://github.com/jankronquist/rock-paper-scissors-in-clojure/tree/master/event
 
 (defn forward-page-uri
   [feed-uri from page-size]
-  (format "%s/%d/forward/%d" feed-uri from page-size))
+  (format "%s/%d/forward/%d" feed-uri (if (= from -1) 0 from) page-size))
 
 (defn load-event-page
   [feed-uri from page-size poll-seconds]
@@ -60,7 +60,7 @@ https://github.com/jankronquist/rock-paper-scissors-in-clojure/tree/master/event
       nil
       (:body response))))
 
-(defn load-events-from-feed [uri message-constructor from-version wait-for-seconds]
+(defn load-events-from-feed [uri from-version message-constructor wait-for-seconds]
   (let [page (load-event-page uri from-version 20 wait-for-seconds)]
     (if-not page
       stream/empty-stream
@@ -73,13 +73,15 @@ https://github.com/jankronquist/rock-paper-scissors-in-clojure/tree/master/event
      (letfn [(stream-uri [stream-id] (str uri "/streams/" stream-id))]
        (reify store/EventStore
          (retrieve-events-since [this stream-id from-version wait-for-seconds]
-           (load-events-from-feed (stream-uri stream-id) from-version message-constructor))
+           (load-events-from-feed (stream-uri stream-id) from-version message-constructor wait-for-seconds))
 
          (append-events
            [this stream-id from-version events]
            (client/post (stream-uri stream-id)
                         {:body (json/generate-string (map to-eventstore-format events))
                          :content-type :json
-                         :headers {"ES-ExpectedVersion" (str (:version (or from-version stream/empty-stream-version)))}})))))
+                         :headers {"ES-ExpectedVersion" (str (if (< 1 from-version)
+                                                               (dec from-version)
+                                                               from-version))}})))))
   ([uri]
      (atom-event-store uri msg/strict-map->Message)))

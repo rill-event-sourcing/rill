@@ -17,7 +17,8 @@
                  [ring.middleware.logger "0.4.0"]
                  [ring-mock "0.1.5"]
                  [ring/ring-devel "1.1.0"]
-                 [org.clojure/core.async "0.1.303.0-886421-alpha"]]
+                 [org.clojure/core.async "0.1.303.0-886421-alpha"]
+                 [me.raynes/conch "0.7.0"]]
   :profiles {:dev
              {:dependencies
               [[org.clojure/tools.trace "0.7.5"]
