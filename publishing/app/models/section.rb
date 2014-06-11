@@ -57,6 +57,7 @@ class Section < ActiveRecord::Base
         )
       end
     end
+    self.updated_at= Time.now
   end
 
 end
