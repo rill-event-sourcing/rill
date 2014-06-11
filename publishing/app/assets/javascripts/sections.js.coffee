@@ -23,7 +23,9 @@ $ ->
         data: form.serialize()
         success: (data, textStatus, jqXHR) ->
           $("#edit-time").html(data.updated_at)
-          refreshPreview(star)
+          refreshPreview(1)
+          refreshPreview(2)
+          refreshPreview(3)
 
 
 
