@@ -12,8 +12,9 @@ class SubsectionsController < ApplicationController
       title: '',
       description: ''
     )
-    @star = @subsection.stars
     if @subsection.save
+      @star = @subsection.stars
+      @index = @subsection.id
       render partial: 'edit'
     else
       Rails.logger.debug 'xxxxxx'+ @subsection.errors.full_messages.join(', ')
