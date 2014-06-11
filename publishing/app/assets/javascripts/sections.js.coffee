@@ -6,9 +6,14 @@ $ ->
   setTimeout(save,100)
   setInterval(save,25000)
 
-#################################################################################
+################################################################################
+
+updateCounter = (star) ->
+  nr_of_subsections = $('.subsection-panel.star-' + star).length
+  $('#badge_' + star).html(nr_of_subsections)
 
 bindAddButtons = ->
+  $('.add-subsection').unbind()
   $('.add-subsection').bind 'click', (event) ->
     star = $(event.currentTarget).data('star')
     # position = $(event.currentTarget).data('star')
@@ -21,13 +26,13 @@ bindAddButtons = ->
           console.log "AJAX Error: #{ textStatus }"
         success: (data, textStatus, jqXHR) ->
           $('#' + after).after(data)
-          # console.log $('').count()
-          # $('#badge_' + star).html(count)
           bindAddButtons()
           bindDeleteButtons()
+          updateCounter(star)
           refreshPreview(star)
 
 bindDeleteButtons = ->
+  $('.delete-subsection').unbind()
   $('.delete-subsection').bind 'click', (event) ->
     if confirm('Are you sure you want to delete this?')
       deleteItem = $(event.currentTarget).data('item')
@@ -40,10 +45,11 @@ bindDeleteButtons = ->
             console.log "AJAX Error: #{ textStatus }"
           success: (data, textStatus, jqXHR) ->
             $(deleteItem).remove()
-            $('#badge_' + star).html(data.count)
+            updateCounter(star)
             refreshPreview(star)
 
 bindSaveButton = ->
+  $('.save').unbind()
   $('.save').bind 'click', (event) ->
     save()
 
