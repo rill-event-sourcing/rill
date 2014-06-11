@@ -66,11 +66,16 @@ refreshAllPreviews = ->
 
 refreshPreview = (star) ->
   url =  $('#preview_' + star).data('url')
-  console.log url
-  $.get url, (data) ->
-    $('#preview_' + star).contents().find('body').html(data)
-  height = $('#preview_' + star)[0].contentWindow.document.body.scrollHeight
-  $('#preview_' + star).css('height', height)
+  #console.log url
+  $.ajax url,
+    type: 'GET'
+    dataType: 'html'
+    error: (jqXHR, textStatus, errorThrown) ->
+      console.log "AJAX Error: #{ textStatus }"
+    success: (data, textStatus, jqXHR) ->
+      $('#preview_' + star).contents().find('body').html(data)
+      height = $('#preview_' + star)[0].contentWindow.document.body.scrollHeight
+      $('#preview_' + star).css('height', height)
 
 
 ################################################################################
@@ -82,4 +87,3 @@ $ ->
   bindSaveButton()
   setTimeout(save,100)
   setInterval(save,10000)
-  refreshAllPreviews()
