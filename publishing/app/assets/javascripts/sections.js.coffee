@@ -1,11 +1,3 @@
-# on load run:
-$ ->
-  bindAddButtons()
-  bindDeleteButtons()
-  bindSaveButton()
-  setTimeout(save,100)
-  setInterval(save,10000)
-
 ################################################################################
 
 updateCounter = (star) ->
@@ -75,3 +67,14 @@ refreshPreview = (star) ->
     $('#preview_' + star).contents().find('body').html(data)
   height = $('#preview_' + star)[0].contentWindow.document.body.scrollHeight
   $('#preview_' + star).css('height', height)
+
+
+################################################################################
+
+# on load run:
+$ ->
+  bindAddButtons()
+  bindDeleteButtons()
+  bindSaveButton()
+  setTimeout(save,100)
+  setInterval(save,10000)
