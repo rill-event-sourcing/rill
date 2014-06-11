@@ -6,7 +6,6 @@ bindAddButtons = ->
   $('.add-subsection').unbind()
   $('.add-subsection').bind 'click', (event) ->
     star = $(event.currentTarget).data('star')
-    # position = $(event.currentTarget).data('star')
     after = $(event.currentTarget).data('after')
     url = $(event.currentTarget).data('url')
     $.ajax url,
@@ -15,8 +14,6 @@ bindAddButtons = ->
         error: (jqXHR, textStatus, errorThrown) ->
           console.log "AJAX Error: #{ textStatus }"
         success: (data, textStatus, jqXHR) ->
-          console.log 'after: #' + after
-          console.log 'data:' + data
           $('#' + after).after(data)
           bindAddButtons()
           bindDeleteButtons()
@@ -26,19 +23,19 @@ bindAddButtons = ->
 bindDeleteButtons = ->
   $('.delete-subsection').unbind()
   $('.delete-subsection').bind 'click', (event) ->
-    if confirm('Are you sure you want to delete this?')
-      deleteItem = $(event.currentTarget).data('item')
-      star = $(event.currentTarget).data('star')
-      url = $(event.currentTarget).data('url')
-      $.ajax url,
-          type: 'DELETE'
-          dataType: 'json'
-          error: (jqXHR, textStatus, errorThrown) ->
-            console.log "AJAX Error: #{ textStatus }"
-          success: (data, textStatus, jqXHR) ->
-            $('#' + deleteItem).remove()
-            updateCounter(star)
-            refreshPreview(star)
+    # if confirm('Are you sure you want to delete this?')
+    deleteItem = $(event.currentTarget).data('item')
+    star = $(event.currentTarget).data('star')
+    url = $(event.currentTarget).data('url')
+    $.ajax url,
+        type: 'DELETE'
+        dataType: 'json'
+        error: (jqXHR, textStatus, errorThrown) ->
+          console.log "AJAX Error: #{ textStatus }"
+        success: (data, textStatus, jqXHR) ->
+          $('#' + deleteItem).remove()
+          updateCounter(star)
+          refreshPreview(star)
 
 bindSaveButton = ->
   $('.save').unbind()
@@ -66,17 +63,18 @@ refreshAllPreviews = ->
 
 refreshPreview = (star) ->
   url =  $('#preview_' + star).data('url')
-  #console.log url
   $.ajax url,
     type: 'GET'
     dataType: 'html'
     error: (jqXHR, textStatus, errorThrown) ->
       console.log "AJAX Error: #{ textStatus }"
     success: (data, textStatus, jqXHR) ->
-      $('#preview_' + star).contents().find('body').html(data)
-      height = $('#preview_' + star)[0].contentWindow.document.body.scrollHeight
-      $('#preview_' + star).css('height', height)
+      setPreview(data)
 
+setPreview = (data) ->
+  $('#preview_' + star).contents().find('body').html(data)
+  height = $('#preview_' + star)[0].contentWindow.document.body.scrollHeight
+  $('#preview_' + star).css('height', height)
 
 ################################################################################
 
@@ -87,3 +85,5 @@ $ ->
   bindSaveButton()
   setTimeout(save,100)
   setInterval(save,10000)
+
+################################################################################

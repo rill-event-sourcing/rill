@@ -1,7 +1,7 @@
 class Subsection < ActiveRecord::Base
   include Trashable, Activateable
 
-  belongs_to :section
+  belongs_to :section, touch: true
   # acts_as_list :scope => [:section, :stars]
 
   validates :section, :presence => true

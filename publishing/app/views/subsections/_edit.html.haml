@@ -4,11 +4,12 @@
       %div.pull-right
         %span.glyphicon.glyphicon-minus.delete-subsection{data: {star: @star, item: "subsection-panel-#{ @subsection.id }", url: chapter_section_subsection_path(@chapter, @section, @subsection) } }
       %h3.panel-title
-        = @subsection.id[0,8]
         = hidden_field_tag "section[subsections][#{@star}][#{@index}][id]", @subsection.id
         = hidden_field_tag "section[subsections][#{@star}][#{@index}][position]", @subsection.position
         = hidden_field_tag "section[subsections][#{@star}][#{@index}][stars]", @subsection.stars
         = text_field_tag "section[subsections][#{@star}][#{@index}][title]", @subsection.title
+      %small= @subsection.id[0,8]
+
     %div.panel-body
       = text_area_tag "section[subsections][#{@star}][#{@index}][description]", @subsection.description, style: 'width: 100%; min-height: 100px;'
 

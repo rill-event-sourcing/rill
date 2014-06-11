@@ -6,29 +6,25 @@ class SubsectionsController < ApplicationController
   before_action :set_subsection, except: [:index, :new, :create]
 
   def create
-    Rails.logger.debug "xxxxxx #{ params }"
     @subsection = @section.subsections.build(
       stars: params[:stars],
       title: '',
-      description: ''
+      description: '',
+      position: params[:position]
     )
     if @subsection.save
+      @section.subsections.where(["id <> ? AND stars = ? AND position >= ?", @subsection.id, @subsection.stars, @subsection.position]).update_all("position=position+1")
       @star = @subsection.stars
       @index = @subsection.id
       render partial: 'edit'
     else
-      Rails.logger.debug 'xxxxxx'+ @subsection.errors.full_messages.join(', ')
       return head :unprocessable_entity
     end
   end
 
   def destroy
     @subsection.destroy if @subsection
-    # if @subsection.destroy
-      render json: { status: :ok } #, count: @section.subsections.find_by_star(@subsection.stars).count }
-    # else
-    #   return head :unprocessable_entity
-    # end
+    render json: { status: :ok }
   end
 
 private
