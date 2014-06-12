@@ -48,4 +48,17 @@ RSpec.describe SubsectionsController, :type => :controller do
 
   end
 
+  describe "POST destroy" do
+    it "should destroy the section" do
+      post :destroy,  chapter_id: @chapter.id[0,8], section_id: @section1.id[0,8], id: @subsection1.id
+      expect(response.status).to eq(200)
+    end
+    it "should destroy the section more than once" do
+      post :destroy,  chapter_id: @chapter.id[0,8], section_id: @section1.id[0,8], id: @subsection1.id
+      expect(response.status).to eq(200)
+      post :destroy,  chapter_id: @chapter.id[0,8], section_id: @section1.id[0,8], id: @subsection1.id
+      expect(response.status).to eq(200)
+    end
+  end
+
 end
