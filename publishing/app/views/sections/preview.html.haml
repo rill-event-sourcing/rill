@@ -1,10 +1,6 @@
-%div.panel.panel-default
-  %div.panel-heading
-    %div.panel-title
-      = l @section.updated_at, format: :long
-  %div.panel-body
-    -@subsections.each do |subsection|
-      %div
+-@subsections.each do |subsection|
+  %div.panel.panel-default
+    %div.panel-heading
+      %div.panel-title
         %strong= subsection.title.html_safe
-      %div= subsection.description.html_safe
-      %br
+    %div.panel-body= subsection.description.html_safe

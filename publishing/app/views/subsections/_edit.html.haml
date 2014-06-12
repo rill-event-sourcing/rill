@@ -13,4 +13,8 @@
     %div.panel-body
       = text_area_tag "section[subsections][#{@star}][#{@index}][description]", @subsection.description, style: 'width: 100%; min-height: 100px;'
 
-  = render partial: 'subsections/new'
+    %div.panel-footer.clearfix
+      %div.pull-right
+        %span.glyphicon.glyphicon-plus.add-subsection{data: { after: "subsection-panel-#{ @subsection.id }",
+                                                              star: @star,
+                                                              url: chapter_section_subsections_path(@chapter, @section, stars: @star, position: @subsection.position.to_i+1) } }
