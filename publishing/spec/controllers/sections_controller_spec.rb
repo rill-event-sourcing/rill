@@ -72,6 +72,19 @@ RSpec.describe SectionsController, :type => :controller do
     end
   end
 
+  describe "GET preview" do
+    it "should render a preview of the section" do
+      @subsection1 = create(:subsection, section: @section1, stars: 1)
+      @subsection2 = create(:subsection, section: @section1, stars: 2)
+      @subsection3 = create(:subsection, section: @section1, stars: 2)
+      get :preview, chapter_id: @chapter.id[0,8], id: @section1.id[0,8], star: 2
+      expect(assigns(:star)).to eq '2'
+      expect(assigns(:section)).to eq @section1
+      expect(assigns(:subsections)).to eq [@subsection2, @subsection3]
+      expect(response).to render_template('preview')
+    end
+  end
+
   describe "POST activate" do
     it "should activate the section and redirect" do
       post :activate, chapter_id: @chapter.id[0,8], id: @section1.id[0,8]
@@ -109,7 +122,6 @@ RSpec.describe SectionsController, :type => :controller do
       expect(@section2.position).to eq 3
     end
   end
-
 
   describe "params filtering" do
     it "should throw when missing" do
