@@ -27,6 +27,13 @@ RSpec.describe Section, :type => :model do
       expect(Section.trashed.first).to eq @section
     end
 
+    it "should list recovered sections" do
+      @section.trash
+      expect(Section.all.map(&:to_s)).to eq ['B', 'C']
+      @section.recover
+      expect(Section.all.map(&:to_s)).to eq ['A','B', 'C']
+    end
+
     it "should be activateable" do
       @section = build(:section)
       expect(@section.active).to eq false
