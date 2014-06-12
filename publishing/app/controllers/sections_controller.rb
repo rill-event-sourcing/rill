@@ -5,12 +5,6 @@ class SectionsController < ApplicationController
   before_action :set_section, except: [:index, :new, :create]
   before_action :set_breadcrumb, except: [:index, :new, :create]
 
-  def preview
-    @star = params[:star]
-    @subsections = @section.subsections.find_by_star(@star)
-    render layout: 'preview'
-  end
-
   def index
     redirect_to @chapter
   end
@@ -32,6 +26,11 @@ class SectionsController < ApplicationController
     end
   end
 
+  def preview
+    @star = params[:star]
+    @subsections = @section.subsections.find_by_star(@star)
+    render layout: 'preview'
+  end
 
   def activate
     @section.activate

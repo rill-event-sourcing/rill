@@ -19,8 +19,6 @@ RSpec.describe ApplicationController, :type => :controller do
     end
 
     it "should set_crumb" do
-      @crumbs = nil
-
       crumb_hash1 = {link: '1234'}
       crumbs = controller.set_crumb(crumb_hash1)
       expect(assigns(:crumbs)).to eq [crumb_hash1]

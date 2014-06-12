@@ -62,6 +62,7 @@ RSpec.describe Chapter, :type => :model do
 
   it "should not throw an ActiveRecord::RecordNotFound when not found by an abbreviated uuid with 'with_404' = false" do
     expect{Chapter.find_by_uuid('1a31a31a', false)}.not_to raise_error
+    expect(Chapter.find_by_uuid('1a31a31a', false)).to eq nil
   end
 
   it "should throw an StudyflowPublishing::ShortUuidDoubleError when found multiple chapters by an abbreviated uuid" do
