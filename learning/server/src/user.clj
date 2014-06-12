@@ -1,0 +1,14 @@
+(ns user
+  (:require [studyflow.system :as sys]
+            [ring.adapter.jetty :refer [run-jetty]]
+            [clojure.test :as test :refer [run-all-tests]]
+            [clojure.tools.trace :refer [trace trace-ns]]))
+
+(defonce web-server nil)
+
+(defn start []
+  (sys/init)
+  (alter-var-root #'web-server (constantly (run-jetty #'sys/web-handler {:port 3000 :join? false}))))
+
+(defn stop []
+  (.stop web-server))
