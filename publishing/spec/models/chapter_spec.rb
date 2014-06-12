@@ -26,6 +26,13 @@ RSpec.describe Chapter, :type => :model do
     expect(Chapter.trashed.first).to eq @chapter
   end
 
+  it "should list recovered chapters" do
+    @chapter.trash
+    expect(Chapter.all.map(&:to_s)).to eq ['B', 'C']
+    @chapter.recover
+    expect(Chapter.all.map(&:to_s)).to eq ['A','B', 'C']
+  end
+
   it "should be activateable" do
     @chapter = build(:chapter, active: false)
     expect(@chapter.active).to eq false
