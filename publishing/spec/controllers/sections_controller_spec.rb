@@ -42,9 +42,16 @@ RSpec.describe SectionsController, :type => :controller do
   end
 
   describe "GET new" do
-    it "should render the new page" do
+
+    before do
       get :new, chapter_id: @chapter.id[0,8]
+    end
+
+    it "should render the new page" do
       expect(response).to render_template('new')
+    end
+
+    it "should create a new section" do
       expect(assigns(:section)).not_to eq nil
       expect(assigns(:section).new_record?)
     end
