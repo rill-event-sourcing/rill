@@ -36,9 +36,9 @@ RSpec.describe Section, :type => :model do
   end
 
   it "should list recovered sections" do
-    @section.trash
+    @section3.trash
     expect(Section.all.map(&:to_s)).to eq ['B', 'C']
-    @section.recover
+    @section3.recover
     expect(Section.all.map(&:to_s)).to eq ['A','B', 'C']
   end
 

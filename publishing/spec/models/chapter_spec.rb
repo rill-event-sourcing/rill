@@ -27,9 +27,9 @@ RSpec.describe Chapter, :type => :model do
   end
 
   it "should list recovered chapters" do
-    @chapter.trash
+    @chapter3.trash
     expect(Chapter.all.map(&:to_s)).to eq ['B', 'C']
-    @chapter.recover
+    @chapter3.recover
     expect(Chapter.all.map(&:to_s)).to eq ['A','B', 'C']
   end
 
