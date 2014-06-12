@@ -2,8 +2,8 @@ require 'rails_helper'
 
 feature "SelectCourses", type: :feature do
   before do
-    create(:course, name: 'Math', active: true)
-    create(:course, name: 'Engels', active: true)
+    create(:course, name: 'Math')
+    create(:course, name: 'Engels')
   end
 
   scenario 'do Course selection', js: true do
