@@ -7,7 +7,9 @@ RSpec.describe SectionsController, :type => :controller do
     session[:course_id] = @course.id
     controller.set_my_course
     @chapter = create(:chapter, course: @course)
-    @section = create(:section, chapter: @chapter)
+    @section1 = create(:section, chapter: @chapter, position: 0)
+    @section2 = create(:section, chapter: @chapter, position: 1)
+    @section3 = create(:section, chapter: @chapter, position: 2)
   end
 
   describe "GET index" do
@@ -19,16 +21,16 @@ RSpec.describe SectionsController, :type => :controller do
 
   describe "GET show" do
     it "should render the show page without subsections" do
-      get :show, chapter_id: @chapter.id[0,8], id: @section.id[0,8]
+      get :show, chapter_id: @chapter.id[0,8], id: @section1.id[0,8]
       expect(response).to render_template('show')
       expect(assigns(:all_subsections)).to eq({})
     end
     it "should render the show page with subsections" do
-      @subsection1 = create(:subsection, section: @section, stars: 1)
-      @subsection2 = create(:subsection, section: @section, stars: 2)
-      @subsection3 = create(:subsection, section: @section, stars: 2)
+      @subsection1 = create(:subsection, section: @section1, stars: 1)
+      @subsection2 = create(:subsection, section: @section1, stars: 2)
+      @subsection3 = create(:subsection, section: @section1, stars: 2)
 
-      get :show, chapter_id: @chapter.id[0,8], id: @section.id[0,8]
+      get :show, chapter_id: @chapter.id[0,8], id: @section1.id[0,8]
       expect(response).to render_template('show')
       expect(assigns(:all_subsections)).to eq(
         {
@@ -38,5 +40,49 @@ RSpec.describe SectionsController, :type => :controller do
     end
   end
 
+  describe "GET new" do
+    it "should render the new page" do
+      get :new, chapter_id: @chapter.id[0,8]
+      expect(response).to render_template('new')
+      expect(assigns(:section)).not_to eq nil
+      expect(assigns(:section).new_record?)
+    end
+  end
+
+
+
+  describe "POST activate" do
+    it "should activate the section and redirect" do
+      post :activate, chapter_id: @chapter.id[0,8], id: @section1.id[0,8]
+      expect(response).to redirect_to chapter_sections_path
+      expect(@section1.active)
+    end
+  end
+
+  describe "POST deactivate" do
+    it "should deactivate the section and redirect" do
+      post :deactivate, chapter_id: @chapter.id[0,8], id: @section1.id[0,8]
+      expect(response).to redirect_to chapter_sections_path
+      expect(!@section1.active)
+    end
+  end
+
+  # describe "POST moveup" do
+  #   it "should moveup the section and redirect" do
+  #     expect(@section2.position).to eq 1
+  #     # post :moveup, chapter_id: @chapter.id[0,8], id: @section2.id[0,8]
+  #     # expect(response).to redirect_to chapter_sections_path
+  #     # expect(@section2.position).to eq 0
+  #   end
+  # end
+  #
+  # describe "POST movedown" do
+  #   it "should movedown the section and redirect" do
+  #     expect(@section1.position).to eq 0
+  #     # post :movedown, chapter_id: @chapter.id[0,8], id: @section1.id[0,8]
+  #     # expect(response).to redirect_to chapter_sections_path
+  #     # expect(@section1.position).to eq 1
+  #   end
+  # end
 
 end

@@ -26,32 +26,6 @@ class SectionsController < ApplicationController
     end
   end
 
-  def preview
-    @star = params[:star]
-    @subsections = @section.subsections.find_by_star(@star)
-    render layout: 'preview'
-  end
-
-  def activate
-    @section.activate
-    redirect_to chapter_sections_path
-  end
-
-  def deactivate
-    @section.deactivate
-    redirect_to chapter_sections_path
-  end
-
-  def moveup
-    @section.move_higher
-    redirect_to chapter_sections_path, notice: 'Section was successfully moved up.'
-  end
-
-  def movedown
-    @section.move_lower
-    redirect_to chapter_sections_path, notice: 'Section was successfully moved down.'
-  end
-
   def update
     respond_to do |format|
       if @section.update(section_params)
@@ -62,6 +36,32 @@ class SectionsController < ApplicationController
         format.json { render json: @section.errors, status: :unprocessable_entity }
       end
     end
+  end
+
+  def preview
+    @star = params[:star]
+    @subsections = @section.subsections.find_by_star(@star)
+    render layout: 'preview'
+  end
+
+  def activate
+    @section.activate
+    redirect_to chapter_sections_path(@chapter)
+  end
+
+  def deactivate
+    @section.deactivate
+    redirect_to chapter_sections_path(@chapter)
+  end
+
+  def moveup
+    @section.move_higher
+    redirect_to chapter_sections_path, notice: 'Section was successfully moved up.'
+  end
+
+  def movedown
+    @section.move_lower
+    redirect_to chapter_sections_path, notice: 'Section was successfully moved down.'
   end
 
 private
