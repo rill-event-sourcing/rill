@@ -62,19 +62,24 @@ refreshAllPreviews = ->
   refreshPreview(3)
 
 refreshPreview = (star) ->
-  url =  $('#preview_' + star).data('url')
-  $.ajax url,
-    type: 'GET'
-    dataType: 'html'
-    error: (jqXHR, textStatus, errorThrown) ->
-      console.log "AJAX Error: #{ textStatus }"
-    success: (data, textStatus, jqXHR) ->
-      setPreview(star, data)
+  $('#preview_' + star).attr("src", $('#preview_' + star).attr("src"))
+  setHeight(star)
+  # url =  $('#preview_' + star).data('url')
+  # $.ajax url,
+  #   type: 'GET'
+  #   dataType: 'html'
+  #   error: (jqXHR, textStatus, errorThrown) ->
+  #     console.log "AJAX Error: #{ textStatus }"
+  #   success: (data, textStatus, jqXHR) ->
+  #     setPreview(star, data)
 
-setPreview = (star, data) ->
-  $('#preview_' + star).contents().find('body').html(data)
+# setPreview = (star, data) ->
+#   $('#preview_' + star).contents().find('html').html(data)
+#   setHeight(star)
+
+setHeight = (star) ->
   height = $('#preview_' + star)[0].contentWindow.document.body.scrollHeight
-  $('#preview_' + star).css('height', height)
+  $('#preview_' + star).css('height', height + 50)
 
 ################################################################################
 
