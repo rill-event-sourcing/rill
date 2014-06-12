@@ -3,6 +3,7 @@
             [rill.uuid :refer [new-id]]
             [ring.middleware.json :refer [wrap-json-body
                                           wrap-json-response]]
+            [studyflow.json-tools :refer [key-to-json key-from-json]]
             [studyflow.learning.course-material :as material]
             [studyflow.learning.read-model :as read-model]
             [studyflow.web.command-executor :refer [wrap-command-executor]]
@@ -13,8 +14,8 @@
 (defn wrap-middleware
   [f]
   (-> f
-      wrap-json-response
-      (wrap-json-body {:keywords? true})
+      (wrap-json-response {:key-fn key-to-json})
+      (wrap-json-body {:keywords? key-from-json})
       wrap-logging))
 
 (defn combine-ring-handlers

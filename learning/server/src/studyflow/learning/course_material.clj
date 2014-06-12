@@ -7,31 +7,33 @@
 (def RichText s/Str)
 (def PlainText s/Str)
 (def Id s/Uuid)
+(def TextLevel s/Int)
 
 (def SubSection
   {:id Id
    :title PlainText
    :text RichText})
 
-(def Hint RichText)
+;; (def Hint RichText)
 
-(def Answer PlainText)
+;; (def Answer PlainText)
 
-(def SectionEndTestQuestion
-  {:id Id
-   :text RichText
-   :hints #{Hint}
-   :choices {Answer RichText}
-   :correct-answers #{Answer}
-   :incorrect-answers #{Answer}})
+;; (def SectionEndTestQuestion
+;;   {:id Id
+;;    :text RichText
+;;    :hints #{Hint}
+;;    :choices {Answer RichText}
+;;    :correct-answers #{Answer}
+;;    :incorrect-answers #{Answer}})
 
 (def ContentLevel s/Int)
 
 (def Section
   {:id Id
    :title PlainText
-   ;;:subsections-for-level {ContentLevel [SubSection]}
-   })
+   :subsections-by-level {:1-star [SubSection]
+                          :2-star [SubSection]
+                          :3-star [SubSection]}})
 
 (def Chapter
   {:id Id
