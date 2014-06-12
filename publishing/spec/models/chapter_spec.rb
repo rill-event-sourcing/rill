@@ -35,4 +35,16 @@ RSpec.describe Chapter, :type => :model do
     expect(@chapter.active).to eq false
   end
 
+  it "should return an abbreviated uuid" do
+    id = @chapter.id.to_s
+    expect(@chapter.to_param).to eq id[0..7]
+  end
+
+  it "should return a json object" do
+    obj = {id: @chapter.id, title: @chapter.title, sections: @chapter.sections.map(&:as_json) }
+    expect(@chapter.as_json).to eq obj
+  end
+
+
+
 end

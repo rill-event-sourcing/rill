@@ -4,6 +4,7 @@ require 'json'
 RSpec.describe Section, :type => :model do
   it {is_expected.to validate_presence_of :title }
   it {is_expected.to validate_presence_of :chapter }
+  it {is_expected.to have_many :subsections}
 
   before do
     create(:section, title: 'B', position: 2)
