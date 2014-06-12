@@ -27,7 +27,8 @@ class Subsection < ActiveRecord::Base
   def as_json
     {
       id: id,
-      title: title
+      title: title,
+      description: description
     }
   end
 

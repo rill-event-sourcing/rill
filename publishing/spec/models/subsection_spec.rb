@@ -21,7 +21,7 @@ RSpec.describe Subsection, :type => :model do
   end
 
   it "should return a json object" do
-    obj = {id: @subsection.id, title: @subsection.title}
+    obj = {id: @subsection.id, title: @subsection.title, description: @subsection.description}
     expect(@subsection.as_json).to eq obj
   end
 

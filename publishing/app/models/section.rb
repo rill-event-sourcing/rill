@@ -29,7 +29,8 @@ class Section < ActiveRecord::Base
   def as_json
     {
       id: id,
-      title: title
+      title: title,
+      subsections: subsections.map(&:as_json)
     }
   end
 

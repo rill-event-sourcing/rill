@@ -45,6 +45,4 @@ RSpec.describe Chapter, :type => :model do
     expect(@chapter.as_json).to eq obj
   end
 
-
-
 end
