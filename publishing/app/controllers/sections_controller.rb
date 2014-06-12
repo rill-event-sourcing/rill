@@ -6,7 +6,8 @@ class SectionsController < ApplicationController
   before_action :set_breadcrumb, except: [:index, :new, :create]
 
   def preview
-    @subsections = @section.subsections.find_by_star(params[:star])
+    @star = params[:star]
+    @subsections = @section.subsections.find_by_star(@star)
     render layout: 'preview'
   end
 
