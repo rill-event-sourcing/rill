@@ -1,5 +1,4 @@
 require 'rails_helper'
-require 'json'
 
 RSpec.describe Section, :type => :model do
   it {is_expected.to validate_presence_of :title }
@@ -43,7 +42,7 @@ RSpec.describe Section, :type => :model do
     end
 
     it "should return a json object" do
-      obj = {id: @section.id, title: @section.title}
+      obj = {id: @section.id, title: @section.title, subsections: @section.subsections.map(&:as_json)}
       expect(@section.as_json).to eq obj
     end
 
