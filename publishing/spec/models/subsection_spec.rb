@@ -16,7 +16,6 @@ RSpec.describe Subsection, :type => :model do
   end
 
   it "should return an abbreviated uuid" do
-    @subsection = create(:subsection)
     id = @subsection.id.to_s
     expect(@subsection.to_param).to eq id[0..7]
   end
@@ -28,11 +27,11 @@ RSpec.describe Subsection, :type => :model do
 
   it "should return a full json object" do
     obj = {
-      id: @subsection.id,
-      position: @subsection.position,
-      stars: @subsection.stars,
-      title: @subsection.title,
-      description: @subsection.description
+        id: @subsection.id,
+        position: @subsection.position,
+        stars: @subsection.stars,
+        title: @subsection.title,
+        description: @subsection.description
       }
     expect(@subsection.as_full_json).to eq obj
   end
