@@ -12,22 +12,47 @@ RSpec.describe SubsectionsController, :type => :controller do
     @section2 = create(:section, chapter: @chapter)
     @section3 = create(:section, chapter: @chapter)
 
-    # @subsection1 = create(:subsection, section: @section1, stars: 1)
-    # @subsection2 = create(:subsection, section: @section1, stars: 2)
-    # @subsection3 = create(:subsection, section: @section1, stars: 2)
+    @subsection1 = create(:subsection, section: @section1, stars: 1, position: 0)
+    @subsection2 = create(:subsection, section: @section1, stars: 2, position: 0)
+    @subsection3 = create(:subsection, section: @section1, stars: 2, position: 1)
   end
 
   describe "POST create" do
     it "should create a new subsection" do
-      post :create, chapter_id: @chapter.id[0,8], section: {title: "new section"}
-      expect(response).to redirect_to chapter_section_path(@chapter, assigns(:section))
+      post :create, chapter_id: @chapter.id[0,8], section_id: @section1.id[0,8], stars: 2, position: 0
+      @subsection = assigns(:subsection)
+      expect(@subsection).not_to eq nil
+      expect(!@subsection.new_record?)
+      expect(assigns(:star)).to eq 2
+      expect(assigns(:index)).to eq @subsection.id
+      expect(response).to render_template('subsections/_edit')
     end
-    it "should not create a invalid subsection" do
-      post :create, chapter_id: @chapter.id[0,8], section: {title: ""}
-      expect(response).to render_template('new')
+
+    it "should create a new subsection with position 0" do
+      post :create, chapter_id: @chapter.id[0,8], section_id: @section1.id[0,8], stars: 2, position: 0
+      @subsection = assigns(:subsection)
+      expect(@section1.subsections.find_by_star(2)).to eq [@subsection, @subsection2, @subsection3]
     end
+
+    it "should create a new subsection with position 1" do
+      post :create, chapter_id: @chapter.id[0,8], section_id: @section1.id[0,8], stars: 2, position: 1
+      @subsection = assigns(:subsection)
+      expect(@section1.subsections.find_by_star(2)).to eq [@subsection2, @subsection, @subsection3]
+    end
+
+    it "should create a new subsection with position 2" do
+      post :create, chapter_id: @chapter.id[0,8], section_id: @section1.id[0,8], stars: 2, position: 2
+      @subsection = assigns(:subsection)
+      expect(@section1.subsections.find_by_star(2)).to eq [@subsection2, @subsection3, @subsection]
+    end
+
   end
 
-  
+
+#   @section.subsections.where(["id <> ? AND stars = ? AND position >= ?", @subsection.id, @subsection.stars, @subsection.position]).update_all("position=position+1")
+
+
+
+
 
 end
