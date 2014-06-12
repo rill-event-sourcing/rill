@@ -87,6 +87,7 @@ RSpec.describe SectionsController, :type => :controller do
 
   describe "POST activate" do
     it "should activate the section and redirect" do
+      expect(!@section1.active)
       post :activate, chapter_id: @chapter.id[0,8], id: @section1.id[0,8]
       expect(response).to redirect_to chapter_sections_path(@chapter)
       expect(@section1.active)
@@ -95,6 +96,7 @@ RSpec.describe SectionsController, :type => :controller do
 
   describe "POST deactivate" do
     it "should deactivate the section and redirect" do
+      expect(@section1.active)
       post :deactivate, chapter_id: @chapter.id[0,8], id: @section1.id[0,8]
       expect(response).to redirect_to chapter_sections_path(@chapter)
       expect(!@section1.active)
