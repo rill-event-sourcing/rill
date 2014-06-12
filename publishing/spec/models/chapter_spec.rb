@@ -6,9 +6,9 @@ RSpec.describe Chapter, :type => :model do
   it {is_expected.to have_many :sections}
 
   before do
-    create(:chapter, title: 'B', position: 2)
-    create(:chapter, title: 'C', position: 3)
-    @chapter = create(:chapter, title: 'A', position: 1)
+    @chapter1 = create(:chapter, title: 'B', position: 2)
+    @chapter2 = create(:chapter, title: 'C', position: 3)
+    @chapter3 = create(:chapter, title: 'A', position: 1)
   end
 
   it "should return title when asked for its string" do
@@ -21,9 +21,9 @@ RSpec.describe Chapter, :type => :model do
   end
 
   it "should not list trashed chapters" do
-    @chapter.trash
+    @chapter3.trash
     expect(Chapter.all.map(&:to_s)).to eq ['B', 'C']
-    expect(Chapter.trashed.first).to eq @chapter
+    expect(Chapter.trashed.first).to eq @chapter3
   end
 
   it "should list recovered chapters" do
@@ -43,13 +43,33 @@ RSpec.describe Chapter, :type => :model do
   end
 
   it "should return an abbreviated uuid" do
-    id = @chapter.id.to_s
-    expect(@chapter.to_param).to eq id[0..7]
+    id = @chapter1.id.to_s
+    expect(@chapter1.to_param).to eq id[0,8]
   end
 
   it "should return a json object" do
-    obj = {id: @chapter.id, title: @chapter.title, sections: @chapter.sections.map(&:as_json) }
-    expect(@chapter.as_json).to eq obj
+    obj = {id: @chapter3.id, title: @chapter3.title, sections: @chapter3.sections.map(&:as_json) }
+    expect(@chapter3.as_json).to eq obj
+  end
+
+  it "should be findable by an abbreviated uuid" do
+    expect(Chapter.find_by_uuid(@chapter3.id[0,8])).to eq @chapter3
+  end
+
+  it "should throw an ActiveRecord::RecordNotFound when not found by an abbreviated uuid" do
+    expect{Chapter.find_by_uuid('1a31a31a')}.to raise_error(ActiveRecord::RecordNotFound)
+  end
+
+  it "should not throw an ActiveRecord::RecordNotFound when not found by an abbreviated uuid with 'with_404' = false" do
+    expect{Chapter.find_by_uuid('1a31a31a', false)}.not_to raise_error
+  end
+
+  it "should throw an StudyflowPublishing::ShortUuidDoubleError when found multiple chapters by an abbreviated uuid" do
+    uuid = Chapter.first.id
+    Chapter.all.each do |chapter|
+      chapter.update_attribute :id, uuid[0,8] + chapter.id[8,28]
+    end
+    expect{Chapter.find_by_uuid(uuid[0,8])}.to raise_error(StudyflowPublishing::ShortUuidDoubleError)
   end
 
 end
