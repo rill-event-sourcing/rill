@@ -111,17 +111,16 @@ RSpec.describe SectionsController, :type => :controller do
   end
 
 
-  # describe "params filtering" do
-  #   it "should throw when missing" do
-  #     params = {something: true}
-  #     expect{controller.send(:section_params)}.to raise_error(ActionController::ParameterMissing)
-  #   end
-  #   it "should filter params" do
-  #     params = {}
-  #     params[:section] = {admin: true, title: 'title'}
-  #     my_params = controller.send(:section_params)
-  #     expect(my_params).to eq({title: 'title'})
-  #   end
-  # end
+  describe "params filtering" do
+    it "should throw when missing" do
+      controller.params = {something: true}
+      expect{controller.send(:section_params)}.to raise_error(ActionController::ParameterMissing)
+    end
+    it "should filter params (turned off for now)" do
+      controller.params = { 'section' => {title: 'my title', description: "my description"} }
+      my_params = controller.send(:section_params)
+      expect(my_params).to eq( {'title' => 'my title', 'description' => "my description"})
+    end
+  end
 
 end
