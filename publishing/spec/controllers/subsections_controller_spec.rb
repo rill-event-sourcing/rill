@@ -48,11 +48,4 @@ RSpec.describe SubsectionsController, :type => :controller do
 
   end
 
-
-#   @section.subsections.where(["id <> ? AND stars = ? AND position >= ?", @subsection.id, @subsection.stars, @subsection.position]).update_all("position=position+1")
-
-
-
-
-
 end
