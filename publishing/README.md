@@ -1,4 +1,4 @@
 Publishing
 ==========
 
-This is the publishing part of the studyflow application.
+This is the publishing part of the Studyflow application.
