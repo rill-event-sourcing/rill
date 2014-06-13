@@ -5,7 +5,8 @@
             [studyflow.learning.course-material :as material]
             [studyflow.web.command-executor :refer [wrap-command-executor]]
             [studyflow.web.handler-tools :refer [combine-ring-handlers]]
-            [studyflow.web.routes :as routes]))
+            [studyflow.web.routes :as routes]
+            [clojure.tools.logging :as log]))
 
 (def command-ring-handler
   "This handler matches ring requests and returns a command (or nil) for the given request.
