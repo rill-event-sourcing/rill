@@ -26,12 +26,7 @@
 
 (defn course-tree
   [course]
-  {:title (:title course)
+  {:name (:name course)
    :id (:id course)
    :chapters (mapv chapter-tree (:chapters course))})
-
-
-(def +current-model+
-  "The 'current' version of the read model"
-  (atom {}))
 

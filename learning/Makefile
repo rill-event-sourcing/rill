@@ -3,5 +3,5 @@ default: test
 .PHONY: test
 
 test:
-	cd server && lein test
+	cd server && make test
 

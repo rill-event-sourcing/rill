@@ -23,9 +23,6 @@
   [model event]
   (m/remove-course model event))
 
-(defn update-current-model!
-  [events]
-  (swap! m/+current-model+ update-model events))
 
 
 
