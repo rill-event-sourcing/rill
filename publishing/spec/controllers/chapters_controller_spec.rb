@@ -43,7 +43,7 @@ RSpec.describe ChaptersController, :type => :controller do
 
     it "should create a new chapter" do
       expect(assigns(:chapter)).not_to eq nil
-      expect(assigns(:chapter).new_record?)
+      expect(assigns(:chapter).new_record?).to eq true
     end
   end
 
@@ -51,7 +51,7 @@ RSpec.describe ChaptersController, :type => :controller do
 
     it "should create a new chapter" do
       post :create, chapter: {id: @chapter.id, title: 'new title', description: 'my best description'}
-      expect(assigns(:chapter).new_record?)
+      expect(assigns(:chapter).new_record?).to eq false
     end
 
     it "should redirect to the chapters path on successful save" do

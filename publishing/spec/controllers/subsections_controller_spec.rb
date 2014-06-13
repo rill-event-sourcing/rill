@@ -22,7 +22,7 @@ RSpec.describe SubsectionsController, :type => :controller do
       post :create, chapter_id: @chapter.to_param, section_id: @section1.to_param, stars: 2, position: 0
       @subsection = assigns(:subsection)
       expect(@subsection).not_to eq nil
-      expect(!@subsection.new_record?)
+      expect(!@subsection.new_record?).to eq true
       expect(assigns(:star)).to eq 2
       expect(assigns(:index)).to eq @subsection.id
       expect(response).to render_template('subsections/_edit')
