@@ -7,7 +7,7 @@ RSpec.describe ApplicationController, :type => :controller do
   end
 
   describe "helper methods" do
-    it "should set_my_course and rest_my_course" do
+    it "should set_my_course and reset_my_course" do
       session[:course_id] = @course.id
       expect(Course.current).to eq nil
       controller.set_my_course
