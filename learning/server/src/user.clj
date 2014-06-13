@@ -17,5 +17,3 @@
   (close! sys/channel)
   (<!! sys/event-listener))
 
-
-

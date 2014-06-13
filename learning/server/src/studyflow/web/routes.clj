@@ -5,6 +5,8 @@
 
 (defroute query-course-material :get "/api/course-material/:course-id")
 
+(defroute get-status :get "/")
+
 
 
 

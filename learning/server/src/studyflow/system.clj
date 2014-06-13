@@ -1,10 +1,10 @@
 (ns studyflow.system
-  (:require [rill.event-store.atom-store :as atom-store]
-            [studyflow.web.api :as web-api]
-            [studyflow.learning.read-model.event-listener :refer [listen!]]
-            [studyflow.learning.read-model :refer [empty-model]]
+  (:require [environ.core :refer [env]]
             [rill.event-channel :refer [event-channel]]
-            [environ.core :refer [env]]))
+            [rill.event-store.atom-store :as atom-store]
+            [studyflow.learning.read-model :refer [empty-model]]
+            [studyflow.learning.read-model.event-listener :refer [listen!]]
+            [studyflow.web :as web]))
 
 (defonce event-store nil)
 (defonce web-handler nil)
@@ -29,7 +29,7 @@
 
 (defn init-web-handler
   []
-  (alter-var-root #'web-handler (constantly (web-api/make-request-handler event-store read-model))))
+  (alter-var-root #'web-handler (constantly (web/make-request-handler event-store read-model))))
 
 (defn init
   []
