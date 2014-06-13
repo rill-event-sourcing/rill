@@ -21,11 +21,9 @@
                  [me.raynes/conch "0.7.0"]]
   :profiles {:dev
              {:dependencies
-              [[org.clojure/tools.trace "0.7.5"]
-               [speclj "3.0.0"]]}}
+              [[org.clojure/tools.trace "0.7.5"]]}}
   :plugins [[cider/cider-nrepl "0.7.0-SNAPSHOT"]
-            [lein-ring "0.8.10"]
-            [speclj "3.0.0"]]
+            [lein-ring "0.8.10"]]
   :test-paths ["test"]
   :ring {:handler studyflow.system/web-handler}
   :aliases {"validate-course-material" ["run" "-m" "studyflow.cli.validate-course-material-json"]})
