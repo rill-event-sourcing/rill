@@ -9,7 +9,7 @@ class SubsectionsController < ApplicationController
     @subsection = @section.subsections.build(
       stars: params[:stars],
       title: '',
-      description: '',
+      text: '',
       position: params[:position]
     )
     if @subsection.save

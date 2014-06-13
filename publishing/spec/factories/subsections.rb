@@ -3,7 +3,7 @@
 FactoryGirl.define do
   factory :subsection do
       title "Default subsection title"
-      description "Default subsection description"
+      text "Default subsection text"
       stars 2
       sequence(:position)
       section

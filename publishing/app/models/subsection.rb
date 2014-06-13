@@ -2,10 +2,8 @@ class Subsection < ActiveRecord::Base
   include Trashable, Activateable
 
   belongs_to :section, touch: true
-  # acts_as_list :scope => [:section, :stars]
 
   validates :section, :presence => true
-  # validates :title, :presence => true
   validates :stars, :presence => true
 
   default_scope { order(:position) }
@@ -28,7 +26,7 @@ class Subsection < ActiveRecord::Base
     {
       id: id,
       title: title,
-      description: description
+      text: text
     }
   end
 
@@ -38,7 +36,7 @@ class Subsection < ActiveRecord::Base
       position: position,
       stars: stars,
       title: title,
-      description: description
+      text: text
     }
   end
 

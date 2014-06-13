@@ -1,7 +1,7 @@
 -@subsections.each do |subsection|
   %div.panel.panel-default
-    %div.panel-heading
-      %div.panel-title
-        %strong= subsection.title.html_safe
+    -# %div.panel-heading
+    -#   %div.panel-title
+    -#     %strong= subsection.title.html_safe
     %div.panel-body
-      = subsection.description.html_safe
+      = subsection.text.html_safe

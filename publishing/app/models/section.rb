@@ -53,7 +53,7 @@ class Section < ActiveRecord::Base
         my_subsection = subsections.find(new_subsection['id'])
         my_subsection.update_attributes(
           title: new_subsection['title'],
-          description: new_subsection['description'],
+          text: new_subsection['text'],
           position: index
         )
       end

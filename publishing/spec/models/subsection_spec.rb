@@ -5,9 +5,9 @@ RSpec.describe Subsection, :type => :model do
   it {is_expected.to validate_presence_of :stars }
 
   before do
-    @subsection1 = create(:subsection, title: "A", description: "A content", stars: 1)
-    @subsection2 = create(:subsection, title: "B", description: "B content", stars: 2)
-    @subsection3 = create(:subsection, title: "C", description: "C content", stars: 3)
+    @subsection1 = create(:subsection, title: "A", text: "A content", stars: 1)
+    @subsection2 = create(:subsection, title: "B", text: "B content", stars: 2)
+    @subsection3 = create(:subsection, title: "C", text: "C content", stars: 3)
   end
 
   it "should return the title when asked for a string" do
@@ -38,7 +38,7 @@ RSpec.describe Subsection, :type => :model do
   end
 
   it "should return a json object" do
-    obj = {id: @subsection1.id, title: @subsection1.title, description: @subsection1.description}
+    obj = {id: @subsection1.id, title: @subsection1.title, text: @subsection1.text}
     expect(@subsection1.as_json).to eq obj
   end
 
@@ -48,7 +48,7 @@ RSpec.describe Subsection, :type => :model do
         position: @subsection1.position,
         stars: @subsection1.stars,
         title: @subsection1.title,
-        description: @subsection1.description
+        text: @subsection1.text
       }
     expect(@subsection1.as_full_json).to eq obj
   end

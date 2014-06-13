@@ -91,17 +91,17 @@ RSpec.describe Section, :type => :model do
   context "as a container for subsections" do
 
     before do
-      @oneone = create(:subsection, title: "oneone", position: 1, stars: 1, section: @section1, description: "oneone desc" )
-      @onetwo = create(:subsection, title: "onetwo", position: 2, stars: 1, section: @section1, description: "onetwo desc")
-      @twoone = create(:subsection, title: "twoone", position: 1, stars: 2, section: @section1, description: "twoone desc")
-      @twotwo = create(:subsection, title: "twotwo", position: 2, stars: 2, section: @section1, description: "twotwo desc")
-      @threeone = create(:subsection, title: "threeone", position: 1, stars: 3, section: @section1, description: "threeone desc")
-      @threetwo = create(:subsection, title: "threetwo", position: 2, stars: 3, section: @section1, description: "threetwo desc")
+      @oneone = create(:subsection, title: "oneone", position: 1, stars: 1, section: @section1, text: "oneone text" )
+      @onetwo = create(:subsection, title: "onetwo", position: 2, stars: 1, section: @section1, text: "onetwo text")
+      @twoone = create(:subsection, title: "twoone", position: 1, stars: 2, section: @section1, text: "twoone text")
+      @twotwo = create(:subsection, title: "twotwo", position: 2, stars: 2, section: @section1, text: "twotwo text")
+      @threeone = create(:subsection, title: "threeone", position: 1, stars: 3, section: @section1, text: "threeone text")
+      @threetwo = create(:subsection, title: "threetwo", position: 2, stars: 3, section: @section1, text: "threetwo text")
     end
 
     def update_first_subsection
       subsection = @section1.subsections.find_by_star(1).first.as_full_json
-      subsection[:description] = "oneone modified desc"
+      subsection[:text] = "oneone modified text"
 
       hashone = hashify [subsection.stringify,@onetwo.as_full_json.stringify]
       hashtwo = hashify [@twoone.as_full_json.stringify,@twotwo.as_full_json.stringify]
@@ -114,7 +114,7 @@ RSpec.describe Section, :type => :model do
 
     it "should allow to update subsections" do
       update_first_subsection
-      expect(@section1.subsections.find_by_star(1).first.as_full_json[:description]).to eq "oneone modified desc"
+      expect(@section1.subsections.find_by_star(1).first.as_full_json[:text]).to eq "oneone modified text"
     end
 
     it "should correctly reflect the time of last update" do
