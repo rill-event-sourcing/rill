@@ -15,14 +15,14 @@ RSpec.describe SectionsController, :type => :controller do
 
   describe "GET index" do
     it "should redirect to the chapter" do
-      get :index, chapter_id: @chapter.id[0,8]
+      get :index, chapter_id: @chapter.to_param
       expect(response).to redirect_to @chapter
     end
   end
 
   describe "GET show" do
     it "should render the show page without subsections" do
-      get :show, chapter_id: @chapter.id[0,8], id: @section1.id[0,8]
+      get :show, chapter_id: @chapter.to_param, id: @section1.to_param
       expect(response).to render_template('show')
       expect(assigns(:all_subsections)).to eq({})
     end
@@ -31,7 +31,7 @@ RSpec.describe SectionsController, :type => :controller do
       @subsection2 = create(:subsection, section: @section1, stars: 2)
       @subsection3 = create(:subsection, section: @section1, stars: 2)
 
-      get :show, chapter_id: @chapter.id[0,8], id: @section1.id[0,8]
+      get :show, chapter_id: @chapter.to_param, id: @section1.to_param
       expect(response).to render_template('show')
       expect(assigns(:all_subsections)).to eq(
         {
@@ -44,7 +44,7 @@ RSpec.describe SectionsController, :type => :controller do
   describe "GET new" do
 
     before do
-      get :new, chapter_id: @chapter.id[0,8]
+      get :new, chapter_id: @chapter.to_param
     end
 
     it "should render the new page" do
@@ -59,22 +59,22 @@ RSpec.describe SectionsController, :type => :controller do
 
   describe "POST create" do
     it "should create a new section" do
-      post :create, chapter_id: @chapter.id[0,8], section: {title: "new section"}
+      post :create, chapter_id: @chapter.to_param, section: {title: "new section"}
       expect(response).to redirect_to chapter_section_path(@chapter, assigns(:section))
     end
     it "should not create a invalid section" do
-      post :create, chapter_id: @chapter.id[0,8], section: {title: ""}
+      post :create, chapter_id: @chapter.to_param, section: {title: ""}
       expect(response).to render_template('new')
     end
   end
 
   describe "PUT update" do
     it "should update the section" do
-      put :update, chapter_id: @chapter.id[0,8], id: @section1.id[0,8], section: {title: "new section2"}
+      put :update, chapter_id: @chapter.to_param, id: @section1.to_param, section: {title: "new section2"}
       expect(response).to redirect_to chapter_section_path(@chapter, assigns(:section))
     end
     it "should not update the invalid section" do
-      put :update, chapter_id: @chapter.id[0,8], id: @section1.id[0,8], section: {title: ""}
+      put :update, chapter_id: @chapter.to_param, id: @section1.to_param, section: {title: ""}
       expect(response).to render_template('show')
     end
   end
@@ -84,7 +84,7 @@ RSpec.describe SectionsController, :type => :controller do
       @subsection1 = create(:subsection, section: @section1, stars: 1)
       @subsection2 = create(:subsection, section: @section1, stars: 2)
       @subsection3 = create(:subsection, section: @section1, stars: 2)
-      get :preview, chapter_id: @chapter.id[0,8], id: @section1.id[0,8], star: 2
+      get :preview, chapter_id: @chapter.to_param, id: @section1.to_param, star: 2
       expect(assigns(:star)).to eq '2'
       expect(assigns(:section)).to eq @section1
       expect(assigns(:subsections)).to eq [@subsection2, @subsection3]
@@ -95,7 +95,7 @@ RSpec.describe SectionsController, :type => :controller do
   describe "POST activate" do
     it "should activate the section and redirect" do
       expect(@section1.active).to eq false
-      post :activate, chapter_id: @chapter.id[0,8], id: @section1.id[0,8]
+      post :activate, chapter_id: @chapter.to_param, id: @section1.to_param
       expect(response).to redirect_to chapter_sections_path(@chapter)
       expect(@section1.active).to eq true
     end
@@ -104,7 +104,7 @@ RSpec.describe SectionsController, :type => :controller do
   describe "POST deactivate" do
     it "should deactivate the section and redirect" do
       expect(@section1.active).to eq true
-      post :deactivate, chapter_id: @chapter.id[0,8], id: @section1.id[0,8]
+      post :deactivate, chapter_id: @chapter.to_param, id: @section1.to_param
       expect(response).to redirect_to chapter_sections_path(@chapter)
       expect(@section1.active).to eq false
     end
@@ -113,7 +113,7 @@ RSpec.describe SectionsController, :type => :controller do
   describe "POST moveup" do
     it "should moveup the section and redirect" do
       expect(@section2.position).to eq 2
-      post :moveup, chapter_id: @chapter.id[0,8], id: @section2.id[0,8]
+      post :moveup, chapter_id: @chapter.to_param, id: @section2.to_param
       expect(assigns(:section)).to eq @section2
       expect(response).to redirect_to chapter_sections_path(@chapter)
       @section2.reload
@@ -124,7 +124,7 @@ RSpec.describe SectionsController, :type => :controller do
   describe "POST movedown" do
     it "should movedown the section and redirect" do
       expect(@section2.position).to eq 2
-      post :movedown, chapter_id: @chapter.id[0,8], id: @section2.id[0,8]
+      post :movedown, chapter_id: @chapter.to_param, id: @section2.to_param
       expect(assigns(:section)).to eq @section2
       expect(response).to redirect_to chapter_sections_path(@chapter)
       @section2.reload

@@ -71,19 +71,19 @@ RSpec.describe ChaptersController, :type => :controller do
   describe "PUT update" do
 
     it "should update the chapter" do
-      put :update, id: @chapter.id[0,8], chapter: { title: 'new title', description: 'my best description'}
+      put :update, id: @chapter.to_param, chapter: { title: 'new title', description: 'my best description'}
       expect(response).to redirect_to chapter_path @chapter
     end
 
     it "should not update the invalid chapter" do
-      put :update, id: @chapter.id[0,8], chapter: {title: '', description: ''}
+      put :update, id: @chapter.to_param, chapter: {title: '', description: ''}
       expect(response).to render_template('edit')
     end
   end
 
   describe "POST destroy" do
     it "should trash the chapter and redirect" do
-      post :destroy, id: @chapter.id[0,8]
+      post :destroy, id: @chapter.to_param
       expect(response).to redirect_to chapters_path
       expect(Chapter.trashed.first).to eq @chapter
     end
@@ -91,7 +91,7 @@ RSpec.describe ChaptersController, :type => :controller do
 
   describe "POST activate" do
     it "should activate the chapter and redirect" do
-      post :activate, id: @chapter.id[0,8]
+      post :activate, id: @chapter.to_param
       expect(response).to redirect_to chapters_path
       expect(@chapter.active)
     end
@@ -99,7 +99,7 @@ RSpec.describe ChaptersController, :type => :controller do
 
   describe "POST deactivate" do
     it "should deactivate the chapter and redirect" do
-      post :deactivate, id: @chapter.id[0,8]
+      post :deactivate, id: @chapter.to_param
       expect(response).to redirect_to chapters_path
       expect(!@chapter.active)
     end
@@ -109,7 +109,7 @@ RSpec.describe ChaptersController, :type => :controller do
 
     it "should moveup the chapter and redirect" do
       expect(@chapter2.position).to eq 2
-      post :moveup, id: @chapter2.id[0,8]
+      post :moveup, id: @chapter2.to_param
       expect(assigns(:chapter)).to eq @chapter2
       expect(response).to redirect_to chapters_path
       @chapter2.reload
@@ -120,7 +120,7 @@ RSpec.describe ChaptersController, :type => :controller do
   describe "POST movedown" do
     it "should movedown the chapter and redirect" do
       expect(@chapter2.position).to eq 2
-      post :movedown, id: @chapter2.id[0,8]
+      post :movedown, id: @chapter2.to_param
       expect(assigns(:chapter)).to eq @chapter2
       expect(response).to redirect_to chapters_path
       @chapter2.reload

@@ -53,7 +53,7 @@ RSpec.describe Chapter, :type => :model do
   end
 
   it "should be findable by an abbreviated uuid" do
-    expect(Chapter.find_by_uuid(@chapter3.id[0,8])).to eq @chapter3
+    expect(Chapter.find_by_uuid(@chapter3.to_param)).to eq @chapter3
   end
 
   it "should throw an ActiveRecord::RecordNotFound when not found by an abbreviated uuid" do
