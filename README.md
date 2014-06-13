@@ -7,6 +7,8 @@
 ## learning
 
 ## publishing
+    cd publishing
+    rspec
 
 ## testing publshing format
 
