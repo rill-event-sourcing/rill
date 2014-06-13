@@ -3,5 +3,6 @@
 
 (defn course-material
   [m course-id]
-  (model/course-tree (model/get-course m course-id)))
+  (when-let [course (model/get-course m course-id)]
+    (model/course-tree course)))
 

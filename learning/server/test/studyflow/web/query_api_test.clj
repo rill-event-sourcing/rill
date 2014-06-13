@@ -6,7 +6,8 @@
             [clout-link.route :refer [uri-for]]))
 
 (deftest test-query-api
-  (let [model (atom {:courses {1 {:name "foo"}}})
+  (let [model (atom {:courses {1 {:name "foo"
+                                  :id 1}}})
         handler (make-request-handler model)]
-    (is (:status (handler (request :get (uri-for routes/query-course-material 1))))
-        200)))
+    (is (= (handler (request :get (uri-for routes/query-course-material 1)))
+           {:name "foo"}))))
