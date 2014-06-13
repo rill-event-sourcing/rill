@@ -53,7 +53,7 @@ RSpec.describe SectionsController, :type => :controller do
 
     it "should create a new section" do
       expect(assigns(:section)).not_to eq nil
-      expect(assigns(:section).new_record?)
+      expect(assigns(:section).new_record?).to eq true
     end
   end
 
@@ -94,19 +94,19 @@ RSpec.describe SectionsController, :type => :controller do
 
   describe "POST activate" do
     it "should activate the section and redirect" do
-      expect(!@section1.active)
+      expect(@section1.active).to eq false
       post :activate, chapter_id: @chapter.id[0,8], id: @section1.id[0,8]
       expect(response).to redirect_to chapter_sections_path(@chapter)
-      expect(@section1.active)
+      expect(@section1.active).to eq true
     end
   end
 
   describe "POST deactivate" do
     it "should deactivate the section and redirect" do
-      expect(@section1.active)
+      expect(@section1.active).to eq true
       post :deactivate, chapter_id: @chapter.id[0,8], id: @section1.id[0,8]
       expect(response).to redirect_to chapter_sections_path(@chapter)
-      expect(!@section1.active)
+      expect(@section1.active).to eq false
     end
   end
 
