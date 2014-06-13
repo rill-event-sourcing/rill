@@ -67,8 +67,7 @@ class SectionsController < ApplicationController
 private
 
   def set_breadcrumb
-    set_crumb({name: @chapter.title, url: chapter_sections_path(@chapter)})
-    set_crumb({name: @section.title, url: chapter_section_path(@chapter, @section)})
+    @crumbs = [{name: @chapter.title, url: chapter_sections_path(@chapter)},{name: @section.title, url: chapter_section_path(@chapter, @section)}]
   end
 
   def set_course
