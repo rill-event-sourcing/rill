@@ -17,7 +17,6 @@ feature "SelectCourses", type: :feature do
 
     visit root_path
     expect(page).to have_select('course_id', options: ['choose course', 'Engels', 'Math'])
-    # expect(Course.current).to eq nil
   end
 
 end
