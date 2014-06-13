@@ -14,7 +14,7 @@ RSpec.describe ApplicationController, :type => :controller do
       expect(Course.current).to eq @course
 
       session[:course_id] = nil
-      controller.reset_my_course
+      controller.unset_my_course
       expect(Course.current).to eq nil
     end
 
