@@ -14,7 +14,6 @@ gem 'bootstrap-sass'
 gem 'haml-rails'
 gem 'pg'
 gem 'sendgrid'
-# later added
 gem 'acts_as_list'
 
 group :development do
@@ -44,7 +43,8 @@ end
 
 group :test do
   gem 'capybara'
-  gem 'capybara-webkit'
+  gem 'phantomjs'
+  gem 'poltergeist'
   gem 'database_cleaner'
   gem 'faker'
   gem 'launchy'

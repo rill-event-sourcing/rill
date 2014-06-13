@@ -22,7 +22,17 @@ Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 ActiveRecord::Migration.maintain_test_schema!
 
 RSpec.configure do |config|
-  Capybara.javascript_driver = :webkit
+
+  require 'capybara/poltergeist'
+  Capybara.default_wait_time = 8 # Seconds to wait before timeout error. Default is 2
+  # Register slightly larger than default window size...
+  Capybara.register_driver :poltergeist do |app|
+    Capybara::Poltergeist::Driver.new(app, { debug: false, # change this to true to troubleshoot
+                                             window_size: [1300, 1000] # this can affect dynamic layout
+    })
+  end
+  Capybara.javascript_driver = :poltergeist
+
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
