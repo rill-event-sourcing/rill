@@ -2,6 +2,7 @@
   (:require [clout-link.route :refer [handle]]
             [rill.uuid :refer [new-id]]
             [studyflow.learning.commands :as commands]
+            [studyflow.learning.command-handler]
             [studyflow.learning.course-material :as material]
             [studyflow.web.command-executor :refer [wrap-command-executor]]
             [studyflow.web.handler-tools :refer [combine-ring-handlers]]
