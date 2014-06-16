@@ -4,3 +4,9 @@
 (defn new-id
   []
   (str (UUID/randomUUID)))
+
+(defn uuid
+  [u]
+  (if (string? u)
+    (UUID/fromString u)
+    u))

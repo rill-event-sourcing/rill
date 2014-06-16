@@ -1,14 +1,12 @@
 (ns studyflow.learning.read-model.event-listener
-  (:require [rill.event-store :as store]))
+  (:require [studyflow.learning.read-model.event-handler :refer [handle-event]]
+            [studyflow.loop-tools :refer [while-let]]
+            [clojure.core.async :refer [<!! thread]]))
 
-(defn update-model
-  [a event-store]
-  ()
-  )
+(defn listen!
+  "listen on event-channel"
+  [model-atom event-channel]
+  (thread
+    (while-let [e (<!! event-channel)]
+               (swap! model-atom handle-event e))))
 
-(defn listen
-  [initial-model event-store]
-  (let [a (atom initial-model)]
-    (store/retrieve-events-since )
-    )
-  )
