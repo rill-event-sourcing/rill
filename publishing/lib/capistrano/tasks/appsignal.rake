@@ -2,6 +2,7 @@ require 'appsignal'
 require 'appsignal/marker'
 
 namespace :appsignal do
+  desc "Send appsignal a deploy signal"
   task :deploy do
     env  = fetch(:rails_env, fetch(:rack_env, 'production'))
     user = ENV['USER'] || ENV['USERNAME']
