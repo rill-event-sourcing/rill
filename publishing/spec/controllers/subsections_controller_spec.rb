@@ -28,6 +28,11 @@ RSpec.describe SubsectionsController, :type => :controller do
       expect(response).to render_template('subsections/_edit')
     end
 
+    it "should not create an invalid subsection" do
+      post :create, chapter_id: @chapter.to_param, section_id: @section1.to_param
+      expect(response.status).to eq(422)
+    end
+
     it "should create a new subsection with position 0" do
       post :create, chapter_id: @chapter.to_param, section_id: @section1.to_param, stars: 2, position: 0
       @subsection = assigns(:subsection)
