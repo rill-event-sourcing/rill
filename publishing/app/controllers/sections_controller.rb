@@ -28,8 +28,7 @@ class SectionsController < ApplicationController
 
   def update
     respond_to do |format|
-      params[:subsections] ||= {}
-      subsections(subsection_params)
+      subsections(params[:subsections]) if params[:subsections]
       if @section.update(section_params)
         format.html { redirect_to chapter_section_path(@chapter, @section), notice: 'Section was successfully updated.' }
         format.json { render json: @section.as_full_json }
@@ -86,10 +85,6 @@ private
 
   def section_params
     params.require(:section).permit(:title, :description)
-  end
-
-  def subsection_params
-    params.permit(:subsections)
   end
 
   def subsections(subsection_hash)
