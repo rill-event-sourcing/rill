@@ -24,14 +24,15 @@ ActiveRecord::Migration.maintain_test_schema!
 RSpec.configure do |config|
 
   require 'capybara/poltergeist'
-  Capybara.default_wait_time = 8 # Seconds to wait before timeout error. Default is 2
-  # Register slightly larger than default window size...
+  Capybara.default_wait_time = 8
   Capybara.register_driver :poltergeist do |app|
-    Capybara::Poltergeist::Driver.new(app, { debug: false, # change this to true to troubleshoot
-                                             window_size: [1300, 1000] # this can affect dynamic layout
-    })
+    Capybara::Poltergeist::Driver.new(app, {})
+  end
+  Capybara.register_driver :poltergeist_debug do |app|
+    Capybara::Poltergeist::Driver.new(app, :inspector => true)
   end
   Capybara.javascript_driver = :poltergeist
+  # Capybara.javascript_driver = :poltergeist_debug # set 'page.driver.debug' in feature fro debugging
 
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
