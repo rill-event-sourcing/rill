@@ -56,5 +56,3 @@ namespace :deploy do
     end
   end
 end
-
-require 'appsignal/capistrano'
