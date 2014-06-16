@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe Subsection, :type => :model do
   it {is_expected.to validate_presence_of :section }
   it {is_expected.to validate_presence_of :stars }
+  it {is_expected.to ensure_inclusion_of(:stars).in_array(Star.all) }
 
   before do
     @subsection1 = create(:subsection, title: "A", text: "A content", stars: 1)

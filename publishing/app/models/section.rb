@@ -13,8 +13,6 @@ class Section < ActiveRecord::Base
 
   scope :for_short_uuid, ->(id) { where(["SUBSTRING(CAST(id AS VARCHAR), 1, 8) = ?", id]) }
 
-  # accepts_nested_attributes_for :subsections, allow_destroy: true
-
   def self.find_by_uuid(id, with_404 = true)
     sections = for_short_uuid(id)
     raise ActiveRecord::RecordNotFound if sections.empty? && with_404
