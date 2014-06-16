@@ -4,7 +4,7 @@ class Subsection < ActiveRecord::Base
   belongs_to :section, touch: true
 
   validates :section, :presence => true
-  validates :stars, :presence => true#, inclusion: { in: Star.all }
+  validates :stars, :presence => true, inclusion: { in: Star.all }
 
   default_scope { order(:position) }
 
