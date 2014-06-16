@@ -1,5 +1,6 @@
 set :application, 'my_app_name'
-set :repo_url, 'git@github.com:StudyFlow/Gibbon.git'
+# set :repo_url, 'git@github.com:StudyFlow/Gibbon.git'
+set :repo_url, 'git@gitlab.studyflow.nl:studyflow/gibbon.git'
 
 ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }
 
