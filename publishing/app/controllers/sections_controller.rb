@@ -28,6 +28,8 @@ class SectionsController < ApplicationController
 
   def update
     respond_to do |format|
+      params[:subsections] ||= {}
+      subsections(subsection_params)
       if @section.update(section_params)
         format.html { redirect_to chapter_section_path(@chapter, @section), notice: 'Section was successfully updated.' }
         format.json { render json: @section.as_full_json }
@@ -83,10 +85,25 @@ private
   end
 
   def section_params
-    params.require(:section).permit!
-    #(:title, :description,
-    #   subsections: {star: []}
-    # )
+    params.require(:section).permit(:title, :description)
+  end
+
+  def subsection_params
+    params.permit(:subsections)
+  end
+
+  def subsections(subsection_hash)
+    subsection_hash.each do |stars, new_subsections|
+      new_subsections.values.each_with_index do |new_subsection, index|
+        my_subsection = @section.subsections.find(new_subsection['id'])
+        my_subsection.update_attributes(
+          title: new_subsection['title'],
+          text: new_subsection['text'],
+          position: index
+        )
+      end
+    end
+    @section.updated_at= Time.now
   end
 
 end

@@ -10,7 +10,6 @@
         Saved on:
         %div#edit-time= l @section.updated_at, format: :long
 
-
   %ul.nav.nav-tabs#subsection-tabs
     - Star.all.each_with_index do |star, index|
       -@star_subsections = @all_subsections[star]||[]

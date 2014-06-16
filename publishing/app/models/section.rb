@@ -47,18 +47,4 @@ class Section < ActiveRecord::Base
     "#{id[0,8]}"
   end
 
-  def subsections=(subsection_hash)
-    subsection_hash.each do |stars, new_subsections|
-      new_subsections.values.each_with_index do |new_subsection, index|
-        my_subsection = subsections.find(new_subsection['id'])
-        my_subsection.update_attributes(
-          title: new_subsection['title'],
-          text: new_subsection['text'],
-          position: index
-        )
-      end
-    end
-    self.updated_at= Time.now
-  end
-
 end
