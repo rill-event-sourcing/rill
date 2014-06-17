@@ -25,11 +25,19 @@ class Section < ActiveRecord::Base
   end
 
   def as_json
+
+    subsections_by_level = {"1_star" => [], "2_star" => [], "3_star" => []}
+
+    subsections.each do |subsection|
+      subsections_by_level["#{subsection.stars}_star"] << subsection.as_json
+    end
+
     {
       id: id,
       title: title,
-      subsections: subsections.map(&:as_json)
+      subsections_by_level: subsections_by_level
     }
+    
   end
 
   def as_full_json
