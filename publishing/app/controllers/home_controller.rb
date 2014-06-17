@@ -17,9 +17,7 @@ class HomeController < ApplicationController
         timeout: 30
       )
     rescue Errno::ECONNREFUSED
-      throw 'ECONNREFUSED!'
     rescue Net::ReadTimeout
-      throw 'ReadTimeout!'
     end
 
     if publish_response && publish_response.code == 200
