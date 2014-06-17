@@ -1,19 +1,16 @@
 (ns user
   (:require [studyflow.system :as sys]
-            [ring.adapter.jetty :refer [run-jetty]]
+            [com.stuartsierra.component :as component]
             [clojure.test :as test :refer [run-all-tests]]
-            [clojure.tools.trace :refer [trace trace-ns]]
-            [clojure.core.async :refer [close! <!!]]))
+            [clojure.tools.trace :refer [trace trace-ns]]))
 
-(defonce web-server nil)
+(defonce system nil)
 
 (defn start []
-  (sys/init)
-  (alter-var-root #'web-server (constantly (run-jetty #'sys/web-handler {:port 3000 :join? false}))))
+  (alter-var-root #'system (constantly (-> (sys/prod-system sys/prod-config)
+                                           (component/start))))
+  :started)
 
 (defn stop []
-  (when web-server
-    (.stop web-server))
-  (close! sys/channel)
-  (<!! sys/event-listener))
+  (alter-var-root #'system (constantly (component/stop #'system))))
 

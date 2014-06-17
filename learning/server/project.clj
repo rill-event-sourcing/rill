@@ -18,16 +18,14 @@
                  [ring-mock "0.1.5"]
                  [ring/ring-devel "1.1.0"]
                  [org.clojure/core.async "0.1.303.0-886421-alpha"]
-                 [me.raynes/conch "0.7.0"]]
+                 [me.raynes/conch "0.7.0"]
+                 [com.stuartsierra/component "0.2.1"]]
   :profiles {:dev
              {:source-paths ["dev"]
               :dependencies
               [[org.clojure/tools.trace "0.7.5"]]}}
-  :plugins [[cider/cider-nrepl "0.7.0-SNAPSHOT"]
-            [lein-ring "0.8.10"]]
   :test-paths ["test"]
-  :ring {:handler studyflow.system/web-handler
-         :init studyflow.system/init}
-  :aliases {"validate-course-material" ["run" "-m" "studyflow.cli.validate-course-material-json"]})
+  :aliases {"server" ["run" "-m" "studyflow.main"]
+            "validate-course-material" ["run" "-m" "studyflow.cli.validate-course-material-json"]})
 
 
