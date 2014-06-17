@@ -9,6 +9,9 @@ RSpec.describe Section, :type => :model do
     @section1 = create(:section, title: 'B', position: 2)
     @section2 = create(:section, title: 'C', position: 3)
     @section3 = create(:section, title: 'A', position: 1)
+    @subsection1 = create(:subsection, title: "A", text: "A content", stars: 1, section: @section1)
+    @subsection2 = create(:subsection, title: "B", text: "A content", stars: 2, section: @section1)
+    @subsection3 = create(:subsection, title: "C", text: "A content", stars: 3, section: @section1)
   end
 
   it "should return title when asked for its string" do
@@ -74,7 +77,11 @@ RSpec.describe Section, :type => :model do
   end
 
   it "should return a json object" do
-    obj = {id: @section1.id, title: @section1.title, subsections: @section1.subsections.map(&:as_json)}
+    subsections_by_level = {"1_star" => [], "2_star" => [], "3_star" => []}
+    @section1.subsections.each do |subsection|
+      subsections_by_level["#{subsection.stars}_star"] << subsection.as_json
+    end
+    obj = {id: @section1.id, title: @section1.title, subsections_by_level: subsections_by_level}
     expect(@section1.as_json).to eq obj
   end
 
