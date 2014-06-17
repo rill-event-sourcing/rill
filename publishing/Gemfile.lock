@@ -121,6 +121,9 @@ GEM
       haml (>= 4.0.0.rc.1)
       hpricot (~> 0.8.6)
       ruby_parser (~> 3.1.1)
+    httparty (0.11.0)
+      multi_json (~> 1.0)
+      multi_xml (>= 0.5.2)
     i18n (0.6.9)
     jbuilder (2.0.7)
       activesupport (>= 3.0.0, < 5)
@@ -145,6 +148,7 @@ GEM
     mini_portile (0.6.0)
     minitest (5.3.4)
     multi_json (1.10.1)
+    multi_xml (0.5.5)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (2.9.1)
@@ -299,6 +303,7 @@ DEPENDENCIES
   guard-rspec
   haml-rails
   html2haml
+  httparty
   jbuilder (~> 2.0)
   jquery-rails
   launchy

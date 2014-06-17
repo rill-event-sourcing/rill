@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
-  match 'select_course', to: 'courses#select', via: :post
+  match 'select_course',  to: 'courses#select', via: :post
+  match 'publish_course', to: 'home#publish', via: :post
 
   resources :chapters do
     member do

@@ -23,7 +23,7 @@ class Course < ActiveRecord::Base
     {
       id: id,
       name: name,
-      chapters: chapters.map(&:as_json)
+      chapters: chapters.active.map(&:as_json)
     }
   end
 end

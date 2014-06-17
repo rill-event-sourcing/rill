@@ -16,6 +16,7 @@ gem 'pg'
 gem 'sendgrid'
 gem 'acts_as_list'
 gem 'appsignal'
+gem 'httparty'
 
 group :development do
   gem 'better_errors'

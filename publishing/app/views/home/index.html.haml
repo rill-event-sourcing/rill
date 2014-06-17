@@ -2,11 +2,15 @@
   - @course = Course.current
   %div.container
     %div.row
+      %div.col-md-10
+        %h2
+          = @course.name
+          %small= "(#{ @course.chapters.length })"
+      %div.col-md-2
+        = link_to 'Publish', publish_course_path, class: "btn btn-success", method: :post
+
+    %div.row
       %div.col-md-8.col-md-offset-2
-        %div.page-header
-          %h1
-            = @course.name
-            %small= "(#{ @course.chapters.length })"
         -@course.chapters.each do |chapter|
           %table.table.table-condensed.table-bordered
             %thead
