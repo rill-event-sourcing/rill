@@ -5,7 +5,7 @@ class HomeController < ApplicationController
 
   def publish
     course = Course.current
-    throw "Publishing without course selected!" unless course
+    throw Exception.new("Publishing without course selected!") unless course
 
     course_json = JSON.pretty_generate(course.as_json)
     url = "http://localhost:3000/api/internal/course/#{ course.id }"
@@ -17,7 +17,9 @@ class HomeController < ApplicationController
         timeout: 30
       )
     rescue Errno::ECONNREFUSED
+      throw 'ECONNREFUSED!'
     rescue Net::ReadTimeout
+      throw 'ReadTimeout!'
     end
 
     if publish_response && publish_response.code == 200
