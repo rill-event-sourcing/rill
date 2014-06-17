@@ -8,7 +8,8 @@ https://github.com/jankronquist/rock-paper-scissors-in-clojure/tree/master/event
             [rill.message :as msg]
             [rill.event-stream :as stream]
             [clj-http.client :as client]
-            [cheshire.core :as json]))
+            [cheshire.core :as json]
+            [clojure.tools.logging :as log]))
 
 (defn to-eventstore-format [event]
   {:eventId (msg/id event)
@@ -68,6 +69,14 @@ https://github.com/jankronquist/rock-paper-scissors-in-clojure/tree/master/event
         (concat (load-events-from-page page message-constructor) (load-events previous-uri message-constructor))
         (load-events-from-page page message-constructor)))))
 
+(defn safe-convert
+  [s m]
+  (try
+    (msg/strict-map->Message s m)
+    (catch RuntimeException e
+      (log/info "Ignoring malformed event" e)
+      nil)))
+
 (defn atom-event-store
   ([uri message-constructor]
      (letfn [(stream-uri [stream-id] (str uri "/streams/" stream-id))]
@@ -84,4 +93,4 @@ https://github.com/jankronquist/rock-paper-scissors-in-clojure/tree/master/event
                                                                (dec from-version)
                                                                from-version))}})))))
   ([uri]
-     (atom-event-store uri msg/strict-map->Message)))
+     (atom-event-store uri safe-convert)))
