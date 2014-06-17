@@ -9,6 +9,8 @@
   (fn [request]
     (when-let [command (ring-handler request)]
       (log/info ["Executing command" (class command)])
-      (if (= :es-dispatcher/error (es-dispatcher/try-command event-store command))
-        {:status 500 :body {:status :command-rejected}}
-        {:status 200 :body {:status :command-accepted}}))))
+      (case (es-dispatcher/try-command event-store command)
+        :rejected {:status 500 :body {:status :command-rejected}}
+        :conflict {:status 409 :body {:status :command-conflict}}
+        :ok {:status 200 :body {:status :command-accepted}}
+        {:status 500 :body {:status :internal-error}}))))

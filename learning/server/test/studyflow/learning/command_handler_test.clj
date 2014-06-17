@@ -13,8 +13,10 @@
 
 (deftest test-try-command
   (let [store (memory-store)]
-    (is (not= (try-command store (cmd/->PublishCourse! (new-id) (:id initial-material) initial-material))
-              :rill.handler/error))))
+    (is (= (try-command store (cmd/->PublishCourse! (new-id) (:id initial-material) initial-material))
+           :ok))
+    (is (= (try-command store (cmd/->PublishCourse! (new-id) (:id initial-material) initial-material))
+           :ok))))
 
 (deftest test-command-handler
   (testing "Publishing commands"

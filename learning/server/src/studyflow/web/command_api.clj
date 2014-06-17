@@ -16,7 +16,7 @@ commands."
   (combine-ring-handlers
    (handle routes/update-course-material
            (fn [{{:keys [course-id]} :params body :body :as request}]
-             (commands/->UpdateCourse! (new-id) course-id (material/parse-course-material body))))))
+             (commands/->PublishCourse! (new-id) course-id (material/parse-course-material body))))))
 
 (defn make-request-handler
   [event-store]

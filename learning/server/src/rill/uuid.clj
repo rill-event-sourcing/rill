@@ -3,7 +3,7 @@
 
 (defn new-id
   []
-  (str (UUID/randomUUID)))
+  (UUID/randomUUID))
 
 (defn uuid
   [u]

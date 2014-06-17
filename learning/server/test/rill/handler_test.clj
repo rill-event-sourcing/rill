@@ -47,7 +47,8 @@
   (testing "the events from a command handler get stored in the relevant aggregate stream"
     (let [store (memory-store)]
       (is (= (retrieve-events store my-aggregate-id) empty-stream))
-      (is (true? (try-command store (->HandlerCommand (new-id) my-aggregate-id))))
+      (is (= :ok
+             (try-command store (->HandlerCommand (new-id) my-aggregate-id))))
       (is (not= (retrieve-events store my-aggregate-id) empty-stream))
       (is (= (map class (retrieve-events store my-aggregate-id))
              [HandlerTestEvent])))))

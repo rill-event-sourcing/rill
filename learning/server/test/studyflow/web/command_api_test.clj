@@ -7,7 +7,7 @@
             [studyflow.learning.course-material-test :as fixture]
             [studyflow.learning.course-material :as material]
             [studyflow.learning.commands])
-  (:import (studyflow.learning.commands UpdateCourse!)))
+  (:import (studyflow.learning.commands PublishCourse!)))
 
 (def input (fixture/read-example-json))
 (def parsed-input (material/parse-course-material input))
@@ -17,7 +17,7 @@
     (let [cmd (api/command-ring-handler
                (-> (request :put (uri-for routes/update-course-material (:id input)))
                    (assoc :body input)))]
-      (is (= (class cmd) UpdateCourse!)
+      (is (= (class cmd) PublishCourse!)
           "generates a command")
       (is (= (:id input)
              (:course-id cmd)))
