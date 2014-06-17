@@ -8,20 +8,19 @@ class HomeController < ApplicationController
     throw "Publishing without course selected!" unless course
 
     course_json = JSON.pretty_generate(course.as_json)
-    url = "http://localhost:3001/api/internal/course/#{ course.id }"
-    # p "Putting Course material to: #{ url }"
+    url = "http://localhost:3000/api/internal/course/#{ course.id }"
 
     begin
       publish_response =  HTTParty.put(url,
         headers: { 'Content-Type' => 'application/json' },
-        body: course_json
+        body: course_json,
+        timeout: 30
       )
-      parsed_response = JSON.parse(response)
     rescue Errno::ECONNREFUSED
+    rescue Net::ReadTimeout
     end
 
-    throw parsed_response
-    if parsed_response && parsed_response
+    if publish_response && publish_response.code == 200
       redirect_to root_path, notice: "Course '#{ course }' was succesfully published!"
     else
       flash[:alert] = "Course '#{ course }' was NOT published!"
