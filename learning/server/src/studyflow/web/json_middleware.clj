@@ -8,7 +8,7 @@
 
 (defn wrap-json-response
   [f]
-  (ring/wrap-json-response {:key-fn key-to-json}))
+  (ring/wrap-json-response f {:key-fn key-to-json}))
 
 (defn wrap-json-io
   [f]

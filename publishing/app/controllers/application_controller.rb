@@ -14,4 +14,9 @@ class ApplicationController < ActionController::Base
     Course.current = nil
   end
 
+  def set_crumb(crumb_hash)
+    @crumbs ||= []
+    @crumbs << crumb_hash
+  end
+
 end

@@ -14,10 +14,6 @@ RSpec.describe Section, :type => :model do
     @subsection3 = create(:subsection, title: "C", text: "A content", stars: 3, section: @section1)
   end
 
-  it "should return title when asked for its string" do
-    @section = build(:section)
-    expect(@section.to_s).to eq @section.title
-  end
 
   it "should list sections in the right order" do
     expect(Section.all.map(&:to_s)).to eq ['A', 'B', 'C']
@@ -29,13 +25,6 @@ RSpec.describe Section, :type => :model do
     expect(Section.trashed.first).to eq @section3
   end
 
-  it "should be activateable" do
-    @section = build(:section)
-    expect(@section.active).to eq false
-    @section.activate
-    expect(@section.active).to eq true
-    @section.deactivate
-    expect(@section.active).to eq false
   end
 
   it "should list recovered sections" do

@@ -6,11 +6,10 @@
 
 (defn fallback-handler
   [r]
-  (resp/not-found "Not found.\n"))
+  (resp/not-found (str "Not found.\n" (pr-str r))))
 
 (defn make-request-handler
   [event-store read-model]
-  (combine-ring-handlers
-   (api/make-request-handler event-store read-model)
-   status/status-handler
-   fallback-handler))
+  (combine-ring-handlers (api/make-request-handler event-store read-model)
+                         status/status-handler
+                         fallback-handler))

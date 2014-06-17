@@ -13,7 +13,3 @@
 
 (defevent CourseDeleted
   [course-id :- material/Id])
-
-
-
-

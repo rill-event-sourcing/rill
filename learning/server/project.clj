@@ -25,7 +25,8 @@
   :plugins [[cider/cider-nrepl "0.7.0-SNAPSHOT"]
             [lein-ring "0.8.10"]]
   :test-paths ["test"]
-  :ring {:handler studyflow.system/web-handler}
+  :ring {:handler studyflow.system/web-handler
+         :init studyflow.system/init}
   :aliases {"validate-course-material" ["run" "-m" "studyflow.cli.validate-course-material-json"]})
 
 
