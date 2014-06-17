@@ -1,31 +1,23 @@
 -if Course.current
   - @course = Course.current
-  %div.page-header
-    %h1
-      = @course.name
-      %small= "(#{ @course.chapters.length })"
-  -@course.chapters.each do |chapter|
-    %div.panel.panel-default
-      %div.panel-heading
-        %h4
-          =link_to chapter.title, chapter
-          %span.badge= chapter.sections.length
-      %div.panel-body
-        -chapter.sections.each do |section|
-          %div.panel.panel-default
-            %div.panel-heading
-              = link_to section.title, [chapter, section]
-            %div.panel-body
-              -sub_hash = section.subsections.group_by(&:stars)
-              -Star.all.each do |star|
-                %dl.dl-horizontal
-                  %dt
-                    -star.times do
-                      %span.glyphicon.glyphicon-star
-                    %span.badge= (sub_hash[star] || []).length
-                  %dd
-                    %ul.list-unstyled
-                      -subsections = sub_hash[star] || []
-                      -subsections.each do |subsection|
-                        %li
-                          =subsection.title
+  %div.container
+    %div.row
+      %div.col-md-8.col-md-offset-2
+        %div.page-header
+          %h1
+            = @course.name
+            %small= "(#{ @course.chapters.length })"
+        -@course.chapters.each do |chapter|
+          %table.table.table-condensed.table-bordered
+            %thead
+              %tr
+                %th
+                  =link_to chapter.title, chapter
+                  %span.pull-right
+                    #{chapter.sections.where(active: true).length} / #{chapter.sections.length}
+            %tbody
+              -chapter.sections.each do |section|
+                %tr
+                  %td{class: section.active? ? "success" : "danger", id: "section-row"}
+                    = link_to section.title, [chapter, section]
+                    %span.badge.pull-right= section.subsections.length
