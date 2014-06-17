@@ -32,10 +32,26 @@ RSpec.describe HomeController, :type => :controller do
     end
 
     it "should publish the course material" do
-      expect(HTTParty).to receive(:put).with(@url, headers: @headers, body: @body, timeout: 30)#.and_return({status: 200})
+      response_object = Net::HTTPOK.new('1.1', 200, 'OK')
+      response_object.stub(body: "{foo:'bar'}")
+      mocked_response = HTTParty::Response.new({},response_object,{})
+      expect(HTTParty).to receive(:put).with(@url, headers: @headers, body: @body, timeout: 30).and_return(mocked_response)
       post :publish
       expect(response).to redirect_to root_path
+      expect(controller.flash[:notice]).to eq "Course '#{ @course }' was succesfully published!"
     end
+
+    it "should warn when the course material is not published" do
+      response_object = Net::HTTPOK.new('1.1', 500, 'NOK')
+      response_object.stub(body: "{foo:'bar'}")
+      mocked_response = HTTParty::Response.new({},response_object,{})
+      expect(HTTParty).to receive(:put).with(@url, headers: @headers, body: @body, timeout: 30).and_return(mocked_response)
+      post :publish
+      expect(response).to redirect_to root_path
+      expect(controller.flash[:alert]).to eq "Course '#{ @course }' was NOT published!"
+    end
+
+
   end
 
 end
