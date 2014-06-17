@@ -25,8 +25,6 @@ RSpec.describe Section, :type => :model do
     expect(Section.trashed.first).to eq @section3
   end
 
-  end
-
   it "should list recovered sections" do
     @section3.trash
     expect(Section.all.map(&:to_s)).to eq ['B', 'C']

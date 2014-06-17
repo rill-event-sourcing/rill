@@ -12,8 +12,8 @@ RSpec.describe Chapter, :type => :model do
   end
 
   it "should return title when asked for its string" do
-    @chapter = build(:chapter)
-    expect(@chapter.to_s).to eq @chapter.title
+    @chapter1 = build(:chapter)
+    expect(@chapter1.to_s).to eq @chapter1.title
   end
 
   it "should list chapters in the right order" do
@@ -30,13 +30,6 @@ RSpec.describe Chapter, :type => :model do
     @chapter3.trash
     expect(Chapter.all.map(&:to_s)).to eq ['B', 'C']
     @chapter3.recover
-    expect(Chapter.all.map(&:to_s)).to eq ['A','B', 'C']
-  end
-
-  it "should list recovered chapters" do
-    @chapter.trash
-    expect(Chapter.all.map(&:to_s)).to eq ['B', 'C']
-    @chapter.recover
     expect(Chapter.all.map(&:to_s)).to eq ['A','B', 'C']
   end
 
