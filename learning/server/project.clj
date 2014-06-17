@@ -14,13 +14,14 @@
                  [ring/ring-jetty-adapter "1.3.0"]
                  [clout-link "0.0.6"]
                  [org.clojure/tools.logging "0.2.6"]
-                 [ring.middleware.logger "0.4.0"]
+                 [org.slf4j/slf4j-log4j12 "1.7.5"]
                  [ring-mock "0.1.5"]
                  [ring/ring-devel "1.1.0"]
                  [org.clojure/core.async "0.1.303.0-886421-alpha"]
                  [me.raynes/conch "0.7.0"]]
   :profiles {:dev
-             {:dependencies
+             {:source-paths ["dev"]
+              :dependencies
               [[org.clojure/tools.trace "0.7.5"]]}}
   :plugins [[cider/cider-nrepl "0.7.0-SNAPSHOT"]
             [lein-ring "0.8.10"]]
