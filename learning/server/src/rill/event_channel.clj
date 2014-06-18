@@ -6,23 +6,24 @@
 (def long-poll-seconds 20)
 
 (defn push-event!!
-  "push event to channel. ignores nil events.
+  "push event to channel.
 returns false when we should not continue pushing."
   [ch event]
-  (log/info event)
-  (if event
-    (boolean (>!! ch event))
-    true))
+  (log/debug "Pushing" event "to channel")
+  (boolean (>!! ch event)))
 
 (defn push-events!!
   [ch cursor events]
-  (log/debug events)
-  (loop [cursor cursor [event & events] events]
-    (if event
-      (if (push-event!! ch event)
-        (recur (:cursor (meta events)) events)
-        nil)
-      cursor)))
+  (log/debug "pushing" (count events) "events to channel")
+  (let [r (loop [cursor cursor
+                 [event & events] events]
+            (if event
+              (if (push-event!! ch event)
+                (recur (:cursor (meta event)) events)
+                nil)
+              cursor))]
+    (log/debug "pushed - " r)
+    r))
 
 (defn event-channel-listen!!
   "Push events from stream into ch. Blocking"
@@ -37,6 +38,9 @@ returns false when we should not continue pushing."
   containing the messages from the stream."
   [event-store stream-id from-version buf-or-n]
   (let [ch (chan buf-or-n)]
-    (thread (do (log/info ["started event listen thread"])
-                (event-channel-listen!! event-store stream-id from-version ch)))
+    (thread (try
+              (do (log/info ["started event listen thread"])
+                  (event-channel-listen!! event-store stream-id from-version ch))
+              (catch Exception e                (log/error e)
+                (throw e))))
     ch))

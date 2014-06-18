@@ -41,7 +41,7 @@ https://github.com/jankronquist/rock-paper-scissors-in-clojure/tree/master/event
                                         :throw-exceptions false}
                                        (if (and poll-seconds
                                                 (< 0 poll-seconds))
-                                         {"ES-LongPoll" (str poll-seconds)})))]
+                                         {:headers {"ES-LongPoll" (str poll-seconds)}})))]
        (if-not (= 200 (:status response))
          nil
          (:body response))))
@@ -68,8 +68,18 @@ https://github.com/jankronquist/rock-paper-scissors-in-clojure/tree/master/event
   (if-let [page (load-page page-uri wait-for-seconds)]
     (let [events (events-from-page cursor page message-constructor)]
       (if-let [previous-uri (uri-for-relation "previous" (:links page))]
-        (concat events (lazy-seq (load-events (->Cursor previous-uri -1) message-constructor 0)))
+        (if (seq events)
+          (concat events (lazy-seq (load-events (->Cursor previous-uri -1) message-constructor 0)))
+          (load-events (->Cursor previous-uri -1) message-constructor wait-for-seconds))
         events))
+    stream/empty-stream))
+
+(defn load-from-head
+  [stream-uri message-constructor wait-for-seconds]
+  (if-let [page (load-page stream-uri wait-for-seconds)]
+    (if-let [last-uri (uri-for-relation "last" (:links page))]
+      (load-events (->Cursor last-uri -1) message-constructor 0) ;; start from last page
+      (events-from-page (->Cursor stream-uri -1) page message-constructor))  ;; only one page
     stream/empty-stream))
 
 (defrecord UnprocessableMessage [v])
@@ -87,28 +97,26 @@ https://github.com/jankronquist/rock-paper-scissors-in-clojure/tree/master/event
      (letfn [(stream-uri [stream-id] (str uri "/streams/" stream-id))]
        (reify store/EventStore
          (retrieve-events-since [this stream-id cursor wait-for-seconds]
-           (load-events (cond
-                         (instance? Cursor cursor)
-                         cursor
+           (if (= -1 cursor)
+             (load-from-head (stream-uri stream-id) message-constructor wait-for-seconds)
+             (load-events (cond
+                           (instance? Cursor cursor)
+                           cursor
 
-                         (= -1 cursor)
-                         (->Cursor (stream-uri stream-id) -1)
+                           (:cursor (meta cursor))
+                           (:cursor (meta cursor))
+                           :else
+                           (throw (RuntimeException. (str "Invalid cursor " (pr-str cursor)))))
 
-                         (:cursor (meta cursor))
-                         (:cursor (meta cursor))
-                         :else
-                         (throw (RuntimeException. (str "Invalid cursor " (pr-str cursor)))))
-
-                        message-constructor
-                        wait-for-seconds))
+                          message-constructor
+                          wait-for-seconds)))
 
          (append-events
            [this stream-id from-version events]
+           (log/debug [:appending (count events) :to stream-id :at from-version])
            (client/post (stream-uri stream-id)
                         {:body (json/generate-string (map to-eventstore-format events))
                          :content-type :json
-                         :headers {"ES-ExpectedVersion" (str (if (< 1 from-version)
-                                                               (dec from-version)
-                                                               from-version))}})))))
+                         :headers {"ES-ExpectedVersion" (str from-version)}})))))
   ([uri]
      (atom-event-store uri safe-convert)))
