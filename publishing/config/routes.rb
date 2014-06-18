@@ -17,8 +17,10 @@ Rails.application.routes.draw do
         post 'moveup'
         post 'movedown'
         get 'preview'
+        get 'questions'
       end
       resources :subsections, only: [:destroy, :create]
+      resources :open_questions, only: [:destroy, :create]
     end
   end
 
