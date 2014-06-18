@@ -11,14 +11,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140618075746) do
+ActiveRecord::Schema.define(version: 20140618145746) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
 
   create_table "answers", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
-    t.uuid     "open_question_id"
+    t.uuid     "line_input_id"
     t.string   "value"
     t.boolean  "correct"
     t.datetime "created_at"
@@ -37,7 +37,7 @@ ActiveRecord::Schema.define(version: 20140618075746) do
   end
 
   create_table "choices", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
-    t.uuid     "multiple_choice_question_id"
+    t.uuid     "multiple_choice_input_id"
     t.text     "value"
     t.boolean  "correct"
     t.datetime "created_at"
@@ -48,6 +48,13 @@ ActiveRecord::Schema.define(version: 20140618075746) do
     t.string   "name"
     t.datetime "deleted_at"
     t.boolean  "active",     default: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "inputs", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
+    t.uuid     "question_id"
+    t.string   "type"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -5,7 +5,7 @@ class Question < ActiveRecord::Base
   validates :section, presence: true
 
   belongs_to :section, touch: true
-
+  has_many :inputs, dependent: :destroy
 
   scope :for_short_uuid, ->(id) { where(["SUBSTRING(CAST(id AS VARCHAR), 1, 8) = ?", id]) }
   def self.find_by_uuid(id, with_404 = true)
@@ -15,15 +15,12 @@ class Question < ActiveRecord::Base
     questions.first
   end
 
-
   def to_s
-    text
+    "#{text}"
   end
 
   def to_param
     "#{id[0,8]}"
   end
-
-
 
 end

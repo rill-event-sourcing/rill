@@ -1,6 +1,10 @@
-class MultipleChoiceQuestion < Question
+class LineInput < Input
 
-  has_many :choices
+  has_many :answers
+
+  # length
+  # pre-text
+  # post-text
 
   # def as_json
   #   {
