@@ -1,6 +1,6 @@
 class Answer < ActiveRecord::Base
 
-  belongs_to :open_question
+  belongs_to :line_input
 
   validates :value, presence: true
 

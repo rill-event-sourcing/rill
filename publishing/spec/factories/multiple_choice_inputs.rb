@@ -2,7 +2,6 @@
 
 FactoryGirl.define do
   factory :multiple_choice_input do
-    text "Default open question text"
     question
   end
 end
