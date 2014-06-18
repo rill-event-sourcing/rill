@@ -3,6 +3,6 @@
 FactoryGirl.define do
   factory :answer do
     value "Default answer value"
-    open_question
+    line_input
   end
 end

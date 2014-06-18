@@ -2,5 +2,7 @@
 
 FactoryGirl.define do
   factory :question do
+    text "Default question text"
+    section
   end
 end

@@ -2,6 +2,7 @@
 
 FactoryGirl.define do
   factory :line_input do
+    text "Default question text"
     question
   end
 end

@@ -2,5 +2,7 @@
 
 FactoryGirl.define do
   factory :choice do
+    value "Default multiple choice value"
+    multiple_choice_input
   end
 end
