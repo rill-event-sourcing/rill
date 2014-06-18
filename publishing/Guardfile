@@ -7,7 +7,7 @@ guard :bundler do
   # watch(/^.+\.gemspec/)
 end
 
-guard 'rails' do
+guard 'rails', start_on_start: false do
   watch('Gemfile.lock')
   watch(%r{^(config|lib)/.*})
 end
@@ -67,4 +67,3 @@ guard :rspec do
   watch(%r{^spec/acceptance/(.+)\.feature$})
   watch(%r{^spec/acceptance/steps/(.+)_steps\.rb$})   { |m| Dir[File.join("**/#{m[1]}.feature")][0] || 'spec/acceptance' }
 end
-
