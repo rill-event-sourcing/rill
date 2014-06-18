@@ -20,6 +20,7 @@ Rails.application.routes.draw do
       resources :subsections do
         collection do
           get 'preview'
+          post 'save'
         end
       end
       resources :questions

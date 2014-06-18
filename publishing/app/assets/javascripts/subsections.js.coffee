@@ -44,7 +44,7 @@ bindSaveButton = ->
 
 save = ->
   form  = $("#section-form")
-  url = form.context.URL
+  url = form.attr("action")
   $("#edit-time").html('<img src="/assets/spinner.gif" alt="Wait" />')
   $.ajax url,
     type: 'POST'

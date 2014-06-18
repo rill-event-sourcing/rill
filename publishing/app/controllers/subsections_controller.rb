@@ -29,14 +29,12 @@ class SubsectionsController < ApplicationController
     end
   end
 
-  def update
+  def save
     respond_to do |format|
-      subsections(params[:subsections]) if params[:subsections]
-      if @section.update(section_params)
-        format.html { redirect_to chapter_section_path(@chapter, @section), notice: 'Section was successfully updated.' }
+      subsections(params[:subsections])# if params[:subsections]
+      if @section.save
         format.json { render json: @section.as_full_json }
       else
-        format.html { render :show }
         format.json { render json: @section.errors, status: :unprocessable_entity }
       end
     end
@@ -53,7 +51,7 @@ private
     @course = Course.current
     @chapter = @course.chapters.find_by_uuid(params[:chapter_id])
     @section = @chapter.sections.find_by_uuid(params[:section_id])
-    @subsection = @section.subsections.find_by_uuid(params[:id], false) if params[:id]
+    @subsection = @section.subsections.find_by_uuid(params[:id]) if params[:id]
   end
 
   def subsections(subsection_hash)
