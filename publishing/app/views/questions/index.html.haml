@@ -1,0 +1,25 @@
+%ul.nav.nav-tabs#subsection-tabs
+  %li.active
+    %a{href: "#open_question_tab", data: {toggle: "tab"} }
+      Open questions
+
+%div.tab-content
+  %div.tab-pane.active#open_question_tab
+    -@section.questions.each do |question|
+      %div.panel.panel-default
+        %div.panel-body
+          %p= question.text
+          %strong Correct answers:
+          %ul
+            - question.answers.each do |answer|
+              %li= answer.value
+
+    -#
+    -# %div.col-md-6
+    -#   = render partial: 'subsections/new'
+    -#   - @star_subsections.each_with_index do |subsection, index|
+    -#     -@subsection, @index = subsection, index
+    -#     = render partial: 'subsections/edit'
+    -#
+    -# %div.col-md-6
+    -#   = render partial: 'subsections/preview'

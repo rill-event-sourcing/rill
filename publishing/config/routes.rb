@@ -17,10 +17,9 @@ Rails.application.routes.draw do
         post 'moveup'
         post 'movedown'
         get 'preview'
-        get 'questions'
       end
-      resources :subsections #, only: [:destroy, :create]
-      resources :questions #, only: [:destroy, :create]
+      resources :subsections
+      resources :questions
     end
   end
 
