@@ -2,8 +2,7 @@ class ChoiceQuestion < Question
 
   has_many :choices
 
-  # has many choices true / false (answers)
-  # limit to one correct answer
+  validates :text, :presence => true
 
   # def as_json
   #   {

@@ -4,11 +4,10 @@ class CreateChapters < ActiveRecord::Migration
       t.uuid :course_id, index: true
       t.string :title
       t.text :description
-      t.datetime :deleted_at
+      t.datetime :deleted_at, index: true
       t.boolean :active, default: false
       t.integer :position, limit: 3
       t.timestamps
     end
-    add_index :chapters, :deleted_at
   end
 end
