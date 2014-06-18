@@ -31,7 +31,7 @@ class SubsectionsController < ApplicationController
 
   def save
     respond_to do |format|
-      subsections(params[:subsections])# if params[:subsections]
+      subsections(params[:subsections])
       if @section.save
         format.json { render json: @section.as_full_json }
       else
@@ -51,7 +51,7 @@ private
     @course = Course.current
     @chapter = @course.chapters.find_by_uuid(params[:chapter_id])
     @section = @chapter.sections.find_by_uuid(params[:section_id])
-    @subsection = @section.subsections.find_by_uuid(params[:id]) if params[:id]
+    @subsection = @section.subsections.find_by_uuid(params[:id], false) if params[:id]
   end
 
   def subsections(subsection_hash)
