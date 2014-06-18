@@ -2,6 +2,6 @@ class Answer < ActiveRecord::Base
 
   belongs_to :open_question
 
-  validates :value, :presence => true
+  validates :value, presence: true
 
 end
