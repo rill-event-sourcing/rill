@@ -4,7 +4,7 @@
     %div.row
       %div.col-md-8.col-md-offset-2
         %h2
-          = @course.name
+          =link_to @course.name, chapters_path
           %small= "(#{ @course.chapters.length })"
       %div.col-md-2
         = link_to 'Publish', publish_course_path, class: "btn btn-success", method: :post
