@@ -1,18 +1,36 @@
+%div.row
+  %div.col-md-10
+    %h2= "Questions for '#{@section}'"
+
 %ul.nav.nav-tabs#subsection-tabs
   %li.active
     %a{href: "#open_question_tab", data: {toggle: "tab"} }
       Open questions
+  %li
+    %a{href: "#multiple_choice_question_tab", data: {toggle: "tab"} }
+      Multiple choice
+
 
 %div.tab-content
   %div.tab-pane.active#open_question_tab
     -@section.questions.each do |question|
       %div.panel.panel-default
+        %div.panel-heading
+          %div.pull-right
+            %span.glyphicon.glyphicon-minus
+            %span.glyphicon.glyphicon-plus
+
         %div.panel-body
           %p= question.text
           %strong Correct answers:
           %ul
             - question.answers.each do |answer|
               %li= answer.value
+  %div.tab-pane#multiple_choice_question_tab
+    %div.panel.panel-default
+      %div.panel-body
+        Empty for now
+
 
     -#
     -# %div.col-md-6

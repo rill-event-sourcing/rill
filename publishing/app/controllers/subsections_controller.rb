@@ -1,5 +1,6 @@
 class SubsectionsController < ApplicationController
   before_action :set_param_objects
+  before_action :set_breadcrumb
 
   def index
     @all_subsections = @section.subsections.group_by(&:stars)
@@ -67,6 +68,10 @@ private
       end
     end
     @section.updated_at= Time.now
+  end
+
+  def set_breadcrumb
+    @crumbs = [{name: @chapter.title, url: chapter_sections_path(@chapter)},{name: @section.title, url: chapter_section_path(@chapter, @section)}, {name: "Subsections", url: chapter_section_subsections_path(@chapter, @section)}]
   end
 
 end
