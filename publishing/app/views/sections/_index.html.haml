@@ -27,3 +27,6 @@
         %td
           =link_to chapter_section_path(@chapter, section), method: :delete, data: { confirm: "Are you sure you want to delete section `#{ section }`?" } do
             %span.glyphicon.glyphicon-trash
+
+        %td
+          =link_to 'questions', chapter_section_questions_path(@chapter, section)

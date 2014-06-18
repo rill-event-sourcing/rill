@@ -19,8 +19,8 @@ Rails.application.routes.draw do
         get 'preview'
         get 'questions'
       end
-      resources :subsections, only: [:destroy, :create]
-      resources :open_questions, only: [:destroy, :create]
+      resources :subsections #, only: [:destroy, :create]
+      resources :questions #, only: [:destroy, :create]
     end
   end
 
