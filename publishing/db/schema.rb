@@ -37,7 +37,7 @@ ActiveRecord::Schema.define(version: 20140618075746) do
   end
 
   create_table "choices", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
-    t.uuid     "choice_question_id"
+    t.uuid     "multiple_choice_question_id"
     t.text     "value"
     t.boolean  "correct"
     t.datetime "created_at"
@@ -53,6 +53,7 @@ ActiveRecord::Schema.define(version: 20140618075746) do
   end
 
   create_table "questions", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
+    t.string   "type"
     t.text     "text"
     t.datetime "deleted_at"
     t.boolean  "active",     default: false

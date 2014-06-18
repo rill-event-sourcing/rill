@@ -1,5 +1,5 @@
 class Choice < ActiveRecord::Base
 
-  belongs_to :choice_question
+  belongs_to :multiple_choice_question
 
 end

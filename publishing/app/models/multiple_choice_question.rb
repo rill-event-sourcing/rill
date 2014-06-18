@@ -1,4 +1,4 @@
-class ChoiceQuestion < Question
+class MultipleChoiceQuestion < Question
 
   has_many :choices
 
