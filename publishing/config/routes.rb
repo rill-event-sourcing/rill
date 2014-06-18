@@ -16,9 +16,12 @@ Rails.application.routes.draw do
         post 'deactivate'
         post 'moveup'
         post 'movedown'
-        get 'preview'
       end
-      resources :subsections
+      resources :subsections do
+        collection do
+          get 'preview'
+        end
+      end
       resources :questions
     end
   end

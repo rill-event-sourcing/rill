@@ -1,35 +1,11 @@
-= form_for([@chapter, @section], html:{ id: "section-form" }) do |form|
-  %div.row
-    %div.col-md-10
-      %h2= form.text_field :title
-      %p= form.text_area :description, cols: 60, rows: 4
-    %div.col-md-2
-      %span.btn.btn-default.save Save
-      %br
-      %small
-        Saved on:
-        %div#edit-time= l @section.updated_at, format: :long
+%div.row
+  %div.col-md-8.col-md-offset-2
+    %h2
+      = @section.title
+    %p
+      = @section.description
 
-  %ul.nav.nav-tabs#subsection-tabs
-    - Star.all.each_with_index do |star, index|
-      -@star_subsections = @all_subsections[star]||[]
-      %li{class: index == 0 ? "active" : ""}
-        %a{href: "#star-#{star}", data: {toggle: "tab"} }
-          - star.times do
-            %span.glyphicon.glyphicon-star
-          %span.badge{id: "badge_#{star}"}= @star_subsections.length
-
-  %div.tab-content
-    - Star.all.each_with_index do |star, index|
-      -@star = star
-      -@star_subsections = @all_subsections[@star]||[]
-      %div.tab-pane{id: "star-#{ star }", class: index == 0 ? "active" : ""}
-
-        %div.col-md-6
-          = render partial: 'subsections/new'
-          - @star_subsections.each_with_index do |subsection, index|
-            -@subsection, @index = subsection, index
-            = render partial: 'subsections/edit'
-
-        %div.col-md-6
-          = render partial: 'subsections/preview'
+%div.row
+  %div.col-md-8.col-md-offset-2
+    =link_to 'subsections', chapter_section_subsections_path(@chapter, @section), class: 'btn btn-default'
+    =link_to 'questions', chapter_section_questions_path(@chapter, @section), class: 'btn btn-default'

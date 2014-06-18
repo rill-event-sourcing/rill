@@ -7,11 +7,13 @@ class SectionsController < ApplicationController
   end
 
   def show
-    @all_subsections = @section.subsections.group_by(&:stars)
   end
 
   def new
     @section = Section.new
+  end
+
+  def edit
   end
 
   def create
@@ -24,23 +26,36 @@ class SectionsController < ApplicationController
   end
 
   def update
-    respond_to do |format|
-      subsections(params[:subsections]) if params[:subsections]
-      if @section.update(section_params)
-        format.html { redirect_to chapter_section_path(@chapter, @section), notice: 'Section was successfully updated.' }
-        format.json { render json: @section.as_full_json }
-      else
-        format.html { render :show }
-        format.json { render json: @section.errors, status: :unprocessable_entity }
-      end
+    if @section.update(section_params)
+      redirect_to chapter_section_path(@chapter, @section), notice: 'Section was successfully updated.'
+    else
+      render :show
     end
   end
 
-  def preview
-    @star = params[:star]
-    @subsections = @section.subsections.find_by_star(@star)
-    render layout: 'preview'
+  def destroy
+    @section.trash
+    redirect_to chapter_sections_path(@chapter), notice: 'Section was successfully destroyed.'
   end
+
+#   def update
+#     respond_to do |format|
+#       subsections(params[:subsections]) if params[:subsections]
+#       if @section.update(section_params)
+#         format.html { redirect_to chapter_section_path(@chapter, @section), notice: 'Section was successfully updated.' }
+#         format.json { render json: @section.as_full_json }
+#       else
+#         format.html { render :show }
+#         format.json { render json: @section.errors, status: :unprocessable_entity }
+#       end
+#     end
+#   end
+#
+#   def preview
+#     @star = params[:star]
+#     @subsections = @section.subsections.find_by_star(@star)
+#     render layout: 'preview'
+#   end
 
   def activate
     @section.activate
@@ -78,18 +93,18 @@ private
     params.require(:section).permit(:title, :description)
   end
 
-  def subsections(subsection_hash)
-    subsection_hash.each do |stars, new_subsections|
-      new_subsections.values.each_with_index do |new_subsection, index|
-        my_subsection = @section.subsections.find(new_subsection['id'])
-        my_subsection.update_attributes(
-          title: new_subsection['title'],
-          text: new_subsection['text'],
-          position: index
-        )
-      end
-    end
-    @section.updated_at= Time.now
-  end
+#   def subsections(subsection_hash)
+#     subsection_hash.each do |stars, new_subsections|
+#       new_subsections.values.each_with_index do |new_subsection, index|
+#         my_subsection = @section.subsections.find(new_subsection['id'])
+#         my_subsection.update_attributes(
+#           title: new_subsection['title'],
+#           text: new_subsection['text'],
+#           position: index
+#         )
+#       end
+#     end
+#     @section.updated_at= Time.now
+#   end
 
 end
