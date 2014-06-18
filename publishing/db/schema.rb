@@ -11,11 +11,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140604145237) do
+ActiveRecord::Schema.define(version: 20140618075746) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
+
+  create_table "answers", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
+    t.uuid     "answer_id"
+    t.string   "value"
+    t.boolean  "correct"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "chapters", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
     t.uuid     "course_id"
@@ -30,6 +38,14 @@ ActiveRecord::Schema.define(version: 20140604145237) do
 
   add_index "chapters", ["created_at"], name: "index_chapters_on_created_at", using: :btree
 
+  create_table "choices", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
+    t.uuid     "choice_id"
+    t.text     "value"
+    t.boolean  "correct"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "courses", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
     t.string   "name"
     t.datetime "deleted_at"
@@ -39,6 +55,17 @@ ActiveRecord::Schema.define(version: 20140604145237) do
   end
 
   add_index "courses", ["created_at"], name: "index_courses_on_created_at", using: :btree
+
+  create_table "questions", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
+    t.uuid     "question_id"
+    t.text     "text"
+    t.datetime "deleted_at"
+    t.boolean  "active",      default: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "questions", ["deleted_at"], name: "index_questions_on_deleted_at", using: :btree
 
   create_table "sections", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
     t.uuid     "chapter_id"

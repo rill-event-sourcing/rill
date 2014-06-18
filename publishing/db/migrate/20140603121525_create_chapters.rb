@@ -9,6 +9,6 @@ class CreateChapters < ActiveRecord::Migration
       t.integer :position, limit: 3
       t.timestamps
     end
-    add_index :chapters, :created_at
+    add_index :chapters, :deleted_at
   end
 end

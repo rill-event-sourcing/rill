@@ -10,6 +10,6 @@ class CreateSubsections < ActiveRecord::Migration
       t.integer :position, limit: 3
       t.timestamps
     end
-    add_index :subsections, :created_at
+    add_index :subsections, :deleted_at
   end
 end

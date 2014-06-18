@@ -6,6 +6,6 @@ class CreateCourses < ActiveRecord::Migration
       t.boolean :active, default: false
       t.timestamps
     end
-    add_index :courses, :created_at
+    add_index :courses, :deleted_at
   end
 end

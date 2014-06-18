@@ -1,0 +1,5 @@
+class Answer < ActiveRecord::Base
+
+  belongs_to :open_question
+
+end

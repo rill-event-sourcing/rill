@@ -9,6 +9,6 @@ class CreateSections < ActiveRecord::Migration
       t.integer :position, limit: 3
       t.timestamps
     end
-    add_index :sections, :created_at
+    add_index :sections, :deleted_at
   end
 end
