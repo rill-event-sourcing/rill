@@ -1,9 +1,5 @@
 class SubsectionsController < ApplicationController
-
-  before_action :set_course
-  before_action :set_chapter
-  before_action :set_section
-  before_action :set_subsection, except: [:index, :new, :create]
+  before_action :set_param_objects
 
   def create
     @subsection = @section.subsections.build(
@@ -29,20 +25,11 @@ class SubsectionsController < ApplicationController
 
 private
 
-  def set_course
+  def set_param_objects
     @course = Course.current
-  end
-
-  def set_chapter
     @chapter = @course.chapters.find_by_uuid(params[:chapter_id])
-  end
-
-  def set_section
     @section = @chapter.sections.find_by_uuid(params[:section_id])
-  end
-
-  def set_subsection
-    @subsection = @section.subsections.find_by_uuid(params[:id], false)
+    @subsection = @section.subsections.find_by_uuid(params[:id], false) if params[:id]
   end
 
 end

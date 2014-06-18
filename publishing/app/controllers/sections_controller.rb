@@ -1,8 +1,5 @@
 class SectionsController < ApplicationController
-
-  before_action :set_course
-  before_action :set_chapter
-  before_action :set_section, except: [:index, :new, :create]
+  before_action :set_param_objects
   before_action :set_breadcrumb, except: [:index, :new, :create]
 
   def index
@@ -67,20 +64,14 @@ class SectionsController < ApplicationController
 
 private
 
+  def set_param_objects
+    @course = Course.current
+    @chapter = @course.chapters.find_by_uuid(params[:chapter_id])
+    @section = @chapter.sections.find_by_uuid(params[:id]) if params[:id]
+  end
+
   def set_breadcrumb
     @crumbs = [{name: @chapter.title, url: chapter_sections_path(@chapter)},{name: @section.title, url: chapter_section_path(@chapter, @section)}]
-  end
-
-  def set_course
-    @course = Course.current
-  end
-
-  def set_chapter
-    @chapter = @course.chapters.find_by_uuid(params[:chapter_id])
-  end
-
-  def set_section
-    @section = @chapter.sections.find_by_uuid(params[:id])
   end
 
   def section_params
