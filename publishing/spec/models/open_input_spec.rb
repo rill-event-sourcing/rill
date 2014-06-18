@@ -1,11 +1,11 @@
 require 'rails_helper'
 
-RSpec.describe OpenQuestion, type: :model do
+RSpec.describe LineInput, type: :model do
 
   it {is_expected.to have_many :answers}
 
   before do
-    @open_question = create(:open_question)
+    @open_question = create(:line_input)
   end
 
 it "should return the text when asked for a string" do
