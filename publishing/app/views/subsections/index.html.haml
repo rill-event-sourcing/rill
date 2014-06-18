@@ -1,8 +1,7 @@
 = form_for([@chapter, @section], html:{ id: "section-form" }) do |form|
   %div.row
     %div.col-md-10
-      %h2= form.text_field :title
-      %p= form.text_area :description, cols: 60, rows: 4
+      %h2= @section.title
     %div.col-md-2
       %span.btn.btn-default.save Save
       %br

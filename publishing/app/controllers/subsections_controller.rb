@@ -11,11 +11,6 @@ class SubsectionsController < ApplicationController
     render layout: 'preview'
   end
 
-
-
-
-
-
   def create
     @subsection = @section.subsections.build(
       stars: params[:stars],
@@ -33,6 +28,19 @@ class SubsectionsController < ApplicationController
     end
   end
 
+  def update
+    respond_to do |format|
+      subsections(params[:subsections]) if params[:subsections]
+      if @section.update(section_params)
+        format.html { redirect_to chapter_section_path(@chapter, @section), notice: 'Section was successfully updated.' }
+        format.json { render json: @section.as_full_json }
+      else
+        format.html { render :show }
+        format.json { render json: @section.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
   def destroy
     @subsection.destroy if @subsection
     render json: { status: :ok }
@@ -45,6 +53,20 @@ private
     @chapter = @course.chapters.find_by_uuid(params[:chapter_id])
     @section = @chapter.sections.find_by_uuid(params[:section_id])
     @subsection = @section.subsections.find_by_uuid(params[:id], false) if params[:id]
+  end
+
+  def subsections(subsection_hash)
+    subsection_hash.each do |stars, new_subsections|
+      new_subsections.values.each_with_index do |new_subsection, index|
+        my_subsection = @section.subsections.find(new_subsection['id'])
+        my_subsection.update_attributes(
+          title: new_subsection['title'],
+          text: new_subsection['text'],
+          position: index
+        )
+      end
+    end
+    @section.updated_at= Time.now
   end
 
 end
