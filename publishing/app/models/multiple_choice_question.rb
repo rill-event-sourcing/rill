@@ -2,8 +2,6 @@ class MultipleChoiceQuestion < Question
 
   has_many :choices
 
-  validates :text, :presence => true
-
   # def as_json
   #   {
   #     id: id,
