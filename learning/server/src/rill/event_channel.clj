@@ -15,23 +15,22 @@ returns false when we should not continue pushing."
     true))
 
 (defn push-events!!
-  [ch events]
-  (loop [[event & events] events]
-    (if (seq events)
+  [ch cursor events]
+  (log/debug events)
+  (loop [cursor cursor [event & events] events]
+    (if event
       (if (push-event!! ch event)
-        (recur events)
-        false)
-      true)))
+        (recur (:cursor (meta events)) events)
+        nil)
+      cursor)))
 
 (defn event-channel-listen!!
   "Push events from stream into ch. Blocking"
-  [event-store stream-id from-version ch]
-  (loop [version from-version]
-    (log/debug [:listen!! stream-id version])
-    (let [events (store/retrieve-events-since event-store stream-id version long-poll-seconds)]
-      (log/debug ["recieved" (count events) "events"])
-      (when (push-events!! ch events)
-        (recur (+ version (count events)))))))
+  [event-store stream-id cursor ch]
+  (loop [cursor cursor]
+    (log/debug [:listen!! stream-id cursor])
+    (when-let [new-cursor (push-events!! ch cursor (store/retrieve-events-since event-store stream-id cursor long-poll-seconds))]
+      (recur new-cursor))))
 
 (defn event-channel
   "Start an event listener in a new thread and returns a channel

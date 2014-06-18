@@ -16,6 +16,12 @@ https://github.com/jankronquist/rock-paper-scissors-in-clojure/tree/master/event
    :eventType (.replace (name (msg/type event)) \. \_)
    :data (assoc (msg/data event) :id (msg/id event))})
 
+(defrecord Cursor [page-uri offset])
+
+(defn with-cursor
+  [event cursor]
+  (with-meta event {:cursor cursor}))
+
 (defn uri-for-relation [relation links]
   (:uri (first (filter #(= relation (:relation %)) links))))
 
@@ -27,47 +33,46 @@ https://github.com/jankronquist/rock-paper-scissors-in-clojure/tree/master/event
       (message-constructor event-type event-data)
       event-data)))
 
-(declare load-events)
+(defn load-page
+  ([page-uri poll-seconds]
+     (log/debug (str "Loading event page " page-uri))
+     (let [response (client/get page-uri
+                                (merge {:as :json
+                                        :throw-exceptions false}
+                                       (if (and poll-seconds
+                                                (< 0 poll-seconds))
+                                         {"ES-LongPoll" (str poll-seconds)})))]
+       (if-not (= 200 (:status response))
+         nil
+         (:body response))))
+  ([page-uri]
+     (load-page page-uri nil)))
 
-(defn load-events-from-list [response message-constructor]
-  (let [body (:body response)
-        links (:links body)
-        event-uris (reverse (map :id (:entries body)))
-        previous-uri (uri-for-relation "previous" links)]
-    (lazy-cat (map #(load-event % message-constructor) event-uris)
-              (if previous-uri (lazy-seq (load-events previous-uri message-constructor))))))
-
-(defn load-events-from-page [page message-constructor]
+(defn events-from-page
+  [{:keys [offset page-uri]} page message-constructor]
   (let [links (:links page)
         event-uris (reverse (map :id (:entries page)))]
-    (map #(load-event % message-constructor) event-uris)))
+    (map-indexed
+     (fn [this-offset e-uri]
+       (with-cursor
+         (load-event e-uri message-constructor)
+         (->Cursor page-uri
+                   (+ 1 offset this-offset))))
+     (if (= offset -1)
+       event-uris
+       (drop (inc offset) event-uris)))))
 
-(defn load-events [uri message-constructor]
-  (load-events-from-list (client/get uri {:as :json}) message-constructor))
-
-(defn forward-page-uri
-  [feed-uri from page-size]
-  (format "%s/%d/forward/%d" feed-uri (if (= from -1) 0 from) page-size))
-
-(defn load-event-page
-  [feed-uri from page-size poll-seconds]
-  (let [response (client/get (forward-page-uri feed-uri from page-size)
-                             (merge {:as :json
-                                     :throw-exceptions false}
-                                    (if (and poll-seconds
-                                             (< 0 poll-seconds))
-                                      {"ES-LongPoll" (str poll-seconds)})))]
-    (if-not (= 200 (:status response))
-      nil
-      (:body response))))
-
-(defn load-events-from-feed [uri from-version message-constructor wait-for-seconds]
-  (let [page (load-event-page uri from-version 20 wait-for-seconds)]
-    (if-not page
-      stream/empty-stream
+(defn load-events
+  [{:keys [page-uri] :as cursor} message-constructor wait-for-seconds]
+  (log/debug "load-events" cursor)
+  (if-let [page (load-page page-uri wait-for-seconds)]
+    (let [events (events-from-page cursor page message-constructor)]
       (if-let [previous-uri (uri-for-relation "previous" (:links page))]
-        (concat (load-events-from-page page message-constructor) (load-events previous-uri message-constructor))
-        (load-events-from-page page message-constructor)))))
+        (concat events (lazy-seq (load-events (->Cursor previous-uri -1) message-constructor 0)))
+        events))
+    stream/empty-stream))
+
+(defrecord UnprocessableMessage [v])
 
 (defn safe-convert
   [s m]
@@ -75,14 +80,27 @@ https://github.com/jankronquist/rock-paper-scissors-in-clojure/tree/master/event
     (msg/strict-map->Message s m)
     (catch RuntimeException e
       (log/info "Ignoring malformed event" e)
-      nil)))
+      (->UnprocessableMessage m))))
 
 (defn atom-event-store
   ([uri message-constructor]
      (letfn [(stream-uri [stream-id] (str uri "/streams/" stream-id))]
        (reify store/EventStore
-         (retrieve-events-since [this stream-id from-version wait-for-seconds]
-           (load-events-from-feed (stream-uri stream-id) from-version message-constructor wait-for-seconds))
+         (retrieve-events-since [this stream-id cursor wait-for-seconds]
+           (load-events (cond
+                         (instance? Cursor cursor)
+                         cursor
+
+                         (= -1 cursor)
+                         (->Cursor (stream-uri stream-id) -1)
+
+                         (:cursor (meta cursor))
+                         (:cursor (meta cursor))
+                         :else
+                         (throw (RuntimeException. (str "Invalid cursor " (pr-str cursor)))))
+
+                        message-constructor
+                        wait-for-seconds))
 
          (append-events
            [this stream-id from-version events]

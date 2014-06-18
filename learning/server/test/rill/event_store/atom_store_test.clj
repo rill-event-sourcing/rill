@@ -13,15 +13,15 @@
 
 (defn gen-event
   []
-  (->TestAtomEvent (new-id) stream-id))
+  (->TestAtomEvent (str (new-id)) (str stream-id)))
 
 (is (= (rill.message/strict-map->Message "TestAtomEvent" {:id "1" :stream-id"2"})
        (->TestAtomEvent "1" "2")))
 
-(def events (repeatedly 340 gen-event))
-(def additional-events (repeatedly 331 gen-event))
+(def events (repeatedly 4 gen-event))
+(def additional-events (repeatedly 2 gen-event))
 
-(def polling-events (repeatedly 445 gen-event))
+(def polling-events (repeatedly 40 gen-event))
 
 
 (deftest test-atom-store
@@ -34,36 +34,36 @@
       (is (store/append-events store stream-id (count events) additional-events))
       (is (= (store/retrieve-events store stream-id)
              (concat events additional-events)))
-      (is (= (store/retrieve-events-since store stream-id (count events) 0)
+      (is (= (store/retrieve-events-since store stream-id (:cursor (meta (last (store/retrieve-events store stream-id)))) 0)
              additional-events)))
 
     (testing "Long polling"
-      (let [from-version (+ (count events) (count additional-events))
+      (let [cursor (:cursor (meta (last (store/retrieve-events store stream-id))))
             post (async/thread
                    (Thread/sleep 2)
-                   (store/append-events store stream-id from-version polling-events))
+                   (store/append-events store stream-id cursor polling-events))
             poll (async/thread
-                   (store/retrieve-events-since store stream-id from-version 4))]
+                   (store/retrieve-events-since store stream-id cursor 4))]
         (is (<!! post))
         (is (<!! poll) polling-events)))
 
     (testing "rough throughput, with overhead"
-      (let [from-version (+ (count events) (count additional-events) (count polling-events))
+      (let [cursor (:cursor (meta (last (store/retrieve-events store stream-id))))
             read-buffer-size 10
             write-chunk-size 10
             num-messages 10000
             throughput-events (repeatedly num-messages gen-event)
-            recieve (event-channel store stream-id from-version 10)]
+            recieve (event-channel store stream-id cursor 10)]
         (println "Writing and recieving" num-messages "messages")
         (time
          (let [post (async/thread
                       (reduce (fn [version chunk]
                                 (store/append-events store stream-id version chunk)
                                 (+ version (count chunk)))
-                              from-version
+                              cursor
                               (partition-all write-chunk-size throughput-events)))]
            (doseq [e throughput-events]
              (is (= (<!! recieve) e)))
            (async/close! recieve)
-           (is (= (+ num-messages from-version) (<!! post)))))))))
+           (is (= (+ num-messages cursor) (<!! post)))))))))
 

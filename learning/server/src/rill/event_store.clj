@@ -1,7 +1,7 @@
 (ns rill.event-store)
 
 (defprotocol EventStore
-  (retrieve-events-since [this stream-id from-version wait-for-seconds])
+  (retrieve-events-since [this stream-id cursor wait-for-seconds])
   (append-events [this stream-id from-version events]))
 
 (defn retrieve-events
