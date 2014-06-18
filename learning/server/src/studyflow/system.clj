@@ -71,7 +71,12 @@
         :event-listener (listen! read-model (:channel event-channel)))))
   (stop [component]
     (info "Stopping read-model")
-    (<!! (:event-listener component))
+    ;; this has a dependency on the event-channel, which will start
+    ;; before as and therefore close after us
+    ;; this will only finish when the channel is closed
+    (when (:read-model component)
+      (close! (:channel event-channel))
+      (<!! (:event-listener component)))
     component))
 
 (defn read-model-component []
@@ -85,7 +90,8 @@
       :channel (event-channel (:store event-store) "$all" 0 0)))
   (stop [component]
     (info "Stopping event-channel")
-    (close! (:channel component))
+    (when-let [c (:channel component)]
+      (close! c))
     component))
 
 (defn event-channel-component []

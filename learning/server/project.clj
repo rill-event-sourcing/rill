@@ -23,7 +23,8 @@
   :profiles {:dev
              {:source-paths ["dev"]
               :dependencies
-              [[org.clojure/tools.trace "0.7.5"]]}}
+              [[org.clojure/tools.trace "0.7.5"]
+               [org.clojure/tools.namespace "0.2.3"]]}}
   :test-paths ["test"]
   :aliases {"server" ["run" "-m" "studyflow.main"]
             "validate-course-material" ["run" "-m" "studyflow.cli.validate-course-material-json"]})
