@@ -15,12 +15,12 @@
   %div.tab-pane.active#open_question_tab
     -@section.questions.each do |question|
       %div.panel.panel-default
-        %div.panel-heading
-          %div.pull-right
-            %span.glyphicon.glyphicon-minus
-            %span.glyphicon.glyphicon-plus
-
         %div.panel-body
+          %div.pull-right
+            =link_to edit_chapter_section_question_path(@chapter, @section, question) do
+              %span.glyphicon.glyphicon-pencil
+            =link_to chapter_section_questions_path(@chapter, @section), method: :delete, data: { confirm: "Are you sure you want to delete this question?" } do
+              %span.glyphicon.glyphicon-trash
           %p= question.text
           %strong Correct answers:
           %ul
@@ -30,14 +30,3 @@
     %div.panel.panel-default
       %div.panel-body
         Empty for now
-
-
-    -#
-    -# %div.col-md-6
-    -#   = render partial: 'subsections/new'
-    -#   - @star_subsections.each_with_index do |subsection, index|
-    -#     -@subsection, @index = subsection, index
-    -#     = render partial: 'subsections/edit'
-    -#
-    -# %div.col-md-6
-    -#   = render partial: 'subsections/preview'
