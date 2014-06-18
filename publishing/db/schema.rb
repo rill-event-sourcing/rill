@@ -53,6 +53,7 @@ ActiveRecord::Schema.define(version: 20140618075746) do
   end
 
   create_table "questions", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
+    t.uuid     "section_id"
     t.string   "type"
     t.text     "text"
     t.datetime "deleted_at"
