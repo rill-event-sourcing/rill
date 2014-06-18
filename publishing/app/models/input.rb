@@ -5,5 +5,5 @@ class Input < ActiveRecord::Base
   def to_param
     "#{id[0,8]}"
   end
-  
+
 end
