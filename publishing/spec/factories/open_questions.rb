@@ -1,8 +1,8 @@
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
 FactoryGirl.define do
-  factory :answer do
-    value "Default answer value"
-    open_question
+  factory :open_question do
+    text "Default open question text"
+    section
   end
 end
