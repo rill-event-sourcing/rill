@@ -23,7 +23,7 @@
   (start [component]
          (info "Starting jetty on port: " port)
          (assoc component :jetty (jetty/run-jetty (:handler ring-handler) {:port port
-                                                                  :join? false})))
+                                                                           :join? false})))
   (stop [component]
         (info "Stopping jetty")
         (when-let [jetty (:jetty component)]
