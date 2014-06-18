@@ -24,3 +24,10 @@
                   %td{class: section.active? ? "success" : "danger", id: "section-row"}
                     = link_to section.title, [chapter, section]
                     %span.badge.pull-right= section.subsections.length
+      %div.col-md-2
+        Guide:
+        %table.table.table-condensed
+          %tr
+            %td.success Section published
+          %tr
+            %td.danger Section not published
