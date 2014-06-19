@@ -2,31 +2,12 @@
   %div.col-md-10
     %h2= "Questions for '#{@section}'"
 
-%ul.nav.nav-tabs#subsection-tabs
-  %li.active
-    %a{href: "#open_question_tab", data: {toggle: "tab"} }
-      Open questions
-  %li
-    %a{href: "#multiple_choice_question_tab", data: {toggle: "tab"} }
-      Multiple choice
-
-
-%div.tab-content
-  %div.tab-pane.active#open_question_tab
-    -@section.questions.each do |question|
-      %div.panel.panel-default
-        %div.panel-body
-          %div.pull-right
-            =link_to edit_chapter_section_question_path(@chapter, @section, question) do
-              %span.glyphicon.glyphicon-pencil
-            =link_to chapter_section_questions_path(@chapter, @section), method: :delete, data: { confirm: "Are you sure you want to delete this question?" } do
-              %span.glyphicon.glyphicon-trash
-          %p= question.text
-          %strong Correct answers:
-          %ul
-            - question.answers.each do |answer|
-              %li= answer.value
-  %div.tab-pane#multiple_choice_question_tab
-    %div.panel.panel-default
-      %div.panel-body
-        Empty for now
+-@section.questions.each do |question|
+  %div.panel.panel-default
+    %div.panel-body
+      %div.pull-right
+        =link_to edit_chapter_section_question_path(@chapter, @section, question) do
+          %span.glyphicon.glyphicon-pencil
+        =link_to chapter_section_questions_path(@chapter, @section), method: :delete, data: { confirm: "Are you sure you want to delete this question?" } do
+          %span.glyphicon.glyphicon-trash
+      %p= question.text

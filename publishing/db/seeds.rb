@@ -63,20 +63,14 @@ going_negativish = Subsection.create(title: 'Going negativish', text: 'This look
 
 ## Add some questions and answers
 
-# grouping_question_1 = OpenQuestion.create(text: "Grouping question 1 text", section: grouping_by_10)
-# grouping_question_1_answer = Answer.create(value: "Grouping Question 1 answer value", open_question: grouping_question_1)
-#
-# grouping_question_2 = OpenQuestion.create(text: "Grouping question 2 text", section: grouping_by_10)
-# grouping_question_2_answer = Answer.create(value: "Grouping Question 2 answer value", open_question: grouping_question_2)
-#
-# grouping_question_3 = OpenQuestion.create(text: "Grouping question 3 text", section: grouping_by_10)
-# grouping_question_3_answer = Answer.create(value: "Grouping Question 3 answer value", open_question: grouping_question_3)
-#
-# position_question_1 = OpenQuestion.create(text: "Position question 1 text", section: position_of_0)
-# position_question_1_answer = Answer.create(value: "Position Question 1 answer value", open_question: position_question_1)
-#
-# position_question_2 = OpenQuestion.create(text: "Position question 2 text", section: position_of_0)
-# position_question_2_answer = Answer.create(value: "Position Question 2 answer value", open_question: position_question_2)
-#
-# position_question_3 = OpenQuestion.create(text: "Position question 3 text", section: position_of_0)
-# position_question_3_answer = Answer.create(value: "Position Question 3 answer value", open_question: position_question_3)
+grouping_question_1 = Question.create(text: "Grouping question 1 text", section: grouping_by_10)
+grouping_question_1_line_input = LineInput.create(question: grouping_question_1)
+grouping_question_1_line_input_answer = Answer.create(value: "Grouping Question 1 Line input answer value", line_input: grouping_question_1_line_input)
+
+grouping_question_2 = Question.create(text: "Grouping question 2 text", section: grouping_by_10)
+grouping_question_2_line_input = LineInput.create(question: grouping_question_2)
+grouping_question_2_line_input_answer = Answer.create(value: "Grouping Question 2 Line input answer value", line_input: grouping_question_2_line_input)
+
+grouping_question_3 = Question.create(text: "Grouping question 3 text", section: grouping_by_10)
+grouping_question_3_line_input = LineInput.create(question: grouping_question_3)
+grouping_question_3_line_input_answer = Answer.create(value: "Grouping Question 3 Line input answer value", line_input: grouping_question_3_line_input)
