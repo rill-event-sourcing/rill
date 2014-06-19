@@ -14,7 +14,7 @@
   - if @question.id
     %div.form-group
       %div.col-sm-offset-2.col-sm-10
-        = link_to 'cancel', chapter_section_question_path(@chapter, @section, @question), class: "btn btn-default"
+        = link_to 'cancel', chapter_section_questions_path(@chapter, @section), class: "btn btn-default"
         = submit_tag('update', class: "btn btn-primary")
   - else
     %div.form-group
