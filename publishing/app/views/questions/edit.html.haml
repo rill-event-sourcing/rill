@@ -1,2 +1,31 @@
-%h1 Editing question
-= render 'form'
+=form_for([@chapter,@section,@question], html: {class: "form-horizontal", role: "form"}) do |f|
+
+  %div.row
+    %div.col-md-10
+      %h2 Editing question
+    %div.col-md-2
+      %span.btn.btn-default.save Save
+      %br
+      %small
+        Saved on:
+        %div#edit-time= l @question.updated_at, format: :long
+
+  %div.row
+    %div.col-md-6
+      = f.text_area :text, style: "width: 100%", rows: 20
+
+      %div.panel.panel-default
+        %div.panel-heading
+          %div.form-group
+            %div.col-md-3
+              %select.form-control
+                %option line-input
+                %option multiple-choice
+            %span.btn.btn-default.add Add
+
+        %div.panel-body
+          -@question.inputs.each do |input|
+            =render partial: 'input', locals: {input: input}
+
+    %div.col-md-6
+      = f.text_area :text, style: "width: 100%", rows: 40
