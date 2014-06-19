@@ -1,16 +1,48 @@
 (ns studyflow.web.query-api
-  (:require [clout-link.route :refer [handle]]
+  (:require [clojure.tools.logging :refer [info debug spy]]
+            [clout-link.route :refer [handle]]
             [studyflow.learning.read-model.queries :as queries]
             [studyflow.web.handler-tools :refer [combine-ring-handlers]]
             [studyflow.web.routes :as routes]
-            [rill.uuid :refer [uuid]]))
+            [rill.uuid :refer [uuid]]
+            
+           [cheshire.core :as json]
+           [studyflow.json-tools :refer [key-from-json]]
+           [studyflow.learning.read-model :as model]
+           
+))
 
 (def query-handler
   "This handler returns data for the json api (or nil)"
   (combine-ring-handlers
    (handle routes/query-course-material
            (fn [{model :read-model {course-id :course-id :as params} :params}]
-             (queries/course-material model (uuid course-id))))))
+             (debug "Query handler for " course-id "with model: " model)
+             
+             
+             ;; just return the fixture date from here
+             #_(queries/course-material model (uuid course-id))
+             (let [nav-tree (-> (slurp "test/studyflow/material.json")
+                                (json/parse-string key-from-json)
+                                model/course-tree)]
+               {:status 200
+                :body nav-tree})))
+   (handle routes/query-section
+           (fn [{model :read-model {:keys [course-id chapter-id section-id] :as params} :params}]
+             (debug "Query handler for " course-id ", " chapter-id " and " section-id "with model: " model)
+             
+             
+             ;; just return the fixture date from here
+             (let [course (-> (slurp "test/studyflow/material.json")
+                              (json/parse-string key-from-json))
+                   chapter (some (fn [c]
+                                   (when (= chapter-id (:id c))
+                                     c)) (:chapters course))
+                   section (some (fn [s]
+                                   (when (= section-id (:id s))
+                                     s)) (:sections chapter))]
+               {:status 200
+                :body section})))))
 
 (defn wrap-read-model
   [f read-model-atom]
