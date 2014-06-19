@@ -9,18 +9,17 @@
             [rill.event-channel :refer [event-channel]]
             [clojure.tools.logging :as log]))
 
-(defevent TestAtomEvent [stream-id])
+(defevent TestAtomEvent [num])
 (def stream-id (new-id))
 
 (defn gen-event
-  []
-  (->TestAtomEvent (str (new-id)) (str stream-id)))
-
-(is (= (rill.message/strict-map->Message "TestAtomEvent" {:id "1" :stream-id"2"})
-       (->TestAtomEvent "1" "2")))
+  ([i]
+     (->TestAtomEvent (str (new-id)) i))
+  ([]
+     (gen-event -666)))
 
 (def events (repeatedly 49 gen-event))
-(def additional-events (repeatedly 52 gen-event))
+(def additional-events (repeatedly 2 gen-event))
 
 (def polling-events (repeatedly 309 gen-event))
 
@@ -58,11 +57,11 @@
         (is (<!! post))
         (is (<!! poll) polling-events)))
 
-    #_(testing "rough throughput, with overhead"
+    (testing "rough throughput, with overhead"
       (let [read-buffer-size 10
-            write-chunk-size 10
-            num-messages 40
-            throughput-events (repeatedly num-messages gen-event)
+            write-chunk-size 12
+            num-messages 10000
+            throughput-events (map gen-event (range num-messages))
             recieve (event-channel store throughput-stream-id -1 10)]
         (println "Writing and recieving" num-messages "messages")
         (time
@@ -75,8 +74,6 @@
                         (log/debug "done appending" (inc r) "messages")
                         r))]
            (doseq [[e i] (map vector throughput-events (range num-messages))]
-             (prn "waiting for event " i e)
-             (is (= (<!! recieve) e))
-             (prn "recieved"))
+             (is (= (<!! recieve) e)))
            (async/close! recieve)
            (is (= (<!! post) (dec (count throughput-events))))))))))
