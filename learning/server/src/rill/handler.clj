@@ -2,7 +2,8 @@
   (:require [rill.aggregate :as aggregate]
             [rill.event-store :as store]
             [rill.event-stream :as stream]
-            [rill.message :as msg]))
+            [rill.message :as msg]
+            [clojure.tools.logging :as log]))
 
 (defmulti aggregate-ids
   "given a command, return the ids of the aggregates that should be
@@ -35,6 +36,7 @@
 (defn commit-events
   [store stream-id from-version events]
   (validate-commit events)
+  (log/info ["committing events" events])
   (let [stream-id-from-event (msg/stream-id (first events))]
     (if (= stream-id stream-id-from-event)
                                         ; events apply to current aggregate
@@ -69,11 +71,14 @@
 (defn try-command
   [event-store command]
   (let [[id version & aggregates] (prepare-aggregates event-store command)]
-    (if-let [events (apply handle-command command aggregates)]
-      (if (commit-events event-store id version events)
-        true
-        ::out-of-date)
-      ::error)))
+    (log/debug [:try-command command])
+    (let [result (if-let [events (apply handle-command command aggregates)]
+                   (if (commit-events event-store id version events)
+                     :ok
+                     :conflict)
+                   :rejected)]
+      (log/debug [result])
+      result)))
 
 (defn make-handler [event-store]
   (fn [command]

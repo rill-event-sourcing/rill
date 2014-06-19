@@ -1,10 +1,10 @@
 (ns studyflow.learning.command-handler
   (:require [studyflow.events :as evt]
             [studyflow.learning.commands]
+            [studyflow.learning.write-model]
             [rill.handler :refer [handle-command defaggregate-ids]]
             [rill.uuid :refer [new-id]])
   (:import (studyflow.learning.commands PublishCourse! UpdateCourse! DeleteCourse!)))
-
 
 (defaggregate-ids PublishCourse! course-id)
 (defaggregate-ids UpdateCourse! course-id)
@@ -12,15 +12,11 @@
 
 (defmethod handle-command PublishCourse!
   [command course]
-  (when-not course
-    [(evt/strict-map->CoursePublished (-> command
-                                          (select-keys [:course-id :material])
-                                          (assoc :id (new-id))))]))
-
-(defmethod handle-command UpdateCourse!
-  [command course]
-  (when course
+  (if course
     [(evt/strict-map->CourseUpdated (-> command
+                                          (select-keys [:course-id :material])
+                                          (assoc :id (new-id))))]
+    [(evt/strict-map->CoursePublished (-> command
                                         (select-keys [:course-id :material])
                                         (assoc :id (new-id))))]))
 
@@ -39,7 +35,7 @@
 ;;   [command learning-step work student]
 ;;   (cond (nil? work)
 ;;         (evt/map->StudentStartedWorkOnLearningStep (select-keys command [:student-id :work-id :learning-step-id]))
-        
+
 ;;         (= (select-keys work [:student-id :work-id :learning-step-id])
 ;;            (select-keys command [:student-id :work-id :learning-step-id]))
 ;;         (evt/map->StudentContinuedWorkOnLearningStep (select-keys command [:student-id :work-id :learning-step-id]))))
@@ -52,5 +48,3 @@
 ;; (defmethod handle-command AnswerQuestion!
 ;;   [{value :value} student work task question]
 ;;   (get (:revealed-question-ids work)))
-
-

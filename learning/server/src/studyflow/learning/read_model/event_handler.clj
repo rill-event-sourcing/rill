@@ -13,15 +13,15 @@
 
 (defmethod handle-event CoursePublished
   [model event]
-  (m/set-course model (:event)))
+  (m/set-course model (:course-id event) (:material event)))
 
 (defmethod handle-event CourseUpdated
   [model event]
-  (m/set-course model event))
+  (m/set-course model (:course-id event) (:material event)))
 
 (defmethod handle-event CourseDeleted
   [model event]
-  (m/remove-course model event))
+  (m/remove-course model (:course-id event)))
 
 
 

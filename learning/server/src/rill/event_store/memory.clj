@@ -4,17 +4,26 @@
             [rill.event-stream :as stream]
             [slingshot.slingshot :refer [try+ throw+]]))
 
+(defn with-cursors
+  [c events]
+  (map-indexed (fn [i e]
+                 (with-meta e {:cursor (+ c i)}))
+               events))
+
 (deftype MemoryStore [state]
   store/EventStore
-  (retrieve-events-since [this stream-id from-version wait-for-seconds]
-    (loop [wait wait-for-seconds]
-      (let [substream (subvec (get @state stream-id stream/empty-stream) (inc from-version))]
-        (if (empty? substream)
-          (if (< 0 wait-for-seconds)
-            (do (Thread/sleep 200)
-                (recur (dec wait)))
-            substream)
-          substream))))
+  (retrieve-events-since [this stream-id cursor wait-for-seconds]
+    (let [cursor (if-let [c (:cursor (meta cursor))]
+                   c
+                   cursor)]
+      (loop [wait wait-for-seconds]
+        (let [substream (subvec (get @state stream-id stream/empty-stream) (inc cursor))]
+          (if (empty? substream)
+            (if (< 0 wait-for-seconds)
+              (do (Thread/sleep 200)
+                  (recur (dec wait)))
+              (with-cursors (inc cursor) substream))
+            (with-cursors (inc cursor) substream))))))
 
   (append-events [this stream-id from-version events]
     (try+ (swap! state (fn [old-state]
