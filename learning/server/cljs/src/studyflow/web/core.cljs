@@ -54,7 +54,9 @@
   (om/root
    navigation
    app-state
-   {:target (. js/document (getElementById "navigation"))})
+   {:target (. js/document (getElementById "navigation"))
+    ;; hack around issue OM-170
+    :tx-listen (fn [tx-report cursor])})
   (om/root
    content
    app-state
