@@ -16,7 +16,7 @@
                  [org.clojure/tools.logging "0.2.6"]
                  [org.slf4j/slf4j-log4j12 "1.7.5"]
                  [ring-mock "0.1.5"]
-                 [ring/ring-devel "1.1.0"]
+                 [ring/ring-devel "1.2.1"]
                  [org.clojure/core.async "0.1.303.0-886421-alpha"]
                  [me.raynes/conch "0.7.0"]
                  [com.stuartsierra/component "0.2.1"]]
