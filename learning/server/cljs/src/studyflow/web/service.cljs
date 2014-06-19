@@ -10,6 +10,9 @@
   (om/root
    (fn [cursor owner]
      (reify
+       om/IShouldUpdate
+       (should-update [this next-props next-state]
+         false)
        om/IRender
        (render [_]
          (dom/div nil nil))
