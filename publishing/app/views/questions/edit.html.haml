@@ -15,9 +15,9 @@
       = f.text_area :text, style: "width: 100%", rows: 20
 
       %div.panel.panel-default
-        %div.panel-heading
-          %div.form-group
-            %div.col-md-3
+        %div.panel-heading.clearfix
+          %div.pull-right
+            %div.col-md-8
               %select.form-control
                 %option line-input
                 %option multiple-choice
@@ -25,7 +25,12 @@
 
         %div.panel-body
           -@question.inputs.each do |input|
-            =render partial: 'input', locals: {input: input}
+            - if input.line_input?
+              =render partial: 'line_input', locals: {input: input}
+            - elsif input.multiple_choice_input?
+              =render partial: 'multiple_choice_input', locals: {input: input}
+            - else
+              unknown input type
 
     %div.col-md-6
       = f.text_area :text, style: "width: 100%", rows: 40
