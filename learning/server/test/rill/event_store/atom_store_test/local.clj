@@ -2,8 +2,11 @@
   (:require [clojure.string :as str]
             [environ.core :refer [env]]
             [rill.event-store.atom-store :refer [atom-event-store]]
-            [me.raynes.conch.low-level :as sh])
+            [me.raynes.conch.low-level :as sh]
+            [me.raynes.conch :refer [programs]])
   (:import (java.io File)))
+
+(programs rm)
 
 (defn local-atom-store
   []
@@ -19,7 +22,7 @@
   []
   (println "STARTING LOCAL STORE")
   (if (local-atom-store)
-    (let [tmpfile (File/createTempFile "test" ".db")
+    (let [tmpfile (File/createTempFile "atom-store-test" ".db")
           port 39287]
       (.delete tmpfile)
       (.deleteOnExit tmpfile)
@@ -36,7 +39,11 @@ Not running tests against the atom event store.")
 
 (defn stop-local-atom-store
   [local-store]
-  (sh/destroy (:proc local-store)))
+  (sh/destroy (:proc local-store))
+  (let [tmpdir (.getAbsolutePath (:tmpfile local-store))]
+    (when (and (.startsWith tmpdir "/")
+               (< 4 (count tmpdir)))
+      (rm "-rf" tmpdir))))
 
 (defmacro with-local-atom-store
   [[store-binding] & body]
