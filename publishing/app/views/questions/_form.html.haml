@@ -1,4 +1,4 @@
-=form_for(chapter_section_question_path(@chapter,@section,@question), html: {class: "form-horizontal", role: "form"}) do |f|
+=form_for([@chapter,@section,@question], html: {class: "form-horizontal", role: "form"}) do |f|
   - if @question.errors.any?
     %div.error_explanation
       %h2= "#{ pluralize(@question.errors.count, "error") } prohibited this question from being saved:"
@@ -11,13 +11,7 @@
     %div.col-sm-10
       = f.text_area :text, cols: 120, rows: 20
 
-  - if @question.id
-    %div.form-group
-      %div.col-sm-offset-2.col-sm-10
-        = link_to 'cancel', chapter_section_questions_path(@chapter, @section), class: "btn btn-default"
-        = submit_tag('update', class: "btn btn-primary")
-  - else
-    %div.form-group
-      %div.col-sm-offset-2.col-sm-10
-        = link_to 'cancel', chapter_section_questions_path(@chapter,@section), class: "btn btn-default"
-        = submit_tag('save', class: "btn btn-primary")
+  %div.form-group
+    %div.col-sm-offset-2.col-sm-10
+      = link_to 'cancel', chapter_section_questions_path(@chapter, @section), class: "btn btn-default"
+      = submit_tag('update', class: "btn btn-primary")

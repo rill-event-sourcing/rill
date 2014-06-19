@@ -10,6 +10,6 @@
       %div.pull-right
         =link_to edit_chapter_section_question_path(@chapter, @section, question) do
           %span.glyphicon.glyphicon-pencil
-        =link_to chapter_section_questions_path(@chapter, @section), method: :delete, data: { confirm: "Are you sure you want to delete this question?" } do
+        =link_to chapter_section_question_path(@chapter, @section, question), method: :delete, data: { confirm: "Are you sure you want to delete this question?" } do
           %span.glyphicon.glyphicon-trash
       %p= question.text
