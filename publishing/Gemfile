@@ -48,4 +48,5 @@ group :test do
   gem 'faker'
   gem 'launchy'
   gem 'shoulda-matchers'
+  gem 'therubyracer'
 end

@@ -4,4 +4,4 @@ default: test
 
 test:
 	cd learning && make test
-	cd publishing && bundle exec rspec
+	cd publishing && make test
