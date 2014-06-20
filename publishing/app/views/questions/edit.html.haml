@@ -15,22 +15,16 @@
       = f.text_area :text, style: "width: 100%", rows: 20
 
       %div.panel.panel-default
-        %div.panel-heading.clearfix
-          %div.pull-right
-            %div.col-md-8
-              %select.form-control
-                %option line-input
-                %option multiple-choice
-            %span.btn.btn-default.add Add
+        %div.panel-heading
+          %div.col-md-3
+            %select.form-control#input-type
+              %option line-input
+              %option multiple-choice
+          %span.btn.btn-default#add-input{data: { url: inputs_path(question_id: @question.to_param) } } Add
 
-        %div.panel-body
+        %div.panel-body#inputs-list
           -@question.inputs.each do |input|
-            - if input.line_input?
-              =render partial: 'line_input', locals: {input: input}
-            - elsif input.multiple_choice_input?
-              =render partial: 'multiple_choice_input', locals: {input: input}
-            - else
-              unknown input type
+            =render partial: 'inputs/edit', locals: {input: input}
 
     %div.col-md-6
       = f.text_area :text, style: "width: 100%", rows: 40

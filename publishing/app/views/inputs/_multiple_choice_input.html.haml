@@ -1,0 +1,7 @@
+%ul
+  - input.choices.each do |choice|
+    %li
+      =text_field_tag 'choice', choice.value
+      %input{type: :radio}
+  %li
+    %span.btn.btn-default.glyphicon.glyphicon-plus.add-choice

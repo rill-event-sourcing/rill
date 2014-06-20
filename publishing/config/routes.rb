@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+
   match 'select_course',  to: 'courses#select', via: :post
   match 'publish_course', to: 'home#publish', via: :post
 
@@ -25,6 +26,11 @@ Rails.application.routes.draw do
       end
       resources :questions
     end
+  end
+
+  resources :inputs do
+    resources :answers
+    resources :choices
   end
 
   root to: 'home#index'

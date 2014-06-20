@@ -1,0 +1,3 @@
+%li{id: "answer-#{answer.id}"}
+  =text_field_tag 'answer', answer.value
+  %span.btn.btn-default.glyphicon.glyphicon-minus.delete-answer{data: { item: "answer-#{ answer.id }", url: input_answer_path(input, answer, question_id: @question.to_param) } }
