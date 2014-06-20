@@ -21,15 +21,15 @@
 (defrecord JettyComponent [port ring-handler]
   component/Lifecycle
   (start [component]
-         (info "Starting jetty on port: " port)
-         (assoc component :jetty (jetty/run-jetty (:handler ring-handler) {:port port
-                                                                  :join? false})))
+    (info "Starting jetty on port: " port)
+    (assoc component :jetty (jetty/run-jetty (:handler ring-handler) {:port port
+                                                                      :join? false})))
   (stop [component]
-        (info "Stopping jetty")
-        (when-let [jetty (:jetty component)]
-          (when-not (.isStopped jetty)
-            (.stop jetty)))
-        component))
+    (info "Stopping jetty")
+    (when-let [jetty (:jetty component)]
+      (when-not (.isStopped jetty)
+        (.stop jetty)))
+    component))
 
 (defn jetty-component [port]
   (map->JettyComponent {:port port}))
@@ -46,20 +46,20 @@
 (defn ring-handler-component []
   (map->RingHandlerComponent {}))
 
-(defrecord EventStoreComponent [event-store-uri]
+(defrecord EventStoreComponent [config]
   component/Lifecycle
   (start [component]
     (info "Starting event-store")
-    (when (not= 200 (:status (try (client/get event-store-uri)
+    (when (not= 200 (:status (try (client/get (:uri config))
                                   (catch Exception e nil))))
-      (throw (Exception. (str "Can't connect to EventStore at " event-store-uri))))
-    (assoc component :store (atom-store/atom-event-store event-store-uri)))
+      (throw (Exception. (str "Can't connect to EventStore at " (:uri config)))))
+    (assoc component :store (atom-store/atom-event-store (:uri config) (select-keys config [:user :password]))))
   (stop [component]
     (info "Stopping event-store")
     component))
 
-(defn event-store-component [event-store-uri]
-  (map->EventStoreComponent {:event-store-uri event-store-uri}))
+(defn event-store-component [config]
+  (map->EventStoreComponent {:config config}))
 
 (defrecord ReadModelComponent [event-channel]
   component/Lifecycle
@@ -82,7 +82,7 @@
   (start [component]
     (info "Starting event-channel")
     (assoc component
-      :channel (event-channel (:store event-store) "$all" 0 0)))
+      :channel (event-channel (:store event-store) "%24all" -1 0)))
   (stop [component]
     (info "Stopping event-channel")
     (close! (:channel component))
@@ -93,25 +93,26 @@
 
 (defn prod-system [config-options]
   (info "Running the production system")
-  (let [{:keys [port event-store-uri]} config-options]
+  (let [{:keys [port event-store-config]} config-options]
     (map->ComponentSystem
-      {:config-options config-options
-       :ring-handler (component/using
-                      (ring-handler-component)
-                      [:event-store :read-model])
-       :jetty (component/using
-               (jetty-component port)
-               [:ring-handler])
-       :event-channel (component/using
-                       (event-channel-component)
-                       [:event-store])
-       :event-store (component/using
-                     (event-store-component event-store-uri)
-                     [])
-       :read-model (component/using
-                    (read-model-component)
-                    [:event-store :event-channel])})))
+     {:config-options config-options
+      :ring-handler (component/using
+                     (ring-handler-component)
+                     [:event-store :read-model])
+      :jetty (component/using
+              (jetty-component port)
+              [:ring-handler])
+      :event-channel (component/using
+                      (event-channel-component)
+                      [:event-store])
+      :event-store (component/using
+                    (event-store-component event-store-config)
+                    [])
+      :read-model (component/using
+                   (read-model-component)
+                   [:event-store :event-channel])})))
 
 (def prod-config {:port 3000
-                  :event-store-uri (or (env :event-store-uri) "http://127.0.0.1:2113")})
-
+                  :event-store-config {:uri (or (env :event-store-uri) "http://127.0.0.1:2113")
+                                       :user (or (env :event-store-user) "admin")
+                                       :password (or (env :event-store-password) "changeit")}})

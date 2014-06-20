@@ -14,3 +14,8 @@
 (defn stop []
   (alter-var-root #'system (constantly (component/stop #'system))))
 
+(defn reset []
+  (when system
+    (stop))
+  (start))
+
