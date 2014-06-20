@@ -11,6 +11,10 @@
   [model events]
   (reduce handle-event model events))
 
+(defn init-model
+  [initial-events]
+  (update-model nil initial-events)) 
+
 (defmethod handle-event CoursePublished
   [model event]
   (m/set-course model (:course-id event) (:material event)))

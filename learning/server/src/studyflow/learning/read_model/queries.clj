@@ -6,3 +6,7 @@
   (when-let [course (model/get-course m course-id)]
     (model/course-tree course)))
 
+(defn section
+  [m course-id section-id]
+  (model/get-section (model/get-course m course-id) section-id))
+

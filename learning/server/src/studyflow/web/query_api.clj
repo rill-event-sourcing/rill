@@ -5,12 +5,9 @@
             [studyflow.web.handler-tools :refer [combine-ring-handlers]]
             [studyflow.web.routes :as routes]
             [rill.uuid :refer [uuid]]
-            
-           [cheshire.core :as json]
-           [studyflow.json-tools :refer [key-from-json]]
-           [studyflow.learning.read-model :as model]
-           
-))
+            [cheshire.core :as json]
+            [studyflow.json-tools :refer [key-from-json]]
+            [studyflow.learning.read-model :as model]))
 
 (def query-handler
   "This handler returns data for the json api (or nil)"
@@ -23,21 +20,12 @@
                 :body course}
                {:status 400})))
    (handle routes/query-section
-           (fn [{model :read-model {:keys [course-id chapter-id section-id] :as params} :params}]
-             (debug "Query handler for " course-id ", " chapter-id " and " section-id "with model: " model)
-             
-             
-             ;; just return the fixture date from here
-             (let [course (-> (slurp "test/studyflow/material.json")
-                              (json/parse-string key-from-json))
-                   chapter (some (fn [c]
-                                   (when (= chapter-id (:id c))
-                                     c)) (:chapters course))
-                   section (some (fn [s]
-                                   (when (= section-id (:id s))
-                                     s)) (:sections chapter))]
+           (fn [{model :read-model {:keys [course-id section-id] :as params} :params}]
+             (debug "Query handler for " course-id " and " section-id "with model: " model)
+             (if-let [section (queries/section model (uuid course-id) (uuid section-id))]
                {:status 200
-                :body section})))))
+                :body section}
+               {:status 400})))))
 
 (defn wrap-read-model
   [f read-model-atom]
