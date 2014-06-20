@@ -18,15 +18,10 @@
    (handle routes/query-course-material
            (fn [{model :read-model {course-id :course-id :as params} :params}]
              (debug "Query handler for " course-id "with model: " model)
-             
-             
-             ;; just return the fixture date from here
-             #_(queries/course-material model (uuid course-id))
-             (let [nav-tree (-> (slurp "test/studyflow/material.json")
-                                (json/parse-string key-from-json)
-                                model/course-tree)]
+             (if-let [course  (queries/course-material model (uuid course-id))]
                {:status 200
-                :body nav-tree})))
+                :body course}
+               {:status 400})))
    (handle routes/query-section
            (fn [{model :read-model {:keys [course-id chapter-id section-id] :as params} :params}]
              (debug "Query handler for " course-id ", " chapter-id " and " section-id "with model: " model)
