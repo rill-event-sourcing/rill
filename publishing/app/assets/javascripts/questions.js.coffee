@@ -11,11 +11,10 @@ bindAddInputButton = ->
           console.log "AJAX Error: #{ textStatus }"
         success: (data, textStatus, jqXHR) ->
           $('#inputs-list').append(data)
-          # bindAddInputButtons()
           bindDeleteInputButtons()
           bindAddAnswerButton()
-          # updateCounter(star)
-          # refreshPreview(star)
+          bindAddChoiceButton()
+          refreshPreview()
 
 bindDeleteInputButtons = ->
   $('.delete-input').unbind()
@@ -30,8 +29,7 @@ bindDeleteInputButtons = ->
           console.log "AJAX Error: #{ textStatus }"
         success: (data, textStatus, jqXHR) ->
           $('#' + deleteItem).remove()
-    #       updateCounter(star)
-    #       refreshPreview(star)
+          refreshPreview()
 
 bindAddAnswerButton = ->
   $('.add-answer').unbind()
@@ -47,8 +45,7 @@ bindAddAnswerButton = ->
           ul = $('#' + inputItem + ' ul')
           ul.append(data)
           bindDeleteAnswerButtons()
-    #       # updateCounter(star)
-    #       # refreshPreview(star)
+          refreshPreview()
 
 bindDeleteAnswerButtons = ->
   $('.delete-answer').unbind()
@@ -63,77 +60,62 @@ bindDeleteAnswerButtons = ->
           console.log "AJAX Error: #{ textStatus }"
         success: (data, textStatus, jqXHR) ->
           $('#' + deleteItem).remove()
+          refreshPreview()
 
+bindAddChoiceButton = ->
+  $('.add-choice').unbind()
+  $('.add-choice').bind 'click', (event) ->
+    url = $(event.currentTarget).data('url')
+    $.ajax url,
+        type: 'POST'
+        dataType: 'html'
+        error: (jqXHR, textStatus, errorThrown) ->
+          console.log "AJAX Error: #{ textStatus }"
+        success: (data, textStatus, jqXHR) ->
+          inputItem = $(event.currentTarget).data('item')
+          ul = $('#' + inputItem + ' ul')
+          ul.append(data)
+          bindDeleteChoiceButtons()
+          refreshPreview()
 
+bindDeleteChoiceButtons = ->
+  $('.delete-choice').unbind()
+  $('.delete-choice').bind 'click', (event) ->
+    # if confirm('Are you sure you want to delete this?')
+    deleteItem = $(event.currentTarget).data('item')
+    url = $(event.currentTarget).data('url')
+    $.ajax url,
+        type: 'DELETE'
+        dataType: 'json'
+        error: (jqXHR, textStatus, errorThrown) ->
+          console.log "AJAX Error: #{ textStatus }"
+        success: (data, textStatus, jqXHR) ->
+          $('#' + deleteItem).remove()
+          refreshPreview()
 
+bindSaveButton = ->
+  $('.save').unbind()
+  $('.save').bind 'click', (event) ->
+    save()
 
-# updateCounter = (star) ->
-#   nr_of_subsections = $('.subsection-panel.star-' + star).length
-#   $('#badge_' + star).html(nr_of_subsections)
-#
-# bindAddButtons = ->
-#   $('.add-subsection').unbind()
-#   $('.add-subsection').bind 'click', (event) ->
-#     star = $(event.currentTarget).data('star')
-#     after = $(event.currentTarget).data('after')
-#     url = $(event.currentTarget).data('url')
-#     $.ajax url,
-#         type: 'POST'
-#         dataType: 'html'
-#         error: (jqXHR, textStatus, errorThrown) ->
-#           console.log "AJAX Error: #{ textStatus }"
-#         success: (data, textStatus, jqXHR) ->
-#           $('#' + after).after(data)
-#           bindAddButtons()
-#           bindDeleteButtons()
-#           updateCounter(star)
-#           refreshPreview(star)
-#
-# bindDeleteButtons = ->
-#   $('.delete-subsection').unbind()
-#   $('.delete-subsection').bind 'click', (event) ->
-#     # if confirm('Are you sure you want to delete this?')
-#     deleteItem = $(event.currentTarget).data('item')
-#     star = $(event.currentTarget).data('star')
-#     url = $(event.currentTarget).data('url')
-#     $.ajax url,
-#         type: 'DELETE'
-#         dataType: 'json'
-#         error: (jqXHR, textStatus, errorThrown) ->
-#           console.log "AJAX Error: #{ textStatus }"
-#         success: (data, textStatus, jqXHR) ->
-#           $('#' + deleteItem).remove()
-#           updateCounter(star)
-#           refreshPreview(star)
-#
-# bindSaveButton = ->
-#   $('.save').unbind()
-#   $('.save').bind 'click', (event) ->
-#     save()
-#
-# save = ->
-#   form  = $("#section-form")
-#   url = form.attr("action")
-#   $("#edit-time").html('<img src="/assets/spinner.gif" alt="Wait" />')
-#   $.ajax url,
-#     type: 'POST'
-#     dataType: 'json'
-#     data: form.serialize()
-#     error: (jqXHR, textStatus, errorThrown) ->
-#       console.log "AJAX Error: #{ textStatus }"
-#     success: (data, textStatus, jqXHR) ->
-#       $("#edit-time").html(data.updated_at)
-#       refreshAllPreviews()
-#
-# refreshAllPreviews = ->
-#   refreshPreview(1)
-#   refreshPreview(2)
-#   refreshPreview(3)
-#
-# refreshPreview = (star) ->
-#   $('#preview-' + star).attr("src", $('#preview-' + star).attr("src"))
-#   height = document.getElementById('preview-' + star).contentWindow.document.body.scrollHeight
-#   $('#preview-' + star).css('height', height)
+save = ->
+  form  = $("#question-form")
+  url = form.attr("action")
+  $("#edit-time").html('<img src="/assets/spinner.gif" alt="Wait" />')
+  $.ajax url,
+    type: 'PUT'
+    dataType: 'json'
+    data: form.serialize()
+    error: (jqXHR, textStatus, errorThrown) ->
+      console.log "AJAX Error: #{ textStatus }"
+    success: (data, textStatus, jqXHR) ->
+      $("#edit-time").html(data.updated_at)
+      refreshPreview()
+
+refreshPreview = ->
+  $('#preview').attr("src", $('#preview').attr("src"))
+  height = document.getElementById('preview').contentWindow.document.body.scrollHeight
+  $('#preview').css('height', height)
 
 ################################################################################
 
@@ -143,8 +125,9 @@ $ ->
   bindDeleteInputButtons()
   bindAddAnswerButton()
   bindDeleteAnswerButtons()
-  # bindSaveButton()
-  # setTimeout(save, 100)
-  # setInterval(save, 10000)
+  bindAddChoiceButton()
+  bindDeleteChoiceButtons()
+  bindSaveButton()
+  setInterval(save, 10000)
 
 ################################################################################

@@ -24,4 +24,20 @@ class Question < ActiveRecord::Base
     "#{id[0,8]}"
   end
 
+  # def as_json
+  #   {
+  #     id: id,
+  #     title: title
+  #   }
+  #
+  # end
+
+  def as_full_json
+    {
+      id: id,
+      text: text,
+      updated_at: I18n.l(updated_at, format: :long)
+    }
+  end
+
 end

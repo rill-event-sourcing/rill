@@ -14,5 +14,4 @@ class Answer < ActiveRecord::Base
     "#{id[0,8]}"
   end
 
-
 end
