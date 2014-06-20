@@ -14,8 +14,8 @@
 
 (deftest test-query-api
   (let [handler (make-request-handler (atom model))]
-    (is (= (:id (handler (request :get (uri-for routes/query-course-material (str course-id)))))
-           course-id))))
+    (is (= (:id (:body (handler (request :get (uri-for routes/query-course-material (str course-id))))))
+           (str course-id)))))
 
 (deftest test-wrap-read-model
   (let [read-model {:read :model}
