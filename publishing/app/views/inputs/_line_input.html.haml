@@ -1,11 +1,9 @@
 %div.pull-right
   %span.btn.btn-default.glyphicon.glyphicon-plus.add-answer{data: { item: "input-#{ input.id }", url: input_answers_path(input, question_id: @question.to_param) } }
 %div
-  pre
-  %input
+  = text_field_tag "line_inputs[#{input.id}][pre]", input.pre
 %div
-  post
-  %input
+  = text_field_tag "line_inputs[#{input.id}][post]", input.post
 %div
   %ul
     - input.answers.each do |answer|

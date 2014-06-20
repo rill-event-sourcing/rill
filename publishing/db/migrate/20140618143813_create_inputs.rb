@@ -3,6 +3,9 @@ class CreateInputs < ActiveRecord::Migration
     create_table :inputs, id: :uuid do |t|
       t.uuid :question_id, index: true
       t.string :type
+      t.integer :position, limit: 2
+      t.string :pre
+      t.string :post
       t.timestamps
     end
   end

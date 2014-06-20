@@ -5,6 +5,7 @@ class CreateQuestions < ActiveRecord::Migration
       t.text :text
       t.datetime :deleted_at, index: true
       t.boolean :active, default: false
+      t.integer :max_inputs, limit: 2
       t.timestamps
     end
   end

@@ -40,4 +40,8 @@ class Question < ActiveRecord::Base
     }
   end
 
+  def increase_max_position
+    max_inputs if increment!(:max_inputs)
+  end
+
 end
