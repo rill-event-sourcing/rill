@@ -4,6 +4,7 @@
             [clojure.test :refer [is deftest testing]]
             [clout-link.route :refer [uri-for]]
             [studyflow.web.routes :as routes]
+            [rill.uuid :refer [uuid]]
             [studyflow.learning.course-material-test :as fixture]
             [studyflow.learning.course-material :as material]
             [studyflow.learning.commands])
@@ -19,7 +20,7 @@
                    (assoc :body input)))]
       (is (= (class cmd) PublishCourse!)
           "generates a command")
-      (is (= (:id input)
+      (is (= (uuid (:id input))
              (:course-id cmd)))
       (is (= (:material cmd) parsed-input)
           "Command has material in correct format"))))

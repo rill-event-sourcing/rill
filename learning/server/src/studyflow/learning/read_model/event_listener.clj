@@ -4,7 +4,7 @@
             [clojure.core.async :refer [<!! thread]]
             [rill.event-store.atom-store]
             [clojure.tools.logging :as log])
-  (:import (rill.event_store.atom_store UntypedMessage UnprocessableMessage)))
+  (:import (rill.event_store.atom_store.event UnprocessableMessage)))
 
 (defn listen!
   "listen on event-channel"
@@ -14,8 +14,7 @@
     (log/info "Started read-model event listener")
     
     (while-let [e (<!! event-channel)]
-               (if (and (not (instance? UntypedMessage e))
-                        (not (instance? UnprocessableMessage e)))
+               (if (not (instance? UnprocessableMessage e))
                  (do (log/info e)
                      (swap! model-atom handle-event e))
                  (log/debug [:skipped-event])))))

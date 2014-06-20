@@ -18,6 +18,7 @@
                  [ring/ring-devel "1.2.1"]
                  [org.clojure/core.async "0.1.303.0-886421-alpha"]
                  [me.raynes/conch "0.7.0"]
+                 [com.velisco/tagged "0.3.4"]
                  [com.stuartsierra/component "0.2.1"]]
   :profiles {:dev
              {:source-paths ["dev"]
