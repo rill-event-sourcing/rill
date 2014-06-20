@@ -1,0 +1,12 @@
+%div.pull-right
+  %span.btn.btn-default.glyphicon.glyphicon-plus.add-answer{data: { item: "input-#{ input.id }", url: input_answers_path(input, question_id: @question.to_param) } }
+%div
+  pre
+  %input
+%div
+  post
+  %input
+%div
+  %ul
+    - input.answers.each do |answer|
+      =render partial: 'answers/edit', locals: {input: input, answer: answer}
