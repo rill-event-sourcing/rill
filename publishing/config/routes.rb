@@ -24,7 +24,11 @@ Rails.application.routes.draw do
           post 'save'
         end
       end
-      resources :questions
+      resources :questions do
+        member do
+          get 'preview'
+        end
+      end
     end
   end
 

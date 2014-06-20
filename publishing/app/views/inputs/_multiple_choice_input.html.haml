@@ -1,7 +1,6 @@
-%ul
-  - input.choices.each do |choice|
-    %li
-      =text_field_tag 'choice', choice.value
-      %input{type: :radio}
-  %li
-    %span.btn.btn-default.glyphicon.glyphicon-plus.add-choice
+%div.pull-right
+  %span.btn.btn-default.glyphicon.glyphicon-plus.add-choice{data: { item: "input-#{ input.id }", url: input_choices_path(input, question_id: @question.to_param) } }
+%div
+  %ul
+    - input.choices.each do |choice|
+      =render partial: 'choices/edit', locals: {input: input, choice: choice}

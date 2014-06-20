@@ -1,4 +1,5 @@
-=form_for([@chapter,@section,@question], html: {class: "form-horizontal", role: "form"}) do |f|
+-# =form_for([@chapter,@section,@question], html: {class: "form-horizontal", role: "form"}) do |f|
+%form.form-horizontal#question-form{action: chapter_section_question_path(@chapter,@section,@question), role: :form}
 
   %div.row
     %div.col-md-10
@@ -12,7 +13,7 @@
 
   %div.row
     %div.col-md-6
-      = f.text_area :text, style: "width: 100%", rows: 20
+      = text_area :question, :text, style: "width: 100%", rows: 20
 
       %div.panel.panel-default
         %div.panel-heading
@@ -27,4 +28,7 @@
             =render partial: 'inputs/edit', locals: {input: input}
 
     %div.col-md-6
-      = f.text_area :text, style: "width: 100%", rows: 40
+      - url = preview_chapter_section_question_path(@chapter, @section, @question)
+      %div.panel.panel-default
+        %div.panel-body
+          %iframe.fill.col-md-12{id: "preview", data: {url: url}, src: url, style: "min-height: 800px;" }

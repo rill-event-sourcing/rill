@@ -6,6 +6,10 @@ class QuestionsController < ApplicationController
   def index
   end
 
+  def preview
+    render layout: 'preview'
+  end
+
   def edit
   end
 
@@ -15,10 +19,12 @@ class QuestionsController < ApplicationController
   end
 
   def update
-    if @question.update_attributes(question_params)
-      redirect_to chapter_section_questions_path(@chapter, @section)
-    else
-      render :edit
+    respond_to do |format|
+      if @question.update_attributes(question_params)
+        format.json { render json: @question.as_full_json }
+      else
+        format.json { render json: @question.errors, status: :unprocessable_entity }
+      end
     end
   end
 

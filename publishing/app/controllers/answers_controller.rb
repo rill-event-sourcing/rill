@@ -19,7 +19,6 @@ class AnswersController < ApplicationController
 
 private
 
-
   def set_param_objects
     @question = Question.find_by_uuid(params[:question_id])
     @input = @question.inputs.find_by_uuid(params[:input_id])
