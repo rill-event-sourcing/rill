@@ -1,7 +1,8 @@
 (ns rill.event-store.atom-store.cursor
-  (:require [rill.event-store.atom-store
-             [page :as page] [feed :as feed] [event :as event]]
-            [clojure.tools.logging :as log]))
+  (:require [clojure.tools.logging :as log]
+            [rill.event-store.atom-store.event :as event]
+            [rill.event-store.atom-store.feed :as feed]
+            [rill.event-store.atom-store.page :as page]))
 
 ;; note that cursors are ordered oldest event first
 ;; while the page feed considers oldest events to be last

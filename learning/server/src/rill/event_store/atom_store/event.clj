@@ -1,8 +1,8 @@
 (ns rill.event-store.atom-store.event
-  (:require [clj-http.client :as http]
-            [rill.event-store.atom-store [feed :as feed]]
-            [cheshire.core :as json])
-  (:import com.fasterxml.jackson.core.JsonParseException))
+  (:require [cheshire.core :as json]
+            [clj-http.client :as http]
+            [rill.event-store.atom-store.feed :as feed])
+  (:import (com.fasterxml.jackson.core JsonParseException)))
 
 (defn body->event
   [body]
