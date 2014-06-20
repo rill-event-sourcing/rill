@@ -2,7 +2,7 @@
   (:require [rill.event-store.atom-store-test.local :refer [with-local-atom-store]]
             [rill.event-store :as store]
             [rill.message :refer [defevent]]
-            [rill.event-stream :refer [empty-stream-version]]
+            [rill.event-stream :refer [empty-stream-version empty-stream]]
             [rill.uuid :refer [new-id]]
             [clojure.test :refer [deftest testing is]]
             [clojure.core.async :as async :refer [<!!]]
@@ -28,6 +28,11 @@
 (deftest test-atom-store
   (with-local-atom-store [store]
     (testing "appending and retrieving events"
+      (testing "reading an empty stream"
+        (is (= (store/retrieve-events store (new-id))
+               empty-stream)
+            "Reading an empty stream returns the empty stream"))
+      
       (is (store/append-events store stream-id empty-stream-version events))
       (let [retrieved-events (store/retrieve-events store stream-id)]
         (is (= retrieved-events events))
@@ -60,7 +65,7 @@
     (testing "rough throughput, with overhead"
       (let [read-buffer-size 10
             write-chunk-size 12
-            num-messages 10000
+            num-messages 1000
             throughput-events (map gen-event (range num-messages))
             recieve (event-channel store throughput-stream-id -1 10)]
         (println "Writing and recieving" num-messages "messages")
