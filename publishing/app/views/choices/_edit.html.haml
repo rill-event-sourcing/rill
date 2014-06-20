@@ -1,4 +1,4 @@
 %li{id: "choice-#{choice.id}"}
-  =text_field_tag 'choice', choice.value
+  =text_area_tag 'choice', choice.value, style: "width: 500px;"
   %input{type: :radio}
   %span.btn.btn-default.glyphicon.glyphicon-minus.delete-choice{data: { item: "choice-#{ choice.id }", url: input_choice_path(input, choice, question_id: @question.to_param) } }

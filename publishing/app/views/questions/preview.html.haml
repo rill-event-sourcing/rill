@@ -1,4 +1,1 @@
-= @question.text.html_safe
-- @question.inputs.each do |input|
-  %br
-  =input
+= question_to_html(@question)
