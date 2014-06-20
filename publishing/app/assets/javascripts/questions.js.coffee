@@ -42,8 +42,8 @@ bindAddAnswerButton = ->
           console.log "AJAX Error: #{ textStatus }"
         success: (data, textStatus, jqXHR) ->
           inputItem = $(event.currentTarget).data('item')
-          ul = $('#' + inputItem + ' ul')
-          ul.append(data)
+          list = $('#' + inputItem + ' .answers-list')
+          list.append(data)
           bindDeleteAnswerButtons()
           refreshPreview()
 
@@ -73,8 +73,8 @@ bindAddChoiceButton = ->
           console.log "AJAX Error: #{ textStatus }"
         success: (data, textStatus, jqXHR) ->
           inputItem = $(event.currentTarget).data('item')
-          ul = $('#' + inputItem + ' ul')
-          ul.append(data)
+          list = $('#' + inputItem + ' .choices-list')
+          list.append(data)
           bindDeleteChoiceButtons()
           refreshPreview()
 

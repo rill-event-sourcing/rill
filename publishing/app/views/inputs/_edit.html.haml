@@ -4,9 +4,9 @@
     %div.pull-right
       %span.btn.btn-default.glyphicon.glyphicon-minus.delete-input{data: {item: "input-#{ input.id }", url: input_path(input, question_id: @question.to_param) } }
   %div.panel-body
-  - if input.line_input?
-    =render partial: 'inputs/line_input', locals: {input: input}
-  - elsif input.multiple_choice_input?
-    =render partial: 'inputs/multiple_choice_input', locals: {input: input}
-  - else
-    unknown input type
+    - if input.line_input?
+      =render partial: 'inputs/line_input', locals: {input: input}
+    - elsif input.multiple_choice_input?
+      =render partial: 'inputs/multiple_choice_input', locals: {input: input}
+    - else
+      unknown input type
