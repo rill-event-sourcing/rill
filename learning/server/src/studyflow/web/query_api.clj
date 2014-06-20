@@ -17,11 +17,15 @@
   (combine-ring-handlers
    (handle routes/query-course-material
            (fn [{model :read-model {course-id :course-id :as params} :params}]
-             (debug "Query handler for " course-id "with model: " model)
-             (if-let [course  (queries/course-material model (uuid course-id))]
-               {:status 200
-                :body course}
-               {:status 400})))
+             (debug "Query handler for " course-id "with model: " model (uuid course-id))
+             (spy (if-let [course  (queries/course-material model 
+                                                            
+                                                            
+                                                            ;; workaround due to schema/coersions to be done
+                                                            (identity #_uuid course-id))]
+                {:status 200
+                 :body course}
+                {:status 400}))))
    (handle routes/query-section
            (fn [{model :read-model {:keys [course-id chapter-id section-id] :as params} :params}]
              (debug "Query handler for " course-id ", " chapter-id " and " section-id "with model: " model)

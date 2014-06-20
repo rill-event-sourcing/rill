@@ -26,6 +26,7 @@
                [org.clojure/tools.namespace "0.2.3"]
                [org.clojure/clojurescript "0.0-2173"]
                [om "0.6.4"]
+               [quiescent "0.1.1"]
                [com.facebook/react "0.9.0.1"]
                [cljs-ajax "0.2.3"]]
               :plugins
