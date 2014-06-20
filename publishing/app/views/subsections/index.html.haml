@@ -1,0 +1,36 @@
+%form#section-form{ action: save_chapter_section_subsections_path(@chapter, @section) }
+
+  %div.row
+    %div.col-md-10
+      %h2= @section.title
+    %div.col-md-2
+      %span.btn.btn-default.save Save
+      %br
+      %small
+        Saved on:
+        %div#edit-time= l @section.updated_at, format: :long
+
+  %ul.nav.nav-tabs#subsection-tabs
+    - Star.all.each_with_index do |star, index|
+      -@star_subsections = @all_subsections[star]||[]
+      %li{class: index == 0 ? "active" : ""}
+        %a{href: "#star-#{star}", data: {toggle: "tab"} }
+          - star.times do
+            %span.glyphicon.glyphicon-star
+          %span.badge{id: "badge_#{star}"}= @star_subsections.length
+
+  %div.tab-content
+    - Star.all.each_with_index do |star, index|
+      -@star = star
+      -@star_subsections = @all_subsections[@star]||[]
+      %div.tab-pane{id: "star-#{ star }", class: index == 0 ? "active" : ""}
+
+        %div.col-md-6
+          = render partial: 'new'
+          - @star_subsections.each_with_index do |subsection, index|
+            -@subsection, @index = subsection, index
+            = render partial: 'edit'
+
+        %div.col-md-6
+          - url = preview_chapter_section_subsections_path(@chapter, @section, star: @star)
+          %iframe.fill.col-md-12{id: "preview-#{ @star }", data: {url: url}, src: url }

@@ -1,17 +1,11 @@
--if @section.active?
-  = link_to 'Deactivate', deactivate_chapter_section_path(@chapter,@section), method: :post, class: "btn btn-warning"
-- else
-  = link_to 'Activate', activate_chapter_section_path(@chapter,@section), method: :post, class: "btn btn-info"
+%div.row
+  %div.col-md-8.col-md-offset-2
+    %h2
+      = @section.title
+    %p
+      = @section.description
 
-%p
-  %strong Title:
-  = @section.title
-%p
-  %strong Description:
-  = @section.description
-
-= link_to 'Back', chapter_sections_path(@chapter), class: "btn btn-default"
-= link_to 'Edit', edit_chapter_section_path(@chapter,@section), class: "btn btn-primary"
-= link_to 'Destroy', chapter_sections_path(@chapter), method: :delete, data: { confirm: "Are you sure you want to delete section `#{ @section }`?" }, class: "btn btn-danger"
-
-%br
+%div.row
+  %div.col-md-8.col-md-offset-2
+    =link_to 'subsections', chapter_section_subsections_path(@chapter, @section), class: 'btn btn-default'
+    =link_to 'questions', chapter_section_questions_path(@chapter, @section), class: 'btn btn-default'

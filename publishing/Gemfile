@@ -14,7 +14,10 @@ gem 'bootstrap-sass'
 gem 'haml-rails'
 gem 'pg'
 gem 'sendgrid'
+# later added
 gem 'acts_as_list'
+gem 'appsignal'
+gem 'httparty'
 
 group :development do
   gem 'better_errors'
@@ -25,8 +28,6 @@ group :development do
   gem 'capistrano-rails-console'
   gem 'capistrano-rvm', '~> 0.1.1'
   gem 'guard-bundler'
-  gem 'guard-rails'
-  gem 'guard-rspec'
   gem 'html2haml'
   gem 'quiet_assets'
   gem 'rails_layout'
@@ -39,14 +40,19 @@ group :development, :test do
   gem 'factory_girl_rails'
   gem 'rspec-rails', '>= 3.0.0.beta2'
   gem 'thin'
+  gem 'guard-rails'
+  gem 'guard-rspec'
 end
 
 group :test do
   gem 'capybara'
-  gem 'capybara-webkit'
+  gem 'phantomjs'
+  gem 'poltergeist'
   gem 'database_cleaner'
   gem 'faker'
   gem 'launchy'
   gem 'shoulda-matchers'
+  gem 'simplecov', :require => false
+  gem 'guard'
   gem 'therubyracer'
 end

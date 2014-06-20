@@ -1,18 +1,33 @@
-%h1 Overview
-
-%ul
-  - Course.all.each do |course|
-    %li
-      = course.name
-      = "(#{ course.chapters.length })"
-      %ul
-        -course.chapters.each do |chapter|
-          %li
-            = chapter.title
-            %small= chapter.description
-            = "(#{ chapter.sections.length })"
-            %ul
+-if Course.current
+  - @course = Course.current
+  %div.container
+    %div.row
+      %div.col-md-8.col-md-offset-2
+        %h2
+          =link_to @course.name, chapters_path
+          %small= "(#{ @course.chapters.length })"
+      %div.col-md-2
+        = link_to 'Publish', publish_course_path, class: "btn btn-success", method: :post
+    %div.row
+      %div.col-md-8.col-md-offset-2
+        -@course.chapters.each do |chapter|
+          %table.table.table-condensed.table-bordered
+            %thead
+              %tr
+                %th
+                  =link_to chapter.title, chapter
+                  %span.pull-right
+                    #{chapter.sections.where(active: true).length} / #{chapter.sections.length}
+            %tbody
               -chapter.sections.each do |section|
-                %li
-                  = section.title
-                  %small= section.description
+                %tr
+                  %td{class: section.active? ? "success" : "danger", id: "section-row"}
+                    = link_to section.title, [chapter, section]
+                    %span.badge.pull-right= section.subsections.length
+      %div.col-md-2
+        Guide:
+        %table.table.table-condensed
+          %tr
+            %td.success Section published
+          %tr
+            %td.danger Section not published

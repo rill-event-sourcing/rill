@@ -1,28 +1,29 @@
 require 'rails_helper'
 
-feature "SelectCourses", :type => :feature do
+feature "SelectCourses", type: :feature do
   before do
     create(:course, name: 'Math')
     create(:course, name: 'Engels')
   end
 
-  scenario 'Visit home page' do
+  scenario 'do Course selection', js: true do
     visit root_path
-    expect(page).to have_content('Home')
-  end
+    expect(page).to have_select('course_id', options: ['choose course', 'Engels', 'Math'])
 
-  scenario 'Course selection', js: true do
+    select('Math', from: 'course_id')
+    expect(page).to have_select('course_id', selected: 'Math')
     visit root_path
-    expect(page).to have_select('course_id', options: ['choose course', 'Math', 'Engels'])
-    select('Math', :from => 'course_id')
-    visit root_path
-    expect(page).to have_select('course_id', :selected => 'Math')
-  end
+    expect(page).to have_select('course_id', selected: 'Math')
 
-  # scenario 'Course list' do
-  #   visit courses_path
-  #   expect(page).to have_content('Courses')
-  #   expect(page).to have_content('New Course')
-  # end
+    select('Engels', from: 'course_id')
+    expect(page).to have_select('course_id', selected: 'Engels')
+    visit root_path
+    expect(page).to have_select('course_id', selected: 'Engels')
+
+    select('choose course', :from => 'course_id')
+    expect(page).to have_select('course_id', options: ['choose course', 'Engels', 'Math'])
+    visit root_path
+    expect(page).to have_select('course_id', options: ['choose course', 'Engels', 'Math'])
+  end
 
 end

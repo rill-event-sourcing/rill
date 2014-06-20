@@ -1,0 +1,10 @@
+%ol.breadcrumb
+  %li
+    =link_to 'Home', root_path
+  -if @crumbs
+    -@crumbs.each_with_index do |crumb,index|
+      -if index == @crumbs.length-1
+        %li.active= crumb[:name]
+      -else
+        %li
+          =link_to crumb[:name], crumb[:url]

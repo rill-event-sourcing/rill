@@ -3,7 +3,7 @@ class Course < ActiveRecord::Base
 
   has_many :chapters, -> { order(:position) }
 
-  validates :name, :presence => true, :uniqueness => true
+  validates :name, presence: true, uniqueness: true
 
   default_scope { order(:name) }
 
@@ -23,7 +23,7 @@ class Course < ActiveRecord::Base
     {
       id: id,
       name: name,
-      chapters: chapters.map(&:as_json)
+      chapters: chapters.active.map(&:as_json)
     }
   end
 end

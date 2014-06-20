@@ -2,14 +2,17 @@
 %html
   %head
     %meta{:name => "viewport", :content => "width=device-width, initial-scale=1.0"}
-    %title= content_for?(:title) ? yield(:title) : 'Rails Bootstrap'
-    %meta{:name => "description", :content => "#{content_for?(:description) ? yield(:description) : 'Rails Bootstrap'}"}
+    %title= content_for?(:title) ? yield(:title) : 'Studyflow Publishing'
+    %meta{:name => "description", :content => "#{content_for?(:description) ? yield(:description) : 'Studyflow Publishing'}"}
     = stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true
-    = javascript_include_tag 'application', 'data-turbolinks-track' => true
     = csrf_meta_tags
   %body
     %header
       = render 'layouts/navigation'
+      = render 'layouts/breadcrumbs'
     %main{:role => "main"}
       = render 'layouts/messages'
       = yield
+
+  = javascript_include_tag 'application', 'data-turbolinks-track' => true
+  = javascript_include_tag params[:controller]

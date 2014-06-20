@@ -3,5 +3,6 @@
 FactoryGirl.define do
   factory :course do
     sequence(:name) { |n| "Default course name#{n}" }
+    active true
   end
 end

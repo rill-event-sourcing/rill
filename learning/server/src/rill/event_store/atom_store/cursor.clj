@@ -51,9 +51,9 @@
       nil)))
 
 (defn event-seq
-  ([cursor message-constructor poll-seconds]
+  ([cursor poll-seconds]
      (lazy-seq
       (when-let [[event current-cursor] (load-event cursor poll-seconds)]
         (log/debug [event current-cursor])
-        (cons (with-meta (message-constructor event) {:cursor current-cursor})
-              (event-seq (next-cursor current-cursor) message-constructor 0))))))
+        (cons (with-meta event {:cursor current-cursor})
+              (event-seq (next-cursor current-cursor) 0))))))

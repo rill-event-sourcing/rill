@@ -1,16 +1,11 @@
-%h1 Sections
-
-%div.row
-  %div.col-md-2.col-md-offset-10
-    = link_to 'New Section', new_chapter_section_path(@chapter), class: "btn btn-success"
-
 %table.table.table-striped
   %thead
     %tr
       %th Title
       %th Description
       %th Order
-      %th Status
+      %th Published
+      %th Actions
 
   %tbody
     -@chapter.sections.each do |section|
@@ -25,7 +20,12 @@
         %td
           -if section.active?
             =link_to deactivate_chapter_section_path(@chapter,section), method: :post do
-              %span.glyphicon.glyphicon-ok
+              %span.glyphicon.glyphicon-eye-open
           -else
             =link_to activate_chapter_section_path(@chapter,section), method: :post do
-              %span.glyphicon.glyphicon-remove
+              %span.glyphicon.glyphicon-ban-circle
+        %td
+          = link_to edit_chapter_section_path(@chapter, section) do
+            %span.glyphicon.glyphicon-pencil
+          =link_to chapter_section_path(@chapter, section), method: :delete, data: { confirm: "Are you sure you want to delete section `#{ section }`?" } do
+            %span.glyphicon.glyphicon-trash

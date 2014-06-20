@@ -1,0 +1,15 @@
+%div.row
+  %div.col-md-10
+    %h2= "Questions for '#{@section}'"
+  %div.col-md-2
+    =link_to 'New Question', new_chapter_section_question_path(@chapter,@section), class: "btn btn-success"
+
+-@section.questions.each do |question|
+  %div.panel.panel-default
+    %div.panel-body
+      %div.pull-right
+        =link_to edit_chapter_section_question_path(@chapter, @section, question) do
+          %span.glyphicon.glyphicon-pencil
+        =link_to chapter_section_question_path(@chapter, @section, question), method: :delete, data: { confirm: "Are you sure you want to delete this question?" } do
+          %span.glyphicon.glyphicon-trash
+      %p= question.text

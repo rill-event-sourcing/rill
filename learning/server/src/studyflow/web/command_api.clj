@@ -1,6 +1,6 @@
 (ns studyflow.web.command-api
   (:require [clout-link.route :refer [handle]]
-            [rill.uuid :refer [new-id]]
+            [rill.uuid :refer [new-id uuid]]
             [studyflow.learning.commands :as commands]
             [studyflow.learning.command-handler]
             [studyflow.learning.course-material :as material]
@@ -16,7 +16,7 @@ commands."
   (combine-ring-handlers
    (handle routes/update-course-material
            (fn [{{:keys [course-id]} :params body :body :as request}]
-             (commands/->PublishCourse! (new-id) course-id (material/parse-course-material body))))))
+             (commands/->PublishCourse! (new-id) (uuid course-id) (material/parse-course-material body))))))
 
 (defn make-request-handler
   [event-store]

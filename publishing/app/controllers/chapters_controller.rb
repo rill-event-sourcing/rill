@@ -1,6 +1,6 @@
 class ChaptersController < ApplicationController
-  before_action :set_course
-  before_action :set_chapter, except: [:index, :new, :create]
+  before_action :set_param_objects
+  before_action :set_breadcrumb, except: [:index, :new, :create]
 
   def index
     if @course
@@ -54,26 +54,27 @@ class ChaptersController < ApplicationController
 
   def moveup
     @chapter.move_higher
-    redirect_to chapters_path
+    redirect_to chapters_path, notice: 'Chapter was successfully moved up.'
   end
 
   def movedown
     @chapter.move_lower
-    redirect_to chapters_path
+    redirect_to chapters_path, notice: 'Chapter was successfully moved down.'
   end
 
 private
 
-  def set_course
+  def set_param_objects
     @course = Course.current
+    @chapter = @course.chapters.find_by_uuid(params[:id]) if params[:id]
   end
 
-  def set_chapter
-    @chapter = @course.chapters.find(params[:id])
+  def set_breadcrumb
+    @crumbs = [{name: @chapter.title, url: chapter_sections_path(@chapter)}]
   end
 
   def chapter_params
-    params.require(:chapter).permit(:title, :description, :course_id)
+    params.require(:chapter).permit(:title, :description)
   end
 
 end

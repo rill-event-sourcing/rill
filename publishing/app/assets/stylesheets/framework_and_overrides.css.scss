@@ -5,16 +5,53 @@ main {
   @extend .container;
   padding-bottom: 80px;
   width: 100%;
-  margin-top: 51px; // accommodate the navbar
   }
 section {
   @extend .row;
   margin-top: 20px;
   }
+iframe {
+  border: 0;
+  }
+input[type="text"] {
+  width: 90%;
+  }
 
+.navbar {
+  border-radius: 0;
+  margin-bottom: 0;
+  }
+.logo {
+  height: 50px;
+  margin: 0 20px 0 10px;
+  }
 .glyphicon-ok {
   color: green;
   }
 .glyphicon-remove {
   color: red;
   }
+.glyphicon-trash {
+  color: red;
+  }
+.glyphicon-star {
+  color: gold;
+  }
+.glyphicon-exclamation-sign {
+  color: red;
+  }
+.glyphicon-plus {
+  color: green;
+  }
+.glyphicon-minus {
+  color: red;
+  }
+.glyphicon-eye-open {
+  color: green;
+  }
+.glyphicon-ban-circle {
+  color: orange;
+  }
+#section-row {
+  padding-left:40px;
+}

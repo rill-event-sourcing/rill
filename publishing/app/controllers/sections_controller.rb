@@ -1,16 +1,16 @@
 class SectionsController < ApplicationController
-  before_action :set_course
-  before_action :set_chapter
-  before_action :set_section, except: [:index, :new, :create]
+  before_action :set_param_objects
+  before_action :set_breadcrumb, except: [:index, :new, :create]
 
   def index
+    redirect_to @chapter
   end
 
   def show
   end
 
   def new
-    @section = @chapter.sections.build
+    @section = Section.new
   end
 
   def edit
@@ -19,60 +19,59 @@ class SectionsController < ApplicationController
   def create
     @section = @chapter.sections.build(section_params)
     if @section.save
-      redirect_to chapter_sections_path(@chapter), notice: 'Section was successfully created.'
+      redirect_to [@chapter, @section]
     else
-      render :new
+      render 'new'
     end
   end
 
   def update
     if @section.update(section_params)
-      redirect_to [@chapter, @section], notice: 'Section was successfully updated.'
+      redirect_to chapter_section_path(@chapter, @section), notice: 'Section was successfully updated.'
     else
-      render :edit
+      render :show
     end
   end
 
   def destroy
-    @chapter.trash
+    @section.trash
     redirect_to chapter_sections_path(@chapter), notice: 'Section was successfully destroyed.'
   end
 
   def activate
     @section.activate
-    redirect_to chapter_sections_path(@chapter), notice: 'Section was successfully activated.'
+    redirect_to chapter_sections_path(@chapter)
   end
 
   def deactivate
     @section.deactivate
-    redirect_to chapter_sections_path(@chapter), notice: 'Section was successfully deactivated.'
+    redirect_to chapter_sections_path(@chapter)
   end
 
   def moveup
     @section.move_higher
-    redirect_to chapter_sections_path(@chapter)
+    redirect_to chapter_sections_path, notice: 'Section was successfully moved up.'
   end
 
   def movedown
     @section.move_lower
-    redirect_to chapter_sections_path(@chapter)
+    redirect_to chapter_sections_path, notice: 'Section was successfully moved down.'
   end
 
 private
 
-   def set_course
-     @course = Course.current
-   end
-#
-   def set_chapter
-     @chapter = @course.chapters.find(params[:chapter_id])
-   end
+  def set_param_objects
+    @course = Course.current
+    @chapter = @course.chapters.find_by_uuid(params[:chapter_id])
+    @section = @chapter.sections.find_by_uuid(params[:id]) if params[:id]
+  end
 
-   def set_section
-     @section = @chapter.sections.find(params[:id])
-   end
+  def set_breadcrumb
+    @crumbs = [{name: @chapter.title, url: chapter_sections_path(@chapter)},{name: @section.title, url: chapter_section_path(@chapter, @section)}]
+  end
 
-   def section_params
-     params.require(:section).permit(:title, :description, :chapter_id)
-   end
+  def section_params
+    params.require(:section).permit(:title, :description)
+  end
+
 end
