@@ -2,6 +2,10 @@ class Input < ActiveRecord::Base
   belongs_to :question
   validates :question, presence: true
 
+  default_scope { order(:position) }
+
+  after_create :set_position
+
   scope :for_short_uuid, ->(id) { where(["SUBSTRING(CAST(id AS VARCHAR), 1, 8) = ?", id]) }
   def self.find_by_uuid(id, with_404 = true)
     inputs = for_short_uuid(id)
@@ -14,12 +18,22 @@ class Input < ActiveRecord::Base
     "#{id[0,8]}"
   end
 
+  def name
+    "_INPUT_#{ position }_"
+  end
+
   def line_input?
     is_a?(LineInput)
   end
 
   def multiple_choice_input?
     is_a?(MultipleChoiceInput)
+  end
+
+private
+
+  def set_position
+    update_attribute(:position, question.increase_max_position)
   end
 
 end
