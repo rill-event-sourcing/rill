@@ -1,11 +1,9 @@
--# =form_for([@chapter,@section,@question], html: {class: "form-horizontal", role: "form"}) do |f|
 %form.form-horizontal#question-form{action: chapter_section_question_path(@chapter,@section,@question), role: :form}
-
   %div.row
     %div.col-md-10
       %h2 Editing question
     %div.col-md-2
-      %span.btn.btn-default.save Save
+      %span.btn.btn-lg.btn-primary.save Save
       %br
       %small
         Saved on:
