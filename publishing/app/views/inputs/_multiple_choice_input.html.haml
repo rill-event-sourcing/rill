@@ -1,5 +1,7 @@
 %div.row
-  %div.col-md-2.col-md-offset-10
+  %div.col-md-1.col-md-offset-9
+    %strong Correct
+  %div.col-md-2
     %span.btn.btn-default.glyphicon.glyphicon-plus.add-choice{data: { item: "input-#{ input.id }", url: input_choices_path(input, question_id: @question.to_param) } }
   %div.choices-list
     - input.choices.each do |choice|
