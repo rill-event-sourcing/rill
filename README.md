@@ -1,15 +1,19 @@
 # Project Gibbon
 
+> Let's go on a safari through the darkest jungle -- @joost
+
 ![](docs/Yi-Yuanji-Two-gibbons-in-an-oak-tree.jpg)
 
-# Sub projects
 
-## learning
+## Documentation
 
-## publishing
-    cd publishing
-    rspec
+* [Branching model](docs/branching_model.md)
 
-## testing publshing format
+## Testing
+
+    make test
+
+To test the publishing of the material from the publishing app, run (from the root folder)
+
     cd learning/server
     lein validate-course-material path/to/material.json
