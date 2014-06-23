@@ -31,7 +31,9 @@ module QuestionsHelper
   end
 
   def multiple_choice_input_to_html(input)
-    input.choices.map{|ch| content_tag(:button, ch.value, class: "btn #{ ch.correct ? 'btn-primary' : 'btn-default' } btn-block") }.join('').html_safe
+    content_tag(:div, style: "width: 300px;") do
+      input.choices.map{|ch| content_tag(:button, ch.value, class: "btn #{ ch.correct ? 'btn-success' : 'btn-default' } btn-block") }.join('').html_safe
+    end
   end
 
 end

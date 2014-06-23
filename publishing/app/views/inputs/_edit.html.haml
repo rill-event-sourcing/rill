@@ -1,6 +1,13 @@
 %div.panel.panel-default{id: "input-#{ input.id }" }
   %div.panel-heading.clearfix
-    =input.name
+    %code=input.name
+    %span.label.label-primary
+      - if input.line_input?
+        Single line input
+      - elsif input.multiple_choice_input?
+        Multiple choice input
+      - else
+        Unknown input type
     %div.pull-right
       %span.btn.btn-default.glyphicon.glyphicon-minus.delete-input{data: {item: "input-#{ input.id }", url: input_path(input, question_id: @question.to_param) } }
   %div.panel-body
