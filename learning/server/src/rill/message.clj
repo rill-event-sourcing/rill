@@ -1,7 +1,8 @@
 (ns rill.message
   (:refer-clojure :exclude [type])
   (:require [schema.macros :as sm]
-            [schema.core]))
+            [schema.core]
+            [miner.tagged :as tagged]))
 
 (defprotocol Message
   (id [this] "The unique id of the message")
@@ -20,6 +21,8 @@
          ~(list 'type '[this] (str name))
          ~'(data [this] (dissoc this :id)))
 
+       (defmethod print-method ~name ~'[this w] (tagged/pr-tagged-record-on ~'this ~'w))
+       
        (defmethod strict-map->Message ~(str name)
          [~'_ map#]
          (~(symbol (str "strict-map->" name)) map#))))
@@ -36,6 +39,8 @@
          ~'(data [this] (dissoc this :id))
          Event
          ~(list 'stream-id '[this] (first params)))
+
+       (defmethod print-method ~name ~'[this w] (tagged/pr-tagged-record-on ~'this ~'w))
 
        (defmethod strict-map->Message ~(str name)
          [~'_ map#]

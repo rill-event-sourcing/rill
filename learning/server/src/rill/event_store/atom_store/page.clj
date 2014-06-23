@@ -25,9 +25,10 @@
   (:uri page))
 
 (defn load-page
-  ([uri poll-seconds]
+  ([uri poll-seconds opts]
      (let [response (http/get uri
-                              (merge {:as :json
+                              (merge opts
+                                     {:as :json
                                       :throw-exceptions false}
                                      (if (and poll-seconds
                                               (< 0 poll-seconds))
@@ -35,5 +36,5 @@
        (if-not (= 200 (:status response))
          nil
          (assoc (:body response) :uri uri))))
-  ([uri]
-     (load-page uri nil)))
+  ([uri opts]
+     (load-page uri 0 opts)))

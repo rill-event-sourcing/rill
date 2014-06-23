@@ -2,7 +2,9 @@
   (:require [studyflow.learning.read-model.event-handler :refer [handle-event]]
             [studyflow.loop-tools :refer [while-let]]
             [clojure.core.async :refer [<!! thread]]
-            [clojure.tools.logging :as log]))
+            [rill.event-store.atom-store]
+            [clojure.tools.logging :as log])
+  (:import (rill.event_store.atom_store.event UnprocessableMessage)))
 
 (defn listen!
   "listen on event-channel"
@@ -10,7 +12,9 @@
   (log/info "Starting read-model event listener")
   (thread
     (log/info "Started read-model event listener")
+    
     (while-let [e (<!! event-channel)]
-               (log/info (pr-str e))
-               (swap! model-atom handle-event e))))
-
+               (if (not (instance? UnprocessableMessage e))
+                 (do (log/info e)
+                     (swap! model-atom handle-event e))
+                 (log/debug [:skipped-event])))))
