@@ -98,6 +98,16 @@ bindSaveButton = ->
   $('.save').bind 'click', (event) ->
     save()
 
+
+bindCorrectChoiceButtons = ->
+  $('.toggle_choice').unbind()
+  $('.toggle_choice').bind 'click', (event) ->
+    input = $(event.currentTarget).data('input')
+    $('#input-' + input + ' :checkbox').each (i, element) ->
+      if element != $(event.currentTarget)[0]
+        $(this).prop("checked",false)
+
+
 save = ->
   form  = $("#question-form")
   url = form.attr("action")
@@ -127,6 +137,7 @@ $ ->
   bindDeleteAnswerButtons()
   bindAddChoiceButton()
   bindDeleteChoiceButtons()
+  bindCorrectChoiceButtons()
   bindSaveButton()
   setInterval(save, 10000)
 

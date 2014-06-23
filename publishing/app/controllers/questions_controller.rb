@@ -56,8 +56,9 @@ private
     multiple_choice_inputs_hash.each do |id, values|
       input = @question.inputs.where(id: id).first
       (values[:choices] || {}).each do |id,values|
-       choice = input.choices.where(id: id).first
-       choice.update_attributes(values)
+        values[:correct] ||= 0
+        choice = input.choices.where(id: id).first
+        choice.update_attributes(values)
       end
     end
   end
