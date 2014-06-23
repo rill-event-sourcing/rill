@@ -114,7 +114,7 @@ bindCopyToClipboardButton = ->
 save = ->
   form  = $("#question-form")
   url = form.attr("action")
-  $("#edit-time").html('<img src="/assets/spinner.gif" alt="Wait" />')
+  $("#edit-time").html('<img src="/spinner.gif" alt="Wait" />')
   $.ajax url,
     type: 'PUT'
     dataType: 'json'
