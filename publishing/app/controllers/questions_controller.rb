@@ -43,7 +43,8 @@ private
       line_input = @question.line_inputs.where(id: id).first
       line_input.update_attributes(
         pre: values[:pre],
-        post: values[:post]
+        post: values[:post],
+        width: values[:width]
       )
       (values[:answers] || {}).each do |id,values|
         answer = line_input.answers.where(id: id).first

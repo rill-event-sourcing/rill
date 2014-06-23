@@ -144,6 +144,6 @@ $ ->
   bindCorrectChoiceButtons()
   bindCopyToClipboardButton()
   bindSaveButton()
-  setInterval(save, 10000)
+  # setInterval(save, 10000)
 
 ################################################################################
