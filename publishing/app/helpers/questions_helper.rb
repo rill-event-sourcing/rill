@@ -1,7 +1,7 @@
 module QuestionsHelper
 
   def question_to_html(question)
-    html = content_tag(:div, question.text)
+    html = content_tag(:div, question.text.html_safe)
     question.inputs.each do |input|
       input_html = input_to_html(input)
       html.gsub!(input.name, input_html)
@@ -33,7 +33,7 @@ module QuestionsHelper
 
   def multiple_choice_input_to_html(input)
     content_tag(:div, style: "width: 300px;") do
-      input.choices.map{|ch| content_tag(:button, ch.value, class: "btn #{ ch.correct ? 'btn-success' : 'btn-default' } btn-block") }.join('').html_safe
+      input.choices.map{|ch| content_tag(:button, ch.value.html_safe, class: "btn #{ ch.correct ? 'btn-success' : 'btn-default' } btn-block") }.join('').html_safe
     end
   end
 
