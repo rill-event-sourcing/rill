@@ -14,6 +14,7 @@ bindAddInputButton = ->
           bindDeleteInputButtons()
           bindAddAnswerButton()
           bindAddChoiceButton()
+          bindCopyToClipboardButton()
           refreshPreview()
 
 bindDeleteInputButtons = ->
@@ -107,6 +108,8 @@ bindCorrectChoiceButtons = ->
       if element != $(event.currentTarget)[0]
         $(this).prop("checked",false)
 
+bindCopyToClipboardButton = ->
+  new ZeroClipboard($(".copy-button"))
 
 save = ->
   form  = $("#question-form")
@@ -127,6 +130,7 @@ refreshPreview = ->
   height = document.getElementById('preview').contentWindow.document.body.scrollHeight
   $('#preview').css('height', height)
 
+
 ################################################################################
 
 # on load run:
@@ -138,6 +142,7 @@ $ ->
   bindAddChoiceButton()
   bindDeleteChoiceButtons()
   bindCorrectChoiceButtons()
+  bindCopyToClipboardButton()
   bindSaveButton()
   setInterval(save, 10000)
 
