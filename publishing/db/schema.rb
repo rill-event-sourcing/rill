@@ -58,6 +58,7 @@ ActiveRecord::Schema.define(version: 20140618145746) do
     t.integer  "position",    limit: 2
     t.string   "pre"
     t.string   "post"
+    t.integer  "width",       limit: 2
     t.datetime "created_at"
     t.datetime "updated_at"
   end
