@@ -2,6 +2,7 @@ class Question < ActiveRecord::Base
   include Trashable, Activateable
 
   validates :section, presence: true
+  before_save :set_default_text
 
   belongs_to :section, touch: true
   has_many :inputs, dependent: :destroy
@@ -22,6 +23,10 @@ class Question < ActiveRecord::Base
 
   def to_param
     "#{id[0,8]}"
+  end
+
+  def set_default_text
+    self.text ||= ""
   end
 
   # def as_json
