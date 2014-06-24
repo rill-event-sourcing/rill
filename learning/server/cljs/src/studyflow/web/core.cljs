@@ -34,12 +34,12 @@
                                          (for [{:keys [title]
                                                 section-id :id
                                                 :as section} sections]
-                                           (dom/a #js {:onClick
-                                                       (fn [_]
-                                                         (om/update! cursor
-                                                                     :selected-section
-                                                                     [chapter-id section-id]))}
-                                                  (dom/li #js {:data-id section-id}
+                                           (dom/li #js {:data-id section-id}
+                                                   (dom/a #js {:onClick
+                                                               (fn [_]
+                                                                 (om/update! cursor
+                                                                             :selected-section
+                                                                             [chapter-id section-id]))}
                                                           title))))))))
         (dom/h2 nil "No content ... spinner goes here")))
     om/IWillUnmount
