@@ -3,5 +3,6 @@
 FactoryGirl.define do
   factory :line_input do
     question
+    sequence(:position) { |n| n }
   end
 end

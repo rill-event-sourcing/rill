@@ -3,5 +3,6 @@
 FactoryGirl.define do
   factory :multiple_choice_input do
     question
+    sequence(:position) { |n| n }
   end
 end

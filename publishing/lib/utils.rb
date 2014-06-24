@@ -4,7 +4,6 @@ def pp(value = '', type = 'debug', debug_start = false)
   logger.send(type, "\e[46;1;31m")
   if @debug_date_time
     txt = "===> ∂: #{ (start - @debug_date_time).round(2) } #{ value.inspect } ===="
-    p txt if Rails.env != 'production'
     logger.send(type, txt)
   else
     txt = "===> #{ start.strftime("%H:%M:%S") }.#{ start.tv_sec } ============================================================="
