@@ -56,6 +56,13 @@ save = ->
       $("#edit-time").html("Saved on: " + data.updated_at)
       refreshAllPreviews()
 
+initializeAutoSave = ->
+  setTimeout(autoSave,10000)
+
+autoSave = ->
+  save()
+  setTimeout(autoSave,10000)
+
 refreshAllPreviews = ->
   refreshPreview(1)
   refreshPreview(2)
@@ -73,7 +80,6 @@ $ ->
   bindAddButtons()
   bindDeleteButtons()
   bindSaveButton()
-  if !interval
-    interval = setInterval(save, 10000)
+  initializeAutoSave()
 
 ################################################################################
