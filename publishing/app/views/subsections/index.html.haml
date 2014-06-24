@@ -34,4 +34,4 @@
 
         %div.col-md-6
           - url = preview_chapter_section_subsections_path(@chapter, @section, star: @star)
-          %iframe.fill.col-md-12{id: "preview-#{ @star }", data: {url: url}, src: url }
+          %iframe.fill.col-md-12{id: "preview-#{ @star }", data: {url: url}, src: url, style: "min-height: 800px;" }
