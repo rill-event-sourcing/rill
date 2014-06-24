@@ -1,7 +1,7 @@
 %div{id: "choice-#{choice.id}"}
-  %div.col-md-10
+  %div.col-md-9
     =text_area_tag "multiple_choice_inputs[#{input.id}][choices][#{choice.id}][value]", choice.value, cols: 50, rows: 4, class: "form-control"
   %div.col-md-1
     =check_box_tag "multiple_choice_inputs[#{input.id}][choices][#{choice.id}][correct]", 1, choice.correct, class: "toggle_choice", data: {input: input.id}, class:"pull-right"
-  %div.col-md-1
-    %span.btn.btn-default.glyphicon.glyphicon-minus.delete-choice{data: { item: "choice-#{ choice.id }", url: input_choice_path(input, choice, question_id: @question.to_param) } }
+  %div.col-md-2
+    %span.btn.pull-right.btn-default.glyphicon.glyphicon-minus.delete-choice{data: { item: "choice-#{ choice.id }", url: input_choice_path(input, choice, question_id: @question.to_param) } }

@@ -66,3 +66,9 @@ input[type="text"] {
 .zeroclipboard-is-hover {
   background-color: #e6e6e6 !important;
 }
+.line-input-panel {
+  @extend .panel-info;
+}
+.multiple-choice-input-panel {
+  @extend .panel-success;
+}

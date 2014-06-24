@@ -1,14 +1,13 @@
-%div.panel.panel-default{id: "input-#{ input.id }" }
+%div.panel.panel-default{id: "input-#{ input.id }", class: "#{input.class.to_s.underscore.dasherize}-panel"}
   %div.panel-heading.clearfix
     %div.row
       %div.col-md-4
-        %strong
-          - if input.line_input?
-            Single line input
-          - elsif input.multiple_choice_input?
-            Multiple choice input
-          - else
-            Unknown input type
+        - if input.line_input?
+          %strong Single line input
+        - elsif input.multiple_choice_input?
+          %strong Multiple choice input
+        - else
+          %strong Unknown input type
       %div.col-md-4
         %div.input-group
           %input.form-control{id: "input-title-#{input.id}", value: input.name, disabled: true, style:"font-family: monospace;"}
