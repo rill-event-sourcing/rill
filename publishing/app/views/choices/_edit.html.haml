@@ -1,6 +1,6 @@
 %div{id: "choice-#{choice.id}"}
   %div.col-md-10
-    =text_area_tag "multiple_choice_inputs[#{input.id}][choices][#{choice.id}][value]", choice.value, cols: 50, class: "form-control"
+    =text_area_tag "multiple_choice_inputs[#{input.id}][choices][#{choice.id}][value]", choice.value, cols: 50, rows: 4, class: "form-control"
   %div.col-md-1
     =check_box_tag "multiple_choice_inputs[#{input.id}][choices][#{choice.id}][correct]", 1, choice.correct, class: "toggle_choice", data: {input: input.id}, class:"pull-right"
   %div.col-md-1
