@@ -13,14 +13,14 @@ class QuestionsController < ApplicationController
   def edit
   end
 
-  def new
+  def create
     @question = @section.questions.create
     redirect_to edit_chapter_section_question_path(@chapter, @section, @question)
   end
 
   def update
-    set_line_inputs params[:line_inputs] if params[:line_inputs]
-    set_multiple_choice_inputs params[:multiple_choice_inputs] if params[:multiple_choice_inputs]
+    set_line_inputs(@question, params[:line_inputs]) if params[:line_inputs]
+    set_multiple_choice_inputs(@question, params[:multiple_choice_inputs]) if params[:multiple_choice_inputs]
 
     respond_to do |format|
       if @question.update_attributes(question_params)
@@ -38,9 +38,9 @@ class QuestionsController < ApplicationController
 
 private
 
-  def set_line_inputs(line_inputs_hash)
+  def set_line_inputs(question, line_inputs_hash)
     line_inputs_hash.each do |id, values|
-      line_input = @question.line_inputs.where(id: id).first
+      line_input = question.line_inputs.where(id: id).first
       line_input.update_attributes(
         pre: values[:pre],
         post: values[:post],
@@ -53,9 +53,9 @@ private
     end
   end
 
-  def set_multiple_choice_inputs(multiple_choice_inputs_hash)
+  def set_multiple_choice_inputs(question, multiple_choice_inputs_hash)
     multiple_choice_inputs_hash.each do |id, values|
-      input = @question.inputs.where(id: id).first
+      input = question.inputs.where(id: id).first
       (values[:choices] || {}).each do |id,values|
         values[:correct] ||= 0
         choice = input.choices.where(id: id).first
@@ -69,14 +69,11 @@ private
     @course = Course.current
     @chapter = @course.chapters.find_by_uuid(params[:chapter_id])
     @section = @chapter.sections.find_by_uuid(params[:section_id])
-    @question = @section.questions.find_by_uuid(params[:id]) if params[:id]
+    @question = @section.questions.find_by_uuid(params[:id], false) if params[:id]
   end
 
   def set_breadcrumb
-    @crumbs = [{name: @chapter.title, url: chapter_sections_path(@chapter)},{name: @section.title, url: chapter_section_path(@chapter, @section)}, {name: "Questions", url: chapter_section_questions_path(@chapter, @section)}]
-    if @question
-      @crumbs << {name: @question.to_param, url: chapter_section_question_path(@chapter,@section,@question)}
-    end
+    @crumbs = [{name: @chapter.title, url: chapter_sections_path(@chapter)},{name: @section.title, url: chapter_section_path(@chapter, @section)}, {name: "Questions", url: chapter_section_subsections_path(@chapter, @section)}]
   end
 
 

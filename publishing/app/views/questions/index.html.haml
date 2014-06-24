@@ -2,7 +2,7 @@
   %div.col-md-10
     %h2= "Questions for '#{@section}'"
   %div.col-md-2
-    =link_to 'New Question', new_chapter_section_question_path(@chapter,@section), class: "btn btn-success"
+    =button_to 'Add Question', chapter_section_questions_path(@chapter,@section), method: :post, class: "btn btn-success"
 
 -@section.questions.each do |question|
   %div.panel.panel-default
