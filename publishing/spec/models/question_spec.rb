@@ -35,7 +35,7 @@ RSpec.describe Question, :type => :model do
     expect(Question.find_by_uuid('1a31a31a', false)).to eq nil
   end
 
-  it "should throw an StudyflowPublishing::ShortUuidDoubleError when found multiple Sections by an abbreviated uuid" do
+  it "should throw an StudyflowPublishing::ShortUuidDoubleError when found multiple questions by an abbreviated uuid" do
     uuid = Question.first.id
     Question.all.each do |question|
       question.update_attribute :id, uuid[0,8] + question.id[8,28]
