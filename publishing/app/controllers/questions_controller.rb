@@ -73,7 +73,10 @@ private
   end
 
   def set_breadcrumb
-    @crumbs = [{name: @chapter.title, url: chapter_sections_path(@chapter)},{name: @section.title, url: chapter_section_path(@chapter, @section)}, {name: "Questions", url: chapter_section_subsections_path(@chapter, @section)}]
+    @crumbs = [{name: @chapter.title, url: chapter_sections_path(@chapter)},{name: @section.title, url: chapter_section_path(@chapter, @section)}, {name: "Questions", url: chapter_section_questions_path(@chapter, @section)}]
+    if @question
+      @crumbs << {name: @question.to_param, url: chapter_section_question_path(@chapter,@section,@question)}
+    end
   end
 
 
