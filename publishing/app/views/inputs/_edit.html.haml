@@ -1,7 +1,7 @@
 %div.panel.panel-default{id: "input-#{ input.id }" }
   %div.panel-heading.clearfix
     %div.row
-      %div.col-md-3
+      %div.col-md-4
         %strong
           - if input.line_input?
             Single line input
@@ -14,7 +14,7 @@
           %input.form-control{id: "input-title-#{input.id}", value: input.name, disabled: true, style:"font-family: monospace;"}
           %span.input-group-addon.copy-button{"data-clipboard-target" => "input-title-#{input.id}"}
             %span.glyphicon.glyphicon-share
-      %div.col-md-5
+      %div.col-md-4
         %span.pull-right.btn.btn-default.glyphicon.glyphicon-minus.delete-input{data: {item: "input-#{ input.id }", url: input_path(input, question_id: @question.to_param) } }
   %div.panel-body
     - if input.line_input?
