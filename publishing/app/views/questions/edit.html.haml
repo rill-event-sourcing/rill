@@ -1,13 +1,14 @@
 %form.form-horizontal#question-form{action: chapter_section_question_path(@chapter,@section,@question), role: :form}
   %div.row
-    %div.col-md-10
+    %div.col-md-9
       %h2 Editing question
+    %div.col-md-1
+      %span.btn.btn-primary.btn-lg.save Save
     %div.col-md-2
-      %span.btn.btn-lg.btn-primary.save Save
-      %br
       %small
-        Saved on:
-        %div#edit-time= l @question.updated_at, format: :long
+        %span#edit-time{style: "min-height:30px;"}
+          Saved on:
+          = l @section.updated_at, format: :long
 
   %div.row
     %div.col-md-6

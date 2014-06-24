@@ -122,7 +122,7 @@ save = ->
     error: (jqXHR, textStatus, errorThrown) ->
       console.log "AJAX Error: #{ textStatus }"
     success: (data, textStatus, jqXHR) ->
-      $("#edit-time").html(data.updated_at)
+      $("#edit-time").html("Saved on: " + data.updated_at)
       refreshPreview()
 
 refreshPreview = ->
@@ -144,6 +144,7 @@ $ ->
   bindCorrectChoiceButtons()
   bindCopyToClipboardButton()
   bindSaveButton()
-  setInterval(save, 10000)
+  if !interval
+    interval = setInterval(save, 10000)
 
 ################################################################################

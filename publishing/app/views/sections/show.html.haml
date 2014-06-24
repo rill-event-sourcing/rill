@@ -1,11 +1,12 @@
-%div.row
-  %div.col-md-8.col-md-offset-2
-    %h2
-      = @section.title
-    %p
-      = @section.description
+%div.container
+  %div.row
+    %div.col-md-8.col-md-offset-2
+      %h2
+        = @section.title
+      %p
+        = @section.description
 
-%div.row
-  %div.col-md-8.col-md-offset-2
-    =link_to 'subsections', chapter_section_subsections_path(@chapter, @section), class: 'btn btn-default'
-    =link_to 'questions', chapter_section_questions_path(@chapter, @section), class: 'btn btn-default'
+  %div.row
+    %div.col-md-8.col-md-offset-2
+      =link_to 'subsections', chapter_section_subsections_path(@chapter, @section), class: 'btn btn-default'
+      =link_to 'questions', chapter_section_questions_path(@chapter, @section), class: 'btn btn-default'
