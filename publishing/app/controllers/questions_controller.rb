@@ -36,6 +36,16 @@ class QuestionsController < ApplicationController
     redirect_to chapter_section_questions_path(@chapter,@section)
   end
 
+  def activate
+    @question.activate
+    redirect_to chapter_section_questions_path(@chapter,@section)
+  end
+
+  def deactivate
+    @question.deactivate
+    redirect_to chapter_section_questions_path(@chapter,@section)
+  end
+
 private
 
   def set_line_inputs(question, line_inputs_hash)

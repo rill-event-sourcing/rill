@@ -64,14 +64,30 @@ RSpec.describe QuestionsController, :type => :controller do
 
     it "should destroy the question" do
       post :destroy, chapter_id: @chapter.to_param, section_id: @section.to_param, id: @question1.to_param
-      expect(response).to redirect_to chapter_section_questions_path(@chapter,@section)
+      expect(response).to redirect_to chapter_section_questions_path(@chapter, @section)
     end
 
     it "should destroy the question more than once" do
-      post :destroy,  chapter_id: @chapter.to_param, section_id: @section.to_param, id: @question1.to_param
-      expect(response).to redirect_to chapter_section_questions_path(@chapter,@section)
-      post :destroy,  chapter_id: @chapter.to_param, section_id: @section.to_param, id: @question1.to_param
-      expect(response).to redirect_to chapter_section_questions_path(@chapter,@section)
+      post :destroy, chapter_id: @chapter.to_param, section_id: @section.to_param, id: @question1.to_param
+      expect(response).to redirect_to chapter_section_questions_path(@chapter, @section)
+      post :destroy, chapter_id: @chapter.to_param, section_id: @section.to_param, id: @question1.to_param
+      expect(response).to redirect_to chapter_section_questions_path(@chapter, @section)
+    end
+  end
+
+  describe "POST activate" do
+    it "should activate the question and redirect" do
+      post :activate, chapter_id: @chapter.to_param, section_id: @section.to_param, id: @question1.to_param
+      expect(response).to redirect_to chapter_section_questions_path(@chapter, @section)
+      expect(@question1.active)
+    end
+  end
+
+  describe "POST deactivate" do
+    it "should deactivate the question and redirect" do
+      post :deactivate, chapter_id: @chapter.to_param, section_id: @section.to_param, id: @question1.to_param
+      expect(response).to redirect_to chapter_section_questions_path(@chapter, @section)
+      expect(!@question1.active)
     end
   end
 

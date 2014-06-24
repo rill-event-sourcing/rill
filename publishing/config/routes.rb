@@ -26,6 +26,10 @@ Rails.application.routes.draw do
       end
       resources :questions do
         member do
+          post 'activate'
+          post 'deactivate'
+          post 'moveup'
+          post 'movedown'
           get 'preview'
         end
       end
