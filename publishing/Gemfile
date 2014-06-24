@@ -14,7 +14,8 @@ gem 'bootstrap-sass'
 gem 'haml-rails'
 gem 'pg'
 gem 'sendgrid'
-# later added
+
+gem 'zeroclipboard-rails'
 gem 'acts_as_list'
 gem 'appsignal'
 gem 'httparty'

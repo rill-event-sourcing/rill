@@ -6,6 +6,10 @@ class QuestionsController < ApplicationController
   def index
   end
 
+  def preview
+    render layout: 'preview'
+  end
+
   def edit
   end
 
@@ -15,10 +19,15 @@ class QuestionsController < ApplicationController
   end
 
   def update
-    if @question.update_attributes(question_params)
-      redirect_to chapter_section_questions_path(@chapter, @section)
-    else
-      render :edit
+    set_line_inputs params[:line_inputs] if params[:line_inputs]
+    set_multiple_choice_inputs params[:multiple_choice_inputs] if params[:multiple_choice_inputs]
+
+    respond_to do |format|
+      if @question.update_attributes(question_params)
+        format.json { render json: @question.as_full_json }
+      else
+        format.json { render json: @question.errors, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -28,6 +37,33 @@ class QuestionsController < ApplicationController
   end
 
 private
+
+  def set_line_inputs(line_inputs_hash)
+    line_inputs_hash.each do |id, values|
+      line_input = @question.line_inputs.where(id: id).first
+      line_input.update_attributes(
+        pre: values[:pre],
+        post: values[:post],
+        width: values[:width]
+      )
+      (values[:answers] || {}).each do |id,values|
+        answer = line_input.answers.where(id: id).first
+        answer.update_attributes(values)
+      end
+    end
+  end
+
+  def set_multiple_choice_inputs(multiple_choice_inputs_hash)
+    multiple_choice_inputs_hash.each do |id, values|
+      input = @question.inputs.where(id: id).first
+      (values[:choices] || {}).each do |id,values|
+        values[:correct] ||= 0
+        choice = input.choices.where(id: id).first
+        choice.update_attributes(values)
+      end
+    end
+  end
+
 
   def set_param_objects
     @course = Course.current

@@ -1,0 +1,11 @@
+%div.row
+  %div.col-md-11
+    %div.form-inline
+      = text_field_tag "line_inputs[#{input.id}][pre]", input.pre, class: "form-control col-md-4", placeholder: "pre"
+      = text_field_tag "line_inputs[#{input.id}][post]", input.post, class: "form-control col-md-4", placeholder: "post"
+      = text_field_tag "line_inputs[#{input.id}][width]", input.width, class: "form-control col-md-4", placeholder: "width"
+  %div.col-md-1
+    %span.btn.btn-default.glyphicon.glyphicon-plus.add-answer{data: { item: "input-#{ input.id }", url: input_answers_path(input, question_id: @question.to_param) } }
+  %div.answers-list
+    - input.answers.each do |answer|
+      =render partial: 'answers/edit', locals: {input: input, answer: answer}

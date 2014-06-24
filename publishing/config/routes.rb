@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+
   match 'select_course',  to: 'courses#select', via: :post
   match 'publish_course', to: 'home#publish', via: :post
 
@@ -23,8 +24,17 @@ Rails.application.routes.draw do
           post 'save'
         end
       end
-      resources :questions
+      resources :questions do
+        member do
+          get 'preview'
+        end
+      end
     end
+  end
+
+  resources :inputs do
+    resources :answers
+    resources :choices
   end
 
   root to: 'home#index'

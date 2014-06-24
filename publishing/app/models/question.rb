@@ -5,6 +5,8 @@ class Question < ActiveRecord::Base
 
   belongs_to :section, touch: true
   has_many :inputs, dependent: :destroy
+  has_many :line_inputs
+  has_many :multiple_choice_inputs
 
   scope :for_short_uuid, ->(id) { where(["SUBSTRING(CAST(id AS VARCHAR), 1, 8) = ?", id]) }
   def self.find_by_uuid(id, with_404 = true)
@@ -20,6 +22,26 @@ class Question < ActiveRecord::Base
 
   def to_param
     "#{id[0,8]}"
+  end
+
+  # def as_json
+  #   {
+  #     id: id,
+  #     title: title
+  #   }
+  #
+  # end
+
+  def as_full_json
+    {
+      id: id,
+      text: text,
+      updated_at: I18n.l(updated_at, format: :long)
+    }
+  end
+
+  def increase_max_position
+    max_inputs if increment!(:max_inputs)
   end
 
 end
