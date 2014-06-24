@@ -72,3 +72,6 @@ input[type="text"] {
 .multiple-choice-input-panel {
   @extend .panel-success;
 }
+.answer-row, .choice-row {
+  margin-top:10px;
+}
