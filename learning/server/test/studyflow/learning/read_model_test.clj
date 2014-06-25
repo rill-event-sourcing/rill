@@ -4,7 +4,7 @@
             [studyflow.learning.course-material :as material]
             [studyflow.learning.course-material-test :as fixture]
             [studyflow.learning.read-model.event-handler :as handler]
-            [studyflow.events :as events]
+            [studyflow.learning.course.events :as events]
             [rill.uuid :refer [new-id]]))
 
 (def material (material/parse-course-material (fixture/read-example-json)))

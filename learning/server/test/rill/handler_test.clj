@@ -1,6 +1,7 @@
 (ns rill.handler-test
-  (:require [rill.handler :as handler :refer [aggregate-ids defaggregate-ids handle-command try-command]]
-            [rill.message :as message :refer [defcommand defevent stream-id]]
+  (:require [rill.handler :as handler :refer [try-command]]
+            [rill.aggregate :refer [handle-command aggregate-ids]]
+            [rill.message :as message :refer [defcommand defevent primary-aggregate-id]]
             [clojure.test :refer [deftest testing is]]
             [rill.uuid :refer [new-id]]
             [rill.event-store :refer [retrieve-events]]
@@ -8,51 +9,28 @@
             [rill.event-store.memory :refer [memory-store]]
             [schema.core :as s]))
 
-(defcommand HandlerTestCommand1
-  :something s/Keyword
-  :my-id s/Uuid
-  :other-thing s/Keyword)
-
-(defaggregate-ids HandlerTestCommand1 my-id)
-
-(defcommand HandlerTestCommand2
-  :id-one s/Uuid
-  :something s/Keyword
-  :id-two s/Uuid
-  :other-thing s/Keyword)
-
-(defaggregate-ids HandlerTestCommand2 id-one id-two)
-
-(deftest aggregate-ids-test
-  (is (= (aggregate-ids (->HandlerTestCommand1 12345 :a :b :c))
-         [:b]))
-  (is (= (aggregate-ids (->HandlerTestCommand2 12345 :a :b :c :d))
-         [:a :c])))
-
 (defcommand HandlerCommand
   :agg-id s/Uuid)
-
-(defaggregate-ids HandlerCommand agg-id)
 
 (defevent HandlerTestEvent
   :agg-id s/Uuid
   :given-aggregate s/Keyword)
 
-(defmethod handle-command :handler-command
-  [command my-aggregate]
+(defmethod handle-command ::HandlerCommand
+  [my-aggregate command]
   [(->HandlerTestEvent (new-id) (:agg-id command) my-aggregate)])
 
 (def my-aggregate-id 2798)
 
 (deftest test-try-command
   (testing "we get events out of the command"
-    (is (= (map message/type (handle-command (->HandlerCommand (new-id) :my-id) :foo))
-           [:handler-test-event]))
-    (is (= (:given-aggregate (first (handle-command (->HandlerCommand (new-id) :my-id) :foo)))
+    (is (= (map message/type (handle-command :foo (->HandlerCommand (new-id) :my-id)))
+           [::HandlerTestEvent]))
+    (is (= (:given-aggregate (first (handle-command :foo (->HandlerCommand (new-id) :my-id))))
            :foo))
-    (is (= (stream-id (->HandlerTestEvent (new-id) my-aggregate-id :foo))
+    (is (= (primary-aggregate-id (->HandlerTestEvent (new-id) my-aggregate-id :foo))
            my-aggregate-id))
-    (is (= (stream-id (first (handle-command (->HandlerCommand (new-id) my-aggregate-id) :foo)))
+    (is (= (primary-aggregate-id (first (handle-command :foo (->HandlerCommand (new-id) my-aggregate-id))))
            my-aggregate-id)))
 
   (testing "preparation of command"
@@ -67,4 +45,5 @@
       (is (not= (retrieve-events store my-aggregate-id)
                 empty-stream))
       (is (= (map message/type (retrieve-events store my-aggregate-id))
-             [:handler-test-event])))))
+             [::HandlerTestEvent])))))
+

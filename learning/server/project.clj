@@ -19,7 +19,8 @@
                  [org.clojure/core.async "0.1.303.0-886421-alpha"]
                  [me.raynes/conch "0.7.0"]
                  [com.velisco/tagged "0.3.4"]
-                 [com.stuartsierra/component "0.2.1"]]
+                 [com.stuartsierra/component "0.2.1"]
+                 [identifiers "1.0.0"]]
   :profiles {:dev
              {:source-paths ["dev"]
               :resource-paths ["dev/resources"]
