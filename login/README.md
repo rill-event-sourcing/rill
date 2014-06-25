@@ -8,6 +8,7 @@ A webapp to provide authentication for Studyflow applications.
     sudo -u postgres createdb studyflow_login -O studyflow
 
 or on OSX:
+
     createuser studyflow -W
     createdb studyflow_login -O studyflow
 
