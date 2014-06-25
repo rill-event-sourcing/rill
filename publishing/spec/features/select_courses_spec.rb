@@ -8,7 +8,7 @@ feature "SelectCourses", type: :feature do
 
   scenario 'do Course selection', js: true do
     visit root_path
-    expect(page).to have_select('course_id', options: ['choose course', 'Engels', 'Math'])
+    expect(page).to have_select('course_id', options: ['Select course', 'Engels', 'Math'])
 
     select('Math', from: 'course_id')
     expect(page).to have_select('course_id', selected: 'Math')
@@ -20,10 +20,10 @@ feature "SelectCourses", type: :feature do
     visit root_path
     expect(page).to have_select('course_id', selected: 'Engels')
 
-    select('choose course', :from => 'course_id')
-    expect(page).to have_select('course_id', options: ['choose course', 'Engels', 'Math'])
+    select('Select course', :from => 'course_id')
+    expect(page).to have_select('course_id', options: ['Select course', 'Engels', 'Math'])
     visit root_path
-    expect(page).to have_select('course_id', options: ['choose course', 'Engels', 'Math'])
+    expect(page).to have_select('course_id', options: ['Select course', 'Engels', 'Math'])
   end
 
 end

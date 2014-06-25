@@ -34,8 +34,11 @@
                     %span.label.label-success.pull-right= section.questions.length
       %div.col-md-2
         Guide:
-        %table.table.table-condensed
+        %table.table.table-condensed.table-bordered
           %tr
             %td.success Section published
           %tr
             %td.danger Section not published
+-else
+  %div.container
+    %div.alert.alert-warning Please select a course from the dropdown on the top right.

@@ -14,6 +14,7 @@ bindAddInputButton = ->
           bindDeleteInputButtons()
           bindAddAnswerButton()
           bindAddChoiceButton()
+          bindCorrectChoiceButtons()
           bindCopyToClipboardButton()
           refreshPreview()
 
@@ -125,6 +126,13 @@ save = ->
       $("#edit-time").html("Saved on: " + data.updated_at)
       refreshPreview()
 
+initializeAutoSave = ->
+  setTimeout(autoSave,10000)
+
+autoSave = ->
+  save()
+  setTimeout(autoSave,10000)
+
 refreshPreview = ->
   $('#preview').attr("src", $('#preview').attr("src"))
   height = document.getElementById('preview').contentWindow.document.body.scrollHeight
@@ -144,7 +152,6 @@ $ ->
   bindCorrectChoiceButtons()
   bindCopyToClipboardButton()
   bindSaveButton()
-  if !interval
-    interval = setInterval(save, 10000)
+  initializeAutoSave()
 
 ################################################################################
