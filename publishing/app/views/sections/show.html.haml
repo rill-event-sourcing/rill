@@ -3,10 +3,40 @@
     %div.col-md-8.col-md-offset-2
       %h2
         = @section.title
-      %p
-        = @section.description
+      %strong Description:
+      %p{style: "margin-left:20px;"}= @section.description
 
   %div.row
-    %div.col-md-8.col-md-offset-2
-      =link_to 'subsections', chapter_section_subsections_path(@chapter, @section), class: 'btn btn-default'
-      =link_to 'questions', chapter_section_questions_path(@chapter, @section), class: 'btn btn-default'
+    %div.col-md-4.col-md-offset-4
+
+
+
+  %div.row
+    %div.col-md-4.col-md-offset-2
+      =link_to 'Edit Subsections', chapter_section_subsections_path(@chapter, @section), class: "btn btn-primary", style: "margin:40px auto; width:100%;"
+      %table.table.table-striped.table-bordered
+        %thead
+          %tr
+            %th
+              Subsections
+              %span.badge= @section.subsections.length
+        %tbody
+          - @section.subsections.all.each do |subsection|
+            %tr
+              %td= subsection.to_s.empty? ? "(empty)" : subsection.to_s
+
+
+    %div.col-md-4
+      =link_to 'Manage Questions', chapter_section_questions_path(@chapter, @section), class: "btn btn-primary", style: "margin:40px auto; width:100%;"
+      %table.table.table-striped.table-bordered
+        %thead
+          %tr
+            %th
+              Questions
+              %span.badge= @section.questions.length
+              %span.pull-right
+                ="#{@section.questions.where(active: true).length} / #{@section.questions.length} published"
+        %tbody
+          - @section.questions.all.each do |question|
+            %tr{class: question.active? ? "success" : "danger", id: "section-row"}
+              %td= question
