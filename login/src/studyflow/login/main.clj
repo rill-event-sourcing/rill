@@ -1,6 +1,8 @@
 (ns studyflow.login.main
-  (:require [clojure.string :as str]
+  (:require [clojure.java.jdbc :as sql]
+            [clojure.string :as str]
             [compojure.core :refer [defroutes GET]]
+            [environ.core :refer [env]]
             [hiccup.page :refer [html5]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]))
 
@@ -29,7 +31,9 @@
 ;; Model
 
 (defn count-users [db]
-  5)
+  (:count
+   (first
+    (sql/query db "SELECT COUNT(*) FROM users"))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -43,5 +47,22 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wiring
 
+
+(defn wrap-db [app db]
+  (fn [req]
+    (app (assoc req :db db))))
+
+(def db
+  {:classname "org.postgresql.Driver"
+   :subprotocol "postgresql"
+   :subname (or (env :db-subname) "//localhost/studyflow_login")
+   :user (or (env :db-user) "studyflow")
+   :password (or (env :db-password) "studyflow")})
+
+(defn bootstrap! []
+  (sql/execute! db ["CREATE TABLE IF NOT EXISTS users (uuid VARCHAR(36) PRIMARY KEY)"]))
+
 (def app
-  (wrap-defaults actions site-defaults))
+  (->
+   (wrap-defaults actions site-defaults)
+   (wrap-db db)))
