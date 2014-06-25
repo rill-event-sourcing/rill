@@ -4,6 +4,7 @@
     %meta{:name => "viewport", :content => "width=device-width, initial-scale=1.0"}
     %title= content_for?(:title) ? yield(:title) : 'Studyflow Publishing'
     %meta{:name => "description", :content => "#{content_for?(:description) ? yield(:description) : 'Studyflow Publishing'}"}
+    = favicon_link_tag 'studyflow_logo.png'
     = stylesheet_link_tag 'application', media: 'all'
     = csrf_meta_tags
   %body
