@@ -22,13 +22,13 @@
     [:h1 title]
     body]))
 
-(defn home [user-count users]
+(defn home [user-count user-list]
   [:div
    [:h2 "welcome home"]
    [:div
     (str user-count " users registered")]
    [:div
-    (str users)]])
+    (str/join " ," user-list)]])
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -40,9 +40,7 @@
     (sql/query db "SELECT COUNT(*) FROM users"))))
 
 (defn list-users [db]
-  (let [result  (sql/query db "SELECT * FROM users")]
-    (str/join ", " (map :uuid result) )))
-
+  (map :uuid  (sql/query db "SELECT * FROM users")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Controller
