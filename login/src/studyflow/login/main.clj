@@ -22,11 +22,13 @@
     [:h1 title]
     body]))
 
-(defn home [user-count]
+(defn home [user-count,users]
   [:div
    [:h2 "welcome home"]
    [:div
-    (str user-count " users registered")]])
+    (str user-count " users registered")]
+   [:div
+    (str users)]])
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -37,13 +39,17 @@
    (first
     (sql/query db "SELECT COUNT(*) FROM users"))))
 
+(defn show-users [db]
+  (let [result  (sql/query db "SELECT * FROM users")]
+   (clojure.string/join ", " (map :uuid result) )))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Controller
 
 (defroutes actions
   (GET "/" {db :db}
-       (layout "HOME" (home (count-users db))))
+       (layout "HOME" (home (count-users db) (show-users db))))
   (not-found "Nothing here"))
 
 
