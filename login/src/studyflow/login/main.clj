@@ -2,8 +2,9 @@
   (:require [clojure.java.jdbc :as sql]
             [clojure.string :as str]
             [compojure.core :refer [defroutes GET]]
+            [compojure.route :refer [not-found]]
             [environ.core :refer [env]]
-            [hiccup.page :refer [html5]]
+            [hiccup.page :refer [html5 include-css]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]))
 
 
@@ -15,7 +16,8 @@
 (defn layout [title & body]
   (html5
    [:head
-    [:title (str/join "-" [app-title title])]]
+    [:title (str/join "-" [app-title title])]
+    (include-css "screen.css")]
    [:body
     [:h1 title]
     body]))
@@ -41,7 +43,8 @@
 
 (defroutes actions
   (GET "/" {db :db}
-       (layout "HOME" (home (count-users db)))))
+       (layout "HOME" (home (count-users db))))
+  (not-found "Nothing here"))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
