@@ -39,4 +39,4 @@
         %tbody
           - @section.questions.all.each do |question|
             %tr{class: question.active? ? "success" : "danger", id: "section-row"}
-              %td= question
+              %td= question.to_s.truncate(50, omission: '...')

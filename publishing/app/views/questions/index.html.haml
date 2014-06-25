@@ -16,7 +16,7 @@
         %tbody
           -@section.questions.each do |question|
             %tr
-              %td= link_to question.text, edit_chapter_section_question_path(@chapter, @section, question)
+              %td= link_to question.text.truncate(90, omission: '...'), edit_chapter_section_question_path(@chapter, @section, question)
               %td
                 -if question.active?
                   =link_to deactivate_chapter_section_question_path(@chapter, @section, question), method: :post do
