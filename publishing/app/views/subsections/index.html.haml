@@ -20,7 +20,7 @@
             %span.glyphicon.glyphicon-star
           %span.badge{id: "badge_#{star}"}= @star_subsections.length
 
-  %div.tab-content
+  %div.tab-content{style: "margin-top: 20px;"}
     - Star.all.each_with_index do |star, index|
       -@star = star
       -@star_subsections = @all_subsections[@star]||[]
