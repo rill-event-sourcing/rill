@@ -1,48 +1,67 @@
 (ns rill.message
   (:refer-clojure :exclude [type])
   (:require [schema.macros :as sm]
-            [schema.core]
-            [miner.tagged :as tagged]))
+            [schema.core :as s]))
 
-(defprotocol Message
-  (id [this] "The unique id of the message")
-  (type [this] "The type of the message as named thing (string, keyword...)")
-  (data [this] "The payload of the message"))
+(defn lisp-name
+  "convert a camelCaseName to a dashed-name"
+  [^String name]
+  (apply str (Character/toLowerCase (first name))
+         (mapcat #(if (Character/isUpperCase %)
+                    ["-" (Character/toLowerCase %)]
+                    [%]) (rest name))))
+
+(def id ::id)
+(def type ::type)
+
+(defn data
+  [m]
+  (dissoc m ::id ::type))
 
 (defmulti strict-map->Message
   (fn [s m]
     s))
 
+(defn ->type-keyword
+  [sym]
+  (keyword (lisp-name (name sym))))
+
+(defn params->args
+  [params]
+  (mapv #(symbol (name (first %)))
+        (partition-all 2 params)))
+
+
+(defmacro defmessage
+  [name & params]
+  {:pre [(every? keyword? (take-nth 2 params))]}
+  `(do (def ~name ~(into {::id s/Uuid
+                          ::type (->type-keyword name)}
+                         (map vec (partition-all 2 params))))
+
+       (defn ~(symbol (str "map->" (clojure.core/name name)))
+         [params#]
+         (assoc params# ::type ~(->type-keyword name)))
+
+       ~(let [args (params->args params)
+              ks (mapv keyword args)
+              id-arg (gensym "msg_id_")]
+          `(defn ~(symbol (str "->" (clojure.core/name name)))
+             ~(vec (into [id-arg] args))
+             ~(into {::id id-arg
+                     ::type (->type-keyword name)}
+                    (zipmap ks args))))))
+
 (defmacro defcommand
-  [name params]
-  `(do (sm/defrecord ~name ~(into '[id :- schema.core/Uuid] params)
-         Message
-         ~'(id [this] (:id this))
-         ~(list 'type '[this] (str name))
-         ~'(data [this] (dissoc this :id)))
+  [name & params]
+  `(defmessage ~name ~@params))
 
-       (defmethod print-method ~name ~'[this w] (tagged/pr-tagged-record-on ~'this ~'w))
-       
-       (defmethod strict-map->Message ~(str name)
-         [~'_ map#]
-         (~(symbol (str "strict-map->" name)) map#))))
-
-(defprotocol Event
-  (stream-id [this] "The id of the event stream for this message"))
+(defmulti stream-id "The id of the event stream for this message" ::type)
 
 (defmacro defevent
-  [name params]
-  `(do (sm/defrecord ~name ~(into '[id :- schema.core/Uuid] params)
-         Message
-         ~'(id [this] (:id this))
-         ~(list 'type '[this] (str name))
-         ~'(data [this] (dissoc this :id))
-         Event
-         ~(list 'stream-id '[this] (first params)))
-
-       (defmethod print-method ~name ~'[this w] (tagged/pr-tagged-record-on ~'this ~'w))
-
-       (defmethod strict-map->Message ~(str name)
-         [~'_ map#]
-         (~(symbol (str "strict-map->" name)) map#))))
-
+  [name & params]
+  `(do (defmessage ~name ~@params)
+       (defmethod stream-id
+         ~(->type-keyword name)
+         [message#]
+         (~(keyword (first params)) message#))))

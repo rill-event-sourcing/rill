@@ -1,9 +1,10 @@
-(ns rill.aggregate)
+(ns rill.aggregate
+  (:require [rill.message :as message]))
 
 (defmulti handle-event
   "Take an event and return the new state of the aggregate"
   (fn [aggregate event]
-    [(class aggregate) (class event)]))
+    [(class aggregate) (message/type event)]))
 
 (defn update-aggregate
   [aggregate events]
