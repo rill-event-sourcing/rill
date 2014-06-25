@@ -11,6 +11,6 @@
   (apply str (:content (first (query-hiccup data pattern)))))
 
 (deftest home-page
-  (let [data (home 314)]
+  (let [data (home 314 nil)]
     (testing "Home page includes a welcome message."
       (is (= "welcome home" (query-hiccup-content data [:h2]))))))
