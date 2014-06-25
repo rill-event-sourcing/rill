@@ -14,7 +14,6 @@ bindAddInputButton = ->
           bindDeleteInputButtons()
           bindAddAnswerButton()
           bindAddChoiceButton()
-          bindCorrectChoiceButtons()
           bindCopyToClipboardButton()
           refreshPreview()
 
@@ -77,6 +76,7 @@ bindAddChoiceButton = ->
           inputItem = $(event.currentTarget).data('item')
           list = $('#' + inputItem + ' .choices-list')
           list.append(data)
+          bindCorrectChoiceButtons()
           bindDeleteChoiceButtons()
           refreshPreview()
 
