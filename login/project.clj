@@ -12,6 +12,7 @@
                  [ring-server "0.3.1"]]
 
   :plugins [[lein-ring "0.8.10"]]
-
   :ring {:init studyflow.login.main/bootstrap!
-         :handler studyflow.login.main/app})
+         :handler studyflow.login.main/app}
+
+  :profiles {:dev {:dependencies [[enlive "1.1.5"]]}})
