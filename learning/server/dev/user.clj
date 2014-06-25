@@ -100,11 +100,9 @@
                       (component/stop s)))))
 
 (defn go []
-  (if system
-    "System not nil, use (reset) ?"
-    (do (bootstrap-emacs)
-        (init)
-        (start))))
+  (bootstrap-emacs)
+  (init)
+  (start))
 
 (defn reset []
   (stop)

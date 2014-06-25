@@ -16,6 +16,9 @@
 
 (defn navigation [cursor owner]
   (reify
+    om/IWillMount
+    (will-mount [_]
+      (println "Navigation will mount"))
     om/IRender
     (render [_]
       (if-let [course (get cursor :course-material)]
@@ -38,7 +41,10 @@
                                                                      [chapter-id section-id]))}
                                                   (dom/li #js {:data-id section-id}
                                                           title))))))))
-        (dom/h2 nil "No content ... spinner goes here")))))
+        (dom/h2 nil "No content ... spinner goes here")))
+    om/IWillUnmount
+    (will-unmount [_]
+      (println "Navigation will unmount"))))
 
 (defn content [cursor owner]
   (reify
@@ -50,16 +56,23 @@
           (dom/h2 nil (str "Selected data not yet loaded" section-id)))
         (dom/h2 nil "No section selected")))))
 
+(defn widgets [cursor owner]
+  (reify
+    om/IWillMount
+    (will-mount [_]
+      (println "widget will mount"))
+    om/IRender
+    (render [_]
+      (dom/div nil
+               (om/build navigation cursor)
+               (om/build content cursor)))
+    om/IWillUnmount
+    (will-unmount [_]
+      (println "widget will unmount"))))
+
 (defn ^:export course-page []
   (om/root
-   navigation
+   (service/wrap-service widgets)
    app-state
-   {:target (. js/document (getElementById "navigation"))
-    ;; hack around issue OM-170
-    :tx-listen (fn [tx-report cursor])})
-  (om/root
-   content
-   app-state
-   {:target (. js/document (getElementById "content"))})
-  (.log js/console "Here")
-  (service/start-service app-state))
+   {:target (. js/document (getElementById "app"))
+    :tx-listen service/listen}))

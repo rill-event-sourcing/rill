@@ -22,6 +22,7 @@
                  [com.stuartsierra/component "0.2.1"]]
   :profiles {:dev
              {:source-paths ["dev"]
+              :resource-paths ["dev/resources"]
               :dependencies
               [[org.clojure/tools.trace "0.7.5"]
                [org.clojure/tools.namespace "0.2.3"]
