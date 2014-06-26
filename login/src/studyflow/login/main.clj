@@ -59,7 +59,7 @@
   (let [result  (sql/query db "SELECT * FROM users")]
    (clojure.string/join ", " (map :uuid result) )))
 
-(defn authenticated? [email,password]
+(defn authenticated? [email password]
   ;; check database
   (and (= email "info@studyflow.nl") (= password "beard")))
 
@@ -71,6 +71,8 @@
   ;; set session persistent
   (session/wrap-session))
 
+(defn create-user [db email password]
+  (sql/insert! db :users [:uuid :email :password]  [(str (java.util.UUID/randomUUID)) email password]))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Controller
 
@@ -103,8 +105,14 @@
    :user (or (env :db-user) "studyflow")
    :password (or (env :db-password) "studyflow")})
 
+(defn seed-database [db]
+ (create-user db "student@studyflow.nl" "studentpassword")
+ (create-user db "coach@studyflow.nl" "coachpassword")
+ )
+ 
 (defn bootstrap! []
-  (sql/execute! db ["CREATE TABLE IF NOT EXISTS users (uuid VARCHAR(36) PRIMARY KEY)"]))
+  (sql/execute! db ["CREATE TABLE IF NOT EXISTS users (uuid VARCHAR(36) PRIMARY KEY, email varchar(255) NOT NULL, password varchar(255) NOT NULL)"])
+  )
 
 (def app
   (->
