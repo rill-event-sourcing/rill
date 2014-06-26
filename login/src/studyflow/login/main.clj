@@ -89,11 +89,13 @@
    :session session})
 
 (defn redirect_home [session]
-  (redirect_to session 
-     (case (session :role)
-      "editor" "http://beta.studyflow.nl"
-      "tester" "https://staging.studyflow.nl"
-      "/")))
+  (redirect_to session (redirect_path (session :role))))
+
+(defn redirect_path [role]
+  (case role
+    "editor" "http://beta.studyflow.nl"
+    "tester" "https://staging.studyflow.nl"
+    "/"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Controller
