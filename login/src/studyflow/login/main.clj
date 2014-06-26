@@ -62,30 +62,38 @@
     (sql/query db "SELECT COUNT(*) FROM users"))))
 
 (defn list-users [db]
-  (let [extract (fn [user] (str (:email user) " " (:uuid user)) )]
+  (let [extract (fn [user] (str (:role user) " " (:email user) " " (:uuid user)) )]
     (map extract (sql/query db "SELECT * FROM users"))))
 
-(defn create-user [db email password]
-  (sql/insert! db :users [:uuid :email :password]  [(str (java.util.UUID/randomUUID)) email password]))
+(defn create-user [db role email password]
+  (sql/insert! db :users [:uuid :role :email :password]  [(str (java.util.UUID/randomUUID)) role email password]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn authenticated? [db email password]
-   (seq (sql/query db ["SELECT 1 FROM users WHERE email = ? AND password = ?", email, password])))
+(defn authenticate [db email password]
+  (first (sql/query db ["SELECT role, email FROM users WHERE email = ? AND password = ?", email, password])))
 
 (defn logged_in? [session]
   (contains? session :loggedin))
 
-(defn persist! [session email]
-  (assoc session :loggedin email))
+(defn persist! [session user]
+  (log/info user)
+  (assoc session :loggedin (user :email) :role (user :role)))
 
 (defn unpersist! [session]
-  (dissoc session :loggedin))
+  (dissoc session :loggedin nil :role nil))
 
 (defn redirect_to [session path]
   {:status  302
    :headers {"Location" path}
    :session session})
+
+(defn redirect_home [session]
+  (redirect_to session 
+     (case (session :role)
+      "editor" "http://beta.studyflow.nl"
+      "tester" "https://staging.studyflow.nl"
+      "/")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Controller
@@ -99,10 +107,11 @@
   (GET "/login" {session :session params :params}
     (layout "login" (login params)))
   (POST "/login" {db :db session :session params :params}
-    (if
-      (authenticated? db (params :email) (params :password))
-        (redirect_to (persist! session (params :email)) "/")
-        (layout "login" (login (assoc params :msg "wrong email / password combination")))))
+    (let [user (authenticate db (params :email) (params :password))]
+      (if
+        (seq user)
+        (redirect_home (persist! session user))
+        (layout "login" (login (assoc params :msg "wrong email / password combination"))))))
   (GET "/logout" {session :session}
     (redirect_to (unpersist! session) "/"))
   (not-found "Nothing here"))
@@ -122,13 +131,18 @@
    :password (or (env :db-password) "studyflow")})
 
 (defn seed-database [db]
- (create-user db "student@studyflow.nl" "student")
- (create-user db "coach@studyflow.nl" "coach")
- )
+  (create-user db "student", "student@studyflow.nl" "student")
+  (create-user db "coach", "coach@studyflow.nl" "coach")
+  (create-user db "editor", "editor@studyflow.nl" "editor")
+  (create-user db "tester", "test@studyflow.nl" "test"))
  
 (defn bootstrap! []
-  (sql/execute! db ["CREATE TABLE IF NOT EXISTS users (uuid VARCHAR(36) PRIMARY KEY, email varchar(255) NOT NULL, password varchar(255) NOT NULL)"])
-  )
+  (sql/execute! db [
+    (str "CREATE TABLE IF NOT EXISTS users (uuid VARCHAR(36) PRIMARY KEY, "
+         "role varchar(16) NOT NULL, "
+         "email varchar(255) NOT NULL, "
+         "password varchar(255) NOT NULL"
+         ")")]))
 
 (def app
   (->
