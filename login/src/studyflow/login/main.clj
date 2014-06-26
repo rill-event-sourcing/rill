@@ -1,6 +1,7 @@
 (ns studyflow.login.main
   (:require [clojure.java.jdbc :as sql]
             [clojure.string :as str]
+            [clojure.tools.logging :as log]
             [compojure.core :refer [defroutes GET POST]]
             [compojure.route :refer [not-found]]
             [environ.core :refer [env]]
@@ -8,7 +9,8 @@
             [hiccup.element :as element]
             [hiccup.form :as form]
             [ring.util.response :as response]
-            [ring.middleware.session :as session]
+            [ring.middleware.session :refer [wrap-session]]
+            [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.anti-forgery :as anti-forgery]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]))
 
@@ -24,6 +26,9 @@
     (include-css "screen.css")]
    [:body
     [:h1 title]
+    [:div
+      (element/link-to "/" "home")
+      (element/link-to "/logout" "logout")]
     body]))
 
 (defn home [user-count user-list]
@@ -34,18 +39,17 @@
    [:div
     (str/join " ," user-list)]])
 
-(defn login [email password msg]
+(defn login [params]
   (form/form-to [:post "/login"]
-    (element/link-to "/logout" "logout")
     (form/hidden-field "__anti-forgery-token" anti-forgery/*anti-forgery-token*)
     [:div
-      [:p msg]
+      [:p (params :msg)]
       [:div
         (form/label "email" "email")
-        (form/email-field "email" email)]
+        (form/email-field "email" (params :email))]
       [:div
         (form/label "password" "password")
-        (form/password-field "password" password)]
+        (form/password-field "password" (params :password))]
       [:div
         (form/submit-button "login")]]))
 
@@ -62,40 +66,43 @@
    (clojure.string/join ", " (map :uuid result) )))
 
 (defn authenticated? [email password]
-  ;; check database
   (and (= email "info@studyflow.nl") (= password "beard")))
 
-(defn persisted? [email]
-  false);;(contains? session :loggedin))
+(defn persisted? [session]
+  (contains? session :loggedin))
 
-(defn persist! [email]
-  false);;(assoc session :loggedin email))
+(defn persist! [session email]
+  (assoc session :loggedin email))
 
-(defn unpersist! []
-  false);;(dissoc session :loggedin))
+(defn unpersist! [session]
+  (dissoc session :loggedin))
+
+(defn redirect_to [session path]
+  {:status  302
+   :headers {"Location" path}
+   :session session})
 
 (defn create-user [db email password]
   (sql/insert! db :users [:uuid :email :password]  [(str (java.util.UUID/randomUUID)) email password]))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Controller
 
 (defroutes actions
-  (GET "/" {db :db}
+  (GET "/" {db :db session :session}
     (if
-      (persisted? "info@studyflow.nl")
+      (persisted? session)
         (layout "home" (home (count-users db) (list-users db)))
         (response/redirect "/login")))
-  (GET "/login" {db :db}
-    (layout "login" (login nil nil "please login")))
-  (POST "/login" [email password]
+  (GET "/login" {db :db session :session params :params}
+    (layout "login" (login params)))
+  (POST "/login" {session :session params :params}
     (if
-      (authenticated? email password)
-        ((unpersist! email)
-          (response/redirect "/"))
-        (layout "login" (login email password "wrong email / password combination"))))
-  (GET "/logout" []
-    (unpersist!)
-    (response/redirect "/"))
+      (authenticated? (params :email) (params :password))
+        (redirect_to (persist! session (params :email)) "/")
+        (layout "login" (login (assoc params :msg "wrong email / password combination")))))
+  (GET "/logout" {session :session}
+    (redirect_to (unpersist! session) "/"))
   (not-found "Nothing here"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
