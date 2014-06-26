@@ -37,7 +37,7 @@
    [:div
     (str user-count " users registered")]
    [:div
-    (str/join " ," user-list)]])
+    (str/join "<br />" user-list)]])
 
 (defn login [params]
   (form/form-to [:post "/login"]
@@ -62,9 +62,8 @@
     (sql/query db "SELECT COUNT(*) FROM users"))))
 
 (defn list-users [db]
-  (let [result  (sql/query db "SELECT * FROM users")]
-    (for [res result]
-      (str (res :email) " " (res :uuid) "<br>"))))
+  (let [extract (fn [user] (str (:email user) " " (:uuid user)) )]
+    (map extract (sql/query db "SELECT * FROM users"))))
 
 (defn create-user [db email password]
   (sql/insert! db :users [:uuid :email :password]  [(str (java.util.UUID/randomUUID)) email password]))
