@@ -31,9 +31,9 @@
       (element/link-to "/logout" "logout")]
     body]))
 
-(defn home [user-count user-list]
+(defn home [session user-count user-list]
   [:div
-   [:h2 "welcome home"]
+   [:h2 "welcome " (session :loggedin)]
    [:div
     (str user-count " users registered")]
    [:div
@@ -63,7 +63,8 @@
 
 (defn list-users [db]
   (let [result  (sql/query db "SELECT * FROM users")]
-   (clojure.string/join ", " (map :uuid result) )))
+    (for [res result]
+      (str (res :email) " " (res :uuid) "<br>"))))
 
 (defn create-user [db email password]
   (sql/insert! db :users [:uuid :email :password]  [(str (java.util.UUID/randomUUID)) email password]))
@@ -94,7 +95,7 @@
   (GET "/" {db :db session :session}
     (if
       (logged_in? session)
-        (layout "home" (home (count-users db) (list-users db)))
+        (layout "home" (home session (count-users db) (list-users db)))
         (response/redirect "/login")))
   (GET "/login" {session :session params :params}
     (layout "login" (login params)))

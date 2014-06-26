@@ -11,6 +11,6 @@
   (apply str (:content (first (query-hiccup data pattern)))))
 
 (deftest home-page
-  (let [data (home 314 ["first-fake-uuid" "second-fake-uuid"])]
+  (let [data (home db 314 ["first-fake-uuid" "second-fake-uuid"])]
     (testing "Home page includes a welcome message."
-      (is (= "welcome home" (query-hiccup-content data [:h2]))))))
+      (is (= "welcome " (query-hiccup-content data [:h2]))))))
