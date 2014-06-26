@@ -65,10 +65,15 @@
   (let [result  (sql/query db "SELECT * FROM users")]
    (clojure.string/join ", " (map :uuid result) )))
 
-(defn authenticated? [email password]
-  (and (= email "info@studyflow.nl") (= password "beard")))
+(defn create-user [db email password]
+  (sql/insert! db :users [:uuid :email :password]  [(str (java.util.UUID/randomUUID)) email password]))
 
-(defn persisted? [session]
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn authenticated? [db email password]
+   (seq (sql/query db ["SELECT 1 FROM users WHERE email = ? AND password = ?", email, password])))
+
+(defn logged_in? [session]
   (contains? session :loggedin))
 
 (defn persist! [session email]
@@ -82,23 +87,20 @@
    :headers {"Location" path}
    :session session})
 
-(defn create-user [db email password]
-  (sql/insert! db :users [:uuid :email :password]  [(str (java.util.UUID/randomUUID)) email password]))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Controller
 
 (defroutes actions
   (GET "/" {db :db session :session}
     (if
-      (persisted? session)
+      (logged_in? session)
         (layout "home" (home (count-users db) (list-users db)))
         (response/redirect "/login")))
-  (GET "/login" {db :db session :session params :params}
+  (GET "/login" {session :session params :params}
     (layout "login" (login params)))
-  (POST "/login" {session :session params :params}
+  (POST "/login" {db :db session :session params :params}
     (if
-      (authenticated? (params :email) (params :password))
+      (authenticated? db (params :email) (params :password))
         (redirect_to (persist! session (params :email)) "/")
         (layout "login" (login (assoc params :msg "wrong email / password combination")))))
   (GET "/logout" {session :session}
@@ -120,8 +122,8 @@
    :password (or (env :db-password) "studyflow")})
 
 (defn seed-database [db]
- (create-user db "student@studyflow.nl" "studentpassword")
- (create-user db "coach@studyflow.nl" "coachpassword")
+ (create-user db "student@studyflow.nl" "student")
+ (create-user db "coach@studyflow.nl" "coach")
  )
  
 (defn bootstrap! []
