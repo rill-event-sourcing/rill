@@ -5,6 +5,7 @@
             [compojure.route :refer [not-found]]
             [environ.core :refer [env]]
             [hiccup.page :refer [html5 include-css]]
+            [hiccup.element :as element]
             [hiccup.form :as form]
             [ring.util.response :as response]
             [ring.middleware.session :as session]
@@ -35,6 +36,7 @@
 
 (defn login [email password msg]
   (form/form-to [:post "/login"]
+    (element/link-to "/logout" "logout")
     (form/hidden-field "__anti-forgery-token" anti-forgery/*anti-forgery-token*)
     [:div
       [:p msg]
@@ -64,12 +66,13 @@
   (and (= email "info@studyflow.nl") (= password "beard")))
 
 (defn persisted? [email]
-  ;; check session
-  (= 1 2))
+  false);;(contains? session :loggedin))
 
 (defn persist! [email]
-  ;; set session persistent
-  (session/wrap-session))
+  false);;(assoc session :loggedin email))
+
+(defn unpersist! []
+  false);;(dissoc session :loggedin))
 
 (defn create-user [db email password]
   (sql/insert! db :users [:uuid :email :password]  [(str (java.util.UUID/randomUUID)) email password]))
@@ -87,8 +90,12 @@
   (POST "/login" [email password]
     (if
       (authenticated? email password)
-        (response/redirect "/")
+        ((unpersist! email)
+          (response/redirect "/"))
         (layout "login" (login email password "wrong email / password combination"))))
+  (GET "/logout" []
+    (unpersist!)
+    (response/redirect "/"))
   (not-found "Nothing here"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
