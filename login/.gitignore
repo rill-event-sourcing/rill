@@ -8,4 +8,3 @@ pom.xml.asc
 *.class
 .lein-*
 lein
-*.swp
