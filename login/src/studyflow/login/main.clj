@@ -73,7 +73,7 @@
 (defn authenticate [db email password]
   (first (sql/query db ["SELECT role, email FROM users WHERE email = ? AND password = ?", email, password])))
 
-(defn logged_in? [session]
+(defn logged-in? [session]
   (contains? session :loggedin))
 
 (defn persist! [session user]
@@ -83,19 +83,19 @@
 (defn unpersist! [session]
   (dissoc session :loggedin nil :role nil))
 
-(defn redirect_to [session path]
+(defn redirect-to [session path]
   {:status  302
    :headers {"Location" path}
    :session session})
 
-(defn redirect_path [role]
+(defn redirect-path [role]
   (case role
     "editor" "http://beta.studyflow.nl"
     "tester" "https://staging.studyflow.nl"
     "/"))
 
-(defn redirect_home [session]
-  (redirect_to session (redirect_path (session :role))))
+(defn redirect-home [session]
+  (redirect-to session (redirect-path (session :role))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Controller
@@ -103,8 +103,7 @@
 (defroutes actions
 
   (GET "/" {db :db session :session}
-    (if
-      (logged_in? session)
+    (if (logged-in? session)
         (layout "home" (home session (count-users db) (list-users db)))
         (response/redirect "/login")))
 
@@ -113,13 +112,12 @@
 
   (POST "/login" {db :db session :session params :params}
     (let [user (authenticate db (params :email) (params :password))]
-      (if
-        (seq user)
-        (redirect_home (persist! session user))
-        (layout "login" (login (assoc params :msg "wrong email / password combination"))))))
+      (if (seq user)
+          (redirect-home (persist! session user))
+          (layout "login" (login (assoc params :msg "wrong email / password combination"))))))
 
   (GET "/logout" {session :session}
-    (redirect_to (unpersist! session) "/"))
+    (redirect-to (unpersist! session) "/"))
 
   (not-found "Nothing here"))
 
@@ -146,9 +144,9 @@
 (defn bootstrap! []
   (sql/execute! db [
     (str "CREATE TABLE IF NOT EXISTS users (uuid VARCHAR(36) PRIMARY KEY, "
-         "role varchar(16) NOT NULL, "
-         "email varchar(255) NOT NULL, "
-         "password varchar(255) NOT NULL"
+         "role VARCHAR(16) NOT NULL, "
+         "email VARCHAR(255) NOT NULL, "
+         "password VARCHAR(255) NOT NULL"
          ")")]))
 
 (def app
