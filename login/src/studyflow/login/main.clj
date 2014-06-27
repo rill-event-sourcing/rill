@@ -11,7 +11,7 @@
             [ring.util.response :as response]
             [ring.middleware.session :refer [wrap-session]]
             [ring.middleware.params :refer [wrap-params]]
-            [ring.middleware.anti-forgery :as anti-forgery]
+            [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -41,7 +41,7 @@
 
 (defn login [msg email password]
   (form/form-to [:post "/login"]
-    (form/hidden-field "__anti-forgery-token" anti-forgery/*anti-forgery-token*)
+    (form/hidden-field "__anti-forgery-token" *anti-forgery-token*)
     [:div
       [:p msg]
       [:div
@@ -109,12 +109,12 @@
   (GET "/login" {session :session params :params}
     (layout "login" (login (params :msg) (params :email) (params :password) )))
 
-  (POST "/login" {db :db session :session params :params}
-    (let [user (authenticate db (:email params) (:password params))]
+  (POST "/login" {db :db session :session {:keys [email password]} :params}
+    (let [user (authenticate db email password)]
       (if (seq user)
         (assoc (redirect-home (:role user))
                :session (assoc-user session user))
-        (layout "login" (login "wrong email / password combination" (:email params) (:password params))))))
+        (layout "login" (login "wrong email / password combination" email password)))))
 
   (GET "/logout" {session :session}
     (assoc (redirect-to "/")
