@@ -10,7 +10,7 @@
             [rill.aggregate :refer [load-aggregate handle-command]]
             [clojure.test :refer [deftest testing is]]))
 
-(def course (load-aggregate [(events/published (:id fixture/course-edn) fixture/course-edn)]))
+(def course fixture/course-aggregate)
 (def section-id #uuid "8117bf7b-8025-43ea-b6d3-aa636d6b6042")
 
 (deftest test-course-aggregate

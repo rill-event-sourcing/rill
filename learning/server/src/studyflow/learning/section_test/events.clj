@@ -23,3 +23,5 @@
   :question-id m/Id
   :inputs {m/FieldName s/Str})
 
+(defevent Finished
+  :section-test-id m/Id)

@@ -26,8 +26,8 @@
 
 (defn answer-correct?
   [{:keys [input-fields]} input-values]
-  (every? (fn [{:keys [field-name correct-answers]}]
-            (when-let [value (get input-values field-name)]
+  (every? (fn [{:keys [name correct-answers]}]
+            (when-let [value (get input-values name)]
               (contains? correct-answers value)))
           input-fields))
 
