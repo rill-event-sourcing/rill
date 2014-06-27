@@ -141,7 +141,7 @@
   (create-user db "student", "student@studyflow.nl" "student")
   (create-user db "coach", "coach@studyflow.nl" "coach")
   (create-user db "editor", "editor@studyflow.nl" "editor")
-  (create-user db "tester", "test@studyflow.nl" "test"))
+  (create-user db "tester", "tester@studyflow.nl" "tester"))
  
 (defn bootstrap! []
   (sql/execute! db [
