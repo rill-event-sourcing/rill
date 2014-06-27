@@ -39,17 +39,17 @@
    [:div
     (str/join "<br />" user-list)]])
 
-(defn login [params]
+(defn login [msg email password]
   (form/form-to [:post "/login"]
     (form/hidden-field "__anti-forgery-token" anti-forgery/*anti-forgery-token*)
     [:div
-      [:p (params :msg)]
+      [:p msg]
       [:div
         (form/label "email" "email")
-        (form/email-field "email" (params :email))]
+        (form/email-field "email" email)]
       [:div
         (form/label "password" "password")
-        (form/password-field "password" (params :password))]
+        (form/password-field "password" password)]
       [:div
         (form/submit-button "login")]]))
 
@@ -76,17 +76,16 @@
 (defn logged-in? [session]
   (contains? session :loggedin))
 
-(defn persist! [session user]
+(defn assoc-user [session user]
   (log/debug user)
-  (assoc session :loggedin (user :email) :role (user :role)))
+  (assoc session :loggedin (:email user) :role (:role user)))
 
-(defn unpersist! [session]
-  (dissoc session :loggedin nil :role nil))
+(defn dissoc-user [session]
+  (dissoc session :loggedin :role))
 
-(defn redirect-to [session path]
+(defn redirect-to [path]
   {:status  302
-   :headers {"Location" path}
-   :session session})
+   :headers {"Location" path}})
 
 (defn redirect-path [role]
   (case role
@@ -94,8 +93,8 @@
     "tester" "https://staging.studyflow.nl"
     "/"))
 
-(defn redirect-home [session]
-  (redirect-to session (redirect-path (session :role))))
+(defn redirect-home [role]
+  (redirect-to (redirect-path role)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Controller
@@ -108,16 +107,18 @@
         (response/redirect "/login")))
 
   (GET "/login" {session :session params :params}
-    (layout "login" (login params)))
+    (layout "login" (login (params :msg) (params :email) (params :password) )))
 
   (POST "/login" {db :db session :session params :params}
-    (let [user (authenticate db (params :email) (params :password))]
+    (let [user (authenticate db (:email params) (:password params))]
       (if (seq user)
-          (redirect-home (persist! session user))
-          (layout "login" (login (assoc params :msg "wrong email / password combination"))))))
+        (assoc (redirect-home (:role user))
+               :session (assoc-user session user))
+        (layout "login" (login "wrong email / password combination" (:email params) (:password params))))))
 
   (GET "/logout" {session :session}
-    (redirect-to (unpersist! session) "/"))
+    (assoc (redirect-to "/")
+           :session (dissoc-user session)))
 
   (not-found "Nothing here"))
 
