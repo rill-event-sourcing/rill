@@ -3,6 +3,7 @@
   :url "http://studyflow.nl/"
 
   :dependencies [[compojure "1.1.8"]
+                 [clojurewerkz/scrypt "1.2.0"]
                  [environ "0.5.0"]
                  [hiccup "1.0.5"]
                  [org.clojure/clojure "1.6.0"]
