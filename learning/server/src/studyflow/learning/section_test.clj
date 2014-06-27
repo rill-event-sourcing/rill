@@ -9,7 +9,8 @@
                            current-question-id
                            current-question-status
                            streak-length
-                           finished?])
+                           finished?
+                           question-finished?])
 
 (defn select-random-question
   [course section-id]
@@ -27,29 +28,41 @@
 
 (defmethod handle-event ::events/Created
   [_ {:keys [section-test-id section-id]}]
-  (->SectionTest section-test-id section-id nil nil 0 false))
+  (->SectionTest section-test-id section-id nil nil 0 false false))
 
 (defmethod handle-event ::events/QuestionAssigned
   [this {:keys [question-id]}]
   (assoc this
     :current-question-id question-id
-    :current-answer-status nil))
+    :current-question-status nil))
 
-(defmethod handle-event ::events/QuestionAnsweredCorrectly
-  [{:keys [current-question-id current-question-status streak-length] :as this} {:keys [question-id]}]
-  {:pre [(= current-question-id question-id)]}
+(defn track-streak-correct
+  [{:keys [streak-length current-question-status] :as this}]
   (if (nil? current-question-status)
     (assoc this
       :current-question-status :answered-correctly
       :streak-length (inc streak-length))
     this))
 
-(defmethod handle-event ::events/QuestionAnsweredIncorrectly
-  [{:keys [current-question-id] :as this} {:keys [question-id]}]
-  {:pre [(= current-question-id question-id)]}
+(defn track-streak-incorrect
+  [this]
   (assoc this
     :current-question-status :answered-incorrectly
     :streak-length 0))
+
+(defmethod handle-event ::events/QuestionAnsweredCorrectly
+  [{:keys [current-question-id current-question-status streak-length] :as this} {:keys [question-id]}]
+  {:pre [(= current-question-id question-id)]}
+  (-> this
+      (assoc :question-finished? true)
+      track-streak-correct))
+
+(defmethod handle-event ::events/QuestionAnsweredIncorrectly
+  [{:keys [current-question-id] :as this} {:keys [question-id]}]
+  {:pre [(= current-question-id question-id)]}
+  (-> this
+      (assoc :question-finished? false)
+      track-streak-incorrect))
 
 (defmethod aggregate-ids ::commands/CheckAnswer!
   [{:keys [course-id]}]
@@ -80,5 +93,9 @@
 (defmethod handle-command ::commands/NextQuestion!
   [section-test command course]
   {:pre [(= (:section-id command) (:section-id section-test))
-         (:current-question-answered-correctly? section-test)]}
+         (not (nil? (:current-question-status section-test)))]}
   [(events/question-assigned (:id section-test) (:id course) (:id (select-random-question course (:section-id command))))])
+
+(defmethod handle-event ::events/Finished
+  [section-test event]
+  (assoc section-test :finished? true))

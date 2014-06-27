@@ -4,6 +4,7 @@
             [studyflow.learning.section-test.commands :as commands]
             [studyflow.learning.course.fixture :as fixture]
             [studyflow.learning.course :as course]
+            [rill.temp-store :refer [with-temp-store]]
             [rill.uuid :refer [new-id]]
             [rill.message :as message]
             [rill.aggregate :refer [handle-event handle-command load-aggregate update-aggregate]]
@@ -14,6 +15,7 @@
 (def question-id #uuid "b117bf7b-8025-43ea-b6d3-aa636d6b6042")
 
 (def course fixture/course-aggregate)
+(def course-id (:id course))
 
 (defn random-correct-input
   [{:keys [input-fields] :as question}]
@@ -29,33 +31,24 @@
                   [name "THIS MUST NOT EVER BE A CORRECT input VALUE!@@"])
                 (:input-fields question))))
 
-(defn apply-command
-  "handle command and use the generated events to update the aggregate. Returns the new aggregate state"
-  [aggregate command & aggregates]
-  (update-aggregate aggregate (apply handle-command aggregate command aggregates)))
-
-
 (deftest test-section-test-flow
-  (let [section-test (apply-command nil (commands/init! section-test-id section-id (:id course)) course)
-        question-id (:current-question-id section-test)]
-    (testing "initialization"
-      (is (= (:id section-test) section-test-id))
-      (is (contains? (set (map :id (course/questions-for-section course section-id))) (:current-question-id section-test))))
+  (testing "correct flow"
+    (with-temp-store [store fetch execute!]
+      (is (= :ok (execute! fixture/publish-course!)))
+      (is (= :ok (execute! (commands/init! section-test-id section-id course-id))))
 
-    (let [question (course/question-for-section course section-id (:current-question-id section-test))
-          correct (apply-command section-test
-                                 (commands/check-answer! section-test-id section-id (:id course) (:id question)
-                                                         (random-correct-input question))
-                                 course)
-          incorrect (apply-command section-test
-                                   (commands/check-answer! section-test-id section-id (:id course) (:id question)
-                                                           (random-incorrect-input question))
-                                   course)]
+      (let [course (fetch course-id)]
+        (dotimes [i 5]
+          (let [section-test (fetch section-test-id)]
 
-      (testing "correctly answer a question without errors"
-        (is (= (:current-question-status correct)
-               :answered-correctly)))
+            (is (= (:streak-length section-test) i))
+            (let [question (course/question-for-section course section-id (:current-question-id section-test))]
 
-      (testing "incorrectly answer a question"
-        (is (= (:current-question-status incorrect)
-               :answered-incorrectly))))))
+              (is (= :ok (execute! (commands/check-answer! section-test-id section-id course-id (:id question)
+                                                           (random-correct-input question))))))
+
+            (let [correct (fetch section-test-id)]
+              (is (= (:current-question-status correct) :answered-correctly))
+              (is (= (:streak-length correct) (inc i))))
+
+            (= :ok (execute! (commands/next-question! section-test-id section-id course-id)))))))))

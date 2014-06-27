@@ -4,6 +4,7 @@
             [studyflow.learning.course-material :as material]
             [studyflow.learning.course :as course]
             [studyflow.learning.course.events :as events]
+            [studyflow.learning.course.commands :as commands]
             [rill.aggregate :refer [load-aggregate]]))
 
 (def course-json
@@ -12,6 +13,10 @@
 (def course-edn
   (material/parse-course-material course-json))
 
-(def course-aggregate (load-aggregate [(events/published (:id course-edn) course-edn)]))
+(def course-id (:id course-edn))
+(def course-published-event (events/published (:id course-edn) course-edn))
+(def publish-course! (commands/publish! (:id course-edn) course-edn))
+(def course-aggregate (load-aggregate [course-published-event]))
+
 
 
