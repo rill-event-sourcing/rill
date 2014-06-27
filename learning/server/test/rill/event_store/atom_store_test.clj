@@ -7,9 +7,12 @@
             [clojure.test :refer [deftest testing is]]
             [clojure.core.async :as async :refer [<!!]]
             [rill.event-channel :refer [event-channel]]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [schema.core :as s]))
 
-(defevent TestAtomEvent [num])
+(defevent TestAtomEvent
+  :num s/Int)
+
 (def stream-id (new-id))
 
 (defn gen-event
