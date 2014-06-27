@@ -77,7 +77,7 @@
   (contains? session :loggedin))
 
 (defn persist! [session user]
-  (log/info user)
+  (log/debug user)
   (assoc session :loggedin (user :email) :role (user :role)))
 
 (defn unpersist! [session]
@@ -101,21 +101,26 @@
 ;; Controller
 
 (defroutes actions
+
   (GET "/" {db :db session :session}
     (if
       (logged_in? session)
         (layout "home" (home session (count-users db) (list-users db)))
         (response/redirect "/login")))
+
   (GET "/login" {session :session params :params}
     (layout "login" (login params)))
+
   (POST "/login" {db :db session :session params :params}
     (let [user (authenticate db (params :email) (params :password))]
       (if
         (seq user)
         (redirect_home (persist! session user))
         (layout "login" (login (assoc params :msg "wrong email / password combination"))))))
+
   (GET "/logout" {session :session}
     (redirect_to (unpersist! session) "/"))
+
   (not-found "Nothing here"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
