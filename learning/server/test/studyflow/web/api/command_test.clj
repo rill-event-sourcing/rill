@@ -1,5 +1,5 @@
-(ns studyflow.web.command-api-test
-  (:require [studyflow.web.command-api :as api]
+(ns studyflow.web.api.command-test
+  (:require [studyflow.web.api.command :as api]
             [ring.mock.request :refer [request body]]
             [clojure.test :refer [is deftest testing]]
             [clout-link.route :refer [uri-for]]
@@ -15,7 +15,7 @@
 
 (deftest web-api
   (testing "command handler"
-    (let [cmd (api/command-ring-handler
+    (let [cmd (api/handler
                (-> (request :put (uri-for routes/update-course-material (:id input)))
                    (assoc :body input)))]
       (is (= (message/type cmd) :publish-course!)
@@ -24,6 +24,3 @@
              (:course-id cmd)))
       (is (= (:material cmd) parsed-input)
           "Command has material in correct format"))))
-
-
-

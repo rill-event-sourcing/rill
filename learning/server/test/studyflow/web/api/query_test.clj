@@ -1,15 +1,15 @@
-(ns studyflow.web.query-api-test
+(ns studyflow.web.api.query-test
   (:require [clojure.test :refer [deftest is testing]]
-            [studyflow.web.query-api :refer [make-request-handler wrap-read-model]]
-            [studyflow.learning.read-model :as m]
-            [studyflow.learning.read-model.event-handler :refer [init-model]]
-            [studyflow.learning.course-material-test :refer [read-example-json]]
-            [studyflow.learning.course-material :as material]
+            [clout-link.route :refer [uri-for]]
             [rill.uuid :refer [new-id]]
             [ring.mock.request :refer [request]]
-            [studyflow.web.routes :as routes]
-            [clout-link.route :refer [uri-for]]
-            [studyflow.events :refer [->CoursePublished]]))
+            [studyflow.events :refer [->CoursePublished]]
+            [studyflow.learning.course-material :as material]
+            [studyflow.learning.course-material-test :refer [read-example-json]]
+            [studyflow.learning.read-model.event-handler :refer [init-model]]
+            [studyflow.web.api.query :refer [make-request-handler
+                                             wrap-read-model]]
+            [studyflow.web.routes :as routes]))
 
 
 (def material (material/parse-course-material (read-example-json)))

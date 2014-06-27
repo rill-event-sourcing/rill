@@ -1,21 +1,15 @@
 (ns studyflow.web.api-test
-  (:require [studyflow.web.api :as api]
-            [clojure.test :refer [deftest is testing]]
-            [rill.event-store.memory :refer [memory-store]]
-            [studyflow.learning.commands :as commands]
-            [studyflow.learning.course-material-test :as fixture]
-            [studyflow.learning.course-material :as material]
+  (:require [clojure.test :refer [deftest is]]
             [clout-link.route :refer [uri-for]]
-            [studyflow.web.routes :as routes]
-            [ring.mock.request :refer [request body content-type]]))
+            [rill.event-store.memory :refer [memory-store]]
+            [ring.mock.request :refer [body content-type request]]
+            [studyflow.learning.course-material :as material]
+            [studyflow.learning.course-material-test :as fixture]
+            [studyflow.web.api :as api]
+            [studyflow.web.routes :as routes]))
 
 (def input (fixture/read-example-json))
 (def parsed-input (material/parse-course-material input))
-
-(deftest test-middleware
-  (let [h (fn [_] {:data :value})]
-    (is (= (h :foo) {:data :value}))
-    (is ((api/wrap-middleware h) :foo))))
 
 (deftest test-api-request-handler
   (let [handler (api/make-request-handler (memory-store) (atom {}))
