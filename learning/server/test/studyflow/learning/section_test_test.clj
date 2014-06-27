@@ -51,4 +51,53 @@
               (is (= (:current-question-status correct) :answered-correctly))
               (is (= (:streak-length correct) (inc i))))
 
-            (= :ok (execute! (commands/next-question! section-test-id section-id course-id)))))))))
+            (= :ok (execute! (commands/next-question! section-test-id section-id course-id))))))))
+
+
+  (testing "eventually correct flow"
+    (with-temp-store [store fetch execute!]
+      (is (= :ok (execute! fixture/publish-course!)))
+      (is (= :ok (execute! (commands/init! section-test-id section-id course-id))))
+
+      (let [course (fetch course-id)
+            goto-next! #(execute! (commands/next-question! section-test-id section-id course-id))
+            check-with (fn [gen-input]
+                         (let [section-test (fetch section-test-id)
+                               question (course/question-for-section course section-id (:current-question-id section-test))]
+                           (execute! (commands/check-answer! section-test-id section-id course-id (:id question) (gen-input question)))))
+            check-correct! #(check-with random-correct-input)
+            check-incorrect! #(check-with random-incorrect-input)]
+
+        (check-correct!)
+        (is (= 1 (:streak-length (fetch section-test-id))))
+        (goto-next!)
+        (check-correct!)
+        (is (not (:finished? (fetch section-test-id))))
+        (is (= 2 (:streak-length (fetch section-test-id))))
+        (goto-next!)
+        (check-correct!)
+        (goto-next!)
+        (is (= 3 (:streak-length (fetch section-test-id))))
+        (check-incorrect!)
+        (is (not (:finished? (fetch section-test-id))))
+        (is (= 0 (:streak-length (fetch section-test-id))))
+        (check-correct!)
+        (is (= 0 (:streak-length (fetch section-test-id))))
+        (goto-next!)
+        (check-correct!)
+        (is (= 1 (:streak-length (fetch section-test-id))))
+        (goto-next!)
+        (check-correct!)
+        (is (not (:finished? (fetch section-test-id))))
+        (is (= 2 (:streak-length (fetch section-test-id))))
+        (goto-next!)
+        (check-correct!)
+        (is (= 3 (:streak-length (fetch section-test-id))))
+        (goto-next!)
+        (check-correct!)
+        (goto-next!)
+        (is (= 4 (:streak-length (fetch section-test-id))))
+        (is (not (:finished? (fetch section-test-id))))
+        (check-correct!)
+        (is (= 5 (:streak-length (fetch section-test-id))))
+        (is (:finished? (fetch section-test-id)))))))
