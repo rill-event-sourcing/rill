@@ -67,7 +67,7 @@
     (map extract (sql/query db "SELECT * FROM users"))))
 
 (defn encrypt [password]
-  (sc/encrypt password 16384 8 1))
+  password);(sc/encrypt password 16384 8 1))
 
 (defn create-user [db role email password]
   (sql/insert! db :users [:uuid :role :email :password]  [(str (java.util.UUID/randomUUID)) role email (encrypt password)]))
