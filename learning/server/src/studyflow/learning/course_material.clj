@@ -14,26 +14,26 @@
    :title PlainText
    :text RichText})
 
-;; (def Hint RichText)
-
-;; (def Answer PlainText)
-
-;; (def SectionEndTestQuestion
-;;   {:id Id
-;;    :text RichText
-;;    :hints #{Hint}
-;;    :choices {Answer RichText}
-;;    :correct-answers #{Answer}
-;;    :incorrect-answers #{Answer}})
-
 (def ContentLevel s/Int)
+
+(def FieldName s/Str)
+
+(def InputField
+  {:name FieldName
+   :correct-answers #{s/Str}})
+
+(def SectionQuestion
+  {:id Id
+   :text RichText
+   :input-fields #{InputField}})
 
 (def Section
   {:id Id
    :title PlainText
    :subsections-by-level {:1-star [SubSection]
                           :2-star [SubSection]
-                          :3-star [SubSection]}})
+                          :3-star [SubSection]}
+   :questions #{SectionQuestion}})
 
 (def Chapter
   {:id Id

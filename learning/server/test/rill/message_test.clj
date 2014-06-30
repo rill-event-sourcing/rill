@@ -4,20 +4,19 @@
             [schema.core :as s]))
 
 (deftest test-internals
-  (testing "camel->kebab"
-    (is (= (message/->type-keyword 'FooBar!)
-           :foo-bar!)))
-  
   (testing "params->args"
     (is (= (message/params->args [:my-id s/Int :foo s/Str])
            '[my-id foo]))))
 
-(deftest test-defmessage
-  (defmessage FooMessage
-    :my-id s/Int)
+(defmessage FooMessage
+  :my-id s/Int)
 
+(deftest test-defmessage
   (testing "generated constructors"
     (is (= (->FooMessage 123 456)
-           {::message/type :foo-message
+           {::message/type ::FooMessage
             ::message/id 123
-            :my-id 456}))))
+            :my-id 456}))
+    (is (= (:my-id (foo-message 456))
+           456))))
+

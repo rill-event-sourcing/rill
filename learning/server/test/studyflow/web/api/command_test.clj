@@ -8,7 +8,8 @@
             [rill.message :as message]
             [studyflow.learning.course-material-test :as fixture]
             [studyflow.learning.course-material :as material]
-            [studyflow.learning.commands]))
+            [studyflow.learning.course.commands :as commands]))
+
 
 (def input (fixture/read-example-json))
 (def parsed-input (material/parse-course-material input))
@@ -18,7 +19,7 @@
     (let [cmd (api/handler
                (-> (request :put (uri-for routes/update-course-material (:id input)))
                    (assoc :body input)))]
-      (is (= (message/type cmd) :publish-course!)
+      (is (= (message/type cmd) ::commands/Publish!)
           "generates a command")
       (is (= (uuid (:id input))
              (:course-id cmd)))

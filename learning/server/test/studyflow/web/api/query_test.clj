@@ -3,18 +3,16 @@
             [clout-link.route :refer [uri-for]]
             [rill.uuid :refer [new-id]]
             [ring.mock.request :refer [request]]
-            [studyflow.events :refer [->CoursePublished]]
-            [studyflow.learning.course-material :as material]
-            [studyflow.learning.course-material-test :refer [read-example-json]]
+            [studyflow.web.routes :as routes]
+            [clout-link.route :refer [uri-for]]
+            [studyflow.web.api.query :refer [make-request-handler wrap-read-model]]
             [studyflow.learning.read-model.event-handler :refer [init-model]]
-            [studyflow.web.api.query :refer [make-request-handler
-                                             wrap-read-model]]
-            [studyflow.web.routes :as routes]))
+            [studyflow.learning.course.fixture :as fixture] 
+            [studyflow.learning.course.events :as events]))
 
-
-(def material (material/parse-course-material (read-example-json)))
+(def material fixture/course-edn)
 (def course-id (:id material))
-(def model (init-model [(->CoursePublished (new-id) course-id material)]))
+(def model (init-model [(events/published course-id material)]))
 
 (deftest test-query-api
   (let [handler (make-request-handler (atom model))]

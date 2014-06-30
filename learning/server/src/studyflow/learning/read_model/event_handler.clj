@@ -1,6 +1,6 @@
 (ns studyflow.learning.read-model.event-handler
   (:require [studyflow.learning.read-model :as m]
-            [studyflow.events :as events]
+            [studyflow.learning.course.events :as events]
             [rill.message :as message]))
 
 (defmulti handle-event
@@ -13,21 +13,16 @@
 
 (defn init-model
   [initial-events]
-  (update-model nil initial-events)) 
+  (update-model nil initial-events))
 
-(defmethod handle-event :course-published
+(defmethod handle-event ::events/Published
   [model event]
   (m/set-course model (:course-id event) (:material event)))
 
-(defmethod handle-event :course-updated
+(defmethod handle-event ::events/Updated
   [model event]
   (m/set-course model (:course-id event) (:material event)))
 
-(defmethod handle-event :course-deleted
+(defmethod handle-event ::events/Deleted
   [model event]
   (m/remove-course model (:course-id event)))
-
-
-
-
-

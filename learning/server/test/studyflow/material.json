@@ -19,7 +19,19 @@
             ],
             "2_star": [],
             "3_star": []
-          }
+          },
+          "questions": [
+            {
+              "id": "a117bf7b-8025-43ea-b6d3-aa636d6b6042",
+              "text": "<h1>Hier komt een vraag</h1><p>2 + 4 = __INPUT_1__</p>",
+             "input_fields": [{"name": "__INPUT_1__", "correct_answers": ["6", "zes"]}]
+            },
+            {
+              "id": "b117bf7b-8025-43ea-b6d3-aa636d6b6042",
+              "text": "<h1>Hier komt een vraag</h1><p>4 + 4 = __INPUT_1__</p>",
+             "input_fields": [{"name": "__INPUT_1__", "correct_answers": ["8", "acht"]}]
+            }
+          ]
         },
         {
           "id": "92dc9cd8-07a9-46bd-8dcf-40bbbae0a04d",
@@ -28,7 +40,8 @@
             "1_star": [],
             "2_star": [],
             "3_star": []
-          }
+          },
+          "questions": []
         },
         {
           "id": "4a66414c-06ed-461c-93ad-c2a62b40bb94",
@@ -37,7 +50,8 @@
             "1_star": [],
             "2_star": [],
             "3_star": []
-          }
+          },
+          "questions": []
         }
       ]
     },
@@ -52,7 +66,8 @@
             "1_star": [],
             "2_star": [],
             "3_star": []
-          }
+          },
+          "questions": []
         },
         {
           "id": "fcc5c9f0-ca8a-474f-9357-305140b53add",
@@ -61,7 +76,8 @@
             "1_star": [],
             "2_star": [],
             "3_star": []
-          }
+          },
+          "questions": []
         },
         {
           "id": "75b76d45-807f-41a0-9721-199092496476",
@@ -70,7 +86,8 @@
             "1_star": [],
             "2_star": [],
             "3_star": []
-          }
+          },
+          "questions": []
         },
         {
           "id": "df95a61e-d71e-47c0-b2ad-44a21d470b8c",
@@ -79,7 +96,8 @@
             "1_star": [],
             "2_star": [],
             "3_star": []
-          }
+          },
+          "questions": []
         },
         {
           "id": "48798c08-b39d-4b39-bb17-f50518aa5983",
@@ -88,7 +106,8 @@
             "1_star": [],
             "2_star": [],
             "3_star": []
-          }
+          },
+          "questions": []
         }
       ]
     }

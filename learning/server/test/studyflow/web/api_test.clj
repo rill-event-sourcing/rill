@@ -3,6 +3,7 @@
             [clout-link.route :refer [uri-for]]
             [rill.event-store.memory :refer [memory-store]]
             [ring.mock.request :refer [body content-type request]]
+            [studyflow.learning.course.commands :as commands]
             [studyflow.learning.course-material :as material]
             [studyflow.learning.course-material-test :as fixture]
             [studyflow.web.api :as api]
