@@ -1,12 +1,13 @@
-%div.row
-  %div.col-md-8.col-md-offset-2
-    %h2
-      = @chapter.title
-    %p
-      = @chapter.description
+%div.container
+  %div.row
+    %div.col-md-8.col-md-offset-2
+      %h2
+        = @chapter.title
+      %p
+        = @chapter.description
 
-  %div.col-md-2
-    = link_to 'New Section', new_chapter_section_path(@chapter), class: "btn btn-success"
-%div.row
-  %div.col-md-8.col-md-offset-2
-    =render 'sections/index'
+    %div.col-md-2
+      = link_to 'New Section', new_chapter_section_path(@chapter), class: "btn btn-success"
+  %div.row
+    %div.col-md-8.col-md-offset-2
+      =render 'sections/index'

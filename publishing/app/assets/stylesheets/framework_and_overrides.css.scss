@@ -55,3 +55,23 @@ input[type="text"] {
 #section-row {
   padding-left:40px;
 }
+
+.copy-button {
+  cursor: pointer;
+  background-color: #ffffff !important;
+}
+.zeroclipboard-is-hover.zeroclipboard-is-active {
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+.zeroclipboard-is-hover {
+  background-color: #e6e6e6 !important;
+}
+.line-input-panel {
+  @extend .panel-info;
+}
+.multiple-choice-input-panel {
+  @extend .panel-success;
+}
+.answer-row, .choice-row {
+  margin-top:10px;
+}

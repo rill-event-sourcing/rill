@@ -17,17 +17,28 @@
                 %th
                   =link_to chapter.title, chapter
                   %span.pull-right
-                    #{chapter.sections.where(active: true).length} / #{chapter.sections.length}
+                    ="#{chapter.sections.where(active: true).length} / #{chapter.sections.length} published"
+                %th
+                  %span.pull-right subsections
+                %th
+                  %span.pull-right questions
             %tbody
               -chapter.sections.each do |section|
-                %tr
-                  %td{class: section.active? ? "success" : "danger", id: "section-row"}
+                %tr{class: section.active? ? "success" : "danger", id: "section-row"}
+                  %td
                     = link_to section.title, [chapter, section]
-                    %span.badge.pull-right= section.subsections.length
+                  %td
+                    %span.label.label-primary.pull-right
+                      = "#{section.subsections.length}"
+                  %td
+                    %span.label.label-success.pull-right= section.questions.length
       %div.col-md-2
         Guide:
-        %table.table.table-condensed
+        %table.table.table-condensed.table-bordered
           %tr
             %td.success Section published
           %tr
             %td.danger Section not published
+-else
+  %div.container
+    %div.alert.alert-warning Please select a course from the dropdown on the top right.

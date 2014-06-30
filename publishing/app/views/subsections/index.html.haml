@@ -1,14 +1,15 @@
 %form#section-form{ action: save_chapter_section_subsections_path(@chapter, @section) }
 
   %div.row
-    %div.col-md-10
+    %div.col-md-9
       %h2= @section.title
+    %div.col-md-1
+      %span.btn.btn-primary.btn-lg.save Save
     %div.col-md-2
-      %span.btn.btn-default.save Save
-      %br
       %small
-        Saved on:
-        %div#edit-time= l @section.updated_at, format: :long
+        %span#edit-time{style: "min-height:30px;"}
+          Saved on:
+          = l @section.updated_at, format: :long
 
   %ul.nav.nav-tabs#subsection-tabs
     - Star.all.each_with_index do |star, index|
@@ -19,7 +20,7 @@
             %span.glyphicon.glyphicon-star
           %span.badge{id: "badge_#{star}"}= @star_subsections.length
 
-  %div.tab-content
+  %div.tab-content{style: "margin-top: 20px;"}
     - Star.all.each_with_index do |star, index|
       -@star = star
       -@star_subsections = @all_subsections[@star]||[]
@@ -33,4 +34,6 @@
 
         %div.col-md-6
           - url = preview_chapter_section_subsections_path(@chapter, @section, star: @star)
-          %iframe.fill.col-md-12{id: "preview-#{ @star }", data: {url: url}, src: url }
+          %div.panel.panel-default
+            %div.panel-body
+              %iframe.fill.col-md-12{id: "preview-#{ @star }", data: {url: url}, src: url, style: "min-height: 800px;" }

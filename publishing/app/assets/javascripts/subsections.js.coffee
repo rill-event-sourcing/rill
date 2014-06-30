@@ -45,7 +45,7 @@ bindSaveButton = ->
 save = ->
   form  = $("#section-form")
   url = form.attr("action")
-  $("#edit-time").html('<img src="/assets/spinner.gif" alt="Wait" />')
+  $("#edit-time").html('<img src="/spinner.gif" alt="Wait" />')
   $.ajax url,
     type: 'POST'
     dataType: 'json'
@@ -53,8 +53,15 @@ save = ->
     error: (jqXHR, textStatus, errorThrown) ->
       console.log "AJAX Error: #{ textStatus }"
     success: (data, textStatus, jqXHR) ->
-      $("#edit-time").html(data.updated_at)
+      $("#edit-time").html("Saved on: " + data.updated_at)
       refreshAllPreviews()
+
+initializeAutoSave = ->
+  setTimeout(autoSave,10000)
+
+autoSave = ->
+  save()
+  setTimeout(autoSave,10000)
 
 refreshAllPreviews = ->
   refreshPreview(1)
@@ -73,7 +80,6 @@ $ ->
   bindAddButtons()
   bindDeleteButtons()
   bindSaveButton()
-  setTimeout(save, 100)
-  setInterval(save, 10000)
+  initializeAutoSave()
 
 ################################################################################

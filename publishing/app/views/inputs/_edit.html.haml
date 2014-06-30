@@ -1,0 +1,24 @@
+%div.panel.panel-default{id: "input-#{ input.id }", class: "#{input.class.to_s.underscore.dasherize}-panel"}
+  %div.panel-heading.clearfix
+    %div.row
+      %div.col-md-4
+        - if input.line_input?
+          %strong Single line input
+        - elsif input.multiple_choice_input?
+          %strong Multiple choice input
+        - else
+          %strong Unknown input type
+      %div.col-md-4
+        %div.input-group
+          %input.form-control{id: "input-title-#{input.id}", value: input.name, disabled: true, style:"font-family: monospace;"}
+          %span.input-group-addon.copy-button{"data-clipboard-target" => "input-title-#{input.id}"}
+            %span.glyphicon.glyphicon-share
+      %div.col-md-4
+        %span.pull-right.btn.btn-default.glyphicon.glyphicon-minus.delete-input{data: {item: "input-#{ input.id }", url: input_path(input, question_id: @question.to_param) } }
+  %div.panel-body
+    - if input.line_input?
+      =render partial: 'inputs/line_input', locals: {input: input}
+    - elsif input.multiple_choice_input?
+      =render partial: 'inputs/multiple_choice_input', locals: {input: input}
+    - else
+      unknown input type

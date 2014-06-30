@@ -1,0 +1,5 @@
+%div{id: "answer-#{answer.id}"}
+  %div.col-md-10
+    =text_field_tag "line_inputs[#{input.id}][answers][#{answer.id}][value]", answer.value, class: "form-control col-md-4 answer-row"
+  %div.col-md-2
+    %span.pull-right.btn.btn-default.glyphicon.glyphicon-minus.delete-answer.answer-row{data: { item: "answer-#{ answer.id }", url: input_answer_path(input, answer, question_id: @question.to_param) } }

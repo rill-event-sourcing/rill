@@ -55,6 +55,10 @@ ActiveRecord::Schema.define(version: 20140618145746) do
   create_table "inputs", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
     t.uuid     "question_id"
     t.string   "type"
+    t.integer  "position",    limit: 2
+    t.string   "pre"
+    t.string   "post"
+    t.integer  "width",       limit: 2
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -63,7 +67,8 @@ ActiveRecord::Schema.define(version: 20140618145746) do
     t.uuid     "section_id"
     t.text     "text"
     t.datetime "deleted_at"
-    t.boolean  "active",     default: false
+    t.boolean  "active",               default: false
+    t.integer  "max_inputs", limit: 2
     t.datetime "created_at"
     t.datetime "updated_at"
   end

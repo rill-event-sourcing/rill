@@ -1,39 +1,40 @@
 - if @course
-  %div.row
-    %div.col-md-8.col-md-offset-2
-      %h2= @course.name
-    %div.col-md-2
-      = link_to 'New Chapter', new_chapter_path, class: "btn btn-success"
-  %div.row
-    %div.col-md-8.col-md-offset-2
-      %table.table.table-striped
-        %thead
-          %tr
-            %th Title
-            %th Description
-            %th Order
-            %th Published
-            %th Actions
-
-        %tbody
-          -@chapters.each do |chapter|
+  %div.container
+    %div.row
+      %div.col-md-8.col-md-offset-2
+        %h2= @course.name
+      %div.col-md-2
+        = link_to 'New Chapter', new_chapter_path, class: "btn btn-success"
+    %div.row
+      %div.col-md-8.col-md-offset-2
+        %table.table.table-striped
+          %thead
             %tr
-              %td= link_to chapter.title, chapter
-              %td= chapter.description
-              %td
-                =link_to movedown_chapter_path(chapter), method: :post do
-                  %span.glyphicon.glyphicon-arrow-down
-                =link_to moveup_chapter_path(chapter), method: :post do
-                  %span.glyphicon.glyphicon-arrow-up
-              %td
-                -if chapter.active?
-                  =link_to deactivate_chapter_path(chapter), method: :post do
-                    %span.glyphicon.glyphicon-eye-open
-                -else
-                  =link_to activate_chapter_path(chapter), method: :post do
-                    %span.glyphicon.glyphicon-ban-circle
-              %td
-                = link_to edit_chapter_path(chapter) do
-                  %span.glyphicon.glyphicon-pencil
-                =link_to chapter_path(chapter), method: :delete, data: { confirm: "Are you sure you want to delete chapter `#{ chapter }`?" } do
-                  %span.glyphicon.glyphicon-trash
+              %th.col-md-3  Title
+              %th.col-md-6  Description
+              %th.col-md-1  Order
+              %th.col-md-1  Published
+              %th.col-md-1  Actions
+
+          %tbody
+            -@chapters.each do |chapter|
+              %tr
+                %td= link_to chapter.title, chapter
+                %td= chapter.description
+                %td
+                  =link_to movedown_chapter_path(chapter), method: :post do
+                    %span.glyphicon.glyphicon-arrow-down
+                  =link_to moveup_chapter_path(chapter), method: :post do
+                    %span.glyphicon.glyphicon-arrow-up
+                %td
+                  -if chapter.active?
+                    =link_to deactivate_chapter_path(chapter), method: :post do
+                      %span.glyphicon.glyphicon-eye-open
+                  -else
+                    =link_to activate_chapter_path(chapter), method: :post do
+                      %span.glyphicon.glyphicon-ban-circle
+                %td
+                  = link_to edit_chapter_path(chapter) do
+                    %span.glyphicon.glyphicon-pencil
+                  =link_to chapter_path(chapter), method: :delete, data: { confirm: "Are you sure you want to delete chapter `#{ chapter }`?" } do
+                    %span.glyphicon.glyphicon-trash

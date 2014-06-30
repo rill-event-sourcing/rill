@@ -4,6 +4,7 @@
             [studyflow.learning.commands :as cmd]
             [studyflow.learning.command-handler]
             [rill.handler :refer [try-command handle-command]]
+            [rill.message :as message]
             [rill.uuid :refer [new-id]]
             [rill.event-store.memory :refer [memory-store]]
             [studyflow.learning.course-material :as material]
@@ -20,5 +21,5 @@
 
 (deftest test-command-handler
   (testing "Publishing commands"
-    (is (= (map class (handle-command (cmd/->PublishCourse! (new-id) (:id initial-material) initial-material) nil))
-           [studyflow.events.CoursePublished]))))
+    (is (= (map message/type (handle-command (cmd/->PublishCourse! (new-id) (:id initial-material) initial-material) nil))
+           [:course-published]))))
