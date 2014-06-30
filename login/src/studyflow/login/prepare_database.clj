@@ -1,4 +1,4 @@
-(ns studyflow.login.prepare-table
+(ns studyflow.login.prepare-database
  (:require [clojure.java.jdbc :as sql]
   :require [studyflow.login.main :as login]))
 
