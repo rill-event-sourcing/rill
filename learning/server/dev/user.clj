@@ -17,8 +17,15 @@
     (let [res (handler req)]
       (if (and (.startsWith (get-in res [:headers "Content-Type"] "") "text/html" )
                (not (.contains ^String (str "" (get req :query-string)) "prod")))
-        (update-in res [:body]
-                   string/replace match replace)
+        (-> res
+            (update-in [:body]
+                       (fn [body]
+                         (-> body
+                             (cond->
+                              (not (string? body))
+                              slurp)
+                             (string/replace match replace))))
+            (update-in [:headers] dissoc "Content-Length" "Last-Modified"))
         res))))
 
 (defrecord DevRingHandlerComponent [event-store read-model]
