@@ -1,5 +1,6 @@
 (ns rill.event-store.atom-store.event
-  (:require [cheshire.core :as json]
+  (:require [clojure.tools.logging :as log]
+            [cheshire.core :as json]
             [clj-http.client :as http]
             [rill.event-store.atom-store.feed :as feed]
             [rill.message :as message]
@@ -19,7 +20,8 @@
   [entry]
   (or (try (if-let [data (:edn (:data entry))]
              (if (string? data)
-               (tagged/read-string data)))
+               (-> (tagged/read-string data)
+                   (assoc :eventNumber (:eventNumber entry)))))
            (catch RuntimeException _
              nil))
       (->UnprocessableMessage entry)))

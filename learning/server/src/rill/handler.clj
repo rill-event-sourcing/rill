@@ -1,5 +1,6 @@
 (ns rill.handler
-  (:require [rill.aggregate :as aggregate]
+  (:require [clojure.tools.logging :as log]
+            [rill.aggregate :as aggregate]
             [rill.event-store :as store]
             [rill.event-stream :as stream]
             [rill.message :as msg :refer [->type-keyword]]
@@ -41,6 +42,8 @@
   (validate-commit events)
   (log/info ["committing events" events])
   (let [stream-id-from-event (msg/stream-id (first events))]
+    ;; TODO the check is always true? both for new streams and
+    ;; existing streams?
     (if (= stream-id stream-id-from-event)
                                         ; events apply to current aggregate
       (store/append-events store stream-id from-version events)
@@ -52,16 +55,12 @@
   (fn [command & aggregates]
     (msg/type command)))
 
-(defn update-aggregate-and-version
-  [aggregate version events]
-  (reduce (fn [[aggregate version] event]
-            [(aggregate/handle-event aggregate event) (inc version)])
-          [aggregate version]
-          events))
-
 (defn load-aggregate-and-version
   [events]
-  (update-aggregate-and-version nil stream/empty-stream-version events))
+  (reduce (fn [[aggregate version] event]
+            [(aggregate/handle-event aggregate event) (:eventNumber event)])
+          [nil stream/empty-stream-version]
+          events))
 
 (defn prepare-aggregates
   "fetch the primary event stream id and version and aggregates for `command`"
