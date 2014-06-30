@@ -1,13 +1,17 @@
 (ns rill.event-store.memory
   "An in-memory event store for testing purposes"
-  (:require [rill.event-store :as store]
+  (:require [clojure.tools.logging :as log]
+            [rill.event-store :as store]
             [rill.event-stream :as stream]
             [slingshot.slingshot :refer [try+ throw+]]))
 
 (defn with-cursors
   [c events]
   (map-indexed (fn [i e]
-                 (with-meta e {:cursor (+ c i)}))
+                 (let [event-number (+ c i)]
+                   (with-meta
+                     (assoc e :eventNumber event-number)
+                     {:cursor event-number})))
                events))
 
 (deftype MemoryStore [state]
