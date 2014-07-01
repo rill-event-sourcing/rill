@@ -19,4 +19,6 @@
          :handler studyflow.login.main/app}
   :aliases {"prepare-database" ["run" "-m" "studyflow.login.prepare-database"]}
 
-  :profiles {:dev {:dependencies [[enlive "1.1.5"]]}})
+  :profiles {:dev {:dependencies [[enlive "1.1.5"]]}}
+  
+  :main studyflow.login.launcher)
