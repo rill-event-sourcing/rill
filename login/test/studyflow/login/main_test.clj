@@ -2,7 +2,8 @@
   (:require [clojure.test :refer :all]
             [hiccup.core :as hiccup]
             [net.cgrand.enlive-html :as enlive]
-            [studyflow.login.main :refer :all]))
+            [studyflow.login.main :refer :all]
+            [studyflow.login.prepare-database :as prep-db]))
 
 (defn query-hiccup [data pattern]
   (enlive/select (enlive/html-snippet (hiccup/html data)) pattern))
@@ -11,10 +12,10 @@
   (apply str (:content (first (query-hiccup data pattern)))))
 
 (use-fixtures :each (fn [test]
-                      (empty-database db)
-                      (seed-database db)
+                      (prep-db/clean-table db)
+                      (prep-db/seed-table db)
                       (test)
-                      (empty-database db)
+                      (prep-db/clean-table db)
                       ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; views
