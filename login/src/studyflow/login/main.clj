@@ -4,16 +4,17 @@
             [clojure.tools.logging :as log]
             [compojure.core :refer [defroutes GET POST]]
             [compojure.route :refer [not-found]]
+            [crypto.password.bcrypt :as bcrypt]
             [environ.core :refer [env]]
             [hiccup.page :refer [html5 include-css]]
             [hiccup.element :as element]
             [hiccup.form :as form]
-            [crypto.password.bcrypt :as bcrypt]
             [ring.util.response :as response]
             [ring.middleware.session :refer [wrap-session]]
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
-            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]))
+            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
+            [taoensso.carmine :as car :refer (wcar)]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; View
@@ -57,6 +58,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Model
 
+(def server1-conn  {:pool {} :spec {}})
+
+(defmacro wcar*  [& body] `(car/wcar server1-conn ~@body))
+
 (defn count-users [db]
   (:count
    (first
@@ -75,20 +80,31 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn find-user [db email]
-  (first (sql/query db ["SELECT role, email, password FROM users WHERE email = ?" email])))
+  (first (sql/query db ["SELECT uuid, role, email, password FROM users WHERE email = ?" email])))
 
 (defn authenticate [user password]
   (bcrypt/check password (:password user)))
 
-(defn logged-in? [session]
-  (contains? session :loggedin))
+(defn expire-session-local [session]
+  (dissoc session :loggedin :role :uuid))
+
+(defn expire-session-server [session]
+  (wcar* (car/del (:uuid session))))
 
 (defn assoc-user [session user]
-  (log/debug user)
-  (assoc session :loggedin (:email user) :role (:role user)))
+  (wcar* (car/set (:uuid user) (:role user)) (car/expire (:uuid user) 600))
+  (assoc session :uuid (:uuid user) :loggedin (:email user) :role (:role user)))
 
 (defn dissoc-user [session]
-  (dissoc session :loggedin :role))
+  (expire-session-local session)
+  (expire-session-server session))
+ 
+(defn logged-in? [session]
+  (if (= (wcar* (car/exists (:uuid session))) 1) 
+      true
+      (do
+        (cond (contains? session :uuid) (expire-session-local session)) 
+        false)))
 
 (defn redirect-to [path]
   {:status  302

@@ -2,7 +2,8 @@
   :description "Authentication hub"
   :url "http://studyflow.nl/"
 
-  :dependencies [[compojure "1.1.8"]
+  :dependencies [[com.taoensso/carmine "2.6.2"]
+                 [compojure "1.1.8"]
                  [crypto-password "0.1.3"]
                  [environ "0.5.0"]
                  [hiccup "1.0.5"]
