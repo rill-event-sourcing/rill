@@ -1,4 +1,4 @@
-# Commits messages
+# Commit messages
 
 The better commit messages are, the highest is the chance of finding useful informations without opening the diff.
 

@@ -8,7 +8,7 @@
 ## Documentation
 
 * [Branching model](docs/branching_model.md)
-
+* [Commit messages](docs/commits.md)
 ## Testing
 
     make test
