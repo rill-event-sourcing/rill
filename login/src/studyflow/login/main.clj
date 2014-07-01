@@ -85,16 +85,26 @@
 (defn authenticate [user password]
   (bcrypt/check password (:password user)))
 
-(defn logged-in? [session]
-  (contains? session :loggedin))
+(defn expire-session-local [session]
+  (dissoc session :loggedin :role :uuid))
+
+(defn expire-session-server [session]
+  (wcar* (car/del (:uuid session))))
 
 (defn assoc-user [session user]
-  (wcar* (car/set (:uuid user) (:role user)))
+  (wcar* (car/set (:uuid user) (:role user)) (car/expire (:uuid user) 600))
   (assoc session :uuid (:uuid user) :loggedin (:email user) :role (:role user)))
 
 (defn dissoc-user [session]
-  (wcar* (car/del (:uuid session)))
-  (dissoc session :loggedin :role :uuid))
+  (expire-session-local session)
+  (expire-session-server session))
+ 
+(defn logged-in? [session]
+  (if (= (wcar* (car/exists (:uuid session))) 1) 
+      true
+      (do
+        (cond (contains? session :uuid) (expire-session-local session)) 
+        false)))
 
 (defn redirect-to [path]
   {:status  302
