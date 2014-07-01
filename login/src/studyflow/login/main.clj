@@ -96,8 +96,8 @@
   (assoc session :uuid (:uuid user) :loggedin (:email user) :role (:role user)))
 
 (defn dissoc-user [session]
-  (expire-session-local session)
-  (expire-session-server session))
+  (expire-session-server session) 
+  (expire-session-local session))
  
 (defn logged-in? [session]
   (if (= (wcar* (car/exists (:uuid session))) 1) 
