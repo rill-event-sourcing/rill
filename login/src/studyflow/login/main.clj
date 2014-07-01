@@ -8,7 +8,7 @@
             [hiccup.page :refer [html5 include-css]]
             [hiccup.element :as element]
             [hiccup.form :as form]
-            [clojurewerkz.scrypt.core :as sc]
+            [crypto.password.bcrypt :as bcrypt]
             [ring.util.response :as response]
             [ring.middleware.session :refer [wrap-session]]
             [ring.middleware.params :refer [wrap-params]]
@@ -67,7 +67,7 @@
     (map extract (sql/query db "SELECT * FROM users"))))
 
 (defn encrypt [password]
-  password);(sc/encrypt password 16384 8 1))
+  (bcrypt/encrypt password))
 
 (defn create-user [db role email password]
   (sql/insert! db :users [:uuid :role :email :password]  [(str (java.util.UUID/randomUUID)) role email (encrypt password)]))
@@ -78,7 +78,7 @@
   (first (sql/query db ["SELECT role, email, password FROM users WHERE email = ?" email])))
 
 (defn authenticate [user password]
-  (sc/verify password (:password user)))
+  (bcrypt/check password (:password user)))
 
 (defn logged-in? [session]
   (contains? session :loggedin))
