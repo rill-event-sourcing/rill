@@ -8,6 +8,7 @@
             [hiccup.page :refer [html5 include-css]]
             [hiccup.element :as element]
             [hiccup.form :as form]
+            [crypto.password.bcrypt :as bcrypt]
             [ring.util.response :as response]
             [ring.middleware.session :refer [wrap-session]]
             [ring.middleware.params :refer [wrap-params]]
@@ -65,13 +66,19 @@
   (let [extract (fn [user] (str (:role user) " " (:email user) " " (:uuid user)) )]
     (map extract (sql/query db "SELECT * FROM users"))))
 
+(defn encrypt [password]
+  (bcrypt/encrypt password))
+
 (defn create-user [db role email password]
-  (sql/insert! db :users [:uuid :role :email :password]  [(str (java.util.UUID/randomUUID)) role email password]))
+  (sql/insert! db :users [:uuid :role :email :password]  [(str (java.util.UUID/randomUUID)) role email (encrypt password)]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn authenticate [db email password]
-  (first (sql/query db ["SELECT role, email FROM users WHERE email = ? AND password = ?", email, password])))
+(defn find-user [db email]
+  (first (sql/query db ["SELECT role, email, password FROM users WHERE email = ?" email])))
+
+(defn authenticate [user password]
+  (bcrypt/check password (:password user)))
 
 (defn logged-in? [session]
   (contains? session :loggedin))
@@ -110,11 +117,13 @@
     (layout "login" (login (params :msg) (params :email) (params :password) )))
 
   (POST "/login" {db :db session :session {:keys [email password]} :params}
-    (let [user (authenticate db email password)]
-      (if (seq user)
+    (if-let [user (find-user db email)]
+      (if (authenticate user password)
         (assoc (redirect-home (:role user))
                :session (assoc-user session user))
-        (layout "login" (login "wrong email / password combination" email password)))))
+        (layout "login" (login "wrong email / password combination" email password)))
+      (layout "login"  (login "wrong email combination" email password))
+      ))
 
   (GET "/logout" {session :session}
     (assoc (redirect-to "/")
@@ -135,6 +144,9 @@
    :subname (or (env :db-subname) "//localhost/studyflow_login")
    :user (or (env :db-user) "studyflow")
    :password (or (env :db-password) "studyflow")})
+
+(defn empty-database [db]
+  (sql/execute! db ["TRUNCATE users;"])) 
 
 (defn seed-database [db]
   (create-user db "student", "student@studyflow.nl" "student")
