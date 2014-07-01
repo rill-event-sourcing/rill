@@ -18,6 +18,7 @@ gem 'zeroclipboard-rails'
 gem 'acts_as_list'
 gem 'appsignal'
 gem 'httparty'
+gem 'redis'
 
 group :development do
   gem 'better_errors'
