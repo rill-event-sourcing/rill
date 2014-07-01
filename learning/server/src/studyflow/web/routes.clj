@@ -10,3 +10,6 @@
 (defroute get-status :get "/")
 
 (defroute get-course-page :get "/course/:course-id")
+
+(defroute section-test-init :put "/api/section-test-init/:course-id/:section-id/:section-test-id")
+(defroute section-test-check-answer :put "/api/section-test-check-answer/:section-test-id/:section-id/:course-id/:question-id")
