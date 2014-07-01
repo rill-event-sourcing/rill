@@ -34,7 +34,7 @@
 
 (defn home [session user-count user-list]
   [:div
-   [:h2 "welcome " (session :loggedin)]
+   [:h3 "welcome " (session :loggedin)]
    [:div
     (str user-count " users registered")]
    [:div
