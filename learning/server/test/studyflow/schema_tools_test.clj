@@ -11,8 +11,8 @@
 
 (deftest id-coercer-test
   (testing "id coercer will tranform the keys to UUIDs"
-    (is (= (id-coercer {"9dd02654-1fd8-43f4-8de4-25a821eadf0d" "9dd02654-1fd8-43f4-8de4-25a821eadf0d"}))
-        {#uuid "9dd02654-1fd8-43f4-8de4-25a821eadf0d" "9dd02654-1fd8-43f4-8de4-25a821eadf0d"})))
+    (is (= (id-coercer {"9dd02654-1fd8-43f4-8de4-25a821eadf0d" "9dd02654-1fd8-43f4-8de4-25a821eadf0d"})
+           {#uuid "9dd02654-1fd8-43f4-8de4-25a821eadf0d" "9dd02654-1fd8-43f4-8de4-25a821eadf0d"}))))
 
 (def JsonSchema
   {:an-id s/Uuid
@@ -34,4 +34,3 @@
 
 (deftest strict-coercion-test
   (is (thrown? RuntimeException (strict-coercer {"invalid" "foo"}))))
-

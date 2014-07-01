@@ -1,14 +1,15 @@
-(ns studyflow.learning.commands
+(ns studyflow.learning.course.commands
   (:require [rill.message :refer [defcommand]]
             [studyflow.learning.course-material :as material]))
 
-(defcommand PublishCourse!
+(defcommand Publish!
   :course-id material/Id
   :material material/CourseMaterial)
 
-(defcommand UpdateCourse!
+(defcommand Update!
   :course-id material/Id
   :material material/CourseMaterial)
 
-(defcommand DeleteCourse!
+(defcommand Delete!
   :course-id material/Id)
+

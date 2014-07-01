@@ -4,6 +4,7 @@
             [clojure.tools.logging :as log]
             [compojure.core :refer [defroutes GET POST]]
             [compojure.route :refer [not-found]]
+            [crypto.password.bcrypt :as bcrypt]
             [environ.core :refer [env]]
             [hiccup.page :refer [html5 include-css]]
             [hiccup.element :as element]
@@ -12,7 +13,8 @@
             [ring.middleware.session :refer [wrap-session]]
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
-            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]))
+            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
+            [taoensso.carmine :as car :refer (wcar)]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; View
@@ -33,7 +35,7 @@
 
 (defn home [session user-count user-list]
   [:div
-   [:h2 "welcome " (session :loggedin)]
+   [:h3 "welcome " (session :loggedin)]
    [:div
     (str user-count " users registered")]
    [:div
@@ -56,6 +58,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Model
 
+(def server1-conn  {:pool {} :spec {}})
+
+(defmacro wcar*  [& body] `(car/wcar server1-conn ~@body))
+
 (defn count-users [db]
   (:count
    (first
@@ -65,23 +71,40 @@
   (let [extract (fn [user] (str (:role user) " " (:email user) " " (:uuid user)) )]
     (map extract (sql/query db "SELECT * FROM users"))))
 
+(defn encrypt [password]
+  (bcrypt/encrypt password))
+
 (defn create-user [db role email password]
-  (sql/insert! db :users [:uuid :role :email :password]  [(str (java.util.UUID/randomUUID)) role email password]))
+  (sql/insert! db :users [:uuid :role :email :password]  [(str (java.util.UUID/randomUUID)) role email (encrypt password)]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn authenticate [db email password]
-  (first (sql/query db ["SELECT role, email FROM users WHERE email = ? AND password = ?", email, password])))
+(defn find-user [db email]
+  (first (sql/query db ["SELECT uuid, role, email, password FROM users WHERE email = ?" email])))
 
-(defn logged-in? [session]
-  (contains? session :loggedin))
+(defn authenticate [user password]
+  (bcrypt/check password (:password user)))
+
+(defn expire-session-local [session]
+  (dissoc session :loggedin :role :uuid))
+
+(defn expire-session-server [session]
+  (wcar* (car/del (:uuid session))))
 
 (defn assoc-user [session user]
-  (log/debug user)
-  (assoc session :loggedin (:email user) :role (:role user)))
+  (wcar* (car/set (:uuid user) (:role user)) (car/expire (:uuid user) 600))
+  (assoc session :uuid (:uuid user) :loggedin (:email user) :role (:role user)))
 
 (defn dissoc-user [session]
-  (dissoc session :loggedin :role))
+  (expire-session-local session)
+  (expire-session-server session))
+ 
+(defn logged-in? [session]
+  (if (= (wcar* (car/exists (:uuid session))) 1) 
+      true
+      (do
+        (cond (contains? session :uuid) (expire-session-local session)) 
+        false)))
 
 (defn redirect-to [path]
   {:status  302
@@ -110,11 +133,13 @@
     (layout "login" (login (params :msg) (params :email) (params :password) )))
 
   (POST "/login" {db :db session :session {:keys [email password]} :params}
-    (let [user (authenticate db email password)]
-      (if (seq user)
+    (if-let [user (find-user db email)]
+      (if (authenticate user password)
         (assoc (redirect-home (:role user))
                :session (assoc-user session user))
-        (layout "login" (login "wrong email / password combination" email password)))))
+        (layout "login" (login "wrong email / password combination" email password)))
+      (layout "login"  (login "wrong email combination" email password))
+      ))
 
   (GET "/logout" {session :session}
     (assoc (redirect-to "/")
@@ -135,6 +160,9 @@
    :subname (or (env :db-subname) "//localhost/studyflow_login")
    :user (or (env :db-user) "studyflow")
    :password (or (env :db-password) "studyflow")})
+
+(defn empty-database [db]
+  (sql/execute! db ["TRUNCATE users;"])) 
 
 (defn seed-database [db]
   (create-user db "student", "student@studyflow.nl" "student")

@@ -5,9 +5,10 @@
             [schema.core :as s]
             [clojure.test :refer [deftest is]]))
 
-(defevent MySerializableEvent [foo :- s/Uuid])
+(defevent MySerializableEvent
+  :foo s/Uuid)
 
-(def my-event (->MySerializableEvent (new-id) (new-id)))
+(def my-event (my-serializable-event (new-id)))
 
 (deftest serializable-events?
   (is (string? (:edn (:data (event->entry my-event)))))

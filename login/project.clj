@@ -2,7 +2,9 @@
   :description "Authentication hub"
   :url "http://studyflow.nl/"
 
-  :dependencies [[compojure "1.1.8"]
+  :dependencies [[com.taoensso/carmine "2.6.2"]
+                 [compojure "1.1.8"]
+                 [crypto-password "0.1.3"]
                  [environ "0.5.0"]
                  [hiccup "1.0.5"]
                  [org.clojure/clojure "1.6.0"]
@@ -15,5 +17,8 @@
   :plugins [[lein-ring "0.8.10"]]
   :ring {:init studyflow.login.main/bootstrap!
          :handler studyflow.login.main/app}
+  :aliases {"prepare-database" ["run" "-m" "studyflow.login.prepare-database"]}
 
-  :profiles {:dev {:dependencies [[enlive "1.1.5"]]}})
+  :profiles {:dev {:dependencies [[enlive "1.1.5"]]}}
+  
+  :main studyflow.login.launcher)
