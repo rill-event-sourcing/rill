@@ -15,7 +15,9 @@
   :stream-id s/Uuid
   :val s/Str)
 
-(def events (map #(->TestEvent (new-id) stream-id %) [:a :b :c :d :e :f]))
+(def events (map-indexed (fn [idx content]
+                           (assoc (->TestEvent (new-id) stream-id content)
+                             :eventNumber idx)) [:a :b :c :d :e :f]))
 
 (deftest event-channel-test
   (let [store (memory-store)]
