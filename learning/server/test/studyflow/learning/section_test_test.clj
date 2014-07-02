@@ -4,7 +4,7 @@
             [studyflow.learning.section-test.commands :as commands]
             [studyflow.learning.course.fixture :as fixture]
             [studyflow.learning.course :as course]
-            [rill.temp-store :refer [with-temp-store]]
+            [rill.temp-store :refer [with-temp-store execute messages= message= command-result=]]
             [rill.uuid :refer [new-id]]
             [rill.message :as message]
             [rill.aggregate :refer [handle-event handle-command load-aggregate update-aggregate]]
@@ -101,3 +101,55 @@
         (check-correct!)
         (is (= 5 (:streak-length (fetch section-test-id))))
         (is (:finished? (fetch section-test-id)))))))
+
+(deftest test-commands
+  (testing "init section test"
+    (let [[status [event1 event2]] (execute (commands/init! section-test-id section-id course-id)
+                                            [fixture/course-published-event])]
+      (is (= :ok status))
+      (is (message= (events/created section-test-id course-id section-id)
+                    event1))
+      (is (= ::events/QuestionAssigned
+             (message/type event2)))))
+
+  (testing "answering questions"
+    (testing "correct answer"
+      (let [inputs {"__INPUT_1__" "6"}
+            question-id #uuid "a117bf7b-8025-43ea-b6d3-aa636d6b6042"]
+        (is (command-result= [:ok [(events/question-answered-correctly section-test-id question-id inputs)]]
+                             (execute (commands/check-answer! section-test-id section-id course-id question-id inputs)
+                                      [fixture/course-published-event
+                                       (events/created section-test-id course-id section-id)
+                                       (events/question-assigned section-test-id course-id question-id)])))))
+
+    (testing "incorrect answer"
+      (let [inputs {"__INPUT_1__" "7"}
+            question-id #uuid "a117bf7b-8025-43ea-b6d3-aa636d6b6042"]
+        (is (command-result= [:ok [(events/question-answered-incorrectly section-test-id question-id inputs)]]
+                             (execute (commands/check-answer! section-test-id section-id course-id question-id inputs)
+                                      [fixture/course-published-event
+                                       (events/created section-test-id course-id section-id)
+                                       (events/question-assigned section-test-id course-id question-id)])))))
+
+    (testing "next question"
+      (testing "with a correct answer"
+        (let [inputs {"__INPUT_1__" "6"}
+              question-id #uuid "a117bf7b-8025-43ea-b6d3-aa636d6b6042"]
+          (let [[status [event]] (execute (commands/next-question! section-test-id section-id course-id)
+                                          [fixture/course-published-event
+                                           (events/created section-test-id course-id section-id)
+                                           (events/question-assigned section-test-id course-id question-id)
+                                           (events/question-answered-correctly section-test-id question-id inputs)])]
+            (is (= :ok status)
+                (= ::events/QuestionAssigned
+                   (message/type event))))))
+
+      (testing "with an incorrect answer"
+        (let [inputs {"__INPUT_1__" "7"}
+              question-id #uuid "a117bf7b-8025-43ea-b6d3-aa636d6b6042"]
+          (is (thrown? AssertionError
+                       (execute (commands/next-question! section-test-id section-id course-id)
+                                [fixture/course-published-event
+                                 (events/created section-test-id course-id section-id)
+                                 (events/question-assigned section-test-id course-id question-id)
+                                 (events/question-answered-incorrectly section-test-id question-id inputs)]))))))))

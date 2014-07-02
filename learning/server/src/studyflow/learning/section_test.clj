@@ -93,7 +93,7 @@
 (defmethod handle-command ::commands/NextQuestion!
   [section-test command course]
   {:pre [(= (:section-id command) (:section-id section-test))
-         (not (nil? (:current-question-status section-test)))]}
+         (:question-finished? section-test)]}
   [(events/question-assigned (:id section-test) (:id course) (:id (select-random-question course (:section-id command))))])
 
 (defmethod handle-event ::events/Finished

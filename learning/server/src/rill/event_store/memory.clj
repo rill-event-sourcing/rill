@@ -33,7 +33,8 @@
   (append-events [this stream-id from-version events]
     (try+ (swap! state (fn [old-state]
                          (let [current-stream (get old-state stream-id stream/empty-stream)]
-                           (if (= (dec (count current-stream)) from-version)
+                           (if (or (nil? from-version)
+                                   (= (dec (count current-stream)) from-version))
                              (assoc old-state stream-id (into current-stream events))
                              (throw+ ::out-of-date)))))
           true
