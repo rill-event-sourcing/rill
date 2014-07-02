@@ -5,9 +5,9 @@ set :stage, :staging
 # Supports bulk-adding hosts to roles, the primary
 # server in each group is considered to be the first
 # unless any hosts have the primary property set.
-role :app, %w{studyflow@beta.studyflow.nl:1022}
-role :web, %w{studyflow@beta.studyflow.nl:1022}
-role :db,  %w{studyflow@beta.studyflow.nl:1022}
+role :app, %w{studyflow@publishing.beta.studyflow.nl:1022}
+role :web, %w{studyflow@publishing.beta.studyflow.nl:1022}
+role :db,  %w{studyflow@publishing.beta.studyflow.nl:1022}
 
 # Extended Server Syntax
 # ======================
