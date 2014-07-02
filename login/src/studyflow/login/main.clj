@@ -161,23 +161,6 @@
    :user (or (env :db-user) "studyflow")
    :password (or (env :db-password) "studyflow")})
 
-(defn empty-database [db]
-  (sql/execute! db ["TRUNCATE users;"])) 
-
-(defn seed-database [db]
-  (create-user db "student", "student@studyflow.nl" "student")
-  (create-user db "coach", "coach@studyflow.nl" "coach")
-  (create-user db "editor", "editor@studyflow.nl" "editor")
-  (create-user db "tester", "tester@studyflow.nl" "tester"))
- 
-(defn bootstrap! []
-  (sql/execute! db [
-    (str "CREATE TABLE IF NOT EXISTS users (uuid VARCHAR(36) PRIMARY KEY, "
-         "role VARCHAR(16) NOT NULL, "
-         "email VARCHAR(255) NOT NULL, "
-         "password VARCHAR(255) NOT NULL"
-         ")")]))
-
 (def app
   (->
    (wrap-defaults actions site-defaults)
