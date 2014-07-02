@@ -3,6 +3,7 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
+  before_action :check_authentication, unless: -> { Rails.env == 'test' }
   before_action :set_my_course
   after_action  :unset_my_course
 
@@ -17,6 +18,18 @@ class ApplicationController < ActionController::Base
   def set_crumb(crumb_hash)
     @crumbs ||= []
     @crumbs << crumb_hash
+  end
+
+private
+
+  def check_authentication
+    uuid = cookies["studyflow_session"]
+    if uuid && StudyflowAuth.logged_in?(uuid)
+      return false
+    else
+      cookies["studyflow_redir_to"] = request.original_url
+      redirect_to StudyflowPublishing::Application.config.auth_server
+    end
   end
 
 end

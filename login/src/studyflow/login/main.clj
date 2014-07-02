@@ -10,7 +10,6 @@
             [hiccup.element :as element]
             [hiccup.form :as form]
             [ring.util.response :as response]
-            [ring.middleware.session :refer [wrap-session]]
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
@@ -106,14 +105,19 @@
   {:status  302
    :headers {"Location" path}})
 
-(defn redirect-path [role]
+(defn default-redirect-path [role]
   (case role
     "editor" publishing-url
     "tester" "https://staging.studyflow.nl"
     "/"))
 
-(defn redirect-home [role]
-  (redirect-to (redirect-path role)))
+(defn redirect-user [cookie-path role]
+  (if cookie-path
+    (redirect-to cookie-path) 
+    (redirect-to (default-redirect-path role))))
+
+(defn get-redirect-cookie [cookies]
+  (:value (cookies "studyflow_redir_to")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Controller
@@ -128,18 +132,22 @@
   (GET "/login" {session :session params :params}
     (layout "login" (login (params :msg) (params :email) (params :password) )))
 
-  (POST "/login" {db :db session :session {:keys [email password]} :params}
+  (POST "/login" {db :db cookies :cookies session :session {:keys [email password]} :params}
     (if-let [user (find-user db email)]
       (if (authenticate user password)
-        (assoc (redirect-home (:role user))
-               :session (assoc-user session user))
+        (assoc (redirect-user (get-redirect-cookie cookies) (:role user))
+               :session (assoc-user session user)
+               :cookies {:studyflow_session (:uuid user)}
+               )
         (layout "login" (login "wrong email / password combination" email password)))
       (layout "login"  (login "wrong email combination" email password))
       ))
 
   (GET "/logout" {session :session}
     (assoc (redirect-to "/")
-           :session (dissoc-user session)))
+           :session (dissoc-user session)
+           :cookies {:studyflow_session {:value "" :max-age -1} }
+           ))
 
   (not-found "Nothing here"))
 
@@ -159,9 +167,13 @@
 
 (defn count-users  [db]
   (:count (first (sql/query db "SELECT COUNT(*) FROM users"))))
- 
+
+(defn set-studyflow-site-defaults []
+  (-> site-defaults
+    (assoc-in  [:session :cookie-name] "studyflow_login_session")))
+
 (def app
   (->
-   (wrap-defaults actions site-defaults)
+   (wrap-defaults actions (set-studyflow-site-defaults))
    (wrap-db db)))
 

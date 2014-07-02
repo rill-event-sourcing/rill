@@ -21,7 +21,15 @@ namespace :deploy do
     end
   end
 
+  desc 'upload lein-env file'
+  task :upload_config do
+    on roles(:app) do
+      upload! ".lein-env", "#{ release_path }/.lein-env"
+    end
+  end
+
   before :updating, 'deploy:mk_jar_file'
+  after :updating, 'deploy:upload_config'
   after :finishing, 'deploy:cleanup'
 end
 

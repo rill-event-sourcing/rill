@@ -51,4 +51,7 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+
+  config.auth_server = "http://localhost:4000"
+  config.redis_server = "localhost"
 end
