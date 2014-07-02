@@ -19,9 +19,11 @@
 (defn entry->event
   [entry]
   (or (try (if-let [data (:edn (:data entry))]
-             (if (string? data)
+             (when (string? data)
                (-> (tagged/read-string data)
-                   (assoc :eventNumber (:eventNumber entry)))))
+                   (assoc message/id (:eventId entry)
+                          message/type (:eventType entry)
+                          message/number (:eventNumber entry)))))
            (catch RuntimeException _
              nil))
       (->UnprocessableMessage entry)))

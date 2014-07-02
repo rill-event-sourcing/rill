@@ -3,6 +3,7 @@
   (:require [clojure.tools.logging :as log]
             [rill.event-store :as store]
             [rill.event-stream :as stream]
+            [rill.message :as message]
             [slingshot.slingshot :refer [try+ throw+]]))
 
 (defn with-cursors
@@ -10,7 +11,7 @@
   (map-indexed (fn [i e]
                  (let [event-number (+ c i)]
                    (with-meta
-                     (assoc e :eventNumber event-number)
+                     (assoc e message/number event-number)
                      {:cursor event-number})))
                events))
 

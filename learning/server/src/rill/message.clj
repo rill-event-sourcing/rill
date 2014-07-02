@@ -7,10 +7,11 @@
 
 (def id ::id)
 (def type ::type)
+(def number ::number)
 
 (defn data
   [m]
-  (dissoc m ::id ::type))
+  (dissoc m id type number))
 
 (defmulti strict-map->Message
   (fn [s m]
