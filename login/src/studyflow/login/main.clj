@@ -33,11 +33,11 @@
       (element/link-to "/logout" "logout")]
     body]))
 
-(defn home [session user-count user-list]
+(defn home [session user-list]
   [:div
    [:h3 "welcome " (session :loggedin)]
    [:div
-    (str user-count " users registered")]
+    (str (count user-list) " users logged in")]
    [:div
     (str/join "<br />" user-list)]])
 
@@ -62,14 +62,8 @@
 
 (defmacro wcar*  [& body] `(car/wcar server1-conn ~@body))
 
-(defn count-users [db]
-  (:count
-   (first
-    (sql/query db "SELECT COUNT(*) FROM users"))))
-
-(defn list-users [db]
-  (let [extract (fn [user] (str (:role user) " " (:email user) " " (:uuid user)) )]
-    (map extract (sql/query db "SELECT * FROM users"))))
+(defn logged-in-users []
+  (wcar* (car/keys "*")))
 
 (defn encrypt [password]
   (bcrypt/encrypt password))
@@ -126,7 +120,7 @@
 
   (GET "/" {db :db session :session}
     (if (logged-in? session)
-        (layout "home" (home session (count-users db) (list-users db)))
+        (layout "home" (home session (logged-in-users)))
         (response/redirect "/login")))
 
   (GET "/login" {session :session params :params}
@@ -161,6 +155,9 @@
    :user (or (env :db-user) "studyflow")
    :password (or (env :db-password) "studyflow")})
 
+(defn count-users  [db]
+  (:count (first (sql/query db "SELECT COUNT(*) FROM users"))))
+ 
 (def app
   (->
    (wrap-defaults actions site-defaults)
