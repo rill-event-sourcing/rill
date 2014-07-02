@@ -23,11 +23,11 @@ class ApplicationController < ActionController::Base
 private
 
   def check_authentication
+    cookies["studyflow_redir_to"] = request.original_url
     uuid = cookies["studyflow_session"]
     if uuid && StudyflowAuth.logged_in?(uuid)
-      return false
+      return true
     else
-      cookies["studyflow_redir_to"] = request.original_url
       redirect_to StudyflowPublishing::Application.config.auth_server
     end
   end
