@@ -23,15 +23,13 @@ class ApplicationController < ActionController::Base
 private
 
   def check_authentication
-    pp Rails.env
-    pp 'checkkingauth'
-    uuid = cookies["Studyflow"]
-    pp "uuid: #{uuid}"
+    uuid = cookies["studyflow_session"]
     if uuid && StudyflowAuth.logged_in?(uuid)
       return false
     else
-      cookies["Studyflow_redir_to"] = request.original_url
+      cookies["studyflow_redir_to"] = request.original_url
       redirect_to StudyflowPublishing::Application.config.auth_server
     end
   end
+
 end

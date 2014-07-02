@@ -90,13 +90,10 @@
   (dissoc session :loggedin :role :uuid))
 
 (defn expire-session-server [session]
-  (wcar* (car/del (:uuid session)))
-  ;; delete cookie with uuid
-  )
+  (wcar* (car/del (:uuid session))))
 
 (defn assoc-user [session user]
   (wcar* (car/set (:uuid user) (:role user)) (car/expire (:uuid user) 600))
-  ;; set cookie with uuid
   (assoc session :uuid (:uuid user) :loggedin (:email user) :role (:role user)))
 
 (defn dissoc-user [session]
@@ -115,7 +112,6 @@
    :headers {"Location" path}})
 
 (defn redirect-path [role]
-  ;; check cookie for redirect
   (case role
     "editor" publishing-url
     "tester" "https://staging.studyflow.nl"
@@ -141,14 +137,18 @@
     (if-let [user (find-user db email)]
       (if (authenticate user password)
         (assoc (redirect-home (:role user))
-               :session (assoc-user session user))
+               :session (assoc-user session user)
+               :cookies {:studyflow_session (:uuid user)}
+               )
         (layout "login" (login "wrong email / password combination" email password)))
       (layout "login"  (login "wrong email combination" email password))
       ))
 
   (GET "/logout" {session :session}
     (assoc (redirect-to "/")
-           :session (dissoc-user session)))
+           :session (dissoc-user session)
+           :cookies {:studyflow_session {:value "" :max-age -1} }
+           ))
 
   (not-found "Nothing here"))
 
@@ -183,8 +183,12 @@
          "password VARCHAR(255) NOT NULL"
          ")")]))
 
+(defn set-studyflow-site-defaults []
+  (-> site-defaults
+    (assoc-in  [:session :cookie-name] "studyflow_login_session")))
+
 (def app
   (->
-   (wrap-defaults actions site-defaults)
+   (wrap-defaults actions (set-studyflow-site-defaults))
    (wrap-db db)))
 
