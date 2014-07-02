@@ -7,8 +7,6 @@ class ApplicationController < ActionController::Base
   before_action :set_my_course
   after_action  :unset_my_course
 
-private
-
   def set_my_course
     Course.current = Course.where(id: session[:course_id]).first
   end
@@ -21,6 +19,8 @@ private
     @crumbs ||= []
     @crumbs << crumb_hash
   end
+
+private
 
   def check_authentication
     uuid = cookies["Studyflow"]
