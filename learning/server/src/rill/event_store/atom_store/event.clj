@@ -21,9 +21,7 @@
   (or (try (if-let [data (:edn (:data entry))]
              (when (string? data)
                (-> (tagged/read-string data)
-                   (assoc message/id (:eventId entry)
-                          message/type (:eventType entry)
-                          message/number (:eventNumber entry)))))
+                   (assoc message/number (:eventNumber entry)))))
            (catch RuntimeException _
              nil))
       (->UnprocessableMessage entry)))

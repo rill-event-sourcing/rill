@@ -32,7 +32,7 @@
 (defn load-aggregate-and-version
   [events]
   (reduce (fn [[aggregate version] event]
-            [(aggregate/handle-event aggregate event) (:eventNumber event)])
+            [(aggregate/handle-event aggregate event) (message/number event)])
           [nil stream/empty-stream-version]
           events))
 
