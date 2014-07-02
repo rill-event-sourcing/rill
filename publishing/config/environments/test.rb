@@ -39,4 +39,5 @@ Rails.application.configure do
 
   config.auth_server = "http://localhost:4000"
   config.redis_server = "localhost"
+  config.cookie_domain = "localhost"
 end
