@@ -16,7 +16,7 @@
 
   :plugins [[lein-ring "0.8.10"]]
   :ring {:init studyflow.login.main/bootstrap!
-         :handler studyflow.login.main/app}
+         :handler studyflow.login.main/app :port 4000}
   :aliases {"prepare-database" ["run" "-m" "studyflow.login.prepare-database"]}
 
   :profiles {:dev {:dependencies [[enlive "1.1.5"]]}}

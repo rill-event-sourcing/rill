@@ -7,11 +7,7 @@ class ApplicationController < ActionController::Base
   before_action :set_my_course
   after_action  :unset_my_course
 
-  def check_authentication
-    unless StudyflowAuth.logged_in?
-      redirect_to "http://login.studyflow.nl:3000"
-    end
-  end
+private
 
   def set_my_course
     Course.current = Course.where(id: session[:course_id]).first
@@ -26,9 +22,13 @@ class ApplicationController < ActionController::Base
     @crumbs << crumb_hash
   end
 
-private
-
-  def logged_in?
-    false
+  def check_authentication
+    uuid = cookies["Studyflow"]
+    if uuid
+      StudyflowAuth.logged_in?(uuid)
+    else
+      cookies["Studyflow_redir_to"] = request.original_url
+      redirect_to StudyflowPublishing::Application.config.auth_server
+    end
   end
 end
