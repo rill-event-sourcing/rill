@@ -4,18 +4,20 @@
             [rill.event-store.memory :refer [memory-store]]
             [rill.event-store :as store]
             [rill.event-stream :refer [empty-stream-version]]
-            [rill.message :as msg]
+            [rill.message :as message]
             [clojure.core.async :as async :refer [<! <!! go close!]]
             [rill.uuid :refer [new-id]]
             [schema.core :as s]))
 
 (def stream-id (new-id))
 
-(msg/defevent TestEvent
+(message/defevent TestEvent
   :stream-id s/Uuid
   :val s/Str)
 
-(def events (map #(->TestEvent (new-id) stream-id %) [:a :b :c :d :e :f]))
+(def events (map-indexed (fn [idx content]
+                           (assoc (->TestEvent (new-id) stream-id content)
+                             message/number idx)) [:a :b :c :d :e :f]))
 
 (deftest event-channel-test
   (let [store (memory-store)]

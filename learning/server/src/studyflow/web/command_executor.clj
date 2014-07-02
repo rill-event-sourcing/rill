@@ -1,6 +1,7 @@
 (ns studyflow.web.command-executor
   (:require [clojure.tools.logging :as log]
-            [rill.handler :as es-dispatcher]))
+            [rill.handler :as es-dispatcher]
+            [rill.message :as message]))
 
 (defn wrap-command-executor
   "Given a set of ring handler that returns a command (or nil), execute
@@ -8,7 +9,7 @@
   [ring-handler event-store]
   (fn [request]
     (when-let [command (ring-handler request)]
-      (log/info ["Executing command" (class command)])
+      (log/info ["Executing command" (message/type command)])
       (case (es-dispatcher/try-command event-store command)
         :rejected {:status 500 :body {:status :command-rejected}}
         :conflict {:status 409 :body {:status :command-conflict}}

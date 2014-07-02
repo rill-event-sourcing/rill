@@ -17,3 +17,6 @@ To test the publishing of the material from the publishing app, run (from the ro
 
     cd learning/server
     lein validate-course-material path/to/material.json
+
+## Running learning/server test with local EventStore
+```ATOM_EVENT_STORE_COMMAND="mono /home/mfex/studyflow/code/eventstore/EventStore.SingleNode.exe" lein test rill.event-store.atom-store-test```

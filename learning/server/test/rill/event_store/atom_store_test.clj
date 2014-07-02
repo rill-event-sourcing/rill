@@ -1,7 +1,7 @@
 (ns rill.event-store.atom-store-test
   (:require [rill.event-store.atom-store-test.local :refer [with-local-atom-store]]
             [rill.event-store :as store]
-            [rill.message :refer [defevent]]
+            [rill.message :as message :refer [defevent]]
             [rill.event-stream :refer [empty-stream-version empty-stream]]
             [rill.uuid :refer [new-id]]
             [clojure.test :refer [deftest testing is]]
@@ -38,10 +38,13 @@
       
       (is (store/append-events store stream-id empty-stream-version events))
       (let [retrieved-events (store/retrieve-events store stream-id)]
-        (is (= retrieved-events events))
+        (is (= (->> retrieved-events
+                    (map #(dissoc % message/number))) events))
         (is (store/append-events store stream-id (dec (count events)) additional-events))
-        (is (= (store/retrieve-events store stream-id) (concat events additional-events)))
-        (is (= (store/retrieve-events-since store stream-id (:cursor (meta (last retrieved-events))) 0)
+        (is (= (->> (store/retrieve-events store stream-id)
+                    (map #(dissoc % message/number))) (concat events additional-events)))
+        (is (= (->> (store/retrieve-events-since store stream-id (:cursor (meta (last retrieved-events))) 0)
+                    (map #(dissoc % message/number)))
                additional-events))))
 
     (testing "Long polling"
@@ -82,6 +85,6 @@
                         (log/debug "done appending" (inc r) "messages")
                         r))]
            (doseq [[e i] (map vector throughput-events (range num-messages))]
-             (is (= (<!! recieve) e)))
+             (is (= (dissoc (<!! recieve) message/number) e)))
            (async/close! recieve)
            (is (= (<!! post) (dec (count throughput-events))))))))))

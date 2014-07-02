@@ -11,13 +11,6 @@
             [clojure.core.async :refer [close! <!!]]
             [clj-http.client :as client]))
 
-(defrecord ComponentSystem []
-  component/Lifecycle
-  (start [this]
-    (component/start-system this (filter (partial satisfies? component/Lifecycle) (keys this))))
-  (stop [this]
-    (component/stop-system this (filter (partial satisfies? component/Lifecycle) (keys this)))))
-
 (defrecord JettyComponent [port ring-handler]
   component/Lifecycle
   (start [component]
@@ -100,23 +93,23 @@
 (defn prod-system [config-options]
   (info "Running the production system")
   (let [{:keys [port event-store-config]} config-options]
-    (map->ComponentSystem
-     {:config-options config-options
-      :ring-handler (component/using
-                     (ring-handler-component)
-                     [:event-store :read-model])
-      :jetty (component/using
-              (jetty-component port)
-              [:ring-handler])
-      :event-channel (component/using
-                      (event-channel-component)
-                      [:event-store])
-      :event-store (component/using
-                    (event-store-component event-store-config)
-                    [])
-      :read-model (component/using
-                   (read-model-component)
-                   [:event-store :event-channel])})))
+    (component/system-map
+     :config-options config-options
+     :ring-handler (component/using
+                    (ring-handler-component)
+                    [:event-store :read-model])
+     :jetty (component/using
+             (jetty-component port)
+             [:ring-handler])
+     :event-channel (component/using
+                     (event-channel-component)
+                     [:event-store])
+     :event-store (component/using
+                   (event-store-component event-store-config)
+                   [])
+     :read-model (component/using
+                  (read-model-component)
+                  [:event-store :event-channel]))))
 
 (def prod-config {:port 3000
                   :event-store-config {:uri (or (env :event-store-uri) "http://127.0.0.1:2113")
