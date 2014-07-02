@@ -7,4 +7,5 @@ pom.xml.asc
 *.jar
 *.class
 .lein-*
+!.lein-env
 lein
