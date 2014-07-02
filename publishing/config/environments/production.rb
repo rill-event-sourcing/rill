@@ -97,6 +97,6 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  config.auth_server = "http://login.studyflow.nl"
-  config.redis_server = "login.studyflow.nl"
+  config.auth_server = "http://login.beta.studyflow.nl"
+  config.redis_server = "login.beta.studyflow.nl"
 end
