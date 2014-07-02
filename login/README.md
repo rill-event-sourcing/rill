@@ -16,12 +16,14 @@ or on OSX:
 
 ### Seeding the database
 
-from `repl`
-
-(use 'studyflow.login.main)
-(bootstrap!)
-(seed-database db)
+`lein prepare-database`
 
 ## Usage
 
+As the default environment in `.lein-env` is `development`, it is enough to specify
+
     lein ring server
+
+If you want to run the server as another environment, prepend it as follows:
+
+    STUDYFLOW_ENV=staging lein ring server

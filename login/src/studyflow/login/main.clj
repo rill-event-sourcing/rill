@@ -19,6 +19,8 @@
 ;; View
 
 (def app-title "Studyflow")
+(def studyflow-env (keyword (env :studyflow-env)))
+(def publishing-url (studyflow-env (env :publishing-url)))
 
 (defn layout [title & body]
   (html5
@@ -115,7 +117,7 @@
 (defn redirect-path [role]
   ;; check cookie for redirect
   (case role
-    "editor" "http://beta.studyflow.nl"
+    "editor" publishing-url
     "tester" "https://staging.studyflow.nl"
     "/"))
 
@@ -160,9 +162,9 @@
 (def db
   {:classname "org.postgresql.Driver"
    :subprotocol "postgresql"
-   :subname (or (env :db-subname) "//localhost/studyflow_login")
-   :user (or (env :db-user) "studyflow")
-   :password (or (env :db-password) "studyflow")})
+   :subname (env :db-subname) 
+   :user (env :db-user) 
+   :password (env :db-password)})
 
 (defn empty-database [db]
   (sql/execute! db ["TRUNCATE users;"])) 
