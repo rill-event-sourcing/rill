@@ -11,6 +11,7 @@
 
 ;; Load command handlers
 (require 'studyflow.learning.course)
+(require 'studyflow.learning.section-test)
 
 (def handler
   "This handler matches ring requests and returns a command (or nil) for the given request.

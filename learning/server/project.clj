@@ -30,7 +30,8 @@
                [org.clojure/clojurescript "0.0-2173"]
                [om "0.6.4"]
                [com.facebook/react "0.9.0.1"]
-               [cljs-ajax "0.2.3"]]
+               [cljs-ajax "0.2.3"]
+               [cljs-uuid "0.0.4"]]
               :plugins
               [[lein-cljsbuild "1.0.2"]
                [com.cemerick/clojurescript.test "0.3.0"]]}}
@@ -48,5 +49,3 @@
                                          :pretty-print false
                                          :preamble ["react/react.min.js"]
                                          :externs ["react/externs/react.js"]}}}})
-
-
