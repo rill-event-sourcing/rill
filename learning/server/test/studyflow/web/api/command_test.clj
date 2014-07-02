@@ -39,7 +39,7 @@
           (testing "with command executor"
             (let [{:keys [status body]} ((make-request-handler store) req)]
               (is (= 200 status))
-              (is (= {:status :command-accepted} body))
+              (is (= :command-accepted (:status body)))
               (is (fetch course-id)))))))
 
   (testing "init section test"
@@ -61,7 +61,7 @@
         (testing "with command executor"
           (let [{:keys [status body]} ((make-request-handler store) req)]
             (is (= 200 status))
-            (is (= {:status :command-accepted} body))
+            (is (= :command-accepted (:status body)))
             (is (fetch section-test-id)))))))
 
   (testing "check section test answer"
@@ -96,4 +96,4 @@
                         (assoc :body inputs))
                 {:keys [status body]} ((make-request-handler store) req)]
             (is (= 200 status))
-            (is (= {:status :command-accepted} body))))))))
+            (is (= :command-accepted (:status body)))))))))

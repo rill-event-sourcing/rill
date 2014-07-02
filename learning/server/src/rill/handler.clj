@@ -51,12 +51,8 @@
     (log/debug [:try-command command])
     (let [result (if-let [events (apply aggregate/handle-command primary-aggregate command rest-aggregates)]
                    (if (commit-events event-store id version events)
-                     :ok
-                     :conflict)
-                   :rejected)]
+                     [:ok events]
+                     [:conflict])
+                   [:rejected])]
       (log/debug [result])
       result)))
-
-(defn make-handler [event-store]
-  (fn [command]
-    (try-command event-store command)))

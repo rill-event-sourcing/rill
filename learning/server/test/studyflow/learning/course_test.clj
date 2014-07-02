@@ -32,14 +32,12 @@
          new-course-id)))
 
 (deftest test-try-command
-  (let [store (memory-store)]
-    (is (= (try-command store (commands/publish! (:id fixture/course-edn) fixture/course-edn))
-           :ok))
-    (is (= (try-command store (commands/publish! (:id fixture/course-edn) fixture/course-edn))
-           :ok))))
+  (let [store (memory-store)
+        [status events] (try-command store (commands/publish! (:id fixture/course-edn) fixture/course-edn))]
+    (is (= :ok status))
+    (is (= [::events/Published] (map message/type events)))))
 
 (deftest test-command-handler
   (testing "Publishing commands"
     (is (= (map message/type (handle-command nil (commands/publish! (:id fixture/course-edn) fixture/course-edn)))
            [::events/Published]))))
-

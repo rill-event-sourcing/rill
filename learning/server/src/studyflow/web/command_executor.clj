@@ -9,9 +9,10 @@
   [ring-handler event-store]
   (fn [request]
     (when-let [command (ring-handler request)]
-      (log/info ["Executing command" (message/type command)])
-      (case (es-dispatcher/try-command event-store command)
-        :rejected {:status 500 :body {:status :command-rejected}}
-        :conflict {:status 409 :body {:status :command-conflict}}
-        :ok {:status 200 :body {:status :command-accepted}}
-        {:status 500 :body {:status :internal-error}}))))
+      (log/info ["Executing command" command])
+      (let [[status events] (es-dispatcher/try-command event-store command)]
+        (case status
+            :rejected {:status 422 :body {:status :command-rejected}} ; HTTP 422 Unprocessable Entity
+            :conflict {:status 409 :body {:status :command-conflict}} ; HTTP 409 Conflict
+            :ok {:status 200 :body {:status :command-accepted, :events events}}
+            {:status 500 :body {:status :internal-error}})))))

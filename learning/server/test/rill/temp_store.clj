@@ -1,7 +1,7 @@
 (ns rill.temp-store
   (:require [rill.event-store :refer [retrieve-events]]
             [rill.aggregate :refer [load-aggregate]]
-            [rill.handler :refer [make-handler]]
+            [rill.handler :refer [try-command]]
             [rill.event-store.memory :refer [memory-store]]))
 
 (defmacro with-temp-store
@@ -13,6 +13,5 @@
   `(let [store# (memory-store)
          ~store store#
          ~fetch #(load-aggregate (retrieve-events store# %))
-         ~execute! (make-handler store#)]
+         ~execute! #(first (try-command store# %))]
      ~@body))
-

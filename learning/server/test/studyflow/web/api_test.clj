@@ -1,9 +1,9 @@
 (ns studyflow.web.api-test
-  (:require [clojure.test :refer [deftest is]]
+  (:use [clojure.test])
+  (:require [cheshire.core :as json]
             [clout-link.route :refer [uri-for]]
             [rill.event-store.memory :refer [memory-store]]
             [ring.mock.request :refer [body content-type request]]
-            [studyflow.learning.course.commands :as commands]
             [studyflow.learning.course-material :as material]
             [studyflow.learning.course-material-test :as fixture]
             [studyflow.web.api :as api]
@@ -14,8 +14,9 @@
 
 (deftest test-api-request-handler
   (let [handler (api/make-request-handler (memory-store) (atom {}))
-        r (-> (request :put (uri-for routes/update-course-material (:id input)))
-              (body (slurp "test/studyflow/material.json"))
-              (content-type "application/json"))]
-    (is (= (:body (handler r))
-           "{\"status\":\"command-accepted\"}"))))
+        req (-> (request :put (uri-for routes/update-course-material (:id input)))
+                (body (slurp "test/studyflow/material.json"))
+                (content-type "application/json"))
+        res (handler req)
+        json (json/parse-string (:body res) true)]
+    (is (= "command-accepted" (:status json)))))
