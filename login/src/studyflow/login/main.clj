@@ -155,6 +155,9 @@
    :user (or (env :db-user) "studyflow")
    :password (or (env :db-password) "studyflow")})
 
+(defn count-users  [db]
+  (:count (first (sql/query db "SELECT COUNT(*) FROM users"))))
+
 (defn empty-database [db]
   (sql/execute! db ["TRUNCATE users;"])) 
 

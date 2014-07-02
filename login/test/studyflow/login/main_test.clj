@@ -19,10 +19,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; views
 (deftest home-page
-  (let [data (home db 314 ["first-fake-uuid" "second-fake-uuid"])]
+  (let [data (home {:loggedin "Testuser"} ["first-fake-uuid" "second-fake-uuid"])]
     (testing "Home page includes a welcome message."
-      (is (= "welcome " (query-hiccup-content data [:h3]))))))
-
+      (is (= "welcome Testuser" (query-hiccup-content data [:h3]))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; models
@@ -31,10 +30,11 @@
     (testing "counting-users should give a count of the users"
       (is (= 4 data)))))
 
-(deftest test-list-users
-  (let [data (list-users db)]
-    (testing "list-users should give a list of users"
-      (is (= 4 (count data))))))
+(deftest test-logged-in-users 
+  (assoc-user {} (find-user db "editor@studyflow.nl"))
+  (let [data (logged-in-users)]
+    (testing "logged-in-users-users should give a list of logged in users"
+      (is (= 1 (count data))))))
 
 (deftest test-create-user
   (let [data (create-user db "tester" "tester@test.nl" "secret")]
