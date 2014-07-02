@@ -10,7 +10,6 @@
             [hiccup.element :as element]
             [hiccup.form :as form]
             [ring.util.response :as response]
-            [ring.middleware.session :refer [wrap-session]]
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
@@ -89,10 +88,13 @@
   (dissoc session :loggedin :role :uuid))
 
 (defn expire-session-server [session]
-  (wcar* (car/del (:uuid session))))
+  (wcar* (car/del (:uuid session)))
+  ;; delete cookie with uuid
+  )
 
 (defn assoc-user [session user]
   (wcar* (car/set (:uuid user) (:role user)) (car/expire (:uuid user) 600))
+  ;; set cookie with uuid
   (assoc session :uuid (:uuid user) :loggedin (:email user) :role (:role user)))
 
 (defn dissoc-user [session]
@@ -111,6 +113,7 @@
    :headers {"Location" path}})
 
 (defn redirect-path [role]
+  ;; check cookie for redirect
   (case role
     "editor" "http://beta.studyflow.nl"
     "tester" "https://staging.studyflow.nl"
