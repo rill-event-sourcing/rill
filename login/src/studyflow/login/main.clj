@@ -21,6 +21,7 @@
 (def app-title "Studyflow")
 (def studyflow-env (keyword (env :studyflow-env)))
 (def publishing-url (studyflow-env (env :publishing-url)))
+(def domain (studyflow-env (env :domain)))
 
 (defn layout [title & body]
   (html5
@@ -137,7 +138,7 @@
       (if (authenticate user password)
         (assoc (redirect-user (get-redirect-cookie cookies) (:role user))
                :session (assoc-user session user)
-               :cookies {:studyflow_session (:uuid user)}
+               :cookies {:studyflow_session {:value (:uuid user) :domain domain :max-age 600}}
                )
         (layout "login" (login "wrong email / password combination" email password)))
       (layout "login"  (login "wrong email combination" email password))

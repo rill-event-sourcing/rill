@@ -4,6 +4,9 @@
  :login-url       { :development  "http://localhost:4000"
                     :staging      "http://login.beta.studyflow.nl"
                     :production   "http://login.studyflow.nl"}
+ :domain          { :development  "localhost"
+                    :staging      "beta.studyflow.nl"
+                    :production   "studyflow.nl"}
  :studyflow-env "development"
  :db-subname  "//localhost/studyflow_login"
  :db-user     "studyflow"
