@@ -23,10 +23,10 @@ class ApplicationController < ActionController::Base
 private
 
   def check_authentication
-    cookies["studyflow_redir_to"] = [
+    cookies["studyflow_redir_to"] = {
       value: request.original_url,
       domain: StudyflowPublishing::Application.config.cookie_domain
-    ]
+    }
     uuid = cookies["studyflow_session"]
     if uuid && StudyflowAuth.logged_in?(uuid)
       return true
