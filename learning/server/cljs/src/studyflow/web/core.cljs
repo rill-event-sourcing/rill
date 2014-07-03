@@ -63,32 +63,41 @@
                            text (:text question)
                            first-part (.replace text (re-pattern (str "__INPUT_1__.*$")) "")
                            last-part (.replace text (re-pattern (str "^.*__INPUT_1__")) "")
-                           current-answer (get-in cursor [:section section-id :test question-id :answer])]
+                           current-answer (get-in cursor [:section section-id :test :questions question-id :answer])
+                           current-answer-correct (get-in cursor [:section section-id :test :questions question-id :correct])]
                        (dom/div nil
                                 (dom/div #js {:dangerouslySetInnerHTML #js {:__html first-part}} nil)
                                 (dom/input #js {:value current-answer
                                                 :onChange (fn [event]
                                                             (om/transact!
                                                              cursor
-                                                             [:section section-id :test]
+                                                             [:section section-id :test :questions]
                                                              #(assoc-in % [question-id :answer] (.. event -target -value))))})
+                                (when-not (nil? current-answer-correct)
+                                  (dom/div nil (str "Marked as: " current-answer-correct
+                                                    (when current-answer-correct
+                                                      " have some balloons"))))
                                 (dom/div #js {:dangerouslySetInnerHTML #js {:__html last-part}} nil)
                                 (when (seq current-answer)
                                   (let [section-test-id (:test-id section-test)
                                         course-id (:course-id cursor)]
-                                    (dom/button #js {:onClick (fn []
-                                                                (om/transact! cursor
-                                                                              [:command-queue]
-                                                                              #(conj %
-                                                                                     ["section-test-commands/check-answer"
-                                                                                      section-test-id
-                                                                                      section-id
-                                                                                      course-id
-                                                                                      question-id
-                                                                                      {"__INPUT_1__" current-answer}]
-                                                                                      )))}
-                                                "Check")))))
-                     "...")
+                                    (if current-answer-correct
+                                      (dom/button #js {:onClick (fn []
+                                                                  (prn "next question command"))}
+                                                  "Next Question")
+                                      (dom/button #js {:onClick (fn []
+                                                                  (om/transact! cursor
+                                                                                [:command-queue]
+                                                                                #(conj %
+                                                                                       ["section-test-commands/check-answer"
+                                                                                        section-test-id
+                                                                                        section-id
+                                                                                        course-id
+                                                                                        question-id
+                                                                                        {"__INPUT_1__" current-answer}]
+                                                                                       )))}
+                                                  "Check"))))))
+                     "Loading question")
                    (dom/button #js {:onClick
                                     (fn [_]
                                       (om/update! cursor

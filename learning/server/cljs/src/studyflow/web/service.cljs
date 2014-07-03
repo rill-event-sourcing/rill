@@ -39,21 +39,25 @@
 
 (defn try-command [cursor command]
   (prn :try-command command)
-  (let [handler ({"section-test-commands/check-answer"
-                  (fn [[section-test-id section-id course-id question-id inputs]]
-                    (PUT (str "/api/section-test-check-answer/" section-test-id "/"  section-id "/" course-id "/" question-id)
-                         {:params inputs
-                          :format :json
-                          :handler (fn [res]
-                                     (let [events (:events (json-edn/json->edn res))]
-                                       (cond
-                                        (find-event "/QuestionAnsweredCorrectly" events)
-                                        (js/alert "GOED!")
-
-                                        (find-event "/QuestionAnsweredIncorrectly" events)
-                                        (js/alert "jammer.."))))}))}
-                 (first command))]
-    (handler (next command))))
+  (let [[command-type & args] command]
+    (condp = command-type
+     "section-test-commands/check-answer"
+     (let [[section-test-id section-id course-id question-id inputs] args]
+       (PUT (str "/api/section-test-check-answer/" section-test-id "/"  section-id "/" course-id "/" question-id)
+            {:params inputs
+             :format :json
+             :handler (fn [res]
+                        (let [events (:events (json-edn/json->edn res))]
+                          (cond
+                           (find-event "/QuestionAnsweredCorrectly" events)
+                           (om/update! cursor
+                                       [:section section-id :test :questions question-id :correct]
+                                       true)
+                           (find-event "/QuestionAnsweredIncorrectly" events)
+                           (om/update! cursor
+                                       [:section section-id :test :questions question-id :correct]
+                                       false))))})))
+    nil))
 
 (defn listen [tx-report cursor]
   (let [{:keys [path new-state]} tx-report]
