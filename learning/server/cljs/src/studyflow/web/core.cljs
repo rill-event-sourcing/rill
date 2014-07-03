@@ -105,6 +105,30 @@
                                                   {}))}
                                "Start test for this section")))))))
 
+(defn section-tabs [cursor owner]
+  (reify
+    om/IInitState
+    (init-state [_]
+      {:selected :explanation})
+    om/IRenderState
+    (render-state [_ state]
+      (dom/div nil
+               (apply dom/ul nil
+                      (for [[k title] {:explanation "Explanation"
+                                       :questions "Questions"}]
+                        (if (= (:selected state) k)
+                          (dom/li nil title)
+                          (dom/a #js {:href "#"
+                                      :onClick (fn [_]
+                                                 (om/set-state! owner :selected k))}
+                                 (dom/li nil title)))))
+               (if (= (:selected state) :explanation)
+                 (let [[_ section-id] (get-in cursor [:selected-section])
+                       section (get-in cursor [:section section-id :data])
+                       text (get-in section [:subsections-by-level :1-star])]
+                   (dom/div nil (pr-str text)))
+                 (om/build section-test cursor))))))
+
 
 (defn content [cursor owner]
   (reify
@@ -114,7 +138,7 @@
         (if-let [section-data (get-in cursor [:section section-id :data])]
           (dom/div #js {:id (str "section-" section-id)}
                    (dom/h2 nil (:title section-data))
-                   (om/build section-test cursor))
+                   (om/build section-tabs cursor))
           (dom/h2 nil (str "Selected data not yet loaded" section-id)))
         (dom/h2 nil "No section selected")))))
 
