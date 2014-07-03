@@ -36,9 +36,9 @@
       (element/link-to "/logout" "logout")]
     body]))
 
-(defn home [session user-list]
+(defn home [email user-list]
   [:div
-   [:h3 "welcome " (session :loggedin)]
+   [:h3 "welcome " email]
    [:div
     (str (count user-list) " users logged in")]
    [:div
@@ -137,7 +137,7 @@
 
   (GET "/" {db :db session :session}
     (if (logged-in? session)
-        (layout "home" (home session (logged-in-users)))
+        (layout "home" (home (:loggedin session) (logged-in-users)))
         (response/redirect "/login")))
 
   (GET "/login" {session :session params :params}
