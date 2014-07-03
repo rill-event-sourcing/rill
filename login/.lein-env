@@ -4,10 +4,9 @@
  :login-url       { :development  "http://localhost:4000"
                     :staging      "http://login.beta.studyflow.nl"
                     :production   "http://login.studyflow.nl"}
- :cookie-domain   { 
-                    :staging      "beta.studyflow.nl"
+ :cookie-domain   { :staging      "beta.studyflow.nl"
                     :production   "studyflow.nl"}
- :cookie-max-age  { :development  600
+ :session-max-age { :development  600
                     :staging      600
                     :production   600}
  :studyflow-env "development"

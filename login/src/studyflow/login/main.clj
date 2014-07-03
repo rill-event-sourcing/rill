@@ -22,7 +22,7 @@
 (def studyflow-env (keyword (env :studyflow-env)))
 (def publishing-url (studyflow-env (env :publishing-url)))
 (def cookie-domain (studyflow-env (env :cookie-domain)))
-(def cookie-max-age (studyflow-env (env :cookie-max-age)))
+(def session-max-age (studyflow-env (env :session-max-age)))
 
 (defn layout [title & body]
   (html5
@@ -89,7 +89,7 @@
   (wcar* (car/del (:uuid session))))
 
 (defn assoc-user [session user]
-  (wcar* (car/set (:uuid user) (:role user)) (car/expire (:uuid user) 600))
+  (wcar* (car/set (:uuid user) (:role user)) (car/expire (:uuid user) session-max-age))
   (assoc session :uuid (:uuid user) :loggedin (:email user) :role (:role user)))
 
 (defn dissoc-user [session]
@@ -123,8 +123,8 @@
 
 (defn get-login-cookie [uuid]
   (if cookie-domain
-    {:studyflow_session {:value uuid :domain cookie-domain :max-age cookie-max-age}}
-    {:studyflow_session {:value uuid :max-age cookie-max-age}}))
+    {:studyflow_session {:value uuid :domain cookie-domain :max-age session-max-age}}
+    {:studyflow_session {:value uuid :max-age session-max-age}}))
 
 (defn get-authenticated-response [cookies session user]
   (assoc (redirect-user (get-redirect-cookie cookies) (:role user))
