@@ -21,7 +21,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; views
 (deftest home-page
-  (let [data (home {:loggedin "Testuser"} ["first-fake-uuid" "second-fake-uuid"])]
+  (let [data (home "Testuser" ["first-fake-uuid" "second-fake-uuid"])]
     (testing "Home page includes a welcome message."
       (is (= "welcome Testuser" (query-hiccup-content data [:h3]))))))
 
