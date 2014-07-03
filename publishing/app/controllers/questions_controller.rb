@@ -1,6 +1,7 @@
 class QuestionsController < ApplicationController
 
   before_action :set_param_objects
+  before_action :set_redirect_cookie, only: [:index, :edit]
   before_action :set_breadcrumb
 
   def index

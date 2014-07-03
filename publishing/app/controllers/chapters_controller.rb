@@ -1,5 +1,6 @@
 class ChaptersController < ApplicationController
   before_action :set_param_objects
+  before_action :set_redirect_cookie, only: [:index, :show, :new, :edit]
   before_action :set_breadcrumb, except: [:index, :new, :create]
 
   def index

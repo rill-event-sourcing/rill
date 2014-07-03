@@ -5,7 +5,7 @@ RSpec.describe QuestionsController, :type => :controller do
   before do
     @course = create(:course)
     session[:course_id] = @course.id
-    controller.set_my_course
+    controller.send :set_my_course
     @chapter = create(:chapter, course: @course)
     @section = create(:section, chapter: @chapter)
     @question1 = create(:question, section: @section)

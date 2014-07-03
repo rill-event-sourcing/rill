@@ -1,5 +1,7 @@
 class HomeController < ApplicationController
 
+  before_action :set_redirect_cookie, only: [:index]
+
   def index
   end
 
