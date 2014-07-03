@@ -96,12 +96,8 @@
   (expire-session-server session) 
   (expire-session-local session))
  
-(defn logged-in? [session]
-  (if (= (wcar* (car/exists (:uuid session))) 1) 
-      true
-      (do
-        (cond (contains? session :uuid) (expire-session-local session)) 
-        false)))
+(defn logged-in? [uuid]
+  (= (wcar* (car/exists uuid)) 1))
 
 (defn redirect-to [path]
   {:status  302
@@ -136,7 +132,7 @@
 (defroutes actions
 
   (GET "/" {db :db session :session}
-    (if (logged-in? session)
+    (if (logged-in? (:uuid  session))
         (layout "home" (home (:loggedin session) (logged-in-users)))
         (response/redirect "/login")))
 
