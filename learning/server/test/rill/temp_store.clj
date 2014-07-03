@@ -17,31 +17,41 @@
          ~execute! #(first (try-command store# %))]
      ~@body))
 
+(defn given
+  "return an event store with the given events inserted"
+  [given-events]
+  (let [store (memory-store)]
+    (doseq [events (partition-by message/primary-aggregate-id given-events)]
+      (append-events store (message/primary-aggregate-id (first events)) nil events))
+    store))
+
 (defn execute
   "apply command to a store with given-events, return the [status,
   generated-events] pair"
   [command given-events]
-  (let [store (memory-store)]
-    (doseq [events (partition-by message/primary-aggregate-id given-events)]
-      (append-events store (message/primary-aggregate-id (first events)) nil events))
+  (let [store (given given-events)]
     (try-command store command)))
 
-(defn message=
-  "test messages for equality ignoring rill.message/id"
-  [& events]
-  (= (map #(dissoc % message/id) events)))
 
-(defn ignore-event-ids
-  [events]
-  (map #(dissoc % message/id) events))
+(defn comparable-message
+  "remove message id and number from a message, so it can be compared"
+  [message]
+  (dissoc message message/id message/number))
+
+(defn message=
+  "test messages for equality ignoring rill.message/id or rill.message/number"
+  [& events]
+  (apply = (map comparable-message events)))
+
 
 (defn messages=
   [expected-events actual-events]
-  (= (ignore-event-ids expected-events)
-     (ignore-event-ids actual-events)))
+  (= (map comparable-message expected-events)
+     (map comparable-message actual-events)))
 
 (defn command-result=
   [[expected-status expected-events]
    [actual-status actual-events]]
   (and (= expected-status actual-status)
        (messages= expected-events actual-events)))
+
