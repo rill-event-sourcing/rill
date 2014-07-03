@@ -3,7 +3,8 @@
             [cljs-uuid.core :as uuid]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [studyflow.web.json-edn :as json-edn]))
+            [studyflow.web.json-edn :as json-edn]
+            [goog.string :as gstring]))
 
 ;; a bit silly to use an Om component for something that is not UI,
 ;; but don't know how to participate in state managament otherwise
@@ -34,7 +35,7 @@
         (om/build widgets cursor)))))
 
 (defn find-event [name events]
-  (first (filter #(.endsWith (:type %) name) events)))
+  (first (filter #(gstring/endsWith (:type %) name) events)))
 
 (defn try-command [cursor command]
   (prn :try-command command)
