@@ -49,7 +49,7 @@
 
 (defn question-by-id [cursor section-id id]
   (first (filter #(= id (:id %))
-                 (-> cursor :sections-data (get section-id) :questions))))
+                 (get-in cursor [:section section-id :data :questions]))))
 
 (defn section-test [cursor owner]
   (reify
@@ -57,46 +57,52 @@
     (render [_]
       (dom/div #js {:className "section-test"}
                (let [[_ section-id] (get-in cursor [:selected-section])]
-                 (if (:section-id-for-section-test cursor)
-                   (if-let [question-id (:current-section-test-question-id cursor)]
+                 (if-let [section-test (get-in cursor [:section section-id :test])]
+                   (if-let [question-id (:test-question-id section-test)]
                      (let [question (question-by-id cursor section-id question-id)
                            text (:text question)
                            first-part (.replace text (re-pattern (str "__INPUT_1__.*$")) "")
-                           last-part (.replace text (re-pattern (str "^.*__INPUT_1__")) "")]
+                           last-part (.replace text (re-pattern (str "^.*__INPUT_1__")) "")
+                           current-answer (get-in cursor [:section section-id :test question-id :answer])]
                        (dom/div nil
                                 (dom/div #js {:dangerouslySetInnerHTML #js {:__html first-part}} nil)
-                                (dom/input #js {:value (get cursor :current-answer "")
+                                (dom/input #js {:value current-answer
                                                 :onChange (fn [event]
-                                                            (om/transact! cursor #(assoc % :current-answer (.. event -target -value))))})
+                                                            (om/transact!
+                                                             cursor
+                                                             [:section section-id :test]
+                                                             #(assoc-in % [question-id :answer] (.. event -target -value))))})
                                 (dom/div #js {:dangerouslySetInnerHTML #js {:__html last-part}} nil)
-                                (when-let [current-answer (:current-answer cursor)]
-                                  (let [current-section-test-id (:current-section-test-id cursor)
+                                (when (seq current-answer)
+                                  (let [section-test-id (:test-id section-test)
                                         course-id (:course-id cursor)]
                                     (dom/button #js {:onClick (fn []
                                                                 (om/transact! cursor
                                                                               [:command-queue]
                                                                               #(conj %
                                                                                      ["section-test-commands/check-answer"
-                                                                                      current-section-test-id
+                                                                                      section-test-id
                                                                                       section-id
                                                                                       course-id
                                                                                       question-id
-                                                                                      {"__INPUT_1__" current-answer}])))}
-                                                "!")))))
+                                                                                      {"__INPUT_1__" current-answer}]
+                                                                                      )))}
+                                                "Check")))))
                      "...")
                    (dom/button #js {:onClick
                                     (fn [_]
                                       (om/update! cursor
-                                                  :section-id-for-section-test
-                                                  section-id))}
-                               "GO!")))))))
+                                                  [:section section-id :test]
+                                                  {}))}
+                               "Start test for this section")))))))
+
 
 (defn content [cursor owner]
   (reify
     om/IRender
     (render [_]
       (if-let [[_ section-id] (get-in cursor [:selected-section])]
-        (if-let [section-data (get-in cursor [:sections-data section-id])]
+        (if-let [section-data (get-in cursor [:section section-id :data])]
           (dom/div #js {:id (str "section-" section-id)}
                    (dom/h2 nil (:title section-data))
                    (om/build section-test cursor))
