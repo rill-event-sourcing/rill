@@ -45,7 +45,7 @@
     (str/join "<br />" user-list)]])
 
 (defn login [msg email password]
-  (form/form-to [:post "/login"]
+  (form/form-to [:post "/"]
     (form/hidden-field "__anti-forgery-token" *anti-forgery-token*)
     [:div
       [:p msg]
@@ -131,18 +131,15 @@
 
 (defroutes actions
 
-  (GET "/" {db :db session :session}
+  (GET "/" {db :db session :session params :params}
     (if (logged-in? (:uuid  session))
         (layout "home" (home (:loggedin session) (logged-in-users)))
-        (response/redirect "/login")))
+    (layout "login" (login (params :msg) (params :email) (params :password)))))
 
-  (GET "/login" {session :session params :params}
-    (layout "login" (login (params :msg) (params :email) (params :password) )))
-
-  (POST "/login" {db :db cookies :cookies session :session {:keys [email password]} :params}
+  (POST "/" {db :db cookies :cookies session :session {:keys [email password]} :params}
     (if-let [user (find-user db email)]
       (if (authenticate user password)
-        (get-authenticated-response cookies session user) 
+        (get-authenticated-response cookies session user)
         (layout "login" (login "wrong email / password combination" email password)))
       (layout "login"  (login "wrong email combination" email password))
       ))
@@ -179,4 +176,3 @@
   (->
    (wrap-defaults actions (set-studyflow-site-defaults))
    (wrap-db db)))
-
