@@ -13,3 +13,6 @@
 
 (defroute section-test-init :put "/api/section-test-init/:course-id/:section-id/:section-test-id")
 (defroute section-test-check-answer :put "/api/section-test-check-answer/:section-test-id/:section-id/:course-id/:question-id")
+
+(defroute section-test-replay :get "/api/section-test-replay/:section-test-id")
+

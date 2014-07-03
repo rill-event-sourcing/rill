@@ -19,4 +19,6 @@
                 (content-type "application/json"))
         res (handler req)
         json (json/parse-string (:body res) true)]
+    (is res)
+    (is json)
     (is (= "command-accepted" (:status json)))))
