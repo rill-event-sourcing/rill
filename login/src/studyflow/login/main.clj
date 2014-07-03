@@ -21,7 +21,8 @@
 (def app-title "Studyflow")
 (def studyflow-env (keyword (env :studyflow-env)))
 (def publishing-url (studyflow-env (env :publishing-url)))
-(def domain (studyflow-env (env :domain)))
+(def cookie-domain (studyflow-env (env :cookie-domain)))
+(def session-max-age (studyflow-env (env :session-max-age)))
 
 (defn layout [title & body]
   (html5
@@ -88,7 +89,7 @@
   (wcar* (car/del (:uuid session))))
 
 (defn assoc-user [session user]
-  (wcar* (car/set (:uuid user) (:role user)) (car/expire (:uuid user) 600))
+  (wcar* (car/set (:uuid user) (:role user)) (car/expire (:uuid user) session-max-age))
   (assoc session :uuid (:uuid user) :loggedin (:email user) :role (:role user)))
 
 (defn dissoc-user [session]
@@ -120,6 +121,15 @@
 (defn get-redirect-cookie [cookies]
   (:value (cookies "studyflow_redir_to")))
 
+(defn get-login-cookie [uuid]
+  (if cookie-domain
+    {:studyflow_session {:value uuid :domain cookie-domain :max-age session-max-age}}
+    {:studyflow_session {:value uuid :max-age session-max-age}}))
+
+(defn get-authenticated-response [cookies session user]
+  (assoc (redirect-user (get-redirect-cookie cookies) (:role user))
+               :session (assoc-user session user)
+               :cookies (get-login-cookie (:uuid user))))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Controller
 
@@ -136,10 +146,7 @@
   (POST "/login" {db :db cookies :cookies session :session {:keys [email password]} :params}
     (if-let [user (find-user db email)]
       (if (authenticate user password)
-        (assoc (redirect-user (get-redirect-cookie cookies) (:role user))
-               :session (assoc-user session user)
-               :cookies {:studyflow_session {:value (:uuid user) :domain domain :max-age 600}}
-               )
+        (get-authenticated-response cookies session user) 
         (layout "login" (login "wrong email / password combination" email password)))
       (layout "login"  (login "wrong email combination" email password))
       ))
@@ -147,8 +154,7 @@
   (GET "/logout" {session :session}
     (assoc (redirect-to "/")
            :session (dissoc-user session)
-           :cookies {:studyflow_session {:value "" :max-age -1} }
-           ))
+           :cookies {:studyflow_session {:value "" :max-age -1}}))
 
   (not-found "Nothing here"))
 

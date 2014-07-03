@@ -11,7 +11,7 @@ RSpec.describe SubsectionsController, :type => :controller do
   before do
     @course = create(:course)
     session[:course_id] = @course.id
-    controller.set_my_course
+    controller.send :set_my_course
     @chapter = create(:chapter, course: @course)
     @section1 = create(:section, chapter: @chapter)
     @section2 = create(:section, chapter: @chapter)

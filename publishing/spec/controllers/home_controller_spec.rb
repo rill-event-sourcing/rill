@@ -5,7 +5,7 @@ RSpec.describe HomeController, :type => :controller do
   before do
     @course = create(:course)
     session[:course_id] = @course.id
-    controller.set_my_course
+    controller.send :set_my_course
 
     @url = "http://localhost:3000/api/internal/course/#{ @course.id }"
     @headers = { 'Content-Type' => 'application/json' }
@@ -27,7 +27,7 @@ RSpec.describe HomeController, :type => :controller do
 
     it "should throw an error when no course is selected" do
       session[:course_id] = nil
-      controller.unset_my_course
+      controller.send :unset_my_course
       expect{post :publish}.to raise_error(Exception)
     end
 
