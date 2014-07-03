@@ -36,16 +36,8 @@
       (element/link-to "/logout" "logout")]
     body]))
 
-(defn home [session user-list]
-  [:div
-   [:h3 "welcome " (session :loggedin)]
-   [:div
-    (str (count user-list) " users logged in")]
-   [:div
-    (str/join "<br />" user-list)]])
-
 (defn login [msg email password]
-  (form/form-to [:post "/login"]
+  (form/form-to [:post "/"]
     (form/hidden-field "__anti-forgery-token" *anti-forgery-token*)
     [:div
       [:p msg]
@@ -76,32 +68,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn find-user [db email]
-  (first (sql/query db ["SELECT uuid, role, email, password FROM users WHERE email = ?" email])))
+(defn find-user-by-email [db email]
+  (first (sql/query db ["SELECT uuid, role, password FROM users WHERE email = ?" email])))
+
+(defn find-user-by-uuid [db uuid]
+  (first (sql/query db ["SELECT uuid, role FROM users WHERE uuid = ?" uuid])) )
 
 (defn authenticate [user password]
   (bcrypt/check password (:password user)))
 
-(defn expire-session-local [session]
-  (dissoc session :loggedin :role :uuid))
+(defn expire-session [uuid]
+  (wcar* (car/del uuid)))
 
-(defn expire-session-server [session]
-  (wcar* (car/del (:uuid session))))
+(defn set-session [uuid role]
+  (wcar* (car/set uuid role) (car/expire uuid session-max-age)))
 
-(defn assoc-user [session user]
-  (wcar* (car/set (:uuid user) (:role user)) (car/expire (:uuid user) session-max-age))
-  (assoc session :uuid (:uuid user) :loggedin (:email user) :role (:role user)))
-
-(defn dissoc-user [session]
-  (expire-session-server session) 
-  (expire-session-local session))
- 
-(defn logged-in? [session]
-  (if (= (wcar* (car/exists (:uuid session))) 1) 
-      true
-      (do
-        (cond (contains? session :uuid) (expire-session-local session)) 
-        false)))
+(defn logged-in? [uuid]
+  (= (wcar* (car/exists uuid)) 1))
 
 (defn redirect-to [path]
   {:status  302
@@ -121,40 +104,40 @@
 (defn get-redirect-cookie [cookies]
   (:value (cookies "studyflow_redir_to")))
 
+(defn get-uuid-from-cookie [cookies]
+  (:value (cookies "studyflow_session")))
+
 (defn get-login-cookie [uuid]
   (if cookie-domain
     {:studyflow_session {:value uuid :domain cookie-domain :max-age session-max-age}}
     {:studyflow_session {:value uuid :max-age session-max-age}}))
 
-(defn get-authenticated-response [cookies session user]
-  (assoc (redirect-user (get-redirect-cookie cookies) (:role user))
-               :session (assoc-user session user)
-               :cookies (get-login-cookie (:uuid user))))
+(defn get-authenticated-response [cookies user]
+  (assoc (redirect-user (get-redirect-cookie cookies) (:role user)) :cookies (get-login-cookie (:uuid user))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Controller
 
 (defroutes actions
 
-  (GET "/" {db :db session :session}
-    (if (logged-in? session)
-        (layout "home" (home session (logged-in-users)))
-        (response/redirect "/login")))
+  (GET "/" {db :db cookies :cookies params :params}
+    (let [uuid (get-uuid-from-cookie cookies)]
+      (if (logged-in? uuid)
+        (get-authenticated-response cookies (find-user-by-uuid db uuid))
+        (layout "login" (login (:msg params) (:email params) (:password params))))))
 
-  (GET "/login" {session :session params :params}
-    (layout "login" (login (params :msg) (params :email) (params :password) )))
-
-  (POST "/login" {db :db cookies :cookies session :session {:keys [email password]} :params}
-    (if-let [user (find-user db email)]
+  (POST "/" {db :db cookies :cookies {:keys [email password]} :params}
+    (if-let [user (find-user-by-email db email)]
       (if (authenticate user password)
-        (get-authenticated-response cookies session user) 
+        (do
+          (set-session (:uuid user) (:role user))
+          (get-authenticated-response cookies user))
         (layout "login" (login "wrong email / password combination" email password)))
-      (layout "login"  (login "wrong email combination" email password))
-      ))
+      (layout "login"  (login "wrong email combination" email password))))
 
-  (GET "/logout" {session :session}
-    (assoc (redirect-to "/")
-           :session (dissoc-user session)
-           :cookies {:studyflow_session {:value "" :max-age -1}}))
+  (GET "/logout" {cookies :cookies}
+    (expire-session (get-uuid-from-cookie cookies))
+    (assoc (redirect-to "/") :cookies {:studyflow_session {:value "" :max-age -1}}))
 
   (not-found "Nothing here"))
 
@@ -183,4 +166,3 @@
   (->
    (wrap-defaults actions (set-studyflow-site-defaults))
    (wrap-db db)))
-
