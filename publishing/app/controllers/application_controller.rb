@@ -23,10 +23,14 @@ private
   end
 
   def set_redirect_cookie
-    cookies["studyflow_redir_to"] = {
-      value: request.original_url,
-      domain: StudyflowPublishing::Application.config.cookie_domain
-    }
+    if StudyflowPublishing::Application.config.cookie_domain == "localhost"
+      cookies["studyflow_redir_to"] = { value: request.original_url }
+    else
+      cookies["studyflow_redir_to"] = {
+        value: request.original_url,
+        domain: StudyflowPublishing::Application.config.cookie_domain
+      }
+    end
   end
 
   def check_authentication
