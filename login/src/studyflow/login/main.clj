@@ -75,7 +75,7 @@
           (assoc (redirect-to "/") :login-user user)
           (layout "login" (render-login email password "wrong email / password combination"))))
 
-  (GET "/logout" {cookies :cookies}
+  (POST "/logout" {}
        (assoc (redirect-to "/") :logout-user true))
 
   (not-found "Nothing here"))

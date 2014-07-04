@@ -20,12 +20,6 @@
                       (test)
                       (prep-db/clean-table db)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; views
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; models
-
 (deftest actions-test
   (testing "get /"
 
@@ -47,11 +41,13 @@
         (is (= "test" (:redirect-for-role resp))))))
 
   (testing "post /"
+
     (testing "without params"
       (let [resp (actions (assoc ( request :post "/") :authenticate (fn [x y] nil )))]
         (is (= 200 (:status resp)))
         (is (query-html (:body resp) [:p.warning]))
         (is (query-html (:body resp) [:form.login]))))
+
     (testing "not authenticated"
       (let [resp (actions (-> (request :post "/")
                               (assoc :email "something@email.com" 
@@ -59,13 +55,21 @@
                                      :authenticate (fn [x y] nil ))))]
         (is (= 200 (:status resp)))
         (is (query-html (:body resp) [:p.warning]))
-        (is (query-html (:body resp) [:form.login]))) 
-      )
-    (testing "authenticated"))
+        (is (query-html (:body resp) [:form.login]))))
 
-  (testing "get /logout"))
+    (testing "authenticated"
+      (let [resp (actions (-> (request :post "/")
+                              (assoc :email "something@email.com" 
+                                     :password "password"
+                                     :authenticate (fn [x y] "something"))))]
+        (is (= 302 (:status resp)))
+        (is (= "/" ((:headers resp) "Location")))
+        (is (= "something" (:login-user resp))))))
+
+  (testing "post /logout"
+    (let [resp (actions (request :post "/logout"))]
+      (is (= 302 (:status resp)))
+      (is (= "/" ((:headers resp) "Location")))
+      (is (= true (:logout-user resp))))))
 
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; controllers
