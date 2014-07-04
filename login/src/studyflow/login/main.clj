@@ -86,6 +86,9 @@
 (defn logged-in? [uuid]
   (= (wcar* (car/exists uuid)) 1))
 
+(defn user-role [uuid]
+  (wcar* (car/get uuid)))
+
 (defn redirect-to [path]
   {:status  302
    :headers {"Location" path}})
@@ -120,10 +123,9 @@
 
 (defroutes actions
 
-  (GET "/" {db :db logged-in? :logged-in? cookies :cookies params :params}
-    (if logged-in?
-      (let [uuid (get-uuid-from-cookie cookies)]
-        (get-authenticated-response cookies (:role (find-user-by-uuid db uuid)))) 
+  (GET "/" {user-role :user-role cookies :cookies params :params}
+    (if user-role 
+      (get-authenticated-response cookies user-role)
       (layout "login" (login (:msg params) (:email params) (:password params)))))
 
 
@@ -135,7 +137,7 @@
           (do
             (set-session uuid role) ; ! function
             (assoc (get-authenticated-response cookies user) :cookies (get-login-cookie uuid)))
-          (layout "login" (login "wrong email / password combination" email password)))) 
+          (layout "login" (login "wrong email / password combination" email password))))
       (layout "login"  (login "wrong email combination" email password))))
 
   (GET "/logout" {cookies :cookies}
@@ -151,10 +153,10 @@
   (fn [req]
     (app (assoc req :db db))))
 
-(defn wrap-login-state [app]
+(defn wrap-user-role [app]
   (fn [req]
-    (let [login-state (logged-in? (get-uuid-from-cookie (:cookies req)))]
-      (app (assoc req :logged-in? login-state)))))
+    (let [user-role (user-role (get-uuid-from-cookie (:cookies req)))]
+      (app (assoc req :user-role user-role)))))
 
 (def db
   {:classname "org.postgresql.Driver"
@@ -173,6 +175,6 @@
 (def app
   (->
    actions
-   wrap-login-state
+   wrap-user-role
    (wrap-defaults (set-studyflow-site-defaults))
    (wrap-db db)))
