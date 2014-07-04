@@ -1,89 +1,18 @@
 (ns user
   (:require [clojure.tools.logging :refer [info debug spy]]
             [studyflow.system :as sys]
+            [studyflow.system.components.memory-event-store :refer [memory-event-store-component]]
+            [studyflow.system.components.dev-ring-handler :refer [dev-ring-handler-component]]
+            [studyflow.system.components.fixtures-loading :refer [fixtures-loading-component]]
             [studyflow.web :as web]
-            [rill.event-store.memory :refer [memory-store]]
             [com.stuartsierra.component :as component]
             [clojure.test :as test :refer [run-all-tests]]
             [clojure.tools.trace :refer [trace trace-ns]]
-            [clojure.tools.namespace.repl :refer (refresh)]
-            [clojure.string :as string]
-            [ring.mock.request :as ring-mock]
-            [studyflow.web.routes :as routes]
-            [clout-link.route :as route])
+            [clojure.tools.namespace.repl :refer (refresh)])
   (:import [org.apache.log4j Logger]))
-
-(defn wrap-dev-cljs [handler match replace]
-  (fn [req]
-    (let [res (handler req)]
-      (if (and (.startsWith (get-in res [:headers "Content-Type"] "") "text/html" )
-               (not (.contains ^String (str "" (get req :query-string)) "prod")))
-        (-> res
-            (update-in [:body]
-                       (fn [body]
-                         (-> body
-                             (cond->
-                              (not (string? body))
-                              slurp)
-                             (string/replace match replace))))
-            (update-in [:headers] dissoc "Content-Length" "Last-Modified"))
-        res))))
-
-(defrecord DevRingHandlerComponent [event-store read-model]
-  component/Lifecycle
-  (start [component]
-    (info "Starting handler")
-    (assoc component :handler
-           (-> (web/make-request-handler (:store event-store) (:read-model read-model))
-               (wrap-dev-cljs
-                "<script src=\"/public/js/studyflow.js\" type=\"text/javascript\"></script>"
-                "<script src=\"http://fb.me/react-0.9.0.js\" type=\"text/javascript\"></script>
-                 <script src=\"/public/js/studyflow-dev.js\" type=\"text/javascript\"></script>
-                 <script type=\"text/javascript\">goog.require('studyflow.web.core');</script>"))))
-  (stop [component]
-    (info "Stopping handler")
-    component))
-
-(defn dev-ring-handler-component []
-  (map->DevRingHandlerComponent {}))
-
-
-(defrecord FixturesLoadingComponent [ring-handler]
-  component/Lifecycle
-  (start [component]
-    (info "Starting fixtures-loading-component")
-    (let [handler (:handler ring-handler)
-          materials (slurp "test/studyflow/material.json")
-          course-id (let [[_ rest] (.split ^String materials ":")
-                          [quoted-id] (.split ^String rest ",")
-                          [_ id] (.split ^String quoted-id "\"")]
-                      id)]
-      (handler (-> (ring-mock/request :put (route/uri-for routes/update-course-material course-id)
-                                      materials)
-                   (ring-mock/content-type "application/json"))))
-    component)
-  (stop [component]
-    (info "Stopping fixtures-loading-component, not removing anything")
-    component))
-
-(defn fixtures-loading-component []
-  (map->FixturesLoadingComponent {}))
 
 (def dev-config (merge sys/prod-config
                        {}))
-
-(defrecord MemoryEventStoreComponent []
-  component/Lifecycle
-  (start [component]
-    (info "Starting in-memory event-store")
-    (assoc component :store (memory-store)))
-  (stop [component]
-    (info "Stopping in-memory event-store")
-    component))
-
-(defn memory-event-store-component []
-  (->MemoryEventStoreComponent))
-
 
 (defn dev-system [dev-options]
   (merge (sys/prod-system dev-options)
