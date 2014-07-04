@@ -72,4 +72,24 @@
       (is (= "/" ((:headers resp) "Location")))
       (is (= true (:logout-user resp))))))
 
+(deftest wrap-authenticator-test
+  (let [handler (wrap-authenticator identity "testdb")]
+    (is (fn? (:authenticate (handler {}))))))
 
+(deftest wrap-login-user-test
+  (let [handler (wrap-login-user identity)]
+    (is (= {} (handler {})))
+    (let [uuid "testuuid"
+          role "testrole"
+          resp (handler {:login-user {:uuid uuid, :role role}})]
+      (is (:cookies resp)) 
+      (is (= {:studyflow_session {:value uuid, :max-age session-max-age }} (:cookies resp)))
+      (is (= role (role-for-uuid uuid))))))
+
+(deftest wrap-logout-user-test
+  (let [handler (wrap-logout-user identity)]
+    (is (= {} (handler {})))
+    (let [resp (handler {:logout-user true, :cookies {:studyflow_session {:value "test", :max-age 123 }}})]
+      (is (:cookies resp))
+      (is (= {:studyflow_session {:value nil, :max-age -1}} (:cookies resp))))
+    ))
