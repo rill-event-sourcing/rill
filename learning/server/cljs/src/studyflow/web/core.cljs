@@ -2,7 +2,8 @@
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [studyflow.web.service :as service]
-            [clojure.string :as string]))
+            [clojure.string :as string]
+            [cljs.core.async :as async]))
 
 
 (enable-console-print!)
@@ -11,8 +12,9 @@
   (let [loc (.. js/document -location -pathname)]
     (last (string/split loc "/"))))
 
-(def app-state (atom {:course-id  (course-id-for-page)}))
-
+(def app-state (atom {:static {:course-id (course-id-for-page)}
+                      :view {}
+                      :aggregates {}}))
 
 (defn navigation [cursor owner]
   (reify
@@ -21,7 +23,7 @@
       (println "Navigation will mount"))
     om/IRender
     (render [_]
-      (if-let [course (get cursor :course-material)]
+      (if-let [course (get-in cursor [:view :course-material])]
         (dom/div nil
                  (dom/h1 #js {:data-id (:id course)} (:name course))
                  (apply dom/ul nil
@@ -34,14 +36,16 @@
                                          (for [{:keys [title]
                                                 section-id :id
                                                 :as section} sections]
-                                           (dom/a #js {:href (str "#section-" section-id)
+                                           (dom/a #js {:href (str "#chapter-" chapter-id "section-" section-id)
                                                        :onClick
                                                        (fn [_]
                                                          (om/update! cursor
-                                                                     :selected-section
+                                                                     [:view :selected-section]
                                                                      [chapter-id section-id]))}
                                                   (dom/li #js {:data-id section-id}
-                                                          title))))))))
+                                                          title
+                                                          (when (= section-id
+                                                                   (get-in cursor [:view :selected-section 1])) "[selected]")))))))))
         (dom/h2 nil "No content ... spinner goes here")))
     om/IWillUnmount
     (will-unmount [_]
@@ -49,61 +53,77 @@
 
 (defn question-by-id [cursor section-id id]
   (first (filter #(= id (:id %))
-                 (get-in cursor [:section section-id :data :questions]))))
+                 (get-in cursor [:view :section section-id :data :questions]))))
+
+(defn click-once-button [value onclick]
+  (fn [cursor owner]
+    (reify
+     om/IRender
+     (render [_]
+       (dom/button #js {:onClick
+                        (fn [_]
+                          (onclick)
+                          (om/set-state! owner :disabled true))}
+                   value
+                   (when (om/get-state owner :disabled)
+                     "[DISABLED]"))))))
 
 (defn section-test [cursor owner]
   (reify
     om/IRender
     (render [_]
       (dom/div #js {:className "section-test"}
-               (let [[_ section-id] (get-in cursor [:selected-section])]
-                 (if-let [section-test (get-in cursor [:section section-id :test])]
-                   (if-let [question-id (:test-question-id section-test)]
-                     (let [question (question-by-id cursor section-id question-id)
-                           text (:text question)
+               (let [[_ section-id] (get-in cursor [:view :selected-section])]
+                 (if-let [section-test-id (get-in cursor [:view :section section-id :test :id])]
+                   (if-let [section-test (get-in cursor [:aggregates section-test-id])]
+                     (let [question (peek (:questions section-test))
+                           question-id (:question-id question)
+                           ;; question should be in aggregate?
+                           question-data (question-by-id cursor section-id question-id)
+                           text (:text question-data)
                            first-part (.replace text (re-pattern (str "__INPUT_1__.*$")) "")
                            last-part (.replace text (re-pattern (str "^.*__INPUT_1__")) "")
-                           current-answer (get-in cursor [:section section-id :test :questions question-id :answer])
-                           current-answer-correct (get-in cursor [:section section-id :test :questions question-id :correct])]
+                           current-answer (get-in cursor [:view :section section-id :test :questions question-id :answer])
+                           current-answer-correct (when (contains? question :correct)
+                                                    (:correct question))]
                        (dom/div nil
                                 (dom/div #js {:dangerouslySetInnerHTML #js {:__html first-part}} nil)
-                                (dom/input #js {:value current-answer
-                                                :onChange (fn [event]
-                                                            (om/transact!
-                                                             cursor
-                                                             [:section section-id :test :questions]
-                                                             #(assoc-in % [question-id :answer] (.. event -target -value))))})
+                                (if current-answer-correct
+                                  (dom/div nil current-answer)
+                                  (dom/input #js {:value current-answer
+                                                  :onChange (fn [event]
+                                                              (om/transact!
+                                                               cursor
+                                                               [:view :section section-id :test :questions]
+                                                               #(assoc-in % [question-id :answer] (.. event -target -value))))}))
                                 (when-not (nil? current-answer-correct)
                                   (dom/div nil (str "Marked as: " current-answer-correct
                                                     (when current-answer-correct
                                                       " have some balloons"))))
                                 (dom/div #js {:dangerouslySetInnerHTML #js {:__html last-part}} nil)
                                 (when (seq current-answer)
-                                  (let [section-test-id (:test-id section-test)
-                                        course-id (:course-id cursor)]
+                                  (let [course-id (get-in cursor [:static :course-id])]
                                     (if current-answer-correct
                                       (dom/button #js {:onClick (fn []
+                                                                  (async/put! (om/get-shared owner :command-channel)
+                                                                                 ["section-test-commands/next-question"
+                                                                                  section-test-id])
                                                                   (prn "next question command"))}
                                                   "Next Question")
-                                      (dom/button #js {:onClick (fn []
-                                                                  (om/transact! cursor
-                                                                                [:command-queue]
-                                                                                #(conj %
-                                                                                       ["section-test-commands/check-answer"
-                                                                                        section-test-id
-                                                                                        section-id
-                                                                                        course-id
-                                                                                        question-id
-                                                                                        {"__INPUT_1__" current-answer}]
-                                                                                       )))}
-                                                  "Check"))))))
-                     "Loading question")
-                   (dom/button #js {:onClick
-                                    (fn [_]
-                                      (om/update! cursor
-                                                  [:section section-id :test]
-                                                  {}))}
-                               "Start test for this section")))))))
+                                      (om/build (click-once-button "Check"
+                                                                   (fn []
+                                                                     (async/put! (om/get-shared owner :command-channel)
+                                                                                 ["section-test-commands/check-answer"
+                                                                                  section-test-id
+                                                                                  section-id
+                                                                                  course-id
+                                                                                  question-id
+                                                                                  {"__INPUT_1__" current-answer}]))) cursor))))))
+                    "Loading test...")
+                   (om/build (click-once-button "Start test for this section"
+                                                (fn []
+                                                  (async/put! (om/get-shared owner :command-channel)
+                                                              ["section-test-commands/init" section-id]))) cursor)))))))
 
 (defn section-tabs [cursor owner]
   (reify
@@ -118,28 +138,40 @@
                                        :questions "Questions"}]
                         (if (= (:selected state) k)
                           (dom/li nil title)
-                          (dom/a #js {:href "#"
-                                      :onClick (fn [_]
+                          (dom/a #js {:onClick (fn [_]
                                                  (om/set-state! owner :selected k))}
                                  (dom/li nil title)))))
                (if (= (:selected state) :explanation)
-                 (let [[_ section-id] (get-in cursor [:selected-section])
-                       section (get-in cursor [:section section-id :data])
+                 (let [[_ section-id] (get-in cursor [:view :selected-section])
+                       section (get-in cursor [:view :section section-id :data])
                        text (get-in section [:subsections-by-level :1-star])]
                    (dom/div nil (pr-str text)))
                  (om/build section-test cursor))))))
+
+(defn inspect [cursor owner]
+  (reify
+    om/IRender
+    (render [_]
+      (dom/div nil
+               (str "Cursor: " (pr-str (-> cursor
+                                           (update-in [:view :course-material] (fn [s] (str (subs (pr-str s) 0 5) "...truncated...")))
+                                           (update-in [:view :section]
+                                                      (fn [s]
+                                                        (zipmap (keys s)
+                                                                (map (fn [sc] (update-in sc [:data] #(str (subs (pr-str %) 0 5) "...truncated..."))) (vals s))))))))))))
 
 
 (defn content [cursor owner]
   (reify
     om/IRender
     (render [_]
-      (if-let [[_ section-id] (get-in cursor [:selected-section])]
-        (if-let [section-data (get-in cursor [:section section-id :data])]
+      (if-let [[chapter-id section-id] (get-in cursor [:view :selected-section])]
+        (if-let [section-data (get-in cursor [:view :section section-id :data])]
           (dom/div #js {:id (str "section-" section-id)}
                    (dom/h2 nil (:title section-data))
-                   (om/build section-tabs cursor))
-          (dom/h2 nil (str "Selected data not yet loaded" section-id)))
+                   (om/build section-tabs cursor)
+                   (om/build inspect cursor))
+          (dom/h2 nil (str "Selected data not yet loaded" [chapter-id section-id])))
         (dom/h2 nil "No section selected")))))
 
 (defn widgets [cursor owner]
@@ -161,4 +193,5 @@
    (service/wrap-service widgets)
    app-state
    {:target (. js/document (getElementById "app"))
-    :tx-listen service/listen}))
+    :tx-listen service/listen
+    :shared {:command-channel (async/chan)}}))
