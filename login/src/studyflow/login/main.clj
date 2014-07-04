@@ -74,13 +74,15 @@
 (defn find-user-by-uuid [db uuid]
   (first (sql/query db ["SELECT uuid, role FROM users WHERE uuid = ?" uuid])) )
 
-(defn authenticate [user password]
-  (bcrypt/check password (:password user)))
+(defn authenticate [db email password]
+  (let [user (find-user-by-email db email)] 
+    (if (bcrypt/check password (:password user))
+      [(:uuid user) (:role user)])))
 
 (defn expire-session [uuid]
   (wcar* (car/del uuid)))
 
-(defn set-session [uuid role]
+(defn set-session! [uuid role]
   (wcar* (car/set uuid role) (car/expire uuid session-max-age)))
 
 (defn logged-in? [uuid]
@@ -123,22 +125,18 @@
 
 (defroutes actions
 
-  (GET "/" {user-role :user-role cookies :cookies params :params}
-    (if user-role 
+  (GET "/" {:keys [user-role cookies params]}
+    (if user-role
       (get-authenticated-response cookies user-role)
       (layout "login" (login (:msg params) (:email params) (:password params)))))
 
-
   (POST "/" {db :db cookies :cookies {:keys [email password]} :params}
-    (if-let [user (find-user-by-email db email)] 
-      (let [uuid (:uuid user) 
-            role (:role user)] 
-        (if (authenticate user password)
-          (do
-            (set-session uuid role) ; ! function
-            (assoc (get-authenticated-response cookies user) :cookies (get-login-cookie uuid)))
-          (layout "login" (login "wrong email / password combination" email password))))
-      (layout "login"  (login "wrong email combination" email password))))
+    (let [[uuid role] (authenticate db email password)]
+      (if uuid
+        (do
+            (set-session! uuid role)
+            (assoc (get-authenticated-response cookies role) :cookies (get-login-cookie uuid)))))
+        (layout "login" (login "wrong email / password combination" email password)))
 
   (GET "/logout" {cookies :cookies}
     (expire-session (get-uuid-from-cookie cookies))
@@ -153,6 +151,11 @@
   (fn [req]
     (app (assoc req :db db))))
 
+#_ (defn wrap-uuid [app]
+  (fn [req]
+    (let [resp (app req)]
+      (if (:uuid req)))))
+
 (defn wrap-user-role [app]
   (fn [req]
     (let [user-role (user-role (get-uuid-from-cookie (:cookies req)))]
@@ -161,8 +164,8 @@
 (def db
   {:classname "org.postgresql.Driver"
    :subprotocol "postgresql"
-   :subname (env :db-subname) 
-   :user (env :db-user) 
+   :subname (env :db-subname)
+   :user (env :db-user)
    :password (env :db-password)})
 
 (defn count-users  [db]
