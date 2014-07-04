@@ -132,11 +132,10 @@
 
   (POST "/" {db :db cookies :cookies {:keys [email password]} :params}
     (let [[uuid role] (authenticate db email password)]
+      (log/info role)
       (if uuid
-        (do
-            (set-session! uuid role)
-            (assoc (get-authenticated-response cookies role) :cookies (get-login-cookie uuid)))))
-        (layout "login" (login "wrong email / password combination" email password)))
+        (assoc (get-authenticated-response cookies role) :uuid uuid :user-role role )
+        (layout "login" (login "wrong email / password combination" email password)))))
 
   (GET "/logout" {cookies :cookies}
     (expire-session (get-uuid-from-cookie cookies))
@@ -151,10 +150,14 @@
   (fn [req]
     (app (assoc req :db db))))
 
-#_ (defn wrap-uuid [app]
+(defn wrap-uuid [app]
   (fn [req]
     (let [resp (app req)]
-      (if (:uuid req)))))
+      (if (:uuid resp)
+        (do
+          (set-session! (:uuid resp) (:user-role resp))
+          (assoc resp :cookies (get-login-cookie (:uuid resp))))
+        resp))))
 
 (defn wrap-user-role [app]
   (fn [req]
@@ -179,5 +182,6 @@
   (->
    actions
    wrap-user-role
+   wrap-uuid
    (wrap-defaults (set-studyflow-site-defaults))
    (wrap-db db)))
