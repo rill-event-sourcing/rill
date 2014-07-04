@@ -24,49 +24,49 @@
       "section-test-commands/init"
       (let [[section-id] args
             course-id (get-in @cursor [:static :course-id])
-            section-test-id (. (uuid/make-random) -uuid)]
-        (om/update! cursor
-                    [:view :section section-id :test :id]
-                    section-test-id)
+            section-test-id (str "student-idDEFAULT_STUDENT_IDsection-id" section-id)]
         (PUT (str "/api/section-test-init/" course-id "/" section-id "/" section-test-id)
-             {:handler (fn [res]
-                         (let [events (:events (json-edn/json->edn res))
-                               section-test-id (:section-test-id (find-event "/Created" events))
-                               question-id (:question-id (find-event "/QuestionAssigned" events))]
+             {:format :json
+              :handler (fn [res]
+                         (let [events (:events (json-edn/json->edn res))]
                            (om/transact! cursor
                                          [:aggregates section-test-id]
                                          (fn [agg]
                                            (prn "playing events on: " agg " with aggr-id " section-test-id " with events: " events)
-                                           (aggregates/apply-events agg events)))))}))
-     "section-test-commands/check-answer"
-     (let [[section-test-id section-id course-id question-id inputs] args]
-       (PUT (str "/api/section-test-check-answer/" section-test-id "/"  section-id "/" course-id "/" question-id)
-            {:params inputs
-             :format :json
-             :handler (fn [res]
-                        (let [events (:events (json-edn/json->edn res))]
-                          (om/transact! cursor
-                                        [:aggregates section-test-id]
-                                        (fn [agg]
-                                          (prn "playing events on: " agg " with aggr-id " section-test-id " with events: " events)
-                                          (let [res (aggregates/apply-events agg events)]
-                                            (prn "RES: " res)
-                                            res)))))}))
-     "section-test-commands/next-question"
-     (let [[section-test-id] args]
-       ;; mock server response
-       (let [events [{:id (. (uuid/make-random) -uuid)
-                      :type "studyflow.learning.section-test.events/QuestionAssigned"
-                      :question-id "b117bf7b-8025-43ea-b6d3-aa636d6b6042"
-                      :section-test-id section-test-id}]]
-         (om/transact! cursor
-                       [:aggregates section-test-id]
-                       (fn [agg]
-                         (prn "playing events on: " agg " with aggr-id " section-test-id " with events: " events)
-                         (let [res (aggregates/apply-events agg events)]
-                           (prn "RES: " res)
-                           res)))))
-     nil)))
+                                           (let [res (aggregates/apply-events agg events)]
+                                             (prn "RES: " res)
+                                             res)))))
+              }))
+
+      "section-test-commands/check-answer"
+      (let [[section-test-id section-id course-id question-id inputs] args]
+        (PUT (str "/api/section-test-check-answer/" section-test-id "/"  section-id "/" course-id "/" question-id)
+             {:params inputs
+              :format :json
+              :handler (fn [res]
+                         (let [events (:events (json-edn/json->edn res))]
+                           (om/transact! cursor
+                                         [:aggregates section-test-id]
+                                         (fn [agg]
+                                           (prn "playing events on: " agg " with aggr-id " section-test-id " with events: " events)
+                                           (let [res (aggregates/apply-events agg events)]
+                                             (prn "RES: " res)
+                                             res)))))}))
+      "section-test-commands/next-question"
+      (let [[section-test-id] args]
+        (let [[section-test-id section-id course-id] args]
+          (PUT (str "/api/section-test-next-question/" section-test-id "/"  section-id "/" course-id)
+               {:format :json
+                :handler (fn [res]
+                           (let [events (:events (json-edn/json->edn res))]
+                             (om/transact! cursor
+                                           [:aggregates section-test-id]
+                                           (fn [agg]
+                                             (prn "playing events on: " agg " with aggr-id " section-test-id " with events: " events)
+                                             (let [res (aggregates/apply-events agg events)]
+                                               (prn "RES: " res)
+                                               res)))))})))
+      nil)))
 
 ;; a bit silly to use an Om component for something that is not UI,
 ;; but don't know how to participate in state managament otherwise
@@ -125,9 +125,7 @@
        (if-let [section-data (get-in new-state [:view :section section-id :data])]
          nil ;; data already loaded
          (do
-           (let [section-test-id (get-in new-state [:view :section section-id :test :id])]
-             ;; where to get the section-test-id from? this won't be
-             ;; on the client after reload
+           (let [section-test-id (str "student-idDEFAULT_STUDENT_IDsection-id" section-id)]
              (prn "Load aggregate: " section-test-id)
              (when-not (contains? (get-in new-state [:aggregates section-test-id]))
                (GET (str "/api/section-test-replay/" section-test-id)

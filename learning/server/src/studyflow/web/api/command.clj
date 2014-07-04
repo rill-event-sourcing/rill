@@ -27,7 +27,7 @@ commands."
    (clout/handle
     routes/section-test-init
     (fn [{{:keys [section-test-id section-id course-id]} :params :as params}]
-      (section-test-commands/init! (uuid section-test-id)
+      (section-test-commands/init! section-test-id
                                    (uuid section-id)
                                    (uuid course-id))))
 
@@ -35,7 +35,7 @@ commands."
     routes/section-test-check-answer
     (fn [{{:keys [section-test-id section-id course-id question-id]} :params body :body}]
       (let [inputs body]
-        (section-test-commands/check-answer! (uuid section-test-id)
+        (section-test-commands/check-answer! section-test-id
                                              (uuid section-id)
                                              (uuid course-id)
                                              (uuid question-id)
