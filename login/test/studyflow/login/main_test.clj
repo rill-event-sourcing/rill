@@ -8,10 +8,10 @@
 
 (defn query-html [data pattern]
   (seq (enlive/select
-          (if (string? data)
-            (enlive/html-snippet data)
-            data) 
-          pattern)))
+        (if (string? data)
+          (enlive/html-snippet data)
+          data)
+        pattern)))
 
 (use-fixtures :each (fn [test]
                       (prep-db/clean-table db)
@@ -27,32 +27,32 @@
 ;; models
 
 (deftest test-logged-in-users
-  (let [user (find-user-by-email db "editor@studyflow.nl")] 
-    (set-session! (:uuid user) (:role user))) 
+  (let [user (find-user-by-email db "editor@studyflow.nl")]
+    (set-session! (:uuid user) (:role user)))
   (let [data (logged-in-users)]
     (testing "logged-in-users-users should give a list of logged in users"
       (is (= 1 (count data))))))
 
 (deftest actions-test
   (testing "get /"
-  (testing "not logged in"
-    (let [resp (actions  (request :get "/"))]
-    (is (= 200 (:status resp)) "status should be OK")
-    (let [form (query-html (:body resp) [[:form.login]])]
-      (is form)
-      (is (query-html form [[(enlive/attr= :method "POST")]])) 
-      (is (query-html form [[(enlive/attr= :action "/")]])) 
-      (is (query-html form [[:input (enlive/attr= :name "password")]])) 
-      (is (query-html form [[:input (enlive/attr= :name "email")]])) 
-      (is (query-html form [[(enlive/attr= :type "submit")]]))))) 
-  (testing "logged in"
-    (let [resp (assoc (actions (request :get "/")) :user-role "test")]
-     (is (= 302 (:status resp))) ))))
+
+    (testing "not logged in"
+      (let [resp (actions  (request :get "/"))]
+        (is (= 200 (:status resp)) "status should be OK")
+        (let [form (query-html (:body resp) [[:form.login]])]
+          (is form)
+          (is (query-html form [[(enlive/attr= :method "POST")]]))
+          (is (query-html form [[(enlive/attr= :action "/")]]))
+          (is (query-html form [[:input (enlive/attr= :name "password")]]))
+          (is (query-html form [[:input (enlive/attr= :name "email")]]))
+          (is (query-html form [[(enlive/attr= :type "submit")]])))))
+
+    (testing "logged in"
+      (let [resp (actions (assoc (request :get "/")
+                            :user-role "test"
+                            :cookies {}))]
+        (is (= "test" (:redirect-for-role resp)))))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; controllers
-
-
-
-

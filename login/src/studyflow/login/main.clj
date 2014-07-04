@@ -75,7 +75,7 @@
   (first (sql/query db ["SELECT uuid, role FROM users WHERE uuid = ?" uuid])) )
 
 (defn authenticate [db email password]
-  (let [user (find-user-by-email db email)] 
+  (let [user (find-user-by-email db email)]
     (if (bcrypt/check password (:password user))
       user)))
 
@@ -88,23 +88,8 @@
 (defn user-role [uuid]
   (wcar* (car/get uuid)))
 
-(defn redirect-to [path]
-  {:status  302
-   :headers {"Location" path}})
-
-(defn default-redirect-path [role]
-  (case role
-    "editor" publishing-url
-    "tester" "https://staging.studyflow.nl"
-    "/"))
-
-(defn redirect-user [cookie-path role]
-  (if cookie-path
-    (redirect-to cookie-path) 
-    (redirect-to (default-redirect-path role))))
-
-(defn get-redirect-cookie [cookies]
-  (:value (cookies "studyflow_redir_to")))
+(def default-redirect-path {"editor" publishing-url
+                            "tester" "https://staging.studyflow.nl"})
 
 (defn get-uuid-from-cookie [cookies]
   (:value (get cookies "studyflow_session")))
@@ -114,27 +99,27 @@
     {:studyflow_session {:value uuid :domain cookie-domain :max-age session-max-age}}
     {:studyflow_session {:value uuid :max-age session-max-age}}))
 
-(defn get-authenticated-response [cookies role]
-  (redirect-user (get-redirect-cookie cookies) role))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Controller
 
-(defroutes actions
+(defn redirect-to [path]
+  {:status  302
+   :headers {"Location" path}})
 
-  (GET "/" {:keys [user-role cookies params]}
-    (if user-role
-      (get-authenticated-response cookies user-role)
-      (layout "login" (login (:msg params) (:email params) (:password params)))))
+(defroutes actions
+  (GET "/" {:keys [user-role params]}
+       (if user-role
+         {:redirect-for-role user-role}
+         (layout "login" (login (:msg params) (:email params) (:password params)))))
 
   (POST "/" {authenticate :authenticate {:keys [email password]} :params}
-    (if-let [user (authenticate email password)] 
-      (assoc (redirect-to "/") :login-user user)
-      (layout "login" (login "wrong email / password combination" email password))))
+        (if-let [user (authenticate email password)]
+          (assoc (redirect-to "/") :login-user user)
+          (layout "login" (login "wrong email / password combination" email password))))
 
   (GET "/logout" {cookies :cookies}
-    (expire-session (get-uuid-from-cookie cookies))
-    (assoc (redirect-to "/") :cookies {:studyflow_session {:value "" :max-age -1}}))
+       (expire-session (get-uuid-from-cookie cookies))
+       (assoc (redirect-to "/") :cookies {:studyflow_session {:value "" :max-age -1}}))
 
   (not-found "Nothing here"))
 
@@ -159,6 +144,15 @@
     (let [user-role (user-role (get-uuid-from-cookie (:cookies req)))]
       (app (assoc req :user-role user-role)))))
 
+(defn wrap-redirect-for-role [app]
+  (fn [req]
+    (let [cookies (:cookies req)
+          resp (app req)]
+      (if-let [user-role (:redirect-for-role resp)]
+        (redirect-to (or (:value (cookies "studyflow_redir_to"))
+                         (default-redirect-path user-role)))
+        resp))))
+
 (def db
   {:classname "org.postgresql.Driver"
    :subprotocol "postgresql"
@@ -174,7 +168,8 @@
 (def app
   (->
    actions
-   wrap-user-role
    wrap-login-user
+   wrap-redirect-for-role
+   wrap-user-role
    (wrap-defaults (set-studyflow-site-defaults))
    (wrap-authenticator db)))
