@@ -32,10 +32,10 @@
     (testing "not logged in"
       (let [resp (actions  (request :get "/"))]
         (is (= 200 (:status resp)) "status should be OK")
-        (let [form (query-html (:body resp) [[:form.login]])]
+        (is (not (query-html (:body resp) [:p.warning])))
+        (let [form (query-html (:body resp) [:form.login])]
           (is form)
-          (is (query-html form [[(enlive/attr= :method "POST")]]))
-          (is (query-html form [[(enlive/attr= :action "/")]]))
+          (is (query-html form [[(enlive/attr= :method "POST" :action "/")]]))
           (is (query-html form [[:input (enlive/attr= :name "password")]]))
           (is (query-html form [[:input (enlive/attr= :name "email")]]))
           (is (query-html form [[(enlive/attr= :type "submit")]])))))
@@ -44,7 +44,27 @@
       (let [resp (actions (assoc (request :get "/")
                             :user-role "test"
                             :cookies {}))]
-        (is (= "test" (:redirect-for-role resp)))))))
+        (is (= "test" (:redirect-for-role resp))))))
+
+  (testing "post /"
+    (testing "without params"
+      (let [resp (actions (assoc ( request :post "/") :authenticate (fn [x y] nil )))]
+        (is (= 200 (:status resp)))
+        (is (query-html (:body resp) [:p.warning]))
+        (is (query-html (:body resp) [:form.login]))))
+    (testing "not authenticated"
+      (let [resp (actions (-> (request :post "/")
+                              (assoc :email "something@email.com" 
+                                     :password "password"
+                                     :authenticate (fn [x y] nil ))))]
+        (is (= 200 (:status resp)))
+        (is (query-html (:body resp) [:p.warning]))
+        (is (query-html (:body resp) [:form.login]))) 
+      )
+    (testing "authenticated"))
+
+  (testing "get /logout"))
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

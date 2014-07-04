@@ -42,12 +42,12 @@
      (element/link-to "/logout" "logout")]
     body]))
 
-(defn login [msg email password]
+(defn render-login [email password & [msg]]
   (form/form-to
    {:class "login" } [:post "/"]
    (form/hidden-field "__anti-forgery-token" *anti-forgery-token*)
    [:div
-    [:p msg]
+    (if msg [:p.warning msg])
     [:div
      (form/label "email" "email")
      (form/email-field "email" email)]
@@ -68,12 +68,12 @@
   (GET "/" {:keys [user-role params]}
        (if user-role
          {:redirect-for-role user-role}
-         (layout "login" (login (:msg params) (:email params) (:password params)))))
+         (layout "login" (render-login (:email params) (:password params)))))
 
   (POST "/" {authenticate :authenticate {:keys [email password]} :params}
         (if-let [user (authenticate email password)]
           (assoc (redirect-to "/") :login-user user)
-          (layout "login" (login "wrong email / password combination" email password))))
+          (layout "login" (render-login email password "wrong email / password combination"))))
 
   (GET "/logout" {cookies :cookies}
        (assoc (redirect-to "/") :logout-user true))
