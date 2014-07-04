@@ -2,6 +2,7 @@
   (:require [clojure.tools.logging :refer [info debug spy]]
             [studyflow.system :as sys]
             [studyflow.web :as web]
+            [rill.event-store.memory :refer [memory-store]]
             [com.stuartsierra.component :as component]
             [clojure.test :as test :refer [run-all-tests]]
             [clojure.tools.trace :refer [trace trace-ns]]
@@ -71,11 +72,27 @@
 (def dev-config (merge sys/prod-config
                        {}))
 
+(defrecord MemoryEventStoreComponent []
+  component/Lifecycle
+  (start [component]
+    (info "Starting in-memory event-store")
+    (assoc component :store (memory-store)))
+  (stop [component]
+    (info "Stopping in-memory event-store")
+    component))
+
+(defn memory-event-store-component []
+  (->MemoryEventStoreComponent))
+
+
 (defn dev-system [dev-options]
   (merge (sys/prod-system dev-options)
          {:ring-handler (component/using
                          (dev-ring-handler-component)
                          [:event-store :read-model])
+          :event-store (component/using
+                        (memory-event-store-component)
+                        [])
           :fixtures-loading (component/using
                              (fixtures-loading-component)
                              [:ring-handler])}))
