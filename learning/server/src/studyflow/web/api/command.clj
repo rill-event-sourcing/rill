@@ -39,7 +39,13 @@ commands."
                                              (uuid section-id)
                                              (uuid course-id)
                                              (uuid question-id)
-                                             inputs))))))
+                                             inputs))))
+      (clout/handle
+    routes/section-test-next-question
+    (fn [{{:keys [section-test-id section-id course-id]} :params body :body}]
+      (section-test-commands/next-question! section-test-id
+                                            (uuid section-id)
+                                            (uuid course-id))))))
 
 (defn make-request-handler
   [event-store]
