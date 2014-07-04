@@ -3,30 +3,28 @@
             [hiccup.core :as hiccup]
             [net.cgrand.enlive-html :as enlive]
             [studyflow.login.main :refer :all]
-            [studyflow.login.prepare-database :as prep-db]))
+            [studyflow.login.prepare-database :as prep-db]
+            [ring.mock.request :refer [request]]))
 
-(defn query-hiccup [data pattern]
-  (enlive/select (enlive/html-snippet (hiccup/html data)) pattern))
-
-(defn query-hiccup-content [data pattern]
-  (apply str (:content (first (query-hiccup data pattern)))))
+(defn query-html [data pattern]
+  (seq (enlive/select
+          (if (string? data)
+            (enlive/html-snippet data)
+            data) 
+          pattern)))
 
 (use-fixtures :each (fn [test]
                       (prep-db/clean-table db)
                       (wcar* (taoensso.carmine/flushdb))
                       (prep-db/seed-table db)
                       (test)
-                      (prep-db/clean-table db)
-                      ))
+                      (prep-db/clean-table db)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; views
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; models
-(deftest test-count-users
-  (let [data (count-users db)]
-    (testing "counting-users should give a count of the users"
-      (is (= 4 data)))))
 
 (deftest test-logged-in-users
   (let [user (find-user-by-email db "editor@studyflow.nl")] 
@@ -35,13 +33,21 @@
     (testing "logged-in-users-users should give a list of logged in users"
       (is (= 1 (count data))))))
 
-(deftest test-create-user
-  (let [data (create-user db "tester" "tester@test.nl" "secret")]
-    (testing "create-user should add a new user to the database"
-      (is (= 5 (count-users db)))
-      )
-    )
-  )
+(deftest actions-test
+  (testing "get /"
+  (testing "not logged in"
+    (let [resp (actions  (request :get "/"))]
+    (is (= 200 (:status resp)) "status should be OK")
+    (let [form (query-html (:body resp) [[:form.login]])]
+      (is form)
+      (is (query-html form [[(enlive/attr= :method "POST")]])) 
+      (is (query-html form [[(enlive/attr= :action "/")]])) 
+      (is (query-html form [[:input (enlive/attr= :name "password")]])) 
+      (is (query-html form [[:input (enlive/attr= :name "email")]])) 
+      (is (query-html form [[(enlive/attr= :type "submit")]]))))) 
+  (testing "logged in"
+    (let [resp (assoc (actions (request :get "/")) :user-role "test")]
+     (is (= 302 (:status resp))) ))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

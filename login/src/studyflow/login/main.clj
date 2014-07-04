@@ -37,7 +37,7 @@
     body]))
 
 (defn login [msg email password]
-  (form/form-to [:post "/"]
+  (form/form-to {:class "login" } [:post "/"]
     (form/hidden-field "__anti-forgery-token" *anti-forgery-token*)
     [:div
       [:p msg]
@@ -77,16 +77,13 @@
 (defn authenticate [db email password]
   (let [user (find-user-by-email db email)] 
     (if (bcrypt/check password (:password user))
-      [(:uuid user) (:role user)])))
+      user)))
 
 (defn expire-session [uuid]
   (wcar* (car/del uuid)))
 
 (defn set-session! [uuid role]
   (wcar* (car/set uuid role) (car/expire uuid session-max-age)))
-
-(defn logged-in? [uuid]
-  (= (wcar* (car/exists uuid)) 1))
 
 (defn user-role [uuid]
   (wcar* (car/get uuid)))
@@ -130,12 +127,10 @@
       (get-authenticated-response cookies user-role)
       (layout "login" (login (:msg params) (:email params) (:password params)))))
 
-  (POST "/" {db :db cookies :cookies {:keys [email password]} :params}
-    (let [[uuid role] (authenticate db email password)]
-      (log/info role)
-      (if uuid
-        (assoc (get-authenticated-response cookies role) :uuid uuid :user-role role )
-        (layout "login" (login "wrong email / password combination" email password)))))
+  (POST "/" {authenticate :authenticate {:keys [email password]} :params}
+    (if-let [user (authenticate email password)] 
+      (assoc (redirect-to "/") :login-user user)
+      (layout "login" (login "wrong email / password combination" email password))))
 
   (GET "/logout" {cookies :cookies}
     (expire-session (get-uuid-from-cookie cookies))
@@ -146,17 +141,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wiring
 
-(defn wrap-db [app db]
+(defn wrap-authenticator [app db]
   (fn [req]
-    (app (assoc req :db db))))
+    (app (assoc req :authenticate (partial authenticate db)))))
 
-(defn wrap-uuid [app]
+(defn wrap-login-user [app]
   (fn [req]
     (let [resp (app req)]
-      (if (:uuid resp)
+      (if-let [user (:login-user resp)]
         (do
-          (set-session! (:uuid resp) (:user-role resp))
-          (assoc resp :cookies (get-login-cookie (:uuid resp))))
+          (set-session! (:uuid user) (:role user))
+          (assoc resp :cookies (get-login-cookie (:uuid user))))
         resp))))
 
 (defn wrap-user-role [app]
@@ -171,17 +166,15 @@
    :user (env :db-user)
    :password (env :db-password)})
 
-(defn count-users  [db]
-  (:count (first (sql/query db "SELECT COUNT(*) FROM users"))))
 
 (defn set-studyflow-site-defaults []
   (-> site-defaults
-    (assoc-in  [:session :cookie-name] "studyflow_login_session")))
+    (assoc-in [:session :cookie-name] "studyflow_login_session")))
 
 (def app
   (->
    actions
    wrap-user-role
-   wrap-uuid
+   wrap-login-user
    (wrap-defaults (set-studyflow-site-defaults))
-   (wrap-db db)))
+   (wrap-authenticator db)))
