@@ -105,34 +105,37 @@
   (:value (cookies "studyflow_redir_to")))
 
 (defn get-uuid-from-cookie [cookies]
-  (:value (cookies "studyflow_session")))
+  (:value (get cookies "studyflow_session")))
 
 (defn get-login-cookie [uuid]
   (if cookie-domain
     {:studyflow_session {:value uuid :domain cookie-domain :max-age session-max-age}}
     {:studyflow_session {:value uuid :max-age session-max-age}}))
 
-(defn get-authenticated-response [cookies user]
-  (assoc (redirect-user (get-redirect-cookie cookies) (:role user)) :cookies (get-login-cookie (:uuid user))))
+(defn get-authenticated-response [cookies role]
+  (redirect-user (get-redirect-cookie cookies) role))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Controller
 
 (defroutes actions
 
-  (GET "/" {db :db cookies :cookies params :params}
-    (let [uuid (get-uuid-from-cookie cookies)]
-      (if (logged-in? uuid)
-        (get-authenticated-response cookies (find-user-by-uuid db uuid))
-        (layout "login" (login (:msg params) (:email params) (:password params))))))
+  (GET "/" {db :db logged-in? :logged-in? cookies :cookies params :params}
+    (if logged-in?
+      (let [uuid (get-uuid-from-cookie cookies)]
+        (get-authenticated-response cookies (:role (find-user-by-uuid db uuid)))) 
+      (layout "login" (login (:msg params) (:email params) (:password params)))))
+
 
   (POST "/" {db :db cookies :cookies {:keys [email password]} :params}
-    (if-let [user (find-user-by-email db email)]
-      (if (authenticate user password)
-        (do
-          (set-session (:uuid user) (:role user))
-          (get-authenticated-response cookies user))
-        (layout "login" (login "wrong email / password combination" email password)))
+    (if-let [user (find-user-by-email db email)] 
+      (let [uuid (:uuid user) 
+            role (:role user)] 
+        (if (authenticate user password)
+          (do
+            (set-session uuid role) ; ! function
+            (assoc (get-authenticated-response cookies user) :cookies (get-login-cookie uuid)))
+          (layout "login" (login "wrong email / password combination" email password)))) 
       (layout "login"  (login "wrong email combination" email password))))
 
   (GET "/logout" {cookies :cookies}
@@ -147,6 +150,11 @@
 (defn wrap-db [app db]
   (fn [req]
     (app (assoc req :db db))))
+
+(defn wrap-login-state [app]
+  (fn [req]
+    (let [login-state (logged-in? (get-uuid-from-cookie (:cookies req)))]
+      (app (assoc req :logged-in? login-state)))))
 
 (def db
   {:classname "org.postgresql.Driver"
@@ -164,5 +172,7 @@
 
 (def app
   (->
-   (wrap-defaults actions (set-studyflow-site-defaults))
+   actions
+   wrap-login-state
+   (wrap-defaults (set-studyflow-site-defaults))
    (wrap-db db)))
