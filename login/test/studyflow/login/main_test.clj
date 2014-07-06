@@ -26,8 +26,8 @@
     (testing "not logged in"
       (let [resp (actions  (request :get "/"))]
         (is (= 200 (:status resp)) "status should be OK")
-        (is (not (query-html (:body resp) [:p.warning])))
-        (let [form (query-html (:body resp) [:form.login])]
+        ;;(is (= "Please sign in" (query-html (:body resp) [:h2.form-signin-heading])))
+        (let [form (query-html (:body resp) [:form.form-signin])]
           (is form)
           (is (query-html form [[(enlive/attr= :method "POST" :action "/")]]))
           (is (query-html form [[:input (enlive/attr= :name "password")]]))
@@ -45,8 +45,8 @@
     (testing "without params"
       (let [resp (actions (assoc ( request :post "/") :authenticate (fn [x y] nil )))]
         (is (= 200 (:status resp)))
-        (is (query-html (:body resp) [:p.warning]))
-        (is (query-html (:body resp) [:form.login]))))
+        (is (query-html (:body resp) [:h2.form-signin-heading]))
+        (is (query-html (:body resp) [:form.form-signin]))))
 
     (testing "not authenticated"
       (let [resp (actions (-> (request :post "/")
@@ -54,8 +54,8 @@
                                      :password "password"
                                      :authenticate (fn [x y] nil ))))]
         (is (= 200 (:status resp)))
-        (is (query-html (:body resp) [:p.warning]))
-        (is (query-html (:body resp) [:form.login]))))
+        (is (query-html (:body resp) [:h2.form-signin-heading]))
+        (is (query-html (:body resp) [:form.form-signin]))))
 
     (testing "authenticated"
       (let [resp (actions (-> (request :post "/")
