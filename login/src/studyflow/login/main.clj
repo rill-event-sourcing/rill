@@ -20,6 +20,7 @@
 (def publishing-url (studyflow-env (env :publishing-url)))
 (def cookie-domain (studyflow-env (env :cookie-domain)))
 (def session-max-age (studyflow-env (env :session-max-age)))
+(def db-subname (studyflow-env (env :db-subname)))
 
 
 (def redis  {:pool {} :spec {}})
@@ -163,7 +164,7 @@
 (def db
   {:classname "org.postgresql.Driver"
    :subprotocol "postgresql"
-   :subname (env :db-subname)
+   :subname db-subname
    :user (env :db-user)
    :password (env :db-password)})
 
