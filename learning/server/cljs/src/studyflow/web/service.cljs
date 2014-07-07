@@ -9,14 +9,6 @@
             [cljs.core.async :refer [<!] :as async])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
-(defn parse-history-hash [history-hash]
-  "#chapter-12334-2342-2342134-123412section-1243234-21421-1243-124"
-  (let [chapter-id (-> history-hash
-                       (.replace #"section-.*$" "")
-                       (.replace "#chapter-" ""))
-        section-id (.replace history-hash #".*section-" "")]
-    [chapter-id section-id]))
-
 (defn try-command [cursor command]
   (prn :try-command command)
   (let [[command-type & args] command]
@@ -98,16 +90,7 @@
                                        [:view :course-material] course-data)))
               :error-handler (fn [res]
                                (println "Error handler" res)
-                               (println res))})
-        (let [history-hash (.. js/document -location -hash)
-              [chapter-id section-id] (parse-history-hash history-hash)]
-          (prn "chapter-id from url" chapter-id)
-          (prn "section-id from url" section-id)
-          (when (and chapter-id
-                     section-id)
-            (om/update! cursor
-                        [:view :selected-section]
-                        [chapter-id section-id]))))
+                               (println res))}))
       om/IRender
       (render [_]
         (om/build widgets cursor)))))
@@ -120,8 +103,8 @@
 (defn listen [tx-report cursor]
   (let [{:keys [path new-state]} tx-report]
     (cond
-     (= path [:view :selected-section])
-     (if-let [[chapter-id section-id] (get-in new-state [:view :selected-section])]
+     (= path [:view :selected-path])
+     (if-let [{:keys [chapter-id section-id]} (get-in new-state path)]
        (if-let [section-data (get-in new-state [:view :section section-id :data])]
          nil ;; data already loaded
          (do

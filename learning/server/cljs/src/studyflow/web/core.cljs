@@ -2,6 +2,7 @@
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [studyflow.web.service :as service]
+            [studyflow.web.history :as url-history]
             [clojure.string :as string]
             [cljs.core.async :as async]))
 
@@ -13,7 +14,9 @@
     (last (string/split loc "/"))))
 
 (def app-state (atom {:static {:course-id (course-id-for-page)}
-                      :view {}
+                      :view {:selected-path {:chapter-id nil
+                                             :section-id nil
+                                             :tab-questions #{}}}
                       :aggregates {}}))
 
 (defn navigation [cursor owner]
@@ -36,16 +39,19 @@
                                          (for [{:keys [title]
                                                 section-id :id
                                                 :as section} sections]
-                                           (dom/a #js {:href (str "#chapter-" chapter-id "section-" section-id)
-                                                       :onClick
-                                                       (fn [_]
-                                                         (om/update! cursor
-                                                                     [:view :selected-section]
-                                                                     [chapter-id section-id]))}
+                                           (dom/span #js {:className "link"
+                                                          :onClick
+                                                          (fn [_]
+                                                            (om/transact! cursor
+                                                                          [:view :selected-path]
+                                                                          (fn [old]
+                                                                            (assoc old
+                                                                              :chapter-id chapter-id
+                                                                              :section-id section-id))))}
                                                   (dom/li #js {:data-id section-id}
                                                           title
                                                           (when (= section-id
-                                                                   (get-in cursor [:view :selected-section 1])) "[selected]")))))))))
+                                                                   (get-in cursor [:view :selected-path :section-id])) "[selected]")))))))))
         (dom/h2 nil "No content ... spinner goes here")))
     om/IWillUnmount
     (will-unmount [_]
@@ -73,7 +79,7 @@
     om/IRender
     (render [_]
       (dom/div #js {:className "section-test"}
-               (let [[_ section-id] (get-in cursor [:view :selected-section])
+               (let [section-id (get-in cursor [:view :selected-path :section-id])
                      section-test-id (str "student-idDEFAULT_STUDENT_IDsection-id" section-id)]
                  (if-let [section-test (get-in cursor [:aggregates section-test-id])]
                    (let [questions (:questions section-test)
@@ -136,26 +142,31 @@
 
 (defn section-tabs [cursor owner]
   (reify
-    om/IInitState
-    (init-state [_]
-      {:selected :explanation})
-    om/IRenderState
-    (render-state [_ state]
-      (dom/div nil
-               (apply dom/ul nil
-                      (for [[k title] {:explanation "Explanation"
-                                       :questions "Questions"}]
-                        (if (= (:selected state) k)
-                          (dom/li nil title)
-                          (dom/a #js {:onClick (fn [_]
-                                                 (om/set-state! owner :selected k))}
-                                 (dom/li nil title)))))
-               (if (= (:selected state) :explanation)
-                 (let [[_ section-id] (get-in cursor [:view :selected-section])
-                       section (get-in cursor [:view :section section-id :data])
-                       text (get-in section [:subsections-by-level :1-star])]
-                   (dom/div nil (pr-str text)))
-                 (om/build section-test cursor))))))
+    om/IRender
+    (render [_]
+      (let [{:keys [section-id tab-questions]} (get-in cursor [:view :selected-path])
+            tab-selection (if (contains? tab-questions section-id)
+                            :questions
+                            :explanation)]
+        (dom/div nil
+                 (apply dom/ul nil
+                        (for [[k title] {:explanation "Explanation"
+                                         :questions "Questions"}]
+                          (if (= tab-selection k)
+                            (dom/li nil title)
+                            (dom/span #js {:className "link"
+                                           :onClick
+                                           (fn [_]
+                                             (om/transact! cursor
+                                                           [:view :selected-path]
+                                                           (fn [old]
+                                                             (update-in old [:tab-questions] (if (= k :questions) conj disj) section-id))))}
+                                      (dom/li nil title)))))
+                 (if (= tab-selection :explanation)
+                   (let [section (get-in cursor [:view :section section-id :data])
+                         text (get-in section [:subsections-by-level :1-star])]
+                     (dom/div nil (pr-str text)))
+                   (om/build section-test cursor)))))))
 
 (defn inspect [cursor owner]
   (reify
@@ -174,7 +185,7 @@
   (reify
     om/IRender
     (render [_]
-      (if-let [[chapter-id section-id] (get-in cursor [:view :selected-section])]
+      (if-let [{:keys [chapter-id section-id]} (get-in cursor [:view :selected-path])]
         (if-let [section-data (get-in cursor [:view :section section-id :data])]
           (dom/div #js {:id (str "section-" section-id)}
                    (dom/h2 nil (:title section-data))
@@ -199,8 +210,12 @@
 
 (defn ^:export course-page []
   (om/root
-   (service/wrap-service widgets)
+   (-> widgets
+       service/wrap-service
+       url-history/wrap-history)
    app-state
    {:target (. js/document (getElementById "app"))
-    :tx-listen service/listen
+    :tx-listen (fn [tx-report cursor]
+                 (service/listen tx-report cursor)
+                 (url-history/listen tx-report cursor))
     :shared {:command-channel (async/chan)}}))

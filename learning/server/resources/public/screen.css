@@ -3,3 +3,8 @@ body {
   max-width: 50em;
   margin: 5em auto;
 }
+
+span.link {
+    color: #02f;
+    text-decoration: underline;
+}
