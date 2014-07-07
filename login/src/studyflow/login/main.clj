@@ -100,6 +100,20 @@
 (defn role-for-uuid [uuid]
   (wcar* (car/get uuid)))
 
+(defn create-session [uuid role]
+  (let [session-uuid (str (java.util.UUID/randomUUID))]
+    (wcar* (car/set session-uuid uuid)
+           (car/expire session-uuid session-max-age))
+    (register-uuid! uuid role)
+    session-uuid))
+
+(defn delete-session! [session-uuid]
+  (let [user-uuid (wcar* (car/get session-uuid))]
+    (wcar* (car/del session-uuid))
+    (deregister-uuid! user-uuid)))
+
+(defn uuid-from-session [session-uuid]
+  (wcar* (car/get session-uuid)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Database interaction 
@@ -140,9 +154,7 @@
   (fn [req]
     (let [resp (app req)]
       (if-let [user (:login-user resp)]
-        (do
-          (register-uuid! (:uuid user) (:role user))
-          (assoc resp :cookies (make-uuid-cookie (:uuid user))))
+        (assoc resp :cookies (make-uuid-cookie (create-session (:uuid user) (:role user)))) 
         resp))))
 
 (defn wrap-logout-user [app]
@@ -150,13 +162,16 @@
     (let [resp (app req)]
       (if (:logout-user resp)
         (do
-          (deregister-uuid! (get-uuid-from-cookies (:cookies req)))
+          (delete-session! (get-uuid-from-cookies (:cookies req)))
           (assoc resp :cookies (clear-uuid-cookie)))
         resp))))
 
 (defn wrap-user-role [app]
   (fn [req]
-    (let [user-role (role-for-uuid (get-uuid-from-cookies (:cookies req)))]
+    (let [user-role (-> (:cookies req)
+                        get-uuid-from-cookies 
+                        uuid-from-session 
+                        role-for-uuid)]
       (app (assoc req :user-role user-role)))))
 
 (defn wrap-redirect-for-role [app]
