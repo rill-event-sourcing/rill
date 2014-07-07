@@ -32,30 +32,29 @@
 
 (defn layout [title & body]
   (html5
-   [:head
-    [:title (str/join " - " [app-title title])]
-    (include-css "screen.css")]
-   [:body
-    [:h1 title]
-    [:div
-     (element/link-to "/" "home")
-     (element/link-to "/logout" "logout")]
-    body]))
+    [:head
+      [:title (str/join " - " [app-title title])]
+      [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
+      (include-css "http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/css/bootstrap.css")
+      (include-css "screen.css")
+      "<!-- [if lt IE 9>]"
+      [:script {:src "http://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.js"}]
+      [:script {:src "http://cdnjs.cloudflare.com/ajax/libs/respond.js/1.3.0/respond.js"}]
+      "<! [endif]-->"]
+    [:body
+      [:div {:class "container"} body]
+      "<!-- /container -->"
+      [:script {:src "http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"}]
+      [:script {:src "http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/js/bootstrap.min.js"}]]))
 
-(defn render-login [email password & [msg]]
+(defn render-login [email password msg]
   (form/form-to
-   {:class "login" } [:post "/"]
-   (form/hidden-field "__anti-forgery-token" *anti-forgery-token*)
-   [:div
-    (if msg [:p.warning msg])
-    [:div
-     (form/label "email" "email")
-     (form/email-field "email" email)]
-    [:div
-     (form/label "password" "password")
-     (form/password-field "password" password)]
-    [:div
-     (form/submit-button "login")]]))
+    {:role "form" :class "form-signin" } [:post "/"]
+    (form/hidden-field "__anti-forgery-token" *anti-forgery-token*)
+    [:h2 {:class "form-signin-heading"} msg]
+    (form/email-field {:class "form-control" :placeholder "Email address"} "email" email) ;; required autofocus
+    (form/password-field {:class "form-control" :placeholder "Password"} "password" password) ;; required
+    [:button {:class "btn btn-lg btn-primary btn-block" :type "submit"} "Sign in"]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Controller
@@ -68,18 +67,20 @@
   (GET "/" {:keys [user-role params]}
        (if user-role
          {:redirect-for-role user-role}
-         (layout "login" (render-login (:email params) (:password params)))))
+         (layout "Studyflow Beta" (render-login (:email params) (:password params) "Please sign in"))))
 
   (POST "/" {authenticate :authenticate {:keys [email password]} :params}
         (if-let [user (authenticate email password)]
           (assoc (redirect-to "/") :login-user user)
-          (layout "login" (render-login email password "wrong email / password combination"))))
+          (layout "Studyflow Beta" (render-login email password "Wrong email / password combination"))))
 
   (POST "/logout" {}
        (assoc (redirect-to "/") :logout-user true))
 
+  ;; temporary until POST logout works without anti-forgery-token
   (GET "/logout" {}
        (assoc (redirect-to "/") :logout-user true))
+  ;; /temporary until POST logout works without anti-forgery-token
 
   (not-found "Nothing here"))
 
@@ -180,6 +181,7 @@
    actions
    wrap-logout-user
    wrap-login-user
+   wrap-logout-user
    wrap-redirect-for-role
    wrap-user-role
    (wrap-defaults (set-studyflow-site-defaults))
