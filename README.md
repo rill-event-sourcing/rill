@@ -20,3 +20,10 @@ To test the publishing of the material from the publishing app, run (from the ro
 
 ## Running learning/server test with local EventStore
     ATOM_EVENT_STORE_COMMAND="mono /home/mfex/studyflow/code/eventstore/EventStore.SingleNode.exe" lein test rill.event-store.atom-store-test
+
+## Deploying to staging
+
+**Make sure you are in the `develop` branch (not enforced for now) **
+
+    make deploy-staging
+
