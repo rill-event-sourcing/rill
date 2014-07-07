@@ -90,30 +90,22 @@
 
 (defmacro wcar*  [& body] `(car/wcar redis ~@body))
 
-(defn register-uuid! [uuid role]
-  (wcar* (car/set uuid role)
-         (car/expire uuid session-max-age)))
-
-(defn deregister-uuid! [uuid]
-  (wcar* (car/del uuid)))
-
-(defn role-for-uuid [uuid]
-  (wcar* (car/get uuid)))
-
 (defn create-session [uuid role]
   (let [session-uuid (str (java.util.UUID/randomUUID))]
     (wcar* (car/set session-uuid uuid)
-           (car/expire session-uuid session-max-age))
-    (register-uuid! uuid role)
+           (car/expire session-uuid session-max-age)
+           (car/set uuid role) 
+           (car/expire uuid session-max-age))
     session-uuid))
 
 (defn delete-session! [session-uuid]
   (let [user-uuid (wcar* (car/get session-uuid))]
-    (wcar* (car/del session-uuid))
-    (deregister-uuid! user-uuid)))
+    (wcar* (car/del session-uuid)
+           (car/del user-uuid))))
 
-(defn uuid-from-session [session-uuid]
-  (wcar* (car/get session-uuid)))
+(defn role-from-session [session-uuid]
+  (let [user-uuid (wcar* (car/get session-uuid))]
+    (wcar* (car/get user-uuid))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Database interaction 
@@ -170,8 +162,7 @@
   (fn [req]
     (let [user-role (-> (:cookies req)
                         get-uuid-from-cookies 
-                        uuid-from-session 
-                        role-for-uuid)]
+                        role-from-session)]
       (app (assoc req :user-role user-role)))))
 
 (defn wrap-redirect-for-role [app]
