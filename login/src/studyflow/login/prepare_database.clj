@@ -24,7 +24,7 @@
          ")")]))
 
 (defn clean-table [db]
-    (sql/execute! db ["TRUNCATE users"]))
+  (sql/execute! db ["TRUNCATE users"]))
 
 (defn -main []
   (create-table login/db)

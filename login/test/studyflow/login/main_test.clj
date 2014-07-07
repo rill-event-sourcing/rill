@@ -1,10 +1,11 @@
 (ns studyflow.login.main-test
   (:require [clojure.test :refer :all]
+            [clojure.tools.logging :as log]
             [hiccup.core :as hiccup]
             [net.cgrand.enlive-html :as enlive]
+            [ring.mock.request :refer [request]]  
             [studyflow.login.main :refer :all]
-            [studyflow.login.prepare-database :as prep-db]
-            [ring.mock.request :refer [request]]))
+            [studyflow.login.prepare-database :as prep-db]))
 
 (defn query-html [data pattern]
   (seq (enlive/select
@@ -93,3 +94,4 @@
       (is (:cookies resp))
       (is (= {:studyflow_session {:value "", :max-age -1}} (:cookies resp))))
     ))
+
