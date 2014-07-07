@@ -91,5 +91,5 @@
     (is (= {} (handler {})))
     (let [resp (handler {:logout-user true, :cookies {:studyflow_session {:value "test", :max-age 123 }}})]
       (is (:cookies resp))
-      (is (= {:studyflow_session {:value nil, :max-age -1}} (:cookies resp))))
+      (is (= {:studyflow_session {:value "", :max-age -1}} (:cookies resp))))
     ))

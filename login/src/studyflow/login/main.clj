@@ -78,6 +78,9 @@
   (POST "/logout" {}
        (assoc (redirect-to "/") :logout-user true))
 
+  (GET "/logout" {}
+       (assoc (redirect-to "/") :logout-user true))
+
   (not-found "Nothing here"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -118,7 +121,7 @@
       {:studyflow_session {:value uuid :max-age max-age}})))
 
 (defn clear-uuid-cookie []
-  (make-uuid-cookie nil -1))
+  (make-uuid-cookie "" -1))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -175,6 +178,7 @@
 (def app
   (->
    actions
+   wrap-logout-user
    wrap-login-user
    wrap-redirect-for-role
    wrap-user-role
