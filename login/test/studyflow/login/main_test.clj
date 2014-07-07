@@ -92,6 +92,25 @@
     (is (= {} (handler {})))
     (let [resp (handler {:logout-user true, :cookies {:studyflow_session {:value "test", :max-age 123 }}})]
       (is (:cookies resp))
-      (is (= {:studyflow_session {:value "", :max-age -1}} (:cookies resp))))
-    ))
+      (is (= {:studyflow_session {:value "", :max-age -1}} (:cookies resp))))))
 
+(deftest wrap-user-role-test
+ (let [handler (wrap-user-role identity)
+       uuid "testuuid2"
+       role "testrole2"]
+    (register-uuid! uuid role)
+    (let [resp (handler {:cookies {"studyflow_session" {:value uuid, :max-age 123}}})]
+      (is (:user-role resp))
+      (is (= role (:user-role resp))))))
+
+(deftest wrap-redirect-for-role-test
+  (let [handler (wrap-redirect-for-role identity)
+        role "testrole"]
+    (testing "without any redirect-for-role into request"
+      (is (= {} (handler {}))))
+    (testing "with redirect-for-role and no cookie"
+      (let [resp (handler {:redirect-for-role role, :cookies {}})]
+        (is (= (default-redirect-path role) ((:headers resp) "Location")))))
+    (testing "with redirect-for-role and cookie"
+      (let [resp (handler {:redirect-for-role role, :cookies {"studyflow_redir_to" {:value "thispath"}}})]
+        (is (= "thispath" ((:headers resp) "Location")))))))
