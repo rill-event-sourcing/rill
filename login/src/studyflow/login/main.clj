@@ -15,154 +15,179 @@
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [taoensso.carmine :as car :refer (wcar)]))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; View
-
 (def app-title "Studyflow")
 (def studyflow-env (keyword (env :studyflow-env)))
 (def publishing-url (studyflow-env (env :publishing-url)))
 (def cookie-domain (studyflow-env (env :cookie-domain)))
 (def session-max-age (studyflow-env (env :session-max-age)))
+(def db-subname (studyflow-env (env :db-subname)))
+
+
+(def redis  {:pool {} :spec {}})
+
+(def default-redirect-path {"editor" publishing-url
+                            "tester" "https://staging.studyflow.nl"})
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; View
 
 (defn layout [title & body]
   (html5
-   [:head
-    [:title (str/join " - " [app-title title])]
-    (include-css "screen.css")]
-   [:body
-    [:h1 title]
-    [:div
-      (element/link-to "/" "home")
-      (element/link-to "/logout" "logout")]
-    body]))
+    [:head
+      [:title (str/join " - " [app-title title])]
+      [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
+      (include-css "http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/css/bootstrap.css")
+      (include-css "screen.css")
+      "<!-- [if lt IE 9>]"
+      [:script {:src "http://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.js"}]
+      [:script {:src "http://cdnjs.cloudflare.com/ajax/libs/respond.js/1.3.0/respond.js"}]
+      "<! [endif]-->"]
+    [:body
+      [:div {:class "container"} body]
+      "<!-- /container -->"
+      [:script {:src "http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"}]
+      [:script {:src "http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/js/bootstrap.min.js"}]]))
 
-(defn login [msg email password]
-  (form/form-to [:post "/"]
+(defn render-login [email password msg]
+  (form/form-to
+    {:role "form" :class "form-signin" } [:post "/"]
     (form/hidden-field "__anti-forgery-token" *anti-forgery-token*)
-    [:div
-      [:p msg]
-      [:div
-        (form/label "email" "email")
-        (form/email-field "email" email)]
-      [:div
-        (form/label "password" "password")
-        (form/password-field "password" password)]
-      [:div
-        (form/submit-button "login")]]))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Model
-
-(def server1-conn  {:pool {} :spec {}})
-
-(defmacro wcar*  [& body] `(car/wcar server1-conn ~@body))
-
-(defn logged-in-users []
-  (wcar* (car/keys "*")))
-
-(defn encrypt [password]
-  (bcrypt/encrypt password))
-
-(defn create-user [db role email password]
-  (sql/insert! db :users [:uuid :role :email :password]  [(str (java.util.UUID/randomUUID)) role email (encrypt password)]))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defn find-user-by-email [db email]
-  (first (sql/query db ["SELECT uuid, role, password FROM users WHERE email = ?" email])))
-
-(defn find-user-by-uuid [db uuid]
-  (first (sql/query db ["SELECT uuid, role FROM users WHERE uuid = ?" uuid])) )
-
-(defn authenticate [user password]
-  (bcrypt/check password (:password user)))
-
-(defn expire-session [uuid]
-  (wcar* (car/del uuid)))
-
-(defn set-session [uuid role]
-  (wcar* (car/set uuid role) (car/expire uuid session-max-age)))
-
-(defn logged-in? [uuid]
-  (= (wcar* (car/exists uuid)) 1))
-
-(defn redirect-to [path]
-  {:status  302
-   :headers {"Location" path}})
-
-(defn default-redirect-path [role]
-  (case role
-    "editor" publishing-url
-    "tester" "https://staging.studyflow.nl"
-    "/"))
-
-(defn redirect-user [cookie-path role]
-  (if cookie-path
-    (redirect-to cookie-path) 
-    (redirect-to (default-redirect-path role))))
-
-(defn get-redirect-cookie [cookies]
-  (:value (cookies "studyflow_redir_to")))
-
-(defn get-uuid-from-cookie [cookies]
-  (:value (cookies "studyflow_session")))
-
-(defn get-login-cookie [uuid]
-  (if cookie-domain
-    {:studyflow_session {:value uuid :domain cookie-domain :max-age session-max-age}}
-    {:studyflow_session {:value uuid :max-age session-max-age}}))
-
-(defn get-authenticated-response [cookies user]
-  (assoc (redirect-user (get-redirect-cookie cookies) (:role user)) :cookies (get-login-cookie (:uuid user))))
+    [:h2 {:class "form-signin-heading"} msg]
+    (form/email-field {:class "form-control" :placeholder "Email address"} "email" email) ;; required autofocus
+    (form/password-field {:class "form-control" :placeholder "Password"} "password" password) ;; required
+    [:button {:class "btn btn-lg btn-primary btn-block" :type "submit"} "Sign in"]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Controller
 
+(defn redirect-to [path]
+  {:status 302
+   :headers {"Location" path}})
+
 (defroutes actions
+  (GET "/" {:keys [user-role params]}
+       (if user-role
+         {:redirect-for-role user-role}
+         (layout "Studyflow Beta" (render-login (:email params) (:password params) "Please sign in"))))
 
-  (GET "/" {db :db cookies :cookies params :params}
-    (let [uuid (get-uuid-from-cookie cookies)]
-      (if (logged-in? uuid)
-        (get-authenticated-response cookies (find-user-by-uuid db uuid))
-        (layout "login" (login (:msg params) (:email params) (:password params))))))
+  (POST "/" {authenticate :authenticate {:keys [email password]} :params}
+        (if-let [user (authenticate email password)]
+          (assoc (redirect-to "/") :login-user user)
+          (layout "Studyflow Beta" (render-login email password "Wrong email / password combination"))))
 
-  (POST "/" {db :db cookies :cookies {:keys [email password]} :params}
-    (if-let [user (find-user-by-email db email)]
-      (if (authenticate user password)
-        (do
-          (set-session (:uuid user) (:role user))
-          (get-authenticated-response cookies user))
-        (layout "login" (login "wrong email / password combination" email password)))
-      (layout "login"  (login "wrong email combination" email password))))
+  (POST "/logout" {}
+       (assoc (redirect-to "/") :logout-user true))
 
-  (GET "/logout" {cookies :cookies}
-    (expire-session (get-uuid-from-cookie cookies))
-    (assoc (redirect-to "/") :cookies {:studyflow_session {:value "" :max-age -1}}))
+  ;; temporary until POST logout works without anti-forgery-token
+  (GET "/logout" {}
+       (assoc (redirect-to "/") :logout-user true))
+  ;; /temporary until POST logout works without anti-forgery-token
 
   (not-found "Nothing here"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Session management with redis
+
+(defmacro wcar*  [& body] `(car/wcar redis ~@body))
+
+(defn register-uuid! [uuid role]
+  (wcar* (car/set uuid role)
+         (car/expire uuid session-max-age)))
+
+(defn deregister-uuid! [uuid]
+  (wcar* (car/del uuid)))
+
+(defn role-for-uuid [uuid]
+  (wcar* (car/get uuid)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Database interaction 
+
+
+(defn- find-user-by-email [db email]
+  (first (sql/query db ["SELECT uuid, role, password FROM users WHERE email = ?" email])))
+
+(defn authenticate [db email password]
+  (if-let [user (find-user-by-email db email)]
+    (if (bcrypt/check password (:password user))
+      user)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Cookie management
+
+(defn get-uuid-from-cookies [cookies]
+  (:value (get cookies "studyflow_session")))
+
+(defn make-uuid-cookie [uuid & [max-age]]
+  (let [max-age (or max-age session-max-age)]
+    (if cookie-domain
+      {:studyflow_session {:value uuid :max-age max-age :domain cookie-domain}}
+      {:studyflow_session {:value uuid :max-age max-age}})))
+
+(defn clear-uuid-cookie []
+  (make-uuid-cookie "" -1))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wiring
 
-(defn wrap-db [app db]
+(defn wrap-authenticator [app db]
   (fn [req]
-    (app (assoc req :db db))))
+    (app (assoc req :authenticate (partial authenticate db)))))
+
+(defn wrap-login-user [app]
+  (fn [req]
+    (let [resp (app req)]
+      (if-let [user (:login-user resp)]
+        (do
+          (register-uuid! (:uuid user) (:role user))
+          (assoc resp :cookies (make-uuid-cookie (:uuid user))))
+        resp))))
+
+(defn wrap-logout-user [app]
+  (fn [req]
+    (let [resp (app req)]
+      (if (:logout-user resp)
+        (do
+          (deregister-uuid! (get-uuid-from-cookies (:cookies req)))
+          (assoc resp :cookies (clear-uuid-cookie)))
+        resp))))
+
+(defn wrap-user-role [app]
+  (fn [req]
+    (let [resp (app req)
+          user-role (role-for-uuid (get-uuid-from-cookies (:cookies req)))]
+      (app (assoc resp :user-role user-role)))))
+
+(defn wrap-redirect-for-role [app]
+  (fn [req]
+    (let [cookies (:cookies req)
+          resp (app req)]
+      (if-let [user-role (:redirect-for-role resp)]
+        (redirect-to (or (:value (cookies "studyflow_redir_to"))
+                         (default-redirect-path user-role)))
+        resp))))
 
 (def db
   {:classname "org.postgresql.Driver"
    :subprotocol "postgresql"
-   :subname (env :db-subname) 
-   :user (env :db-user) 
+   :subname db-subname
+   :user (env :db-user)
    :password (env :db-password)})
 
-(defn count-users  [db]
-  (:count (first (sql/query db "SELECT COUNT(*) FROM users"))))
 
 (defn set-studyflow-site-defaults []
   (-> site-defaults
-    (assoc-in  [:session :cookie-name] "studyflow_login_session")))
+      (assoc-in [:session :cookie-name] "studyflow_login_session")))
 
 (def app
   (->
-   (wrap-defaults actions (set-studyflow-site-defaults))
-   (wrap-db db)))
+   actions
+   wrap-logout-user
+   wrap-login-user
+   wrap-logout-user
+   wrap-redirect-for-role
+   wrap-user-role
+   (wrap-defaults (set-studyflow-site-defaults))
+   (wrap-authenticator db)))
