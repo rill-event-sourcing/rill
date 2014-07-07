@@ -156,9 +156,8 @@
 
 (defn wrap-user-role [app]
   (fn [req]
-    (let [resp (app req)
-          user-role (role-for-uuid (get-uuid-from-cookies (:cookies req)))]
-      (app (assoc resp :user-role user-role)))))
+    (let [user-role (role-for-uuid (get-uuid-from-cookies (:cookies req)))]
+      (app (assoc req :user-role user-role)))))
 
 (defn wrap-redirect-for-role [app]
   (fn [req]
@@ -186,7 +185,6 @@
    actions
    wrap-logout-user
    wrap-login-user
-   wrap-logout-user
    wrap-redirect-for-role
    wrap-user-role
    (wrap-defaults (set-studyflow-site-defaults))
