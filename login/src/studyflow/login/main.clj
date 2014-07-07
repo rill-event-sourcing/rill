@@ -86,22 +86,24 @@
   (not-found "Nothing here"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Model
+;; Session management with redis
 
 (defmacro wcar*  [& body] `(car/wcar redis ~@body))
-
-(defn deregister-uuid! [uuid]
-  (wcar* (car/del uuid)))
 
 (defn register-uuid! [uuid role]
   (wcar* (car/set uuid role)
          (car/expire uuid session-max-age)))
 
+(defn deregister-uuid! [uuid]
+  (wcar* (car/del uuid)))
+
 (defn role-for-uuid [uuid]
   (wcar* (car/get uuid)))
 
 
-;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Database interaction 
+
 
 (defn- find-user-by-email [db email]
   (first (sql/query db ["SELECT uuid, role, password FROM users WHERE email = ?" email])))
@@ -111,7 +113,8 @@
     (if (bcrypt/check password (:password user))
       user)))
 
-;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Cookie management
 
 (defn get-uuid-from-cookies [cookies]
   (:value (get cookies "studyflow_session")))

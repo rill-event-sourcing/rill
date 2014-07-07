@@ -3,9 +3,10 @@
             [clojure.tools.logging :as log]
             [hiccup.core :as hiccup]
             [net.cgrand.enlive-html :as enlive]
-            [ring.mock.request :refer [request]]  
+            [ring.mock.request :refer [request]]
             [studyflow.login.main :refer :all]
-            [studyflow.login.prepare-database :as prep-db]))
+            [studyflow.login.prepare-database :as prep-db]
+            [taoensso.carmine :as car]))  
 
 (defn query-html [data pattern]
   (seq (enlive/select
@@ -20,6 +21,8 @@
                       (prep-db/seed-table db)
                       (test)
                       (prep-db/clean-table db)))
+
+;;; routes
 
 (deftest actions-test
   (testing "get /"
@@ -51,7 +54,7 @@
 
     (testing "not authenticated"
       (let [resp (actions (-> (request :post "/")
-                              (assoc :email "something@email.com" 
+                              (assoc :email "something@email.com"
                                      :password "password"
                                      :authenticate (fn [x y] nil ))))]
         (is (= 200 (:status resp)))
@@ -60,7 +63,7 @@
 
     (testing "authenticated"
       (let [resp (actions (-> (request :post "/")
-                              (assoc :email "something@email.com" 
+                              (assoc :email "something@email.com"
                                      :password "password"
                                      :authenticate (fn [x y] "something"))))]
         (is (= 302 (:status resp)))
@@ -73,6 +76,8 @@
       (is (= "/" ((:headers resp) "Location")))
       (is (= true (:logout-user resp))))))
 
+;;; wiring
+
 (deftest wrap-authenticator-test
   (let [handler (wrap-authenticator identity "testdb")]
     (is (fn? (:authenticate (handler {}))))))
@@ -83,7 +88,7 @@
     (let [uuid "testuuid"
           role "testrole"
           resp (handler {:login-user {:uuid uuid, :role role}})]
-      (is (:cookies resp)) 
+      (is (:cookies resp))
       (is (= {:studyflow_session {:value uuid, :max-age session-max-age }} (:cookies resp)))
       (is (= role (role-for-uuid uuid))))))
 
@@ -114,3 +119,50 @@
     (testing "with redirect-for-role and cookie"
       (let [resp (handler {:redirect-for-role role, :cookies {"studyflow_redir_to" {:value "thispath"}}})]
         (is (= "thispath" ((:headers resp) "Location")))))))
+
+;;;; Redis
+
+(deftest register-uuid!-test
+  (let [uuid "testuuid"
+        role "testrole"]
+    (register-uuid! uuid role)
+    (is (= role (wcar* (car/get uuid))))
+    (let [ttl (wcar* (car/ttl uuid))]
+    (is (and (< (- session-max-age 3) ttl) (>= session-max-age ttl))))))
+
+(deftest deregister-uuid!-test
+  (let [uuid "testuuid"
+        role "testrole"]
+    (wcar* (car/set uuid role))
+    (is (= role (wcar* (car/get uuid))))
+    (deregister-uuid! uuid)
+    (is (= nil (wcar* (car/get uuid))))))
+
+(deftest role-for-uuid-test
+  (let [uuid "testuuid"
+        role "testrole"]
+    (wcar* (car/set uuid role))
+    (is (= role (role-for-uuid uuid)))))
+
+;;;;; Database
+
+
+;;;;; Cookies
+
+(deftest get-uuid-from-cookies-test
+  (is (= "something") (get-uuid-from-cookies {"studyflow_session" {:value "something"}})))
+
+(deftest make-uuid-cookie-test
+  (testing "without max-age"
+    (let [cookie (:studyflow_session (make-uuid-cookie "testuuid"))]
+      (is (= "testuuid" (:value cookie)))
+      (is (= session-max-age (:max-age cookie)))))
+  (testing "with max-age"
+    (let [cookie (:studyflow_session (make-uuid-cookie "testuuid" 123))]
+      (is (= "testuuid" (:value cookie)))
+      (is (= 123 (:max-age cookie))))))
+
+(deftest clear-uuid-cookie-test
+  (let [cookie (:studyflow_session (clear-uuid-cookie))]
+    (is (= "" (:value cookie)))
+    (is (= -1 (:max-age cookie)))))
