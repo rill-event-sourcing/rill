@@ -12,15 +12,12 @@
           data)
         pattern)))
 
-;;; routes
-
 (deftest actions-test
   (testing "get /"
 
     (testing "not logged in"
-      (let [resp (actions  (request :get "/"))]
+      (let [resp (actions (request :get "/"))]
         (is (= 200 (:status resp)) "status should be OK")
-        ;;(is (= "Please sign in" (query-html (:body resp) [:h2.form-signin-heading])))
         (let [form (query-html (:body resp) [:form.form-signin])]
           (is form)
           (is (query-html form [[(enlive/attr= :method "POST" :action "/")]]))
@@ -66,8 +63,6 @@
       (is (= "/" ((:headers resp) "Location")))
       (is (= true (:logout-user resp))))))
 
-;;; wiring
-
 (deftest wrap-authenticator-test
   (let [handler (wrap-authenticator identity "testdb")]
     (is (fn? (:authenticate (handler {}))))))
@@ -92,12 +87,12 @@
       (is (= {:studyflow_session {:value "", :max-age -1}} (:cookies resp))))))
 
 (deftest wrap-user-role-test
- (let [handler (wrap-user-role identity)
-       uuid "testuuid2"
-       role "testrole2"]
-   (let [session-uuid (create-session uuid role) 
-         resp (handler {:cookies {"studyflow_session" {:value session-uuid, :max-age 123}}})]
-     (is (:user-role resp))
+  (let [handler (wrap-user-role identity)
+        uuid "testuuid2"
+        role "testrole2"]
+    (let [session-uuid (create-session uuid role)
+          resp (handler {:cookies {"studyflow_session" {:value session-uuid, :max-age 123}}})]
+      (is (:user-role resp))
       (is (= role (:user-role resp))))))
 
 (deftest wrap-redirect-for-role-test
@@ -112,23 +107,21 @@
       (let [resp (handler {:redirect-for-role role, :cookies {"studyflow_redir_to" {:value "thispath"}}})]
         (is (= "thispath" ((:headers resp) "Location")))))))
 
-;;;; Redis
-
 (deftest create-session-test
   (let [uuid "testuuid"
-        role "testrole" 
+        role "testrole"
         session-uuid (create-session uuid role)
         user-uuid (wcar* (car/get session-uuid))
         ttl-session (wcar* (car/ttl session-uuid))
         ttl-user (wcar* (car/ttl user-uuid))]
-    (is  (not  (= session-uuid  (create-session uuid role)))) 
+    (is (not (= session-uuid (create-session uuid role))))
     (is session-uuid)
     (is user-uuid)
-    (is (= uuid user-uuid)) 
-    (is  (and (<  (- session-max-age 3) ttl-session)
-              (>= session-max-age ttl-session)))
-    (is  (and (<  (- session-max-age 3) ttl-user)
-              (>= session-max-age ttl-user)))))
+    (is (= uuid user-uuid))
+    (is (and (< (- session-max-age 3) ttl-session)
+             (>= session-max-age ttl-session)))
+    (is (and (< (- session-max-age 3) ttl-user)
+             (>= session-max-age ttl-user)))))
 
 (deftest delete-session-test
   (let [uuid "testuuid"
@@ -143,11 +136,6 @@
         role "testrole"
         session-uuid (create-session uuid role)]
     (is (= role (role-from-session session-uuid)))))
-
-;;;;; Database
-
-
-;;;;; Cookies
 
 (deftest get-uuid-from-cookies-test
   (is (= "something"
