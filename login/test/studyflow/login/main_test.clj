@@ -6,7 +6,7 @@
             [ring.mock.request :refer [request]]
             [studyflow.login.main :refer :all]
             [studyflow.login.prepare-database :as prep-db]
-            [taoensso.carmine :as car]))  
+            [taoensso.carmine :as car]))
 
 (defn query-html [data pattern]
   (seq (enlive/select
@@ -17,7 +17,7 @@
 
 (use-fixtures :each (fn [test]
                       (prep-db/clean-table db)
-                      (wcar* (taoensso.carmine/flushdb))
+                      (wcar* (car/flushdb))
                       (prep-db/seed-table db)
                       (test)
                       (prep-db/clean-table db)))
@@ -87,10 +87,12 @@
     (is (= {} (handler {})))
     (let [uuid "testuuid"
           role "testrole"
-          resp (handler {:login-user {:uuid uuid, :role role}})]
-      (is (:cookies resp))
-      (is (= {:studyflow_session {:value uuid, :max-age session-max-age }} (:cookies resp)))
-      (is (= role (role-for-uuid uuid))))))
+          resp (handler {:login-user {:uuid uuid, :role role}})
+          cookies (:cookies resp)]
+      (is cookies)
+      (let [session-uuid (:value (:studyflow_session cookies))]
+        (is session-uuid)
+        (is (= uuid (wcar* (car/get session-uuid))))))))
 
 (deftest wrap-logout-user-test
   (let [handler (wrap-logout-user identity)]
@@ -103,9 +105,9 @@
  (let [handler (wrap-user-role identity)
        uuid "testuuid2"
        role "testrole2"]
-    (register-uuid! uuid role)
-    (let [resp (handler {:cookies {"studyflow_session" {:value uuid, :max-age 123}}})]
-      (is (:user-role resp))
+   (let [session-uuid (create-session uuid role) 
+         resp (handler {:cookies {"studyflow_session" {:value session-uuid, :max-age 123}}})]
+     (is (:user-role resp))
       (is (= role (:user-role resp))))))
 
 (deftest wrap-redirect-for-role-test
@@ -122,27 +124,35 @@
 
 ;;;; Redis
 
-(deftest register-uuid!-test
+(deftest create-session-test
   (let [uuid "testuuid"
-        role "testrole"]
-    (register-uuid! uuid role)
-    (is (= role (wcar* (car/get uuid))))
-    (let [ttl (wcar* (car/ttl uuid))]
-    (is (and (< (- session-max-age 3) ttl) (>= session-max-age ttl))))))
+        role "testrole" 
+        session-uuid (create-session uuid role)
+        user-uuid (wcar* (car/get session-uuid))
+        ttl-session (wcar* (car/ttl session-uuid))
+        ttl-user (wcar* (car/ttl user-uuid))]
+    (is  (not  (= session-uuid  (create-session uuid role)))) 
+    (is session-uuid)
+    (is user-uuid)
+    (is (= uuid user-uuid)) 
+    (is  (and (<  (- session-max-age 3) ttl-session)
+              (>= session-max-age ttl-session)))
+    (is  (and (<  (- session-max-age 3) ttl-user)
+              (>= session-max-age ttl-user)))))
 
-(deftest deregister-uuid!-test
+(deftest delete-session-test
   (let [uuid "testuuid"
-        role "testrole"]
-    (wcar* (car/set uuid role))
-    (is (= role (wcar* (car/get uuid))))
-    (deregister-uuid! uuid)
-    (is (= nil (wcar* (car/get uuid))))))
+        role "testrole"
+        session-uuid (create-session uuid role)]
+    (delete-session! session-uuid)
+    (is (not (wcar* (car/get session-uuid))))
+    (is (not (wcar* (car/get uuid))))))
 
-(deftest role-for-uuid-test
+(deftest role-from-session-test
   (let [uuid "testuuid"
-        role "testrole"]
-    (wcar* (car/set uuid role))
-    (is (= role (role-for-uuid uuid)))))
+        role "testrole"
+        session-uuid (create-session uuid role)]
+    (is (= role (role-from-session session-uuid)))))
 
 ;;;;; Database
 

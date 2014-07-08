@@ -7,5 +7,4 @@ lein:
 	chmod 755 ./lein
 
 test: lein
-	STUDYFLOW_ENV=test ./lein prepare-database
 	STUDYFLOW_ENV=test ./lein test && echo "OK"
