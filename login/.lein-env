@@ -6,7 +6,7 @@
                     :test         "http://localhost:4000"
                     :staging      "https://login-beta.studyflow.nl"
                     :production   "https://login.studyflow.nl"}
- :cookie-domain   { :staging      "beta.studyflow.nl"
+ :cookie-domain   { :staging      "studyflow.nl"
                     :production   "studyflow.nl"}
  :session-max-age { :development  600
                     :test         600
