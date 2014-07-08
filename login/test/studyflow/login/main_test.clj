@@ -1,11 +1,8 @@
 (ns studyflow.login.main-test
   (:require [clojure.test :refer :all]
-            [clojure.tools.logging :as log]
-            [hiccup.core :as hiccup]
             [net.cgrand.enlive-html :as enlive]
             [ring.mock.request :refer [request]]
             [studyflow.login.main :refer :all]
-            [studyflow.login.prepare-database :as prep-db]
             [taoensso.carmine :as car]))
 
 (defn query-html [data pattern]
@@ -14,13 +11,6 @@
           (enlive/html-snippet data)
           data)
         pattern)))
-
-(use-fixtures :each (fn [test]
-                      (prep-db/clean-table db)
-                      (wcar* (car/flushdb))
-                      (prep-db/seed-table db)
-                      (test)
-                      (prep-db/clean-table db)))
 
 ;;; routes
 
