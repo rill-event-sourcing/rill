@@ -35,6 +35,7 @@
               :plugins
               [[lein-cljsbuild "1.0.2"]
                [com.cemerick/clojurescript.test "0.3.0"]]}}
+  :source-paths ["src" "../lib/rill/src"]
   :test-paths ["test"]
   :aliases {"server" ["run" "-m" "studyflow.main"]
             "validate-course-material" ["run" "-m" "studyflow.cli.validate-course-material-json"]}
