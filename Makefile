@@ -10,3 +10,4 @@ test:
 	cd learning && make test
 	cd publishing && make test
 	cd login && make test
+	cd lib/rill && make test
