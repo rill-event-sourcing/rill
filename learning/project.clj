@@ -17,6 +17,7 @@
                  [ring/ring-devel "1.2.1"]
                  [org.clojure/core.async "0.1.303.0-886421-alpha"]
                  [com.stuartsierra/component "0.2.1"]
+                 [com.velisco/tagged "0.3.4"]
                  [identifiers "1.0.0"]]
   :plugins  [[lein-checkouts "1.1.0"]]
   :profiles {:dev
@@ -47,5 +48,5 @@
                                          :pretty-print false
                                          :preamble ["react/react.min.js"]
                                          :externs ["react/externs/react.js"]}}}}
-  
+
   :main studyflow.main)
