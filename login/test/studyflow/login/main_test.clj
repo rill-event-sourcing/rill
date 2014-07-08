@@ -150,7 +150,8 @@
 ;;;;; Cookies
 
 (deftest get-uuid-from-cookies-test
-  (is (= "something") (get-uuid-from-cookies {"studyflow_session" {:value "something"}})))
+  (is (= "something"
+         (get-uuid-from-cookies {"studyflow_session" {:value "something"}}))))
 
 (deftest make-uuid-cookie-test
   (testing "without max-age"
