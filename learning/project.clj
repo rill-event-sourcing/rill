@@ -21,6 +21,7 @@
                  [com.velisco/tagged "0.3.4"]
                  [com.stuartsierra/component "0.2.1"]
                  [identifiers "1.0.0"]]
+  :plugins  [[lein-checkouts "1.1.0"]]
   :profiles {:dev
              {:source-paths ["dev"]
               :resource-paths ["dev/resources"]
@@ -35,7 +36,6 @@
               :plugins
               [[lein-cljsbuild "1.0.2"]
                [com.cemerick/clojurescript.test "0.3.0"]]}}
-  :source-paths ["src" "../lib/rill/src"]
   :test-paths ["test"]
   :aliases {"server" ["run" "-m" "studyflow.main"]
             "validate-course-material" ["run" "-m" "studyflow.cli.validate-course-material-json"]}
