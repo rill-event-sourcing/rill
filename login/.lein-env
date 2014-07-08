@@ -1,11 +1,11 @@
 {:publishing-url  { :development  "http://localhost:3000"
                     :test         "http://localhost:3000"
-                    :staging      "http://publishing.beta.studyflow.nl"
-                    :production   "http://publishing.studyflow.nl"}
+                    :staging      "https://publishing-beta.studyflow.nl"
+                    :production   "https://publishing.studyflow.nl"}
  :login-url       { :development  "http://localhost:4000"
                     :test         "http://localhost:4000"
-                    :staging      "http://login.beta.studyflow.nl"
-                    :production   "http://login.studyflow.nl"}
+                    :staging      "https://login-beta.studyflow.nl"
+                    :production   "https://login.studyflow.nl"}
  :cookie-domain   { :staging      "beta.studyflow.nl"
                     :production   "studyflow.nl"}
  :session-max-age { :development  600

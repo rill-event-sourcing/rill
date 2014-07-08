@@ -36,17 +36,17 @@
     [:head
       [:title (str/join " - " [app-title title])]
       [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
-      (include-css "http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/css/bootstrap.css")
+      (include-css "//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/css/bootstrap.css")
       (include-css "screen.css")
       "<!-- [if lt IE 9>]"
-      [:script {:src "http://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.js"}]
-      [:script {:src "http://cdnjs.cloudflare.com/ajax/libs/respond.js/1.3.0/respond.js"}]
+      [:script {:src "//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.js"}]
+      [:script {:src "//cdnjs.cloudflare.com/ajax/libs/respond.js/1.3.0/respond.js"}]
       "<! [endif]-->"]
     [:body
       [:div {:class "container"} body]
       "<!-- /container -->"
-      [:script {:src "http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"}]
-      [:script {:src "http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/js/bootstrap.min.js"}]]))
+      [:script {:src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"}]
+      [:script {:src "//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/js/bootstrap.min.js"}]]))
 
 (defn render-login [email password msg]
   (form/form-to
