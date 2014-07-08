@@ -91,7 +91,7 @@
   (let [session-uuid (str (java.util.UUID/randomUUID))]
     (wcar* (car/set session-uuid uuid)
            (car/expire session-uuid session-max-age)
-           (car/set uuid role) 
+           (car/set uuid role)
            (car/expire uuid session-max-age))
     session-uuid))
 
@@ -106,7 +106,7 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Database interaction 
+;; Database interaction
 
 (defn- find-user-by-email [db email]
   (first (sql/query db ["SELECT uuid, role, password FROM users WHERE email = ?" email])))
@@ -144,7 +144,7 @@
   (fn [req]
     (let [resp (app req)]
       (if-let [user (:login-user resp)]
-        (assoc resp :cookies (make-uuid-cookie (create-session (:uuid user) (:role user)))) 
+        (assoc resp :cookies (make-uuid-cookie (create-session (:uuid user) (:role user))))
         resp))))
 
 (defn wrap-logout-user [app]
@@ -159,7 +159,7 @@
 (defn wrap-user-role [app]
   (fn [req]
     (let [user-role (-> (:cookies req)
-                        get-uuid-from-cookies 
+                        get-uuid-from-cookies
                         role-from-session)]
       (app (assoc req :user-role user-role)))))
 
