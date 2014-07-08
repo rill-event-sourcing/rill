@@ -2,7 +2,7 @@
   (:require [clojure.java.jdbc :as sql]
             [clojure.string :as str]
             [clojure.tools.logging :as log]
-            [compojure.core :refer [defroutes GET POST]]
+            [compojure.core :refer [defroutes GET POST DELETE]]
             [compojure.route :refer [not-found]]
             [crypto.password.bcrypt :as bcrypt]
             [environ.core :refer [env]]
@@ -57,6 +57,7 @@
     (form/password-field {:class "form-control" :placeholder "Password"} "password" password) ;; required
     [:button {:class "btn btn-lg btn-primary btn-block" :type "submit"} "Sign in"]))
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Controller
 
@@ -75,15 +76,11 @@
           (assoc (redirect-to "/") :login-user user)
           (layout "Studyflow Beta" (render-login email password "Wrong email / password combination"))))
 
-  (POST "/logout" {}
+  (DELETE "/" {}
        (assoc (redirect-to "/") :logout-user true))
-
-  ;; temporary until POST logout works without anti-forgery-token
-  (GET "/logout" {}
-       (assoc (redirect-to "/") :logout-user true))
-  ;; /temporary until POST logout works without anti-forgery-token
 
   (not-found "Nothing here"))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Session management with redis
@@ -107,9 +104,9 @@
   (let [user-uuid (wcar* (car/get session-uuid))]
     (wcar* (car/get user-uuid))))
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Database interaction 
-
 
 (defn- find-user-by-email [db email]
   (first (sql/query db ["SELECT uuid, role, password FROM users WHERE email = ?" email])))
@@ -118,6 +115,7 @@
   (if-let [user (find-user-by-email db email)]
     (if (bcrypt/check password (:password user))
       user)))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Cookie management
@@ -183,8 +181,9 @@
 
 
 (defn set-studyflow-site-defaults []
-  (-> site-defaults
-      (assoc-in [:session :cookie-name] "studyflow_login_session")))
+  (-> site-defaults ;; secure-site-defaults
+      (assoc-in [:session :cookie-name] "studyflow_login_session")
+      (assoc-in [:security :anti-forgery] false)))
 
 (def app
   (->

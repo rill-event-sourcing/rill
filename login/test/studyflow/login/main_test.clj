@@ -70,8 +70,8 @@
         (is (= "/" ((:headers resp) "Location")))
         (is (= "something" (:login-user resp))))))
 
-  (testing "post /logout"
-    (let [resp (actions (request :post "/logout"))]
+  (testing "delete /"
+    (let [resp (actions (request :delete "/"))]
       (is (= 302 (:status resp)))
       (is (= "/" ((:headers resp) "Location")))
       (is (= true (:logout-user resp))))))

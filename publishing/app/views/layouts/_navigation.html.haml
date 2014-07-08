@@ -13,4 +13,4 @@
         =form_for(Course.current||Course.new, url: select_course_path, method: :post, html: {id: "course_select", class: "navbar-form form-inline"}) do |f|
           =f.collection_select(:id, Course.all, :id, :name, {include_blank: 'Select course'}, {onchange: "submit()", class: "form-control"})
       %li
-        =link_to 'logout', "#{ StudyflowPublishing::Application.config.auth_server }/logout" #, method: :post
+        =link_to 'logout', "#{ StudyflowPublishing::Application.config.auth_server }", method: :delete
