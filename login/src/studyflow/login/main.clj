@@ -43,7 +43,7 @@
       [:script {:src "//cdnjs.cloudflare.com/ajax/libs/respond.js/1.3.0/respond.js"}]
       "<! [endif]-->"]
     [:body
-      [:div {:class "container"} body]
+      [:div.container body]
       "<!-- /container -->"
       [:script {:src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"}]
       [:script {:src "//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/js/bootstrap.min.js"}]]))
@@ -52,10 +52,10 @@
   (form/form-to
     {:role "form" :class "form-signin" } [:post "/"]
     (form/hidden-field "__anti-forgery-token" *anti-forgery-token*)
-    [:h2 {:class "form-signin-heading"} msg]
+    [:h2.form-signin-heading msg]
     (form/email-field {:class "form-control" :placeholder "Email address"} "email" email) ;; required autofocus
     (form/password-field {:class "form-control" :placeholder "Password"} "password" password) ;; required
-    [:button {:class "btn btn-lg btn-primary btn-block" :type "submit"} "Sign in"]))
+    [:button.btn.btn-lg.btn-primary.btn-block {:type "submit"} "Sign in"]))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
