@@ -22,3 +22,8 @@
 (defevent PasswordChanged
   :student-id s/Uuid
   :encrypted-password s/Str)
+
+(def fixture
+  [(created "1" "Joost")
+   (created "2" "Steven")])
+
