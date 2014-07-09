@@ -13,6 +13,11 @@
   [model id name]
   (assoc-in model [:students id :full-name] name))
 
+(defn set-student-credentials
+  [model id credentials]
+  (assoc-in model [:students id :credentials] credentials))
+
+
 
 
 

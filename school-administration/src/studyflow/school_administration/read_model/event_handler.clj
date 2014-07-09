@@ -18,3 +18,11 @@
 (defmethod handle-event ::events/NameChanged
   [model {:keys [student-id full-name]}]
   (m/set-student-full-name model student-id full-name))
+
+(defmethod handle-event ::events/CredentialsAdded
+  [model {:keys [student-id credentials]}]
+  (m/set-student-credentials model student-id credentials))
+
+(defmethod handle-event ::events/CredentialsChanged
+  [model {:keys [student-id credentials]}]
+  (m/set-student-credentials model student-id credentials))
