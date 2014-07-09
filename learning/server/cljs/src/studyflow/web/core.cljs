@@ -55,9 +55,11 @@
     (will-unmount [_]
       (println "Navigation will unmount"))))
 
-(defn question-by-id [cursor section-id id]
-  (first (filter #(= id (:id %))
-                 (get-in cursor [:view :section section-id :data :questions]))))
+(defn question-by-id [cursor section-id question-id]
+  (if-let [question (get-in cursor [:view :section section-id :test question-id])]
+    question
+    (do (om/update! cursor [:view :section section-id :test question-id] nil)
+      nil)))
 
 (defn click-once-button [value onclick]
   (fn [cursor owner]
@@ -83,56 +85,56 @@
                    (let [questions (:questions section-test)
                          _ (prn "questions: " questions)
                          question (peek questions)
-                         question-id (:question-id question)
-                         ;; question should be in aggregate?
-                         question-data (question-by-id cursor section-id question-id)
-                         text (:text question-data)
-                         first-part (.replace text (re-pattern (str "__INPUT_1__.*$")) "")
-                         last-part (.replace text (re-pattern (str "^.*__INPUT_1__")) "")
-                         current-answer (get-in cursor [:view :section section-id :test :questions question-id :answer])
-                         answer-correct (when (contains? question :correct)
-                                          (:correct question))]
-                     (dom/div nil
-                              (dom/div nil (pr-str (:streak section-test)))
-                              (dom/div nil "Number of questions done: "
-                                       (count (filter #{:correct} (:streak section-test))))
-                              (dom/div #js {:dangerouslySetInnerHTML #js {:__html first-part}} nil)
-                              (if answer-correct
-                                (dom/div nil (pr-str (:inputs question)))
-                                (dom/input #js {:value current-answer
-                                                :onChange (fn [event]
-                                                            (om/transact!
-                                                             cursor
-                                                             [:view :section section-id :test :questions]
-                                                             #(assoc-in % [question-id :answer] (.. event -target -value))))}))
-                              (when-not (nil? answer-correct)
-                                (dom/div nil (str "Marked as: " answer-correct
-                                                  (when answer-correct
-                                                    " have some balloons"))))
-                              (dom/div #js {:dangerouslySetInnerHTML #js {:__html last-part}} nil)
-                              (let [course-id (get-in cursor [:static :course-id])]
-                                (if answer-correct
-                                  (dom/button #js {:onClick (fn []
-                                                              (async/put! (om/get-shared owner :command-channel)
-                                                                          ["section-test-commands/next-question"
-                                                                           section-test-id
-                                                                           section-id
-                                                                           course-id])
-                                                              (prn "next question command"))}
-                                              "Next Question")
-                                  (om/build (click-once-button "Check"
-                                                               (fn []
-                                                                 (om/update!
-                                                                  cursor
-                                                                  [:view :section section-id :test :questions question-id :answer]
-                                                                  nil)
-                                                                 (async/put! (om/get-shared owner :command-channel)
-                                                                             ["section-test-commands/check-answer"
-                                                                              section-test-id
-                                                                              section-id
-                                                                              course-id
-                                                                              question-id
-                                                                              {"__INPUT_1__" current-answer}]))) cursor)))))
+                         question-id (:question-id question)]
+                     (if-let [question-data (question-by-id cursor section-id question-id)]
+                       (let [text (:text question-data)
+                             first-part (.replace text (re-pattern (str "__INPUT_1__.*$")) "")
+                             last-part (.replace text (re-pattern (str "^.*__INPUT_1__")) "")
+                             current-answer (get-in cursor [:view :section section-id :test :questions question-id :answer])
+                             answer-correct (when (contains? question :correct)
+                                              (:correct question))]
+                         (dom/div nil
+                                  (dom/div nil (pr-str (:streak section-test)))
+                                  (dom/div nil "Number of questions done: "
+                                           (count (filter #{:correct} (:streak section-test))))
+                                  (dom/div #js {:dangerouslySetInnerHTML #js {:__html first-part}} nil)
+                                  (if answer-correct
+                                    (dom/div nil (pr-str (:inputs question)))
+                                    (dom/input #js {:value current-answer
+                                                    :onChange (fn [event]
+                                                                (om/transact!
+                                                                 cursor
+                                                                 [:view :section section-id :test :questions]
+                                                                 #(assoc-in % [question-id :answer] (.. event -target -value))))}))
+                                  (when-not (nil? answer-correct)
+                                    (dom/div nil (str "Marked as: " answer-correct
+                                                      (when answer-correct
+                                                        " have some balloons"))))
+                                  (dom/div #js {:dangerouslySetInnerHTML #js {:__html last-part}} nil)
+                                  (let [course-id (get-in cursor [:static :course-id])]
+                                    (if answer-correct
+                                      (dom/button #js {:onClick (fn []
+                                                                  (async/put! (om/get-shared owner :command-channel)
+                                                                              ["section-test-commands/next-question"
+                                                                               section-test-id
+                                                                               section-id
+                                                                               course-id])
+                                                                  (prn "next question command"))}
+                                                  "Next Question")
+                                      (om/build (click-once-button "Check"
+                                                                   (fn []
+                                                                     (om/update!
+                                                                      cursor
+                                                                      [:view :section section-id :test :questions question-id :answer]
+                                                                      nil)
+                                                                     (async/put! (om/get-shared owner :command-channel)
+                                                                                 ["section-test-commands/check-answer"
+                                                                                  section-test-id
+                                                                                  section-id
+                                                                                  course-id
+                                                                                  question-id
+                                                                                  {"__INPUT_1__" current-answer}]))) cursor)))))
+                       (dom/div nil "Loading question ...")))
                    (om/build (click-once-button "Start test for this section"
                                                 (fn []
                                                   (async/put! (om/get-shared owner :command-channel)

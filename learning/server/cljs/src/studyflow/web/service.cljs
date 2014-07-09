@@ -140,4 +140,26 @@
                                  (println res))})))
        nil)
 
+     (let [[view section _ test _] path]
+       (and (= view :view)
+            (= section :section)
+            (= test :test)))
+     (let [[_ _ section-id _ question-id] path
+           chapter-id (get-in new-state [:view :selected-path :chapter-id])]
+       (GET (str "/api/course-material/"
+                 (get-in new-state [:static :course-id])
+                 "/chapter/" chapter-id
+                 "/section/" section-id
+                 "/question/" question-id)
+            {:params {}
+             :handler (fn [res]
+                        (let [question-data (json-edn/json->edn res)]
+                          (om/transact! cursor
+                                        #(assoc-in %
+                                                   [:view :section section-id :test (:id question-data)]
+                                                   question-data))))
+             :error-handler (fn [res]
+                              (println "Error handler" res)
+                              (println res))}))
+
      :else nil)))
