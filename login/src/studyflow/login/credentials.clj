@@ -30,6 +30,9 @@
           :role "student"
           :encrypted-password (:encrypted-password event)}))
 
+(defmethod handle-event ::student-events/PasswordChanged [state event]
+  (assoc-in state [(:email event) :encrypted-password] (:encrypted-password event)))
+
 (defmethod handle-event :default
   [state _] state)
 
