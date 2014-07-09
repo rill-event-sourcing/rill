@@ -1,20 +1,14 @@
 (ns studyflow.login.main
-  (:require [clojure.java.jdbc :as sql]
-            [clojure.string :as str]
-            [clojure.tools.logging :as log]
-            [compojure.core :refer [defroutes GET POST DELETE]]
+  (:require [clojure.string :as str]
+            [compojure.core :refer [DELETE GET POST defroutes]]
             [compojure.route :refer [not-found]]
-            [crypto.password.bcrypt :as bcrypt]
             [environ.core :refer [env]]
-            [hiccup.page :refer [html5 include-css]]
-            [hiccup.element :as element]
             [hiccup.form :as form]
-            [ring.util.response :as response]
-            [ring.middleware.params :refer [wrap-params]]
+            [hiccup.page :refer [html5 include-css]]
             [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
-            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
-            [taoensso.carmine :as car :refer (wcar)]
-            [studyflow.login.credentials :refer :all]))
+            [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
+            [studyflow.login.credentials :refer :all]
+            [taoensso.carmine :as car]))
 
 (def app-title "Studyflow")
 (def studyflow-env (keyword (env :studyflow-env)))
