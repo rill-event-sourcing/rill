@@ -110,7 +110,7 @@
          (do
            (let [section-test-id (str "student-idDEFAULT_STUDENT_IDsection-id" section-id)]
              (prn "Load aggregate: " section-test-id)
-             (when-not (contains? (get-in new-state [:aggregates section-test-id]))
+             (when-not (contains? (get new-state :aggregates) section-test-id)
                (GET (str "/api/section-test-replay/" section-test-id)
                     {:format :json
                      :handler (fn [res]
