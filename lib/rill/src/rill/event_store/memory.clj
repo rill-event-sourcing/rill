@@ -2,7 +2,7 @@
   "An in-memory event store for testing purposes"
   (:require [clojure.tools.logging :as log]
             [rill.event-store :as store]
-            [rill.event-stream :as stream]
+            [rill.event-stream :as stream :refer [all-events-stream-id]]
             [rill.message :as message]
             [slingshot.slingshot :refer [try+ throw+]]))
 
@@ -32,10 +32,13 @@
 
   (append-events [this stream-id from-version events]
     (try+ (swap! state (fn [old-state]
-                         (let [current-stream (get old-state stream-id stream/empty-stream)]
+                         (let [current-stream (get old-state stream-id stream/empty-stream)
+                               all-stream (get old-state all-events-stream-id stream/empty-stream)]
                            (if (or (nil? from-version)
                                    (= (dec (count current-stream)) from-version))
-                             (assoc old-state stream-id (into current-stream events))
+                             (-> old-state
+                                 (assoc stream-id (into current-stream events))
+                                 (assoc all-events-stream-id (into all-stream events)))
                              (throw+ ::out-of-date)))))
           true
           (catch #(= % ::out-of-date) err

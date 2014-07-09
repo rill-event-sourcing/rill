@@ -4,4 +4,6 @@
 
 (def empty-stream-version -1)
 
+(def all-events-stream-id ::all-events)
+
 
