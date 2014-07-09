@@ -6,19 +6,16 @@
             [rill.message :as message]
             [studyflow.events.student :as student-events]))
 
-(defonce db (atom {}))
-
-(defn- find-user-by-email [db email]
-  (get @db email))
+(defonce db-atom (atom {}))
 
 (defn authenticate [db email password]
-  (if-let [user (find-user-by-email db email)]
+  (if-let [user (get db email)]
     (if (bcrypt/check password (:encrypted-password user))
       user)))
 
-(defn wrap-authenticator [app db]
+(defn wrap-authenticator [app]
   (fn [req]
-    (app (assoc req :authenticate (partial authenticate db)))))
+    (app (assoc req :authenticate (partial authenticate @db-atom)))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -40,5 +37,5 @@
   (thread
     (loop []
       (when-let [event (<!! channel)]
-        (swap! db handle-event event)
+        (swap! db-atom handle-event event)
         (recur)))))

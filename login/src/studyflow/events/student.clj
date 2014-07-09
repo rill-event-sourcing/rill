@@ -7,3 +7,7 @@
   :full-name s/Str
   :email s/Str
   :encrypted-password s/Str)
+
+(defevent PasswordChanged
+  :email s/Str
+  :encrypted-password s/Str)
