@@ -9,6 +9,7 @@
                  [org.clojure/java.jdbc "0.3.3"]
                  [org.clojure/tools.logging "0.3.0"]
                  [postgresql/postgresql "8.4-702.jdbc4"]
+                 [rill "0.1.0-SNAPSHOT"]
                  [ring/ring-defaults "0.1.0"]
                  [ring-server "0.3.1"]]
 
