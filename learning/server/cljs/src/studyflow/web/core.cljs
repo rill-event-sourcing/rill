@@ -19,6 +19,9 @@
                                              :tab-questions #{}}}
                       :aggregates {}}))
 
+(defn history-link [selected-path]
+  (str "#" (url-history/path->token selected-path)))
+
 (defn navigation [cursor owner]
   (reify
     om/IWillMount
@@ -39,15 +42,10 @@
                                          (for [{:keys [title]
                                                 section-id :id
                                                 :as section} sections]
-                                           (dom/span #js {:className "link"
-                                                          :onClick
-                                                          (fn [_]
-                                                            (om/transact! cursor
-                                                                          [:view :selected-path]
-                                                                          (fn [old]
-                                                                            (assoc old
-                                                                              :chapter-id chapter-id
-                                                                              :section-id section-id))))}
+                                           (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
+                                                                 (assoc :chapter-id chapter-id
+                                                                        :section-id section-id)
+                                                                 history-link)}
                                                   (dom/li #js {:data-id section-id}
                                                           title
                                                           (when (= section-id
@@ -154,14 +152,12 @@
                                          :questions "Questions"}]
                           (if (= tab-selection k)
                             (dom/li nil title)
-                            (dom/span #js {:className "link"
-                                           :onClick
-                                           (fn [_]
-                                             (om/transact! cursor
-                                                           [:view :selected-path]
-                                                           (fn [old]
-                                                             (update-in old [:tab-questions] (if (= k :questions) conj disj) section-id))))}
-                                      (dom/li nil title)))))
+                            (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
+                                                  (update-in [:tab-questions]
+                                                             (if (= k :questions) conj disj)
+                                                             section-id)
+                                                  history-link)}
+                                   (dom/li nil title)))))
                  (if (= tab-selection :explanation)
                    (let [section (get-in cursor [:view :section section-id :data])
                          text (get-in section [:subsections-by-level :1-star])]
