@@ -13,14 +13,14 @@
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
-            [taoensso.carmine :as car :refer (wcar)]))
+            [taoensso.carmine :as car :refer (wcar)]
+            [studyflow.login.credentials :refer :all]))
 
 (def app-title "Studyflow")
 (def studyflow-env (keyword (env :studyflow-env)))
 (def publishing-url (studyflow-env (env :publishing-url)))
 (def cookie-domain (studyflow-env (env :cookie-domain)))
 (def session-max-age (studyflow-env (env :session-max-age)))
-(def db-subname (studyflow-env (env :db-subname)))
 
 
 (def redis  {:pool {} :spec {}})
@@ -106,18 +106,6 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Database interaction
-
-(defn- find-user-by-email [db email]
-  (first (sql/query db ["SELECT uuid, role, password FROM users WHERE email = ?" email])))
-
-(defn authenticate [db email password]
-  (if-let [user (find-user-by-email db email)]
-    (if (bcrypt/check password (:password user))
-      user)))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Cookie management
 
 (defn get-uuid-from-cookies [cookies]
@@ -135,10 +123,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wiring
-
-(defn wrap-authenticator [app db]
-  (fn [req]
-    (app (assoc req :authenticate (partial authenticate db)))))
 
 (defn wrap-login-user [app]
   (fn [req]
@@ -171,14 +155,6 @@
         (redirect-to (or (:value (cookies "studyflow_redir_to"))
                          (default-redirect-path user-role)))
         resp))))
-
-(def db
-  {:classname "org.postgresql.Driver"
-   :subprotocol "postgresql"
-   :subname db-subname
-   :user (env :db-user)
-   :password (env :db-password)})
-
 
 (defn set-studyflow-site-defaults []
   (-> site-defaults ;; secure-site-defaults

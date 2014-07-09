@@ -13,8 +13,8 @@
                  [postgresql/postgresql "8.4-702.jdbc4"]
                  [ring/ring-defaults "0.1.0"]
                  [ring-server "0.3.1"]]
-
-  :plugins [[lein-ring "0.8.10"]]
+  :plugins [[lein-ring "0.8.10"]
+            [lein-checkouts "1.1.0"]]
   :ring {:init studyflow.login.main/bootstrap!
          :handler studyflow.login.main/app :port 4000}
   :aliases {"prepare-database" ["run" "-m" "studyflow.login.prepare-database"]}
