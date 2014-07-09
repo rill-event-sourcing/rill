@@ -12,8 +12,7 @@
                                                  {:user "admin" :password "changeit"})
         channel (event-channel event-store all-events-stream-id -1 0)]
     (credentials/listen! channel)
-    (>!! channel (student-events/created
+    (>!! channel (student-events/credentials-added
                   "my-student-id"
-                  "Fred Flintstone"
                   "fred@example.com"
-                  (bcrypt/encrypt "test123")))))
+                  (bcrypt/encrypt "wilma")))))

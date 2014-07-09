@@ -2,12 +2,12 @@
   (:require [rill.message :refer [defevent]]
             [schema.core :as s]))
 
-(defevent Created
+(defevent CredentialsAdded
   :student-id s/Uuid
-  :full-name s/Str
   :email s/Str
   :encrypted-password s/Str)
 
-(defevent PasswordChanged
+(defevent CredentialsChanged
+  :student-id s/Uuid
   :email s/Str
   :encrypted-password s/Str)

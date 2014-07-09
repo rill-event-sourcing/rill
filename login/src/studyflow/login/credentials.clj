@@ -23,15 +23,20 @@
 
 (defmulti handle-event (fn [_ event] (message/type event)))
 
-(defmethod handle-event ::student-events/Created
-  [state event]
-  (assoc state (:email event)
-         {:uuid (:student-id event)
+(defmethod handle-event ::student-events/CredentialsAdded
+  [state {:keys [email student-id encrypted-password]}]
+  (assoc state email
+         {:uuid student-id
           :role "student"
-          :encrypted-password (:encrypted-password event)}))
+          :encrypted-password encrypted-password}))
 
-(defmethod handle-event ::student-events/PasswordChanged [state event]
-  (assoc-in state [(:email event) :encrypted-password] (:encrypted-password event)))
+(defmethod handle-event ::student-events/CredentialsChanged
+  [state {:keys [email student-id encrypted-password]}]
+  (into {email 
+          {:uuid student-id 
+           :role "student"
+           :encrypted-password encrypted-password }}
+        (filter (fn [[_ user]] (not= student-id (:uuid user))) state)))
 
 (defmethod handle-event :default
   [state _] state)

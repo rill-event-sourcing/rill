@@ -25,10 +25,13 @@
                    :role "student"
                    :encrypted-password "token"}}
          (handle-event {}
-                       (student-events/created "id" "name" "email" "token"))))
+                       (student-events/credentials-added "id" "email" "token"))))
   (let [db (-> {}
-               (handle-event (student-events/created "id" "name" "email" "token"))
-               (handle-event (student-events/password-changed "email" "newpassword")))
+               (handle-event (student-events/credentials-added "id" "email" "token"))
+               (handle-event (student-events/credentials-changed "id" "email" "newpassword")))
         user (get db "email")]
     (is (= "newpassword" (:encrypted-password user)))
     (is (= "id" (:uuid user)))))
+
+
+
