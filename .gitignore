@@ -1,5 +1,6 @@
 *~
 *#
+pom.xml
 .nrepl-port
 .lein-repl-history
 .DS_Store

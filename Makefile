@@ -7,6 +7,7 @@ deploy-staging:
 	cd publishing && cap staging deploy
 
 test:
+	cd lib/rill && lein install
 	cd learning && make test
 	cd publishing && make test
 	cd login && make test
