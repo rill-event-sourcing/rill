@@ -29,28 +29,33 @@
       (println "Navigation will mount"))
     om/IRender
     (render [_]
-      (if-let [course (get-in cursor [:view :course-material])]
-        (dom/div nil
-                 (dom/h1 #js {:data-id (:id course)} (:name course))
-                 (apply dom/ul nil
-                        (for [{:keys [title sections]
-                               chapter-id :id
-                               :as chapter} (:chapters course)]
-                          (dom/li #js {:data-id chapter-id}
-                                  title
-                                  (apply dom/ul nil
-                                         (for [{:keys [title]
-                                                section-id :id
-                                                :as section} sections]
-                                           (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
-                                                                 (assoc :chapter-id chapter-id
-                                                                        :section-id section-id)
-                                                                 history-link)}
-                                                  (dom/li #js {:data-id section-id}
-                                                          title
-                                                          (when (= section-id
-                                                                   (get-in cursor [:view :selected-path :section-id])) "[selected]")))))))))
-        (dom/h2 nil "No content ... spinner goes here")))
+      (let [chapter-id (get-in cursor [:view :selected-path :chapter-id])
+            course (get-in cursor [:view :course-material])]
+        (if-let [chapter (some (fn [{:keys [id] :as chapter}]
+                                 (when (= id chapter-id)
+                                   chapter)) (:chapters course))]
+          (dom/div nil
+                   (dom/div #js {:className "panel panel-default"}
+                            (dom/a #js {:href ""}
+                                   "< Dashboard")
+                            (dom/h1 nil "Course: "(:name course))
+                            (dom/h1 #js {:data-id (:id course)}
+                                    "Chapter: "
+                                    (:title chapter)))
+                   (dom/div #js {:className "panel panel-default"}
+                            (apply dom/ul nil
+                                   (for [{:keys [title]
+                                          section-id :id
+                                          :as section} (:sections chapter)]
+                                     (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
+                                                           (assoc :chapter-id chapter-id
+                                                                  :section-id section-id)
+                                                           history-link)}
+                                            (dom/li #js {:data-id section-id}
+                                                    title
+                                                    (when (= section-id
+                                                             (get-in cursor [:view :selected-path :section-id])) "[selected]")))))))
+          (dom/h2 nil "No content ... spinner goes here"))))
     om/IWillUnmount
     (will-unmount [_]
       (println "Navigation will unmount"))))
@@ -74,16 +79,56 @@
                    (when (om/get-state owner :disabled)
                      "[DISABLED]"))))))
 
+(defn section-explanation [cursor owner]
+  (reify
+    om/IRender
+    (render [_]
+      (let [{:keys [chapter-id section-id tab-questions]} (get-in cursor [:view :selected-path])]
+        (apply dom/div #js {:className "row"}
+               (apply dom/div #js {:className "col-md-12 panel panel-default"}
+                      (when (get-in cursor [:view :selected-path :section-id])
+                        [(dom/div #js {:className "col-md-8"} "?????? title is what ????")
+                         (dom/div #js {:className "col-md-4"}
+                                  (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
+                                                        (update-in [:tab-questions]
+                                                                   conj section-id)
+                                                        history-link)}
+                                         "=> Vragen"))]))
+               (if-let [section (get-in cursor [:view :section section-id :data])]
+                 (let [text (get-in section [:subsections-by-level :1-star])]
+                   [(dom/div #js {:className "col-md-8 panel panel-default"}
+                             (pr-str (repeat 100 text)))
+                    (dom/div #js {:className "col-md-4 panel panel-default"}
+                             (apply dom/ul nil
+                                    (for [{:keys [title]
+                                           subsection-id :id
+                                           :as subsection} (get-in section [:subsections-by-level :1-star])]
+                                      (dom/li nil title))))])
+                 ["Loading section data..."])
+)))))
+
 (defn section-test [cursor owner]
   (reify
     om/IRender
     (render [_]
-      (dom/div #js {:className "section-test"}
-               (let [section-id (get-in cursor [:view :selected-path :section-id])
-                     section-test-id (str "student-idDEFAULT_STUDENT_IDsection-id" section-id)]
-                 (if-let [section-test (get-in cursor [:aggregates section-test-id])]
+      (let [section-id (get-in cursor [:view :selected-path :section-id])
+            section-test-id (str "student-idDEFAULT_STUDENT_IDsection-id" section-id)
+            section-test (get-in cursor [:aggregates section-test-id])]
+        (dom/div #js {:className "row"}
+                 (dom/div #js {:className "col-md-12 panel panel-default"}
+                          (dom/div #js {:className "col-md-4"}
+                                   (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
+                                                         (update-in [:tab-questions]
+                                                                    disj section-id)
+                                                         history-link)}
+                                          "<= Explanation"))
+                          (dom/div #js {:className "col-md-4"}
+                                   "???? Some title ????")
+                          (when section-test
+                            (dom/div #js {:className "col-md-4"}
+                                    (pr-str (:streak section-test)))))
+                 (if section-test
                    (let [questions (:questions section-test)
-                         _ (prn "questions: " questions)
                          question (peek questions)
                          question-id (:question-id question)]
                      (if-let [question-data (question-by-id cursor section-id question-id)]
@@ -93,7 +138,7 @@
                              current-answer (get-in cursor [:view :section section-id :test :questions question-id :answer])
                              answer-correct (when (contains? question :correct)
                                               (:correct question))]
-                         (dom/div nil
+                         (dom/div #js {:className "col-md-12 panel panel-default"}
                                   (dom/div nil (pr-str (:streak section-test)))
                                   (dom/div nil "Number of questions done: "
                                            (count (filter #{:correct} (:streak section-test))))
@@ -140,15 +185,18 @@
                                                   (async/put! (om/get-shared owner :command-channel)
                                                               ["section-test-commands/init" section-id]))) cursor)))))))
 
-(defn section-tabs [cursor owner]
+(defn section-panel [cursor owner]
   (reify
     om/IRender
     (render [_]
-      (let [{:keys [section-id tab-questions]} (get-in cursor [:view :selected-path])
+      (let [{:keys [chapter-id section-id tab-questions]} (get-in cursor [:view :selected-path])
             tab-selection (if (contains? tab-questions section-id)
                             :questions
                             :explanation)]
-        (dom/div nil
+        (if (= tab-selection :explanation)
+          (om/build section-explanation cursor)
+          (om/build section-test cursor))
+        #_(dom/div nil
                  (apply dom/ul nil
                         (for [[k title] {:explanation "Explanation"
                                          :questions "Questions"}]
@@ -160,11 +208,7 @@
                                                              section-id)
                                                   history-link)}
                                    (dom/li nil title)))))
-                 (if (= tab-selection :explanation)
-                   (let [section (get-in cursor [:view :section section-id :data])
-                         text (get-in section [:subsections-by-level :1-star])]
-                     (dom/div nil (pr-str text)))
-                   (om/build section-test cursor)))))))
+            )))))
 
 (defn inspect [cursor owner]
   (reify
@@ -178,8 +222,11 @@
                                                         (zipmap (keys s)
                                                                 (map (fn [sc] (update-in sc [:data] #(str (subs (pr-str %) 0 5) "...truncated..."))) (vals s))))))))))))
 
-
-(defn content [cursor owner]
+                  
+ 
+ 
+ 
+ #_(defn section-panel [cursor owner]
   (reify
     om/IRender
     (render [_]
@@ -187,10 +234,31 @@
         (if-let [section-data (get-in cursor [:view :section section-id :data])]
           (dom/div #js {:id (str "section-" section-id)}
                    (dom/h2 nil (:title section-data))
-                   (om/build section-tabs cursor)
+                   (om/build section-panel cursor)
                    (om/build inspect cursor))
           (dom/h2 nil (str "Selected data not yet loaded" [chapter-id section-id])))
         (dom/h2 nil "No section selected")))))
+
+(defn dashboard [cursor owner]
+  (reify
+    om/IRender
+    (render [_]
+      (apply dom/div nil
+             "Dashboard"
+             (if-let [course (get-in cursor [:view :course-material])]
+               [(dom/h1 nil (:name course))
+                (apply dom/ul nil
+                        (for [{:keys [title]
+                               chapter-id :id
+                               :as chapter} (:chapters course)]
+                          (dom/li #js {:data-id chapter-id}
+                                  (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
+                                                        (assoc :chapter-id chapter-id)
+                                                        history-link)}
+                                         title
+                                         (when (= chapter-id
+                                                  (get-in cursor [:view :selected-path :chapter-id])) "[selected]")))))]
+               [(dom/h2 nil "No content ... spinner goes here")])))))
 
 (defn widgets [cursor owner]
   (reify
@@ -199,9 +267,13 @@
       (println "widget will mount"))
     om/IRender
     (render [_]
-      (dom/div nil
-               (om/build navigation cursor)
-               (om/build content cursor)))
+      (if-not (get-in cursor [:view :selected-path :chapter-id])
+        (om/build dashboard cursor)
+        (dom/div #js {:className "row"}
+                 (dom/div #js {:className "col-md-4"}
+                          (om/build navigation cursor))
+                 (dom/div #js {:className "col-md-8"}
+                          (om/build section-panel cursor)))))
     om/IWillUnmount
     (will-unmount [_]
       (println "widget will unmount"))))

@@ -14,18 +14,20 @@
         section-id (-> token
                        (.replace #"tab-.*$" "")
                        (.replace #".*section-" ""))
+        section-id (when (seq section-id)
+                     section-id)
         tab-ids (-> token
                    (.replace  #".*tab-" "")
                    (string/split "|")
                    set)]
-    (when (and (seq chapter-id) (seq section-id))
+    (when (seq chapter-id)
       {:chapter-id chapter-id
        :section-id section-id
        :tab-questions tab-ids})))
 
 (defn path->token [path]
   (let [{:keys [chapter-id section-id tab-questions]} path]
-    (when (and chapter-id section-id)
+    (when chapter-id
       (let [tab-questions (string/join "|" tab-questions)]
         (str "chapter-" chapter-id "section-" section-id "tab-" tab-questions)))))
 
