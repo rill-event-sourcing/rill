@@ -208,6 +208,28 @@
                                                         (zipmap (keys s)
                                                                 (map (fn [sc] (update-in sc [:data] #(str (subs (pr-str %) 0 5) "...truncated..."))) (vals s))))))))))))
 
+
+(defn dashboard [cursor owner]
+  (reify
+    om/IRender
+    (render [_]
+      (apply dom/div nil
+             "Dashboard"
+             (if-let [course (get-in cursor [:view :course-material])]
+               [(dom/h1 nil (:name course))
+                (apply dom/ul nil
+                        (for [{:keys [title]
+                               chapter-id :id
+                               :as chapter} (:chapters course)]
+                          (dom/li #js {:data-id chapter-id}
+                                  (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
+                                                        (assoc :chapter-id chapter-id)
+                                                        history-link)}
+                                         title
+                                         (when (= chapter-id
+                                                  (get-in cursor [:view :selected-path :chapter-id])) "[selected]")))))]
+               [(dom/h2 nil "No content ... spinner goes here")])))))
+
 (defn dashboard [cursor owner]
   (reify
     om/IRender
