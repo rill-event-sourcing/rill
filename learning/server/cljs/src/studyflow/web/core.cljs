@@ -107,6 +107,21 @@
                  ["Loading section data..."])
 )))))
 
+(defn streak-box [cursor owner]
+  (reify
+    om/IRender
+    (render [_]
+      (apply dom/div #js {:className "streak-box"}
+             (map-indexed
+              (fn [idx [question-id result]]
+                (dom/span #js {:className (if (<= (- (count cursor) 4) idx)
+                                            "last-four"
+                                            "old")}
+                          (condp = result
+                            :correct "V"
+                            :incorrect "X")))
+              cursor)))))
+
 (defn question-panel [cursor owner {:keys [section-test
                                            section-test-id
                                            question
@@ -122,9 +137,7 @@
             answer-correct (when (contains? question :correct)
                              (:correct question))]
         (dom/div #js {:className "col-md-12 panel panel-default"}
-                 (dom/div nil (pr-str (:streak section-test)))
-                 (dom/div nil "Number of questions done: "
-                          (count (filter #{:correct} (:streak section-test))))
+                 (om/build streak-box (:streak section-test))
                  (dom/div #js {:dangerouslySetInnerHTML #js {:__html first-part}} nil)
                  (if answer-correct
                    (dom/div nil (pr-str (:inputs question)))
@@ -190,7 +203,7 @@
                                    "???? Some title ????")
                           (when section-test
                             (dom/div #js {:className "col-md-4"}
-                                    (pr-str (:streak section-test)))))
+                                     (om/build streak-box (:streak section-test)))))
                  (if section-test
                    (let [questions (:questions section-test)
                          question (peek questions)

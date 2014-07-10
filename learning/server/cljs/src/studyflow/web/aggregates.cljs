@@ -1,5 +1,11 @@
 (ns studyflow.web.aggregates)
 
+(defn conj-streak [streak question-id result]
+  (if (= (first (peek streak)) question-id)
+    streak ;; already recorded a streak entry
+    (conj streak [question-id result])
+    ))
+
 (defn handle-event [agg event]
   (condp = (:type event)
     "studyflow.learning.section-test.events/Created"
@@ -14,7 +20,8 @@
     (let [question-id (:question-id event)
           inputs (:inputs event)]
       (-> agg
-          (update-in [:streak] conj :correct)
+          (update-in [:streak]
+                     conj-streak question-id :correct)
           (update-in [:questions]
                      (fn [qs]
                        (vec (for [q qs]
@@ -27,7 +34,8 @@
     (let [question-id (:question-id event)
           inputs (:inputs event)]
       (-> agg
-          (update-in [:streak] conj :incorrect)
+          (update-in [:streak]
+                     conj-streak question-id :incorrect)
           (update-in [:questions]
                      (fn [qs]
                        (vec (for [q qs]
