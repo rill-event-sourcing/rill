@@ -13,8 +13,9 @@
                  [ring/ring-defaults "0.1.0"]
                  [ring-server "0.3.1"]]
 
-  :plugins [[lein-ring "0.8.10"]]
-  :ring {;;:init studyflow.school-administration.main/bootstrap!
+  :plugins [[lein-ring "0.8.10"]
+            [cider/cider-nrepl "0.7.0-SNAPSHOT"]]
+  :ring {:init studyflow.school-administration.dev/bootstrap!
          :handler studyflow.school-administration.main/app :port 4000}
   :aliases {"prepare-database" ["run" "-m" "studyflow.school-administration.prepare-database"]}
 
