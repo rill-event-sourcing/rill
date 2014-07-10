@@ -43,7 +43,12 @@
                                 (assoc q
                                   :correct false
                                   :inputs inputs)
-                                q)))))))))
+                                q)))))))
+    "studyflow.learning.section-test.events/Finished"
+    (assoc agg :finished true)
+    (do
+      (prn "Aggregate can't handle event: " event)
+      agg)))
 
 (defn apply-events [agg events]
   (reduce

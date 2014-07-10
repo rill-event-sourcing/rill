@@ -135,7 +135,16 @@
             last-part (.replace text (re-pattern (str "^.*__INPUT_1__")) "")
             current-answer (get-in cursor [:view :section section-id :test :questions question-id :answer])
             answer-correct (when (contains? question :correct)
-                             (:correct question))]
+                             (:correct question))
+            course-id (get-in cursor [:static :course-id])
+            check-answer (fn []
+                           (async/put! (om/get-shared owner :command-channel)
+                                       ["section-test-commands/check-answer"
+                                        section-test-id
+                                        section-id
+                                        course-id
+                                        question-id
+                                        {"__INPUT_1__" current-answer}]))]
         (dom/div #js {:className "col-md-12 panel panel-default"}
                  (om/build streak-box (:streak section-test))
                  (dom/div #js {:dangerouslySetInnerHTML #js {:__html first-part}} nil)
@@ -147,37 +156,37 @@
                                                (om/update!
                                                 cursor
                                                 [:view :section section-id :test :questions question-id :answer]
-                                                (.. event -target -value)))}))
+                                                (.. event -target -value)))
+                                   :onKeyPress (fn [event]
+                                                 (when (= (.-keyCode event) 13) ;; enter
+                                                   (check-answer)))}))
                  (when-not (nil? answer-correct)
                    (dom/div nil (str "Marked as: " answer-correct
                                      (when answer-correct
                                        " have some balloons"))))
                  (dom/div #js {:dangerouslySetInnerHTML #js {:__html last-part}} nil)
-                 (let [course-id (get-in cursor [:static :course-id])]
-                   (if answer-correct
-                     (dom/button #js {:onClick (fn []
-                                                 (async/put! (om/get-shared owner :command-channel)
-                                                             ["section-test-commands/next-question"
-                                                              section-test-id
-                                                              section-id
-                                                              course-id])
-                                                 (prn "next question command"))}
-                                 "Next Question")
-                     (om/build (click-once-button (if (seq (get-in cursor [:view :section section-id :test :questions question-id :answer]))
-                                                    "Check"
-                                                    "Check [DISABLED]")
-                                                  (fn []
-                                                    (om/update!
-                                                     cursor
-                                                     [:view :section section-id :test :questions question-id :answer]
-                                                     nil)
-                                                    (async/put! (om/get-shared owner :command-channel)
-                                                                ["section-test-commands/check-answer"
-                                                                 section-test-id
-                                                                 section-id
-                                                                 course-id
-                                                                 question-id
-                                                                 {"__INPUT_1__" current-answer}]))) cursor))))))
+                 (if answer-correct
+                   (dom/button #js {:onClick (fn []
+                                               (async/put! (om/get-shared owner :command-channel)
+                                                           ["section-test-commands/next-question"
+                                                            section-test-id
+                                                            section-id
+                                                            course-id])
+                                               (prn "next question command"))}
+                               "Correct! Next Question")
+                   (om/build (click-once-button (if (seq (get-in cursor [:view :section section-id :test :questions question-id :answer]))
+                                                  "Check"
+                                                  "Check [DISABLED]")
+                                                (fn []
+                                                  (om/update!
+                                                   cursor
+                                                   [:view :section section-id :test :questions question-id :answer]
+                                                   nil)
+                                                  (check-answer)
+                                                  )) cursor))
+                 (when (:finished section-test)
+                   (dom/div nil
+                            "CONGRATS YOU ARE NOW DONE!! [should be pop-up/modal]")))))
     om/IDidMount
     (did-mount [_]
       (when-let [input-field (om/get-node owner "__INPUT_1__")]
