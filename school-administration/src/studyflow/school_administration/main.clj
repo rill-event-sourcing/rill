@@ -46,21 +46,30 @@
     [:script {:src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"}]
     [:script {:src "//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/js/bootstrap.min.js"}]]))
 
+(defn render-new-student-form
+  [{:keys [full-name]}]
+  (form/form-to
+   {:role "form"} [:post "/create_student"]
+   (form/hidden-field "__anti-forgery-token" *anti-forgery-token*)
+   (form/text-field {:placeholder "Full name"} "full-name" full-name)
+   [:button {:type "submit"} "Add student"]))
+
 (defn render-student-list
   [students]
-  (layout "Student list"
+  (layout
+   "Student list"
    [:table
     [:thead
      [:tr
       [:th "id"]
       [:th "name"]]]
     [:tbody
-     (map student-row students)]]))
+     (map student-row students)]
+    (render-new-student-form nil)]))
 
 (defroutes actions
   (GET "/" {:keys [read-model]}
        (render-student-list (m/list-students read-model)))
-
   (not-found "Nothing here"))
 
 (defn wrap-read-model
