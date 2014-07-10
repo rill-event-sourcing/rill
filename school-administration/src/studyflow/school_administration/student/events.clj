@@ -25,6 +25,7 @@
 (def fixture
   [(created "1" "Joost")
    (created "2" "Steven")
+   (created "3" "Davide")
    (credentials-added "1" {:email "joost@zeekat.nl" :encryped-password "...."})])
 
 
