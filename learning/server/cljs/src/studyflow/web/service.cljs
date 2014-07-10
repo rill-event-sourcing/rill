@@ -153,8 +153,9 @@
                                   (println res))})))
        nil)
 
-     (let [[view section _ test _] path]
-       (and (= view :view)
+     (let [[view section _ test _ & more] path]
+       (and (not more)
+            (= view :view)
             (= section :section)
             (= test :test)))
      (let [[_ _ section-id _ question-id] path
