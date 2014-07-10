@@ -196,7 +196,7 @@
         (if (= tab-selection :explanation)
           (if section-id
             (om/build section-explanation cursor)
-            "Select a section")
+            (dom/div nil "Select a section"))
           (om/build section-test cursor))))))
 
 (defn inspect [cursor owner]
