@@ -2,20 +2,22 @@
   (:require
    [clojure.string :as str]
    [clojure.tools.logging :as log]
-   [compojure.core :refer [defroutes GET POST DELETE]]
+   [compojure.core :refer [defroutes GET POST DELETE routes]]
    [compojure.route :refer [not-found]]
    [hiccup.page :refer [html5 include-css]]
    [hiccup.element :as element]
    [hiccup.form :as form]
+   [rill.event-store.memory :refer [memory-store]]
+   [rill.uuid :refer [new-id]]
+   [rill.web :refer [wrap-command-handler]]
    [ring.util.response :as response]
    [ring.middleware.params :refer [wrap-params]]
    [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
    [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
    [studyflow.school-administration.read-model :as m]
    [studyflow.school-administration.read-model.event-handler :refer [load-model]]
-   [studyflow.school-administration.student.events :refer [fixture]]))
-
-
+   [studyflow.school-administration.student.events :refer [fixture]]
+   [studyflow.school-administration.student.commands :as commands]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; View
@@ -49,7 +51,7 @@
 (defn render-new-student-form
   [{:keys [full-name]}]
   (form/form-to
-   {:role "form"} [:post "/create_student"]
+   {:role "form"} [:post "/create-student"]
    (form/hidden-field "__anti-forgery-token" *anti-forgery-token*)
    (form/text-field {:placeholder "Full name"} "full-name" full-name)
    [:button {:type "submit"} "Add student"]))
@@ -67,19 +69,30 @@
      (map student-row students)]
     (render-new-student-form nil)]))
 
-(defroutes actions
+(defroutes queries
   (GET "/" {:keys [read-model]}
        (render-student-list (m/list-students read-model)))
   (not-found "Nothing here"))
+
+(defroutes commands
+  (POST "/create-student" {{:keys [full-name]} :params}
+        (commands/create! (new-id) full-name)))
 
 (defn wrap-read-model
   [f model-atom]
   (fn [request]
     (f (assoc request :read-model @model-atom))))
 
-(def app
-  (->
-   actions
-   (wrap-read-model (atom (load-model fixture)))
-   (wrap-defaults site-defaults)))
+(def queries-app
+  (-> queries
+      (wrap-read-model (atom (load-model fixture)))))
 
+(def event-store (memory-store))
+
+(def commands-app
+  (-> commands
+      (wrap-command-handler event-store)))
+
+(def app
+  (-> (routes commands-app queries-app)
+      (wrap-defaults site-defaults)))

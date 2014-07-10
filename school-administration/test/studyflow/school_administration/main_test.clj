@@ -1,6 +1,11 @@
 (ns studyflow.school-administration.main-test
   (:require [studyflow.school-administration.main :as main]
-            [clojure.test :refer [is deftest testing]]))
+            [studyflow.school-administration.student.commands :as commands]
+            [rill.message :as message]
+            [clojure.test :refer [is deftest testing]]
+            [ring.mock.request :refer [request]]))
 
-
-
+(deftest test-commands
+  (testing "post create-student"
+    (let [resp (main/commands (request :post "/create-student" {:full-name "Tinus"}))]
+      (is (= ::commands/Create! (message/type resp))))))
