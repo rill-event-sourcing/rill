@@ -133,24 +133,25 @@
                                       (handle-events-or-init [])
                                       )}))))
          ;; for explanation tab
-         (if-let [section-data (get-in new-state [:view :section section-id :data])]
-           nil ;; data already loaded
-           (GET (str "/api/course-material/"
-                     (get-in new-state [:static :course-id])
-                     "/chapter/" chapter-id
-                     "/section/" section-id)
-                {:params {}
-                 :handler (fn [res]
-                            (println "Service heard: " res)
-                            (let [section-data (json-edn/json->edn res)]
-                              (println "section: " section-data)
-                              (om/transact! cursor
-                                            #(assoc-in %
-                                                       [:view :section (:id section-data) :data]
-                                                       section-data))))
-                 :error-handler (fn [res]
-                                  (println "Error handler" res)
-                                  (println res))})))
+         (when section-id
+           (if-let [section-data (get-in new-state [:view :section section-id :data])]
+             nil ;; data already loaded
+             (GET (str "/api/course-material/"
+                       (get-in new-state [:static :course-id])
+                       "/chapter/" chapter-id
+                       "/section/" section-id)
+                  {:params {}
+                   :handler (fn [res]
+                              (println "Service heard: " res)
+                              (let [section-data (json-edn/json->edn res)]
+                                (println "section: " section-data)
+                                (om/transact! cursor
+                                              #(assoc-in %
+                                                         [:view :section (:id section-data) :data]
+                                                         section-data))))
+                   :error-handler (fn [res]
+                                    (println "Error handler" res)
+                                    (println res))}))))
        nil)
 
      (let [[view section _ test _ & more] path]
