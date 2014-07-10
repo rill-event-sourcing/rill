@@ -1,5 +1,6 @@
 (ns studyflow.school-administration.main
   (:require
+   [clojure.core.async :refer [thread <!!]]
    [clojure.string :as str]
    [clojure.tools.logging :as log]
    [compojure.core :refer [defroutes GET POST DELETE routes]]
@@ -15,7 +16,8 @@
    [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
    [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
    [studyflow.school-administration.read-model :as m]
-   [studyflow.school-administration.read-model.event-handler :refer [load-model]]
+   [studyflow.school-administration.read-model.event-handler :refer [handle-event]]
+   [studyflow.school-administration.student]
    [studyflow.school-administration.student.events :refer [fixture]]
    [studyflow.school-administration.student.commands :as commands]))
 
@@ -78,6 +80,17 @@
   (POST "/create-student" {{:keys [full-name]} :params}
         (commands/create! (new-id) full-name)))
 
+(defn wrap-back-to-previous
+  [f]
+  (fn [{headers :headers :as request}]
+    (let [referer (or (headers "referer") "/")]
+      (when-let [{:keys [status]} (f request)]
+        (if (= status 200)
+          (response/redirect referer)
+          {:status status :body (str status)})))))
+
+(def my-read-model (atom {}))
+
 (defn wrap-read-model
   [f model-atom]
   (fn [request]
@@ -85,13 +98,21 @@
 
 (def queries-app
   (-> queries
-      (wrap-read-model (atom (load-model fixture)))))
+      (wrap-read-model my-read-model)))
 
 (def event-store (memory-store))
 
+(defn event-listener [channel read-model-atom]
+  (thread
+    (loop []
+      (when-let [event (<!! channel)]
+        (swap! read-model-atom handle-event event)
+        (recur)))))
+
 (def commands-app
   (-> commands
-      (wrap-command-handler event-store)))
+      (wrap-command-handler event-store)
+      wrap-back-to-previous))
 
 (def app
   (-> (routes commands-app queries-app)
