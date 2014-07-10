@@ -180,7 +180,7 @@
                                                                  {"__INPUT_1__" current-answer}]))) cursor))))))
     om/IDidMount
     (did-mount [_]
-      (let [input-field (om/get-node owner "__INPUT_1__")]
+      (when-let [input-field (om/get-node owner "__INPUT_1__")]
         (prn "input-field" input-field)
         (.focus input-field)))))
 
