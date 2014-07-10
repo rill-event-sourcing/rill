@@ -104,40 +104,53 @@
   (let [{:keys [path new-state]} tx-report]
     (cond
      (= path [:view :selected-path])
-     (if-let [{:keys [chapter-id section-id]} (get-in new-state path)]
-       (if-let [section-data (get-in new-state [:view :section section-id :data])]
-         nil ;; data already loaded
-         (do
-           (let [section-test-id (str "student-idDEFAULT_STUDENT_IDsection-id" section-id)]
-             (prn "Load aggregate: " section-test-id)
-             (when-not (contains? (get new-state :aggregates) section-test-id)
+     (if-let [{:keys [chapter-id section-id tab-questions]} (get-in new-state path)]
+       (if (contains? tab-questions section-id)
+         ;; for question tab
+         (let [section-test-id (str "student-idDEFAULT_STUDENT_IDsection-id" section-id)]
+           (prn "Load aggregate: " section-test-id)
+           (when-not (contains? (get new-state :aggregates) section-test-id)
+             (let [handle-events-or-init
+                   (fn [events]
+                     (if (seq events)
+                       (om/transact! cursor
+                                     [:aggregates section-test-id]
+                                     (fn [agg]
+                                       (aggregates/apply-events agg events)))
+                       ;; we got no events back, init the test first
+                       (try-command cursor ["section-test-commands/init" section-id])
+                       ))]
                (GET (str "/api/section-test-replay/" section-test-id)
                     {:format :json
                      :handler (fn [res]
                                 (let [events (:events (json-edn/json->edn res))]
-                                  (om/transact! cursor
-                                                [:aggregates section-test-id]
-                                                (fn [agg]
-                                                  (prn "playing events on: " agg " with aggr-id " section-test-id " with events: " events)
-                                                  (let [res (aggregates/apply-events agg events)]
-                                                    (prn "RES: " res)
-                                                    res)))))})))
+                                  (handle-events-or-init events)))
+                     :error-handler (fn [res]
+                                      ;; currently the api
+                                      ;; gives a 401 when
+                                      ;; there are no events
+                                      ;; for an aggregate
+                                      (handle-events-or-init [])
+                                      )}))))
+         ;; for explanation tab
+         (if-let [section-data (get-in new-state [:view :section section-id :data])]
+           nil ;; data already loaded
            (GET (str "/api/course-material/"
                      (get-in new-state [:static :course-id])
                      "/chapter/" chapter-id
                      "/section/" section-id)
-               {:params {}
-                :handler (fn [res]
-                           (println "Service heard: " res)
-                           (let [section-data (json-edn/json->edn res)]
-                             (println "section: " section-data)
-                             (om/transact! cursor
-                                           #(assoc-in %
-                                                      [:view :section (:id section-data) :data]
-                                                      section-data))))
-                :error-handler (fn [res]
-                                 (println "Error handler" res)
-                                 (println res))})))
+                {:params {}
+                 :handler (fn [res]
+                            (println "Service heard: " res)
+                            (let [section-data (json-edn/json->edn res)]
+                              (println "section: " section-data)
+                              (om/transact! cursor
+                                            #(assoc-in %
+                                                       [:view :section (:id section-data) :data]
+                                                       section-data))))
+                 :error-handler (fn [res]
+                                  (println "Error handler" res)
+                                  (println res))})))
        nil)
 
      (let [[view section _ test _] path]
@@ -160,6 +173,6 @@
                                                    question-data))))
              :error-handler (fn [res]
                               (println "Error handler" res)
-                              (println res))}))
+                              (println res))})))
 
-     :else nil)))
+    :else nil))

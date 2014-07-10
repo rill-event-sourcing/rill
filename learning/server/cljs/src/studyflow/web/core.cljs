@@ -180,10 +180,7 @@
                                                                                   question-id
                                                                                   {"__INPUT_1__" current-answer}]))) cursor)))))
                        (dom/div nil "Loading question ...")))
-                   (om/build (click-once-button "Start test for this section"
-                                                (fn []
-                                                  (async/put! (om/get-shared owner :command-channel)
-                                                              ["section-test-commands/init" section-id]))) cursor)))))))
+                   (dom/div nil "Starting test for this section")))))))
 
 (defn section-panel [cursor owner]
   (reify
