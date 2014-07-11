@@ -18,6 +18,7 @@
 
   :ring {:init studyflow.login.system/bootstrap!
          :handler studyflow.login.main/app
+         :auto-reload? false
          :port 4000}
 
   :profiles {:dev {:dependencies [[enlive "1.1.5"]
