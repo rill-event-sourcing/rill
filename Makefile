@@ -1,10 +1,13 @@
 default: test
 
-.PHONY: test default
+.PHONY: test default install
 
 lein:
 	curl -O https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
 	chmod 755 ./lein
 
 test: lein
-	./lein test && echo "OK"
+	./lein test
+
+install: lein
+	./lein install
