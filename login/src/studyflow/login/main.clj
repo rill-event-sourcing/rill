@@ -7,7 +7,6 @@
             [hiccup.page :refer [html5 include-css]]
             [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
             [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
-            [studyflow.login.credentials :refer [wrap-authenticator]]
             [taoensso.carmine :as car]))
 
 (def app-title "Studyflow")
@@ -162,5 +161,4 @@
    wrap-login-user
    wrap-redirect-for-role
    wrap-user-role
-   (wrap-defaults (set-studyflow-site-defaults))
-   wrap-authenticator))
+   (wrap-defaults (set-studyflow-site-defaults))))
