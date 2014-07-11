@@ -1,8 +1,12 @@
 (ns studyflow.web.aggregates)
 
 (defn conj-streak [streak question-id result]
+  "only update the streak with the first result for each question"
   (if (= (first (peek streak)) question-id)
-    streak ;; already recorded a streak entry
+    (if (= (second (peek streak)) :open)
+      (conj (pop streak) [question-id result])
+      streak ;; already recorded a streak entry
+      )
     (conj streak [question-id result])
     ))
 
@@ -15,7 +19,10 @@
        :streak []})
     "studyflow.learning.section-test.events/QuestionAssigned"
     (let [question-id (:question-id event)]
-      (update-in agg [:questions] conj {:question-id question-id}))
+      (-> agg
+          (update-in [:questions] conj {:question-id question-id})
+          (update-in [:streak]
+                     conj [question-id :open])))
     "studyflow.learning.section-test.events/QuestionAnsweredCorrectly"
     (let [question-id (:question-id event)
           inputs (:inputs event)]

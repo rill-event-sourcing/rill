@@ -107,20 +107,25 @@
                  ["Loading section data..."])
 )))))
 
-(defn streak-box [cursor owner]
+(defn streak-box [streak owner]
   (reify
     om/IRender
     (render [_]
-      (apply dom/div #js {:className "streak-box"}
-             (map-indexed
-              (fn [idx [question-id result]]
-                (dom/span #js {:className (if (<= (- (count cursor) 4) idx)
-                                            "last-four"
-                                            "old")}
-                          (condp = result
-                            :correct "V"
-                            :incorrect "X")))
-              cursor)))))
+      (let [streak
+            (if (< (count streak) 4)
+              (take 4 (concat streak (repeat 4 [nil :open])))
+              streak)]
+        (apply dom/div #js {:className "streak-box"}
+               (map-indexed
+                (fn [idx [question-id result]]
+                  (dom/span #js {:className (if (<= (- (count streak) 4) idx)
+                                              "last-four"
+                                              "old")}
+                            (condp = result
+                              :correct "V"
+                              :incorrect "X"
+                              :open "_")))
+                streak))))))
 
 (defn question-panel [cursor owner {:keys [section-test
                                            section-test-id
