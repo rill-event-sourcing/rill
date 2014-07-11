@@ -171,14 +171,18 @@
                                        " have some balloons"))))
                  (dom/div #js {:dangerouslySetInnerHTML #js {:__html last-part}} nil)
                  (if answer-correct
-                   (dom/button #js {:onClick (fn []
-                                               (async/put! (om/get-shared owner :command-channel)
-                                                           ["section-test-commands/next-question"
-                                                            section-test-id
-                                                            section-id
-                                                            course-id])
-                                               (prn "next question command"))}
-                               "Correct! Next Question")
+                   (if-not (:finished section-test)
+                     (dom/button #js {:onClick (fn []
+                                                 (async/put! (om/get-shared owner :command-channel)
+                                                             ["section-test-commands/next-question"
+                                                              section-test-id
+                                                              section-id
+                                                              course-id])
+                                                 (prn "next question command"))}
+                                 "Correct! Next Question")
+                     (dom/button #js {:onClick (fn []
+                                                 (js/alert "Well done, continue or go to next section"))}
+                                 "Correct! Finished Section"))
                    (om/build (click-once-button (if (seq (get-in cursor [:view :section section-id :test :questions question-id :answer]))
                                                   "Check"
                                                   "Check [DISABLED]")
@@ -188,10 +192,7 @@
                                                    [:view :section section-id :test :questions question-id :answer]
                                                    nil)
                                                   (check-answer)
-                                                  )) cursor))
-                 (when (:finished section-test)
-                   (dom/div nil
-                            "CONGRATS YOU ARE NOW DONE!! [should be pop-up/modal]")))))
+                                                  )) cursor)))))
     om/IDidMount
     (did-mount [_]
       (when-let [input-field (om/get-node owner "__INPUT_1__")]
