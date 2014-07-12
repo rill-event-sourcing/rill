@@ -13,10 +13,6 @@
                                    "fred@example.com"
                                    "wilma")))))
 
-(deftest wrap-authenticator-test
-  (let [handler (wrap-authenticator identity)]
-    (is (fn? (:authenticate (handler {}))))))
-
 (deftest handle-event-test
   (is (= {}
          (handle-event {}
