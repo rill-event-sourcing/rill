@@ -16,7 +16,7 @@
 
       %div.panel.panel-default
         %div.panel-heading
-          %div.col-md-3
+          %div.col-md-4
             %select.form-control#input-type
               %option line-input
               %option multiple-choice
@@ -24,10 +24,13 @@
 
         %div.panel-body#inputs-list
           -@question.inputs.each do |input|
-            =render partial: 'inputs/edit', locals: {input: input}
+            = render partial: 'inputs/edit', locals: {input: input}
+
+      %div.panel.panel-default
+        %div.panel-heading Explanation
+        %div.panel-body
+          = text_area :question, :explanation, style: "width:100%;", rows: 20, class: "form-control"
 
     %div.col-md-6
       - url = preview_chapter_section_question_path(@chapter, @section, @question)
-      %div.panel.panel-default
-        %div.panel-body
-          %iframe.fill.col-md-12{id: "preview", data: {url: url}, src: url, style: "min-height: 800px;" }
+      %iframe.fill.col-md-12{id: "preview", data: {url: url}, src: url, style: "min-height: 800px;" }
