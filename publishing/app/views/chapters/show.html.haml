@@ -1,10 +1,11 @@
 %div.container
   %div.row
     %div.col-md-8.col-md-offset-2
-      %h2
-        = @chapter.title
-      %p
-        = @chapter.description
+      %h2= @chapter.title
+      %div.panel.panel-default
+        %div.panel-heading
+          %strong Chapter description:
+        %div.panel-body= @chapter.description
 
     %div.col-md-2
       = link_to 'New Section', new_chapter_section_path(@chapter), class: "btn btn-success"

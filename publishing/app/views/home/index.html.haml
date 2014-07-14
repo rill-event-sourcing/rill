@@ -3,27 +3,28 @@
   %div.container
     %div.row
       %div.col-md-8.col-md-offset-2
-        %h2
-          =link_to @course.name, chapters_path
-          %small= "(#{ @course.chapters.length })"
+        %h1
+          = link_to @course.name, chapters_path
+          %small= "(#{ @course.chapters.length } chapters)"
       %div.col-md-2
         = link_to 'Publish', publish_course_path, class: "btn btn-success", method: :post
-    %div.row
+    %div.row{style: "margin-top:20px;"}
       %div.col-md-8.col-md-offset-2
-        -@course.chapters.each do |chapter|
+        - @course.chapters.each do |chapter|
+          %h3= link_to chapter.title, chapter
           %table.table.table-condensed.table-bordered
             %thead
               %tr
                 %th
-                  =link_to chapter.title, chapter
+                  Section
                   %span.pull-right
-                    ="#{chapter.sections.where(active: true).length} / #{chapter.sections.length} published"
+                    = "#{chapter.sections.where(active: true).length} / #{chapter.sections.length} published"
                 %th
-                  %span.pull-right subsections
+                  %span.pull-right # subsections
                 %th
-                  %span.pull-right questions
+                  %span.pull-right # questions
             %tbody
-              -chapter.sections.each do |section|
+              - chapter.sections.each do |section|
                 %tr{class: section.active? ? "success" : "danger", id: "section-row"}
                   %td
                     = link_to section.title, [chapter, section]
@@ -33,12 +34,12 @@
                   %td
                     %span.label.label-success.pull-right= section.questions.length
       %div.col-md-2
-        Guide:
+        %strong Guide:
         %table.table.table-condensed.table-bordered
           %tr
             %td.success Section published
           %tr
             %td.danger Section not published
--else
+- else
   %div.container
     %div.alert.alert-warning Please select a course from the dropdown on the top right.

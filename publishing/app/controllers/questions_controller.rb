@@ -75,7 +75,6 @@ private
     end
   end
 
-
   def set_param_objects
     @course = Course.current
     @chapter = @course.chapters.find_by_uuid(params[:chapter_id])
@@ -84,16 +83,15 @@ private
   end
 
   def set_breadcrumb
-    @crumbs = [{name: @chapter.title, url: chapter_sections_path(@chapter)},{name: @section.title, url: chapter_section_path(@chapter, @section)}, {name: "Questions", url: chapter_section_questions_path(@chapter, @section)}]
-    if @question
-      @crumbs << {name: @question.to_param, url: chapter_section_question_path(@chapter,@section,@question)}
-    end
+    @crumbs = [{name: @course.name, url: chapters_path}]
+    @crumbs << {name: @chapter.title, url: chapter_sections_path(@chapter)}
+    @crumbs << {name: @section.title, url: chapter_section_path(@chapter, @section)}
+    @crumbs << {name: "Questions", url: chapter_section_questions_path(@chapter,@section)}
+    @crumbs << {name: @question.to_param, url: chapter_section_question_path(@chapter,@section,@question)} if @question
   end
-
 
   def question_params
     params.require(:question).permit!
   end
-
 
 end

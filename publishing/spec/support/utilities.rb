@@ -7,7 +7,7 @@ class Hash
   end
 end
 
-def hashify(array,start_from_one=false)
+def hashify(array, start_from_one = false)
   if start_from_one
     indices = 1...array.size+1
   else

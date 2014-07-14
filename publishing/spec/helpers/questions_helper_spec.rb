@@ -2,16 +2,16 @@ require 'rails_helper'
 
 RSpec.describe QuestionsHelper, :type => :helper do
 
-  describe "question_to_html" do
+  describe "question_text_to_html" do
     it "should return html with the text of the question" do
       question = build(:question)
-      expect(helper.question_to_html(question)).to match /question.text/
+      expect(helper.question_text_to_html(question)).to match /question.text/
     end
 
     it "should return html with the warning when input is not found" do
       question = build(:question)
       question.text << " _INPUT_99_"
-      expect(helper.question_to_html(question)).to match /alert-danger/
+      expect(helper.question_text_to_html(question)).to match /alert-danger/
     end
 
     it "should call input_to_html for each input" do
@@ -19,10 +19,16 @@ RSpec.describe QuestionsHelper, :type => :helper do
       question.inputs << build(:line_input, position: 1)
       question.inputs << build(:multiple_choice_input, position: 2)
       expect(helper).to receive(:input_to_html).twice.with(any_args()).and_return('')
-      helper.question_to_html(question)
+      helper.question_text_to_html(question)
     end
   end
 
+  describe "question_explanation_to_html" do
+    it "should return html with the explanation of the question" do
+      question = build(:question)
+      expect(helper.question_explanation_to_html(question)).to match /#{question.explanation}/
+    end
+  end
 
   describe "input_to_html" do
     it "should return html for the line-input type" do
