@@ -127,7 +127,9 @@ save = ->
       refreshPreview()
 
 initializeAutoSave = ->
-  setTimeout(autoSave,10000)
+  form = $("#question-form")
+  if form.length > 0
+    setTimeout(autoSave,10000)
 
 autoSave = ->
   save()
