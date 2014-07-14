@@ -4,11 +4,8 @@ class Subsection < ActiveRecord::Base
   belongs_to :section, touch: true
 
   validates :section, presence: true
-  validates :stars, presence: true, inclusion: { in: Star.all }
 
   default_scope { order(:position) }
-
-  scope :find_by_star, ->(star) { where(stars: star)}
 
   scope :for_short_uuid, ->(id) { where(["SUBSTRING(CAST(id AS VARCHAR), 1, 8) = ?", id]) }
   def self.find_by_uuid(id, with_404 = true)
@@ -34,7 +31,6 @@ class Subsection < ActiveRecord::Base
     {
       id: id,
       position: position,
-      stars: stars,
       title: title,
       text: text
     }

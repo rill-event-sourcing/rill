@@ -10,30 +10,15 @@
         %span#edit-time{style: "min-height:30px;"}
           Saved on:
           = l @section.updated_at, format: :long
+  %div.row
+    %div.col-md-6
+      = render partial: 'new'
+      - @section.subsections.each_with_index do |subsection, index|
+        -@subsection, @index = subsection, index
+        = render partial: 'edit'
 
-  %ul.nav.nav-tabs#subsection-tabs
-    - Star.all.each_with_index do |star, index|
-      -@star_subsections = @all_subsections[star]||[]
-      %li{class: index == 0 ? "active" : ""}
-        %a{href: "#star-#{star}", data: {toggle: "tab"} }
-          - star.times do
-            %span.glyphicon.glyphicon-star
-          %span.badge{id: "badge_#{star}"}= @star_subsections.length
-
-  %div.tab-content{style: "margin-top: 20px;"}
-    - Star.all.each_with_index do |star, index|
-      -@star = star
-      -@star_subsections = @all_subsections[@star]||[]
-      %div.tab-pane{id: "star-#{ star }", class: index == 0 ? "active" : ""}
-
-        %div.col-md-6
-          = render partial: 'new'
-          - @star_subsections.each_with_index do |subsection, index|
-            -@subsection, @index = subsection, index
-            = render partial: 'edit'
-
-        %div.col-md-6
-          - url = preview_chapter_section_subsections_path(@chapter, @section, star: @star)
-          %div.panel.panel-default
-            %div.panel-body
-              %iframe.fill.col-md-12{id: "preview-#{ @star }", data: {url: url}, src: url, style: "min-height: 800px;" }
+    %div.col-md-6
+      - url = preview_chapter_section_subsections_path(@chapter, @section)
+      %div.panel.panel-default
+        %div.panel-body
+          %iframe.fill.col-md-12#preview{ data: {url: url}, src: url, style: "min-height: 800px;" }
