@@ -2,13 +2,11 @@ require 'rails_helper'
 
 RSpec.describe Subsection, type: :model do
   it {is_expected.to validate_presence_of :section }
-  it {is_expected.to validate_presence_of :stars }
-  it {is_expected.to ensure_inclusion_of(:stars).in_array(Star.all) }
 
   before do
-    @subsection1 = create(:subsection, title: "A", text: "A content", stars: 1)
-    @subsection2 = create(:subsection, title: "B", text: "B content", stars: 2)
-    @subsection3 = create(:subsection, title: "C", text: "C content", stars: 3)
+    @subsection1 = create(:subsection, title: "A", text: "A content")
+    @subsection2 = create(:subsection, title: "B", text: "B content")
+    @subsection3 = create(:subsection, title: "C", text: "C content")
   end
 
   it "should return the title when asked for a string" do
@@ -47,7 +45,6 @@ RSpec.describe Subsection, type: :model do
     obj = {
         id: @subsection1.id,
         position: @subsection1.position,
-        stars: @subsection1.stars,
         title: @subsection1.title,
         text: @subsection1.text
       }

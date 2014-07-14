@@ -89,9 +89,8 @@ ActiveRecord::Schema.define(version: 20140618145746) do
     t.uuid     "section_id"
     t.string   "title"
     t.text     "text"
-    t.integer  "stars",      limit: 2
     t.datetime "deleted_at"
-    t.boolean  "active",               default: false
+    t.boolean  "active",     default: false
     t.integer  "position"
     t.datetime "created_at"
     t.datetime "updated_at"

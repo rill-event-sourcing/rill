@@ -3,9 +3,9 @@ require 'rails_helper'
 RSpec.describe SubsectionsController, :type => :controller do
 
   def set_subsections
-    @subsection1 = create(:subsection, section: @section1, stars: 1, position: 0)
-    @subsection2 = create(:subsection, section: @section1, stars: 2, position: 0)
-    @subsection3 = create(:subsection, section: @section1, stars: 2, position: 1)
+    @subsection1 = create(:subsection, section: @section1, position: 2)
+    @subsection2 = create(:subsection, section: @section1, position: 0)
+    @subsection3 = create(:subsection, section: @section1, position: 1)
   end
 
   before do
@@ -23,18 +23,14 @@ RSpec.describe SubsectionsController, :type => :controller do
     it "should render the index page without subsections" do
       get :index, chapter_id: @chapter.to_param, section_id: @section1.to_param
       expect(response).to render_template('index')
-      expect(assigns(:all_subsections)).to eq({})
+      expect(@section1.subsections.to_a).to eq []
     end
 
     it "should render the index page with subsections" do
       set_subsections
       get :index, chapter_id: @chapter.to_param, section_id: @section1.to_param
       expect(response).to render_template('index')
-      expect(assigns(:all_subsections)).to eq(
-        {
-          1 => [@subsection1],
-          2 => [@subsection2, @subsection3]
-        })
+      expect(@section1.subsections.to_a).to eq [@subsection2, @subsection3, @subsection1]
     end
   end
 
@@ -45,36 +41,30 @@ RSpec.describe SubsectionsController, :type => :controller do
     end
 
     it "should create a new subsection" do
-      post :create, chapter_id: @chapter.to_param, section_id: @section1.to_param, stars: 2, position: 0
+      post :create, chapter_id: @chapter.to_param, section_id: @section1.to_param, position: 0
       @subsection = assigns(:subsection)
       expect(@subsection).not_to eq nil
       expect(!@subsection.new_record?).to eq true
-      expect(assigns(:star)).to eq 2
       expect(assigns(:index)).to eq @subsection.id
       expect(response).to render_template('subsections/_edit')
     end
 
-    it "should not create an invalid subsection" do
-      post :create, chapter_id: @chapter.to_param, section_id: @section1.to_param
-      expect(response.status).to eq(422)
-    end
-
     it "should create a new subsection with position 0" do
-      post :create, chapter_id: @chapter.to_param, section_id: @section1.to_param, stars: 2, position: 0
+      post :create, chapter_id: @chapter.to_param, section_id: @section1.to_param, position: 0
       @subsection = assigns(:subsection)
-      expect(@section1.subsections.find_by_star(2)).to eq [@subsection, @subsection2, @subsection3]
+      expect(@section1.subsections).to eq [@subsection, @subsection2, @subsection3, @subsection1]
     end
 
     it "should create a new subsection with position 1" do
-      post :create, chapter_id: @chapter.to_param, section_id: @section1.to_param, stars: 2, position: 1
+      post :create, chapter_id: @chapter.to_param, section_id: @section1.to_param, position: 1
       @subsection = assigns(:subsection)
-      expect(@section1.subsections.find_by_star(2)).to eq [@subsection2, @subsection, @subsection3]
+      expect(@section1.subsections).to eq [@subsection2, @subsection, @subsection3, @subsection1]
     end
 
     it "should create a new subsection with position 2" do
-      post :create, chapter_id: @chapter.to_param, section_id: @section1.to_param, stars: 2, position: 2
+      post :create, chapter_id: @chapter.to_param, section_id: @section1.to_param, position: 3
       @subsection = assigns(:subsection)
-      expect(@section1.subsections.find_by_star(2)).to eq [@subsection2, @subsection3, @subsection]
+      expect(@section1.subsections).to eq [@subsection2, @subsection3, @subsection1, @subsection]
     end
   end
 
@@ -85,10 +75,9 @@ RSpec.describe SubsectionsController, :type => :controller do
     end
 
     it "should render a preview of the section" do
-      get :preview, chapter_id: @chapter.to_param, section_id: @section1.to_param, star: 2
-      expect(assigns(:star)).to eq '2'
+      get :preview, chapter_id: @chapter.to_param, section_id: @section1.to_param
       expect(assigns(:section)).to eq @section1
-      expect(assigns(:subsections)).to eq [@subsection2, @subsection3]
+      expect(@section1.subsections).to eq [@subsection2, @subsection3, @subsection1]
       expect(response).to render_template('preview')
     end
   end
@@ -97,28 +86,21 @@ RSpec.describe SubsectionsController, :type => :controller do
   describe "POST save" do
 
     before do
-      @oneone = create(:subsection, title: "oneone", position: 1, stars: 1, section: @section1, text: "oneone text" )
-      @onetwo = create(:subsection, title: "onetwo", position: 2, stars: 1, section: @section1, text: "onetwo text")
-      @twoone = create(:subsection, title: "twoone", position: 1, stars: 2, section: @section1, text: "twoone text")
-      @twotwo = create(:subsection, title: "twotwo", position: 2, stars: 2, section: @section1, text: "twotwo text")
-      @threeone = create(:subsection, title: "threeone", position: 1, stars: 3, section: @section1, text: "threeone text")
-      @threetwo = create(:subsection, title: "threetwo", position: 2, stars: 3, section: @section1, text: "threetwo text")
+      @subsection1 = create(:subsection, title: "one", position: 0, section: @section1, text: "one text" )
+      @subsection2 = create(:subsection, title: "two", position: 1, section: @section1, text: "two text")
     end
 
     def update_first_subsection
-      subsection = @section1.subsections.find_by_star(1).first.as_full_json
-      subsection[:text] = "oneone modified text"
-
-      hashone = hashify [subsection.stringify, @onetwo.as_full_json.stringify]
-      hashtwo = hashify [@twoone.as_full_json.stringify, @twotwo.as_full_json.stringify]
-      hashthree = hashify [@threeone.as_full_json.stringify, @threetwo.as_full_json.stringify]
-      hashify([hashone, hashtwo, hashthree], true)
+      subsection1 = @section1.subsections.first.as_full_json
+      subsection1[:text] = "one modified text"
+      subsection2 = @section1.subsections.last.as_full_json
+      hashify([subsection1, subsection2], true)
     end
 
     it "should allow to update subsections" do
       input = update_first_subsection
       post :save, chapter_id: @chapter.to_param, section_id: @section1.to_param, subsections: input, format: :json
-      expect(@section1.subsections.find_by_star(1).first.as_full_json[:text]).to eq "oneone modified text"
+      expect(@section1.subsections.first.as_full_json[:text]).to eq "one modified text"
     end
 
     # it "should correctly reflect the time of last update" do
@@ -129,18 +111,14 @@ RSpec.describe SubsectionsController, :type => :controller do
     # end
 
     it "should respect the order of input subsections" do
-      first_subsection = @section1.subsections.find_by_star(2).first
-      last_subsection = @section1.subsections.find_by_star(2).last
+      first_subsection = @section1.subsections.first
+      last_subsection = @section1.subsections.last
 
-      hashone = hashify [@oneone.as_full_json.stringify,@onetwo.as_full_json.stringify]
-      hashtwo = hashify [last_subsection.as_full_json.stringify,first_subsection.as_full_json.stringify]
-      hashthree = hashify [@threeone.as_full_json.stringify,@threetwo.as_full_json.stringify]
+      subsection_hash = hashify([last_subsection.as_full_json, first_subsection.as_full_json], true)
+      post :save, chapter_id: @chapter.to_param, section_id: @section1.to_param, subsections: subsection_hash, format: :json
 
-      input = hashify([hashone, hashtwo, hashthree], true)
-      post :save, chapter_id: @chapter.to_param, section_id: @section1.to_param, subsections: input, format: :json
-
-      expect(@section1.subsections.find_by_star(2).first).to eq last_subsection
-      expect(@section1.subsections.find_by_star(2).last).to eq first_subsection
+      expect(@section1.subsections.first).to eq last_subsection
+      expect(@section1.subsections.last).to eq first_subsection
     end
   end
 

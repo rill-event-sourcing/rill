@@ -1,20 +1,18 @@
-%div.subsection-panel{class: "star-#{ @star }", id: "subsection-panel-#{ @subsection.id }" }
+%div.subsection-panel{ id: "subsection-panel-#{ @subsection.id }" }
   %div.panel.panel-default
     %div.panel-heading
       %div.pull-right
-        %span.btn.btn-default.glyphicon.glyphicon-minus.delete-subsection{data: {star: @star, item: "subsection-panel-#{ @subsection.id }", url: chapter_section_subsection_path(@chapter, @section, @subsection) } }
+        %span.btn.btn-default.glyphicon.glyphicon-minus.delete-subsection{data: {item: "subsection-panel-#{ @subsection.id }", url: chapter_section_subsection_path(@chapter, @section, @subsection) } }
       %h3.panel-title
-        = hidden_field_tag "subsections[#{@star}][#{@index}][id]", @subsection.id
-        = hidden_field_tag "subsections[#{@star}][#{@index}][position]", @subsection.position
-        = hidden_field_tag "subsections[#{@star}][#{@index}][stars]", @subsection.stars
-        = text_field_tag   "subsections[#{@star}][#{@index}][title]", @subsection.title
+        = hidden_field_tag "subsections[#{@index}][id]", @subsection.id
+        = hidden_field_tag "subsections[#{@index}][position]", @subsection.position
+        = text_field_tag   "subsections[#{@index}][title]", @subsection.title
       %small= @subsection.id[0,8]
 
     %div.panel-body
-      = text_area_tag "subsections[#{@star}][#{@index}][text]", @subsection.text, style: 'width: 100%; min-height: 100px;', class: "form-control"
+      = text_area_tag "subsections[#{@index}][text]", @subsection.text, style: 'width: 100%; min-height: 100px;', class: "form-control"
 
     %div.panel-footer.clearfix
       %div.pull-right
         %span.btn.btn-default.glyphicon.glyphicon-plus.add-subsection{data: { after: "subsection-panel-#{ @subsection.id }",
-                                                              star: @star,
-                                                              url: chapter_section_subsections_path(@chapter, @section, stars: @star, position: @subsection.position.to_i+1) } }
+                                                                                                                          url: chapter_section_subsections_path(@chapter, @section, position: @subsection.position.to_i+1) } }
