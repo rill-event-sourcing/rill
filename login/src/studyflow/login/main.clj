@@ -12,14 +12,13 @@
 (def app-title "Studyflow")
 (def studyflow-env (keyword (env :studyflow-env)))
 (def publishing-url (studyflow-env (env :publishing-url)))
-(def learning-url (studyflow-env (env :learning-url)))
 (def cookie-domain (studyflow-env (env :cookie-domain)))
 (def session-max-age (studyflow-env (env :session-max-age)))
+
 
 (def redis  {:pool {} :spec {}})
 
 (def default-redirect-path {"editor" publishing-url
-                            "student" learning-url
                             "tester" "https://staging.studyflow.nl"})
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

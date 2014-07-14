@@ -13,15 +13,8 @@
                  [org.clojure/tools.logging "0.3.0"]
                  [rill "0.1.0-SNAPSHOT"]
                  [ring/ring-defaults "0.1.0"]
-                 [studyflow/components "0.1.0-SNAPSHOT"]
-                 [ring-server "0.3.1"]]
+                 [studyflow/components "0.1.0-SNAPSHOT"]]
 
-  :plugins [[lein-ring "0.8.10"]]
-
-  :ring {:init studyflow.login.system/bootstrap!
-         :handler studyflow.login.main/app
-         :auto-reload? false
-         :port 4000}
   :profiles {:dev {:dependencies [[enlive "1.1.5"]
                                   [ring-mock "0.1.5"]]}}
 
