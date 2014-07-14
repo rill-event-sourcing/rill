@@ -1,4 +1,4 @@
-%table.table.table-striped
+%table.table.table-bordered
   %thead
     %tr
       %th.col-md-3  Section title
@@ -8,24 +8,24 @@
       %th.col-md-1  Actions
 
   %tbody
-    -@chapter.sections.each do |section|
-      %tr
+    - @chapter.sections.each do |section|
+      %tr{class: section.active? ? "success" : "danger"}
         %td= link_to section.title, [@chapter,section]
         %td= section.description
         %td
-          =link_to movedown_chapter_section_path(@chapter,section), method: :post do
+          = link_to movedown_chapter_section_path(@chapter,section), method: :post do
             %span.glyphicon.glyphicon-arrow-down
-          =link_to moveup_chapter_section_path(@chapter,section), method: :post do
+          = link_to moveup_chapter_section_path(@chapter,section), method: :post do
             %span.glyphicon.glyphicon-arrow-up
         %td
-          -if section.active?
-            =link_to deactivate_chapter_section_path(@chapter,section), method: :post do
+          - if section.active?
+            = link_to deactivate_chapter_section_path(@chapter,section), method: :post do
               %span.glyphicon.glyphicon-eye-open
-          -else
-            =link_to activate_chapter_section_path(@chapter,section), method: :post do
+          - else
+            = link_to activate_chapter_section_path(@chapter,section), method: :post do
               %span.glyphicon.glyphicon-ban-circle
         %td
           = link_to edit_chapter_section_path(@chapter, section) do
             %span.glyphicon.glyphicon-pencil
-          =link_to chapter_section_path(@chapter, section), method: :delete, data: { confirm: "Are you sure you want to delete section `#{ section }`?" } do
+          = link_to chapter_section_path(@chapter, section), method: :delete, data: { confirm: "Are you sure you want to delete section `#{ section }`?" } do
             %span.glyphicon.glyphicon-trash

@@ -7,7 +7,7 @@
         = link_to 'New Chapter', new_chapter_path, class: "btn btn-success"
     %div.row
       %div.col-md-8.col-md-offset-2
-        %table.table.table-striped
+        %table.table.table-bordered
           %thead
             %tr
               %th.col-md-3  Chapter title
@@ -18,23 +18,23 @@
 
           %tbody
             -@chapters.each do |chapter|
-              %tr
+              %tr{class: chapter.active? ? "success" : "danger"}
                 %td= link_to chapter.title, chapter
                 %td= chapter.description
                 %td
-                  =link_to movedown_chapter_path(chapter), method: :post do
+                  = link_to movedown_chapter_path(chapter), method: :post do
                     %span.glyphicon.glyphicon-arrow-down
-                  =link_to moveup_chapter_path(chapter), method: :post do
+                  = link_to moveup_chapter_path(chapter), method: :post do
                     %span.glyphicon.glyphicon-arrow-up
                 %td
-                  -if chapter.active?
-                    =link_to deactivate_chapter_path(chapter), method: :post do
+                  - if chapter.active?
+                    = link_to deactivate_chapter_path(chapter), method: :post do
                       %span.glyphicon.glyphicon-eye-open
-                  -else
-                    =link_to activate_chapter_path(chapter), method: :post do
+                  - else
+                    = link_to activate_chapter_path(chapter), method: :post do
                       %span.glyphicon.glyphicon-ban-circle
                 %td
                   = link_to edit_chapter_path(chapter) do
                     %span.glyphicon.glyphicon-pencil
-                  =link_to chapter_path(chapter), method: :delete, data: { confirm: "Are you sure you want to delete chapter `#{ chapter }`?" } do
+                  = link_to chapter_path(chapter), method: :delete, data: { confirm: "Are you sure you want to delete chapter `#{ chapter }`?" } do
                     %span.glyphicon.glyphicon-trash
