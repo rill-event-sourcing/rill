@@ -47,7 +47,7 @@
 
 (defn init [config]
   (let [sm (component/system-map
-            :jetty (component/using (jetty-component {:jetty-port config}) [:ring-handler])
+            :jetty (component/using (jetty-component (:jetty-port config)) [:ring-handler])
             :ring-handler (component/using (ring-handler-component) [:credentials])
             :credentials (component/using (credentials-component) [:event-channel])
             :event-channel (component/using (event-channel-component) [:event-store])
