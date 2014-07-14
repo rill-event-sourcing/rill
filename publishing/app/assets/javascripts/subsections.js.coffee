@@ -17,10 +17,10 @@ bindAddButtons = ->
 bindDeleteButtons = ->
   $('.delete-subsection').unbind()
   $('.delete-subsection').bind 'click', (event) ->
-    # if confirm('Are you sure you want to delete this?')
-    deleteItem = $(event.currentTarget).data('item')
-    url = $(event.currentTarget).data('url')
-    $.ajax url,
+    if confirm('Are you sure you want to delete this?')
+      deleteItem = $(event.currentTarget).data('item')
+      url = $(event.currentTarget).data('url')
+      $.ajax url,
         type: 'DELETE'
         dataType: 'json'
         error: (jqXHR, textStatus, errorThrown) ->

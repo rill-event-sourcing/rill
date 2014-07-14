@@ -19,6 +19,4 @@
 
     %div.col-md-6
       - url = preview_chapter_section_subsections_path(@chapter, @section)
-      %div.panel.panel-default
-        %div.panel-body
-          %iframe.fill.col-md-12#preview{ data: {url: url}, src: url, style: "min-height: 800px;" }
+      %iframe.fill.col-md-12#preview{ data: {url: url}, src: url, style: "min-height: 800px;" }

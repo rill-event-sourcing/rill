@@ -23,12 +23,6 @@ RSpec.describe ChaptersController, :type => :controller do
       expect(assigns(:chapters)).to eq @course.chapters
     end
 
-    it "should require a course selected before selecting chapters" do
-      session[:course_id] = nil
-      get :index
-      expect(controller.flash[:alert]).to eq 'Please select a course first'
-    end
-
   end
 
   describe 'GET new' do

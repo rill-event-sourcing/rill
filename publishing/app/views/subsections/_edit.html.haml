@@ -14,5 +14,4 @@
 
     %div.panel-footer.clearfix
       %div.pull-right
-        %span.btn.btn-default.glyphicon.glyphicon-plus.add-subsection{data: { after: "subsection-panel-#{ @subsection.id }",
-                                                                                                                          url: chapter_section_subsections_path(@chapter, @section, position: @subsection.position.to_i+1) } }
+        %span.btn.btn-default.glyphicon.glyphicon-plus.add-subsection{data: { after: "subsection-panel-#{ @subsection.id }", url: chapter_section_subsections_path(@chapter, @section, position: @subsection.position.to_i+1) } }
