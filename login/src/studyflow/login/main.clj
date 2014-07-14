@@ -1,26 +1,19 @@
 (ns studyflow.login.main
-  (:require [clojure.java.jdbc :as sql]
-            [clojure.string :as str]
-            [clojure.tools.logging :as log]
-            [compojure.core :refer [defroutes GET POST DELETE]]
+  (:require [clojure.string :as str]
+            [compojure.core :refer [DELETE GET POST defroutes]]
             [compojure.route :refer [not-found]]
-            [crypto.password.bcrypt :as bcrypt]
             [environ.core :refer [env]]
-            [hiccup.page :refer [html5 include-css]]
-            [hiccup.element :as element]
             [hiccup.form :as form]
-            [ring.util.response :as response]
-            [ring.middleware.params :refer [wrap-params]]
+            [hiccup.page :refer [html5 include-css]]
             [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
-            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
-            [taoensso.carmine :as car :refer (wcar)]))
+            [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
+            [taoensso.carmine :as car]))
 
 (def app-title "Studyflow")
 (def studyflow-env (keyword (env :studyflow-env)))
 (def publishing-url (studyflow-env (env :publishing-url)))
 (def cookie-domain (studyflow-env (env :cookie-domain)))
 (def session-max-age (studyflow-env (env :session-max-age)))
-(def db-subname (studyflow-env (env :db-subname)))
 
 
 (def redis  {:pool {} :spec {}})
@@ -106,18 +99,6 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Database interaction
-
-(defn- find-user-by-email [db email]
-  (first (sql/query db ["SELECT uuid, role, password FROM users WHERE email = ?" email])))
-
-(defn authenticate [db email password]
-  (if-let [user (find-user-by-email db email)]
-    (if (bcrypt/check password (:password user))
-      user)))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Cookie management
 
 (defn get-uuid-from-cookies [cookies]
@@ -135,10 +116,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wiring
-
-(defn wrap-authenticator [app db]
-  (fn [req]
-    (app (assoc req :authenticate (partial authenticate db)))))
 
 (defn wrap-login-user [app]
   (fn [req]
@@ -172,14 +149,6 @@
                          (default-redirect-path user-role)))
         resp))))
 
-(def db
-  {:classname "org.postgresql.Driver"
-   :subprotocol "postgresql"
-   :subname db-subname
-   :user (env :db-user)
-   :password (env :db-password)})
-
-
 (defn set-studyflow-site-defaults []
   (-> site-defaults ;; secure-site-defaults
       (assoc-in [:session :cookie-name] "studyflow_login_session")
@@ -192,5 +161,4 @@
    wrap-login-user
    wrap-redirect-for-role
    wrap-user-role
-   (wrap-defaults (set-studyflow-site-defaults))
-   (wrap-authenticator db)))
+   (wrap-defaults (set-studyflow-site-defaults))))

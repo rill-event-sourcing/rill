@@ -63,9 +63,7 @@
       (is (= "/" ((:headers resp) "Location")))
       (is (= true (:logout-user resp))))))
 
-(deftest wrap-authenticator-test
-  (let [handler (wrap-authenticator identity "testdb")]
-    (is (fn? (:authenticate (handler {}))))))
+
 
 (deftest wrap-login-user-test
   (let [handler (wrap-login-user identity)]
