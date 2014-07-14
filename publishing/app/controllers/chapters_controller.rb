@@ -4,11 +4,7 @@ class ChaptersController < ApplicationController
   before_action :set_breadcrumb, except: [:new, :create]
 
   def index
-    if @course
-      @chapters = @course.chapters
-    else
-      flash.now[:alert] = 'Please select a course first'
-    end
+    @chapters = @course.chapters
   end
 
   def show
