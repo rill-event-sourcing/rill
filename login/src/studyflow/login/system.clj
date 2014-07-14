@@ -1,5 +1,6 @@
 (ns studyflow.login.system
   (:require [clojure.tools.logging :as log]
+            [crypto.password.bcrypt :as bcrypt]
             [com.stuartsierra.component :as component]
             [studyflow.login.credentials :as credentials]
             [studyflow.login.main :as main]
