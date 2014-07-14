@@ -20,9 +20,14 @@
             %th
               Subsections
               %span.badge= @section.subsections.length
+              %span.pull-right
+                - if @section.active?
+                  published
+                - else
+                  not published
         %tbody
           - @section.subsections.all.each do |subsection|
-            %tr
+            %tr{class: @section.active? ? "success" : "danger"}
               %td= subsection.to_s.empty? ? "(empty)" : subsection.to_s
 
 
