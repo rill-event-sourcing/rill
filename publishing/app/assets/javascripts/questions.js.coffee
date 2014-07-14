@@ -20,10 +20,10 @@ bindAddInputButton = ->
 bindDeleteInputButtons = ->
   $('.delete-input').unbind()
   $('.delete-input').bind 'click', (event) ->
-    # if confirm('Are you sure you want to delete this?')
-    deleteItem = $(event.currentTarget).data('item')
-    url = $(event.currentTarget).data('url')
-    $.ajax url,
+    if confirm('Are you sure you want to delete this?')
+      deleteItem = $(event.currentTarget).data('item')
+      url = $(event.currentTarget).data('url')
+      $.ajax url,
         type: 'DELETE'
         dataType: 'json'
         error: (jqXHR, textStatus, errorThrown) ->
@@ -51,10 +51,10 @@ bindAddAnswerButton = ->
 bindDeleteAnswerButtons = ->
   $('.delete-answer').unbind()
   $('.delete-answer').bind 'click', (event) ->
-    # if confirm('Are you sure you want to delete this?')
-    deleteItem = $(event.currentTarget).data('item')
-    url = $(event.currentTarget).data('url')
-    $.ajax url,
+    if confirm('Are you sure you want to delete this?')
+      deleteItem = $(event.currentTarget).data('item')
+      url = $(event.currentTarget).data('url')
+      $.ajax url,
         type: 'DELETE'
         dataType: 'json'
         error: (jqXHR, textStatus, errorThrown) ->
@@ -83,10 +83,10 @@ bindAddChoiceButton = ->
 bindDeleteChoiceButtons = ->
   $('.delete-choice').unbind()
   $('.delete-choice').bind 'click', (event) ->
-    # if confirm('Are you sure you want to delete this?')
-    deleteItem = $(event.currentTarget).data('item')
-    url = $(event.currentTarget).data('url')
-    $.ajax url,
+    if confirm('Are you sure you want to delete this?')
+      deleteItem = $(event.currentTarget).data('item')
+      url = $(event.currentTarget).data('url')
+      $.ajax url,
         type: 'DELETE'
         dataType: 'json'
         error: (jqXHR, textStatus, errorThrown) ->
