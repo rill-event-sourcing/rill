@@ -1,19 +1,15 @@
 %div.container
   %div.row
     %div.col-md-8.col-md-offset-2
-      %h2
-        = @section.title
-      %strong Description:
-      %p{style: "margin-left:20px;"}= @section.description
-
-  %div.row
-    %div.col-md-4.col-md-offset-4
-
-
+      %h2= @section.title
+      %div.panel.panel-default
+        %div.panel-heading
+          %strong Section description:
+        %div.panel-body= @section.description
 
   %div.row
     %div.col-md-4.col-md-offset-2
-      =link_to 'Edit Subsections', chapter_section_subsections_path(@chapter, @section), class: "btn btn-primary", style: "margin:40px auto; width:100%;"
+      =link_to 'Edit Subsections', chapter_section_subsections_path(@chapter, @section), class: "btn btn-primary", style: "margin:20px auto; width:100%;"
       %table.table.table-striped.table-bordered
         %thead
           %tr
@@ -32,7 +28,7 @@
 
 
     %div.col-md-4
-      =link_to 'Manage Questions', chapter_section_questions_path(@chapter, @section), class: "btn btn-primary", style: "margin:40px auto; width:100%;"
+      =link_to 'Manage Questions', chapter_section_questions_path(@chapter, @section), class: "btn btn-primary", style: "margin:20px auto; width:100%;"
       %table.table.table-striped.table-bordered
         %thead
           %tr
