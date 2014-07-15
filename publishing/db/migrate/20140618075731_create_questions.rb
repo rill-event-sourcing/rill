@@ -1,7 +1,8 @@
 class CreateQuestions < ActiveRecord::Migration
   def change
     create_table :questions, id: :uuid do |t|
-      t.uuid :section_id, index: true
+      t.uuid :questionable_id, index: true
+      t.string :questionable_type
       t.text :text
       t.text :explanation
       t.datetime :deleted_at, index: true

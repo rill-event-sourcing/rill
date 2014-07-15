@@ -6,16 +6,16 @@
       =button_to 'Add Question', chapter_section_questions_path(@chapter, @section), method: :post, class: "btn btn-success"
   %div.row
     %div.col-md-8.col-md-offset-2
-      %table.table.table-striped
+      %table.table.table-bordered
         %thead
           %tr
             %th.col-md-10 Title
             %th.col-md-1 Published
-            %th.col-md-1 Actions
+            %th.col-md-1 Remove
 
         %tbody
           -@section.questions.each do |question|
-            %tr
+            %tr{class: question.active? ? "success" : "danger"}
               %td= link_to question.text.truncate(90, omission: '...'), edit_chapter_section_question_path(@chapter, @section, question)
               %td
                 -if question.active?

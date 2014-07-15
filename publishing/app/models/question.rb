@@ -1,10 +1,11 @@
 class Question < ActiveRecord::Base
   include Trashable, Activateable
 
-  validates :section, presence: true
+  #validates :section, presence: true
   before_save :set_default_text
 
-  belongs_to :section, touch: true
+  belongs_to :questionable, polymorphic: true#, touch: true
+
   has_many :inputs, dependent: :destroy
   has_many :line_inputs
   has_many :multiple_choice_inputs

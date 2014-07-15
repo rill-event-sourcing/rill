@@ -12,7 +12,7 @@ RSpec.describe ChoicesController, :type => :controller do
     @course = create(:course)
     @chapter = create(:chapter, course: @course)
     @section1 = create(:section, chapter: @chapter)
-    @question1 = create(:question, section: @section1)
+    @question1 = create(:question, questionable: @section1)
     @input1 = create(:multiple_choice_input, question: @question1)
   end
 
