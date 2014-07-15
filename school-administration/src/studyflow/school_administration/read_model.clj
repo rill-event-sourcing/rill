@@ -17,7 +17,13 @@
   [model id credentials]
   (assoc-in model [:students id :credentials] credentials))
 
+(defn set-aggregate-version
+  [model aggregate-id version]
+  (assoc-in model [:aggregate-versions aggregate-id] version))
 
+(defn aggregate-version
+  [model aggregate-id]
+  (get-in model [:aggregate-versions aggregate-id]))
 
 
 

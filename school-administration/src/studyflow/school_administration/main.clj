@@ -10,7 +10,7 @@
    [hiccup.form :as form]
    [org.bovinegenius.exploding-fish :as uri]
    [rill.event-store.memory :refer [memory-store]]
-   [rill.uuid :refer [new-id]]
+   [rill.uuid :refer [new-id uuid]]
    [rill.web :refer [wrap-command-handler]]
    [ring.util.response :as response]
    [ring.middleware.params :refer [wrap-params]]
@@ -72,8 +72,16 @@
     (render-new-student-form nil)]))
 
 (defroutes queries
-  (GET "/" {:keys [read-model]}
-       (render-student-list (m/list-students read-model)))
+  (GET "/" {:keys [read-model] {:keys [aggregate-id aggregate-version]} :params}
+       (if (< (or (m/aggregate-version read-model (uuid aggregate-id)) -1)
+              (if aggregate-version
+                (Integer/parseInt aggregate-version)
+                -1))
+         {:status 200
+          :headers {"Refresh" "1"
+                    "Content-Type" "text/html"}
+          :body (html5 [:body "Just a sec..."])}
+         (render-student-list (m/list-students read-model))))
   (not-found "Nothing here"))
 
 (defroutes commands

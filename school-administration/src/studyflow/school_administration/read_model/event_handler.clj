@@ -11,18 +11,26 @@
   (reduce handle-event nil events))
 
 (defmethod handle-event ::events/Created
-  [model {:keys [student-id full-name]}]
-  (m/set-student model student-id {:full-name full-name
-                                   :id student-id}))
+  [model {:keys [student-id full-name ::message/number]}]
+  (-> model
+      (m/set-student student-id {:full-name full-name
+                                 :id student-id})
+      (m/set-aggregate-version student-id number)))
 
 (defmethod handle-event ::events/NameChanged
-  [model {:keys [student-id full-name]}]
-  (m/set-student-full-name model student-id full-name))
+  [model {:keys [student-id full-name ::message/number]}]
+  (-> model
+      (m/set-student-full-name student-id full-name)
+      (m/set-aggregate-version student-id number)))
 
 (defmethod handle-event ::events/CredentialsAdded
-  [model {:keys [student-id credentials]}]
-  (m/set-student-credentials model student-id credentials))
+  [model {:keys [student-id credentials ::message/number]}]
+  (-> model
+      (m/set-student-credentials student-id credentials)
+      (m/set-aggregate-version student-id number)))
 
 (defmethod handle-event ::events/CredentialsChanged
-  [model {:keys [student-id credentials]}]
-  (m/set-student-credentials model student-id credentials))
+  [model {:keys [student-id credentials ::message/number]}]
+  (-> model
+      (m/set-student-credentials student-id credentials)
+      (m/set-aggregate-version student-id number)))
