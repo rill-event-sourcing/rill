@@ -3,7 +3,7 @@
     %div.col-md-8.col-md-offset-2
       %h2= "Questions for '#{@section}'"
     %div.col-md-2
-      =button_to 'Add Question', chapter_section_questions_path(@chapter, @section), method: :post, class: "btn btn-success"
+      = button_to 'Add Question', chapter_section_questions_path(@chapter, @section), method: :post, class: "btn btn-success"
   %div.row
     %div.col-md-8.col-md-offset-2
       %table.table.table-bordered
@@ -14,16 +14,16 @@
             %th.col-md-1 Remove
 
         %tbody
-          -@section.questions.each do |question|
+          - @section.questions.each do |question|
             %tr{class: question.active? ? "success" : "danger"}
-              %td= link_to question.text.truncate(90, omission: '...'), edit_chapter_section_question_path(@chapter, @section, question)
+              %td= link_to question.to_s.truncate(90, omission: '...'), edit_chapter_section_question_path(@chapter, @section, question)
               %td
-                -if question.active?
-                  =link_to deactivate_chapter_section_question_path(@chapter, @section, question), method: :post do
+                - if question.active?
+                  = link_to deactivate_chapter_section_question_path(@chapter, @section, question), method: :post do
                     %span.glyphicon.glyphicon-eye-open
-                -else
-                  =link_to activate_chapter_section_question_path(@chapter, @section, question), method: :post do
+                - else
+                  = link_to activate_chapter_section_question_path(@chapter, @section, question), method: :post do
                     %span.glyphicon.glyphicon-ban-circle
               %td
-                =link_to chapter_section_question_path(@chapter, @section, question), method: :delete, data: { confirm: "Are you sure you want to delete this question?" } do
+                = link_to chapter_section_question_path(@chapter, @section, question), method: :delete, data: { confirm: "Are you sure you want to delete this question?" } do
                   %span.glyphicon.glyphicon-trash

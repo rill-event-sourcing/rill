@@ -21,7 +21,7 @@ class Question < ActiveRecord::Base
   end
 
   def to_s
-    "#{text}"
+    text.blank? ? "blank" : text
   end
 
   def to_param
