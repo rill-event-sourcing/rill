@@ -13,6 +13,7 @@
    [rill.uuid :refer [new-id uuid]]
    [rill.web :refer [wrap-command-handler]]
    [ring.util.response :as response]
+   [ring.util.request :refer [request-url]]
    [ring.middleware.params :refer [wrap-params]]
    [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
    [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
@@ -72,16 +73,8 @@
     (render-new-student-form nil)]))
 
 (defroutes queries
-  (GET "/" {:keys [read-model] {:keys [aggregate-id aggregate-version]} :params}
-       (if (< (or (m/aggregate-version read-model (uuid aggregate-id)) -1)
-              (if aggregate-version
-                (Integer/parseInt aggregate-version)
-                -1))
-         {:status 200
-          :headers {"Refresh" "1"
-                    "Content-Type" "text/html"}
-          :body (html5 [:body "Just a sec..."])}
-         (render-student-list (m/list-students read-model))))
+  (GET "/" {:keys [read-model]}
+       (render-student-list (m/list-students read-model)))
   (not-found "Nothing here"))
 
 (defroutes commands
@@ -91,6 +84,7 @@
 (defn add-version-to-url
   [url aggregate-id aggregate-version]
   (-> url
+      (uri/param "refresh-count" 0)
       (uri/param "aggregate-id" aggregate-id)
       (uri/param "aggregate-version" aggregate-version)))
 
@@ -105,10 +99,22 @@
 
 (def my-read-model (atom {}))
 
+(defn model-up-to-date?
+  [model id version]
+  (<= version (or (m/aggregate-version model id) -1)))
+
 (defn wrap-read-model
   [f model-atom]
-  (fn [request]
-    (f (assoc request :read-model @model-atom))))
+  (fn [{{version :aggregate-version id :aggregate-id count :refresh-count} :params :as request}]
+    (let [read-model @model-atom
+          count (if count (Integer/parseInt count) 0)]
+      (if (and version id count (< count 5)
+               (not (model-up-to-date? read-model (uuid id) (Integer/parseInt version))))
+        {:status 200
+         :headers {"Refresh" (str "1; url=" (uri/param (request-url request) "refresh-count" (inc count)))
+                   "Content-Type" "text/html"}
+         :body (html5 [:body "Just a sec..."])}
+        (f (assoc request :read-model read-model))))))
 
 (def queries-app
   (-> queries
