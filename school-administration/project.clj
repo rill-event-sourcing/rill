@@ -9,7 +9,8 @@
                  [org.clojure/tools.logging "0.3.0"]
                  [rill "0.1.0-SNAPSHOT"]
                  [ring/ring-defaults "0.1.0"]
-                 [ring-server "0.3.1"]]
+                 [ring-server "0.3.1"]
+                 [org.bovinegenius/exploding-fish "0.3.4"]]
 
   :plugins [[lein-ring "0.8.10"]
             [cider/cider-nrepl "0.7.0-SNAPSHOT"]]

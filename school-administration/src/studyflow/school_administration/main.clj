@@ -8,6 +8,7 @@
    [hiccup.page :refer [html5 include-css]]
    [hiccup.element :as element]
    [hiccup.form :as form]
+   [org.bovinegenius.exploding-fish :as uri]
    [rill.event-store.memory :refer [memory-store]]
    [rill.uuid :refer [new-id]]
    [rill.web :refer [wrap-command-handler]]
@@ -79,13 +80,19 @@
   (POST "/create-student" {{:keys [full-name]} :params}
         (student/create! (new-id) full-name)))
 
+(defn add-version-to-url
+  [url aggregate-id aggregate-version]
+  (-> url
+      (uri/param "aggregate-id" aggregate-id)
+      (uri/param "aggregate-version" aggregate-version)))
+
 (defn wrap-back-to-previous
   [f]
   (fn [{headers :headers :as request}]
     (let [referer (or (headers "referer") "/")]
-      (when-let [{:keys [status]} (f request)]
+      (when-let [{:keys [status] {:keys [aggregate-version aggregate-id]} :body} (f request)]
         (if (= status 200)
-          (response/redirect referer)
+          (response/redirect (add-version-to-url referer aggregate-id aggregate-version))
           {:status status :body (str status)})))))
 
 (def my-read-model (atom {}))
@@ -99,7 +106,7 @@
   (-> queries
       (wrap-read-model my-read-model)))
 
-(def event-store (memory-store))
+(defonce event-store (memory-store))
 
 (defn event-listener [channel read-model-atom]
   (thread
