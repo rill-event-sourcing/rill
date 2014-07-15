@@ -18,15 +18,6 @@ RSpec.describe ApplicationController, :type => :controller do
       expect(Course.current).to eq nil
     end
 
-    it "should set_crumb" do
-      crumb_hash1 = {link: '1234'}
-      crumbs = controller.send :set_crumb, crumb_hash1
-      expect(assigns(:crumbs)).to eq [crumb_hash1]
-
-      crumb_hash2 = {link2: '5678'}
-      controller.send :set_crumb, crumb_hash2
-      expect(assigns(:crumbs)).to eq [crumb_hash1, crumb_hash2]
-    end
   end
 
 end

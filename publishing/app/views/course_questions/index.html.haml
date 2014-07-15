@@ -1,9 +1,9 @@
 %div.container
   %div.row
     %div.col-md-8.col-md-offset-2
-      %h2= "Questions for '#{@course}'"
+      %h2 List of entry test questions
     %div.col-md-2
-      =button_to 'Add Question', questions_path, method: :post, class: "btn btn-success"
+      = button_to 'Add Question', questions_path, method: :post, class: "btn btn-success"
   %div.row
     %div.col-md-8.col-md-offset-2
       %table.table.table-bordered
@@ -14,15 +14,15 @@
             %th.col-md-1 Remove
 
         %tbody
-          -@course.questions.each do |question|
+          - @course.questions.each do |question|
             %tr{class: question.active? ? "success" : "danger"}
               %td= link_to question.to_s.truncate(90, omission: '...'), edit_question_path(question)
               %td
-                -if question.active?
-                  =link_to deactivate_question_path(question), method: :post do
+                - if question.active?
+                  = link_to deactivate_question_path(question), method: :post do
                     %span.glyphicon.glyphicon-eye-open
-                -else
-                  =link_to activate_question_path(question), method: :post do
+                - else
+                  = link_to activate_question_path(question), method: :post do
                     %span.glyphicon.glyphicon-ban-circle
               %td
                 = link_to question_path(question), method: :delete, data: { confirm: "Are you sure you want to delete this question?" } do

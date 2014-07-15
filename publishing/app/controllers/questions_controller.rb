@@ -83,7 +83,7 @@ private
   end
 
   def set_breadcrumb
-    @crumbs = [{name: @course.name, url: chapters_path}]
+    @crumbs = [{name: @course.name, url: root_path}]
     @crumbs << {name: @chapter.title, url: chapter_sections_path(@chapter)}
     @crumbs << {name: @section.title, url: chapter_section_path(@chapter, @section)}
     @crumbs << {name: "Questions", url: chapter_section_questions_path(@chapter,@section)}

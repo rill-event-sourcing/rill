@@ -59,7 +59,7 @@ class ChaptersController < ApplicationController
     redirect_to chapters_path, notice: 'Chapter was successfully moved down.'
   end
 
-private
+  private
 
   def set_param_objects
     @course = Course.current
@@ -67,8 +67,13 @@ private
   end
 
   def set_breadcrumb
-    @crumbs = [{name: @course.name, url: chapters_path}]
-    @crumbs << {name: @chapter.title, url: chapter_sections_path(@chapter)} if @chapter
+    @crumbs = [{name: @course.name, url: root_path}]
+    if @chapter
+      @crumbs << {name: @chapter.title, url: chapter_sections_path(@chapter)}
+    else
+      @crumbs << {name: "Chapters", url: chapters_path}
+    end
+
   end
 
   def chapter_params

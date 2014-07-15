@@ -81,7 +81,7 @@ private
   end
 
   def set_breadcrumb
-    @crumbs = [{name: @course.name, url: chapters_path}]
+    @crumbs = [{name: @course.name, url: root_path}]
     @crumbs << {name: "Course Questions", url: questions_path}
     @crumbs << {name: @question.to_param, url: question_path(@question)} if @question
   end
