@@ -1,7 +1,6 @@
-(ns studyflow.school-administration.student.commands-test
+(ns studyflow.school-administration.student-test
   (:require
    [studyflow.school-administration.student.events :as events]
-   [studyflow.school-administration.student.commands :as commands]
    [studyflow.school-administration.student :as student]
    [rill.temp-store :refer [with-temp-store execute messages= message= command-result=]]
    [rill.uuid :refer [new-id]]
@@ -13,6 +12,6 @@
   (testing "create students"
     (let [student-id (new-id)]
       (is (command-result= [:ok [(events/created student-id "Joost")]]
-                           (execute (commands/create! student-id "Joost")
+                           (execute (student/create! student-id "Joost")
                                     []))))))
 

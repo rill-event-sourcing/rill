@@ -17,9 +17,8 @@
    [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
    [studyflow.school-administration.read-model :as m]
    [studyflow.school-administration.read-model.event-handler :refer [handle-event]]
-   [studyflow.school-administration.student]
-   [studyflow.school-administration.student.events :refer [fixture]]
-   [studyflow.school-administration.student.commands :as commands]))
+   [studyflow.school-administration.student :as student]
+   [studyflow.school-administration.student.events :refer [fixture]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; View
@@ -78,7 +77,7 @@
 
 (defroutes commands
   (POST "/create-student" {{:keys [full-name]} :params}
-        (commands/create! (new-id) full-name)))
+        (student/create! (new-id) full-name)))
 
 (defn wrap-back-to-previous
   [f]
