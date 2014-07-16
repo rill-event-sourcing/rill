@@ -49,6 +49,4 @@
                                          :elide-asserts true
                                          :pretty-print false
                                          :preamble ["react/react.min.js"]
-                                         :externs ["react/externs/react.js"]}}}}
-
-  :main studyflow.main)
+                                         :externs ["react/externs/react.js"]}}}})
