@@ -1,4 +1,4 @@
-(ns rill.event-store.atom-store.event
+(ns rill.event-store.atom-store.event-test
   (:require [rill.event-store.atom-store.event :as event]
             [rill.message :as message :refer [defevent]]
             [rill.uuid :refer [new-id]]
