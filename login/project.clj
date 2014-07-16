@@ -13,6 +13,8 @@
                  [org.clojure/tools.logging "0.3.0"]
                  [rill "0.1.0-SNAPSHOT"]
                  [ring/ring-defaults "0.1.0"]
+                 [org.slf4j/slf4j-log4j12 "1.7.5"]
+                 [org.clojars.seancorfield/clj-soap "0.2.0"]
                  [studyflow/components "0.1.0-SNAPSHOT"]]
 
   :profiles {:dev {:dependencies [[enlive "1.1.5"]

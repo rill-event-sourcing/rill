@@ -7,7 +7,10 @@
             [hiccup.page :refer [html5 include-css]]
             [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
             [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
-            [taoensso.carmine :as car]))
+            [taoensso.carmine :as car]
+            [rill.handler :refer [try-command]]
+            [studyflow.login.edu-route-service :as edu-route-service]
+            [studyflow.login.edu-route-student :as edu-route-student]))
 
 (def app-title "Studyflow")
 (def studyflow-env (keyword (env :studyflow-env)))
@@ -50,6 +53,9 @@
     (form/password-field {:class "form-control" :placeholder "Password"} "password" password) ;; required
     [:button.btn.btn-lg.btn-primary.btn-block {:type "submit"} "Sign in"]))
 
+(defn please-wait
+  []
+  [:h1 "Please wait..."])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Controller
@@ -64,15 +70,24 @@
          {:redirect-for-role user-role}
          (layout "Studyflow Beta" (render-login (:email params) (:password params) "Please sign in"))))
 
-  (POST "/" {authenticate :authenticate {:keys [email password]} :params}
+  (POST "/" {authenticate :authenticate-by-email-and-password {:keys [email password]} :params}
         (if-let [user (authenticate email password)]
           (assoc (redirect-to "/") :login-user user)
           (layout "Studyflow Beta" (render-login email password "Wrong email / password combination"))))
 
-  (DELETE "/" {}
-       (assoc (redirect-to "/") :logout-user true))
+  (GET "/students/sign_in"
+       {event-store :event-store authenticate :authenticate-by-edu-route-id {:keys [edurouteSessieId signature]} :params}
+       (if-let [{:keys [edu-route-id full-name brin-code]} (edu-route-service/get-student-info edurouteSessieId)]
+         (if-let [user (authenticate edu-route-id)]
+           (assoc (redirect-to "/") :login-user user)
+           (let [[status] (try-command event-store (edu-route-student/register! edu-route-id full-name brin-code))]
+             (layout "Studyflow Beta" (please-wait))))))
 
-  (not-found "Nothing here"))
+  (DELETE "/" {}
+       (assoc (redirect-to "/") :logout-user true)) 
+
+  ;;(not-found "Nothing here")
+  (not-found {:status 404}))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
