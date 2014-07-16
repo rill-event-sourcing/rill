@@ -5,7 +5,7 @@
             [studyflow.learning.course-material :as course-material]
             [studyflow.learning.course.commands :as course-commands]
             [studyflow.learning.section-test.commands :as section-test-commands]
-            [studyflow.web.command-executor :refer [wrap-command-executor]]
+            [rill.web :refer [wrap-command-handler]]
             [studyflow.web.handler-tools :refer [combine-ring-handlers]]
             [studyflow.web.routes :as routes]))
 
@@ -15,7 +15,7 @@
 
 (def handler
   "This handler matches ring requests and returns a command (or nil) for the given request.
-Intended to be wrapped by `wrap-command-executor` to actually run the
+Intended to be wrapped by `wrap-command-handler` to actually run the
 commands."
   (combine-ring-handlers
    (clout/handle
@@ -44,4 +44,4 @@ commands."
 (defn make-request-handler
   [event-store]
   (-> handler
-      (wrap-command-executor event-store)))
+      (wrap-command-handler event-store)))
