@@ -9,7 +9,7 @@
   [ring-handler event-store]
   (fn [request]
     (when-let [command (ring-handler request)]
-      (log/info ["Executing command" command])
+      (log/debug ["Executing command" command])
       (let [[status events new-version] (rill-handler/try-command event-store command)]
         (case status
             :rejected {:status 422 :body {:status :command-rejected}} ; HTTP 422 Unprocessable Entity
