@@ -43,7 +43,7 @@
               (is (fetch course-id)))))))
 
   (testing "init section test"
-    (let [section-test-id (new-id)
+    (let [section-test-id (str "student-idSTUDENTMOCKsection-id" (str section-id))
           req (request :put (uri-for routes/section-test-init
                                      course-id
                                      section-id
@@ -65,7 +65,7 @@
             (is (fetch section-test-id)))))))
 
   (testing "check section test answer"
-    (let [section-test-id (new-id)
+    (let [section-test-id (str "student-idSTUDENTMOCKsection-id" (str section-id))
           inputs {"name" "value"}
           req (-> (request :put (uri-for routes/section-test-check-answer
                                          section-test-id
@@ -76,8 +76,10 @@
           cmd (handler req)]
       (is (= ::section-test-commands/CheckAnswer! (message/type cmd))
           "generates correct command")
-      (is (= [section-test-id section-id course-id question-id]
-             (map #(uuid (% cmd)) [:section-test-id :section-id :course-id :question-id]))
+      (is (= [section-id course-id question-id]
+             (map #(uuid (% cmd)) [:section-id :course-id :question-id]))
+          "commands has correct ids")
+      (is (= section-test-id (get cmd :section-test-id))
           "commands has correct ids")
       (is (= inputs (:inputs cmd))
           "commands has correct inputs")
