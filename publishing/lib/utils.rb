@@ -1,4 +1,5 @@
-def pp(value = '', type = 'debug', debug_start = false)
+# -*- coding: utf-8 -*-
+def pretty_debug(value = '', type = 'debug', debug_start = false)
   start = Time.now
   logger ||= ::Rails.logger
   logger.send(type, "\e[46;1;31m")
