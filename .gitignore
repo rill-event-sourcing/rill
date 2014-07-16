@@ -4,6 +4,6 @@ pom.xml
 .nrepl-port
 .lein-repl-history
 .DS_Store
-learning/server/resources/public/js/out/*
-learning/server/resources/public/js/studyflow-dev.js
-learning/server/resources/public/js/studyflow.js
+learning/resources/public/js/out/*
+learning/resources/public/js/studyflow-dev.js
+learning/resources/public/js/studyflow.js
