@@ -34,6 +34,6 @@ class HomeController < ApplicationController
   private
 
   def set_breadcrumb
-    @crumbs = [{name: Course.current.name, url: root_path}]
+    @crumbs = [{name: Course.current.name, url: root_path}] if Course.current
   end
 end

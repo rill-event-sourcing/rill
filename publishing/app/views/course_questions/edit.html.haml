@@ -23,13 +23,13 @@
           %span.btn.btn-default#add-input{data: { url: inputs_path(question_id: @question.to_param) } } Add
 
         %div.panel-body#inputs-list
-          -@question.inputs.each do |input|
+          - @question.inputs.each do |input|
             = render partial: 'inputs/edit', locals: {input: input}
 
       %div.panel.panel-default
-        %div.panel-heading Explanation
+        %div.panel-heading Worked out answer
         %div.panel-body
-          = text_area :question, :explanation, style: "width:100%;", rows: 20, class: "form-control"
+          = text_area :question, :worked_out_answer, style: "width:100%;", rows: 20, class: "form-control"
 
     %div.col-md-6
       - url = preview_question_path(@question)
