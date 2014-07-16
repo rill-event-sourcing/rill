@@ -51,7 +51,7 @@
     (log/debug [:try-command command])
     (let [result (if-let [events (apply aggregate/handle-command primary-aggregate command rest-aggregates)]
                    (if (commit-events event-store id version events)
-                     [:ok events]
+                     [:ok events (+ version (count events))]
                      [:conflict])
                    [:rejected])]
       (log/debug [result])
