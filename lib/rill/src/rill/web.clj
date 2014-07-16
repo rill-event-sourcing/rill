@@ -15,7 +15,8 @@
     {:status 412 :body {:status :command-out-of-date}} ; HTTP 412 Precondition Failed
 
     :ok
-    {:status 200 :body {:events events
+    {:status 200 :body {:status :command-accepted
+                        :events events
                         :aggregate-version new-version
                         :aggregate-id (message/primary-aggregate-id command)}}
 
