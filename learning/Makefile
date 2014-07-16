@@ -1,9 +1,10 @@
 default: test
 
-.PHONY: test
+.PHONY: test default
 
-test:
-	cd server && make test
+lein:
+	curl -O https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
+	chmod 755 ./lein
 
-import:
-	cd server && lein validate-course-material ../../publishing/tmp/material.json
+test: lein
+	./lein test && echo "OK"

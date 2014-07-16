@@ -1,13 +1,17 @@
 module QuestionsHelper
 
-  def question_to_html(question)
-    html = content_tag(:div, question.text.html_safe)
+  def question_text_to_html(question)
+    html = question.text.html_safe
     question.inputs.each do |input|
       input_html = input_to_html(input)
       html.gsub!(input.name, input_html)
     end
-    html.gsub!(/(_INPUT_[0-9]+_)/, content_tag(:div, 'Remove \1 from the source!', class: "alert alert-danger"))
+    html.gsub!(/(_INPUT_[0-9]+_)/, content_tag(:div, 'Please remove \1 from the source!', class: "alert alert-danger"))
     html.html_safe
+  end
+
+  def question_explanation_to_html(question)
+    question.explanation.html_safe
   end
 
   def input_to_html(input)

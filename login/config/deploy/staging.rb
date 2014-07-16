@@ -1,4 +1,4 @@
-set :rails_env, :staging
+set :stage, :staging
 
-server '188.226.137.228', user: 'studyflow', roles: %w{app}
+server 'login-beta.studyflow.nl', port: 1022, user: 'studyflow', roles: %w{app}
 

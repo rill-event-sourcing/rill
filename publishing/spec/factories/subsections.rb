@@ -4,7 +4,6 @@ FactoryGirl.define do
   factory :subsection do
       title "Default subsection title"
       text "Default subsection text"
-      stars 2
       sequence(:position)
       section
   end

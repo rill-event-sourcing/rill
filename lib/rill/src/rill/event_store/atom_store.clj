@@ -7,6 +7,7 @@ Code originally taken from https://github.com/jankronquist/rock-paper-scissors-i
             [rill.event-store :refer [EventStore]]
             [rill.event-store.atom-store.cursor :as cursor]
             [rill.event-store.atom-store.event :as event]
+            [rill.event-stream :refer [all-events-stream-id]]
             [rill.message :as msg]))
 
 
@@ -19,7 +20,10 @@ Code originally taken from https://github.com/jankronquist/rock-paper-scissors-i
   EventStore
   (retrieve-events-since [_ stream-id cursor wait-for-seconds]
     (cursor/event-seq (if (= -1 cursor)
-                        (cursor/first-cursor uri stream-id (client-opts user password))
+                        (cursor/first-cursor uri (if (= all-events-stream-id stream-id)
+                                                   "%24all"
+                                                   stream-id)
+                                             (client-opts user password))
                         (cursor/next-cursor cursor))
                       wait-for-seconds))
   (append-events [_ stream-id from-version events]

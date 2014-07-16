@@ -6,7 +6,6 @@
                  [cheshire "5.3.1"]
                  [org.clojure/tools.logging "0.2.6"]
                  [environ "0.5.0"]
-                 [slingshot "0.10.3"]
                  [prismatic/schema "0.2.2"]
                  [ring/ring-json "0.3.1"]
                  [compojure "1.1.8"]
@@ -17,10 +16,10 @@
                  [ring-mock "0.1.5"]
                  [ring/ring-devel "1.2.1"]
                  [org.clojure/core.async "0.1.303.0-886421-alpha"]
-                 [me.raynes/conch "0.7.0"]
-                 [com.velisco/tagged "0.3.4"]
                  [com.stuartsierra/component "0.2.1"]
-                 [identifiers "1.0.0"]]
+                 [identifiers "1.0.0"]
+                 [rill "0.1.0-SNAPSHOT"]]
+
   :profiles {:dev
              {:source-paths ["dev"]
               :resource-paths ["dev/resources"]
@@ -48,4 +47,6 @@
                                          :elide-asserts true
                                          :pretty-print false
                                          :preamble ["react/react.min.js"]
-                                         :externs ["react/externs/react.js"]}}}})
+                                         :externs ["react/externs/react.js"]}}}}
+
+  :main studyflow.main)
