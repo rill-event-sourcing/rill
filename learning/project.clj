@@ -33,7 +33,9 @@
                [cljs-uuid "0.0.4"]]
               :plugins
               [[lein-cljsbuild "1.0.2"]
-               [com.cemerick/clojurescript.test "0.3.0"]]}}
+               [com.cemerick/clojurescript.test "0.3.0"]]}
+             :uberjar {:aot [studyflow.main]
+                       :main studyflow.main}}
   :test-paths ["test"]
   :aliases {"server" ["run" "-m" "studyflow.main"]
             "validate-course-material" ["run" "-m" "studyflow.cli.validate-course-material-json"]}
@@ -47,6 +49,4 @@
                                          :elide-asserts true
                                          :pretty-print false
                                          :preamble ["react/react.min.js"]
-                                         :externs ["react/externs/react.js"]}}}}
-
-  :main studyflow.main)
+                                         :externs ["react/externs/react.js"]}}}})
