@@ -25,7 +25,7 @@
               :resource-paths ["dev/resources"]
               :dependencies
               [[org.clojure/tools.trace "0.7.5"]
-               [org.clojure/tools.namespace "0.2.3"]
+               [org.clojure/tools.namespace "0.2.5"]
                [org.clojure/clojurescript "0.0-2173"]
                [om "0.6.4"]
                [com.facebook/react "0.9.0.1"]
