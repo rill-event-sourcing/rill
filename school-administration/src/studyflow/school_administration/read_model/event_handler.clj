@@ -6,6 +6,10 @@
 (defmulti handle-event
   (fn [model event] (message/type event)))
 
+(defmethod handle-event :default
+  [model _]
+  model)
+
 (defn load-model
   [events]
   (reduce handle-event nil events))
