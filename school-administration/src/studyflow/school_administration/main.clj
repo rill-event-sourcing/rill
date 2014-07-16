@@ -1,26 +1,21 @@
 (ns studyflow.school-administration.main
-  (:require
-   [clojure.core.async :refer [thread <!!]]
-   [clojure.string :as str]
-   [clojure.tools.logging :as log]
-   [compojure.core :refer [defroutes GET POST DELETE routes]]
-   [compojure.route :refer [not-found]]
-   [hiccup.page :refer [html5 include-css]]
-   [hiccup.element :as element]
-   [hiccup.form :as form]
-   [org.bovinegenius.exploding-fish :as uri]
-   [rill.event-store.memory :refer [memory-store]]
-   [rill.uuid :refer [new-id uuid]]
-   [rill.web :refer [wrap-command-handler]]
-   [ring.util.response :as response]
-   [ring.util.request :refer [request-url]]
-   [ring.middleware.params :refer [wrap-params]]
-   [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
-   [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
-   [studyflow.school-administration.read-model :as m]
-   [studyflow.school-administration.read-model.event-handler :refer [handle-event]]
-   [studyflow.school-administration.student :as student]
-   [studyflow.school-administration.student.events :refer [fixture]]))
+  (:require [clojure.core.async :refer [<!! thread]]
+            [clojure.string :as str]
+            [compojure.core :refer [GET POST defroutes routes]]
+            [compojure.route :refer [not-found]]
+            [hiccup.form :as form]
+            [hiccup.page :refer [html5 include-css]]
+            [org.bovinegenius.exploding-fish :as uri]
+            [rill.event-store.memory :refer [memory-store]]
+            [rill.uuid :refer [new-id uuid]]
+            [rill.web :refer [wrap-command-handler]]
+            [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
+            [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
+            [ring.util.request :refer [request-url]]
+            [ring.util.response :as response]
+            [studyflow.school-administration.read-model :as m]
+            [studyflow.school-administration.read-model.event-handler :refer [handle-event]]
+            [studyflow.school-administration.student :as student]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; View
@@ -42,7 +37,7 @@
      (form/text-field {:placeholder "Full name"} "full-name" full-name)
      [:button {:type "submit"} "Change student name"])]])
 
-(defn layout [title & body]
+(defn layout [{:keys [title flash]} & body]
   (html5
    [:head
     [:title (str/join " - " [app-title title])]
@@ -54,6 +49,7 @@
     [:script {:src "//cdnjs.cloudflare.com/ajax/libs/respond.js/1.3.0/respond.js"}]
     "<! [endif]-->"]
    [:body
+    (when flash [:div.flash flash])
     [:div.container body]
     "<!-- /container -->"
     [:script {:src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"}]
@@ -68,9 +64,9 @@
    [:button {:type "submit"} "Add student"]))
 
 (defn render-student-list
-  [students]
+  [students options]
   (layout
-   "Student list"
+   (merge {:title "Student list"} options)
    [:table
     [:thead
      [:tr
@@ -81,8 +77,8 @@
     (render-new-student-form nil)]))
 
 (defroutes queries
-  (GET "/" {:keys [read-model]}
-       (render-student-list (m/list-students read-model)))
+  (GET "/" {:keys [read-model flash]}
+       (render-student-list (m/list-students read-model) {:flash flash}))
   (not-found "Nothing here"))
 
 (defroutes commands
@@ -108,7 +104,7 @@
          (response/redirect (add-version-to-url referer aggregate-id aggregate-version))
 
          (= status 412) ; HTTP 412 Precondition Failed
-         {:status status :body "out of date" :headers { "Content-Type" "text/plain"}}
+         (assoc (response/redirect referer) :flash "record not updated; already edited by somebody else")
 
          :else
          {:status status :body "error" :headers { "Content-Type" "text/plain"}})))))
