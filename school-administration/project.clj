@@ -12,8 +12,7 @@
                  [ring-server "0.3.1"]
                  [org.bovinegenius/exploding-fish "0.3.4"]]
 
-  :plugins [[lein-ring "0.8.10"]
-            [cider/cider-nrepl "0.7.0-SNAPSHOT"]]
+  :plugins [[lein-ring "0.8.10"]]
   :ring {:init studyflow.school-administration.dev/bootstrap!
          :auto-reload? false
          :handler studyflow.school-administration.main/app :port 4000}

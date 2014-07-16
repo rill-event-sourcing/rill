@@ -32,3 +32,15 @@
 (defmethod handle-event ::events/NameChanged
   [student event]
   (assoc student :full-name (:full-name event)))
+
+(defcommand CreateFromEduRouteCredentials!
+  :student-id s/Uuid
+  :edu-route-id s/Str
+  :full-name s/Str)
+
+(defmethod handle-command ::CreateFromEduRouteCredentials!
+  [student {:keys [student-id full-name edu-route-id]}]
+  {:pre [(nil? student)]}
+  [(events/created student-id full-name)
+   (events/edu-route-credentials-added student-id edu-route-id)])
+
