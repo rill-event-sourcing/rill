@@ -1,10 +1,5 @@
 (ns studyflow.school-administration.read-model)
 
-(defn list-students
-  "sequence of all the students in the system"
-  [model]
-  (sort-by :full-name (vals (:students model))))
-
 (defn set-student
   [model id student]
   (assoc-in model [:students id] student))
@@ -25,5 +20,8 @@
   [model aggregate-id]
   (get-in model [:aggregate-versions aggregate-id]))
 
-
-
+(defn list-students
+  "sequence of all the students in the system"
+  [model]
+  (map #(assoc % :version (aggregate-version model (:id %)))
+       (sort-by :full-name (vals (:students model)))))

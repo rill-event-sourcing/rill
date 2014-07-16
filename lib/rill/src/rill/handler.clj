@@ -3,8 +3,7 @@
             [rill.aggregate :as aggregate]
             [rill.event-store :as store]
             [rill.event-stream :as stream]
-            [rill.message :as message :refer [->type-keyword]]
-            [clojure.tools.logging :as log]))
+            [rill.message :as message]))
 
 (defn valid-commit?
   [[event & events]]
@@ -47,12 +46,12 @@
 
 (defn try-command
   [event-store command]
-  (let [[id version & [primary-aggregate & rest-aggregates]] (prepare-aggregates event-store command)]
-    (log/debug [:try-command command])
-    (let [result (if-let [events (apply aggregate/handle-command primary-aggregate command rest-aggregates)]
-                   (if (commit-events event-store id version events)
-                     [:ok events (+ version (count events))]
-                     [:conflict])
-                   [:rejected])]
-      (log/debug [result])
-      result)))
+  (let [[id version & [primary-aggregate & rest-aggregates]] (prepare-aggregates event-store command)
+        expected-version (:expected-version command)]
+    (if (and expected-version (not= version expected-version))
+      [:out-of-date]
+      (if-let [events (apply aggregate/handle-command primary-aggregate command rest-aggregates)]
+        (if (commit-events event-store id version events)
+          [:ok events (+ version (count events))]
+          [:conflict])
+        [:rejected]))))
