@@ -29,10 +29,18 @@
 (def app-title "Studyflow")
 
 (defn student-row
-  [{:keys [id full-name]}]
+  [{:keys [id version full-name]}]
   [:tr
    [:td id]
-   [:td full-name]])
+   [:td full-name]
+   [:td.change-name
+    (form/form-to
+     [:post "/change-student-name"]
+     (form/hidden-field "__anti-forgery-token" *anti-forgery-token*)
+     (form/hidden-field "student-id" id)
+     (form/hidden-field "expected-version" version)
+     (form/text-field {:placeholder "Full name"} "full-name" full-name)
+     [:button {:type "submit"} "Change student name"])]])
 
 (defn layout [title & body]
   (html5
@@ -79,7 +87,9 @@
 
 (defroutes commands
   (POST "/create-student" {{:keys [full-name]} :params}
-        (student/create! (new-id) full-name)))
+        (student/create! (new-id) full-name))
+  (POST "/change-student-name" {{:keys [student-id expected-version full-name]} :params}
+        (student/change-name! (uuid student-id) (Long/parseLong expected-version) full-name)))
 
 (defn add-version-to-url
   [url aggregate-id aggregate-version]
@@ -93,11 +103,17 @@
   (fn [{headers :headers :as request}]
     (let [referer (or (headers "referer") "/")]
       (when-let [{:keys [status] {:keys [aggregate-version aggregate-id]} :body} (f request)]
-        (if (= status 200)
-          (response/redirect (add-version-to-url referer aggregate-id aggregate-version))
-          {:status status :body (str status)})))))
+        (cond
+         (= status 200)
+         (response/redirect (add-version-to-url referer aggregate-id aggregate-version))
 
-(def my-read-model (atom {}))
+         (= status 412) ; HTTP 412 Precondition Failed
+         {:status status :body "out of date" :headers { "Content-Type" "text/plain"}}
+
+         :else
+         {:status status :body "error" :headers { "Content-Type" "text/plain"}})))))
+
+(defonce my-read-model (atom {}))
 
 (defn model-up-to-date?
   [model id version]
