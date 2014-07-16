@@ -29,7 +29,7 @@ class Question < ActiveRecord::Base
 
   def set_default_text
     self.text ||= ""
-    self.explanation ||= ""
+    self.worked_out_answer ||= ""
   end
 
   # def as_json

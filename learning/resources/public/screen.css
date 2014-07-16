@@ -3,9 +3,3 @@ body {
   max-width: 50em;
   margin: 5em auto;
 }
-.streak-box .last-four {
-    border: 2px solid black;
-}
-.streak-box .old {
-    border: 2px solid grey;
-}
