@@ -1,4 +1,5 @@
 # EduRoute login flow
+0. logged into EduRoute site
 
 1. curl 'http://www.eduroute.nl//content.php/9789491682001\?LeerlingID\=test1\&SchoolID\=123456'
    <HTML><HEAD><TITLE>Eduroute</TITLE>
