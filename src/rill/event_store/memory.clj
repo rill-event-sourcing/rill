@@ -8,12 +8,7 @@
 
 (defn with-cursors
   [c events]
-  (map-indexed (fn [i e]
-                 (let [event-number (+ c i)]
-                   (with-meta
-                     (assoc e message/number event-number)
-                     {:cursor event-number})))
-               events))
+  (map-indexed #(with-meta %2 {:cursor (+ c %1)}) events))
 
 (deftype MemoryStore [state]
   store/EventStore
@@ -33,7 +28,10 @@
   (append-events [this stream-id from-version events]
     (try+ (swap! state (fn [old-state]
                          (let [current-stream (get old-state stream-id stream/empty-stream)
-                               all-stream (get old-state all-events-stream-id stream/empty-stream)]
+                               all-stream (get old-state all-events-stream-id stream/empty-stream)
+                               events (map #(assoc %1 message/number (+ (or from-version stream/empty-stream-version) %2))
+                                           events
+                                           (iterate inc 1))]
                            (if (or (nil? from-version)
                                    (= (dec (count current-stream)) from-version))
                              (-> old-state

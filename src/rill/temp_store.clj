@@ -22,7 +22,10 @@
   [given-events]
   (let [store (memory-store)]
     (doseq [events (partition-by message/primary-aggregate-id given-events)]
-      (append-events store (message/primary-aggregate-id (first events)) nil events))
+      (append-events store
+                     (message/primary-aggregate-id (first events))
+                     nil
+                     (map #(assoc %1 message/number %2) events (iterate inc 0))))
     store))
 
 (defn execute
@@ -54,4 +57,3 @@
    [actual-status actual-events]]
   (and (= expected-status actual-status)
        (messages= expected-events actual-events)))
-
