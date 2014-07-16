@@ -91,7 +91,7 @@ course_question_1_line_input = LineInput.create(question: course_question_1, pre
 course_question_1_line_input_answer = Answer.create(value: "Course 1 Line input answer value", line_input: course_question_1_line_input)
 
 course_question_2 = Question.create(text: "Course question 2 text", active: true, worked_out_answer: "Nice, hheh?", questionable: counting)
-course_question_2_line_input = LineInput.create(question: course_question_2, pre: "pre", post: "post", width: 5)
+course_question_2_line_input = LineInput.create(question: course_question_2, pre: "AWAWA", post: "OHOH")
 course_question_2_line_input_answer = Answer.create(value: "Course 2 Line input answer value", line_input: course_question_2_line_input)
 course_question_1_multiple_choice_input = MultipleChoiceInput.create(question: course_question_1)
 course_question_1_multiple_choice_input_choice1 = Choice.create(multiple_choice_input: course_question_1_multiple_choice_input, value: "okay1", correct: false)
