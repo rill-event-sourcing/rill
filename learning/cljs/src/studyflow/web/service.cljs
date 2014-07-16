@@ -3,7 +3,62 @@
             [cljs-uuid.core :as uuid]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [studyflow.web.json-edn :as json-edn]))
+            [studyflow.web.json-edn :as json-edn]
+            [goog.string :as gstring]
+            [studyflow.web.aggregates :as aggregates]
+            [cljs.core.async :refer [<!] :as async])
+  (:require-macros [cljs.core.async.macros :refer [go]]))
+
+(defn try-command [cursor command]
+  (prn :try-command command)
+  (let [[command-type & args] command]
+    (condp = command-type
+      "section-test-commands/init"
+      (let [[section-id] args
+            course-id (get-in @cursor [:static :course-id])
+            section-test-id (str "student-idDEFAULT_STUDENT_IDsection-id" section-id)]
+        (PUT (str "/api/section-test-init/" course-id "/" section-id "/" section-test-id)
+             {:format :json
+              :handler (fn [res]
+                         (let [events (:events (json-edn/json->edn res))]
+                           (om/transact! cursor
+                                         [:aggregates section-test-id]
+                                         (fn [agg]
+                                           (prn "playing events on: " agg " with aggr-id " section-test-id " with events: " events)
+                                           (let [res (aggregates/apply-events agg events)]
+                                             (prn "RES: " res)
+                                             res)))))
+              }))
+
+      "section-test-commands/check-answer"
+      (let [[section-test-id section-id course-id question-id inputs] args]
+        (PUT (str "/api/section-test-check-answer/" section-test-id "/"  section-id "/" course-id "/" question-id)
+             {:params inputs
+              :format :json
+              :handler (fn [res]
+                         (let [events (:events (json-edn/json->edn res))]
+                           (om/transact! cursor
+                                         [:aggregates section-test-id]
+                                         (fn [agg]
+                                           (prn "playing events on: " agg " with aggr-id " section-test-id " with events: " events)
+                                           (let [res (aggregates/apply-events agg events)]
+                                             (prn "RES: " res)
+                                             res)))))}))
+      "section-test-commands/next-question"
+      (let [[section-test-id] args]
+        (let [[section-test-id section-id course-id] args]
+          (PUT (str "/api/section-test-next-question/" section-test-id "/"  section-id "/" course-id)
+               {:format :json
+                :handler (fn [res]
+                           (let [events (:events (json-edn/json->edn res))]
+                             (om/transact! cursor
+                                           [:aggregates section-test-id]
+                                           (fn [agg]
+                                             (prn "playing events on: " agg " with aggr-id " section-test-id " with events: " events)
+                                             (let [res (aggregates/apply-events agg events)]
+                                               (prn "RES: " res)
+                                               res)))))})))
+      nil)))
 
 ;; a bit silly to use an Om component for something that is not UI,
 ;; but don't know how to participate in state managament otherwise
@@ -17,85 +72,109 @@
       (will-mount [_]
         (println "service will mount")
         ;; listen to server push connection here
-        (.setTimeout js/window
-                     #(GET (str "/api/course-material/"
-                                (get-in @cursor [:course-id]))
-                           {:params {}
-                            :handler (fn [res]
-                                       (println "Service heard: " res)
-                                       (let [course-data (json-edn/json->edn res)]
-                                         (om/update! cursor :course-material course-data)))
-                            :error-handler (fn [res]
-                                             (println "Error handler" res)
-                                             (println res))})
-                     1000))
+        (let [command-channel (om/get-shared owner :command-channel)]
+            (go (loop []
+               (when-let [command (<! command-channel)]
+                 (try-command cursor command)
+                 (recur)))))
+
+
+        ;; initialize the menu
+        (GET (str "/api/course-material/"
+                  (get-in cursor [:static :course-id]))
+             {:params {}
+              :handler (fn [res]
+                         (println "Service heard: " res)
+                         (let [course-data (json-edn/json->edn res)]
+                           (om/update! cursor
+                                       [:view :course-material] course-data)))
+              :error-handler (fn [res]
+                               (println "Error handler" res)
+                               (println res))}))
       om/IRender
       (render [_]
         (om/build widgets cursor)))))
 
 (defn find-event [name events]
-  (first (filter #(.endsWith (:type %) name) events)))
+  (first (filter #(gstring/endsWith (:type %) name) events)))
 
-(defn try-command [cursor command]
-  (prn :try-command command)
-  (let [handler ({"section-test-commands/check-answer"
-                  (fn [[section-test-id section-id course-id question-id inputs]]
-                    (PUT (str "/api/section-test-check-answer/" section-test-id "/"  section-id "/" course-id "/" question-id)
-                         {:params inputs
-                          :format :json
-                          :handler (fn [res]
-                                     (let [events (:events (json-edn/json->edn res))]
-                                       (cond
-                                        (find-event "/QuestionAnsweredCorrectly" events)
-                                        (js/alert "GOED!")
 
-                                        (find-event "/QuestionAnsweredIncorrectly" events)
-                                        (js/alert "jammer.."))))}))}
-                 (first command))]
-    (handler (next command))))
 
 (defn listen [tx-report cursor]
   (let [{:keys [path new-state]} tx-report]
-    (condp = path
-      [:selected-section]
-      (if-let [[chapter-id section-id] (get-in new-state [:selected-section])]
-        (if-let [section-data (get-in new-state [:sections-data section-id])]
-          nil ;; data already loaded
-          (GET (str "/api/course-material/"
-                    (get-in new-state [:course-id])
-                    "/chapter/" chapter-id
-                    "/section/" section-id)
-               {:params {}
-                :handler (fn [res]
-                           (println "Service heard: " res)
-                           (let [section-data (json-edn/json->edn res)]
-                             (println "section: " section-data)
-                             (om/transact! cursor
-                                           #(assoc-in %
-                                                      [:sections-data (:id section-data)]
-                                                      section-data))))
-                :error-handler (fn [res]
-                                 (println "Error handler" res)
-                                 (println res))}))
-        nil)
+    (cond
+     (= path [:view :selected-path])
+     (if-let [{:keys [chapter-id section-id tab-questions]} (get-in new-state path)]
+       (if (contains? tab-questions section-id)
+         ;; for question tab
+         (let [section-test-id (str "student-idDEFAULT_STUDENT_IDsection-id" section-id)]
+           (prn "Load aggregate: " section-test-id)
+           (when-not (contains? (get new-state :aggregates) section-test-id)
+             (let [handle-events-or-init
+                   (fn [events]
+                     (if (seq events)
+                       (om/transact! cursor
+                                     [:aggregates section-test-id]
+                                     (fn [agg]
+                                       (aggregates/apply-events agg events)))
+                       ;; we got no events back, init the test first
+                       (try-command cursor ["section-test-commands/init" section-id])
+                       ))]
+               (GET (str "/api/section-test-replay/" section-test-id)
+                    {:format :json
+                     :handler (fn [res]
+                                (let [events (:events (json-edn/json->edn res))]
+                                  (handle-events-or-init events)))
+                     :error-handler (fn [res]
+                                      ;; currently the api
+                                      ;; gives a 401 when
+                                      ;; there are no events
+                                      ;; for an aggregate
+                                      (handle-events-or-init [])
+                                      )}))))
+         ;; for explanation tab
+         (when section-id
+           (if-let [section-data (get-in new-state [:view :section section-id :data])]
+             nil ;; data already loaded
+             (GET (str "/api/course-material/"
+                       (get-in new-state [:static :course-id])
+                       "/chapter/" chapter-id
+                       "/section/" section-id)
+                  {:params {}
+                   :handler (fn [res]
+                              (println "Service heard: " res)
+                              (let [section-data (json-edn/json->edn res)]
+                                (println "section: " section-data)
+                                (om/transact! cursor
+                                              #(assoc-in %
+                                                         [:view :section (:id section-data) :data]
+                                                         section-data))))
+                   :error-handler (fn [res]
+                                    (println "Error handler" res)
+                                    (println res))}))))
+       nil)
 
-      [:section-id-for-section-test]
-      (when-let [section-id (:section-id-for-section-test new-state)]
-        (PUT (str "/api/section-test-init/" (:course-id new-state) "/" section-id "/"  (. (uuid/make-random) -uuid))
-             {:handler (fn [res]
-                         (let [events (:events (json-edn/json->edn res))
-                               section-test-id (:section-test-id (find-event "/Created" events))
-                               question-id (:question-id (find-event "/QuestionAssigned" events))]
-                           (om/transact! cursor
-                                         #(assoc %
-                                            :current-section-test-id section-test-id
-                                            :current-section-test-question-id question-id))))}))
+     (let [[view section _ test _ & more] path]
+       (and (not more)
+            (= view :view)
+            (= section :section)
+            (= test :test)))
+     (let [[_ _ section-id _ question-id] path
+           chapter-id (get-in new-state [:view :selected-path :chapter-id])]
+       (GET (str "/api/course-material/"
+                 (get-in new-state [:static :course-id])
+                 "/chapter/" chapter-id
+                 "/section/" section-id
+                 "/question/" question-id)
+            {:params {}
+             :handler (fn [res]
+                        (let [question-data (json-edn/json->edn res)]
+                          (om/transact! cursor
+                                        #(assoc-in %
+                                                   [:view :section section-id :test (:id question-data)]
+                                                   question-data))))
+             :error-handler (fn [res]
+                              (println "Error handler" res)
+                              (println res))})))
 
-      [:command-queue]
-      (when (first (:command-queue new-state))
-        (om/transact! cursor [:command-queue]
-                      #(do
-                         (try-command cursor (first %))
-                         (next %))))
-
-      nil)))
+    :else nil))
