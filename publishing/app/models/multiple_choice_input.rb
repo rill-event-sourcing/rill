@@ -2,12 +2,11 @@ class MultipleChoiceInput < Input
 
   has_many :choices
 
-  # def as_json
-  #   {
-  #     id: id,
-  #     name: name,
-  #     chapters: chapters.active.map(&:as_json)
-  #   }
-  # end
+  def as_json
+    {
+      id: id,
+      choices: choices.map(&:as_json)
+    }
+  end
 
 end

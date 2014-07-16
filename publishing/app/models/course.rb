@@ -24,7 +24,8 @@ class Course < ActiveRecord::Base
     {
       id: id,
       name: name,
-      chapters: chapters.active.map(&:as_json)
+      chapters: chapters.active.map(&:as_json),
+      course_questions: questions.active.map(&:as_json)
     }
   end
 end

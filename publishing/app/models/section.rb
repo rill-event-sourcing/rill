@@ -30,7 +30,8 @@ class Section < ActiveRecord::Base
     {
       id: id,
       title: title,
-      subsections: subsections.map(&:as_json)
+      subsections: subsections.map(&:as_json),
+      questions: questions.active.map(&:as_json)
     }
   end
 
