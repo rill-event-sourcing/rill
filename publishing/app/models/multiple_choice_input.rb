@@ -4,7 +4,7 @@ class MultipleChoiceInput < Input
 
   def as_json
     {
-      id: id,
+      name: "_INPUT_#{position}_",
       choices: choices.map(&:as_json)
     }
   end

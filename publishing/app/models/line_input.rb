@@ -4,11 +4,11 @@ class LineInput < Input
 
   def as_json
     {
-      id: id,
+      name: "_INPUT_#{position}_",
       pre: pre,
       post: post,
       width: width,
-      answers: answers.map(&:as_json)
+      correct_answers: answers.map(&:as_json)
     }
   end
 

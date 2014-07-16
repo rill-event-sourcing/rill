@@ -39,10 +39,9 @@ class Question < ActiveRecord::Base
       id: id,
       text: text,
       worked_out_answer: worked_out_answer,
-      line_inputs: line_inputs.map(&:as_json),
-      multiple_choice_inputs: multiple_choice_inputs.map(&:as_json)
+      line_input_fields: line_inputs.map(&:as_json),
+      multiple_choice_input_fields: multiple_choice_inputs.map(&:as_json)
     }
-
   end
 
   def as_full_json
