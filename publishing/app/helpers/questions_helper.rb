@@ -10,8 +10,8 @@ module QuestionsHelper
     html.html_safe
   end
 
-  def question_explanation_to_html(question)
-    question.explanation.html_safe
+  def question_worked_out_answer_to_html(question)
+    question.worked_out_answer.html_safe
   end
 
   def input_to_html(input)
