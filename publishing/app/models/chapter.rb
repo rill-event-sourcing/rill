@@ -29,7 +29,7 @@ class Chapter < ActiveRecord::Base
     {
       id: id,
       title: title,
-      sections: sections.active.map(&:as_json)
+      sections: sections.active.map(&:as_json),
     }
   end
 

@@ -2,16 +2,14 @@ class LineInput < Input
 
   has_many :answers
 
-  # length
-  # pre-text
-  # post-text
-
-  # def as_json
-  #   {
-  #     id: id,
-  #     name: name,
-  #     chapters: chapters.active.map(&:as_json)
-  #   }
-  # end
+  def as_json
+    {
+      id: id,
+      pre: pre,
+      post: post,
+      width: width,
+      answers: answers.map(&:as_json)
+    }
+  end
 
 end
