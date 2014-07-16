@@ -39,3 +39,11 @@
   [course section-id]
   (get-in course [:sections-by-id section-id]))
 
+(defn get-question
+  [section question-id]
+  (some
+   (fn [{:keys [id] :as question}]
+     (when (= id question-id)
+       question))
+   (:questions section)))
+

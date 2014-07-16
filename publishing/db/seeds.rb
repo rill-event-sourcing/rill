@@ -72,5 +72,6 @@ grouping_question_2_line_input = LineInput.create(question: grouping_question_2)
 grouping_question_2_line_input_answer = Answer.create(value: "Grouping Question 2 Line input answer value", line_input: grouping_question_2_line_input)
 
 grouping_question_3 = Question.create(text: "Grouping question 3 text", worked_out_answer: "Content, more content!", section: grouping_by_10)
+
 grouping_question_3_line_input = LineInput.create(question: grouping_question_3)
 grouping_question_3_line_input_answer = Answer.create(value: "Grouping Question 3 Line input answer value", line_input: grouping_question_3_line_input)
