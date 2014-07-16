@@ -47,8 +47,12 @@ RSpec.describe Chapter, type: :model do
     expect(@chapter1.to_param).to eq id[0,8]
   end
 
-  it "should return a json object" do
-    obj = {id: @chapter3.id, title: @chapter3.title, sections: @chapter3.sections.map(&:as_json) }
+  it "should have the correct format for publishing" do
+    obj = {
+      id: @chapter3.id,
+      title: @chapter3.title,
+      sections: @chapter3.sections.map(&:as_json)
+    }
     expect(@chapter3.as_json).to eq obj
   end
 

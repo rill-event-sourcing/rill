@@ -13,4 +13,15 @@ RSpec.describe LineInput, type: :model do
     expect(@line_input.to_param).to eq id[0,8]
   end
 
+  it "should have the correct format for publishing" do
+    obj = {
+      name: "_INPUT_#{@line_input.position}_",
+      pre: @line_input.pre,
+      post: @line_input.post,
+      width: @line_input.width,
+      correct_answers: @line_input.answers.map(&:as_json)
+    }
+    expect(@line_input.as_json).to eq obj
+  end
+
 end

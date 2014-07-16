@@ -43,9 +43,13 @@ RSpec.describe Course, type: :model do
     expect(@course.active).to eq false
   end
 
-
-  it "should return a json object" do
-    obj = {id: @course.id, name: @course.name, chapters: @course.chapters.map(&:as_json) }
+  it "should have the correct format for publishing" do
+    obj = {
+      id: @course.id,
+      name: @course.name,
+      chapters: @course.chapters.map(&:as_json),
+      course_questions: @course.questions.map(&:as_json)
+    }
     expect(@course.as_json).to eq obj
   end
 
