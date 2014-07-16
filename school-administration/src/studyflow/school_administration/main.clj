@@ -23,58 +23,47 @@
 
 (def app-title "Studyflow")
 
+(defn layout [{:keys [title flash]} & body]
+  (html5
+   [:head
+    [:title (str/join " - " [title app-title])]
+    (include-css "screen.css")]
+   [:body
+    [:h1 title]
+    (when flash [:div.flash flash])
+    [:div.container body]]))
+
+(defn render-new-student-form
+  [{:keys [full-name]}]
+  (form/form-to {:class "mod-create-student"} [:post "/create-student"]
+   (form/hidden-field "__anti-forgery-token" *anti-forgery-token*)
+   (form/text-field {:placeholder "Full name"} "full-name" full-name)
+   [:button {:type "submit"} "Add student"]))
+
 (defn student-row
   [{:keys [id version full-name]}]
   [:tr
    [:td id]
-   [:td full-name]
-   [:td.change-name
-    (form/form-to
-     [:post "/change-student-name"]
+   [:td
+    (form/form-to {:class "mod-change-student-name"} [:post "/change-student-name"]
      (form/hidden-field "__anti-forgery-token" *anti-forgery-token*)
      (form/hidden-field "student-id" id)
      (form/hidden-field "expected-version" version)
      (form/text-field {:placeholder "Full name"} "full-name" full-name)
-     [:button {:type "submit"} "Change student name"])]])
-
-(defn layout [{:keys [title flash]} & body]
-  (html5
-   [:head
-    [:title (str/join " - " [app-title title])]
-    [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
-    (include-css "//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/css/bootstrap.css")
-    (include-css "screen.css")
-    "<!-- [if lt IE 9>]"
-    [:script {:src "//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.js"}]
-    [:script {:src "//cdnjs.cloudflare.com/ajax/libs/respond.js/1.3.0/respond.js"}]
-    "<! [endif]-->"]
-   [:body
-    (when flash [:div.flash flash])
-    [:div.container body]
-    "<!-- /container -->"
-    [:script {:src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"}]
-    [:script {:src "//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/js/bootstrap.min.js"}]]))
-
-(defn render-new-student-form
-  [{:keys [full-name]}]
-  (form/form-to
-   {:role "form"} [:post "/create-student"]
-   (form/hidden-field "__anti-forgery-token" *anti-forgery-token*)
-   (form/text-field {:placeholder "Full name"} "full-name" full-name)
-   [:button {:type "submit"} "Add student"]))
+     [:button {:type "submit"} "Save"])]])
 
 (defn render-student-list
   [students options]
   (layout
    (merge {:title "Student list"} options)
-   [:table
+   [:table.mod-students
     [:thead
      [:tr
       [:th "id"]
       [:th "name"]]]
     [:tbody
-     (map student-row students)]
-    (render-new-student-form nil)]))
+     (map student-row students)]]
+   (render-new-student-form nil)))
 
 (defroutes queries
   (GET "/" {:keys [read-model flash]}
