@@ -21,7 +21,7 @@
 (defn commit-events
   [store stream-id from-version events]
   (validate-commit events)
-  (log/info ["committing events" events])
+  (log/debug ["committing events" events])
   (let [stream-id-from-event (message/primary-aggregate-id (first events))]
     (if (= stream-id stream-id-from-event)
                                         ; events apply to current aggregate
@@ -51,7 +51,7 @@
     (log/debug [:try-command command])
     (let [result (if-let [events (apply aggregate/handle-command primary-aggregate command rest-aggregates)]
                    (if (commit-events event-store id version events)
-                     [:ok events]
+                     [:ok events (+ version (count events))]
                      [:conflict])
                    [:rejected])]
       (log/debug [result])

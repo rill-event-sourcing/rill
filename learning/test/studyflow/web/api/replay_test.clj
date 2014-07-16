@@ -9,8 +9,8 @@
             [studyflow.web.routes :as routes]
             [clout-link.route :refer [uri-for]]))
 
-(def section-test-id (new-id))
 (def section-id #uuid "8117bf7b-8025-43ea-b6d3-aa636d6b6042")
+(def section-test-id (str "student-idSTUDENTMOCKsection-id" section-id))
 (def question-id #uuid "b117bf7b-8025-43ea-b6d3-aa636d6b6042")
 
 (def section-test-events [(events/created section-test-id fixture/course-id section-id)

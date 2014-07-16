@@ -4,7 +4,7 @@ class CreateQuestions < ActiveRecord::Migration
       t.uuid :questionable_id, index: true
       t.string :questionable_type
       t.text :text
-      t.text :explanation
+      t.text :worked_out_answer
       t.datetime :deleted_at, index: true
       t.boolean :active, default: false
       t.integer :max_inputs, limit: 2

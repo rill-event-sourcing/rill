@@ -9,6 +9,7 @@
 
 * [Branching model](docs/branching_model.md)
 * [Commit messages](docs/commits.md)
+* [Login flow](docs/login_flow.md)
 ## Testing
 
     make test

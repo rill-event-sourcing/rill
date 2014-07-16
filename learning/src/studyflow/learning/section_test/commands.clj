@@ -10,8 +10,12 @@
   :question-id m/Id
   :inputs {m/FieldName s/Str})
 
+(def SectionTestId (s/pred (fn [str]
+                             (and str
+                                  (.contains str "student-id")
+                                  (.contains str "section-id"))) 'is-section-test-id))
 (defcommand Init!
-  :section-test-id m/Id
+  :section-test-id SectionTestId
   :section-id m/Id
   :course-id m/Id)
 

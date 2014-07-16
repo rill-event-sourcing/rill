@@ -63,14 +63,14 @@ going_negativish = Subsection.create(title: 'Going negativish', text: 'This look
 
 ## Add some questions and answers
 
-grouping_question_1 = Question.create(text: "Grouping question 1 text", explanation: "Something something here", questionable: grouping_by_10)
+grouping_question_1 = Question.create(text: "Grouping question 1 text", worked_out_answer: "Something something here", questionable: grouping_by_10)
 grouping_question_1_line_input = LineInput.create(question: grouping_question_1)
 grouping_question_1_line_input_answer = Answer.create(value: "Grouping Question 1 Line input answer value", line_input: grouping_question_1_line_input)
 
-grouping_question_2 = Question.create(text: "Grouping question 2 text", explanation: "This is supposed to explain", questionable: grouping_by_10)
+grouping_question_2 = Question.create(text: "Grouping question 2 text", worked_out_answer: "This is supposed to explain", questionable: grouping_by_10)
 grouping_question_2_line_input = LineInput.create(question: grouping_question_2)
 grouping_question_2_line_input_answer = Answer.create(value: "Grouping Question 2 Line input answer value", line_input: grouping_question_2_line_input)
 
-grouping_question_3 = Question.create(text: "Grouping question 3 text", explanation: "Content, more content!", questionable: grouping_by_10)
+grouping_question_3 = Question.create(text: "Grouping question 3 text", worked_out_answer: "Content, more content!", questionable: grouping_by_10)
 grouping_question_3_line_input = LineInput.create(question: grouping_question_3)
 grouping_question_3_line_input_answer = Answer.create(value: "Grouping Question 3 Line input answer value", line_input: grouping_question_3_line_input)

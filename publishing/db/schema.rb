@@ -67,7 +67,7 @@ ActiveRecord::Schema.define(version: 20140618145746) do
     t.uuid     "questionable_id"
     t.string   "questionable_type"
     t.text     "text"
-    t.text     "explanation"
+    t.text     "worked_out_answer"
     t.datetime "deleted_at"
     t.boolean  "active",                      default: false
     t.integer  "max_inputs",        limit: 2

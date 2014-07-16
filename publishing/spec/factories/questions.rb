@@ -3,6 +3,6 @@
 FactoryGirl.define do
   factory :question do
     text "Default question text"
-    explanation "Default explanation"
+    worked_out_answer "Default worked out answer"
   end
 end

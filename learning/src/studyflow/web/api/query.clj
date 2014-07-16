@@ -20,6 +20,12 @@
                    (debug "Query handler for " course-id " and " section-id "with model: " model)
                    (if-let [section (queries/section model (uuid course-id) (uuid section-id))]
                      {:status 200 :body section}
+                     {:status 400})))
+   (clout/handle routes/query-question
+                 (fn [{model :read-model {:keys [course-id section-id question-id]} :params}]
+                   (debug "Query handler for " course-id ", " section-id " and " question-id "with model: " model)
+                   (if-let [question (queries/question model (uuid course-id) (uuid section-id) (uuid question-id))]
+                     {:status 200 :body question}
                      {:status 400})))))
 
 (defn wrap-read-model
