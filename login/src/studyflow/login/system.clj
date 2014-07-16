@@ -6,7 +6,8 @@
             [studyflow.login.main :as main]
             [studyflow.components.jetty :refer [jetty-component]]
             [studyflow.components.event-channel :refer [event-channel-component]]
-            [studyflow.components.memory-event-store :refer [memory-event-store-component]])
+            [studyflow.components.memory-event-store :refer [memory-event-store-component]]
+            [studyflow.components.atom-event-store :refer [atom-event-store-component]])
   (:import [org.apache.log4j Logger]))
 
 (defrecord CredentialsComponent [event-channel-component]
@@ -61,7 +62,7 @@
                :ring-handler (component/using (ring-handler-component) [:credentials-component :event-store])
                :credentials-component (component/using (credentials-component) [:event-channel-component])
                :event-channel-component (component/using (event-channel-component) [:event-store])
-               :event-store (component/using (memory-event-store-component) []))]
+               :event-store (component/using (atom-event-store-component {:uri "http://127.0.0.1:2113" :user "admin" :password "changeit"}) []))]
        (alter-var-root (var system) (constantly sm))))
   ([]
      (init {:jetty-port 4000})))

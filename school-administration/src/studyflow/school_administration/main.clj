@@ -1,6 +1,7 @@
 (ns studyflow.school-administration.main
   (:require [clojure.core.async :refer [<!! thread]]
             [clojure.string :as str]
+            [clojure.tools.logging :as log]
             [compojure.core :refer [GET POST defroutes routes]]
             [compojure.route :refer [not-found]]
             [hiccup.form :as form]
@@ -19,7 +20,6 @@
             [studyflow.school-administration.read-model :as m]
             [studyflow.school-administration.read-model.event-handler :refer [handle-event]]
             [studyflow.school-administration.student :as student]))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; View
@@ -125,21 +125,25 @@
   (-> queries
       (wrap-read-model my-read-model)))
 
+;(defonce event-store (atom-event-store "http://127.0.0.1:2113"))
 (defonce event-store (memory-store))
 
 (defn edu-route-registration-trigger
   ;; TODO this should check if the events were already seen before.
   ;; TODO and we should probably not run more than instance of this trigger.
-
   [event-store event]
   (when (= (message/type event) :studyflow.login.edu-route-student.events/Registered)
+    (log/info event)
     (try-command event-store (student/create-from-edu-route-credentials! (:student-id event) (:edu-route-id event) (:full-name event)))))
 
 
 (defn event-listener [channel read-model-atom]
+  (log/info "Starting event listener")
   (thread
     (loop []
+      (log/info "loop de loop")
       (when-let [event (<!! channel)]
+        (log/info (pr-str event))
         (swap! read-model-atom handle-event event)
         (edu-route-registration-trigger event)
         (recur)))))
