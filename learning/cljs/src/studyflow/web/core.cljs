@@ -291,13 +291,20 @@
       (println "widget will mount"))
     om/IRender
     (render [_]
-      (if-not (get-in cursor [:view :selected-path :chapter-id])
-        (om/build dashboard cursor)
-        (dom/div #js {:className "row"}
-                 (dom/div #js {:className "col-md-4"}
-                          (om/build navigation cursor))
-                 (dom/div #js {:className "col-md-8"}
-                          (om/build section-panel cursor)))))
+      (dom/div nil
+               (when (get-in cursor [:aggregates :failed])
+                 (dom/div #js {:className "reload-alert"}
+                          (dom/h1 nil "You are out of sync with the server. Please reload the page")
+                          (dom/button #js {:onClick (fn [e]
+                                                      (.reload js/location true))}
+                                      "Reload page")))
+               (if-not (get-in cursor [:view :selected-path :chapter-id])
+                 (om/build dashboard cursor)
+                 (dom/div #js {:className "row"}
+                          (dom/div #js {:className "col-md-4"}
+                                   (om/build navigation cursor))
+                          (dom/div #js {:className "col-md-8"}
+                           (om/build section-panel cursor))))))
     om/IWillUnmount
     (will-unmount [_]
       (println "widget will unmount"))))
