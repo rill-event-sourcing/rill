@@ -25,11 +25,11 @@
               question-id))
 
 (defn answer-correct?
-  [{:keys [input-fields]} input-values]
+  [{:keys [line-input-fields]} input-values]
   (every? (fn [{:keys [name correct-answers]}]
             (when-let [value (get input-values name)]
               (contains? correct-answers value)))
-          input-fields))
+          line-input-fields))
 
 (defmethod handle-event ::events/Published
   [_ event]
