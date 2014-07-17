@@ -7,7 +7,8 @@
             [studyflow.components.jetty :refer [jetty-component]]
             [studyflow.components.event-channel :refer [event-channel-component]]
             [studyflow.components.memory-event-store :refer [memory-event-store-component]]
-            [studyflow.components.atom-event-store :refer [atom-event-store-component]])
+            [studyflow.components.atom-event-store :refer [atom-event-store-component]]
+            [studyflow.login.edu-route-mock-service :refer [edu-route-mock-service]])
   (:import [org.apache.log4j Logger]))
 
 (defrecord CredentialsComponent [event-channel-component]
@@ -33,16 +34,16 @@
 (defn credentials-component []
   (map->CredentialsComponent {}))
 
-(defrecord RingHandlerComponent [credentials-component event-store]
+(defrecord RingHandlerComponent [credentials-component event-store edu-route-service]
   component/Lifecycle
 
   (start [component]
     (log/info "Starting handler")
     (assoc component :handler
            (fn [req]
-             (prn [(:store event-store)])
              (main/app (assoc req
                          :authenticate-by-email-and-password (:authenticate-by-email-and-password-fn credentials-component)
+                         :edu-route-service edu-route-service
                          :authenticate-by-edu-route-id (:authenticate-by-edu-route-id-fn credentials-component)
                          :event-store (:store event-store))))))
 
@@ -59,10 +60,11 @@
   ([config]
      (let [sm (component/system-map
                :jetty (component/using (jetty-component (:jetty-port config)) [:ring-handler])
-               :ring-handler (component/using (ring-handler-component) [:credentials-component :event-store])
+               :ring-handler (component/using (ring-handler-component) [:credentials-component :event-store :edu-route-service])
+               :edu-route-service (edu-route-mock-service) ;; TODO: get implementation from config
                :credentials-component (component/using (credentials-component) [:event-channel-component])
                :event-channel-component (component/using (event-channel-component) [:event-store])
-               :event-store (component/using (atom-event-store-component {:uri "http://127.0.0.1:2113" :user "admin" :password "changeit"}) []))]
+               :event-store (atom-event-store-component {:uri "http://127.0.0.1:2113" :user "admin" :password "changeit"}))]
        (alter-var-root (var system) (constantly sm))))
   ([]
      (init {:jetty-port 4000})))

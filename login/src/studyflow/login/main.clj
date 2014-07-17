@@ -11,7 +11,7 @@
             [ring.util.response :refer [content-type]]
             [taoensso.carmine :as car]
             [rill.handler :refer [try-command]]
-            [studyflow.login.edu-route-service :as edu-route-service]
+            [studyflow.login.edu-route-service :refer [get-student-info]]
             [studyflow.login.edu-route-student :as edu-route-student]
             [clojure.tools.logging :as log]))
 
@@ -76,6 +76,14 @@
 (defn refresh [r path seconds]
   (assoc-in r [:headers "Refresh"] (str seconds "; url=" path)))
 
+(defn please-wait-response
+  [session refresh-count]
+  (-> (layout "Studyflow Beta" (please-wait refresh-count))
+      (assoc :session (assoc session :refresh-count  (inc refresh-count)))
+      (refresh "/students/sign_in_wait" 5)))
+
+
+
 (defroutes actions
   (GET "/" {:keys [user-role params]}
        (if user-role
@@ -88,21 +96,28 @@
           (layout "Studyflow Beta" (render-login email password "Wrong email / password combination"))))
 
   (GET "/students/sign_in"
-       {event-store :event-store authenticate :authenticate-by-edu-route-id {:keys [edurouteSessieId signature] :as params} :params session :session}
+       {{:keys [edurouteSessieId signature] :as params} :params
+        :keys [session event-store edu-route-service authenticate-by-edu-route-id]}
        (log/info "eduroute login!")
        (if edurouteSessieId
-         (if-let [{:keys [edu-route-id full-name brin-code] :as edu-route-info} (edu-route-service/get-student-info edurouteSessieId)]
-           (if-let [user (authenticate edu-route-id)]
+         ;; check if eduroute session is valid
+         (if-let [{:keys [edu-route-id full-name brin-code] :as edu-route-info} (get-student-info edu-route-service edurouteSessieId signature)]
+           ;; check if we have a registered student with the given edu route id
+           (if-let [user (authenticate-by-edu-route-id edu-route-id)]
+             ;; succes! happy flow 1: user is an existing student :-)
              (assoc (redirect-to "/") :login-user user)
-             (let [[status] (try-command event-store (edu-route-student/register! edu-route-id full-name brin-code))]
-               (-> (layout "Studyflow Beta" (please-wait 0))
-                   (assoc :session (assoc session
-                                     :edu-route-id edu-route-id
-                                     :refresh-count 1))
-                   (refresh "/students/sign_in_wait" 2))))
+             ;; happy flow 2: user is new and should get a student account
+             ;; fire registration event; school-administration system will
+             ;; create new student for us (eventually)
+             (do (try-command event-store (edu-route-student/register! edu-route-id full-name brin-code))
+                 ;; wait for student to be created
+                 ;; redirects to sign_in_wait
+                 (please-wait-response session 1)))
+           ;; something went wrong while validating the eduroute session.
            (-> (layout "Eduroute auth failed" "Eduroute auth failed")
                (assoc :status 400)))
          (redirect-to "/")))
+
   (GET "/students/sign_in_wait"
        {{{:keys [edu-route-id]} :edu-route-info
          refresh-count :refresh-count :as session} :session
@@ -110,11 +125,7 @@
        (if-let [user (authenticate edu-route-id)]
          (assoc (redirect-to "/") :login-user user)
          (if (< refresh-count 5)
-           (-> (layout "Studyflow Beta" (please-wait refresh-count))
-               (assoc :session (assoc session
-                                 :edu-route-id edu-route-id
-                                 :refresh-count (inc refresh-count)))
-               (refresh "/students/sign_in_wait" (* 5 refresh-count)))
+           (please-wait-response session refresh-count)
            (layout "Studyflow Beta" [:p "Helaas, het is erg druk."]))))
 
   (DELETE "/" {}
@@ -198,16 +209,15 @@
                          (default-redirect-path user-role)))
         resp))))
 
-(defn set-studyflow-site-defaults []
+(def studyflow-site-defaults
   (-> site-defaults ;; secure-site-defaults
       (assoc-in [:session :cookie-name] "studyflow_login_session")
       (assoc-in [:security :anti-forgery] false)))
 
 (def app
-  (->
-   #'actions
-   wrap-logout-user
-   wrap-login-user
-   wrap-redirect-for-role
-   wrap-user-role
-   (wrap-defaults (set-studyflow-site-defaults))))
+  (-> (var actions)
+      wrap-logout-user
+      wrap-login-user
+      wrap-redirect-for-role
+      wrap-user-role
+      (wrap-defaults studyflow-site-defaults)))
