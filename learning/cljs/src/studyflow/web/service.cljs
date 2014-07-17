@@ -38,7 +38,12 @@
                            (om/transact! cursor
                                          [:aggregates section-test-id]
                                          (fn [agg]
-                                           (aggregates/apply-events agg aggregate-version events)))))}))
+                                           (aggregates/apply-events agg aggregate-version events)))))
+              :error-handler (fn [res]
+                               (om/update! cursor
+                                           [:aggregates :failed]
+                                           true)
+                               )}))
       "section-test-commands/next-question"
       (let [[section-test-id] args]
         (let [[section-test-id section-test-aggregate-version section-id course-id] args]
@@ -50,7 +55,12 @@
                              (om/transact! cursor
                                            [:aggregates section-test-id]
                                            (fn [agg]
-                                             (aggregates/apply-events agg aggregate-version events)))))})))
+                                             (aggregates/apply-events agg aggregate-version events)))))
+                :error-handler (fn [res]
+                                 (om/update! cursor
+                                             [:aggregates :failed]
+                                             true)
+                                 )})))
       nil)))
 
 ;; a bit silly to use an Om component for something that is not UI,
