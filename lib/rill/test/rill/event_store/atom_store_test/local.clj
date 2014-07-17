@@ -50,7 +50,7 @@ Not running tests against the atom event store.")
   `(if-let [store# (start-local-atom-store)]
      (try
        (Thread/sleep 20000)
-       (let [~store-binding (atom-event-store (:url store#))]
+       (let [~store-binding (atom-event-store (:url store#) {:user "admin" :password "changeit"})]
          ~@body)
        (finally
          (stop-local-atom-store store#)))))

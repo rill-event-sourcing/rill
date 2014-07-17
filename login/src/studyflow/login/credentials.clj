@@ -4,6 +4,10 @@
             [rill.message :as message]
             [clojure.tools.logging :as log]))
 
+
+
+;;;; Authenticate against the credentials db
+
 (defn authenticate-by-email-and-password [db email password]
   (if-let [user (get-in db [:by-email email])]
     (if (bcrypt/check password (:encrypted-password user))
@@ -14,20 +18,17 @@
     (log/info [:authenticated-as user])
     user))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Event sourcing
+;;;; Accessors for credentials db
 
-(defmulti handle-event (fn [_ event] (message/type event)))
-
-(defmethod handle-event :studyflow.school-administration.student.events/CredentialsAdded
-  [db {:keys [email student-id encrypted-password]}]
+(defn add-email-and-password-credentials
+  [db student-id {:keys [email encrypted-password]}]
   (assoc-in db [:by-email email]
             {:uuid student-id
              :role "student"
              :encrypted-password encrypted-password}))
 
-(defmethod handle-event :studyflow.school-administration.student.events/CredentialsChanged
-  [db {:keys [email student-id encrypted-password]}]
+(defn change-email-and-password-credentials
+  [db student-id {:keys [email encrypted-password]}]
   (assoc db :by-email
          (into {email
                 {:uuid student-id
@@ -35,12 +36,28 @@
                  :encrypted-password encrypted-password }}
                (filter (fn [[_ user]] (not= student-id (:uuid user))) db))))
 
-(defmethod handle-event :studyflow.school-administration.student.events/EduRouteCredentialsAdded
-  [db {:keys [edu-route-id student-id] :as event}]
-  (log/info [event])
+(defn add-edu-route-credentials
+  [db student-id edu-route-id]
   (assoc-in db [:by-edu-route-id edu-route-id]
             {:uuid student-id
              :role "student"}))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Event sourcing
+
+(defmulti handle-event (fn [_ event] (message/type event)))
+
+(defmethod handle-event :studyflow.school-administration.student.events/CredentialsAdded
+  [db {:keys [student-id credentials]}]
+  (add-email-and-password-credentials db student-id credentials))
+
+(defmethod handle-event :studyflow.school-administration.student.events/CredentialsChanged
+  [db {:keys [student-id credentials]}]
+  (change-email-and-password-credentials db student-id credentials))
+
+(defmethod handle-event :studyflow.school-administration.student.events/EduRouteCredentialsAdded
+  [db {:keys [edu-route-id student-id] :as event}]
+  (add-edu-route-credentials db student-id edu-route-id))
 
 (defmethod handle-event :default
   [db _]

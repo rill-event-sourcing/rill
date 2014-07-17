@@ -34,7 +34,7 @@
   (testing "post /"
 
     (testing "without params"
-      (let [resp (actions (assoc ( request :post "/") :authenticate (fn [x y] nil )))]
+      (let [resp (actions (assoc ( request :post "/") :authenticate-by-email-and-password (fn [x y] nil )))]
         (is (= 200 (:status resp)))
         (is (query-html (:body resp) [:h2.form-signin-heading]))
         (is (query-html (:body resp) [:form.form-signin]))))
@@ -43,16 +43,16 @@
       (let [resp (actions (-> (request :post "/")
                               (assoc :email "something@email.com"
                                      :password "password"
-                                     :authenticate (fn [x y] nil ))))]
+                                     :authenticate-by-email-and-password (fn [x y] nil ))))]
         (is (= 200 (:status resp)))
         (is (query-html (:body resp) [:h2.form-signin-heading]))
         (is (query-html (:body resp) [:form.form-signin]))))
 
-    (testing "authenticated"
+    (testing "authenticate-by-email-and-passwordd"
       (let [resp (actions (-> (request :post "/")
                               (assoc :email "something@email.com"
                                      :password "password"
-                                     :authenticate (fn [x y] "something"))))]
+                                     :authenticate-by-email-and-password (fn [x y] "something"))))]
         (is (= 302 (:status resp)))
         (is (= "/" ((:headers resp) "Location")))
         (is (= "something" (:login-user resp))))))
@@ -80,9 +80,9 @@
 (deftest wrap-logout-user-test
   (let [handler (wrap-logout-user identity)]
     (is (= {} (handler {})))
-    (let [resp (handler {:logout-user true, :cookies {:studyflow_session {:value "test", :max-age 123 }}})]
+    (let [resp (handler {:logout-user true :cookies {:studyflow_session {:value "test" :max-age 123}}})]
       (is (:cookies resp))
-      (is (= {:studyflow_session {:value "", :max-age -1}} (:cookies resp))))))
+      (is (= {:studyflow_session {:value "" :max-age -1 :path "/"}} (:cookies resp))))))
 
 (deftest wrap-user-role-test
   (let [handler (wrap-user-role identity)
@@ -95,7 +95,7 @@
 
 (deftest wrap-redirect-for-role-test
   (let [handler (wrap-redirect-for-role identity)
-        role "testrole"]
+        role "tester"]
     (testing "without any redirect-for-role into request"
       (is (= {} (handler {}))))
     (testing "with redirect-for-role and no cookie"
