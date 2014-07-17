@@ -108,8 +108,8 @@ RSpec.describe QuestionsController, :type => :controller do
       new_value = "I changed this!"
       line_inputs_hash = {
         "#{@input.id}"=> {
-          pre: "new_pre",
-          post: "after_post",
+          prefix: "new_pre",
+          suffix: "after_post",
           width: 10,
           answers: {
             "#{@answer.id}"=>{
@@ -120,8 +120,8 @@ RSpec.describe QuestionsController, :type => :controller do
       }
       controller.send(:set_line_inputs, @question, line_inputs_hash)
       @input.reload
-      expect(@input.pre).to eq "new_pre"
-      expect(@input.post).to eq "after_post"
+      expect(@input.prefix).to eq "new_pre"
+      expect(@input.suffix).to eq "after_post"
       expect(@input.width).to eq 10
       @answer.reload
       expect(@answer.value).to eq new_value
