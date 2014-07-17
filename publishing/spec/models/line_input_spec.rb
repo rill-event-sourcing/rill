@@ -21,7 +21,7 @@ RSpec.describe LineInput, type: :model do
       width: @line_input.width,
       correct_answers: @line_input.answers.map(&:value)
     }
-    expect(@line_input.as_json).to eq obj
+    expect(@line_input.to_publishing_format).to eq obj
   end
 
 end

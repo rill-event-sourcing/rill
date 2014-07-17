@@ -10,7 +10,7 @@ class Choice < ActiveRecord::Base
     choices.first
   end
 
-  def as_json
+  def to_publishing_format
     {
       value: value,
       correct: correct

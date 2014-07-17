@@ -34,13 +34,13 @@ class Question < ActiveRecord::Base
     self.worked_out_answer ||= ""
   end
 
-  def as_json
+  def to_publishing_format
     {
       id: id,
       text: text,
       worked_out_answer: worked_out_answer,
-      line_input_fields: line_inputs.map(&:as_json),
-      multiple_choice_input_fields: multiple_choice_inputs.map(&:as_json)
+      line_input_fields: line_inputs.map(&:to_publishing_format),
+      multiple_choice_input_fields: multiple_choice_inputs.map(&:to_publishing_format)
     }
   end
 

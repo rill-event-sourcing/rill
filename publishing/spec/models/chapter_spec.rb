@@ -51,9 +51,9 @@ RSpec.describe Chapter, type: :model do
     obj = {
       id: @chapter3.id,
       title: @chapter3.title,
-      sections: @chapter3.sections.map(&:as_json)
+      sections: @chapter3.sections.map(&:to_publishing_format)
     }
-    expect(@chapter3.as_json).to eq obj
+    expect(@chapter3.to_publishing_format).to eq obj
   end
 
   it "should be findable by an abbreviated uuid" do

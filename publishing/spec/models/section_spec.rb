@@ -68,10 +68,10 @@ RSpec.describe Section, type: :model do
     obj = {
       id: @section1.id,
       title: @section1.title,
-      subsections: @section1.subsections.map(&:as_json),
-      questions: @section1.questions.map(&:as_json)
+      subsections: @section1.subsections.map(&:to_publishing_format),
+      questions: @section1.questions.map(&:to_publishing_format)
     }
-    expect(@section1.as_json).to eq obj
+    expect(@section1.to_publishing_format).to eq obj
   end
 
   it "should return a full json object" do

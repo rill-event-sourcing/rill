@@ -2,7 +2,7 @@ class LineInput < Input
 
   has_many :answers
 
-  def as_json
+  def to_publishing_format
     {
       name: "_INPUT_#{position}_",
       prefix: prefix,

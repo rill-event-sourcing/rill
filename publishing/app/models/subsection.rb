@@ -19,7 +19,7 @@ class Subsection < ActiveRecord::Base
     "#{title}"
   end
 
-  def as_json
+  def to_publishing_format
     {
       id: id,
       title: title,

@@ -47,10 +47,10 @@ RSpec.describe Course, type: :model do
     obj = {
       id: @course.id,
       name: @course.name,
-      chapters: @course.chapters.map(&:as_json),
-      course_questions: @course.questions.map(&:as_json)
+      chapters: @course.chapters.map(&:to_publishing_format),
+      course_questions: @course.questions.map(&:to_publishing_format)
     }
-    expect(@course.as_json).to eq obj
+    expect(@course.to_publishing_format).to eq obj
   end
 
 end

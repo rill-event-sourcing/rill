@@ -9,7 +9,7 @@ RSpec.describe HomeController, :type => :controller do
 
     @url = "http://localhost:3000/api/internal/course/#{ @course.id }"
     @headers = { 'Content-Type' => 'application/json' }
-    @body = JSON.pretty_generate(@course.as_json)
+    @body = JSON.pretty_generate(@course.to_publishing_format)
   end
 
   describe "GET index" do

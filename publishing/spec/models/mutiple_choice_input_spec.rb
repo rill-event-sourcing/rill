@@ -17,9 +17,9 @@ RSpec.describe MultipleChoiceInput, type: :model do
   it "should have the correct format for publishing" do
     obj = {
       name: "_INPUT_#{@multiple_choice_input.position}_",
-      choices: @multiple_choice_input.choices.map(&:as_json)
+      choices: @multiple_choice_input.choices.map(&:to_publishing_format)
     }
-    expect(@multiple_choice_input.as_json).to eq obj
+    expect(@multiple_choice_input.to_publishing_format).to eq obj
   end
 
 
