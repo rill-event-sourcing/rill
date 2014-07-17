@@ -63,7 +63,7 @@ going_negativish = Subsection.create(title: 'Going negativish', text: 'This look
 ## Add some questions and answers for subsections
 
 grouping_question_1 = Question.create(text: "Grouping question 1 text", active: true, worked_out_answer: "Something something here", questionable: grouping_by_10)
-grouping_question_1_line_input = LineInput.create(question: grouping_question_1, pre: "asd", post: "mah")
+grouping_question_1_line_input = LineInput.create(question: grouping_question_1, prefix: "asd", suffix: "mah")
 grouping_question_1_line_input_answer = Answer.create(value: "Grouping Question 1 Line input answer value", line_input: grouping_question_1_line_input)
 grouping_question_1_multiple_choice_input = MultipleChoiceInput.create(question: grouping_question_1)
 grouping_question_1_multiple_choice_input_choice1 = Choice.create(multiple_choice_input: grouping_question_1_multiple_choice_input, value: "okay", correct: false)
@@ -71,7 +71,7 @@ grouping_question_1_multiple_choice_input_choice2 = Choice.create(multiple_choic
 grouping_question_1_multiple_choice_input_choice3 = Choice.create(multiple_choice_input: grouping_question_1_multiple_choice_input, value: "nope", correct: true)
 
 grouping_question_2 = Question.create(text: "Grouping question 2 text", active: true, worked_out_answer: "This is supposed to explain", questionable: grouping_by_10)
-grouping_question_2_line_input = LineInput.create(question: grouping_question_2, post: "ohlala")
+grouping_question_2_line_input = LineInput.create(question: grouping_question_2, suffix: "ohlala")
 grouping_question_2_line_input_answer = Answer.create(value: "Grouping Question 2 Line input answer value", line_input: grouping_question_2_line_input)
 grouping_question_2_multiple_choice_input = MultipleChoiceInput.create(question: grouping_question_2)
 grouping_question_2_multiple_choice_input_choice1 = Choice.create(multiple_choice_input: grouping_question_2_multiple_choice_input, value: "oasdkay", correct: false)
@@ -87,11 +87,11 @@ grouping_question_3_line_input_answer = Answer.create(value: "Grouping Question 
 ## Add some questions to the course for the entry test
 
 course_question_1 = Question.create(text: "Course question 1 text", active: true, worked_out_answer: "Nice, hheh?", questionable: counting)
-course_question_1_line_input = LineInput.create(question: course_question_1, pre: "pre", post: "post", width: 175)
+course_question_1_line_input = LineInput.create(question: course_question_1, prefix: "prefix", suffix: "suffix", width: 175)
 course_question_1_line_input_answer = Answer.create(value: "Course 1 Line input answer value", line_input: course_question_1_line_input)
 
 course_question_2 = Question.create(text: "Course question 2 text", active: true, worked_out_answer: "Nice, hheh?", questionable: counting)
-course_question_2_line_input = LineInput.create(question: course_question_2, pre: "AWAWA", post: "OHOH")
+course_question_2_line_input = LineInput.create(question: course_question_2, prefix: "AWAWA", suffix: "OHOH")
 course_question_2_line_input_answer = Answer.create(value: "Course 2 Line input answer value", line_input: course_question_2_line_input)
 course_question_1_multiple_choice_input = MultipleChoiceInput.create(question: course_question_1)
 course_question_1_multiple_choice_input_choice1 = Choice.create(multiple_choice_input: course_question_1_multiple_choice_input, value: "okay1", correct: false)

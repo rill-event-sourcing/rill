@@ -5,8 +5,8 @@ class LineInput < Input
   def as_json
     {
       name: "_INPUT_#{position}_",
-      pre: pre,
-      post: post,
+      prefix: prefix,
+      suffix: suffix,
       width: width,
       correct_answers: answers.map(&:as_json)
     }

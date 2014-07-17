@@ -16,8 +16,8 @@ RSpec.describe LineInput, type: :model do
   it "should have the correct format for publishing" do
     obj = {
       name: "_INPUT_#{@line_input.position}_",
-      pre: @line_input.pre,
-      post: @line_input.post,
+      prefix: @line_input.prefix,
+      suffix: @line_input.suffix,
       width: @line_input.width,
       correct_answers: @line_input.answers.map(&:as_json)
     }

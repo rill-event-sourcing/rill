@@ -53,8 +53,8 @@ private
     line_inputs_hash.each do |id, values|
       line_input = question.line_inputs.where(id: id).first
       line_input.update_attributes(
-        pre: values[:pre],
-        post: values[:post],
+        prefix: values[:prefix],
+        suffix: values[:suffix],
         width: values[:width]
       )
       (values[:answers] || {}).each do |id,values|
