@@ -12,7 +12,7 @@
 (deftest parsing-test
   (testing "parsing example json"
     (is (= (:name (material/parse-course-material (read-example-json)))
-           "Math")))
+           "Counting")))
 
   (testing "throws exceptions when not valid"
-    (is (thrown? RuntimeException (material/parse-course-material {:id "invalid" :name "Math"})))))
+    (is (thrown? RuntimeException (material/parse-course-material {:id "invalid" :name "Counting"})))))

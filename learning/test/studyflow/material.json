@@ -1,114 +1,242 @@
 {
-  "id": "1f8e2f2b-ed71-4788-8f08-5529949f2188",
-  "name": "Math",
+  "id": "9b4e47bc-8148-4656-b353-01c28e6569e7",
+  "name": "Counting",
   "chapters": [
     {
-      "id": "62cf2300-5e84-4c07-9275-93d8d07c5b6d",
-      "title": "Het positie stelsel",
+      "id": "cbb26478-c8ff-4bde-a237-ab31b6d46931",
+      "title": "Positional system",
       "sections": [
         {
-          "id": "8117bf7b-8025-43ea-b6d3-aa636d6b6042",
-          "title": "Groeperen per 10",
-          "subsections_by_level": {
-            "1_star": [
-              {
-                "id": "8117bf74-8025-43ea-b6d3-aa636d6b6045",
-                "title": "En hoeveel vierkantjes zie je hier?",
-                "text": "<p>Je ziet dat het veel makkelijker én sneller is om te tellen als de vierkantjes netjes in een rijtje staan. In elk rijtje staan 10 vierkantjes van dezelfde kleur. Er zijn 3 van die rijtjes: samen zijn dat er 30</p><p>Dan zijn er nog 6 vierkantjes van de laatste kleur. In totaal dus 36 vierkantjes. Zo werkt een telraam ook. Op elke staafje van het telraam zitten tien kralen.</p>"
-              }
-            ],
-            "2_star": [],
-            "3_star": []
-          },
-          "questions": [
+          "id": "9a40bd5f-e824-4454-9d0c-785cbf56392b",
+          "title": "Grouping by 10",
+          "subsections": [
             {
-              "id": "a117bf7b-8025-43ea-b6d3-aa636d6b6042",
-              "text": "<h1>Hier komt een vraag</h1><p>2 + 4 = __INPUT_1__</p>",
-             "input_fields": [{"name": "__INPUT_1__", "correct_answers": ["6", "zes"]}]
+              "id": "202ca8bf-095d-4010-b405-f03cd7bcf9cb",
+              "title": "Counting to 10",
+              "text": "1+1+1+... = 10"
             },
             {
-              "id": "b117bf7b-8025-43ea-b6d3-aa636d6b6042",
-              "text": "<h1>Hier komt een vraag</h1><p>4 + 4 = __INPUT_1__</p>",
-             "input_fields": [{"name": "__INPUT_1__", "correct_answers": ["8", "acht"]}]
+              "id": "ce46a8db-b04b-4fdf-a5fe-8b6fa7527ffa",
+              "title": "Summing up the number of the groups",
+              "text": "Keep adding!"
+            },
+            {
+              "id": "97c94af8-093f-4efe-945f-39c1b50596f1",
+              "title": "Adding up everything with the remainder",
+              "text": "Something did not fit in groups..."
+            },
+            {
+              "id": "a915aa11-785e-4e61-82fa-175bae708fd6",
+              "title": "Counting to 100",
+              "text": "1+1+1+... = 100"
+            },
+            {
+              "id": "4ac8fef6-25dc-4195-98dc-63592da84285",
+              "title": "Summing up in big groups",
+              "text": "Keep adding!"
+            },
+            {
+              "id": "b3b189ce-ebe5-4f42-aa13-a1c64f0f9bc8",
+              "title": "Adding up everything again",
+              "text": "Moar additions"
+            }
+          ],
+          "questions": [
+            {
+              "id": "ef67f401-14cc-41d0-8305-c2a1392b8639",
+              "text": "Grouping question 2 text",
+              "worked_out_answer": "This is supposed to explain",
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "prefix": "",
+                  "suffix": "ohlala",
+                  "width": 150,
+                  "correct_answers": [
+                    {
+                      "value": "6"
+                    }
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+                {
+                  "name": "_INPUT_2_",
+                  "choices": [
+                    {
+                      "value": "oasdkay",
+                      "correct": false
+                    },
+                    {
+                      "value": "nsadot really",
+                      "correct": false
+                    },
+                    {
+                      "value": "nopasde",
+                      "correct": true
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "07e091ea-091e-4551-a57a-658377424737",
+              "text": "_INPUT_1_\r\n\r\n_INPUT_4_",
+              "worked_out_answer": "Something something here",
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "prefix": "asd",
+                  "suffix": "mah",
+                  "width": 150,
+                  "correct_answers": [
+                    {
+                      "value": ""
+                    }
+                  ]
+                },
+                {
+                  "name": "_INPUT_3_",
+                  "prefix": "",
+                  "suffix": "",
+                  "width": 150,
+                  "correct_answers": [
+                    {
+                      "value": ""
+                    }
+                  ]
+                },
+                {
+                  "name": "_INPUT_4_",
+                  "prefix": "",
+                  "suffix": "",
+                  "width": 400,
+                  "correct_answers": [
+
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+                {
+                  "name": "_INPUT_2_",
+                  "choices": [
+                    {
+                      "value": "okay",
+                      "correct": false
+                    },
+                    {
+                      "value": "not really",
+                      "correct": false
+                    },
+                    {
+                      "value": "nope",
+                      "correct": true
+                    }
+                  ]
+                }
+              ]
             }
           ]
         },
         {
-          "id": "92dc9cd8-07a9-46bd-8dcf-40bbbae0a04d",
-          "title": "Positie en de 0",
-          "subsections_by_level": {
-            "1_star": [],
-            "2_star": [],
-            "3_star": []
-          },
-          "questions": []
-        },
+          "id": "c7998d37-1561-48eb-ae74-f1653f25245d",
+          "title": "Position of the 0",
+          "subsections": [
+            {
+              "id": "b1ba33a0-0f1e-4fb6-a263-dd8963b40272",
+              "title": "0 to the left",
+              "text": "It does not matter!"
+            },
+            {
+              "id": "5990f422-d12c-48e6-9bda-0325c934e0b8",
+              "title": "0 to the right",
+              "text": "Hey, I multiply by 10!"
+            },
+            {
+              "id": "433daff6-3651-45a9-a7e2-367acbfe8752",
+              "title": "0 in the center",
+              "text": "What now?"
+            },
+            {
+              "id": "36a6289c-f6e2-4c31-82bd-e599dc20c430",
+              "title": "1 to the left",
+              "text": "It does not matter!"
+            },
+            {
+              "id": "cb525052-aad7-4c8a-9f86-b34cddcbb1f0",
+              "title": "1 to the right",
+              "text": "Hey, I multiply by 10!"
+            },
+            {
+              "id": "21daffd9-3976-480f-a177-e9c3cf96035a",
+              "title": "1 in the center",
+              "text": "What now?"
+            }
+          ],
+          "questions": [
+
+          ]
+        }
+      ]
+    }
+  ],
+  "course_questions": [
+    {
+      "id": "fe29399d-c6e5-4e49-bf3a-46584de411ff",
+      "text": "Course question 1 text",
+      "worked_out_answer": "Nice, hheh?",
+      "line_input_fields": [
         {
-          "id": "4a66414c-06ed-461c-93ad-c2a62b40bb94",
-          "title": "Over de 10 heengaan",
-          "subsections_by_level": {
-            "1_star": [],
-            "2_star": [],
-            "3_star": []
-          },
-          "questions": []
+          "name": "_INPUT_1_",
+          "prefix": "pre",
+          "suffix": "post",
+          "width": 175,
+          "correct_answers": [
+            {
+              "value": "Course 1 Line input answer value"
+            }
+          ]
+        }
+      ],
+      "multiple_choice_input_fields": [
+        {
+          "name": "_INPUT_2_",
+          "choices": [
+            {
+              "value": "okay1",
+              "correct": false
+            },
+            {
+              "value": "not really2",
+              "correct": false
+            },
+            {
+              "value": "nope3",
+              "correct": true
+            }
+          ]
         }
       ]
     },
     {
-      "id": "8ea2f66d-4d8c-49d0-9932-893878d2e2c2",
-      "title": "Basisbewerkingen",
-      "sections": [
+      "id": "a3357bd0-8b33-4ea7-9e4d-1011ed51b458",
+      "text": "Course question 2 text",
+      "worked_out_answer": "Nice, hheh?",
+      "line_input_fields": [
         {
-          "id": "881eb224-f07f-4481-89d2-86b0b4e540c3",
-          "title": "Optellen",
-          "subsections_by_level": {
-            "1_star": [],
-            "2_star": [],
-            "3_star": []
-          },
-          "questions": []
-        },
-        {
-          "id": "fcc5c9f0-ca8a-474f-9357-305140b53add",
-          "title": "Aftrekken",
-          "subsections_by_level": {
-            "1_star": [],
-            "2_star": [],
-            "3_star": []
-          },
-          "questions": []
-        },
-        {
-          "id": "75b76d45-807f-41a0-9721-199092496476",
-          "title": "Vermenigvuldigen",
-          "subsections_by_level": {
-            "1_star": [],
-            "2_star": [],
-            "3_star": []
-          },
-          "questions": []
-        },
-        {
-          "id": "df95a61e-d71e-47c0-b2ad-44a21d470b8c",
-          "title": "Delen",
-          "subsections_by_level": {
-            "1_star": [],
-            "2_star": [],
-            "3_star": []
-          },
-          "questions": []
-        },
-        {
-          "id": "48798c08-b39d-4b39-bb17-f50518aa5983",
-          "title": "Volgorde van bewerkingen",
-          "subsections_by_level": {
-            "1_star": [],
-            "2_star": [],
-            "3_star": []
-          },
-          "questions": []
+          "name": "_INPUT_1_",
+          "prefix": "AWAWA",
+          "suffix": "OHOH",
+          "width": 150,
+          "correct_answers": [
+            {
+              "value": "Course 2 Line input answer value"
+            }
+          ]
         }
+      ],
+      "multiple_choice_input_fields": [
+
       ]
     }
   ]

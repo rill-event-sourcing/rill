@@ -22,8 +22,8 @@
 
 (def LineInputField
   {:name FieldName
-   :pre s/Str
-   :post s/Str
+   :prefix s/Str
+   :suffix s/Str
    :width s/Int
    :correct-answers #{Answer}})
 
