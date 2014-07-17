@@ -10,12 +10,6 @@ class Answer < ActiveRecord::Base
     answers.first
   end
 
-  def as_json
-    {
-      value: value,
-    }
-  end
-
   def to_param
     "#{id[0,8]}"
   end
