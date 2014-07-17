@@ -11,7 +11,7 @@
             [clojure.test :refer [deftest testing is]]))
 
 (def course fixture/course-aggregate)
-(def section-id #uuid "9a40bd5f-e824-4454-9d0c-785cbf56392b")
+(def section-id #uuid "6db0308c-e91b-4351-87ce-55523fa99158")
 
 (deftest test-course-aggregate
   (is (= (count (:chapters course))

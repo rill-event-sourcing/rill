@@ -17,15 +17,12 @@
   {:name FieldName
    :choices #{Choice}})
 
-(def Answer
-  {:value s/Str})
-
 (def LineInputField
   {:name FieldName
    :prefix s/Str
    :suffix s/Str
    :width s/Int
-   :correct-answers #{Answer}})
+   :correct-answers  #{s/Str}})
 
 (def CourseQuestion
   {:id Id

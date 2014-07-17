@@ -11,8 +11,8 @@
             [clojure.test :refer [deftest testing is]]))
 
 (def section-test-id (new-id))
-(def section-id #uuid "9a40bd5f-e824-4454-9d0c-785cbf56392b")
-(def question-id #uuid "ef67f401-14cc-41d0-8305-c2a1392b8639")
+(def section-id #uuid "6db0308c-e91b-4351-87ce-55523fa99158")
+(def question-id #uuid "c734efd4-fa1a-4a8a-88dc-4431ff39877f")
 
 (def course fixture/course-aggregate)
 (def course-id (:id course))
@@ -122,7 +122,7 @@
   (testing "answering questions"
     (testing "correct answer"
       (let [inputs {"_INPUT_1_" "6"}
-            question-id #uuid "ef67f401-14cc-41d0-8305-c2a1392b8639"]
+            question-id #uuid "c734efd4-fa1a-4a8a-88dc-4431ff39877f"]
         (is (command-result= [:ok [(events/question-answered-correctly section-test-id question-id inputs)]]
                              (execute (commands/check-answer! section-test-id 1 section-id course-id question-id inputs)
                                       [fixture/course-published-event
@@ -131,7 +131,7 @@
 
     (testing "incorrect answer"
       (let [inputs {"_INPUT_1_" "7"}
-            question-id #uuid "ef67f401-14cc-41d0-8305-c2a1392b8639"]
+            question-id #uuid "c734efd4-fa1a-4a8a-88dc-4431ff39877f"]
         (is (command-result= [:ok [(events/question-answered-incorrectly section-test-id question-id inputs)]]
                              (execute (commands/check-answer! section-test-id 1 section-id course-id question-id inputs)
                                       [fixture/course-published-event
@@ -141,7 +141,7 @@
     (testing "next question"
       (testing "with a correct answer"
         (let [inputs {"_INPUT_1_" "6"}
-              question-id #uuid "ef67f401-14cc-41d0-8305-c2a1392b8639"]
+              question-id #uuid "c734efd4-fa1a-4a8a-88dc-4431ff39877f"]
           (let [[status [event]] (execute (commands/next-question! section-test-id 2 section-id course-id)
                                           [fixture/course-published-event
                                            (events/created section-test-id course-id section-id)
@@ -153,7 +153,7 @@
 
       (testing "with an incorrect answer"
         (let [inputs {"_INPUT_1_" "7"}
-              question-id #uuid "ef67f401-14cc-41d0-8305-c2a1392b8639"]
+              question-id #uuid "c734efd4-fa1a-4a8a-88dc-4431ff39877f"]
           (is (thrown? AssertionError
                        (execute (commands/next-question! section-test-id 2 section-id course-id)
                                 [fixture/course-published-event
