@@ -6,7 +6,7 @@ class CreateInputs < ActiveRecord::Migration
       t.integer :position, limit: 2
       t.string :pre, default: ""
       t.string :post, default: ""
-      t.integer :width, default: 10, limit: 2
+      t.integer :width, default: 150, limit: 3
       t.timestamps
     end
   end
