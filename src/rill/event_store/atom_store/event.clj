@@ -16,6 +16,10 @@
 
 (defrecord UnprocessableMessage [v])
 
+(defn unprocessable?
+  [e]
+  (instance? UnprocessableMessage e))
+
 (defn entry->event
   [entry]
   (or (try (if-let [data (:edn (:data entry))]
