@@ -2,7 +2,6 @@
   (:require [clojure.core.async :refer [<!! thread]]
             [crypto.password.bcrypt :as bcrypt]
             [rill.message :as message]
-            [studyflow.events.student :as student-events]
             [clojure.tools.logging :as log]))
 
 (defn authenticate-by-email-and-password [db email password]
@@ -20,14 +19,14 @@
 
 (defmulti handle-event (fn [_ event] (message/type event)))
 
-(defmethod handle-event ::student-events/CredentialsAdded
+(defmethod handle-event :studyflow.school-administration.student.events/CredentialsAdded
   [db {:keys [email student-id encrypted-password]}]
   (assoc-in db [:by-email email]
             {:uuid student-id
              :role "student"
              :encrypted-password encrypted-password}))
 
-(defmethod handle-event ::student-events/CredentialsChanged
+(defmethod handle-event :studyflow.school-administration.student.events/CredentialsChanged
   [db {:keys [email student-id encrypted-password]}]
   (assoc db :by-email
          (into {email
@@ -36,14 +35,17 @@
                  :encrypted-password encrypted-password }}
                (filter (fn [[_ user]] (not= student-id (:uuid user))) db))))
 
-(defmethod handle-event ::student-events/EduRouteCredentialsAdded
-  [db {:keys [edo-route-id student-id]}]
-  (assoc-in db [:by-edu-route-id edo-route-id]
+(defmethod handle-event :studyflow.school-administration.student.events/EduRouteCredentialsAdded
+  [db {:keys [edu-route-id student-id] :as event}]
+  (log/info [event])
+  (assoc-in db [:by-edu-route-id edu-route-id]
             {:uuid student-id
              :role "student"}))
 
 (defmethod handle-event :default
-  [db _] db)
+  [db _]
+  (log/info :skipped-event)
+  db)
 
 (defn listen! [channel db]
   (thread

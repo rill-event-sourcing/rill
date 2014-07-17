@@ -7,7 +7,7 @@
             [hiccup.form :as form]
             [hiccup.page :refer [html5 include-css]]
             [org.bovinegenius.exploding-fish :as uri]
-            [rill.event-store.memory :refer [memory-store]]
+            [rill.event-store.atom-store :refer [atom-event-store]]
             [rill.handler :refer [try-command]]
             [rill.message :as message]
             [rill.uuid :refer [new-id uuid]]
@@ -125,8 +125,8 @@
   (-> queries
       (wrap-read-model my-read-model)))
 
-;(defonce event-store (atom-event-store "http://127.0.0.1:2113"))
-(defonce event-store (memory-store))
+(defonce event-store (atom-event-store "http://127.0.0.1:2113" {:user "admin" :password "changeit"}))
+;(defonce event-store (memory-store))
 
 (defn edu-route-registration-trigger
   ;; TODO this should check if the events were already seen before.
@@ -134,18 +134,16 @@
   [event-store event]
   (when (= (message/type event) :studyflow.login.edu-route-student.events/Registered)
     (log/info event)
-    (try-command event-store (student/create-from-edu-route-credentials! (:student-id event) (:edu-route-id event) (:full-name event)))))
+    (try-command event-store (student/create-from-edu-route-credentials! (new-id) (:edu-route-id event) (:full-name event)))))
 
 
 (defn event-listener [channel read-model-atom]
   (log/info "Starting event listener")
   (thread
     (loop []
-      (log/info "loop de loop")
       (when-let [event (<!! channel)]
-        (log/info (pr-str event))
         (swap! read-model-atom handle-event event)
-        (edu-route-registration-trigger event)
+        (edu-route-registration-trigger event-store event)
         (recur)))))
 
 (def commands-app
