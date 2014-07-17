@@ -142,10 +142,12 @@
             answer-correct (when (contains? question :correct)
                              (:correct question))
             course-id (get-in cursor [:static :course-id])
+            section-test-aggregate-version (:aggregate-version section-test)
             check-answer (fn []
                            (async/put! (om/get-shared owner :command-channel)
                                        ["section-test-commands/check-answer"
                                         section-test-id
+                                        section-test-aggregate-version
                                         section-id
                                         course-id
                                         question-id
@@ -176,6 +178,7 @@
                                                  (async/put! (om/get-shared owner :command-channel)
                                                              ["section-test-commands/next-question"
                                                               section-test-id
+                                                              section-test-aggregate-version
                                                               section-id
                                                               course-id])
                                                  (prn "next question command"))}

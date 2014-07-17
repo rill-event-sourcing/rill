@@ -20,44 +20,37 @@
         (PUT (str "/api/section-test-init/" course-id "/" section-id "/" section-test-id)
              {:format :json
               :handler (fn [res]
-                         (let [events (:events (json-edn/json->edn res))]
+                         (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
                            (om/transact! cursor
                                          [:aggregates section-test-id]
                                          (fn [agg]
-                                           (prn "playing events on: " agg " with aggr-id " section-test-id " with events: " events)
-                                           (let [res (aggregates/apply-events agg events)]
-                                             (prn "RES: " res)
-                                             res)))))
+                                           (aggregates/apply-events agg aggregate-version events)))))
               }))
 
       "section-test-commands/check-answer"
-      (let [[section-test-id section-id course-id question-id inputs] args]
+      (let [[section-test-id section-test-aggregate-version section-id course-id question-id inputs] args]
         (PUT (str "/api/section-test-check-answer/" section-test-id "/"  section-id "/" course-id "/" question-id)
-             {:params inputs
+             {:params {:expected-version section-test-aggregate-version
+                       :inputs inputs}
               :format :json
               :handler (fn [res]
-                         (let [events (:events (json-edn/json->edn res))]
+                         (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
                            (om/transact! cursor
                                          [:aggregates section-test-id]
                                          (fn [agg]
-                                           (prn "playing events on: " agg " with aggr-id " section-test-id " with events: " events)
-                                           (let [res (aggregates/apply-events agg events)]
-                                             (prn "RES: " res)
-                                             res)))))}))
+                                           (aggregates/apply-events agg aggregate-version events)))))}))
       "section-test-commands/next-question"
       (let [[section-test-id] args]
-        (let [[section-test-id section-id course-id] args]
+        (let [[section-test-id section-test-aggregate-version section-id course-id] args]
           (PUT (str "/api/section-test-next-question/" section-test-id "/"  section-id "/" course-id)
-               {:format :json
+               {:params {:expected-version section-test-aggregate-version}
+                :format :json
                 :handler (fn [res]
-                           (let [events (:events (json-edn/json->edn res))]
+                           (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
                              (om/transact! cursor
                                            [:aggregates section-test-id]
                                            (fn [agg]
-                                             (prn "playing events on: " agg " with aggr-id " section-test-id " with events: " events)
-                                             (let [res (aggregates/apply-events agg events)]
-                                               (prn "RES: " res)
-                                               res)))))})))
+                                             (aggregates/apply-events agg aggregate-version events)))))})))
       nil)))
 
 ;; a bit silly to use an Om component for something that is not UI,
@@ -113,10 +106,11 @@
              (let [handle-events-or-init
                    (fn [events]
                      (if (seq events)
-                       (om/transact! cursor
-                                     [:aggregates section-test-id]
-                                     (fn [agg]
-                                       (aggregates/apply-events agg events)))
+                       (let [aggregate-version (:number (last events))]
+                         (om/transact! cursor
+                                       [:aggregates section-test-id]
+                                       (fn [agg]
+                                         (aggregates/apply-events agg aggregate-version events))))
                        ;; we got no events back, init the test first
                        (try-command cursor ["section-test-commands/init" section-id])
                        ))]
