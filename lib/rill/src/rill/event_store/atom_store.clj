@@ -13,6 +13,7 @@ Code originally taken from https://github.com/jankronquist/rock-paper-scissors-i
 
 (defn client-opts
   [user password]
+  {:pre [user password]}
   (if (and user password)
     {:basic-auth [user password]}))
 
@@ -30,5 +31,6 @@ Code originally taken from https://github.com/jankronquist/rock-paper-scissors-i
     (event/post uri stream-id from-version events (client-opts user password))))
 
 (defn atom-event-store
-  [uri & [opts]]
-  (->AtomStore uri (:user opts) (:password opts)))
+  [uri & [{:keys [user password]}]]
+  {:pre [user password uri]}
+  (->AtomStore uri user password))
