@@ -7,10 +7,13 @@
             [hiccup.page :refer [html5 include-css]]
             [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
             [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
+            [ring.util.codec :refer [form-encode]]
+            [ring.util.response :refer [content-type]]
             [taoensso.carmine :as car]
             [rill.handler :refer [try-command]]
             [studyflow.login.edu-route-service :as edu-route-service]
-            [studyflow.login.edu-route-student :as edu-route-student]))
+            [studyflow.login.edu-route-student :as edu-route-student]
+            [clojure.tools.logging :as log]))
 
 (def app-title "Studyflow")
 (def studyflow-env (keyword (env :studyflow-env)))
@@ -21,41 +24,47 @@
 
 (def redis  {:pool {} :spec {}})
 
-(def default-redirect-path {"editor" publishing-url
-                            "tester" "https://staging.studyflow.nl"})
+(defn default-redirect-path
+  [role]
+  {:post [%]}
+  ({"editor" publishing-url
+    "tester" "https://staging.studyflow.nl"
+    "student" "http://learning-beta.studyflow.nl"} role))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; View
 
 (defn layout [title & body]
-  (html5
-    [:head
-      [:title (str/join " - " [app-title title])]
-      [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
-      (include-css "//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/css/bootstrap.css")
-      (include-css "screen.css")
-      "<!-- [if lt IE 9>]"
-      [:script {:src "//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.js"}]
-      [:script {:src "//cdnjs.cloudflare.com/ajax/libs/respond.js/1.3.0/respond.js"}]
-      "<! [endif]-->"]
-    [:body
-      [:div.container body]
-      "<!-- /container -->"
-      [:script {:src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"}]
-      [:script {:src "//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/js/bootstrap.min.js"}]]))
+  (-> {:status 200
+       :body (html5
+              [:head
+               [:title (str/join " - " [app-title title])]
+               [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
+               (include-css "//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/css/bootstrap.css")
+               (include-css "screen.css")
+               "<!-- [if lt IE 9>]"
+               [:script {:src "//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.js"}]
+               [:script {:src "//cdnjs.cloudflare.com/ajax/libs/respond.js/1.3.0/respond.js"}]
+               "<! [endif]-->"]
+              [:body
+               [:div.container body]
+               "<!-- /container -->"
+               [:script {:src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"}]
+               [:script {:src "//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/js/bootstrap.min.js"}]])}
+      (content-type "text/html")))
 
 (defn render-login [email password msg]
   (form/form-to
-    {:role "form" :class "form-signin" } [:post "/"]
-    (form/hidden-field "__anti-forgery-token" *anti-forgery-token*)
-    [:h2.form-signin-heading msg]
-    (form/email-field {:class "form-control" :placeholder "Email address"} "email" email) ;; required autofocus
-    (form/password-field {:class "form-control" :placeholder "Password"} "password" password) ;; required
-    [:button.btn.btn-lg.btn-primary.btn-block {:type "submit"} "Sign in"]))
+   {:role "form" :class "form-signin" } [:post "/"]
+   (form/hidden-field "__anti-forgery-token" *anti-forgery-token*)
+   [:h2.form-signin-heading msg]
+   (form/email-field {:class "form-control" :placeholder "Email address"} "email" email) ;; required autofocus
+   (form/password-field {:class "form-control" :placeholder "Password"} "password" password) ;; required
+   [:button.btn.btn-lg.btn-primary.btn-block {:type "submit"} "Sign in"]))
 
 (defn please-wait
-  []
-  [:h1 "Please wait..."])
+  [refresh-count]
+  [:h1 "Please wait..." (str refresh-count)])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Controller
@@ -63,6 +72,9 @@
 (defn redirect-to [path]
   {:status 302
    :headers {"Location" path}})
+
+(defn refresh [r path seconds]
+  (assoc-in r [:headers "Refresh"] (str seconds "; url=" path)))
 
 (defroutes actions
   (GET "/" {:keys [user-role params]}
@@ -76,18 +88,40 @@
           (layout "Studyflow Beta" (render-login email password "Wrong email / password combination"))))
 
   (GET "/students/sign_in"
-       {event-store :event-store authenticate :authenticate-by-edu-route-id {:keys [edurouteSessieId signature]} :params}
-       (if-let [{:keys [edu-route-id full-name brin-code]} (edu-route-service/get-student-info edurouteSessieId)]
-         (if-let [user (authenticate edu-route-id)]
-           (assoc (redirect-to "/") :login-user user)
-           (let [[status] (try-command event-store (edu-route-student/register! edu-route-id full-name brin-code))]
-             (layout "Studyflow Beta" (please-wait))))))
+       {event-store :event-store authenticate :authenticate-by-edu-route-id {:keys [edurouteSessieId signature] :as params} :params session :session}
+       (log/info "eduroute login!")
+       (if edurouteSessieId
+         (if-let [{:keys [edu-route-id full-name brin-code] :as edu-route-info} (edu-route-service/get-student-info edurouteSessieId)]
+           (if-let [user (authenticate edu-route-id)]
+             (assoc (redirect-to "/") :login-user user)
+             (let [[status] (try-command event-store (edu-route-student/register! edu-route-id full-name brin-code))]
+               (-> (layout "Studyflow Beta" (please-wait 0))
+                   (assoc :session (assoc session
+                                     :edu-route-id edu-route-id
+                                     :refresh-count 1))
+                   (refresh "/students/sign_in_wait" 2))))
+           (-> (layout "Eduroute auth failed" "Eduroute auth failed")
+               (assoc :status 400)))
+         (redirect-to "/")))
+  (GET "/students/sign_in_wait"
+       {{{:keys [edu-route-id]} :edu-route-info
+         refresh-count :refresh-count :as session} :session
+         authenticate :authenticate-by-edu-route-id}
+       (if-let [user (authenticate edu-route-id)]
+         (assoc (redirect-to "/") :login-user user)
+         (if (< refresh-count 5)
+           (-> (layout "Studyflow Beta" (please-wait refresh-count))
+               (assoc :session (assoc session
+                                 :edu-route-id edu-route-id
+                                 :refresh-count (inc refresh-count)))
+               (refresh "/students/sign_in_wait" (* 5 refresh-count)))
+           (layout "Studyflow Beta" [:p "Helaas, het is erg druk."]))))
 
   (DELETE "/" {}
-       (assoc (redirect-to "/") :logout-user true)) 
-
-  ;;(not-found "Nothing here")
-  (not-found {:status 404}))
+          (assoc (redirect-to "/") :logout-user true))
+  (not-found "Nothing here")
+  ;;(not-found {:status 404})
+  )
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -122,8 +156,8 @@
 (defn make-uuid-cookie [uuid & [max-age]]
   (let [max-age (or max-age session-max-age)]
     (if cookie-domain
-      {:studyflow_session {:value uuid :max-age max-age :domain cookie-domain}}
-      {:studyflow_session {:value uuid :max-age max-age}})))
+      {:studyflow_session {:value uuid :max-age max-age :domain cookie-domain :path "/"}}
+      {:studyflow_session {:value uuid :max-age max-age :path "/"}})))
 
 (defn clear-uuid-cookie []
   (make-uuid-cookie "" -1))
@@ -171,7 +205,7 @@
 
 (def app
   (->
-   actions
+   #'actions
    wrap-logout-user
    wrap-login-user
    wrap-redirect-for-role
