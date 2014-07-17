@@ -72,7 +72,8 @@
                                          section-id
                                          course-id
                                          question-id))
-                  (assoc :body inputs))
+                  (assoc :body {:expected-version 0
+                                :inputs inputs}))
           cmd (handler req)]
       (is (= ::section-test-commands/CheckAnswer! (message/type cmd))
           "generates correct command")
@@ -95,7 +96,8 @@
                                                section-id
                                                course-id
                                                (:current-question-id section-test)))
-                        (assoc :body inputs))
+                        (assoc :body {:expected-version 1
+                                      :inputs inputs}))
                 {:keys [status body]} ((make-request-handler store) req)]
             (is (= 200 status))
             (is (= :command-accepted (:status body)))))))))
