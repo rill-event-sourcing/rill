@@ -26,12 +26,12 @@ class Section < ActiveRecord::Base
     "#{title}"
   end
 
-  def as_json
+  def to_publishing_format
     {
       id: id,
       title: title,
-      subsections: subsections.map(&:as_json),
-      questions: questions.active.map(&:as_json)
+      subsections: subsections.map(&:to_publishing_format),
+      questions: questions.active.map(&:to_publishing_format)
     }
   end
 

@@ -59,11 +59,10 @@ RSpec.describe Question, :type => :model do
       id: @question.id,
       text: @question.text,
       worked_out_answer: @question.worked_out_answer,
-      line_input_fields: @question.line_inputs.map(&:as_json),
-      multiple_choice_input_fields: @question.multiple_choice_inputs.map(&:as_json)
+      line_input_fields: @question.line_inputs.map(&:to_publishing_format),
+      multiple_choice_input_fields: @question.multiple_choice_inputs.map(&:to_publishing_format)
     }
-    expect(@question.as_json).to eq obj
+    expect(@question.to_publishing_format).to eq obj
   end
-
 
 end

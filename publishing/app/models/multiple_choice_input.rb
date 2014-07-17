@@ -2,10 +2,10 @@ class MultipleChoiceInput < Input
 
   has_many :choices
 
-  def as_json
+  def to_publishing_format
     {
       name: "_INPUT_#{position}_",
-      choices: choices.map(&:as_json)
+      choices: choices.map(&:to_publishing_format)
     }
   end
 

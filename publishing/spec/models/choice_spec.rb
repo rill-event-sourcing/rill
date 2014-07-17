@@ -36,7 +36,7 @@ RSpec.describe Choice, type: :model do
       value: @choice.value,
       correct: @choice.correct
     }
-    expect(@choice.as_json).to eq obj
+    expect(@choice.to_publishing_format).to eq obj
   end
 
 end

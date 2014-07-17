@@ -20,12 +20,12 @@ class Course < ActiveRecord::Base
     "#{name}"
   end
 
-  def as_json
+  def to_publishing_format
     {
       id: id,
       name: name,
-      chapters: chapters.active.map(&:as_json),
-      course_questions: questions.active.map(&:as_json)
+      chapters: chapters.active.map(&:to_publishing_format),
+      course_questions: questions.active.map(&:to_publishing_format)
     }
   end
 end

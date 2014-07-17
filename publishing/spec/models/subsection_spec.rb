@@ -42,7 +42,7 @@ RSpec.describe Subsection, type: :model do
       title: @subsection1.title,
       text: @subsection1.text
     }
-    expect(@subsection1.as_json).to eq obj
+    expect(@subsection1.to_publishing_format).to eq obj
   end
 
   it "should return a full json object" do
