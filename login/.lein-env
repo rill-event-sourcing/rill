@@ -8,10 +8,10 @@
                     :production   "https://login.studyflow.nl"}
  :cookie-domain   { :staging      "studyflow.nl"
                     :production   "studyflow.nl"}
- :session-max-age { :development  600
-                    :test         600
-                    :staging      600
-                    :production   600}
+ :session-max-age { :development  86400
+                    :test         21600
+                    :staging      21600
+                    :production   21600}
  :db-subname      { :development  "//localhost/studyflow_login"
                     :test         "//localhost/studyflow_login_test"
                     :staging      "//localhost/studyflow_login"
