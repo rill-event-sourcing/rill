@@ -32,11 +32,4 @@ RSpec.describe Answer, type: :model do
     expect{Answer.find_by_uuid(uuid[0,8])}.to raise_error(StudyflowPublishing::ShortUuidDoubleError)
   end
 
-  it "should have the correct format for publishing" do
-    obj = {
-      value: @answer.value
-    }
-    expect(@answer.as_json).to eq obj
-  end
-
 end

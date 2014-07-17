@@ -1,49 +1,84 @@
 {
-  "id": "9b4e47bc-8148-4656-b353-01c28e6569e7",
+  "id": "520d7eba-aa0b-417a-8ab1-37621674f68b",
   "name": "Counting",
   "chapters": [
     {
-      "id": "cbb26478-c8ff-4bde-a237-ab31b6d46931",
+      "id": "4dfbb219-6b14-468d-bfef-65fb063afbba",
       "title": "Positional system",
       "sections": [
         {
-          "id": "9a40bd5f-e824-4454-9d0c-785cbf56392b",
+          "id": "6db0308c-e91b-4351-87ce-55523fa99158",
           "title": "Grouping by 10",
           "subsections": [
             {
-              "id": "202ca8bf-095d-4010-b405-f03cd7bcf9cb",
+              "id": "a55b9637-2f9e-46f2-8aac-61c528cfe6c5",
               "title": "Counting to 10",
               "text": "1+1+1+... = 10"
             },
             {
-              "id": "ce46a8db-b04b-4fdf-a5fe-8b6fa7527ffa",
+              "id": "c099e4c0-e7d5-4331-be6a-0eab1dedff69",
               "title": "Summing up the number of the groups",
               "text": "Keep adding!"
             },
             {
-              "id": "97c94af8-093f-4efe-945f-39c1b50596f1",
+              "id": "4c9f3b11-56ab-431b-a3c4-7f76c41df06b",
               "title": "Adding up everything with the remainder",
               "text": "Something did not fit in groups..."
             },
             {
-              "id": "a915aa11-785e-4e61-82fa-175bae708fd6",
+              "id": "691bdc2d-ffd5-4273-aefb-2030268f7987",
               "title": "Counting to 100",
               "text": "1+1+1+... = 100"
             },
             {
-              "id": "4ac8fef6-25dc-4195-98dc-63592da84285",
+              "id": "6f51cbd0-7da9-4623-bb41-4444a202c1e6",
               "title": "Summing up in big groups",
               "text": "Keep adding!"
             },
             {
-              "id": "b3b189ce-ebe5-4f42-aa13-a1c64f0f9bc8",
+              "id": "f369e572-5fb5-4e49-9be1-957ee3ee2b00",
               "title": "Adding up everything again",
               "text": "Moar additions"
             }
           ],
           "questions": [
             {
-              "id": "ef67f401-14cc-41d0-8305-c2a1392b8639",
+              "id": "68593b22-09ae-42d2-addf-ab84288330dc",
+              "text": "Grouping question 1 text",
+              "worked_out_answer": "Something something here",
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "prefix": "asd",
+                  "suffix": "mah",
+                  "width": 150,
+                  "correct_answers": [
+                    "something1"
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+                {
+                  "name": "_INPUT_2_",
+                  "choices": [
+                    {
+                      "value": "okay",
+                      "correct": false
+                    },
+                    {
+                      "value": "notreally",
+                      "correct": false
+                    },
+                    {
+                      "value": "nope",
+                      "correct": true
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "c734efd4-fa1a-4a8a-88dc-4431ff39877f",
               "text": "Grouping question 2 text",
               "worked_out_answer": "This is supposed to explain",
               "line_input_fields": [
@@ -53,9 +88,8 @@
                   "suffix": "ohlala",
                   "width": 150,
                   "correct_answers": [
-                    {
-                      "value": "6"
-                    }
+                    "6",
+                    "8"
                   ]
                 }
               ],
@@ -78,97 +112,40 @@
                   ]
                 }
               ]
-            },
-            {
-              "id": "07e091ea-091e-4551-a57a-658377424737",
-              "text": "_INPUT_1_\r\n\r\n_INPUT_4_",
-              "worked_out_answer": "Something something here",
-              "line_input_fields": [
-                {
-                  "name": "_INPUT_1_",
-                  "prefix": "asd",
-                  "suffix": "mah",
-                  "width": 150,
-                  "correct_answers": [
-                    {
-                      "value": ""
-                    }
-                  ]
-                },
-                {
-                  "name": "_INPUT_3_",
-                  "prefix": "",
-                  "suffix": "",
-                  "width": 150,
-                  "correct_answers": [
-                    {
-                      "value": ""
-                    }
-                  ]
-                },
-                {
-                  "name": "_INPUT_4_",
-                  "prefix": "",
-                  "suffix": "",
-                  "width": 400,
-                  "correct_answers": [
-
-                  ]
-                }
-              ],
-              "multiple_choice_input_fields": [
-                {
-                  "name": "_INPUT_2_",
-                  "choices": [
-                    {
-                      "value": "okay",
-                      "correct": false
-                    },
-                    {
-                      "value": "not really",
-                      "correct": false
-                    },
-                    {
-                      "value": "nope",
-                      "correct": true
-                    }
-                  ]
-                }
-              ]
             }
           ]
         },
         {
-          "id": "c7998d37-1561-48eb-ae74-f1653f25245d",
+          "id": "49141fdf-7165-4b17-9d12-1025efcd78d7",
           "title": "Position of the 0",
           "subsections": [
             {
-              "id": "b1ba33a0-0f1e-4fb6-a263-dd8963b40272",
+              "id": "daa8ff48-4f67-43b4-bdd9-6d34acc0b48c",
               "title": "0 to the left",
               "text": "It does not matter!"
             },
             {
-              "id": "5990f422-d12c-48e6-9bda-0325c934e0b8",
+              "id": "84785a88-6073-4174-bdf9-eb90490124f1",
               "title": "0 to the right",
               "text": "Hey, I multiply by 10!"
             },
             {
-              "id": "433daff6-3651-45a9-a7e2-367acbfe8752",
+              "id": "1b8e9024-32b0-46cf-a95e-cf1bbb593088",
               "title": "0 in the center",
               "text": "What now?"
             },
             {
-              "id": "36a6289c-f6e2-4c31-82bd-e599dc20c430",
+              "id": "71ccaa38-4f32-451f-89ec-7bb6b34da1f5",
               "title": "1 to the left",
               "text": "It does not matter!"
             },
             {
-              "id": "cb525052-aad7-4c8a-9f86-b34cddcbb1f0",
+              "id": "c2151cfa-2db9-47ec-8638-50aa18927339",
               "title": "1 to the right",
               "text": "Hey, I multiply by 10!"
             },
             {
-              "id": "21daffd9-3976-480f-a177-e9c3cf96035a",
+              "id": "7037137d-4bce-41c2-93e5-5237cb0fffc0",
               "title": "1 in the center",
               "text": "What now?"
             }
@@ -182,19 +159,17 @@
   ],
   "course_questions": [
     {
-      "id": "fe29399d-c6e5-4e49-bf3a-46584de411ff",
+      "id": "75f831f3-9ecc-486d-8fe6-25802dbeba94",
       "text": "Course question 1 text",
       "worked_out_answer": "Nice, hheh?",
       "line_input_fields": [
         {
           "name": "_INPUT_1_",
-          "prefix": "pre",
-          "suffix": "post",
+          "prefix": "prefix",
+          "suffix": "suffix",
           "width": 175,
           "correct_answers": [
-            {
-              "value": "Course 1 Line input answer value"
-            }
+            "Course 1 Line input answer value"
           ]
         }
       ],
@@ -219,7 +194,7 @@
       ]
     },
     {
-      "id": "a3357bd0-8b33-4ea7-9e4d-1011ed51b458",
+      "id": "fc1bbba6-75e7-4b2f-ba05-9843ad2c33c1",
       "text": "Course question 2 text",
       "worked_out_answer": "Nice, hheh?",
       "line_input_fields": [
@@ -229,9 +204,7 @@
           "suffix": "OHOH",
           "width": 150,
           "correct_answers": [
-            {
-              "value": "Course 2 Line input answer value"
-            }
+            "Course 2 Line input answer value"
           ]
         }
       ],

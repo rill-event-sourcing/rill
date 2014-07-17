@@ -19,7 +19,7 @@ RSpec.describe LineInput, type: :model do
       prefix: @line_input.prefix,
       suffix: @line_input.suffix,
       width: @line_input.width,
-      correct_answers: @line_input.answers.map(&:as_json)
+      correct_answers: @line_input.answers.map(&:value)
     }
     expect(@line_input.as_json).to eq obj
   end

@@ -8,7 +8,7 @@ class LineInput < Input
       prefix: prefix,
       suffix: suffix,
       width: width,
-      correct_answers: answers.map(&:as_json)
+      correct_answers: answers.map(&:value)
     }
   end
 
