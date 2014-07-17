@@ -25,8 +25,7 @@ module QuestionsHelper
   end
 
   def line_input_to_html(input)
-    input.width ||= 30
-    content_tag(:div, class: "input-group col-xs-#{ input.width / 2 }") do
+    content_tag(:div, class: "input-group", style: "width:#{input.width}px") do
       html = ""
       html << content_tag(:span, input.pre, class: "input-group-addon") unless input.pre.blank?
       html << content_tag(:input, nil, class: 'form-control')
