@@ -11,16 +11,14 @@
             [clojure.test :refer [deftest testing is]]))
 
 (def course fixture/course-aggregate)
-(def section-id #uuid "6db0308c-e91b-4351-87ce-55523fa99158")
+(def section-id #uuid "baaffea6-3094-4494-8071-87c2854fd26f")
 
 (deftest test-course-aggregate
-  (is (= (count (:chapters course))
-         1))
+  (is (= 1 (count (:chapters course))))
   (is (= (:id course) (:id fixture/course-edn)))
   (is (= (:id (course/section course section-id))
          section-id))
-  (is (= (count (course/questions-for-section course section-id))
-         2))
+  (is (= 2 (count (course/questions-for-section course section-id))))
   (doseq [question-id (map :id (course/questions-for-section course section-id))]
     (let [question (course/question-for-section course section-id question-id)]
       (is question)

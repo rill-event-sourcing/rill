@@ -24,8 +24,7 @@ class Course < ActiveRecord::Base
     {
       id: id,
       name: name,
-      chapters: chapters.active.map(&:to_publishing_format),
-      #course_questions: questions.active.map(&:to_publishing_format)
+      chapters: chapters.active.map(&:to_publishing_format)
     }
   end
 end
