@@ -62,25 +62,25 @@ going_negativish = Subsection.create(title: 'Going negativish', text: 'This look
 
 ## Add some questions and answers for subsections
 
-grouping_question_1 = Question.create(text: "Grouping question 1 text", active: true, worked_out_answer: "Something something here", quizzable: grouping_by_10)
-grouping_question_1_line_input = LineInput.create(question: grouping_question_1, prefix: "asd", suffix: "mah")
+grouping_question_1 = Question.create(text: "Grouping question 1 text _INPUT_1_ and of course _INPUT_2_", active: true, worked_out_answer: "Something something here", quizzable: grouping_by_10)
+grouping_question_1_line_input = LineInput.create(question: grouping_question_1, prefix: "pre", suffix: "suf")
 grouping_question_1_line_input_answer = Answer.create(value: "Grouping Question 1 Line input answer value", line_input: grouping_question_1_line_input)
 grouping_question_1_multiple_choice_input = MultipleChoiceInput.create(question: grouping_question_1)
-grouping_question_1_multiple_choice_input_choice1 = Choice.create(multiple_choice_input: grouping_question_1_multiple_choice_input, value: "okay", correct: false)
-grouping_question_1_multiple_choice_input_choice2 = Choice.create(multiple_choice_input: grouping_question_1_multiple_choice_input, value: "not really", correct: false)
-grouping_question_1_multiple_choice_input_choice3 = Choice.create(multiple_choice_input: grouping_question_1_multiple_choice_input, value: "nope", correct: true)
+grouping_question_1_multiple_choice_input_choice1 = Choice.create(multiple_choice_input: grouping_question_1_multiple_choice_input, value: "1", correct: false)
+grouping_question_1_multiple_choice_input_choice2 = Choice.create(multiple_choice_input: grouping_question_1_multiple_choice_input, value: "2", correct: false)
+grouping_question_1_multiple_choice_input_choice3 = Choice.create(multiple_choice_input: grouping_question_1_multiple_choice_input, value: "3", correct: true)
 
-grouping_question_2 = Question.create(text: "Grouping question 2 text", active: true, worked_out_answer: "This is supposed to explain", quizzable: grouping_by_10)
+grouping_question_2 = Question.create(text: "And now, for something completely different _INPUT_2_ and _INPUT_1_", active: true, worked_out_answer: "This is supposed to explain", quizzable: grouping_by_10)
 grouping_question_2_line_input = LineInput.create(question: grouping_question_2, suffix: "ohlala")
 grouping_question_2_line_input_answer = Answer.create(value: "6", line_input: grouping_question_2_line_input)
 grouping_question_2_line_input_answer2 = Answer.create(value: "8", line_input: grouping_question_2_line_input)
 grouping_question_2_multiple_choice_input = MultipleChoiceInput.create(question: grouping_question_2)
 grouping_question_2_multiple_choice_input_choice1 = Choice.create(multiple_choice_input: grouping_question_2_multiple_choice_input, value: "oasdkay", correct: false)
 grouping_question_2_multiple_choice_input_choice2 = Choice.create(multiple_choice_input: grouping_question_2_multiple_choice_input, value: "nsadot really", correct: false)
-grouping_question_2_multiple_choice_input_choice3 = Choice.create(multiple_choice_input: grouping_question_2_multiple_choice_input, value: "nopasde", correct: true)
+grouping_question_2_multiple_choice_input_choice3 = Choice.create(multiple_choice_input: grouping_question_2_multiple_choice_input, value: "notcorrect", correct: true)
 
 
-grouping_question_3 = Question.create(text: "Grouping question 3 text", worked_out_answer: "Content, more content!", quizzable: grouping_by_10)
+grouping_question_3 = Question.create(text: "Grouping question 3 text _INPUT_1_", worked_out_answer: "Content, more content!", quizzable: grouping_by_10)
 grouping_question_3_line_input = LineInput.create(question: grouping_question_3, width: 120)
 grouping_question_3_line_input_answer = Answer.create(value: "Grouping Question 3 Line input answer value", line_input: grouping_question_3_line_input)
 
