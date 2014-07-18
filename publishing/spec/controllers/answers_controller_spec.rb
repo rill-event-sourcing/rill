@@ -12,7 +12,7 @@ RSpec.describe AnswersController, :type => :controller do
     @course = create(:course)
     @chapter = create(:chapter, course: @course)
     @section1 = create(:section, chapter: @chapter)
-    @question1 = create(:question, questionable: @section1)
+    @question1 = create(:question, quizzable: @section1)
     @input1 = create(:line_input, question: @question1)
   end
 
