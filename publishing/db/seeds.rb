@@ -84,17 +84,16 @@ grouping_question_3 = Question.create(text: "Grouping question 3 text _INPUT_1_"
 grouping_question_3_line_input = LineInput.create(question: grouping_question_3, width: 120)
 grouping_question_3_line_input_answer = Answer.create(value: "Grouping Question 3 Line input answer value", line_input: grouping_question_3_line_input)
 
-
 ## Add some questions to the course for the entry test
 
-course_question_1 = Question.create(text: "Course question 1 text", active: true, worked_out_answer: "Nice, hheh?", quizzable: counting)
-course_question_1_line_input = LineInput.create(question: course_question_1, prefix: "prefix", suffix: "suffix", width: 175)
-course_question_1_line_input_answer = Answer.create(value: "Course 1 Line input answer value", line_input: course_question_1_line_input)
+# course_question_1 = Question.create(text: "Course question 1 text", active: true, worked_out_answer: "Nice, hheh?", quizzable: counting)
+# course_question_1_line_input = LineInput.create(question: course_question_1, prefix: "prefix", suffix: "suffix", width: 175)
+# course_question_1_line_input_answer = Answer.create(value: "Course 1 Line input answer value", line_input: course_question_1_line_input)
 
-course_question_2 = Question.create(text: "Course question 2 text", active: true, worked_out_answer: "Nice, hheh?", quizzable: counting)
-course_question_2_line_input = LineInput.create(question: course_question_2, prefix: "AWAWA", suffix: "OHOH")
-course_question_2_line_input_answer = Answer.create(value: "Course 2 Line input answer value", line_input: course_question_2_line_input)
-course_question_1_multiple_choice_input = MultipleChoiceInput.create(question: course_question_1)
-course_question_1_multiple_choice_input_choice1 = Choice.create(multiple_choice_input: course_question_1_multiple_choice_input, value: "okay1", correct: false)
-course_question_1_multiple_choice_input_choice2 = Choice.create(multiple_choice_input: course_question_1_multiple_choice_input, value: "not really2", correct: false)
-course_question_1_multiple_choice_input_choice3 = Choice.create(multiple_choice_input: course_question_1_multiple_choice_input, value: "nope3", correct: true)
+# course_question_2 = Question.create(text: "Course question 2 text", active: true, worked_out_answer: "Nice, eh?", quizzable: counting)
+# course_question_2_line_input = LineInput.create(question: course_question_2, prefix: "Euro", suffix: "px")
+# course_question_2_line_input_answer = Answer.create(value: "Course 2 Line input answer value", line_input: course_question_2_line_input)
+# course_question_1_multiple_choice_input = MultipleChoiceInput.create(question: course_question_1)
+# course_question_1_multiple_choice_input_choice1 = Choice.create(multiple_choice_input: course_question_1_multiple_choice_input, value: "1", correct: false)
+# course_question_1_multiple_choice_input_choice2 = Choice.create(multiple_choice_input: course_question_1_multiple_choice_input, value: "2", correct: false)
+# course_question_1_multiple_choice_input_choice3 = Choice.create(multiple_choice_input: course_question_1_multiple_choice_input, value: "3", correct: true)
