@@ -17,6 +17,6 @@
 (deftest test-replay-api
   (let [store (given (cons fixture/course-published-event section-test-events))]
     (is (messages= section-test-events
-                   (replay/replay-section-test store section-test-id)))
+                   (:events (replay/replay-section-test store section-test-id))))
 
     (is (nil? (replay/replay-section-test store fixture/course-id)))))
