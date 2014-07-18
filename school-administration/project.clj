@@ -1,4 +1,4 @@
-(defproject school-administration "0.1.0-SNAPSHOT"
+(defproject studyflow/school-administration "0.1.0-SNAPSHOT"
   :description "School administration"
   :url "http://studyflow.nl"
 
