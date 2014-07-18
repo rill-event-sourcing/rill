@@ -5,6 +5,7 @@
 
 (defcommand CheckAnswer!
   :section-test-id m/Id
+  :expected-version s/Int
   :section-id m/Id
   :course-id m/Id
   :question-id m/Id
@@ -21,6 +22,7 @@
 
 (defcommand NextQuestion!
   :section-test-id m/Id
+  :expected-version s/Int
   :section-id m/Id
   :course-id m/Id)
 

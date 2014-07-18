@@ -9,3 +9,6 @@ body {
 .streak-box .old {
     border: 2px solid grey;
 }
+.reload-alert {
+    border: 2px solid red;
+}

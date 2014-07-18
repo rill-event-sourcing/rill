@@ -44,14 +44,18 @@
             (is (= (:streak-length section-test) i))
             (let [question (course/question-for-section course section-id (:current-question-id section-test))]
 
-              (is (= :ok (execute! (commands/check-answer! section-test-id section-id course-id (:id question)
-                                                           (random-correct-input question))))))
+              (is (= :ok (execute! (commands/check-answer! section-test-id (inc (* i 2)) section-id course-id (:id question)
+                                                           (random-correct-input question))
+                                   ))))
 
             (let [correct (fetch section-test-id)]
               (is (= (:current-question-status correct) :answered-correctly))
               (is (= (:streak-length correct) (inc i))))
 
-            (= :ok (execute! (commands/next-question! section-test-id section-id course-id))))))))
+            (is (= :ok (execute! (commands/next-question! section-test-id
+                                                          (if (= i 4)
+                                                            11 ;; include finished
+                                                            (+ 2 (* i 2))) section-id course-id)))))))))
 
 
   (testing "eventually correct flow"
@@ -60,45 +64,48 @@
       (is (= :ok (execute! (commands/init! section-test-id section-id course-id))))
 
       (let [course (fetch course-id)
-            goto-next! #(execute! (commands/next-question! section-test-id section-id course-id))
-            check-with (fn [gen-input]
+            goto-next! (fn [aggregate-version]
+                         (is (= (execute! (commands/next-question! section-test-id aggregate-version section-id course-id)))))
+            check-with (fn [aggregate-version gen-input]
                          (let [section-test (fetch section-test-id)
                                question (course/question-for-section course section-id (:current-question-id section-test))]
-                           (execute! (commands/check-answer! section-test-id section-id course-id (:id question) (gen-input question)))))
-            check-correct! #(check-with random-correct-input)
-            check-incorrect! #(check-with random-incorrect-input)]
+                           (is (= :ok (execute! (commands/check-answer! section-test-id aggregate-version section-id course-id (:id question) (gen-input question)))))))
+            check-correct! (fn [aggregate-version]
+                             (check-with aggregate-version random-correct-input))
+            check-incorrect! (fn [aggregate-version]
+                               (check-with aggregate-version random-incorrect-input))]
 
-        (check-correct!)
+        (check-correct! 1)
         (is (= 1 (:streak-length (fetch section-test-id))))
-        (goto-next!)
-        (check-correct!)
+        (goto-next! 2)
+        (check-correct! 3)
         (is (not (:finished? (fetch section-test-id))))
         (is (= 2 (:streak-length (fetch section-test-id))))
-        (goto-next!)
-        (check-correct!)
-        (goto-next!)
+        (goto-next! 4)
+        (check-correct! 5)
+        (goto-next! 6)
         (is (= 3 (:streak-length (fetch section-test-id))))
-        (check-incorrect!)
+        (check-incorrect! 7)
         (is (not (:finished? (fetch section-test-id))))
         (is (= 0 (:streak-length (fetch section-test-id))))
-        (check-correct!)
+        (check-correct! 8)
         (is (= 0 (:streak-length (fetch section-test-id))))
-        (goto-next!)
-        (check-correct!)
+        (goto-next! 9)
+        (check-correct! 10)
         (is (= 1 (:streak-length (fetch section-test-id))))
-        (goto-next!)
-        (check-correct!)
+        (goto-next! 11)
+        (check-correct! 12)
         (is (not (:finished? (fetch section-test-id))))
         (is (= 2 (:streak-length (fetch section-test-id))))
-        (goto-next!)
-        (check-correct!)
+        (goto-next! 13)
+        (check-correct! 14)
         (is (= 3 (:streak-length (fetch section-test-id))))
-        (goto-next!)
-        (check-correct!)
-        (goto-next!)
+        (goto-next! 15)
+        (check-correct! 16)
+        (goto-next! 17)
         (is (= 4 (:streak-length (fetch section-test-id))))
         (is (not (:finished? (fetch section-test-id))))
-        (check-correct!)
+        (check-correct! 18)
         (is (= 5 (:streak-length (fetch section-test-id))))
         (is (:finished? (fetch section-test-id)))))))
 
@@ -117,7 +124,7 @@
       (let [inputs {"__INPUT_1__" "6"}
             question-id #uuid "a117bf7b-8025-43ea-b6d3-aa636d6b6042"]
         (is (command-result= [:ok [(events/question-answered-correctly section-test-id question-id inputs)]]
-                             (execute (commands/check-answer! section-test-id section-id course-id question-id inputs)
+                             (execute (commands/check-answer! section-test-id 1 section-id course-id question-id inputs)
                                       [fixture/course-published-event
                                        (events/created section-test-id course-id section-id)
                                        (events/question-assigned section-test-id course-id question-id)])))))
@@ -126,7 +133,7 @@
       (let [inputs {"__INPUT_1__" "7"}
             question-id #uuid "a117bf7b-8025-43ea-b6d3-aa636d6b6042"]
         (is (command-result= [:ok [(events/question-answered-incorrectly section-test-id question-id inputs)]]
-                             (execute (commands/check-answer! section-test-id section-id course-id question-id inputs)
+                             (execute (commands/check-answer! section-test-id 1 section-id course-id question-id inputs)
                                       [fixture/course-published-event
                                        (events/created section-test-id course-id section-id)
                                        (events/question-assigned section-test-id course-id question-id)])))))
@@ -135,7 +142,7 @@
       (testing "with a correct answer"
         (let [inputs {"__INPUT_1__" "6"}
               question-id #uuid "a117bf7b-8025-43ea-b6d3-aa636d6b6042"]
-          (let [[status [event]] (execute (commands/next-question! section-test-id section-id course-id)
+          (let [[status [event]] (execute (commands/next-question! section-test-id 2 section-id course-id)
                                           [fixture/course-published-event
                                            (events/created section-test-id course-id section-id)
                                            (events/question-assigned section-test-id course-id question-id)
@@ -148,7 +155,7 @@
         (let [inputs {"__INPUT_1__" "7"}
               question-id #uuid "a117bf7b-8025-43ea-b6d3-aa636d6b6042"]
           (is (thrown? AssertionError
-                       (execute (commands/next-question! section-test-id section-id course-id)
+                       (execute (commands/next-question! section-test-id 2 section-id course-id)
                                 [fixture/course-published-event
                                  (events/created section-test-id course-id section-id)
                                  (events/question-assigned section-test-id course-id question-id)

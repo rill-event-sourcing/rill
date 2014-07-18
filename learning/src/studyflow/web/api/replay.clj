@@ -6,10 +6,12 @@
             [rill.uuid :refer [uuid]]))
 
 (defn response
-  [events]
+  [{:keys [events aggregate-id aggregate-version]}]
   (if (seq events)
     {:status 200
-     :body {:events events}}
+     :body {:events events
+            :aggregate-id aggregate-id
+            :aggregate-version aggregate-version}}
     {:status 401}))
 
 (def handler
