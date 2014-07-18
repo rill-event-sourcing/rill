@@ -48,7 +48,7 @@ RSpec.describe Course, type: :model do
       id: @course.id,
       name: @course.name,
       chapters: @course.chapters.map(&:to_publishing_format),
-      course_questions: @course.questions.map(&:to_publishing_format)
+      #course_questions: @course.questions.map(&:to_publishing_format)
     }
     expect(@course.to_publishing_format).to eq obj
   end
