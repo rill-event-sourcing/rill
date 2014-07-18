@@ -1,85 +1,50 @@
 {
-  "id": "520d7eba-aa0b-417a-8ab1-37621674f68b",
+  "id": "71a2bd12-00b9-46fd-b52c-019ea4d2e3ea",
   "name": "Counting",
   "chapters": [
     {
-      "id": "4dfbb219-6b14-468d-bfef-65fb063afbba",
+      "id": "8112d048-1189-4b45-a7ba-78da2b0c389d",
       "title": "Positional system",
       "sections": [
         {
-          "id": "6db0308c-e91b-4351-87ce-55523fa99158",
+          "id": "baaffea6-3094-4494-8071-87c2854fd26f",
           "title": "Grouping by 10",
           "subsections": [
             {
-              "id": "a55b9637-2f9e-46f2-8aac-61c528cfe6c5",
+              "id": "2aa9de44-e7c9-4b4a-aad7-cd1bb304d0e5",
               "title": "Counting to 10",
               "text": "1+1+1+... = 10"
             },
             {
-              "id": "c099e4c0-e7d5-4331-be6a-0eab1dedff69",
+              "id": "9f3b3ee3-0722-4f7c-b1fe-bf01525ce33e",
               "title": "Summing up the number of the groups",
               "text": "Keep adding!"
             },
             {
-              "id": "4c9f3b11-56ab-431b-a3c4-7f76c41df06b",
+              "id": "4ef44b54-1a79-4922-8a77-ad1be256f7be",
               "title": "Adding up everything with the remainder",
               "text": "Something did not fit in groups..."
             },
             {
-              "id": "691bdc2d-ffd5-4273-aefb-2030268f7987",
+              "id": "f6e1beeb-8fe1-4074-abd9-525ba5c9476a",
               "title": "Counting to 100",
               "text": "1+1+1+... = 100"
             },
             {
-              "id": "6f51cbd0-7da9-4623-bb41-4444a202c1e6",
+              "id": "33624b2a-4ee9-46b7-a237-056b43c2e45b",
               "title": "Summing up in big groups",
               "text": "Keep adding!"
             },
             {
-              "id": "f369e572-5fb5-4e49-9be1-957ee3ee2b00",
+              "id": "336a676a-9c69-4a1e-b1a6-5341dcbf45fe",
               "title": "Adding up everything again",
               "text": "Moar additions"
             }
           ],
           "questions": [
             {
-              "id": "68593b22-09ae-42d2-addf-ab84288330dc",
-              "text": "Grouping question 1 text",
-              "worked_out_answer": "Something something here",
-              "line_input_fields": [
-                {
-                  "name": "_INPUT_1_",
-                  "prefix": "asd",
-                  "suffix": "mah",
-                  "width": 150,
-                  "correct_answers": [
-                    "something1"
-                  ]
-                }
-              ],
-              "multiple_choice_input_fields": [
-                {
-                  "name": "_INPUT_2_",
-                  "choices": [
-                    {
-                      "value": "okay",
-                      "correct": false
-                    },
-                    {
-                      "value": "notreally",
-                      "correct": false
-                    },
-                    {
-                      "value": "nope",
-                      "correct": true
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "id": "c734efd4-fa1a-4a8a-88dc-4431ff39877f",
-              "text": "Grouping question 2 text",
+              "id": "3e09e382-266c-4b16-9020-c5a071c2e2a4",
+              "text": "And now, for something completely different _INPUT_2_ and _INPUT_1_",
               "worked_out_answer": "This is supposed to explain",
               "line_input_fields": [
                 {
@@ -106,7 +71,42 @@
                       "correct": false
                     },
                     {
-                      "value": "nopasde",
+                      "value": "notcorrect",
+                      "correct": true
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "fe9d41b5-4aa8-4dff-8e65-44fae2459c3f",
+              "text": "Grouping question 1 text _INPUT_1_ and of course _INPUT_2_",
+              "worked_out_answer": "Something something here",
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "prefix": "pre",
+                  "suffix": "suf",
+                  "width": 150,
+                  "correct_answers": [
+                    "Grouping Question 1 Line input answer value"
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+                {
+                  "name": "_INPUT_2_",
+                  "choices": [
+                    {
+                      "value": "1",
+                      "correct": false
+                    },
+                    {
+                      "value": "2",
+                      "correct": false
+                    },
+                    {
+                      "value": "3",
                       "correct": true
                     }
                   ]
@@ -116,36 +116,36 @@
           ]
         },
         {
-          "id": "49141fdf-7165-4b17-9d12-1025efcd78d7",
+          "id": "969a31de-2725-453c-9177-f821982634cf",
           "title": "Position of the 0",
           "subsections": [
             {
-              "id": "daa8ff48-4f67-43b4-bdd9-6d34acc0b48c",
+              "id": "2219fc9a-122a-4205-ae42-9bdba7510b15",
               "title": "0 to the left",
               "text": "It does not matter!"
             },
             {
-              "id": "84785a88-6073-4174-bdf9-eb90490124f1",
+              "id": "408e1d53-b284-4957-9774-24f8c1fb39d2",
               "title": "0 to the right",
               "text": "Hey, I multiply by 10!"
             },
             {
-              "id": "1b8e9024-32b0-46cf-a95e-cf1bbb593088",
+              "id": "9104037c-9cae-47f5-b6b7-a1dfc8d4669d",
               "title": "0 in the center",
               "text": "What now?"
             },
             {
-              "id": "71ccaa38-4f32-451f-89ec-7bb6b34da1f5",
+              "id": "17df5399-3699-428f-a4aa-1d2a6ea5a497",
               "title": "1 to the left",
               "text": "It does not matter!"
             },
             {
-              "id": "c2151cfa-2db9-47ec-8638-50aa18927339",
+              "id": "68e9e7f8-f588-49e7-a2c2-3bdb84a8382a",
               "title": "1 to the right",
               "text": "Hey, I multiply by 10!"
             },
             {
-              "id": "7037137d-4bce-41c2-93e5-5237cb0fffc0",
+              "id": "83693d42-cbc4-49c5-ac3b-28f35aa33a04",
               "title": "1 in the center",
               "text": "What now?"
             }
@@ -154,62 +154,6 @@
 
           ]
         }
-      ]
-    }
-  ],
-  "course_questions": [
-    {
-      "id": "75f831f3-9ecc-486d-8fe6-25802dbeba94",
-      "text": "Course question 1 text",
-      "worked_out_answer": "Nice, hheh?",
-      "line_input_fields": [
-        {
-          "name": "_INPUT_1_",
-          "prefix": "prefix",
-          "suffix": "suffix",
-          "width": 175,
-          "correct_answers": [
-            "Course 1 Line input answer value"
-          ]
-        }
-      ],
-      "multiple_choice_input_fields": [
-        {
-          "name": "_INPUT_2_",
-          "choices": [
-            {
-              "value": "okay1",
-              "correct": false
-            },
-            {
-              "value": "not really2",
-              "correct": false
-            },
-            {
-              "value": "nope3",
-              "correct": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "fc1bbba6-75e7-4b2f-ba05-9843ad2c33c1",
-      "text": "Course question 2 text",
-      "worked_out_answer": "Nice, hheh?",
-      "line_input_fields": [
-        {
-          "name": "_INPUT_1_",
-          "prefix": "AWAWA",
-          "suffix": "OHOH",
-          "width": 150,
-          "correct_answers": [
-            "Course 2 Line input answer value"
-          ]
-        }
-      ],
-      "multiple_choice_input_fields": [
-
       ]
     }
   ]

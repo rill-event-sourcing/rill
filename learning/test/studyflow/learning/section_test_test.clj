@@ -11,8 +11,8 @@
             [clojure.test :refer [deftest testing is]]))
 
 (def section-test-id (new-id))
-(def section-id #uuid "6db0308c-e91b-4351-87ce-55523fa99158")
-(def question-id #uuid "c734efd4-fa1a-4a8a-88dc-4431ff39877f")
+(def section-id #uuid  "baaffea6-3094-4494-8071-87c2854fd26f")
+(def question-id #uuid "3e09e382-266c-4b16-9020-c5a071c2e2a4")
 
 (def course fixture/course-aggregate)
 (def course-id (:id course))
@@ -121,8 +121,7 @@
 
   (testing "answering questions"
     (testing "correct answer"
-      (let [inputs {"_INPUT_1_" "6"}
-            question-id #uuid "c734efd4-fa1a-4a8a-88dc-4431ff39877f"]
+      (let [inputs {"_INPUT_1_" "6"}]
         (is (command-result= [:ok [(events/question-answered-correctly section-test-id question-id inputs)]]
                              (execute (commands/check-answer! section-test-id 1 section-id course-id question-id inputs)
                                       [fixture/course-published-event
@@ -130,8 +129,7 @@
                                        (events/question-assigned section-test-id course-id question-id)])))))
 
     (testing "incorrect answer"
-      (let [inputs {"_INPUT_1_" "7"}
-            question-id #uuid "c734efd4-fa1a-4a8a-88dc-4431ff39877f"]
+      (let [inputs {"_INPUT_1_" "7"}]
         (is (command-result= [:ok [(events/question-answered-incorrectly section-test-id question-id inputs)]]
                              (execute (commands/check-answer! section-test-id 1 section-id course-id question-id inputs)
                                       [fixture/course-published-event
@@ -140,8 +138,7 @@
 
     (testing "next question"
       (testing "with a correct answer"
-        (let [inputs {"_INPUT_1_" "6"}
-              question-id #uuid "c734efd4-fa1a-4a8a-88dc-4431ff39877f"]
+        (let [inputs {"_INPUT_1_" "6"}]
           (let [[status [event]] (execute (commands/next-question! section-test-id 2 section-id course-id)
                                           [fixture/course-published-event
                                            (events/created section-test-id course-id section-id)
@@ -152,8 +149,7 @@
                    (message/type event))))))
 
       (testing "with an incorrect answer"
-        (let [inputs {"_INPUT_1_" "7"}
-              question-id #uuid "c734efd4-fa1a-4a8a-88dc-4431ff39877f"]
+        (let [inputs {"_INPUT_1_" "7"}]
           (is (thrown? AssertionError
                        (execute (commands/next-question! section-test-id 2 section-id course-id)
                                 [fixture/course-published-event

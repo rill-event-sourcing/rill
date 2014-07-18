@@ -24,13 +24,6 @@
    :width s/Int
    :correct-answers  #{s/Str}})
 
-(def CourseQuestion
-  {:id Id
-   :text RichText
-   :worked-out-answer RichText
-   :line-input-fields #{LineInputField}
-   :multiple-choice-input-fields #{MultipleChoiceInputField}})
-
 (def SectionQuestion
   {:id Id
    :text RichText
@@ -57,8 +50,7 @@
 (def CourseMaterial
   {:id Id
    :name PlainText
-   :chapters [Chapter]
-   :course-questions #{CourseQuestion}})
+   :chapters [Chapter]})
 
 (def parse-course-material*
   (coerce/coercer CourseMaterial schema-tools/schema-coercion-matcher))
