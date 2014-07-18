@@ -101,7 +101,15 @@
 (defn find-event [name events]
   (first (filter #(gstring/endsWith (:type %) name) events)))
 
-
+(defn handle-replay-events-or-init [cursor section-test-id section-id events aggregate-version]
+  (if (seq events)
+    (om/transact! cursor
+                  [:aggregates section-test-id]
+                  (fn [agg]
+                    (aggregates/apply-events agg aggregate-version events)))
+    ;; we got no events back, init the test first
+    (try-command cursor ["section-test-commands/init" section-id])
+    ))
 
 (defn listen [tx-report cursor]
   (let [{:keys [path new-state]} tx-report]
@@ -113,29 +121,18 @@
          (let [section-test-id (str "student-idDEFAULT_STUDENT_IDsection-id" section-id)]
            (prn "Load aggregate: " section-test-id)
            (when-not (contains? (get new-state :aggregates) section-test-id)
-             (let [handle-events-or-init
-                   (fn [events]
-                     (if (seq events)
-                       (let [aggregate-version (:number (last events))]
-                         (om/transact! cursor
-                                       [:aggregates section-test-id]
-                                       (fn [agg]
-                                         (aggregates/apply-events agg aggregate-version events))))
-                       ;; we got no events back, init the test first
-                       (try-command cursor ["section-test-commands/init" section-id])
-                       ))]
-               (GET (str "/api/section-test-replay/" section-test-id)
-                    {:format :json
-                     :handler (fn [res]
-                                (let [events (:events (json-edn/json->edn res))]
-                                  (handle-events-or-init events)))
-                     :error-handler (fn [res]
-                                      ;; currently the api
-                                      ;; gives a 401 when
-                                      ;; there are no events
-                                      ;; for an aggregate
-                                      (handle-events-or-init [])
-                                      )}))))
+             (GET (str "/api/section-test-replay/" section-test-id)
+                  {:format :json
+                   :handler (fn [res]
+                              (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
+                                (handle-replay-events-or-init cursor section-test-id section-id events aggregate-version)))
+                   :error-handler (fn [res]
+                                    ;; currently the api
+                                    ;; gives a 401 when
+                                    ;; there are no events
+                                    ;; for an aggregate
+                                    (handle-replay-events-or-init cursor section-test-id section-id [] -1)
+                                    )})))
          ;; for explanation tab
          (when section-id
            (if-let [section-data (get-in new-state [:view :section section-id :data])]
