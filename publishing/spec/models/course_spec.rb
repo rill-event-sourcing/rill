@@ -43,14 +43,4 @@ RSpec.describe Course, type: :model do
     expect(@course.active).to eq false
   end
 
-  it "should have the correct format for publishing" do
-    obj = {
-      id: @course.id,
-      name: @course.name,
-      chapters: @course.chapters.map(&:to_publishing_format),
-      #course_questions: @course.questions.map(&:to_publishing_format)
-    }
-    expect(@course.to_publishing_format).to eq obj
-  end
-
 end

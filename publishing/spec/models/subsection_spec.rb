@@ -36,15 +36,6 @@ RSpec.describe Subsection, type: :model do
     expect{Subsection.find_by_uuid(uuid[0,8])}.to raise_error(StudyflowPublishing::ShortUuidDoubleError)
   end
 
-  it "should have the correct format for publishing" do
-    obj = {
-      id: @subsection1.id,
-      title: @subsection1.title,
-      text: @subsection1.text
-    }
-    expect(@subsection1.to_publishing_format).to eq obj
-  end
-
   it "should return a full json object" do
     obj = {
         id: @subsection1.id,
