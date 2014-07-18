@@ -54,15 +54,4 @@ RSpec.describe Question, :type => :model do
     expect(@question.max_inputs).to eq (max_inputs+1)
   end
 
-   it "should have the correct format for publishing" do
-    obj = {
-      id: @question.id,
-      text: @question.text,
-      worked_out_answer: @question.worked_out_answer,
-      line_input_fields: @question.line_inputs.map(&:to_publishing_format),
-      multiple_choice_input_fields: @question.multiple_choice_inputs.map(&:to_publishing_format)
-    }
-    expect(@question.to_publishing_format).to eq obj
-  end
-
 end

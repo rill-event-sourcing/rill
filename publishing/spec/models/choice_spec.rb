@@ -31,12 +31,4 @@ RSpec.describe Choice, type: :model do
     expect{Choice.find_by_uuid(uuid[0,8])}.to raise_error(StudyflowPublishing::ShortUuidDoubleError)
   end
 
-  it "should have the correct format for publishing" do
-    obj = {
-      value: @choice.value,
-      correct: @choice.correct
-    }
-    expect(@choice.to_publishing_format).to eq obj
-  end
-
 end

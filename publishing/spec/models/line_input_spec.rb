@@ -13,15 +13,4 @@ RSpec.describe LineInput, type: :model do
     expect(@line_input.to_param).to eq id[0,8]
   end
 
-  it "should have the correct format for publishing" do
-    obj = {
-      name: "_INPUT_#{@line_input.position}_",
-      prefix: @line_input.prefix,
-      suffix: @line_input.suffix,
-      width: @line_input.width,
-      correct_answers: @line_input.answers.map(&:value)
-    }
-    expect(@line_input.to_publishing_format).to eq obj
-  end
-
 end
