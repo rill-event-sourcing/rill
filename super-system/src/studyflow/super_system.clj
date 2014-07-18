@@ -13,6 +13,3 @@
                   (assoc :event-store event-store))]
     (system-map :learning-system learning
                 :login-system login)))
-
-
-
