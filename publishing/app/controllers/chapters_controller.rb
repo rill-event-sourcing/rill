@@ -1,7 +1,7 @@
 class ChaptersController < ApplicationController
   before_action :set_param_objects
   before_action :set_redirect_cookie, only: [:index, :show, :new, :edit]
-  before_action :set_breadcrumb, except: [:new, :create]
+  before_action :set_breadcrumb, except: [:create]
 
   def index
     @chapters = @course.chapters
@@ -73,7 +73,7 @@ class ChaptersController < ApplicationController
     else
       @crumbs << {name: "Chapters", url: chapters_path}
     end
-
+    @crumbs << {name: "New chapter", url: ""} if action_name == "new"
   end
 
   def chapter_params

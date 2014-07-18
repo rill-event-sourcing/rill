@@ -1,4 +1,4 @@
-=form_for(@chapter, html: {class: "form-horizontal", role: "form"}) do |f|
+= form_for(@chapter, html: {class: "form-horizontal", role: "form"}) do |f|
   - if @chapter.errors.any?
     %div.error_explanation
       %h2= #{ pluralize(@chapter.errors.count, "error") } prohibited this chapter from being saved:
@@ -9,12 +9,12 @@
   %div.form-group
     = f.label :title, class: "col-sm-2 control-label"
     %div.col-sm-10
-      = f.text_field :title, size: 120
+      = f.text_field :title, size: 20, class: "form-control"
 
   %div.form-group
     = f.label :description, class: "col-sm-2 control-label"
     %div.col-sm-10
-      = f.text_area :description, cols: 120, rows: 20
+      = f.text_area :description, cols: 20, rows: 20, class: "form-control"
 
   - if @chapter.id
     %div.form-group

@@ -1,20 +1,20 @@
-=form_for([@chapter, @section], html: {class: "form-horizontal", role: "form"}) do |f|
+= form_for([@chapter, @section], html: {class: "form-horizontal", role: "form"}) do |f|
   - if @section.errors.any?
     %div.error_explanation
       %h2= "#{ pluralize(@section.errors.count, "error") } prohibited this section from being saved:"
       %ul
-        -@section.errors.full_messages.each do |message|
+        - @section.errors.full_messages.each do |message|
           %li= message
 
   %div.form-group
     = f.label :title, class: "col-sm-2 control-label"
     %div.col-sm-10
-      = f.text_field :title, size: 120
+      = f.text_field :title, size: 20, class: "form-control"
 
   %div.form-group
     = f.label :description, class: "col-sm-2 control-label"
     %div.col-sm-10
-      = f.text_area :description, cols: 120, rows: 20
+      = f.text_area :description, cols: 20, rows: 20, class: "form-control"
 
   - if @section.id
     %div.form-group

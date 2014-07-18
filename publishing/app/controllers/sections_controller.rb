@@ -1,7 +1,7 @@
 class SectionsController < ApplicationController
   before_action :set_param_objects
   before_action :set_redirect_cookie, only: [:index, :show, :new, :edit]
-  before_action :set_breadcrumb, except: [:index, :new, :create]
+  before_action :set_breadcrumb, except: [:create]
 
   def index
     redirect_to @chapter
@@ -70,7 +70,8 @@ private
   def set_breadcrumb
     @crumbs = [{name: @course.name, url: root_path}]
     @crumbs << {name: @chapter.title, url: chapter_sections_path(@chapter)}
-    @crumbs << {name: @section.title, url: chapter_section_path(@chapter, @section)}
+    @crumbs << {name: @section.title, url: chapter_section_path(@chapter, @section)} if @section
+    @crumbs << {name: "New section", url: ""} if action_name == "new"
   end
 
   def section_params
