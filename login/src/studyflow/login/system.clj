@@ -45,15 +45,18 @@
 
 (defonce system nil)
 
+(defn make-system
+  [config]
+  (component/system-map
+   :jetty (component/using (jetty-component (:jetty-port config)) [:ring-handler])
+   :ring-handler (component/using (ring-handler-component) [:credentials])
+   :credentials (component/using (credentials-component) [:event-channel])
+   :event-channel (component/using (event-channel-component) [:event-store])
+   :event-store (component/using (memory-event-store-component) [])))
+
 (defn init
   ([config]
-     (let [sm (component/system-map
-               :jetty (component/using (jetty-component (:jetty-port config)) [:ring-handler])
-               :ring-handler (component/using (ring-handler-component) [:credentials])
-               :credentials (component/using (credentials-component) [:event-channel])
-               :event-channel (component/using (event-channel-component) [:event-store])
-               :event-store (component/using (memory-event-store-component) []))]
-       (alter-var-root (var system) (constantly sm))))
+     (alter-var-root (var system) (constantly (make-system config))))
   ([]
      (init {:jetty-port 4000})))
 
@@ -67,4 +70,3 @@
   (stop)
   (init)
   (start))
-
