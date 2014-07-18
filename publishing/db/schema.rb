@@ -64,8 +64,8 @@ ActiveRecord::Schema.define(version: 20140618145746) do
   end
 
   create_table "questions", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
-    t.uuid     "questionable_id"
-    t.string   "questionable_type"
+    t.uuid     "quizzable_id"
+    t.string   "quizzable_type"
     t.text     "text"
     t.text     "worked_out_answer"
     t.datetime "deleted_at"

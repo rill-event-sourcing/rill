@@ -3,7 +3,7 @@ class Question < ActiveRecord::Base
 
   before_save :set_default_text
 
-  belongs_to :questionable, polymorphic: true, touch: true
+  belongs_to :quizzable, polymorphic: true, touch: true
 
   has_many :inputs, dependent: :destroy
   has_many :line_inputs

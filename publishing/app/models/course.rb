@@ -2,7 +2,7 @@ class Course < ActiveRecord::Base
   include Trashable, Activateable
 
   has_many :chapters, -> { order(:position) }
-  has_many :questions, as: :questionable
+  has_many :questions, as: :quizzable
 
   validates :name, presence: true, uniqueness: true
 
