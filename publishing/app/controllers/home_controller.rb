@@ -1,6 +1,7 @@
 class HomeController < ApplicationController
 
   before_action :set_redirect_cookie, only: [:index]
+  before_action :set_breadcrumb
 
   def index
   end
@@ -14,10 +15,10 @@ class HomeController < ApplicationController
 
     begin
       publish_response =  HTTParty.put(url,
-        headers: { 'Content-Type' => 'application/json' },
-        body: course_json,
-        timeout: 30
-      )
+                                       headers: { 'Content-Type' => 'application/json' },
+                                       body: course_json,
+                                       timeout: 30
+                                       )
     rescue Errno::ECONNREFUSED
     rescue Net::ReadTimeout
     end
@@ -30,4 +31,9 @@ class HomeController < ApplicationController
     end
   end
 
+  private
+
+  def set_breadcrumb
+    @crumbs = [{name: Course.current.name, url: root_path}] if Course.current
+  end
 end

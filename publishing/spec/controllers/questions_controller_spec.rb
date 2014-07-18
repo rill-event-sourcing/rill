@@ -8,9 +8,9 @@ RSpec.describe QuestionsController, :type => :controller do
     controller.send :set_my_course
     @chapter = create(:chapter, course: @course)
     @section = create(:section, chapter: @chapter)
-    @question1 = create(:question, section: @section)
-    @question2 = create(:question, section: @section)
-    @question3 = create(:question, section: @section)
+    @question1 = create(:question, questionable: @section)
+    @question2 = create(:question, questionable: @section)
+    @question3 = create(:question, questionable: @section)
   end
 
   describe 'GET index' do

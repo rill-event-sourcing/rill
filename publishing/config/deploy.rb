@@ -36,7 +36,11 @@ namespace :deploy do
   # for the git case. (For subversion it is straightforward.)
   task :mv_rails_app_dir do
     on roles(:app) do
-      execute "mv #{release_path}/publishing/* #{release_path}/ "
+      execute "rm -Rf /tmp/publishing"
+      execute "mv #{release_path}/publishing /tmp/"
+      execute "rm -Rf #{release_path}/*"
+      execute "mv /tmp/publishing/* #{release_path}/"
+      execute "rm -Rf /tmp/publishing"
     end
   end
 

@@ -4,15 +4,37 @@
     %div.row
       %div.col-md-8.col-md-offset-2
         %h1
-          = link_to @course.name, chapters_path
-          %small= "(#{ @course.chapters.length } chapters)"
+          = @course.name
       %div.col-md-2
-        = link_to 'Publish', publish_course_path, class: "btn btn-success", method: :post
-    %div.row{style: "margin-top:20px;"}
+        = link_to 'Publish', publish_course_path, class: "btn btn-lg btn-success", method: :post
+    %div.row{style: "margin-top:10px;"}
       %div.col-md-8.col-md-offset-2
+        %h3
+          = link_to 'Entry test questions', questions_path
+          %small= "(#{ @course.questions.length } questions)"
+        %table.table.table-bordered
+          %thead
+            %tr
+              %th Question
+          %tbody
+            - @course.questions.each do |question|
+              %tr{class: question.active? ? "success" : "danger"}
+                %td= link_to question.to_s.truncate(90, omission: '...'), edit_question_path(question)
+      %div.col-md-2
+        %strong Guide:
+        %table.table.table-condensed.table-bordered
+          %tr
+            %td.success Element published
+            %tr
+            %td.danger Element not published
+    %div.row{style: "margin-top:10px;"}
+      %div.col-md-8.col-md-offset-2
+        %h3
+          = link_to 'Chapters', chapters_path
+          %small= "(#{ @course.chapters.length } chapters)"
         - @course.chapters.each do |chapter|
-          %h3= link_to chapter.title, chapter
-          %table.table.table-condensed.table-bordered
+          %h4= link_to chapter.title, chapter
+          %table.table.table-bordered
             %thead
               %tr
                 %th
@@ -33,13 +55,7 @@
                       = "#{section.subsections.length}"
                   %td
                     %span.label.label-success.pull-right= section.questions.length
-      %div.col-md-2
-        %strong Guide:
-        %table.table.table-condensed.table-bordered
-          %tr
-            %td.success Section published
-          %tr
-            %td.danger Section not published
+
 - else
   %div.container
     %div.alert.alert-warning Please select a course from the dropdown on the top right.

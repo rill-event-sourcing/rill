@@ -36,6 +36,16 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :course_questions, as: 'questions'  do
+    member do
+      post 'activate'
+      post 'deactivate'
+      post 'moveup'
+      post 'movedown'
+      get 'preview'
+    end
+  end
+
   resources :inputs do
     resources :answers
     resources :choices

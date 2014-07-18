@@ -17,11 +17,6 @@ private
     Course.current = nil
   end
 
-  def set_crumb(crumb_hash)
-    @crumbs ||= []
-    @crumbs << crumb_hash
-  end
-
   def set_redirect_cookie
     if StudyflowPublishing::Application.config.cookie_domain == "localhost"
       cookies["studyflow_redir_to"] = { value: request.original_url }

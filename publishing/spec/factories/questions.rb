@@ -4,6 +4,5 @@ FactoryGirl.define do
   factory :question do
     text "Default question text"
     worked_out_answer "Default worked out answer"
-    section
   end
 end

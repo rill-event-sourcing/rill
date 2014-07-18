@@ -2,8 +2,6 @@ require 'rails_helper'
 
 RSpec.describe Question, :type => :model do
 
-  it {is_expected.to validate_presence_of :section }
-
   before do
     @question = create(:question)
     @question2 = create(:question)
