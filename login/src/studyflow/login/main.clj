@@ -80,7 +80,7 @@
   [session refresh-count]
   (-> (layout "Studyflow Beta" (please-wait refresh-count))
       (assoc :session (assoc session :refresh-count  (inc refresh-count)))
-      (refresh "/students/sign_in_wait" 5)))
+      (refresh "/students/sign_in_wait" (* 2 refresh-count))))
 
 
 
@@ -112,7 +112,7 @@
              (do (try-command event-store (edu-route-student/register! edu-route-id full-name brin-code))
                  ;; wait for student to be created
                  ;; redirects to sign_in_wait
-                 (please-wait-response session 1)))
+                 (please-wait-response (assoc session :edu-route-info edu-route-info) 1)))
            ;; something went wrong while validating the eduroute session.
            (-> (layout "Eduroute auth failed" "Eduroute auth failed")
                (assoc :status 400)))
@@ -121,10 +121,10 @@
   (GET "/students/sign_in_wait"
        {{{:keys [edu-route-id]} :edu-route-info
          refresh-count :refresh-count :as session} :session
-         authenticate :authenticate-by-edu-route-id}
-       (if-let [user (authenticate edu-route-id)]
+         authenticate-by-edu-route-id :authenticate-by-edu-route-id}
+       (if-let [user (authenticate-by-edu-route-id edu-route-id)]
          (assoc (redirect-to "/") :login-user user)
-         (if (< refresh-count 5)
+         (if (< refresh-count 10)
            (please-wait-response session refresh-count)
            (layout "Studyflow Beta" [:p "Helaas, het is erg druk."]))))
 
