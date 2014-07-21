@@ -95,14 +95,17 @@
                                                         history-link)}
                                          "=> Vragen"))]))
                (if-let [section (get-in cursor [:view :section section-id :data])]
-                 (let [text (get-in section [:subsections-by-level :1-star])]
-                   [(dom/div #js {:className "col-md-8 panel panel-default"}
-                             (pr-str (repeat 100 text)))
+                 (let [subsections (get section :subsections)]
+                   [(apply dom/div #js {:className "col-md-8 panel panel-default"}
+                           (mapcat (fn [{:keys [title text id] :as subsection}]
+                                     [(dom/h3 nil title)
+                                      (dom/div nil
+                                               (pr-str (repeat 100 text)))])
+                                   subsections))
                     (dom/div #js {:className "col-md-4 panel panel-default"}
                              (apply dom/ul nil
-                                    (for [{:keys [title]
-                                           subsection-id :id
-                                           :as subsection} (get-in section [:subsections-by-level :1-star])]
+                                    (for [{:keys [title id]
+                                           :as subsection} subsections]
                                       (dom/li nil title))))])
                  ["Loading section data..."])
 )))))
@@ -136,27 +139,30 @@
     om/IRender
     (render [_]
       (let [text (:text question-data)
-            first-part (.replace text (re-pattern (str "__INPUT_1__.*$")) "")
-            last-part (.replace text (re-pattern (str "^.*__INPUT_1__")) "")
+            first-part (.replace text (re-pattern (str "_INPUT_1_.*$")) "")
+            last-part (.replace text (re-pattern (str "^.*_INPUT_1_")) "")
             current-answer (get-in cursor [:view :section section-id :test :questions question-id :answer])
             answer-correct (when (contains? question :correct)
                              (:correct question))
             course-id (get-in cursor [:static :course-id])
+            section-test-aggregate-version (:aggregate-version section-test)
             check-answer (fn []
                            (async/put! (om/get-shared owner :command-channel)
                                        ["section-test-commands/check-answer"
                                         section-test-id
+                                        section-test-aggregate-version
                                         section-id
                                         course-id
                                         question-id
-                                        {"__INPUT_1__" current-answer}]))]
+                                        {"_INPUT_1_" current-answer}]))]
         (dom/div #js {:className "col-md-12 panel panel-default"}
+                 (dom/div nil (pr-str question-data))
                  (om/build streak-box (:streak section-test))
                  (dom/div #js {:dangerouslySetInnerHTML #js {:__html first-part}} nil)
                  (if answer-correct
                    (dom/div nil (pr-str (:inputs question)))
                    (dom/input #js {:value current-answer
-                                   :ref "__INPUT_1__"
+                                   :ref "_INPUT_1_"
                                    :onChange (fn [event]
                                                (om/update!
                                                 cursor
@@ -176,6 +182,7 @@
                                                  (async/put! (om/get-shared owner :command-channel)
                                                              ["section-test-commands/next-question"
                                                               section-test-id
+                                                              section-test-aggregate-version
                                                               section-id
                                                               course-id])
                                                  (prn "next question command"))}
@@ -195,7 +202,7 @@
                                                   )) cursor)))))
     om/IDidMount
     (did-mount [_]
-      (when-let [input-field (om/get-node owner "__INPUT_1__")]
+      (when-let [input-field (om/get-node owner "_INPUT_1_")]
         (prn "input-field" input-field)
         (.focus input-field)))))
 
@@ -288,13 +295,20 @@
       (println "widget will mount"))
     om/IRender
     (render [_]
-      (if-not (get-in cursor [:view :selected-path :chapter-id])
-        (om/build dashboard cursor)
-        (dom/div #js {:className "row"}
-                 (dom/div #js {:className "col-md-4"}
-                          (om/build navigation cursor))
-                 (dom/div #js {:className "col-md-8"}
-                          (om/build section-panel cursor)))))
+      (dom/div nil
+               (when (get-in cursor [:aggregates :failed])
+                 (dom/div #js {:className "reload-alert"}
+                          (dom/h1 nil "You are out of sync with the server. Please reload the page")
+                          (dom/button #js {:onClick (fn [e]
+                                                      (.reload js/location true))}
+                                      "Reload page")))
+               (if-not (get-in cursor [:view :selected-path :chapter-id])
+                 (om/build dashboard cursor)
+                 (dom/div #js {:className "row"}
+                          (dom/div #js {:className "col-md-4"}
+                                   (om/build navigation cursor))
+                          (dom/div #js {:className "col-md-8"}
+                           (om/build section-panel cursor))))))
     om/IWillUnmount
     (will-unmount [_]
       (println "widget will unmount"))))

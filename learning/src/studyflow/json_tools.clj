@@ -3,7 +3,7 @@
 
 (defn key-from-json
   [key-str]
-  (if (.startsWith key-str "__") ; HACK, HACK, HACK, TODO, TODO, TODO
+  (if (.startsWith key-str "_INPUT") ; HACK, HACK, HACK, TODO, TODO, TODO
     key-str
     (keyword (str/replace key-str \_ \-))))
 
