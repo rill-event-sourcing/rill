@@ -119,8 +119,9 @@
        (if (contains? tab-questions section-id)
          ;; for question tab
          (let [section-test-id (str "student-idDEFAULT_STUDENT_IDsection-id" section-id)]
-           (prn "Load aggregate: " section-test-id)
+           (prn "Load aggregate: " section-test-id (get-in new-state path) )
            (when-not (contains? (get new-state :aggregates) section-test-id)
+             (om/update! cursor [:aggregates section-test-id] false)
              (GET (str "/api/section-test-replay/" section-test-id)
                   {:format :json
                    :handler (fn [res]
