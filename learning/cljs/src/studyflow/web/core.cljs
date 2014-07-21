@@ -95,14 +95,17 @@
                                                         history-link)}
                                          "=> Vragen"))]))
                (if-let [section (get-in cursor [:view :section section-id :data])]
-                 (let [text (get-in section [:subsections-by-level :1-star])]
-                   [(dom/div #js {:className "col-md-8 panel panel-default"}
-                             (pr-str (repeat 100 text)))
+                 (let [subsections (get section :subsections)]
+                   [(apply dom/div #js {:className "col-md-8 panel panel-default"}
+                           (mapcat (fn [{:keys [title text id] :as subsection}]
+                                     [(dom/h3 nil title)
+                                      (dom/div nil
+                                               (pr-str (repeat 100 text)))])
+                                   subsections))
                     (dom/div #js {:className "col-md-4 panel panel-default"}
                              (apply dom/ul nil
-                                    (for [{:keys [title]
-                                           subsection-id :id
-                                           :as subsection} (get-in section [:subsections-by-level :1-star])]
+                                    (for [{:keys [title id]
+                                           :as subsection} subsections]
                                       (dom/li nil title))))])
                  ["Loading section data..."])
 )))))
