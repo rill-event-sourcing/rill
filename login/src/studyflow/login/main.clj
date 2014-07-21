@@ -11,7 +11,7 @@
             [ring.util.response :refer [content-type]]
             [taoensso.carmine :as car]
             [rill.handler :refer [try-command]]
-            [studyflow.login.edu-route-service :refer [get-student-info]]
+            [studyflow.login.edu-route-service :refer [get-student-info check-edu-route-signature]]
             [studyflow.login.edu-route-student :as edu-route-student]
             [clojure.tools.logging :as log]))
 
@@ -83,7 +83,6 @@
       (refresh "/students/sign_in_wait" (* 2 refresh-count))))
 
 
-
 (defroutes actions
   (GET "/" {:keys [user-role params]}
        (if user-role
@@ -96,12 +95,13 @@
           (layout "Studyflow Beta" (render-login email password "Wrong email / password combination"))))
 
   (GET "/students/sign_in"
-       {{:keys [edurouteSessieId signature] :as params} :params
+       {{:keys [edurouteSessieID signature EAN] :as params} :params
         :keys [session event-store edu-route-service authenticate-by-edu-route-id]}
-       (log/info "eduroute login!")
-       (if edurouteSessieId
+       (log/info "eduroute login with params: " params)
+       ;; check if eduroute session has a valid format
+       (if (check-edu-route-signature edu-route-service edurouteSessieID signature)
          ;; check if eduroute session is valid
-         (if-let [{:keys [edu-route-id full-name brin-code] :as edu-route-info} (get-student-info edu-route-service edurouteSessieId signature)]
+         (if-let [{:keys [edu-route-id full-name brin-code] :as edu-route-info} (get-student-info edu-route-service edurouteSessieID)]
            ;; check if we have a registered student with the given edu route id
            (if-let [user (authenticate-by-edu-route-id edu-route-id)]
              ;; succes! happy flow 1: user is an existing student :-)

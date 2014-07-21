@@ -5,7 +5,10 @@
 (deftype EduRouteMockService []
   EduRouteService
 
-  (get-student-info [service edu-route-session-id signature]
+  (check-edu-route-signature [service edu-route-session-id signature]
+    true)
+
+  (get-student-info [service edu-route-session-id]
     {:edu-route-id "1234"
      :full-name "Joost M. Student"
      :brin-code "ABC1234"})
