@@ -19,5 +19,7 @@
 
   :profiles {:dev {:dependencies [[enlive "1.1.5"]
                                   [ring-mock "0.1.5"]]}}
+  
+  :java-source-paths ["src/eduroute" "test/java"]
 
   :main studyflow.login.launcher)

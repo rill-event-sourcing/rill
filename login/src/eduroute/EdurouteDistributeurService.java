@@ -1,5 +1,5 @@
 
-package eduroutenamespace;
+package eduroute;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -21,22 +21,22 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.1
  * 
  */
-@WebServiceClient(name = "EdurouteDistributeurService", targetNamespace = "urn:edurouteNamespace", wsdlLocation = "file:/Users/steven/Downloads/uitgeverAPI.xml")
+@WebServiceClient(name = "EdurouteDistributeurService", targetNamespace = "urn:edurouteNamespace", wsdlLocation = "file:/Users/steven/projects/studyflow/gibbon/login/src/eduroute/uitgeverAPI.wsdl")
 public class EdurouteDistributeurService
     extends Service
 {
 
     private final static URL EDUROUTEDISTRIBUTEURSERVICE_WSDL_LOCATION;
-    private final static Logger logger = Logger.getLogger(eduroutenamespace.EdurouteDistributeurService.class.getName());
+    private final static Logger logger = Logger.getLogger(eduroute.EdurouteDistributeurService.class.getName());
 
     static {
         URL url = null;
         try {
             URL baseUrl;
-            baseUrl = eduroutenamespace.EdurouteDistributeurService.class.getResource(".");
-            url = new URL(baseUrl, "file:/Users/steven/Downloads/uitgeverAPI.xml");
+            baseUrl = eduroute.EdurouteDistributeurService.class.getResource(".");
+            url = new URL(baseUrl, "file:/Users/steven/projects/studyflow/gibbon/login/src/eduroute/uitgeverAPI.wsdl");
         } catch (MalformedURLException e) {
-            logger.warning("Failed to create URL for the wsdl Location: 'file:/Users/steven/Downloads/uitgeverAPI.xml', retrying as a local file");
+            logger.warning("Failed to create URL for the wsdl Location: 'file:/Users/steven/projects/studyflow/gibbon/login/src/eduroute/uitgeverAPI.wsdl', retrying as a local file");
             logger.warning(e.getMessage());
         }
         EDUROUTEDISTRIBUTEURSERVICE_WSDL_LOCATION = url;

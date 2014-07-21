@@ -1,5 +1,5 @@
 
-package eduroutenamespace;
+package eduroute;
 
 import java.math.BigInteger;
 import javax.jws.WebMethod;
