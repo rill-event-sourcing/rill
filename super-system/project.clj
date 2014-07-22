@@ -10,19 +10,21 @@
              {:source-paths ["dev"]
               :resource-paths ["dev/resources"]
               :dependencies
-              [[org.clojure/tools.trace "0.7.5"]
-               [org.clojure/tools.namespace "0.2.5"]
-               ;; :dev :dependencies from checkouts not available in
-               ;; this project but will be reloaded by c.t.n.repl/refresh
-               ;; need to find a way to do this programmatically
-               ;; from learning
-               ;; from login
-               [enlive "1.1.5"]
-               [ring-mock "0.1.5"]
-
-]}})
-
-
-
-
-
+              ~(let [find-dev-deps (fn [project-clj-file]
+                                     (let [conf (->>
+                                                 project-clj-file
+                                                 slurp
+                                                 read-string
+                                                 (drop 3)
+                                                 (partition 2)
+                                                 (map vec)
+                                                 (into {}))]
+                                       (get-in conf [:profiles :dev :dependencies])))
+                     dev-deps (->> (for [f (file-seq (java.io.File. "checkouts"))
+                                         :let [n (.getPath f)]
+                                         :when (.endsWith n "project.clj")]
+                                     (find-dev-deps n))
+                                   (reduce into []))]
+                 (into '[[org.clojure/tools.trace "0.7.5"]
+                         [org.clojure/tools.namespace "0.2.5"]]
+                       dev-deps))}})
