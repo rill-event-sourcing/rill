@@ -5,10 +5,6 @@
             [digest :refer [md5]])
   (:import [eduroute EdurouteDistributeurService KeyPortType]))
 
-(def pre-shared-key "DDF9nh3w45s$Wo1w")
-(def leveranciers-code "studyflow")
-(def controle-code "qW3#f65S")
-
 (defn- make-full-name
   [voornaam tussenvoegsel achternaam]
   (if (and tussenvoegsel
@@ -25,7 +21,7 @@
    :raw-edu-route-response response})
 
 
-(deftype EduRouteProductionService []
+(defrecord EduRouteProductionService [pre-shared-key supplier-code check-code]
   EduRouteService
 
   (check-edu-route-signature [service edu-route-session-id signature]
@@ -44,7 +40,7 @@
           myport (.getMyPort soapie)
           h1 (javax.xml.ws.Holder.)
           h2 (javax.xml.ws.Holder.)
-          result (.sessieLogin myport leveranciers-code controle-code edu-route-session-id h1 h2)]
+          result (.sessieLogin myport supplier-code check-code edu-route-session-id h1 h2)]
       (when (> (.value h1) 0)
         (make-edu-route-student-info (json/read-str (.value h2))))))
 
@@ -57,11 +53,11 @@
           h1 (javax.xml.ws.Holder.)
           h2 (javax.xml.ws.Holder.)
           assu-nr ""
-          result (.getSchoolInfo myport leveranciers-code controle-code assu-nr brin-code h1 h2)]
+          result (.getSchoolInfo myport supplier-code check-code assu-nr brin-code h1 h2)]
       (when (> (.value h1) 0)
         (json/read-str (.value h2))))))
 
 
 (defn edu-route-production-service
-  []
-  (->EduRouteProductionService))
+  [pre-shared-key supplier-code check-code]
+  (->EduRouteProductionService pre-shared-key supplier-code check-code))
