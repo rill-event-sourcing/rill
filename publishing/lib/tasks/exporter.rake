@@ -1,17 +1,31 @@
 namespace :exporter do
   desc "Export learning material to json"
+
   task :export => :environment  do
     require 'json'
-    name = ENV["COURSE_NAME"]
-    unless name
-      warn "Usage: COURSE_NAME=yourname rake exporter:export"
-      exit 1
+    course = Course.first
+    print JSON.pretty_generate(course.to_publishing_format)
+  end
+
+  task :test_export => :environment do
+    require 'json'
+    @published_format = JSON.parse(JSON.pretty_generate(Course.first.to_publishing_format))
+    recursive_delete!(@published_format,"id")
+    @doc_file = JSON.parse(File.read(Rails.root.join('..','learning','test','studyflow','material.json')))
+    recursive_delete!(@doc_file,"id")
+    if @published_format == @doc_file
+      p "Exporter: OK"
+    else
+      abort "The exported file and the versioned control documentation are different!"
     end
-    course = Course.where(name: name).first
-    unless course
-      warn "Course '#{name}' not found!\nCourse can be any of: #{Course.all.map(&:name).join(', ')}"
-      exit 1
+  end
+
+  def recursive_delete!(node, key)
+    if node.is_a?(Array) || node.is_a?(Hash)
+      node.reject! { |e| e == key }
+      node.each do |e|
+        recursive_delete!(e, key)
+      end
     end
-    print JSON.pretty_generate(course.as_json)
   end
 end

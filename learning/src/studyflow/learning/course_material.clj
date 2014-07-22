@@ -7,32 +7,39 @@
 (def RichText s/Str)
 (def PlainText s/Str)
 (def Id s/Uuid)
-(def TextLevel s/Int)
+(def FieldName s/Str)
+
+(def Choice
+  {:value s/Str
+   :correct s/Bool})
+
+(def MultipleChoiceInputField
+  {:name FieldName
+   :choices #{Choice}})
+
+(def LineInputField
+  {:name FieldName
+   :prefix s/Str
+   :suffix s/Str
+   :width s/Int
+   :correct-answers  #{s/Str}})
+
+(def SectionQuestion
+  {:id Id
+   :text RichText
+   :worked-out-answer RichText
+   :line-input-fields #{LineInputField}
+   :multiple-choice-input-fields #{MultipleChoiceInputField}})
 
 (def SubSection
   {:id Id
    :title PlainText
    :text RichText})
 
-(def ContentLevel s/Int)
-
-(def FieldName s/Str)
-
-(def InputField
-  {:name FieldName
-   :correct-answers #{s/Str}})
-
-(def SectionQuestion
-  {:id Id
-   :text RichText
-   :input-fields #{InputField}})
-
 (def Section
   {:id Id
    :title PlainText
-   :subsections-by-level {:1-star [SubSection]
-                          :2-star [SubSection]
-                          :3-star [SubSection]}
+   :subsections [SubSection]
    :questions #{SectionQuestion}})
 
 (def Chapter

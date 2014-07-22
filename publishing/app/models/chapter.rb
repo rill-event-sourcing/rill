@@ -25,11 +25,11 @@ class Chapter < ActiveRecord::Base
     "#{title}"
   end
 
-  def as_json
+  def to_publishing_format
     {
       id: id,
       title: title,
-      sections: sections.active.map(&:as_json)
+      sections: sections.active.map(&:to_publishing_format),
     }
   end
 

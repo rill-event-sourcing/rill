@@ -57,14 +57,14 @@ RSpec.describe QuestionsHelper, :type => :helper do
       expect(helper.line_input_to_html(input)).to match /input/
     end
 
-    it "should return an pre addon field for the input" do
-      input = build(:line_input, pre: 'pre-text')
-      expect(helper.line_input_to_html(input)).to match /pre-text/
+    it "should return a prefix addon field for the input" do
+      input = build(:line_input, prefix: 'prefix-text')
+      expect(helper.line_input_to_html(input)).to match /prefix-text/
     end
 
-    it "should return an post addon field for the input" do
-      input = build(:line_input, pre: 'post-text')
-      expect(helper.line_input_to_html(input)).to match /post-text/
+    it "should return a suffix addon field for the input" do
+      input = build(:line_input, suffix: 'suffix-text')
+      expect(helper.line_input_to_html(input)).to match /suffix-text/
     end
   end
 

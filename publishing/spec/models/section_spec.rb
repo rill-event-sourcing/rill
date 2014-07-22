@@ -64,11 +64,6 @@ RSpec.describe Section, type: :model do
     expect{Section.find_by_uuid(uuid[0,8])}.to raise_error(StudyflowPublishing::ShortUuidDoubleError)
   end
 
-  it "should return a json object" do
-    obj = {id: @section1.id, title: @section1.title, subsections: @section1.subsections.map(&:as_json)}
-    expect(@section1.as_json).to eq obj
-  end
-
   it "should return a full json object" do
     obj = {
       id: @section1.id,

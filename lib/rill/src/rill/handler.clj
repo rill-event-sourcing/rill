@@ -46,9 +46,9 @@
 
 (defn try-command
   [event-store command]
-  (let [[id version & [primary-aggregate & rest-aggregates]] (prepare-aggregates event-store command)
-        expected-version (:expected-version command)]
-    (if (and expected-version (not= version expected-version))
+  (let [[id version & [primary-aggregate & rest-aggregates]] (prepare-aggregates event-store command)]
+    (if (and (contains? command :expected-version)
+             (not= version (:expected-version command)))
       [:out-of-date]
       (if-let [events (apply aggregate/handle-command primary-aggregate command rest-aggregates)]
         (if (commit-events event-store id version events)

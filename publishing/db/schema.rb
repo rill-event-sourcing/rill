@@ -56,16 +56,16 @@ ActiveRecord::Schema.define(version: 20140618145746) do
     t.uuid     "question_id"
     t.string   "type"
     t.integer  "position",    limit: 2
-    t.string   "pre"
-    t.string   "post"
-    t.integer  "width",       limit: 2
+    t.string   "prefix",                default: ""
+    t.string   "suffix",                default: ""
+    t.integer  "width",                 default: 150
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "questions", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
-    t.uuid     "questionable_id"
-    t.string   "questionable_type"
+    t.uuid     "quizzable_id"
+    t.string   "quizzable_type"
     t.text     "text"
     t.text     "worked_out_answer"
     t.datetime "deleted_at"

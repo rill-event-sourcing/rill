@@ -57,9 +57,10 @@
       (prn "Aggregate can't handle event: " event)
       agg)))
 
-(defn apply-events [agg events]
-  (reduce
-   handle-event
-   agg
-   events))
+(defn apply-events [agg aggregate-version events]
+  (-> (reduce
+       handle-event
+       agg
+       events)
+      (assoc :aggregate-version aggregate-version)))
 

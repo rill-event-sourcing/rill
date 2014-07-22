@@ -9,4 +9,6 @@
   (let [[head :as events] (retrieve-events store section-test-id)]
     (when (= ::events/Created (message/type head))
       ;; TODO: Check for student id here...
-      events)))
+      {:events events
+       :aggregate-version (message/number (last events))
+       :aggregate-id section-test-id})))

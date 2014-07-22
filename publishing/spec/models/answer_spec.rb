@@ -32,5 +32,4 @@ RSpec.describe Answer, type: :model do
     expect{Answer.find_by_uuid(uuid[0,8])}.to raise_error(StudyflowPublishing::ShortUuidDoubleError)
   end
 
-
 end

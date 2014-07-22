@@ -34,16 +34,19 @@ commands."
    (clout/handle
     routes/section-test-check-answer
     (fn [{{:keys [section-test-id section-id course-id question-id]} :params body :body}]
-      (let [inputs body]
+      (let [{:keys [expected-version inputs]} body]
         (section-test-commands/check-answer! section-test-id
+                                             expected-version
                                              (uuid section-id)
                                              (uuid course-id)
                                              (uuid question-id)
                                              inputs))))
       (clout/handle
     routes/section-test-next-question
-    (fn [{{:keys [section-test-id section-id course-id]} :params body :body}]
+    (fn [{{:keys [section-test-id section-id course-id]} :params
+          {:keys [expected-version] :as body} :body}]
       (section-test-commands/next-question! section-test-id
+                                            expected-version
                                             (uuid section-id)
                                             (uuid course-id))))))
 

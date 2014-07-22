@@ -2,7 +2,7 @@ class Course < ActiveRecord::Base
   include Trashable, Activateable
 
   has_many :chapters, -> { order(:position) }
-  has_many :questions, as: :questionable
+  has_many :questions, as: :quizzable
 
   validates :name, presence: true, uniqueness: true
 
@@ -20,11 +20,11 @@ class Course < ActiveRecord::Base
     "#{name}"
   end
 
-  def as_json
+  def to_publishing_format
     {
       id: id,
       name: name,
-      chapters: chapters.active.map(&:as_json)
+      chapters: chapters.active.map(&:to_publishing_format)
     }
   end
 end

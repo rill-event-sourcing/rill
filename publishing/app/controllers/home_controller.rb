@@ -10,7 +10,7 @@ class HomeController < ApplicationController
     course = Course.current
     throw Exception.new("Publishing without course selected!") unless course
 
-    course_json = JSON.pretty_generate(course.as_json)
+    course_json = JSON.pretty_generate(course.to_publishing_format)
     url = "http://localhost:3000/api/internal/course/#{ course.id }"
 
     begin

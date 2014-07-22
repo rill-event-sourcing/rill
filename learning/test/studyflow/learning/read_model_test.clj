@@ -14,10 +14,10 @@
 
 (deftest read-model-test
   (testing "Chapters and learning steps can be requested as a tree"
-    (is (= (get-in (model/course-tree (model/get-course model course-id)) [:chapters 1 :sections 2 :title])
-           "Vermenigvuldigen"))
+    (is (= (get-in (model/course-tree (model/get-course model course-id)) [:chapters 0 :sections 1 :title])
+           "Position of the 0"))
 
-    (is (= (set (keys (get-in (model/course-tree (model/get-course model course-id)) [:chapters 1 :sections 2])))
+    (is (= (set (keys (get-in (model/course-tree (model/get-course model course-id)) [:chapters 0 :sections 1])))
            #{:title :id})
         "no subsection data in the course tree")
 
