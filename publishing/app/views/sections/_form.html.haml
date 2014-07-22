@@ -9,20 +9,20 @@
   %div.form-group
     = f.label :title, class: "col-sm-2 control-label"
     %div.col-sm-10
-      = f.text_field :title, size: 20, class: "form-control"
+      = f.text_field :title, size: 20, class: "form-control", tabindex: 1
 
   %div.form-group
     = f.label :description, class: "col-sm-2 control-label"
     %div.col-sm-10
-      = f.text_area :description, cols: 20, rows: 20, class: "form-control"
+      = f.text_area :description, cols: 20, rows: 20, class: "form-control", tabindex: 4
 
   - if @section.id
     %div.form-group
       %div.col-sm-offset-2.col-sm-10
-        = link_to 'cancel', chapter_section_path(@chapter, @section), class: "btn btn-default"
-        = submit_tag('update', class: "btn btn-primary")
+        = link_to 'cancel', chapter_section_path(@chapter, @section), class: "btn btn-default", tabindex: 3
+        = submit_tag('update', class: "btn btn-primary", tabindex: 2)
   - else
     %div.form-group
       %div.col-sm-offset-2.col-sm-10
-        = link_to 'cancel', chapter_path(@chapter), class: "btn btn-default"
-        = submit_tag('save', class: "btn btn-primary")
+        = link_to 'cancel', chapter_path(@chapter), class: "btn btn-default", tabindex: 3
+        = submit_tag('save', class: "btn btn-primary", tabindex: 2)
