@@ -1,5 +1,6 @@
 (ns studyflow.learning.course-material-test
   (:require [studyflow.learning.course-material :as material]
+            [clojure.java.io :as io]
             [clojure.test :refer [is deftest testing]]
             [rill.uuid :refer [new-id]]
             [cheshire.core :as json]
@@ -7,7 +8,7 @@
 
 (defn read-example-json
   []
-  (json/parse-string (slurp "test/studyflow/material.json") key-from-json))
+  (json/parse-string (slurp (io/resource "dev/material.json")) key-from-json))
 
 (deftest parsing-test
   (testing "parsing example json"

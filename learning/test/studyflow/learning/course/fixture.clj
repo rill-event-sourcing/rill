@@ -1,5 +1,6 @@
 (ns studyflow.learning.course.fixture
   (:require [cheshire.core :as json]
+            [clojure.java.io :as io]
             [studyflow.json-tools :refer [key-from-json]]
             [studyflow.learning.course-material :as material]
             [studyflow.learning.course :as course]
@@ -8,7 +9,7 @@
             [rill.aggregate :refer [load-aggregate]]))
 
 (def course-json
-  (json/parse-string (slurp "test/studyflow/material.json") key-from-json))
+  (json/parse-string (slurp (io/resource "dev/material.json")) key-from-json))
 
 (def course-edn
   (material/parse-course-material course-json))

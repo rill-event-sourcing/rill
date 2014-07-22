@@ -3,14 +3,15 @@
             [ring.mock.request :as ring-mock]
             [clout-link.route :as route]
             [studyflow.web.routes :as routes]
-            [clojure.tools.logging :refer [info debug spy]]))
+            [clojure.tools.logging :refer [info debug spy]]
+            [clojure.java.io :as io]))
 
 (defrecord FixturesLoadingComponent [ring-handler]
   Lifecycle
   (start [component]
     (info "Starting fixtures-loading-component")
     (let [handler (:handler ring-handler)
-          materials (slurp "test/studyflow/material.json")
+          materials (slurp (io/resource "dev/material.json"))
           course-id (let [[_ rest] (.split ^String materials ":")
                           [quoted-id] (.split ^String rest ",")
                           [_ id] (.split ^String quoted-id "\"")]
