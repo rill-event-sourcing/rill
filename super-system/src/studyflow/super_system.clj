@@ -3,6 +3,7 @@
             [studyflow.login.system :as login]
             [studyflow.system :as learning]
             [studyflow.system.components.memory-event-store :as memory-event-store]
+            [studyflow.super-system.components.dev-event-fixtures :as dev-event-fixtures]
             [clojure.tools.logging :as log]
             [learning-dev-system]))
 
@@ -28,9 +29,11 @@
         login (-> (login/make-system {:jetty-port 4000})
                   (dissoc :event-store)
                   (namespace-system :login [:event-store]))
-        shared-system {:event-store (component/using
-                                     (memory-event-store/memory-event-store-component)
-                                     [])}]
+        shared-system {:event-store (memory-event-store/memory-event-store-component)
+                       :dev-event-fixtures
+                       (component/using
+                        (dev-event-fixtures/dev-event-fixtures-component)
+                        [:event-store])}]
     (-> shared-system
         (into learning)
         (into login)
