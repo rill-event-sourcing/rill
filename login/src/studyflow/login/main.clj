@@ -10,6 +10,7 @@
             [taoensso.carmine :as car]))
 
 (def app-title "Studyflow")
+(assert (env :studyflow-env) "login requires .lein-env on path")
 (def studyflow-env (keyword (env :studyflow-env)))
 (def publishing-url (studyflow-env (env :publishing-url)))
 (def cookie-domain (studyflow-env (env :cookie-domain)))
