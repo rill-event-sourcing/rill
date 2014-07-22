@@ -5,7 +5,7 @@ class Section < ActiveRecord::Base
   acts_as_list scope: :chapter
 
   has_many :subsections, -> { order(:position) }
-  has_many :questions, as: :questionable
+  has_many :questions, as: :quizzable
 
   validates :chapter, presence: true
   validates :title, presence: true
@@ -26,11 +26,12 @@ class Section < ActiveRecord::Base
     "#{title}"
   end
 
-  def as_json
+  def to_publishing_format
     {
       id: id,
       title: title,
-      subsections: subsections.map(&:as_json)
+      subsections: subsections.map(&:to_publishing_format),
+      questions: questions.active.map(&:to_publishing_format)
     }
   end
 

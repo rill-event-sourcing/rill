@@ -10,5 +10,5 @@
     (when (= ::events/Created (message/type head))
       ;; TODO: Check for student id here...
       {:events events
-       :aggregate-version (:number (last events))
+       :aggregate-version (message/number (last events))
        :aggregate-id section-test-id})))

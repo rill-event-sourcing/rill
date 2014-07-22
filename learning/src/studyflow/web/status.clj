@@ -8,7 +8,7 @@
    :headers {"Content-Type" "text/html"}
    :body (str
           ;; temporary to guide people to the demo page
-          "Course demo at: <a href=\"/course/1f8e2f2b-ed71-4788-8f08-5529949f2188\">/course/1f8e2f2b-ed71-4788-8f08-5529949f2188</a>"
+          "Course demo at: <a href=\"/course/71a2bd12-00b9-46fd-b52c-019ea4d2e3ea\">/course/71a2bd12-00b9-46fd-b52c-019ea4d2e3ea</a>"
           (pr-str r))})
 
 (def status-handler

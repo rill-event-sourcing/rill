@@ -12,7 +12,7 @@
 (deftest test-queries
   (let [tree (q/course-material model course-id)]
     (is (= (:name tree)
-           "Math"))
+           "Counting"))
     (is (vector? (:chapters tree)))
     (is (vector? (-> tree :chapters first :sections)))
     (is (= (set (keys (-> tree :chapters first :sections first)))

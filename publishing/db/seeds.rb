@@ -1,21 +1,21 @@
 # Basic Layout with two courses
 
-math = Course.create(name: 'Counting')
+counting = Course.create(name: 'Counting')
 english = Course.create(name: 'English')
 
 # Two chapters
 
 ## Counting
-positional_system = Chapter.create(title: 'Positional system', description: 'Position matters', course: math)
-basic_operations = Chapter.create(title: 'Basic operations', description: 'Back to basics', course: math)
+positional_system = Chapter.create(title: 'Positional system', active:true, description: 'Position matters', course: counting)
+basic_operations = Chapter.create(title: 'Basic operations', description: 'Back to basics', course: counting)
 
 
 # For each chapter, we put two sections
 
 ## Position system
 
-grouping_by_10 = Section.create(title: 'Grouping by 10', description: '10 by 10', chapter: positional_system)
-position_of_0 = Section.create(title: 'Position of the 0', description: 'at the back or at the front?', chapter: positional_system)
+grouping_by_10 = Section.create(title: 'Grouping by 10', active: true, description: '10 by 10', chapter: positional_system)
+position_of_0 = Section.create(title: 'Position of the 0', active: true, description: 'at the back or at the front?', chapter: positional_system)
 
 ## Basic operations
 addition = Section.create(title: 'Addition', description: '2+2=5 for the majority of values of 2', chapter: basic_operations)
@@ -41,7 +41,7 @@ subtracting_small_numbers = Subsection.create(title: 'Subtracting small numbers'
 subtracting_large_numbers = Subsection.create(title: 'Subtracting medium numbers', text: 'This looks hard enough already', section: subtraction)
 going_negative = Subsection.create(title: 'Going negative', text: 'This looks weird', section: subtraction)
 
-# more to work with
+# more subsections to work with
 
 counting_to_100 = Subsection.create(title: 'Counting to 100', text: '1+1+1+... = 100', section: grouping_by_10)
 summing_up_in_big_groups = Subsection.create(title: 'Summing up in big groups', text: 'Keep adding!', section: grouping_by_10)
@@ -60,17 +60,40 @@ subtracting_smallish_numbers = Subsection.create(title: 'Subtracting smallish nu
 subtracting_largish_numbers = Subsection.create(title: 'Subtracting mediumish numbers', text: 'This looks hard enough already', section: subtraction)
 going_negativish = Subsection.create(title: 'Going negativish', text: 'This looks weird', section: subtraction)
 
+## Add some questions and answers for subsections
 
-## Add some questions and answers
-
-grouping_question_1 = Question.create(text: "Grouping question 1 text", worked_out_answer: "Something something here", questionable: grouping_by_10)
-grouping_question_1_line_input = LineInput.create(question: grouping_question_1)
+grouping_question_1 = Question.create(text: "Grouping question 1 text _INPUT_1_ and of course _INPUT_2_", active: true, worked_out_answer: "Something something here", quizzable: grouping_by_10)
+grouping_question_1_line_input = LineInput.create(question: grouping_question_1, prefix: "pre", suffix: "suf")
 grouping_question_1_line_input_answer = Answer.create(value: "Grouping Question 1 Line input answer value", line_input: grouping_question_1_line_input)
+grouping_question_1_multiple_choice_input = MultipleChoiceInput.create(question: grouping_question_1)
+grouping_question_1_multiple_choice_input_choice1 = Choice.create(multiple_choice_input: grouping_question_1_multiple_choice_input, value: "1", correct: false)
+grouping_question_1_multiple_choice_input_choice2 = Choice.create(multiple_choice_input: grouping_question_1_multiple_choice_input, value: "2", correct: false)
+grouping_question_1_multiple_choice_input_choice3 = Choice.create(multiple_choice_input: grouping_question_1_multiple_choice_input, value: "3", correct: true)
 
-grouping_question_2 = Question.create(text: "Grouping question 2 text", worked_out_answer: "This is supposed to explain", questionable: grouping_by_10)
-grouping_question_2_line_input = LineInput.create(question: grouping_question_2)
-grouping_question_2_line_input_answer = Answer.create(value: "Grouping Question 2 Line input answer value", line_input: grouping_question_2_line_input)
+grouping_question_2 = Question.create(text: "And now, for something completely different _INPUT_2_ and _INPUT_1_", active: true, worked_out_answer: "This is supposed to explain", quizzable: grouping_by_10)
+grouping_question_2_line_input = LineInput.create(question: grouping_question_2, suffix: "ohlala")
+grouping_question_2_line_input_answer = Answer.create(value: "6", line_input: grouping_question_2_line_input)
+grouping_question_2_line_input_answer2 = Answer.create(value: "8", line_input: grouping_question_2_line_input)
+grouping_question_2_multiple_choice_input = MultipleChoiceInput.create(question: grouping_question_2)
+grouping_question_2_multiple_choice_input_choice1 = Choice.create(multiple_choice_input: grouping_question_2_multiple_choice_input, value: "oasdkay", correct: false)
+grouping_question_2_multiple_choice_input_choice2 = Choice.create(multiple_choice_input: grouping_question_2_multiple_choice_input, value: "nsadot really", correct: false)
+grouping_question_2_multiple_choice_input_choice3 = Choice.create(multiple_choice_input: grouping_question_2_multiple_choice_input, value: "notcorrect", correct: true)
 
-grouping_question_3 = Question.create(text: "Grouping question 3 text", worked_out_answer: "Content, more content!", questionable: grouping_by_10)
-grouping_question_3_line_input = LineInput.create(question: grouping_question_3)
+
+grouping_question_3 = Question.create(text: "Grouping question 3 text _INPUT_1_", worked_out_answer: "Content, more content!", quizzable: grouping_by_10)
+grouping_question_3_line_input = LineInput.create(question: grouping_question_3, width: 120)
 grouping_question_3_line_input_answer = Answer.create(value: "Grouping Question 3 Line input answer value", line_input: grouping_question_3_line_input)
+
+## Add some questions to the course for the entry test
+
+# course_question_1 = Question.create(text: "Course question 1 text", active: true, worked_out_answer: "Nice, hheh?", quizzable: counting)
+# course_question_1_line_input = LineInput.create(question: course_question_1, prefix: "prefix", suffix: "suffix", width: 175)
+# course_question_1_line_input_answer = Answer.create(value: "Course 1 Line input answer value", line_input: course_question_1_line_input)
+
+# course_question_2 = Question.create(text: "Course question 2 text", active: true, worked_out_answer: "Nice, eh?", quizzable: counting)
+# course_question_2_line_input = LineInput.create(question: course_question_2, prefix: "Euro", suffix: "px")
+# course_question_2_line_input_answer = Answer.create(value: "Course 2 Line input answer value", line_input: course_question_2_line_input)
+# course_question_1_multiple_choice_input = MultipleChoiceInput.create(question: course_question_1)
+# course_question_1_multiple_choice_input_choice1 = Choice.create(multiple_choice_input: course_question_1_multiple_choice_input, value: "1", correct: false)
+# course_question_1_multiple_choice_input_choice2 = Choice.create(multiple_choice_input: course_question_1_multiple_choice_input, value: "2", correct: false)
+# course_question_1_multiple_choice_input_choice3 = Choice.create(multiple_choice_input: course_question_1_multiple_choice_input, value: "3", correct: true)

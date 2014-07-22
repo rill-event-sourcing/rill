@@ -1,10 +1,9 @@
 class Question < ActiveRecord::Base
   include Trashable, Activateable
 
-  #validates :section, presence: true
   before_save :set_default_text
 
-  belongs_to :questionable, polymorphic: true#, touch: true
+  belongs_to :quizzable, polymorphic: true, touch: true
 
   has_many :inputs, dependent: :destroy
   has_many :line_inputs
@@ -12,7 +11,9 @@ class Question < ActiveRecord::Base
 
   default_scope { order(:text) }
 
+  scope :active, -> { where(active: true) }
   scope :for_short_uuid, ->(id) { where(["SUBSTRING(CAST(id AS VARCHAR), 1, 8) = ?", id]) }
+
   def self.find_by_uuid(id, with_404 = true)
     questions = for_short_uuid(id)
     raise ActiveRecord::RecordNotFound if questions.empty? && with_404
@@ -33,13 +34,15 @@ class Question < ActiveRecord::Base
     self.worked_out_answer ||= ""
   end
 
-  # def as_json
-  #   {
-  #     id: id,
-  #     title: title
-  #   }
-  #
-  # end
+  def to_publishing_format
+    {
+      id: id,
+      text: text,
+      worked_out_answer: worked_out_answer,
+      line_input_fields: line_inputs.map(&:to_publishing_format),
+      multiple_choice_input_fields: multiple_choice_inputs.map(&:to_publishing_format)
+    }
+  end
 
   def as_full_json
     {

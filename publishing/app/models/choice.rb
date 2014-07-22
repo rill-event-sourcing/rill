@@ -10,6 +10,13 @@ class Choice < ActiveRecord::Base
     choices.first
   end
 
+  def to_publishing_format
+    {
+      value: value,
+      correct: correct
+    }
+  end
+
   def to_param
     "#{id[0,8]}"
   end

@@ -34,7 +34,7 @@ RSpec.configure do |config|
   Capybara.javascript_driver = :poltergeist
 
   # Don't forget to set 'page.driver.debug' in feature for debugging
-  # Capybara.javascript_driver = :poltergeist_debug 
+  # Capybara.javascript_driver = :poltergeist_debug
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
