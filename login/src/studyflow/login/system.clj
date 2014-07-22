@@ -8,7 +8,8 @@
             [studyflow.components.event-channel :refer [event-channel-component]]
             [studyflow.components.memory-event-store :refer [memory-event-store-component]]
             [studyflow.components.atom-event-store :refer [atom-event-store-component]]
-            [studyflow.login.edu-route-mock-service :refer [edu-route-mock-service]])
+            [studyflow.login.edu-route-mock-service :refer [edu-route-mock-service]]
+            [studyflow.login.edu-route-production-service :refer [edu-route-production-service]])
   (:import [org.apache.log4j Logger]))
 
 (defrecord CredentialsComponent [event-channel-component]
@@ -61,7 +62,7 @@
      (let [sm (component/system-map
                :jetty (component/using (jetty-component (:jetty-port config)) [:ring-handler])
                :ring-handler (component/using (ring-handler-component) [:credentials-component :event-store :edu-route-service])
-               :edu-route-service (edu-route-mock-service) ;; TODO: get implementation from config
+               :edu-route-service (edu-route-production-service) ;; TODO: get implementation from config
                :credentials-component (component/using (credentials-component) [:event-channel-component])
                :event-channel-component (component/using (event-channel-component) [:event-store])
                :event-store (atom-event-store-component {:uri "http://127.0.0.1:2113" :user "admin" :password "changeit"}))]

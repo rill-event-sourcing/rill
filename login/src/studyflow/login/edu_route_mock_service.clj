@@ -11,9 +11,10 @@
   (get-student-info [service edu-route-session-id]
     {:edu-route-id "1234"
      :full-name "Joost M. Student"
-     :brin-code "ABC1234"})
+     :brin-code "ABC1234"
+     :raw-edu-route-response nil})
 
-  (get-school-info [service assu-nr brin-code]
+  (get-school-info [service brin-code]
     {
      "ASSUnr" "44544"
      "Naam" "RSG Magister Alvinus"
