@@ -9,15 +9,15 @@
       %table.table.table-bordered
         %thead
           %tr
-            %th.col-md-1 nr
-            %th.col-md-9 Title
+            %th.col-md-2 Name
+            %th.col-md-8 Title
             %th.col-md-1 Published
             %th.col-md-1 Remove
 
         %tbody
-          - @section.questions.each_with_index do |question, index|
+          - @section.questions.each do |question|
             %tr{class: question.active? ? "success" : "danger"}
-              %td= index + 1
+              %td= question.name
               %td= link_to question.to_s.truncate(90, omission: '...'), edit_chapter_section_question_path(@chapter, @section, question)
               %td
                 - if question.active?
