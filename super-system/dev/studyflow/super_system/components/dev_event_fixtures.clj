@@ -17,7 +17,7 @@
           events [{message/type :studyflow.school-administration.student.events/Created
                    :student-id student-id
                    :full-name "Dev Student One"}
-                  {message/type :studyflow.school-administration.student.events/CredentialsAdded
+                  {message/type :studyflow.events.student/CredentialsAdded
                    :student-id student-id
                    :credentials {:email "dev-student-one@studyflow.nl"
                                  :encrypted-password (bcrypt/encrypt "student")}}]]
