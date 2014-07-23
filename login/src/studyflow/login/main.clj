@@ -7,6 +7,7 @@
             [hiccup.page :refer [html5 include-css]]
             [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
             [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
+            [studyflow.components.session-store :refer [create-session delete-session! get-user-id get-role]]
             [taoensso.carmine :as car]))
 
 (def app-title "Studyflow")
@@ -17,7 +18,6 @@
 (def session-max-age (studyflow-env (env :session-max-age)))
 
 
-(def redis  {:pool {} :spec {}})
 
 (def default-redirect-path {"editor" publishing-url
                             "tester" "https://staging.studyflow.nl"})
@@ -75,30 +75,6 @@
 
   (not-found "Nothing here"))
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Session management with redis
-
-(defmacro wcar*  [& body] `(car/wcar redis ~@body))
-
-(defn create-session [uuid role]
-  (let [session-uuid (str (java.util.UUID/randomUUID))]
-    (wcar* (car/set session-uuid uuid)
-           (car/expire session-uuid session-max-age)
-           (car/set uuid role)
-           (car/expire uuid session-max-age))
-    session-uuid))
-
-(defn delete-session! [session-uuid]
-  (let [user-uuid (wcar* (car/get session-uuid))]
-    (wcar* (car/del session-uuid)
-           (car/del user-uuid))))
-
-(defn role-from-session [session-uuid]
-  (let [user-uuid (wcar* (car/get session-uuid))]
-    (wcar* (car/get user-uuid))))
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Cookie management
 
@@ -119,26 +95,24 @@
 ;; Wiring
 
 (defn wrap-login-user [app]
-  (fn [req]
+  (fn [{:keys [session-store] :as req}]
     (let [resp (app req)]
       (if-let [user (:login-user resp)]
-        (assoc resp :cookies (make-uuid-cookie (create-session (:uuid user) (:role user))))
+        (assoc resp :cookies (make-uuid-cookie (create-session session-store (:uuid user) (:role user) session-max-age)))
         resp))))
 
 (defn wrap-logout-user [app]
-  (fn [req]
+  (fn [{:keys [session-store] :as req}]
     (let [resp (app req)]
       (if (:logout-user resp)
         (do
-          (delete-session! (get-uuid-from-cookies (:cookies req)))
+          (delete-session! session-store (get-uuid-from-cookies (:cookies req)))
           (assoc resp :cookies (clear-uuid-cookie)))
         resp))))
 
 (defn wrap-user-role [app]
-  (fn [req]
-    (let [user-role (-> (:cookies req)
-                        get-uuid-from-cookies
-                        role-from-session)]
+  (fn [{:keys [session-store] :as req}]
+    (let [user-role (get-role session-store (get-uuid-from-cookies (:cookies req)))]
       (app (assoc req :user-role user-role)))))
 
 (defn wrap-redirect-for-role [app]
