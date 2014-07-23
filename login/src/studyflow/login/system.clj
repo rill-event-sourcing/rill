@@ -43,28 +43,11 @@
 (defn ring-handler-component []
   (map->RingHandlerComponent {}))
 
-(defonce system nil)
-
-(defn init
-  ([config]
-     (let [sm (component/system-map
-               :jetty (component/using (jetty-component (:jetty-port config)) [:ring-handler])
-               :ring-handler (component/using (ring-handler-component) [:credentials])
-               :credentials (component/using (credentials-component) [:event-channel])
-               :event-channel (component/using (event-channel-component) [:event-store])
-               :event-store (component/using (memory-event-store-component) []))]
-       (alter-var-root (var system) (constantly sm))))
-  ([]
-     (init {:jetty-port 4000})))
-
-(defn start []
-  (alter-var-root (var system) component/start))
-
-(defn stop []
-  (alter-var-root (var system) component/stop))
-
-(defn reset []
-  (stop)
-  (init)
-  (start))
-
+(defn make-system
+  [config]
+  (component/system-map
+   :jetty (component/using (jetty-component (:jetty-port config)) [:ring-handler])
+   :ring-handler (component/using (ring-handler-component) [:credentials])
+   :credentials (component/using (credentials-component) [:event-channel])
+   :event-channel (component/using (event-channel-component) [:event-store])
+   :event-store (component/using (memory-event-store-component) [])))

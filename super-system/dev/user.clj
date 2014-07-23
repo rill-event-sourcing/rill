@@ -1,11 +1,10 @@
 (ns user
-  (:require [clojure.tools.logging :refer [info debug spy]]
+  (:require [clojure.tools.logging :as log]
+            [studyflow.super-system :as super-system]
             [com.stuartsierra.component :as component]
-            [clojure.test :as test :refer [run-all-tests]]
-            [clojure.tools.trace :refer [trace trace-ns]]
-            [clojure.tools.namespace.repl :refer (refresh)]
-            [learning-dev-system :as learning-dev-system])
+            [clojure.tools.namespace.repl :refer [refresh]])
   (:import [org.apache.log4j Logger]))
+
 
 ;; from cascalog playground for swank/slime
 (defn bootstrap-emacs []
@@ -13,12 +12,12 @@
     (doto (. logger (getAppender "stdout"))
       (.setWriter *out*))
     (alter-var-root #'clojure.test/*test-out* (constantly *out*))
-    (info "Logging to repl")))
+    (log/info "Logging to repl")))
 
 (defonce system nil)
 
 (defn init []
-  (alter-var-root #'system (constantly (learning-dev-system/dev-system learning-dev-system/dev-config))))
+  (alter-var-root #'system (constantly (super-system/make-system {}))))
 
 (defn start []
   (bootstrap-emacs)
@@ -28,8 +27,8 @@
 (defn stop []
   (alter-var-root #'system
                   (fn [s]
-                    (info "stopping system")
-                    (info "system is" s)
+                    (log/info "stopping system")
+                    (log/info "system is" s)
                     (when s
                       (component/stop s)))))
 
@@ -41,3 +40,9 @@
 (defn reset []
   (stop)
   (refresh :after 'user/go))
+
+
+
+
+
+

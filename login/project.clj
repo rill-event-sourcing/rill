@@ -11,11 +11,16 @@
                  [org.clojure/clojure "1.6.0"]
                  [org.clojure/core.async "0.1.303.0-886421-alpha"]
                  [org.clojure/tools.logging "0.3.0"]
+                 [org.slf4j/slf4j-log4j12 "1.7.5"]
                  [rill "0.1.0-SNAPSHOT"]
                  [ring/ring-defaults "0.1.0"]
                  [studyflow/components "0.1.0-SNAPSHOT"]]
 
-  :profiles {:dev {:dependencies [[enlive "1.1.5"]
-                                  [ring-mock "0.1.5"]]}}
-
-  :main studyflow.login.launcher)
+  :profiles {:dev {:source-paths ["dev"]
+                   :resource-paths ["dev/resources"]
+                   :dependencies [[org.clojure/tools.trace "0.7.5"]
+                                  [org.clojure/tools.namespace "0.2.5"]
+                                  [enlive "1.1.5"]
+                                  [ring-mock "0.1.5"]]}
+             :uberjar {:aot [studyflow.login.launcher]
+                       :main studyflow.login.launcher}})
