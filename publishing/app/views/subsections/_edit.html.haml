@@ -5,7 +5,6 @@
         %span.btn.btn-default.glyphicon.glyphicon-minus.delete-subsection{data: {item: "subsection-panel-#{ @subsection.id }", url: chapter_section_subsection_path(@chapter, @section, @subsection) } }
       %h3.panel-title
         = hidden_field_tag "subsections[#{@index}][id]", @subsection.id
-        = hidden_field_tag "subsections[#{@index}][position]", @subsection.position
         = text_field_tag   "subsections[#{@index}][title]", @subsection.title
       %small= @subsection.id[0,8]
 
