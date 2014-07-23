@@ -17,5 +17,5 @@
                       {:status 200
                        :headers {"Content-Type" "text/html"}
                        :body (apply str (course-frame (get req :student)))}))
-      (wrap-resource "/")
+      (wrap-resource "learning/public")
       file-info/wrap-file-info))
