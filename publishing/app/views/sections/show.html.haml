@@ -9,11 +9,11 @@
 
   %div.row
     %div.col-md-4.col-md-offset-2
-      =link_to 'Edit Subsections', chapter_section_subsections_path(@chapter, @section), class: "btn btn-primary", style: "margin:20px auto; width:100%;"
+      = link_to 'Edit Subsections', chapter_section_subsections_path(@chapter, @section), class: "btn btn-primary", style: "margin:20px auto; width:100%;"
       %table.table.table-striped.table-bordered
         %thead
           %tr
-            %th
+            %th{colspan: 2}
               Subsections
               %span.badge= @section.subsections.length
               %span.pull-right
@@ -22,22 +22,26 @@
                 - else
                   not published
         %tbody
-          - @section.subsections.all.each do |subsection|
+          - @section.subsections.each_with_index do |subsection, index|
             %tr{class: @section.active? ? "success" : "danger"}
+              %td= index + 1
               %td= subsection.to_s.empty? ? "(empty)" : subsection.to_s
 
 
     %div.col-md-4
-      =link_to 'Manage Questions', chapter_section_questions_path(@chapter, @section), class: "btn btn-primary", style: "margin:20px auto; width:100%;"
+      = link_to 'Manage Questions', chapter_section_questions_path(@chapter, @section), class: "btn btn-primary", style: "margin:20px auto; width:100%;"
       %table.table.table-striped.table-bordered
         %thead
           %tr
             %th
+              Name
+            %th
               Questions
               %span.badge= @section.questions.length
               %span.pull-right
-                ="#{@section.questions.where(active: true).length} / #{@section.questions.length} published"
+                ="#{@section.questions.active.length} / #{@section.questions.length} published"
         %tbody
-          - @section.questions.all.each do |question|
+          - @section.questions.each do |question|
             %tr{class: question.active? ? "success" : "danger", id: "section-row"}
-              %td= question.to_s.truncate(50, omission: '...')
+              %td= question.name
+              %td= question.to_s.truncate(40, omission: '...')

@@ -9,6 +9,11 @@
         %span#edit-time{style: "min-height:30px;"}
           Saved on:
           = l @section.updated_at, format: :long
+  %div.row{style: "padding-bottom: 10px;"}
+    %div.col-md-12
+      %div.input-group
+        %span.input-group-addon Name:
+        = text_field :question, :name, style: "width: 100px;", class: "form-control", maxlength: 5
 
   %div.row
     %div.col-md-6
@@ -23,7 +28,7 @@
           %span.btn.btn-default#add-input{data: { url: inputs_path(question_id: @question.to_param) } } Add
 
         %div.panel-body#inputs-list
-          -@question.inputs.each do |input|
+          - @question.inputs.each do |input|
             = render partial: 'inputs/edit', locals: {input: input}
 
       %div.panel.panel-default
