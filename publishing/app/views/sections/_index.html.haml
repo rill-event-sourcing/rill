@@ -1,15 +1,16 @@
 %table.table.table-bordered
   %thead
     %tr
-      %th.col-md-3  Section title
+      %th.col-md-3{colspan: 2}  Section title
       %th.col-md-6  Section description
       %th.col-md-1  Order
       %th.col-md-1  Published
       %th.col-md-1  Actions
 
   %tbody
-    - @chapter.sections.each do |section|
+    - @chapter.sections.each_with_index do |section, index|
       %tr{class: section.active? ? "success" : "danger"}
+        %td= index + 1
         %td= link_to section.title, [@chapter,section]
         %td= section.description
         %td

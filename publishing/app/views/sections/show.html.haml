@@ -13,7 +13,7 @@
       %table.table.table-striped.table-bordered
         %thead
           %tr
-            %th
+            %th{colspan: 2}
               Subsections
               %span.badge= @section.subsections.length
               %span.pull-right
@@ -22,8 +22,9 @@
                 - else
                   not published
         %tbody
-          - @section.subsections.all.each do |subsection|
+          - @section.subsections.each_with_index do |subsection, index|
             %tr{class: @section.active? ? "success" : "danger"}
+              %td= index + 1
               %td= subsection.to_s.empty? ? "(empty)" : subsection.to_s
 
 
@@ -32,12 +33,13 @@
       %table.table.table-striped.table-bordered
         %thead
           %tr
-            %th
+            %th{colspan: 2}
               Questions
               %span.badge= @section.questions.length
               %span.pull-right
-                ="#{@section.questions.where(active: true).length} / #{@section.questions.length} published"
+                ="#{@section.questions.active.length} / #{@section.questions.length} published"
         %tbody
-          - @section.questions.all.each do |question|
+          - @section.questions.all.each_with_index do |question, index|
             %tr{class: question.active? ? "success" : "danger", id: "section-row"}
+              %td= index + 1
               %td= question.to_s.truncate(50, omission: '...')

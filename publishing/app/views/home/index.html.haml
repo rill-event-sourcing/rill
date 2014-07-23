@@ -31,17 +31,18 @@
           %table.table.table-bordered
             %thead
               %tr
-                %th
+                %th{colspan: 2}
                   Section
                   %span.pull-right
-                    = "#{chapter.sections.where(active: true).length} / #{chapter.sections.length} published"
+                    = "#{chapter.sections.active.length} / #{chapter.sections.length} published"
                 %th
                   %span.pull-right # subsections
                 %th
                   %span.pull-right # questions
             %tbody
-              - chapter.sections.each do |section|
+              - chapter.sections.each_with_index do |section, index|
                 %tr{class: section.active? ? "success" : "danger", id: "section-row"}
+                  %td= index + 1
                   %td
                     = link_to section.title, [chapter, section]
                   %td
