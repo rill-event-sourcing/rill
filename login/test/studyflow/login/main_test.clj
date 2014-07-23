@@ -111,35 +111,6 @@
       (let [resp (handler {:redirect-for-role role, :cookies {"studyflow_redir_to" {:value "thispath"}}})]
         (is (= "thispath" ((:headers resp) "Location")))))))
 
-#_(deftest create-session-test
-  (let [uuid "testuuid"
-        role "testrole"
-        session-uuid (create-session uuid role)
-        user-uuid (wcar* (car/get session-uuid))
-        ttl-session (wcar* (car/ttl session-uuid))
-        ttl-user (wcar* (car/ttl user-uuid))]
-    (is (not (= session-uuid (create-session uuid role))))
-    (is session-uuid)
-    (is user-uuid)
-    (is (= uuid user-uuid))
-    (is (and (< (- session-max-age 3) ttl-session)
-             (>= session-max-age ttl-session)))
-    (is (and (< (- session-max-age 3) ttl-user)
-             (>= session-max-age ttl-user)))))
-
-#_(deftest delete-session-test
-  (let [uuid "testuuid"
-        role "testrole"
-        session-uuid (create-session uuid role)]
-    (delete-session! session-uuid)
-    (is (not (wcar* (car/get session-uuid))))
-    (is (not (wcar* (car/get uuid))))))
-
-#_(deftest role-from-session-test
-  (let [uuid "testuuid"
-        role "testrole"
-        session-uuid (create-session uuid role)]
-    (is (= role (role-from-session session-uuid)))))
 
 (deftest get-uuid-from-cookies-test
   (is (= "something"
