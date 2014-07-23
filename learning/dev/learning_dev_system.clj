@@ -12,7 +12,7 @@
   (merge (sys/prod-system dev-options)
          {:ring-handler (component/using
                          (dev-ring-handler-component)
-                         [:event-store :read-model])
+                         [:event-store :read-model :session-store])
           :event-store (component/using
                         (memory-event-store-component)
                         [])

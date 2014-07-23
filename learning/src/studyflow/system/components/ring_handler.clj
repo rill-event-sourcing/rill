@@ -3,11 +3,11 @@
             [studyflow.web :as web]
             [clojure.tools.logging :refer [info debug spy]]))
 
-(defrecord RingHandlerComponent [event-store read-model]
+(defrecord RingHandlerComponent [event-store read-model session-store]
   Lifecycle
   (start [component]
     (info "Starting handler")
-    (assoc component :handler (web/make-request-handler (:store event-store) (:read-model read-model))))
+    (assoc component :handler (web/make-request-handler (:store event-store) (:read-model read-model)) (:session-store session-store)))
   (stop [component]
     (info "Stopping handler")
     component))

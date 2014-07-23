@@ -6,6 +6,7 @@
             [studyflow.system.components.jetty :refer [jetty-component]]
             [studyflow.system.components.read-model :refer [read-model-component]]
             [studyflow.system.components.ring-handler :refer [ring-handler-component]]
+            [studyflow.system.components.session-store :refer [redis-session-store]]
             [clojure.tools.logging :refer [info debug spy]]))
 
 (defn prod-system [config-options]
@@ -13,9 +14,10 @@
   (let [{:keys [port event-store-config]} config-options]
     (component/system-map
      :config-options config-options
+     :session-store {:session-store (redis-session-store {:some :config})}
      :ring-handler (component/using
                     (ring-handler-component)
-                    [:event-store :read-model])
+                    [:event-store :read-model :session-store])
      :jetty (component/using
              (jetty-component port)
              [:ring-handler])
