@@ -8,5 +8,6 @@ class StudyflowAuth
   def self.logged_in?(user)
     throw "No connection to Redis!" unless redis
     redis.get(user)
+    redis.expire(user, 21800)
   end
 end

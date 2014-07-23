@@ -3,7 +3,7 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
-  # before_action :check_authentication, unless: -> { Rails.env == 'test' }
+  before_action :check_authentication, unless: -> { Rails.env == 'test' || Rails.env == 'staging' }
   before_action :set_my_course
   after_action  :unset_my_course
 
@@ -29,6 +29,7 @@ private
   end
 
   def check_authentication
+ StudyflowAuth.logged_in?('uuid')
     uuid = cookies["studyflow_session"]
     if uuid && StudyflowAuth.logged_in?(uuid)
       return true
