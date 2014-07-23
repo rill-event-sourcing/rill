@@ -4,6 +4,7 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [clj-http "0.9.1"]
                  [cheshire "5.3.1"]
+                 [com.taoensso/carmine "2.6.2"]
                  [org.clojure/tools.logging "0.2.6"]
                  [environ "0.5.0"]
                  [prismatic/schema "0.2.2"]
