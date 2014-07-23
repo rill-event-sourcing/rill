@@ -1,5 +1,6 @@
 (ns studyflow.login.main
-  (:require [clojure.string :as str]
+  (:require [clojure.tools.logging :as log]
+            [clojure.string :as str]
             [compojure.core :refer [DELETE GET POST defroutes]]
             [compojure.route :refer [not-found]]
             [environ.core :refer [env]]
@@ -177,7 +178,8 @@
           resp (app req)]
       (if-let [user-role (:redirect-for-role resp)]
         (redirect-to (or (:value (cookies "studyflow_redir_to"))
-                         (default-redirect-path user-role)))
+                         (default-redirect-path user-role)
+                         "/"))
         resp))))
 
 (def studyflow-site-defaults
