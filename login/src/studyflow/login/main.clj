@@ -14,12 +14,12 @@
 (assert (env :studyflow-env) "login requires .lein-env on path")
 (def studyflow-env (keyword (env :studyflow-env)))
 (def publishing-url (studyflow-env (env :publishing-url)))
+(def learning-url (studyflow-env (env :learning-url)))
 (def cookie-domain (studyflow-env (env :cookie-domain)))
 (def session-max-age (studyflow-env (env :session-max-age)))
 
-
-
 (def default-redirect-path {"editor" publishing-url
+                            "student" learning-url
                             "tester" "https://staging.studyflow.nl"})
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -78,17 +78,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Cookie management
 
-(defn get-uuid-from-cookies [cookies]
+(defn get-session-id-from-cookies [cookies]
   (:value (get cookies "studyflow_session")))
 
-(defn make-uuid-cookie [uuid & [max-age]]
+(defn make-session-cookie [session-id & [max-age]]
   (let [max-age (or max-age session-max-age)]
     (if cookie-domain
-      {:studyflow_session {:value uuid :max-age max-age :domain cookie-domain}}
-      {:studyflow_session {:value uuid :max-age max-age}})))
+      {:studyflow_session {:value session-id :max-age max-age :domain cookie-domain}}
+      {:studyflow_session {:value session-id :max-age max-age}})))
 
-(defn clear-uuid-cookie []
-  (make-uuid-cookie "" -1))
+(defn clear-session-cookie []
+  (make-session-cookie "" -1))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -98,7 +98,7 @@
   (fn [{:keys [session-store] :as req}]
     (let [resp (app req)]
       (if-let [user (:login-user resp)]
-        (assoc resp :cookies (make-uuid-cookie (create-session session-store (:uuid user) (:role user) session-max-age)))
+        (assoc resp :cookies (make-session-cookie (create-session session-store (:uuid user) (:role user) session-max-age)))
         resp))))
 
 (defn wrap-logout-user [app]
@@ -106,13 +106,13 @@
     (let [resp (app req)]
       (if (:logout-user resp)
         (do
-          (delete-session! session-store (get-uuid-from-cookies (:cookies req)))
-          (assoc resp :cookies (clear-uuid-cookie)))
+          (delete-session! session-store (get-session-id-from-cookies (:cookies req)))
+          (assoc resp :cookies (clear-session-cookie)))
         resp))))
 
 (defn wrap-user-role [app]
   (fn [{:keys [session-store] :as req}]
-    (let [user-role (get-role session-store (get-uuid-from-cookies (:cookies req)))]
+    (let [user-role (get-role session-store (get-session-id-from-cookies (:cookies req)))]
       (app (assoc req :user-role user-role)))))
 
 (defn wrap-redirect-for-role [app]
