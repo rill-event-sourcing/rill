@@ -60,10 +60,6 @@ refreshPreview = ->
   height = document.getElementById('preview').contentWindow.document.body.scrollHeight
   $('#preview').css('height', height)
 
-autoResize = ->
-  $('.auto-resize').unbind()
-  $('.auto-resize').autosize()
-
 ################################################################################
 
 # on load run:
@@ -72,6 +68,5 @@ $ ->
   bindDeleteButtons()
   bindSaveButton()
   initializeAutoSave()
-  autoResize()
 
 ################################################################################

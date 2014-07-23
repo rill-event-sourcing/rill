@@ -140,7 +140,6 @@ refreshPreview = ->
   height = document.getElementById('preview').contentWindow.document.body.scrollHeight
   $('#preview').css('height', height)
 
-
 ################################################################################
 
 # on load run:

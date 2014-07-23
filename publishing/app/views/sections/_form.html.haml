@@ -14,7 +14,7 @@
   %div.form-group
     = f.label :description, class: "col-sm-2 control-label"
     %div.col-sm-10
-      = f.text_area :description, cols: 20, rows: 20, class: "form-control", tabindex: 4
+      = f.text_area :description, cols: 20, rows: 4, class: "form-control auto-resize", tabindex: 4
 
   - if @section.id
     %div.form-group
