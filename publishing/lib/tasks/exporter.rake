@@ -11,7 +11,7 @@ namespace :exporter do
     require 'json'
     @published_format = JSON.parse(JSON.pretty_generate(Course.first.to_publishing_format))
     recursive_delete!(@published_format,"id")
-    @doc_file = JSON.parse(File.read(Rails.root.join('..','learning','test','studyflow','material.json')))
+    @doc_file = JSON.parse(File.read(Rails.root.join('..','learning','dev','resources','dev','material.json')))
     recursive_delete!(@doc_file,"id")
     if @published_format == @doc_file
       p "Exporter: OK"
