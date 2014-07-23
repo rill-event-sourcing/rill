@@ -7,19 +7,22 @@
 (defn redirect-login [req]
   {:status 302
    :headers {"Location" "http://localhost:4000/"}
-   :cookies {"studyflow_redir_to" {:value (str "http://localhost:3000" (get req :uri))}}
+   :cookies {"studyflow_redir_to" {:value (str "http://localhost:3000" (get req :uri))}
+             "studyflow_session" {:value ""
+                                  :path "/"
+                                  :max-age -1}}
    :body nil})
 
 (defn wrap-student [handler read-model]
   (fn [req]
     (if-let [student-id (get req :student-id)]
       (if-let [student (read-model/get-student @read-model student-id)]
-        {:status 200
-         :body (str "Lookup student-id" student-id " read-model " @read-model " found: " student)}
+        (handler (-> req
+                     (assoc :student student)
+                     (dissoc :student-id)))
         (do
           (log/warn "Can't find student through session, perhaps re-logging in will work")
-          (-> (redirect-login req)
-              (assoc-in [:cookies "studyflow_session"] {:value "" :max-age 0}))))
+          (redirect-login req)))
       req)))
 
 (defn wrap-student-id [handler session-store]

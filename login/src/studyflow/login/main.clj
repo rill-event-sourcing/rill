@@ -177,15 +177,14 @@
     (let [cookies (:cookies req)
           resp (app req)]
       (if-let [user-role (:redirect-for-role resp)]
-        (-> (redirect-to (or (:value (cookies "studyflow_redir_to"))
-                             (default-redirect-path user-role)
-                             "/"))
-            (assoc-in [:cookies "studyflow_redir_to"] {:value "" :max-age 0}))
+        (redirect-to (or (:value (cookies "studyflow_redir_to"))
+                         (default-redirect-path user-role)
+                         "/"))
         resp))))
 
 (def studyflow-site-defaults
   (-> site-defaults ;; secure-site-defaults
-      (assoc-in [:session :cookie-name] "studyflow_login_session")
+      (assoc-in [:session :cookie-name] "studyflow_session")
       (assoc-in [:security :anti-forgery] false)))
 
 (def app
