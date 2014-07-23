@@ -7,6 +7,7 @@
                  [com.taoensso/carmine "2.6.2"]
                  [org.clojure/tools.logging "0.2.6"]
                  [environ "0.5.0"]
+                 [enlive "1.1.5"]
                  [prismatic/schema "0.2.2"]
                  [ring/ring-json "0.3.1"]
                  [compojure "1.1.8"]
