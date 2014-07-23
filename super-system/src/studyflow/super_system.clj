@@ -4,6 +4,7 @@
             [studyflow.components.memory-event-store :as memory-event-store]
             [studyflow.super-system.components.dev-event-fixtures :as dev-event-fixtures]
             [clojure.tools.logging :as log]
+            [studyflow.school-administration.system :as school-administration]
             [learning-dev-system]
             [login-dev-system]))
 
@@ -33,6 +34,9 @@
                                                  :cookie-domain nil})
                   (dissoc :event-store :session-store)
                   (namespace-system :login [:event-store :session-store]))
+        school-administration (-> (school-administration/prod-system {:port 5000})
+                                  (dissoc :event-store)
+                                  (namespace-system :school-administration [:event-store]))
         shared-system {:event-store (memory-event-store/memory-event-store-component)
                        :session-store (simple-session-store)
                        :dev-event-fixtures
@@ -42,6 +46,7 @@
     (-> shared-system
         (into learning)
         (into login)
+        (into school-administration)
         (->>
          (mapcat identity)
          (apply system-map)))))

@@ -22,7 +22,6 @@
           (redirect "/list-students")
           ((compojure/routes
             (command/commands-app event-store)
-            (query/queries-app read-model)
-            (not-found "not found..")) req)))
+            (query/queries-app read-model)) req)))
       wrap-exception-catcher
-      (wrap-defaults site-defaults)))
+      (wrap-defaults (assoc-in site-defaults [:static :resources] "school_administration/public"))))
