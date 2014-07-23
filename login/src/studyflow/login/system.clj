@@ -14,7 +14,7 @@
 
   (start [component]
     (log/info "Starting credentials")
-    (let [store (atom {"editor@studyflow.nl" {:uuid "editor-id" :role "editor" :encrypted-password (bcrypt/encrypt "editor")}})]
+    (let [store (atom {"editor@studyflow.nl" {:user-id "editor-id" :user-role "editor" :encrypted-password (bcrypt/encrypt "editor")}})]
       (credentials/listen! (:channel event-channel) store)
       (assoc component
         :credentials-store store

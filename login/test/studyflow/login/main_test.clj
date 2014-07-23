@@ -65,15 +65,13 @@
       (is (= "/" ((:headers resp) "Location")))
       (is (= true (:logout-user resp))))))
 
-
-
 (deftest wrap-login-user-test
   (let [handler (wrap-login-user identity)]
     (is (= {} (handler {})))
     (let [user-id "test-user-id"
           user-role "test-role"
           session-store (temp-session-store)
-          resp (handler {:login-user {:uuid user-id, :role user-role} :session-store session-store})
+          resp (handler {:login-user {:user-id user-id, :user-role user-role} :session-store session-store})
           cookies (:cookies resp)]
       (is cookies)
       (let [session-id (:value (:studyflow_session cookies))]
@@ -116,7 +114,7 @@
   (is (= "something"
          (get-session-id-from-cookies {"studyflow_session" {:value "something"}}))))
 
-(deftest make-uuid-cookie-test
+(deftest make-session-cookie-test
   (let [session-id "test-session-id"]
     (testing "without max-age"
       (let [cookie (:studyflow_session (make-session-cookie session-id))]
@@ -127,7 +125,7 @@
         (is (= session-id (:value cookie)))
         (is (= 123 (:max-age cookie)))))))
 
-(deftest clear-uuid-cookie-test
+(deftest clear-session-cookie-test
   (let [cookie (:studyflow_session (clear-session-cookie))]
     (is (= "" (:value cookie)))
     (is (= -1 (:max-age cookie)))))

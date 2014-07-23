@@ -98,7 +98,7 @@
   (fn [{:keys [session-store] :as req}]
     (let [resp (app req)]
       (if-let [user (:login-user resp)]
-        (assoc resp :cookies (make-session-cookie (create-session session-store (:uuid user) (:role user) session-max-age)))
+        (assoc resp :cookies (make-session-cookie (create-session session-store (:user-id user) (:user-role user) session-max-age)))
         resp))))
 
 (defn wrap-logout-user [app]

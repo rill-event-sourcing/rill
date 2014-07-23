@@ -17,8 +17,8 @@
   (is (= {}
          (handle-event {}
                        {message/type :some-other-event})))
-  (is (= {"email" {:uuid "id"
-                   :role "student"
+  (is (= {"email" {:user-id "id"
+                   :user-role "student"
                    :encrypted-password "token"}}
          (handle-event {}
                        (student-events/credentials-added "id" "email" "token"))))
@@ -27,7 +27,7 @@
                (handle-event (student-events/credentials-changed "id" "email" "newpassword")))
         user (get db "email")]
     (is (= "newpassword" (:encrypted-password user)))
-    (is (= "id" (:uuid user)))))
+    (is (= "id" (:user-id user)))))
 
 
 
