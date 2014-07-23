@@ -10,7 +10,7 @@
       %small= @subsection.id[0,8]
 
     %div.panel-body
-      = text_area_tag "subsections[#{@index}][text]", @subsection.text, style: 'width: 100%; min-height: 100px;', class: "form-control"
+      = text_area_tag "subsections[#{@index}][text]", @subsection.text, style: 'width: 100%; min-height: 100px;', class: "form-control auto-resize"
 
     %div.panel-footer.clearfix
       %div.pull-right

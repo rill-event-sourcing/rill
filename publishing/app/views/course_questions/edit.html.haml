@@ -12,7 +12,7 @@
 
   %div.row
     %div.col-md-6
-      = text_area :question, :text, style: "width: 100%", rows: 20, class: "form-control"
+      = text_area :question, :text, style: "width: 100%", rows: 4, class: "form-control auto-resize"
 
       %div.panel.panel-default
         %div.panel-heading
@@ -29,7 +29,7 @@
       %div.panel.panel-default
         %div.panel-heading Worked out answer
         %div.panel-body
-          = text_area :question, :worked_out_answer, style: "width:100%;", rows: 20, class: "form-control"
+          = text_area :question, :worked_out_answer, style: "width:100%;", rows: 4, class: "form-control auto-resize"
 
     %div.col-md-6
       - url = preview_question_path(@question)

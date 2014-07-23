@@ -14,3 +14,10 @@
 #= require jquery_ujs
 #= require bootstrap
 #= require zeroclipboard
+
+autoResize = ->
+  $('.auto-resize').unbind()
+  $('.auto-resize').autosize()
+
+$ ->
+  autoResize()
