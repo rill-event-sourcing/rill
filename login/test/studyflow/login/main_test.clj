@@ -3,6 +3,8 @@
             [net.cgrand.enlive-html :as enlive]
             [ring.mock.request :refer [request]]
             [studyflow.login.main :refer :all]
+            [studyflow.components.simple-session-store :refer [simple-session-store]]
+            [studyflow.components.session-store :refer [get-user-id create-session]]
             [taoensso.carmine :as car]))
 
 (defn query-html [data pattern]
@@ -63,93 +65,67 @@
       (is (= "/" ((:headers resp) "Location")))
       (is (= true (:logout-user resp))))))
 
-
-
 (deftest wrap-login-user-test
   (let [handler (wrap-login-user identity)]
     (is (= {} (handler {})))
-    (let [uuid "testuuid"
-          role "testrole"
-          resp (handler {:login-user {:uuid uuid, :role role}})
+    (let [user-id "test-user-id"
+          user-role "test-role"
+          session-store (simple-session-store)
+          resp (handler {:login-user {:user-id user-id, :user-role user-role} :session-store session-store})
           cookies (:cookies resp)]
       (is cookies)
-      (let [session-uuid (:value (:studyflow_session cookies))]
-        (is session-uuid)
-        (is (= uuid (wcar* (car/get session-uuid))))))))
+      (let [session-id (:value (:studyflow_session cookies))]
+        (is session-id)
+        (is (= user-id (get-user-id session-store session-id)))))))
 
 (deftest wrap-logout-user-test
   (let [handler (wrap-logout-user identity)]
     (is (= {} (handler {})))
-    (let [resp (handler {:logout-user true, :cookies {:studyflow_session {:value "test", :max-age 123 }}})]
+    (let [resp (handler {:logout-user true, :cookies {:studyflow_session {:value "test", :max-age 123 }}
+                         :session-store (simple-session-store)})]
       (is (:cookies resp))
       (is (= {:studyflow_session {:value "", :max-age -1}} (:cookies resp))))))
 
 (deftest wrap-user-role-test
   (let [handler (wrap-user-role identity)
-        uuid "testuuid2"
-        role "testrole2"]
-    (let [session-uuid (create-session uuid role)
-          resp (handler {:cookies {"studyflow_session" {:value session-uuid, :max-age 123}}})]
+        user-id "test-user-id-2"
+        user-role "test-role-2"
+        session-store (simple-session-store)]
+    (let [session-id (create-session session-store user-id user-role 123)
+          resp (handler {:cookies {"studyflow_session" {:value session-id, :max-age 123}}
+                         :session-store session-store})]
       (is (:user-role resp))
-      (is (= role (:user-role resp))))))
+      (is (= user-role (:user-role resp))))))
 
 (deftest wrap-redirect-for-role-test
   (let [handler (wrap-redirect-for-role identity)
-        role "testrole"]
+        user-role "test-role"]
     (testing "without any redirect-for-role into request"
       (is (= {} (handler {}))))
     (testing "with redirect-for-role and no cookie"
-      (let [resp (handler {:redirect-for-role role, :cookies {}})]
-        (is (= (default-redirect-path role) ((:headers resp) "Location")))))
+      (let [resp (handler {:redirect-for-role user-role, :cookies {}})]
+        (is (= (default-redirect-path user-role) ((:headers resp) "Location")))))
     (testing "with redirect-for-role and cookie"
-      (let [resp (handler {:redirect-for-role role, :cookies {"studyflow_redir_to" {:value "thispath"}}})]
-        (is (= "thispath" ((:headers resp) "Location")))))))
+      (let [path "this-path"
+            resp (handler {:redirect-for-role user-role, :cookies {"studyflow_redir_to" {:value path}}})]
+        (is (= path ((:headers resp) "Location")))))))
 
-(deftest create-session-test
-  (let [uuid "testuuid"
-        role "testrole"
-        session-uuid (create-session uuid role)
-        user-uuid (wcar* (car/get session-uuid))
-        ttl-session (wcar* (car/ttl session-uuid))
-        ttl-user (wcar* (car/ttl user-uuid))]
-    (is (not (= session-uuid (create-session uuid role))))
-    (is session-uuid)
-    (is user-uuid)
-    (is (= uuid user-uuid))
-    (is (and (< (- session-max-age 3) ttl-session)
-             (>= session-max-age ttl-session)))
-    (is (and (< (- session-max-age 3) ttl-user)
-             (>= session-max-age ttl-user)))))
-
-(deftest delete-session-test
-  (let [uuid "testuuid"
-        role "testrole"
-        session-uuid (create-session uuid role)]
-    (delete-session! session-uuid)
-    (is (not (wcar* (car/get session-uuid))))
-    (is (not (wcar* (car/get uuid))))))
-
-(deftest role-from-session-test
-  (let [uuid "testuuid"
-        role "testrole"
-        session-uuid (create-session uuid role)]
-    (is (= role (role-from-session session-uuid)))))
-
-(deftest get-uuid-from-cookies-test
+(deftest get-session-id-from-cookies-test
   (is (= "something"
-         (get-uuid-from-cookies {"studyflow_session" {:value "something"}}))))
+         (get-session-id-from-cookies {"studyflow_session" {:value "something"}}))))
 
-(deftest make-uuid-cookie-test
-  (testing "without max-age"
-    (let [cookie (:studyflow_session (make-uuid-cookie "testuuid"))]
-      (is (= "testuuid" (:value cookie)))
-      (is (= session-max-age (:max-age cookie)))))
-  (testing "with max-age"
-    (let [cookie (:studyflow_session (make-uuid-cookie "testuuid" 123))]
-      (is (= "testuuid" (:value cookie)))
-      (is (= 123 (:max-age cookie))))))
+(deftest make-session-cookie-test
+  (let [session-id "test-session-id"]
+    (testing "without max-age"
+      (let [cookie (:studyflow_session (make-session-cookie session-id))]
+        (is (= session-id (:value cookie)))
+        (is (= session-max-age (:max-age cookie)))))
+    (testing "with max-age"
+      (let [cookie (:studyflow_session (make-session-cookie session-id 123))]
+        (is (= session-id (:value cookie)))
+        (is (= 123 (:max-age cookie)))))))
 
-(deftest clear-uuid-cookie-test
-  (let [cookie (:studyflow_session (clear-uuid-cookie))]
+(deftest clear-session-cookie-test
+  (let [cookie (:studyflow_session (clear-session-cookie))]
     (is (= "" (:value cookie)))
     (is (= -1 (:max-age cookie)))))

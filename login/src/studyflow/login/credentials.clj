@@ -17,17 +17,17 @@
 (defmethod handle-event ::student-events/CredentialsAdded
   [state {:keys [email student-id encrypted-password]}]
   (assoc state email
-         {:uuid student-id
-          :role "student"
+         {:user-id student-id
+          :user-role "student"
           :encrypted-password encrypted-password}))
 
 (defmethod handle-event ::student-events/CredentialsChanged
   [state {:keys [email student-id encrypted-password]}]
   (into {email
-          {:uuid student-id
-           :role "student"
+          {:user-id student-id
+           :user-role "student"
            :encrypted-password encrypted-password }}
-        (filter (fn [[_ user]] (not= student-id (:uuid user))) state)))
+        (filter (fn [[_ user]] (not= student-id (:user-id user))) state)))
 
 (defmethod handle-event :default
   [state _] state)

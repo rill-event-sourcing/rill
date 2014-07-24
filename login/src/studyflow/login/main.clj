@@ -7,19 +7,19 @@
             [hiccup.page :refer [html5 include-css]]
             [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
             [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
+            [studyflow.components.session-store :refer [create-session delete-session! get-user-id get-role]]
             [taoensso.carmine :as car]))
 
 (def app-title "Studyflow")
 (assert (env :studyflow-env) "login requires .lein-env on path")
 (def studyflow-env (keyword (env :studyflow-env)))
 (def publishing-url (studyflow-env (env :publishing-url)))
+(def learning-url (studyflow-env (env :learning-url)))
 (def cookie-domain (studyflow-env (env :cookie-domain)))
 (def session-max-age (studyflow-env (env :session-max-age)))
 
-
-(def redis  {:pool {} :spec {}})
-
 (def default-redirect-path {"editor" publishing-url
+                            "student" learning-url
                             "tester" "https://staging.studyflow.nl"})
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -75,70 +75,44 @@
 
   (not-found "Nothing here"))
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Session management with redis
-
-(defmacro wcar*  [& body] `(car/wcar redis ~@body))
-
-(defn create-session [uuid role]
-  (let [session-uuid (str (java.util.UUID/randomUUID))]
-    (wcar* (car/set session-uuid uuid)
-           (car/expire session-uuid session-max-age)
-           (car/set uuid role)
-           (car/expire uuid session-max-age))
-    session-uuid))
-
-(defn delete-session! [session-uuid]
-  (let [user-uuid (wcar* (car/get session-uuid))]
-    (wcar* (car/del session-uuid)
-           (car/del user-uuid))))
-
-(defn role-from-session [session-uuid]
-  (let [user-uuid (wcar* (car/get session-uuid))]
-    (wcar* (car/get user-uuid))))
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Cookie management
 
-(defn get-uuid-from-cookies [cookies]
+(defn get-session-id-from-cookies [cookies]
   (:value (get cookies "studyflow_session")))
 
-(defn make-uuid-cookie [uuid & [max-age]]
+(defn make-session-cookie [session-id & [max-age]]
   (let [max-age (or max-age session-max-age)]
     (if cookie-domain
-      {:studyflow_session {:value uuid :max-age max-age :domain cookie-domain}}
-      {:studyflow_session {:value uuid :max-age max-age}})))
+      {:studyflow_session {:value session-id :max-age max-age :domain cookie-domain}}
+      {:studyflow_session {:value session-id :max-age max-age}})))
 
-(defn clear-uuid-cookie []
-  (make-uuid-cookie "" -1))
+(defn clear-session-cookie []
+  (make-session-cookie "" -1))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wiring
 
 (defn wrap-login-user [app]
-  (fn [req]
+  (fn [{:keys [session-store] :as req}]
     (let [resp (app req)]
       (if-let [user (:login-user resp)]
-        (assoc resp :cookies (make-uuid-cookie (create-session (:uuid user) (:role user))))
+        (assoc resp :cookies (make-session-cookie (create-session session-store (:user-id user) (:user-role user) session-max-age)))
         resp))))
 
 (defn wrap-logout-user [app]
-  (fn [req]
+  (fn [{:keys [session-store] :as req}]
     (let [resp (app req)]
       (if (:logout-user resp)
         (do
-          (delete-session! (get-uuid-from-cookies (:cookies req)))
-          (assoc resp :cookies (clear-uuid-cookie)))
+          (delete-session! session-store (get-session-id-from-cookies (:cookies req)))
+          (assoc resp :cookies (clear-session-cookie)))
         resp))))
 
 (defn wrap-user-role [app]
-  (fn [req]
-    (let [user-role (-> (:cookies req)
-                        get-uuid-from-cookies
-                        role-from-session)]
+  (fn [{:keys [session-store] :as req}]
+    (let [user-role (get-role session-store (get-session-id-from-cookies (:cookies req)))]
       (app (assoc req :user-role user-role)))))
 
 (defn wrap-redirect-for-role [app]
