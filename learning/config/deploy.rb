@@ -1,27 +1,7 @@
+set :application, "learning"
+set :repo_url, "git@gitlab.studyflow.nl:studyflow/gibbon.git"
 set :deploy_to, '/home/studyflow/learning'
-set :scm, :copy
-set :log_level, :info
-set :linked_files, %w{}
-set :linked_dirs, %w{}
-set :keep_releases, 5
-
-namespace :deploy do
-
-  desc 'Restart application'
-  task :restart do
-    on roles(:app) do
-      execute "sudo supervisorctl restart studyflow_learning"
-    end
-  end
-
-  desc 'make JAR file'
-  task :mk_jar_file do
-    run_locally do
-      execute "lein uberjar"
-    end
-  end
-
-  before :updating, 'deploy:mk_jar_file'
-  after :finishing, 'deploy:cleanup'
-end
-
+set :log_level, :debug
+set :keep_releases, 10
+set :s3path, "s3://studyflow-server-images/learning"
+set :supervisor_name, "studyflow_learning"
