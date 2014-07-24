@@ -7,11 +7,10 @@ class Hash
   end
 end
 
-def hashify(array, start_from_one = false)
-  if start_from_one
-    indices = 1...array.size+1
-  else
-    indices = 0...array.size
+def hashify(array_of_subsections)
+  output_hash = {}
+  array_of_subsections.each do |subsection|
+    output_hash["#{subsection.id}"] = {id: subsection.id, position: subsection.position, title: subsection.title, text: subsection.text}
   end
-  Hash[indices.map(&:to_s).zip array]
+  output_hash
 end
