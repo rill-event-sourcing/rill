@@ -27,7 +27,7 @@ class SubsectionsController < ApplicationController
 
   def save
     respond_to do |format|
-      subsections(params[:subsections])
+      subsections(params[:subsections]) if params[:subsections]
       if @section.save
         format.json { render json: @section.as_full_json }
       else
@@ -56,8 +56,7 @@ private
       my_subsection.update_attributes(
         title: new_subsection['title'],
         text: new_subsection['text'],
-        position: index
-      )
+        position: new_subsection['position'])
     end
     @section.updated_at= Time.now
   end

@@ -3,6 +3,7 @@ bindAddButtons = ->
   $('.add-subsection').bind 'click', (event) ->
     after = $(event.currentTarget).data('after')
     url = $(event.currentTarget).data('url')
+    console.log $(event.currentTarget)
     $.ajax url,
         type: 'POST'
         dataType: 'html'
