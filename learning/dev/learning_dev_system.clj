@@ -18,4 +18,4 @@
                         [])
           :fixtures-loading (component/using
                              (fixtures-loading-component)
-                             {:ring-handler :internal-api-handler})}))
+                             {:ring-handler :publishing-api-handler})}))
