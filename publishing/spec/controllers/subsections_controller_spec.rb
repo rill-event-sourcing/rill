@@ -91,30 +91,26 @@ RSpec.describe SubsectionsController, :type => :controller do
     end
 
     def update_first_subsection
-      subsection1 = @section1.subsections.first.as_full_json
-      subsection1[:text] = "one modified text"
-      subsection2 = @section1.subsections.last.as_full_json
-      hashify([subsection1, subsection2], true)
+      subsection1 = @section1.subsections.first#.as_full_json
+      subsection1.text = "one modified text"
+      subsection2 = @section1.subsections.last#.as_full_json
+      hashify([subsection1, subsection2])
     end
 
     it "should allow to update subsections" do
       input = update_first_subsection
       post :save, chapter_id: @chapter.to_param, section_id: @section1.to_param, subsections: input, format: :json
-      expect(@section1.subsections.first.as_full_json[:text]).to eq "one modified text"
+      expect(@section1.subsections.first.text).to eq "one modified text"
     end
-
-    # it "should correctly reflect the time of last update" do
-    #   old_time = @section1.updated_at
-    #   input = update_first_subsection
-    #   post :save, chapter_id: @chapter.to_param, section_id: @section1.to_param, subsections: input, format: :json
-    #   expect(@section1.updated_at).to be > old_time
-    # end
 
     it "should respect the order of input subsections" do
       first_subsection = @section1.subsections.first
       last_subsection = @section1.subsections.last
+      first_subsection.position = 1
+      last_subsection.position = 0
 
-      subsection_hash = hashify([last_subsection.as_full_json, first_subsection.as_full_json], true)
+      subsection_hash = hashify([last_subsection, first_subsection])
+
       post :save, chapter_id: @chapter.to_param, section_id: @section1.to_param, subsections: subsection_hash, format: :json
 
       expect(@section1.subsections.first).to eq last_subsection
