@@ -7,7 +7,7 @@
   Lifecycle
   (start [component]
     (info "Starting handler")
-    (assoc component :handler (web/make-request-handler (:store event-store) (:read-model read-model)) (:session-store session-store)))
+    (assoc component :handler (web/make-request-handler (:store event-store) (:read-model read-model)) session-store))
   (stop [component]
     (info "Stopping handler")
     component))

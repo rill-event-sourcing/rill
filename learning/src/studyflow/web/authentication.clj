@@ -2,7 +2,7 @@
   (:require [clojure.tools.logging :as log]
             [ring.middleware.cookies :as cookies]
             [studyflow.learning.read-model :as read-model]
-            [studyflow.system.components.session-store :as session-store]))
+            [studyflow.components.session-store :as session-store]))
 
 (defn redirect-login [req]
   {:status 302
@@ -26,10 +26,15 @@
           (redirect-login req)))
       req)))
 
+(defn get-student-id [session-store session-id]
+  (when-let [user-id (session-store/get-user-id session-store session-id)]
+    (when (= (session-store/get-role session-store session-id) "student")
+      user-id)))
+
 (defn wrap-student-id [handler session-store]
   (fn [req]
     (if-let [session-id (get req :session-id)]
-      (if-let [student-id (session-store/lookup-session session-store session-id)]
+      (if-let [student-id (get-student-id session-store session-id)]
         (handler (-> req
                      (assoc :student-id student-id)
                      (dissoc :session-id)))
