@@ -3,7 +3,7 @@
             [environ.core :refer [env]]
             [studyflow.system.components.event-channel :refer [event-channel-component]]
             [studyflow.system.components.atom-event-store :refer [atom-event-store-component]]
-            [studyflow.system.components.internal-api :refer [internal-api-component]]
+            [studyflow.system.components.publishing-api :refer [publishing-api-component]]
             [studyflow.system.components.jetty :refer [jetty-component]]
             [studyflow.system.components.read-model :refer [read-model-component]]
             [studyflow.system.components.ring-handler :refer [ring-handler-component]]
@@ -15,12 +15,12 @@
   (let [{:keys [port event-store-config internal-api-port]} config-options]
     (component/system-map
      :config-options config-options
-     :internal-api-handler (component/using
-                            (internal-api-component)
-                            [:event-store])
-     :internal-api-jetty (component/using
-                          (jetty-component internal-api-port)
-                          [:internal-api-handler])
+     :publishing-api-handler (component/using
+                              (publishing-api-component)
+                              [:event-store])
+     :publishing-api-jetty (component/using
+                            (jetty-component internal-api-port)
+                            [:publishing-api-handler])
      :session-store {:session-store (redis-session-store {:some :config})}
      :ring-handler (component/using
                     (ring-handler-component)
