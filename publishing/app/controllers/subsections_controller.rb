@@ -51,8 +51,8 @@ private
   end
 
   def subsections(subsection_hash)
-    subsection_hash.each do |index, new_subsection|
-      my_subsection = @section.subsections.find(new_subsection['id'])
+    subsection_hash.each do |subsection_id, new_subsection|
+      my_subsection = @section.subsections.find(subsection_id)
       my_subsection.update_attributes(
         title: new_subsection['title'],
         text: new_subsection['text'],

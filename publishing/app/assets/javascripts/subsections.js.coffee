@@ -3,16 +3,23 @@ bindAddButtons = ->
   $('.add-subsection').bind 'click', (event) ->
     after = $(event.currentTarget).data('after')
     url = $(event.currentTarget).data('url')
-    console.log $(event.currentTarget)
+    subsection_id = $(event.currentTarget).data('id')
+    if subsection_id
+      subsection_position = $("#subsections_" + subsection_id + "_position")[0].value
+      position = parseInt(subsection_position) + 1
+    else
+      position = 0
     $.ajax url,
         type: 'POST'
         dataType: 'html'
+        data: "position=" + position
         error: (jqXHR, textStatus, errorThrown) ->
           console.log "AJAX Error: #{ textStatus }"
         success: (data, textStatus, jqXHR) ->
           $('#' + after).after(data)
           bindAddButtons()
           bindDeleteButtons()
+          updateViewPositions()
           refreshPreview()
 
 bindDeleteButtons = ->
@@ -28,6 +35,7 @@ bindDeleteButtons = ->
           console.log "AJAX Error: #{ textStatus }"
         success: (data, textStatus, jqXHR) ->
           $('#' + deleteItem).remove()
+          updateViewPositions()
           refreshPreview()
 
 bindSaveButton = ->
@@ -50,16 +58,20 @@ save = ->
       refreshPreview()
 
 initializeAutoSave = ->
-  setTimeout(autoSave,10000)
+  setTimeout(autoSave, 10000)
 
 autoSave = ->
   save()
-  setTimeout(autoSave,10000)
+  setTimeout(autoSave, 10000)
 
 refreshPreview = ->
   $('#preview').attr("src", $('#preview').attr("src"))
   height = document.getElementById('preview').contentWindow.document.body.scrollHeight
   $('#preview').css('height', height)
+
+updateViewPositions = ->
+  $(".subsection-position").each (position) ->
+    this.value = position
 
 ################################################################################
 

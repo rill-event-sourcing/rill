@@ -4,14 +4,13 @@
       %div.pull-right
         %span.btn.btn-default.glyphicon.glyphicon-minus.delete-subsection{data: {item: "subsection-panel-#{ @subsection.id }", url: chapter_section_subsection_path(@chapter, @section, @subsection) } }
       %h3.panel-title
-        = text_field_tag "subsections[#{@index}][position]", @subsection.position
-        = hidden_field_tag "subsections[#{@index}][id]", @subsection.id
-        = text_field_tag   "subsections[#{@index}][title]", @subsection.title, class: "form-control"
+        = hidden_field_tag   "subsections[#{@subsection.id}][position]", @subsection.position, class: "subsection-position"
+        = text_field_tag   "subsections[#{@subsection.id}][title]", @subsection.title, class: "form-control"
       %small= @subsection.id[0,8]
 
     %div.panel-body
-      = text_area_tag "subsections[#{@index}][text]", @subsection.text, style: 'width: 100%; min-height: 100px;', class: "form-control auto-resize"
+      = text_area_tag "subsections[#{@subsection.id}][text]", @subsection.text, style: 'width: 100%; min-height: 100px;', class: "form-control auto-resize"
 
     %div.panel-footer.clearfix
       %div.pull-right
-        %span.btn.btn-default.glyphicon.glyphicon-plus.add-subsection{data: { after: "subsection-panel-#{ @subsection.id }", url: chapter_section_subsections_path(@chapter, @section) } }
+        %span.btn.btn-default.glyphicon.glyphicon-plus.add-subsection{data: { after: "subsection-panel-#{ @subsection.id }", id: @subsection.id, url: chapter_section_subsections_path(@chapter, @section) } }
