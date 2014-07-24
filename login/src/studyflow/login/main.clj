@@ -178,8 +178,7 @@
           resp (app req)]
       (if-let [user-role (:redirect-for-role resp)]
         (redirect-to (or (:value (cookies "studyflow_redir_to"))
-                         (default-redirect-path user-role)
-                         "/"))
+                         (default-redirect-path user-role)))
         resp))))
 
 (def studyflow-site-defaults

@@ -84,7 +84,7 @@
     (let [resp (handler {:logout-user true, :cookies {:studyflow_session {:value "test", :max-age 123 }}
                          :session-store (simple-session-store)})]
       (is (:cookies resp))
-      (is (= {:studyflow_session {:value "" :max-age -1 :path "/"}} (:cookies resp))))))
+      (is (= {:studyflow_session {:value "", :max-age -1, :path "/"}} (:cookies resp))))))
 
 (deftest wrap-user-role-test
   (let [handler (wrap-user-role identity)
