@@ -1,5 +1,6 @@
 (ns learning-dev-system
-  (:require [studyflow.system :as sys]
+  (:require [studyflow.components.simple-session-store :refer [simple-session-store]]
+            [studyflow.system :as sys]
             [studyflow.system.components.memory-event-store :refer [memory-event-store-component]]
             [studyflow.system.components.dev-ring-handler :refer [dev-ring-handler-component]]
             [studyflow.system.components.fixtures-loading :refer [fixtures-loading-component]]
@@ -13,6 +14,7 @@
          {:ring-handler (component/using
                          (dev-ring-handler-component)
                          [:event-store :read-model :session-store])
+          :session-store (simple-session-store)
           :event-store (component/using
                         (memory-event-store-component)
                         [])
