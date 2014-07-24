@@ -5,7 +5,8 @@
             [clojure.tools.logging :refer [info debug spy]]
             [rill.event-store :as event-store]
             [rill.message :as message]
-            [rill.uuid :as uuid]))
+            [rill.uuid :as uuid]
+            [studyflow.events.student :as events-student]))
 
 (defrecord DevEventFixturesComponent [event-store]
   Lifecycle
@@ -17,10 +18,7 @@
           events [{message/type :studyflow.school-administration.student.events/Created
                    :student-id student-id
                    :full-name "Dev Student One"}
-                  {message/type :studyflow.events.student/CredentialsAdded
-                   :student-id student-id
-                   :credentials {:email "dev-student-one@studyflow.nl"
-                                 :encrypted-password (bcrypt/encrypt "student")}}]]
+                  (events-student/credentials-added student-id "dev-student-one@studyflow.nl" (bcrypt/encrypt "student"))]]
       (event-store/append-events (:store event-store) stream-id from-version events))
     component)
   (stop [component]
