@@ -2,6 +2,7 @@
   (:use  [studyflow.web.api.command])
   (:require [ring.mock.request :refer [request body]]
             [clojure.test :refer [is deftest testing]]
+            [clojure.tools.logging :as log]
             [clout-link.route :refer [uri-for]]
             [studyflow.web.routes :as routes]
             [rill.temp-store :refer [with-temp-store]]
@@ -10,7 +11,8 @@
             [studyflow.learning.course.fixture :as course-fixture]
             [studyflow.learning.course-material :as course-material]
             [studyflow.learning.course.commands :as course-commands]
-            [studyflow.learning.section-test.commands :as section-test-commands]))
+            [studyflow.learning.section-test.commands :as section-test-commands]
+            [studyflow.web.publishing-api :as publishing-api]))
 
 ;; handle command multi methods
 (require '[studyflow.learning.section-test :refer []])
@@ -27,7 +29,7 @@
           req (-> (request :put (uri-for routes/update-course-material
                                          (:id input)))
                   (assoc :body input))
-          cmd (handler req)]
+          cmd (publishing-api/publish-course-handler req)]
         (is (= ::course-commands/Publish! (message/type cmd))
             "generates correct command")
         (is (= (uuid (:id input)) (:course-id cmd))
@@ -37,7 +39,7 @@
 
         (with-temp-store [store fetch _]
           (testing "with command executor"
-            (let [{:keys [status body]} ((make-request-handler store) req)]
+            (let [{:keys [status body] :as res} ((publishing-api/make-handler store) req)]
               (is (= 200 status))
               (is (= :command-accepted (:status body)))
               (is (fetch course-id)))))))
