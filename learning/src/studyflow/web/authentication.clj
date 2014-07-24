@@ -7,7 +7,8 @@
 (defn redirect-login [req]
   {:status 302
    :headers {"Location" "http://localhost:4000/"}
-   :cookies {"studyflow_redir_to" {:value (str "http://localhost:3000" (get req :uri))}
+   :cookies {"studyflow_redir_to" {:value (str "http://localhost:3000" (get req :uri))
+                                   :path "/"}
              "studyflow_session" {:value ""
                                   :path "/"
                                   :max-age -1}}
