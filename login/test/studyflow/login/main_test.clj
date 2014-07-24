@@ -3,7 +3,7 @@
             [net.cgrand.enlive-html :as enlive]
             [ring.mock.request :refer [request]]
             [studyflow.login.main :refer :all]
-            [studyflow.components.temp-session-store :refer [temp-session-store]]
+            [studyflow.components.simple-session-store :refer [simple-session-store]]
             [studyflow.components.session-store :refer [get-user-id create-session]]
             [taoensso.carmine :as car]))
 
@@ -70,7 +70,7 @@
     (is (= {} (handler {})))
     (let [user-id "test-user-id"
           user-role "test-role"
-          session-store (temp-session-store)
+          session-store (simple-session-store)
           resp (handler {:login-user {:user-id user-id, :user-role user-role} :session-store session-store})
           cookies (:cookies resp)]
       (is cookies)
@@ -82,7 +82,7 @@
   (let [handler (wrap-logout-user identity)]
     (is (= {} (handler {})))
     (let [resp (handler {:logout-user true, :cookies {:studyflow_session {:value "test", :max-age 123 }}
-                         :session-store (temp-session-store)})]
+                         :session-store (simple-session-store)})]
       (is (:cookies resp))
       (is (= {:studyflow_session {:value "", :max-age -1}} (:cookies resp))))))
 
@@ -90,7 +90,7 @@
   (let [handler (wrap-user-role identity)
         user-id "test-user-id-2"
         user-role "test-role-2"
-        session-store (temp-session-store)]
+        session-store (simple-session-store)]
     (let [session-id (create-session session-store user-id user-role 123)
           resp (handler {:cookies {"studyflow_session" {:value session-id, :max-age 123}}
                          :session-store session-store})]

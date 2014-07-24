@@ -1,9 +1,9 @@
-(ns studyflow.components.temp-session-store
+(ns studyflow.components.simple-session-store
   (:require [clojure.tools.logging :as log]
             [clojure.string :as str]
             [studyflow.components.session-store :refer [SessionStore]]))
 
-(defrecord TempSessionStore [sessions]
+(defrecord SimpleSessionStore [sessions]
   SessionStore
 
   (create-session [store user-id role session-max-age]
@@ -20,5 +20,5 @@
   (get-role [store session-id]
     (:role (get @sessions session-id))))
 
-(defn temp-session-store []
-  (->TempSessionStore (atom {})))
+(defn simple-session-store []
+  (->SimpleSessionStore (atom {})))
