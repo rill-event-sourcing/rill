@@ -44,7 +44,7 @@
                                            true)
                                )}))
       "section-test-commands/next-question"
-      (let [[section-id student-id section-test-aggregate-version section-id course-id] args]
+      (let [[section-id student-id section-test-aggregate-version course-id] args]
         (PUT (str "/api/section-test-next-question/" section-id "/" student-id "/" course-id)
              {:params {:expected-version section-test-aggregate-version}
               :format :json

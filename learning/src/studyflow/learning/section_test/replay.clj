@@ -6,8 +6,9 @@
 
 (defn replay-section-test
   [store section-id student-id]
-  (let [[head :as events] (retrieve-events store (section-test-id {:student-id student-id :section-id section-id}))]
+  (let [aggregate-id (section-test-id {:student-id student-id :section-id section-id})
+        [head :as events] (retrieve-events store aggregate-id)]
     (when (= ::events/Created (message/type head))
       {:events events
        :aggregate-version (message/number (last events))
-       :aggregate-id section-test-id})))
+       :aggregate-id aggregate-id})))
