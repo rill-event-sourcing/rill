@@ -217,6 +217,7 @@
     om/IRender
     (render [_]
       (let [section-id (get-in cursor [:view :selected-path :section-id])
+            student-id (get-in cursor [:static :student-id])
             section-test (get-in cursor [:aggregates section-id])]
         (dom/div #js {:className "row"}
                  (dom/div #js {:className "col-md-12 panel panel-default"}
