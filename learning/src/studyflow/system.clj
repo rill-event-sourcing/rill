@@ -1,13 +1,13 @@
 (ns studyflow.system
   (:require [com.stuartsierra.component :as component]
             [environ.core :refer [env]]
-            [studyflow.system.components.event-channel :refer [event-channel-component]]
-            [studyflow.system.components.atom-event-store :refer [atom-event-store-component]]
+            [studyflow.components.atom-event-store :refer [atom-event-store-component]]
+            [studyflow.components.event-channel :refer [event-channel-component]]
+            [studyflow.components.jetty :refer [jetty-component]]
+            [studyflow.components.redis-session-store :refer [redis-session-store]]
             [studyflow.system.components.publishing-api :refer [publishing-api-component]]
-            [studyflow.system.components.jetty :refer [jetty-component]]
             [studyflow.system.components.read-model :refer [read-model-component]]
             [studyflow.system.components.ring-handler :refer [ring-handler-component]]
-            [studyflow.components.redis-session-store :refer [redis-session-store]]
             [clojure.tools.logging :refer [info debug spy]]))
 
 (defn prod-system [config-options]

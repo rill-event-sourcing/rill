@@ -1,7 +1,7 @@
 (ns studyflow.super-system
   (:require [com.stuartsierra.component :refer [system-map] :as component]
             [studyflow.components.simple-session-store :refer [simple-session-store]]
-            [studyflow.system.components.memory-event-store :as memory-event-store]
+            [studyflow.components.memory-event-store :as memory-event-store]
             [studyflow.super-system.components.dev-event-fixtures :as dev-event-fixtures]
             [clojure.tools.logging :as log]
             [learning-dev-system]
