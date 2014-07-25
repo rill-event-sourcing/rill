@@ -19,9 +19,9 @@
   (start [component]
     (log/info "Starting credentials")
     (let [db (atom {:by-email {"editor@studyflow.nl"
-                               {:uuid "editor-id" :role "editor" :encrypted-password (bcrypt/encrypt "editor")}}
+                               {:user-id "editor-id" :user-role "editor" :encrypted-password (bcrypt/encrypt "editor")}}
                     :by-edu-route-id {"12345"
-                                      {:role "student" :uuid "some student id"}}
+                                      {:user-role "student" :user-id "some student id"}}
 })]
       (credentials/listen! (:channel event-channel) db)
       (assoc component
