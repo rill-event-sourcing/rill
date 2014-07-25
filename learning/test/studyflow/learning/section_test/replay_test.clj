@@ -6,17 +6,15 @@
             [rill.uuid :refer [new-id]]
             [clojure.test :refer [deftest testing is]]))
 
-(def section-test-id (new-id))
+(def student-id (new-id))
 (def section-id #uuid "8117bf7b-8025-43ea-b6d3-aa636d6b6042")
 (def question-id #uuid "b117bf7b-8025-43ea-b6d3-aa636d6b6042")
 
-(def section-test-events [(events/created section-test-id fixture/course-id section-id)
-                          (events/question-assigned section-test-id fixture/course-id question-id)
-                          (events/question-answered-correctly section-test-id question-id {"__INPUT_1__" "Incorrect input"})])
+(def section-test-events [(events/created section-id student-id fixture/course-id)
+                          (events/question-assigned section-id student-id question-id)
+                          (events/question-answered-correctly section-id student-id question-id {"__INPUT_1__" "Incorrect input"})])
 
 (deftest test-replay-api
   (let [store (given (cons fixture/course-published-event section-test-events))]
     (is (messages= section-test-events
-                   (:events (replay/replay-section-test store section-test-id))))
-
-    (is (nil? (replay/replay-section-test store fixture/course-id)))))
+                   (:events (replay/replay-section-test store section-id student-id))))) )

@@ -14,9 +14,6 @@
   [events]
   (update-aggregate nil events))
 
-(defmacro defaggregate [name attrs]
-  `(do (defrecord ~name ~(into '[id] attrs))))
-
 (defmulti handle-command
   "handle command given aggregates. returns a seq of events"
   (fn [primary-aggregate command & aggregates]

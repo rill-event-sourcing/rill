@@ -1,10 +1,11 @@
 (ns studyflow.school-administration.student
   (:require [studyflow.school-administration.student.events :as events]
-            [rill.aggregate :refer [defaggregate handle-event handle-command aggregate-ids]]
+            [rill.aggregate :refer [handle-event handle-command aggregate-ids]]
             [rill.message :refer [defcommand]]
             [schema.core :as s]))
 
-(defaggregate Student [full-name])
+(defrecord Student
+    [id full-name])
 
 (defcommand Create!
   :student-id s/Uuid

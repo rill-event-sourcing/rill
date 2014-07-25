@@ -17,28 +17,28 @@ commands."
   (combine-ring-handlers
    (clout/handle
     routes/section-test-init
-    (fn [{{:keys [section-test-id section-id course-id]} :params :as params}]
-      (section-test-commands/init! section-test-id
-                                   (uuid section-id)
+    (fn [{{:keys [section-id student-id section-id course-id]} :params :as params}]
+      (section-test-commands/init! (uuid section-id)
+                                   (uuid student-id)
                                    (uuid course-id))))
 
    (clout/handle
     routes/section-test-check-answer
-    (fn [{{:keys [section-test-id section-id course-id question-id]} :params body :body}]
+    (fn [{{:keys [section-id student-id course-id question-id]} :params body :body}]
       (let [{:keys [expected-version inputs]} body]
-        (section-test-commands/check-answer! section-test-id
+        (section-test-commands/check-answer! (uuid section-id)
+                                             (uuid student-id)
                                              expected-version
-                                             (uuid section-id)
                                              (uuid course-id)
                                              (uuid question-id)
                                              inputs))))
-      (clout/handle
+   (clout/handle
     routes/section-test-next-question
-    (fn [{{:keys [section-test-id section-id course-id]} :params
+    (fn [{{:keys [section-id student-id course-id]} :params
           {:keys [expected-version] :as body} :body}]
-      (section-test-commands/next-question! section-test-id
-                                            expected-version
+      (section-test-commands/next-question! (uuid section-id)
                                             (uuid section-id)
+                                            expected-version
                                             (uuid course-id))))))
 
 (defn make-request-handler
