@@ -21,5 +21,6 @@
   (let [store (given (cons fixture/course-published-event section-test-events))]
     (is (messages= section-test-events
                    (-> (replay/handler (-> (request :get (uri-for routes/section-test-replay section-id student-id))
+                                           (assoc-in [:student :student-id] student-id)
                                            (assoc :event-store store)))
                        :body :events)))))
