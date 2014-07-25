@@ -1,10 +1,9 @@
 default: test
 
-.PHONY: test default
+.PHONY: test default deploy
 
-lein:
-	curl -O https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
-	chmod 755 ./lein
+test:
+	STUDYFLOW_ENV=test lein test && echo "OK"
 
-test: lein
-	STUDYFLOW_ENV=test ./lein test && echo "OK"
+deploy:
+	cap staging build

@@ -1,3 +1,5 @@
+# Studyflow S3 deployment
+
 Rake::Task["deploy:updating"].clear_actions
 
 desc 'Compile and then upload application to S3'
@@ -62,13 +64,11 @@ namespace :deploy do
   desc 'download application from S3'
   task :create_release2 do
     on roles(:app) do
-      last_commit = ""
-      last_commit = capture("cd #{ repo_path } && git log -1 --format='%H'") if File.directory?(repo_path)
+      last_commit = capture("cd #{ repo_path } && git log -1 --format='%H'")
       ask :current_revision, last_commit
       set :release_file, "#{ fetch(:application) }-#{ fetch(:current_revision) }.jar"
       execute :mkdir, '-p', release_path
       execute "s3cmd get #{ fetch(:s3path) }/#{ fetch(:release_file) } #{ release_path }/"
-      execute "ln -s #{ deploy_path }/.lein-env #{ release_path }/.lein-env"
     end
   end
 
