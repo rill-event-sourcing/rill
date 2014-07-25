@@ -8,7 +8,7 @@ require 'rails/commands/server'
 
 module DefaultOptions
   def default_options
-    super.merge!(Port: 6000)
+    super.merge!(Port: 2000)
   end
 end
 
