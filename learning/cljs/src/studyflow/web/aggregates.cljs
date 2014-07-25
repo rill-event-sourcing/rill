@@ -13,7 +13,7 @@
 (defn handle-event [agg event]
   (condp = (:type event)
     "studyflow.learning.section-test.events/Created"
-    (let [aggr-id (:section-test-id event)]
+    (let [aggr-id (:section-id event)]
       {:id aggr-id
        :questions []
        :streak []})

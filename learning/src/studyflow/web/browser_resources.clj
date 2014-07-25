@@ -7,7 +7,8 @@
 
 (html/deftemplate course-frame "templates/courses.html"
   [student]
-  [:span.student-full-name] (html/content (get student :full-name)))
+  [:span.student-full-name] (html/content (get student :full-name))
+  [:input#student-id] (html/set-attr :value (str (get student :student-id))))
 
 (defn make-request-handler
   []
