@@ -74,7 +74,7 @@ namespace :deploy do
 
   task :new_release_path2 do
     run_locally do
-      ask :current_revision, capture("git log -1 --format='%H'")
+      set :current_revision, capture("git log -1 --format='%H'")
       set :release_file, "#{ fetch(:application) }-#{ fetch(:current_revision) }.jar"
     end
   end
