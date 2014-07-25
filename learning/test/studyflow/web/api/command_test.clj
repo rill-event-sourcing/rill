@@ -26,28 +26,6 @@
 (def question-id (-> course-edn :chapters first :sections first :questions first :id))
 
 (deftest handler-test
-  (testing "update course material"
-    (let [input course-fixture/course-json
-          parsed-input (course-material/parse-course-material input)
-          req (-> (request :put (uri-for routes/update-course-material
-                                         (:id input)))
-                  (assoc :body input))
-          cmd (handler req)]
-      (is cmd)
-      (is (= ::course-commands/Publish! (message/type cmd))
-          "generates correct command")
-      (is (= (uuid (:id input)) (:course-id cmd))
-          "command has correct course id")
-      (is (= parsed-input (:material cmd))
-          "command has material in correct format")
-
-      (with-temp-store [store fetch _]
-        (testing "with command executor"
-          (let [{:keys [status body]} ((make-request-handler store) req)]
-            (is (= 200 status))
-            (is (= :command-accepted (:status body)))
-            (is (fetch course-id)))))))
-
   (testing "init section test"
     (let [req (request :put (uri-for routes/section-test-init
                                      course-id
