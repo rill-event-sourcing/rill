@@ -64,7 +64,7 @@ namespace :deploy do
   desc 'download application from S3'
   task :create_release2 do
     on roles(:app) do
-      last_commit = capture("cd #{ repo_path } && git log -1 --format='%H'")
+      last_commit = capture("cd #{ repo_path } && git log -1 --format='%H'") if File.directory?(repo_path)
       ask :current_revision, last_commit
       set :release_file, "#{ fetch(:application) }-#{ fetch(:current_revision) }.jar"
       execute :mkdir, '-p', release_path
