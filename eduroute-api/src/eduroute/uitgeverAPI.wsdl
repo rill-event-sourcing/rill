@@ -1,0 +1,213 @@
+<?xml version="1.0"?>
+<definitions name="LicenseELOMatch" targetNamespace="urn:edurouteNamespace" xmlns:tns="urn:edurouteNamespace" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+	<message name="maakBatchRequest">
+		<part name="LeverancierCode" type="xsd:string"/>
+		<part name="ControleCode" type="xsd:string"/>
+		<part name="Omschrijving" type="xsd:string"/>
+		<part name="DistributeurBatchnummer" type="xsd:string"/>
+	</message>
+	<message name="maakContentRequest">
+		<part name="SessieID" type="xsd:string"/>
+		<part name="EAN" type="xsd:string"/>
+		<part name="Titel" type="xsd:string"/>
+		<part name="Soort" type="xsd:string"/>
+		<part name="URL" type="xsd:string"/>
+		<part name="User" type="xsd:string"/>
+		<part name="Password" type="xsd:string"/>
+		<part name="BeschikbaarVanaf" type="xsd:string"/>
+		<part name="DownloadPath" type="xsd:string"/>
+		<part name="SCORMURL" type="xsd:string"/>
+		<part name="SCORMLocatie" type="xsd:string"/>
+		<part name="ActivatiecodeNodig" type="xsd:string"/>
+	</message>
+	<message name="verwijderContentRequest">
+		<part name="SessieID" type="xsd:string"/>
+		<part name="EAN" type="xsd:string"/>
+	</message>
+	<message name="maakCRHLicentieRequest">
+		<part name="SessieID" type="xsd:string"/>
+		<part name="LeverancierCRHLicentieID" type="xsd:string"/>
+		<part name="CRHCode" type="xsd:string"/>
+		<part name="EAN" type="xsd:string"/>
+		<part name="LicentieDatum" type="xsd:string"/>
+		<part name="VerloopDatum" type="xsd:string"/>
+	</message>
+	<message name="maakSchoolLicentieRequest">
+		<part name="SessieID" type="xsd:string"/>
+		<part name="LeverancierSchoolLicentieID" type="xsd:string"/>
+		<part name="AssuNr" type="xsd:string"/>
+		<part name="EAN" type="xsd:string"/>
+		<part name="LicentieDatum" type="xsd:string"/>
+		<part name="VerloopDatum" type="xsd:string"/>
+		<part name="Status" type="xsd:string"/>
+		<part name="HeleSchool" type="xsd:string"/>
+	</message>
+	<message name="sessieLoginRequest">
+		<part name="LeverancierCode" type="xsd:string"/>
+		<part name="ControleCode" type="xsd:string"/>
+		<part name="SessieID" type="xsd:string"/>
+	</message>
+	<message name="licentiesRequest">
+		<part name="LeverancierCode" type="xsd:string"/>
+		<part name="ControleCode" type="xsd:string"/>
+		<part name="persoon_ID" type="xsd:string"/>
+	</message>
+	<message name="getSchoolInfoRequest">
+		<part name="UitgeverCode" type="xsd:string"/>
+		<part name="ControleCode" type="xsd:string"/>
+		<part name="AssuNr" type="xsd:string"/>
+		<part name="Brin" type="xsd:string"/>
+	</message>
+	<message name="leverActivatiecodesRequest">
+		<part name="SessieID" type="xsd:string"/>
+		<part name="Distributeur_ID" type="xsd:integer"/>
+		<part name="EAN" type="xsd:string"/>
+		<part name="OrderReferentie" type="xsd:string"/>
+		<part name="Activatiecodes" type="xsd:string"/>
+		<part name="Vervaldatum" type="xsd:string"/>
+		<part name="FactuurNummer" type="xsd:string"/>
+	</message>
+	<message name="StatusResponse">
+		<part name="ResParam" type="xsd:integer"/>
+		<part name="ResString" type="xsd:string"/>
+	</message>
+	<portType name="KeyPortType">
+		<operation name="maakBatch">
+			<documentation>Maak een batchnummer aan voor deze overdracht.</documentation>
+			<input message="tns:maakBatchRequest"/>
+			<output message="tns:StatusResponse"/>
+		</operation>
+		<operation name="maakContent">
+			<documentation>Maak een content-record aan.</documentation>
+			<input message="tns:maakContentRequest"/>
+			<output message="tns:StatusResponse"/>
+		</operation>
+		<operation name="verwijderContent">
+			<documentation>Verwijdert een content-record.</documentation>
+			<input message="tns:verwijderContentRequest"/>
+			<output message="tns:StatusResponse"/>
+		</operation>
+		<operation name="maakCRHLicentie">
+			<documentation>MAak een CRHLicentie-record.</documentation>
+			<input message="tns:maakCRHLicentieRequest"/>
+			<output message="tns:StatusResponse"/>
+		</operation>
+		<operation name="maakSchoolLicentie">
+			<documentation>Maak een schoollicentie-record aan.</documentation>
+			<input message="tns:maakSchoolLicentieRequest"/>
+			<output message="tns:StatusResponse"/>
+		</operation>
+		<operation name="sessieLogin">
+			<documentation>Checkt de login van een account via een sessie</documentation>
+			<input message="tns:sessieLoginRequest"/>
+			<output message="tns:StatusResponse"/>
+		</operation>
+		<operation name="licenties">
+			<documentation>Vraagt de licenties van een account op.</documentation>
+			<input message="tns:licentiesRequest"/>
+			<output message="tns:StatusResponse"/>
+		</operation>
+		<operation name="getSchoolInfo">
+			<documentation>Vraagt de gegevens van een ASSUnr of Brin op.</documentation>
+			<input message="tns:getSchoolInfoRequest"/>
+			<output message="tns:StatusResponse"/>
+		</operation>
+		<operation name="leverActivatiecodes">
+			<documentation>Lever Activatiecodes uit naar de Eduroute activatiecode voorraad voor distributeurs.</documentation>
+			<input message="tns:leverActivatiecodesRequest"/>
+			<output message="tns:StatusResponse"/>
+		</operation>
+	</portType>
+	<binding name="KeyBinding" type="tns:KeyPortType">
+		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="maakBatch">
+			<soap:operation soapAction="urn:Magic-KeyPortType#maakBatch" style="rpc"/>
+			<input>
+				<soap:body use="literal" namespace="urn:myInputNamespace" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="literal" namespace="urn:myOutputNamespace" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="maakContent">
+			<soap:operation soapAction="urn:Magic-KeyPortType#maakContent" style="rpc"/>
+			<input>
+				<soap:body use="literal" namespace="urn:myInputNamespace" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="literal" namespace="urn:myOutputNamespace" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="verwijderContent">
+			<soap:operation soapAction="urn:Magic-KeyPortType#verwijderContent" style="rpc"/>
+			<input>
+				<soap:body use="literal" namespace="urn:myInputNamespace" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="literal" namespace="urn:myOutputNamespace" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="maakCRHLicentie">
+			<soap:operation soapAction="urn:Magic-KeyPortType#maakCRHLicentie" style="rpc"/>
+			<input>
+				<soap:body use="literal" namespace="urn:myInputNamespace" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="literal" namespace="urn:myOutputNamespace" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="maakSchoolLicentie">
+			<soap:operation soapAction="urn:Magic-KeyPortType#maakSchoolLicentie" style="rpc"/>
+			<input>
+				<soap:body use="literal" namespace="urn:myInputNamespace" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="literal" namespace="urn:myOutputNamespace" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="sessieLogin">
+			<soap:operation soapAction="urn:Magic-KeyPortType#sessieLogin" style="rpc"/>
+			<input>
+				<soap:body use="literal" namespace="urn:myInputNamespace" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="literal" namespace="urn:myOutputNamespace" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="licenties">
+			<soap:operation soapAction="urn:Magic-KeyPortType#licenties" style="rpc"/>
+			<input>
+				<soap:body use="literal" namespace="urn:myInputNamespace" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="literal" namespace="urn:myOutputNamespace" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getSchoolInfo">
+			<soap:operation soapAction="urn:Magic-KeyPortType#getSchoolInfo" style="rpc"/>
+			<input>
+				<soap:body use="literal" namespace="urn:myInputNamespace" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="literal" namespace="urn:myOutputNamespace" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="leverActivatiecodes">
+			<soap:operation soapAction="urn:Magic-KeyPortType#leverActivatiecodes" style="rpc"/>
+			<input>
+				<soap:body use="literal" namespace="urn:myInputNamespace" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="literal" namespace="urn:myOutputNamespace" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+	</binding>
+	<service name="EdurouteDistributeurService">
+		<documentation>
+			Eduroute SOAP interface.
+		</documentation>
+		<port name="MyPort" binding="tns:KeyBinding">
+			<soap:address location="http://www.eduroute.nl/soap/uitgever/uitgeverAPI.php"/>
+		</port>
+	</service>
+</definitions>

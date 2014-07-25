@@ -1,16 +1,20 @@
 (ns studyflow.school-administration.main
   (:require [clojure.core.async :refer [<!! thread]]
             [clojure.string :as str]
+            [clojure.tools.logging :as log]
             [compojure.core :refer [GET POST defroutes routes]]
             [compojure.route :refer [not-found]]
             [hiccup.form :as form]
             [hiccup.page :refer [html5 include-css]]
             [org.bovinegenius.exploding-fish :as uri]
-            [rill.event-store.memory :refer [memory-store]]
+            [rill.event-store.atom-store :refer [atom-event-store]]
+            [rill.handler :refer [try-command]]
+            [rill.message :as message]
             [rill.uuid :refer [new-id uuid]]
             [rill.web :refer [wrap-command-handler]]
             [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
-            [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
+            [ring.middleware.defaults :refer [site-defaults
+                                              wrap-defaults]]
             [ring.util.request :refer [request-url]]
             [ring.util.response :as response]
             [studyflow.school-administration.read-model :as m]
@@ -121,13 +125,25 @@
   (-> queries
       (wrap-read-model my-read-model)))
 
-(defonce event-store (memory-store))
+(defonce event-store (atom-event-store "http://127.0.0.1:2113" {:user "admin" :password "changeit"}))
+;(defonce event-store (memory-store))
+
+(defn edu-route-registration-trigger
+  ;; TODO this should check if the events were already seen before.
+  ;; TODO and we should probably not run more than instance of this trigger.
+  [event-store event]
+  (when (= (message/type event) :studyflow.login.edu-route-student.events/Registered)
+    (log/info event)
+    (try-command event-store (student/create-from-edu-route-credentials! (new-id) (:edu-route-id event) (:full-name event)))))
+
 
 (defn event-listener [channel read-model-atom]
+  (log/info "Starting event listener")
   (thread
     (loop []
       (when-let [event (<!! channel)]
         (swap! read-model-atom handle-event event)
+        (edu-route-registration-trigger event-store event)
         (recur)))))
 
 (def commands-app
