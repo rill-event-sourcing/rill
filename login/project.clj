@@ -8,6 +8,7 @@
                  [crypto-password "0.1.3"]
                  [environ "0.5.0"]
                  [hiccup "1.0.5"]
+                 [nl.studyflow/eduroute-api "0.0.1"]
                  [org.clojure/clojure "1.6.0"]
                  [org.clojure/core.async "0.1.303.0-886421-alpha"]
                  [org.clojure/data.json "0.2.5"]
@@ -19,8 +20,6 @@
                  [digest "1.4.4"]]
 
   :profiles {:dev {:dependencies [[enlive "1.1.5"]
-                                  [ring-mock "0.1.5"]]}}
-  
-  :java-source-paths ["src/eduroute" "test/java"]
-
-  :main studyflow.login.launcher)
+                                  [ring-mock "0.1.5"]]}
+             :uberjar {:aot [studyflow.login.launcher]
+                       :main studyflow.login.launcher}})
