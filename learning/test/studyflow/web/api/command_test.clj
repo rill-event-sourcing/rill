@@ -27,10 +27,11 @@
 
 (deftest handler-test
   (testing "init section test"
-    (let [req (request :put (uri-for routes/section-test-init
-                                     course-id
-                                     section-id
-                                     student-id))
+    (let [req (-> (request :put (uri-for routes/section-test-init
+                                         course-id
+                                         section-id
+                                         student-id))
+                  (assoc-in [:student :student-id] student-id))
           cmd (handler req)]
       (is (= ::section-test-commands/Init! (message/type cmd))
           "generates correct command")
@@ -54,6 +55,7 @@
                                          student-id
                                          course-id
                                          question-id))
+                  (assoc-in [:student :student-id] student-id)
                   (assoc :body {:expected-version 0
                                 :inputs inputs}))
           cmd (handler req)]
@@ -71,6 +73,7 @@
                                                student-id
                                                course-id
                                                (:current-question-id section-test)))
+                        (assoc-in [:student :student-id] student-id)
                         (assoc :body {:expected-version 1
                                       :inputs inputs}))
                 {:keys [status body]} ((make-request-handler store) req)]
