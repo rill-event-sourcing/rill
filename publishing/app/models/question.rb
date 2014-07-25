@@ -9,7 +9,7 @@ class Question < ActiveRecord::Base
   has_many :line_inputs
   has_many :multiple_choice_inputs
 
-  default_scope { order(:name) }
+  default_scope { order(:name, :text) }
 
   scope :active, -> { where(active: true) }
   scope :for_short_uuid, ->(id) { where(["SUBSTRING(CAST(id AS VARCHAR), 1, 8) = ?", id]) }
