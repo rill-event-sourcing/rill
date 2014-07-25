@@ -16,8 +16,8 @@
 
 (def handler
   (clout/handle routes/section-test-replay
-                (fn [{{:keys [section-test-id]} :params store :event-store :as request}]
-                  (response (replay-section-test store section-test-id)))))
+                (fn [{{:keys [section-id student-id]} :params store :event-store :as request}]
+                  (response (replay-section-test store section-id student-id)))))
 
 (defn make-request-handler
   [event-store]

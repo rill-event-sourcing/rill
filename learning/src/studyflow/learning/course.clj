@@ -1,10 +1,11 @@
 (ns studyflow.learning.course
-  (:require [rill.aggregate :refer [defaggregate handle-event handle-command]]
+  (:require [rill.aggregate :refer [handle-event handle-command]]
             [rill.uuid :refer [new-id]]
             [studyflow.learning.course.events :as events]
             [studyflow.learning.course.commands :as commands]))
 
-(defaggregate Course [chapters])
+(defrecord Course
+    [id chapters])
 
 (defn- find-by-id
   [coll id]
@@ -12,20 +13,27 @@
 
 (defn section
   [course section-id]
+  {:pre [course section-id]
+   :post [%]}
   (find-by-id (mapcat :sections (:chapters course))
               section-id))
 
 (defn questions-for-section
   [course section-id]
+  {:pre [course section-id]
+   :post [%]}
   (:questions (section course section-id)))
 
 (defn question-for-section
   [course section-id question-id]
+  {:pre [course section-id question-id]
+   :post [%]}
   (find-by-id (questions-for-section course section-id)
               question-id))
 
 (defn answer-correct?
-  [{:keys [line-input-fields]} input-values]
+  [{:keys [line-input-fields] :as question} input-values]
+  {:pre [question line-input-fields]}
   (every? (fn [{:keys [name correct-answers]}]
             (when-let [value (get input-values name)]
               (contains? correct-answers value)))
