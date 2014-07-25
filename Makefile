@@ -9,7 +9,7 @@ deploy-staging:
 test:
 	cd lib/rill && make test && make install
 	cd lib/components && make test && make install
-	cd learning && make test
+	cd learning && make test && make deploy
 	cd publishing && make test
-	cd login && make test
+	cd login && make test && make deploy
 
