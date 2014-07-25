@@ -18,9 +18,7 @@
   (fn [req]
     (if-let [student-id (get req :student-id)]
       (if-let [student (read-model/get-student @read-model student-id)]
-        (handler (-> req
-                     (assoc :student student)
-                     (dissoc :student-id)))
+        (handler (assoc req :student (assoc student :student-id student-id)))
         (do
           (log/warn "Can't find student through session, perhaps re-logging in will work")
           (redirect-login req)))
