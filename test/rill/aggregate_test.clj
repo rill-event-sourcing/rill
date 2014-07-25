@@ -31,6 +31,20 @@
   [my-aggregate command]
   [(handler-test-event (:agg-id command) my-aggregate)])
 
+(defn custom-ag-id
+  [event]
+  (str (:foo event) ":" (:bar event)))
+
+(defevent CustomAggIdEvent
+  :foo s/Uuid
+  :bar s/Uuid
+  custom-ag-id)
+
+(deftest custom-aggregate-id
+  (let [e (custom-agg-id-event "foo" "bar")]
+    (is (= (custom-ag-id e)
+           (primary-aggregate-id e)))))
+
 (def my-aggregate-id 2798)
 
 (deftest aggregate-ids-test

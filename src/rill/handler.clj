@@ -15,7 +15,8 @@
 (defn validate-commit
   [events]
   (when-not (valid-commit? events)
-    (throw (Exception. "Transactions must apply to exactly one aggregate"))))
+    (throw (Exception. (format "Transactions must apply to exactly one aggregate. Given aggregate ids: %s"
+                               (pr-str (map message/primary-aggregate-id  events)))))))
 
 (defn commit-events
   [store stream-id from-version events]
@@ -49,7 +50,7 @@
   (let [[id version & [primary-aggregate & rest-aggregates]] (prepare-aggregates event-store command)]
     (if (and (contains? command :expected-version)
              (not= version (:expected-version command)))
-      [:out-of-date]
+      [:out-of-date {:expected-version (:expected-version command) :actual-version version}]
       (if-let [events (apply aggregate/handle-command primary-aggregate command rest-aggregates)]
         (if (commit-events event-store id version events)
           [:ok events (+ version (count events))]
