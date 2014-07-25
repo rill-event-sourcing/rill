@@ -37,7 +37,7 @@ commands."
     (fn [{{:keys [section-id student-id course-id]} :params
           {:keys [expected-version] :as body} :body}]
       (section-test-commands/next-question! (uuid section-id)
-                                            (uuid section-id)
+                                            (uuid student-id)
                                             expected-version
                                             (uuid course-id))))))
 
