@@ -94,7 +94,7 @@ namespace :deploy do
 
   task :new_release_path2 do
     run_locally do
-      set :current_revision, capture("git rev-parse #{ fetch(:branch) }")
+      set :current_revision, capture("git rev-parse HEAD")
       set :release_file, "#{ fetch(:application) }-#{ fetch(:current_revision) }-#{ Time.now.strftime("%Y%m%dT%H%M%S") }.jar"
     end
   end
