@@ -21,8 +21,7 @@
     (let [db (atom {:by-email {"editor@studyflow.nl"
                                {:user-id "editor-id" :user-role "editor" :encrypted-password (bcrypt/encrypt "editor")}}
                     :by-edu-route-id {"12345"
-                                      {:user-role "student" :user-id "some student id"}}
-})]
+                                      {:user-role "student" :user-id "some student id"}}})]
       (credentials/listen! (:channel event-channel) db)
       (assoc component
         :credentials-db db
@@ -36,7 +35,7 @@
 (defn credentials-component []
   (map->CredentialsComponent {}))
 
-(defrecord RingHandlerComponent [credentials session-store event-store edu-route-service]
+(defrecord RingHandlerComponent [credentials session-store event-store edu-route-service default-redirect-paths session-max-age cookie-domain]
   component/Lifecycle
 
   (start [component]
@@ -48,20 +47,30 @@
                          :edu-route-service edu-route-service
                          :authenticate-by-edu-route-id (:authenticate-by-edu-route-id-fn credentials)
                          :event-store (:store event-store)
+                         :default-redirect-paths default-redirect-paths
+                         :session-max-age session-max-age
+                         :cookie-domain cookie-domain
                          :session-store session-store)))))
 
   (stop [component]
     (log/info "Stopping handler")
     (dissoc component :handler)))
 
-(defn ring-handler-component []
-  (map->RingHandlerComponent {}))
+(defn ring-handler-component [session-max-age default-redirect-paths cookie-domain]
+  (map->RingHandlerComponent {:session-max-age session-max-age
+                              :default-redirect-paths default-redirect-paths
+                              :cookie-domain cookie-domain}))
 
 (defn make-system
-  [config]
+  [{:keys [jetty-port default-redirect-paths session-max-age cookie-domain]}]
   (component/system-map
-   :jetty (component/using (jetty-component (:jetty-port config)) [:ring-handler])
-   :ring-handler (component/using (ring-handler-component) [:credentials :session-store :event-store :edu-route-service])
+   :jetty (component/using (jetty-component jetty-port) [:ring-handler])
+   :ring-handler (component/using (ring-handler-component (or session-max-age (* 8 60 60))
+                                                          (merge {"editor" "http://localhost:2000"
+                                                                  "student" "http://localhost:3000"}
+                                                                 default-redirect-paths)
+                                                          cookie-domain)
+                                  [:credentials :session-store :event-store :edu-route-service])
    :edu-route-service (edu-route-production-service "DDF9nh3w45s$Wo1w" "studyflow" "qW3#f65S") ;; TODO: get implementation from config
    :session-store (redis-session-store)
    :credentials (component/using (credentials-component) [:event-channel])
