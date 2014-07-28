@@ -6,4 +6,4 @@ test:
 	STUDYFLOW_ENV=test lein test && echo "OK"
 
 deploy:
-	cap production build
+	lein install && lein uberjar && cap production build
