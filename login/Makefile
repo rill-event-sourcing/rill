@@ -6,4 +6,4 @@ test:
 	STUDYFLOW_ENV=test lein test && echo "OK"
 
 deploy:
-	cap staging build
+	cap production build

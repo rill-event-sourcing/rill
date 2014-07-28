@@ -1,11 +1,11 @@
 (ns studyflow.school-administration.school
   (:require [clojure.string :as str]
-            [rill.aggregate :refer [defaggregate handle-command handle-event]]
+            [rill.aggregate :refer [handle-command handle-event]]
             [rill.message :refer [defcommand primary-aggregate-id]]
             [schema.core :as s]
             [studyflow.school-administration.school.events :as events]))
 
-(defaggregate School [name brin])
+(defrecord School [id name brin])
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
