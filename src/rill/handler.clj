@@ -51,8 +51,9 @@
     (if (and (contains? command :expected-version)
              (not= version (:expected-version command)))
       [:out-of-date {:expected-version (:expected-version command) :actual-version version}]
-      (if-let [events (apply aggregate/handle-command primary-aggregate command rest-aggregates)]
-        (if (commit-events event-store id version events)
-          [:ok events (+ version (count events))]
-          [:conflict])
-        [:rejected]))))
+      (let [[status events :as response] (apply aggregate/handle-command primary-aggregate command rest-aggregates)]
+        (case status
+          :ok (if (commit-events event-store id version events)
+                  [:ok events (+ version (count events))]
+                  [:conflict])
+          :rejected response)))))

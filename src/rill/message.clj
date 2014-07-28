@@ -13,10 +13,6 @@
   [m]
   (dissoc m id type number))
 
-(defmulti strict-map->Message
-  (fn [s m]
-    s))
-
 (defn ->type-keyword
   [ns sym]
   (keyword (name (ns-name ns)) (name sym)))
@@ -28,7 +24,14 @@
 
 (defmulti primary-aggregate-id
   "The id of the aggregate that will handle this message"
-  ::type)
+  type)
+
+(defn make-message
+  "Create a new message with type `message-type` and data"
+  [message-type data]
+  (assoc data
+    type message-type
+    id (new-id)))
 
 (defmacro defmessage
   [name & params]
@@ -51,20 +54,11 @@
            (assoc params# ::type ~type-keyword))
 
          ~(let [args (params->args params)
-                ks (mapv keyword args)
-                id-arg (gensym "msg_id_")]
-            `(do (defn ~(symbol (str "->" name-str))
-                   ~(str "Constructs a " name-str " message from the positional arguments.")
-                   ~(vec (into [id-arg] args))
-                   ~(into {::id id-arg
-                           ::type type-keyword}
-                          (zipmap ks args)))
-                 (defn ~(symbol (lisp-name name-str))
-                   ~(str "Create a new " name-str " message from the positional arguments. Automatically generates a new message id.")
-                   ~(vec args)
-                   ~(into {::id `(new-id)
-                           ::type type-keyword}
-                          (zipmap ks args)))))
+                ks (mapv keyword args)]
+            `(defn ~(symbol (lisp-name name-str))
+               ~(str "Create a new " name-str " message from the positional arguments. Automatically generates a new message id.")
+               ~(vec args)
+               ~(make-message type-keyword (zipmap ks args))))
 
          (defmethod primary-aggregate-id
            ~type-keyword
