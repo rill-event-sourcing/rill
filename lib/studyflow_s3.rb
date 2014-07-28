@@ -3,36 +3,18 @@
 Rake::Task["deploy:updating"].clear_actions
 
 desc 'Compile and then upload application to S3'
-task :build => ["deploy:build",
-                "deploy:upload",
-                "deploy:clean_s3"]
+task :build => ["deploy:upload"]
 
 
 namespace :deploy do
 
   #############################################################################################
-  # building
-
-  desc 'Build application for deployment'
-  task build: :new_release_path2 do
-    run_locally do
-      execute "mkdir -p s3output && rm -Rf s3output/*"
-      execute "lein uberjar"
-      execute "cp target/*-SNAPSHOT-standalone.jar s3output/#{ fetch(:release_file) }"
-    end
-  end
+  # upload builded jar file
 
   desc 'Upload jar-file to S3'
   task upload: :new_release_path2 do
     run_locally do
-      execute "s3cmd --multipart-chunk-size-mb=5 put s3output/#{ fetch(:release_file) } #{ fetch(:s3path) }/"
-    end
-  end
-
-  desc 'Cleanup S3 output directory'
-  task :clean_s3 do
-    run_locally do
-      execute "rm -Rf s3output"
+      execute "s3cmd --multipart-chunk-size-mb=5 put target/*-SNAPSHOT-standalone.jar #{ fetch(:s3path) }/#{ fetch(:release_file) }"
     end
   end
 
