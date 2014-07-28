@@ -64,7 +64,7 @@
 (defn make-system
   [{:keys [jetty-port default-redirect-paths session-max-age cookie-domain]}]
   (component/system-map
-   :jetty (component/using (jetty-component jetty-port) [:ring-handler])
+   :jetty (component/using (jetty-component (or jetty-port 4000)) [:ring-handler])
    :ring-handler (component/using (ring-handler-component (or session-max-age (* 8 60 60))
                                                           (merge {"editor" "http://localhost:2000"
                                                                   "student" "http://localhost:3000"}
