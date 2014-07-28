@@ -6,8 +6,8 @@
             [studyflow.system.components.fixtures-loading :refer [fixtures-loading-component]]
             [com.stuartsierra.component :as component]))
 
-(def dev-config (merge sys/prod-config
-                       {}))
+(def dev-config {:port 3000
+                 :internal-api-port 3001})
 
 (defn dev-system [dev-options]
   (merge (sys/prod-system dev-options)

@@ -4,9 +4,12 @@
             [com.stuartsierra.component :as component])
   (:gen-class))
 
-(defn -main [& args]
-  (log/info "Main Studyflow learning app")
-  (let [s (-> (system/prod-system system/prod-config)
+(defn -main [jetty-port event-store-uri]
+  (log/info "Studyflow school administration app")
+  (let [s (-> (system/prod-system {:port (Long/parseLong jetty-port)
+                                   :event-store-config {:uri event-store-uri
+                                                        :user "admin"
+                                                        :password "changeit"}})
               component/start)]
     (.addShutdownHook (Runtime/getRuntime)
                       (Thread. (fn []
