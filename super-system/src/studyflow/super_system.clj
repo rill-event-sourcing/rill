@@ -25,7 +25,11 @@
                                                        :jetty-port 3000))
                      (dissoc :event-store)
                      (namespace-system :learning [:event-store]))
-        login (-> (login/make-system {:jetty-port 4000})
+        login (-> (login/make-system {:jetty-port 4000
+                                      :default-redirect-paths {"editor" "http://localhost:2000"
+                                                               "student" "http://localhost:3000"}
+                                      :session-max-age (* 8 60 60)
+                                      :cookie-domain nil})
                   (dissoc :event-store)
                   (namespace-system :login [:event-store]))
         shared-system {:event-store (component/using
