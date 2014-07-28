@@ -1,5 +1,6 @@
 (ns studyflow.login.main
-  (:require [clojure.string :as str]
+  (:require [clojure.tools.logging :as log]
+            [clojure.string :as str]
             [compojure.core :refer [DELETE GET POST defroutes]]
             [compojure.route :refer [not-found]]
             [environ.core :refer [env]]
@@ -182,7 +183,7 @@
 
 (def studyflow-site-defaults
   (-> site-defaults ;; secure-site-defaults
-      (assoc-in [:session :cookie-name] "studyflow_login_session")
+      (assoc-in [:session :cookie-name] "studyflow_session")
       (assoc-in [:security :anti-forgery] false)))
 
 (def app

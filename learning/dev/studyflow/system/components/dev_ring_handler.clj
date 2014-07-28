@@ -20,14 +20,14 @@
             (update-in [:headers] dissoc "Content-Length" "Last-Modified"))
         res))))
 
-(defrecord DevRingHandlerComponent [event-store read-model]
+(defrecord DevRingHandlerComponent [event-store read-model session-store]
   Lifecycle
   (start [component]
     (info "Starting handler")
     (assoc component :handler
-           (-> (web/make-request-handler (:store event-store) (:read-model read-model))
+           (-> (web/make-request-handler (:store event-store) (:read-model read-model) session-store)
                (wrap-dev-cljs
-                "<script src=\"/public/js/studyflow.js\" type=\"text/javascript\"></script>"
+                "<script type=\"text/javascript\" src=\"/public/js/studyflow.js\"></script>"
                 "<script src=\"/dev/public/js/react_0.9.0_local_copy.js\" type=\"text/javascript\"></script>
                  <script src=\"/public/js/studyflow-dev.js\" type=\"text/javascript\"></script>
                  <script type=\"text/javascript\">goog.require('studyflow.web.core');</script>"))))

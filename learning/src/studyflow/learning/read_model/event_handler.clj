@@ -1,5 +1,6 @@
 (ns studyflow.learning.read-model.event-handler
-  (:require [studyflow.learning.read-model :as m]
+  (:require [clojure.tools.logging :as log]
+            [studyflow.learning.read-model :as m]
             [studyflow.learning.course.events :as events]
             [rill.message :as message]))
 
@@ -26,3 +27,13 @@
 (defmethod handle-event ::events/Deleted
   [model event]
   (m/remove-course model (:course-id event)))
+
+(defmethod handle-event :studyflow.school-administration.student.events/Created
+  [model event]
+  (log/debug "Adding student to read-model: " event)
+  (m/set-student model (:student-id event) {:full-name (:full-name event)}))
+
+(defmethod handle-event :default
+  [model event]
+  (log/debug "learning read-model does not handle event" (message/type event))
+  model)

@@ -32,12 +32,18 @@
 
 (defmacro defmessage
   [name & params]
-  {:pre [(every? keyword? (take-nth 2 params))]}
+  {:pre [(every? keyword? (take-nth 2 (butlast params)))]}
   (let [type-keyword (->type-keyword (ns-name *ns*) name)
-        name-str (clojure.core/name name)]
+        name-str (clojure.core/name name)
+        primary-aggregate-id-fn (if (even? (count params))
+                                  (keyword (first params))
+                                  (last params))
+        params (if (even? (count params))
+                 params
+                 (butlast params))]
     `(do (def ~name ~(into {::id s/Uuid
                             ::type type-keyword}
-                           (map vec (partition-all 2 params))))
+                           (map vec (partition 2 params))))
 
          (defn ~(symbol (str "map->" name-str))
            ~(str "Inserts a " name-str " rill.message/type tag into the given map.")
@@ -63,7 +69,7 @@
          (defmethod primary-aggregate-id
            ~type-keyword
            [message#]
-           (~(keyword (first params)) message#)))))
+           (~primary-aggregate-id-fn message#)))))
 
 (defmacro defcommand
   [name & params]

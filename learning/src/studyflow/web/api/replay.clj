@@ -2,6 +2,7 @@
   "Fetch old events"
   (:require [studyflow.learning.section-test.replay :refer [replay-section-test]]
             [clout-link.route :as clout]
+            [studyflow.web.authorization :as authorization]
             [studyflow.web.routes :as routes]
             [rill.uuid :refer [uuid]]))
 
@@ -16,8 +17,9 @@
 
 (def handler
   (clout/handle routes/section-test-replay
-                (fn [{{:keys [section-test-id]} :params store :event-store :as request}]
-                  (response (replay-section-test store section-test-id)))))
+                (authorization/wrap-student-authorization
+                 (fn [{{:keys [section-id student-id]} :params store :event-store :as request}]
+                   (response (replay-section-test store section-id student-id))))))
 
 (defn make-request-handler
   [event-store]

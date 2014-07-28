@@ -4,8 +4,10 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [clj-http "0.9.1"]
                  [cheshire "5.3.1"]
+                 [com.taoensso/carmine "2.6.2"]
                  [org.clojure/tools.logging "0.2.6"]
                  [environ "0.5.0"]
+                 [enlive "1.1.5"]
                  [prismatic/schema "0.2.2"]
                  [ring/ring-json "0.3.1"]
                  [compojure "1.1.8"]
@@ -18,7 +20,8 @@
                  [org.clojure/core.async "0.1.303.0-886421-alpha"]
                  [com.stuartsierra/component "0.2.1"]
                  [identifiers "1.0.0"]
-                 [rill "0.1.0-SNAPSHOT"]]
+                 [rill "0.1.0-SNAPSHOT"]
+                 [studyflow/components "0.1.0-SNAPSHOT"]]
 
   :profiles {:dev
              {:source-paths ["dev"]

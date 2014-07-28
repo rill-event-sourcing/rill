@@ -63,7 +63,7 @@
    :jetty (component/using (jetty-component (:jetty-port config)) [:ring-handler])
    :ring-handler (component/using (ring-handler-component) [:credentials :session-store :event-store :edu-route-service])
    :edu-route-service (edu-route-production-service "DDF9nh3w45s$Wo1w" "studyflow" "qW3#f65S") ;; TODO: get implementation from config
-   :session-store (redis-session-store)
+   :session-store (redis-session-store {:some :config})
    :credentials (component/using (credentials-component) [:event-channel])
    :event-channel (component/using (event-channel-component) [:event-store])
    :event-store (component/using (memory-event-store-component) [])))

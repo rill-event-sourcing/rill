@@ -1,5 +1,6 @@
 (ns studyflow.web.core
-  (:require [om.core :as om :include-macros true]
+  (:require [goog.dom :as gdom]
+            [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [studyflow.web.service :as service]
             [studyflow.web.history :as url-history]
@@ -13,7 +14,11 @@
   (let [loc (.. js/document -location -pathname)]
     (last (string/split loc "/"))))
 
-(def app-state (atom {:static {:course-id (course-id-for-page)}
+(defn student-id-for-page []
+  (.-value (gdom/getElement "student-id")))
+
+(def app-state (atom {:static {:course-id (course-id-for-page)
+                               :student-id (student-id-for-page)}
                       :view {:selected-path {:chapter-id nil
                                              :section-id nil
                                              :tab-questions #{}}}
@@ -131,10 +136,11 @@
                 streak))))))
 
 (defn question-panel [cursor owner {:keys [section-test
-                                           section-test-id
+                                           section-id
+                                           student-id
                                            question
                                            question-data
-                                           chapter-id section-id question-id] :as opts}]
+                                           chapter-id question-id] :as opts}]
   (reify
     om/IRender
     (render [_]
@@ -149,9 +155,9 @@
             check-answer (fn []
                            (async/put! (om/get-shared owner :command-channel)
                                        ["section-test-commands/check-answer"
-                                        section-test-id
-                                        section-test-aggregate-version
                                         section-id
+                                        student-id
+                                        section-test-aggregate-version
                                         course-id
                                         question-id
                                         {"_INPUT_1_" current-answer}]))]
@@ -181,9 +187,9 @@
                      (dom/button #js {:onClick (fn []
                                                  (async/put! (om/get-shared owner :command-channel)
                                                              ["section-test-commands/next-question"
-                                                              section-test-id
-                                                              section-test-aggregate-version
                                                               section-id
+                                                              student-id
+                                                              section-test-aggregate-version
                                                               course-id])
                                                  (prn "next question command"))}
                                  "Correct! Next Question")
@@ -211,8 +217,8 @@
     om/IRender
     (render [_]
       (let [section-id (get-in cursor [:view :selected-path :section-id])
-            section-test-id (str "student-idDEFAULT_STUDENT_IDsection-id" section-id)
-            section-test (get-in cursor [:aggregates section-test-id])]
+            student-id (get-in cursor [:static :student-id])
+            section-test (get-in cursor [:aggregates section-id])]
         (dom/div #js {:className "row"}
                  (dom/div #js {:className "col-md-12 panel panel-default"}
                           (dom/div #js {:className "col-md-4"}
@@ -232,11 +238,11 @@
                          question-id (:question-id question)]
                      (if-let [question-data (question-by-id cursor section-id question-id)]
                        (om/build question-panel cursor {:opts {:section-test section-test
-                                                               :section-test-id section-test-id
                                                                :question question
                                                                :question-data question-data
                                                                :question-id question-id
-                                                               :section-id section-id}})
+                                                               :section-id section-id
+                                                               :student-id student-id}})
                        (dom/div nil "Loading question ...")))
                    (dom/div nil "Starting test for this section")))))))
 
@@ -319,7 +325,7 @@
        service/wrap-service
        url-history/wrap-history)
    app-state
-   {:target (. js/document (getElementById "app"))
+   {:target (gdom/getElement "app")
     :tx-listen (fn [tx-report cursor]
                  (service/listen tx-report cursor)
                  (url-history/listen tx-report cursor))

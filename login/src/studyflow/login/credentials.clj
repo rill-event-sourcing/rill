@@ -1,5 +1,6 @@
 (ns studyflow.login.credentials
   (:require [clojure.core.async :refer [<!! thread]]
+            [clojure.tools.logging :as log]
             [crypto.password.bcrypt :as bcrypt]
             [rill.message :as message]
             [clojure.tools.logging :as log]))
