@@ -6,4 +6,4 @@ test:
 	lein test && echo "OK"
 
 deploy:
-	cap staging build
+	cap production build
