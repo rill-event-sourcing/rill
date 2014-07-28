@@ -24,7 +24,7 @@
 
 (defn redis-session-store
   ([config]
-     (->RedisSessionStore (merge {:pool {} :spec {}} config)))
+     (->RedisSessionStore {:pool {} :spec config}))
   ([]
      (redis-session-store {})))
 

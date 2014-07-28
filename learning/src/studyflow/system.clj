@@ -12,7 +12,7 @@
 
 (defn prod-system [config-options]
   (info "Running the production system")
-  (let [{:keys [port event-store-config internal-api-port]} config-options]
+  (let [{:keys [port event-store-config internal-api-port session-store-config]} config-options]
     (component/system-map
      :config-options config-options
      :publishing-api-handler (component/using
@@ -21,7 +21,7 @@
      :publishing-api-jetty (component/using
                             (jetty-component internal-api-port)
                             [:publishing-api-handler])
-     :session-store (redis-session-store {:some :config})
+     :session-store (redis-session-store session-store-config)
      :ring-handler (component/using
                     (ring-handler-component)
                     [:event-store :read-model :session-store])
@@ -42,4 +42,5 @@
                   :internal-api-port 3001
                   :event-store-config {:uri (or (env :event-store-uri) "http://127.0.0.1:2113")
                                        :user (or (env :event-store-user) "admin")
-                                       :password (or (env :event-store-password) "changeit")}})
+                                       :password (or (env :event-store-password) "changeit")}
+                  :session-store-config {:uri "redis://localhost:7890"}})

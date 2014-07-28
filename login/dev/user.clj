@@ -20,6 +20,7 @@
   (alter-var-root #'system (constantly (system/make-system {:jetty-port 4000
                                                             :default-redirect-paths {"student" "http://localhost:3000"
                                                                                      "editor" "http://localhost:2000"}
+                                                            :session-store-config {:uri "redis://localhost:7890"}
                                                             :session-max-age (* 8 60 60)
                                                             :cookie-domain nil}))))
 
