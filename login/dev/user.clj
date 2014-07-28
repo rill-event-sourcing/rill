@@ -17,7 +17,11 @@
 (defonce system nil)
 
 (defn init []
-  (alter-var-root #'system (constantly (system/make-system {:jetty-port 4000}))))
+  (alter-var-root #'system (constantly (system/make-system {:jetty-port 4000
+                                                            :default-redirect-paths {"student" "http://localhost:3000"
+                                                                                     "editor" "http://localhost:2000"}
+                                                            :session-max-age (* 8 60 60)
+                                                            :cookie-domain nil}))))
 
 (defn start []
   (bootstrap-emacs)

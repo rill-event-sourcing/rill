@@ -99,15 +99,16 @@
 
 (deftest wrap-redirect-for-role-test
   (let [handler (wrap-redirect-for-role identity)
-        user-role "tester"]
+        user-role "tester"
+        default-redirect-paths {"tester" "this-is-a-url"}]
     (testing "without any redirect-for-role into request"
       (is (= {} (handler {}))))
     (testing "with redirect-for-role and no cookie"
-      (let [resp (handler {:redirect-for-role user-role, :cookies {}})]
-        (is (= (default-redirect-path user-role) ((:headers resp) "Location")))))
+      (let [resp (handler {:redirect-for-role user-role, :cookies {}, :default-redirect-paths default-redirect-paths})]
+        (is (= (default-redirect-paths user-role) ((:headers resp) "Location")))))
     (testing "with redirect-for-role and cookie"
       (let [path "this-path"
-            resp (handler {:redirect-for-role user-role, :cookies {"studyflow_redir_to" {:value path}}})]
+            resp (handler {:redirect-for-role user-role, :default-redirect-paths default-redirect-paths, :cookies {"studyflow_redir_to" {:value path}}})]
         (is (= path ((:headers resp) "Location")))))))
 
 (deftest get-session-id-from-cookies-test
@@ -115,17 +116,16 @@
          (get-session-id-from-cookies {"studyflow_session" {:value "something"}}))))
 
 (deftest make-session-cookie-test
-  (let [session-id "test-session-id"]
-    (testing "without max-age"
-      (let [cookie (:studyflow_session (make-session-cookie session-id))]
-        (is (= session-id (:value cookie)))
-        (is (= session-max-age (:max-age cookie)))))
-    (testing "with max-age"
-      (let [cookie (:studyflow_session (make-session-cookie session-id 123))]
-        (is (= session-id (:value cookie)))
-        (is (= 123 (:max-age cookie)))))))
+  (let [cookie-domain "domain"
+        session-id "test-session-id"
+        max-age 123]
+    (let [cookie (:studyflow_session (make-session-cookie cookie-domain session-id max-age))]
+      (is (= cookie-domain (:domain cookie)))
+      (is (= session-id (:value cookie)))
+      (is (= max-age (:max-age cookie))))))
 
 (deftest clear-session-cookie-test
-  (let [cookie (:studyflow_session (clear-session-cookie))]
+  (let [cookie-domain "domain"
+        cookie (:studyflow_session (clear-session-cookie cookie-domain))]
     (is (= "" (:value cookie)))
     (is (= -1 (:max-age cookie)))))
