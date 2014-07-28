@@ -70,7 +70,7 @@ namespace :deploy do
       set :release_file, "#{ fetch(:application) }-#{ fetch(:current_revision) }*.jar"
       execute :mkdir, '-p', release_path
       execute "s3cmd get #{ fetch(:s3path) }/#{ fetch(:release_file) } #{ release_path }/"
-      execute "ln -s  #{ release_path }/#{ fetch(:release_file) } #{ release_path }/#{ fetch(:supervisor_name) }.jar"
+      execute "ln -fs  #{ release_path }/#{ fetch(:release_file) } #{ release_path }/#{ fetch(:supervisor_name) }.jar"
     end
   end
 
