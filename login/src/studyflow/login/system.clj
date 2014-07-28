@@ -63,7 +63,7 @@
                               :cookie-domain cookie-domain}))
 
 (defn make-system
-  [{:keys [jetty-port default-redirect-paths session-store-config session-max-age cookie-domain]}]
+  [{:keys [jetty-port default-redirect-paths event-store-config session-store-config session-max-age cookie-domain]}]
   (component/system-map
    :jetty (component/using (jetty-component (or jetty-port 4000)) [:ring-handler])
    :ring-handler (component/using (ring-handler-component (or session-max-age (* 8 60 60))
@@ -76,4 +76,7 @@
    :session-store (redis-session-store session-store-config)
    :credentials (component/using (credentials-component) [:event-channel])
    :event-channel (component/using (event-channel-component) [:event-store])
-   :event-store (component/using (memory-event-store-component) [])))
+   :event-store (component/using (atom-event-store-component (merge {:uri "http://127.0.0.1:2113"
+                                                                     :user "admin"
+                                                                     :password "changeit"}
+                                                                    event-store-config)) [])))

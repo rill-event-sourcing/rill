@@ -4,11 +4,11 @@
             [com.stuartsierra.component :as component])
   (:gen-class))
 
-(defn -main [jetty-port session-store-uri]
+(defn -main [jetty-port event-store-uri session-store-uri]
   (log/info "Main Studyflow learning app")
   (let [s (-> (system/prod-system {:port (Long/parseLong jetty-port)
                                    :internal-api-port 3001
-                                   :event-store-config {:uri "http://127.0.0.1:2113"
+                                   :event-store-config {:uri event-store-uri
                                                         :user "admin"
                                                         :password "changeit"}
                                    :session-store-config {:uri session-store-uri}})

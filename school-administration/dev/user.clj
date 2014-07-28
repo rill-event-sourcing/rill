@@ -8,8 +8,7 @@
             [clojure.tools.namespace.repl :refer (refresh)])
   (:import [org.apache.log4j Logger]))
 
-(def dev-config (merge sys/prod-config
-                       {}))
+(def dev-config {:port 5000})
 
 (defn dev-system [dev-options]
   (merge (sys/prod-system dev-options)
