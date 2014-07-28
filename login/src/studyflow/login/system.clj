@@ -5,6 +5,7 @@
             [studyflow.login.credentials :as credentials]
             [studyflow.login.main :as main]
             [studyflow.components.jetty :refer [jetty-component]]
+            [studyflow.components.simple-session-store :refer [simple-session-store]]
             [studyflow.components.redis-session-store :refer [redis-session-store]]
             [studyflow.components.event-channel :refer [event-channel-component]]
             [studyflow.components.memory-event-store :refer [memory-event-store-component]]
