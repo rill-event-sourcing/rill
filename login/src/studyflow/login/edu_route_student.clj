@@ -16,8 +16,9 @@
 (defmethod handle-command ::Register!
   [edu-route-student {:keys [edu-route-id full-name brin-code]}]
   {:pre [edu-route-id full-name brin-code]}
-  (when (not edu-route-student)
-    [(events/registered edu-route-id full-name brin-code)]))
+  (if (not edu-route-student)
+    [:ok [(events/registered edu-route-id full-name brin-code)]]
+    [:rejected]))
 
 (defmethod handle-event ::events/Registered
   [edu-route-student {:keys [edu-route-id full-name brin-code]}]

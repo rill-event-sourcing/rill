@@ -54,9 +54,9 @@
 (defmethod handle-command ::commands/Publish!
   [course {:keys [course-id material]}]
   (if course
-    [(events/updated course-id material)]
-    [(events/published course-id material)]))
+    [:ok [(events/updated course-id material)]]
+    [:ok [(events/published course-id material)]]))
 
 (defmethod handle-command ::commands/Delete!
   [course {:keys [course-id]}]
-  [(events/deleted course-id)])
+  [:ok [(events/deleted course-id)]])

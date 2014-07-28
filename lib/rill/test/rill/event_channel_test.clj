@@ -16,7 +16,7 @@
   :val s/Str)
 
 (def events (map-indexed (fn [idx content]
-                           (assoc (->TestEvent (new-id) stream-id content)
+                           (assoc (test-event stream-id content)
                              message/number idx)) [:a :b :c :d :e :f]))
 
 (deftest event-channel-test

@@ -29,7 +29,7 @@
 
 (defmethod handle-command ::HandlerCommand
   [my-aggregate command]
-  [(handler-test-event (:agg-id command) my-aggregate)])
+  [:ok [(handler-test-event (:agg-id command) my-aggregate)]])
 
 (defn custom-ag-id
   [event]
@@ -59,12 +59,12 @@
 
 (deftest command-handling
   (testing "we get events out of the command"
-    (is (= (map message/type (handle-command :foo (handler-command :my-id)))
+    (is (= (map message/type (second (handle-command :foo (handler-command :my-id))))
            [::HandlerTestEvent]))
-    (is (= (:given-aggregate (first (handle-command :foo (handler-command :my-id))))
+    (is (= (:given-aggregate (first (second (handle-command :foo (handler-command :my-id)))))
            :foo))
     (is (= (primary-aggregate-id (handler-test-event my-aggregate-id :foo))
            my-aggregate-id))
-    (is (= (primary-aggregate-id (first (handle-command :foo (handler-command my-aggregate-id))))
+    (is (= (primary-aggregate-id (first (second (handle-command :foo (handler-command my-aggregate-id)))))
            my-aggregate-id))))
 

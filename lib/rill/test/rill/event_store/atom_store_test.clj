@@ -17,7 +17,7 @@
 
 (defn gen-event
   ([i]
-     (->TestAtomEvent (str (new-id)) i))
+     (test-atom-event i))
   ([]
      (gen-event -666)))
 
