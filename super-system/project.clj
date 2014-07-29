@@ -6,6 +6,12 @@
                  [com.stuartsierra/component "0.2.1"]
                  [org.clojure/tools.logging "0.2.6"]
                  [org.slf4j/slf4j-log4j12 "1.7.5"]]
+  :test-paths ["../learning/test"
+               "../school-administration/test"
+               "../login/test"
+               "../edu-route-api/test"
+               "../lib/rill/test"
+               "../lib/components/test"]
   :profiles {:dev
              {:source-paths ["dev"]
               :resource-paths ["dev/resources"]

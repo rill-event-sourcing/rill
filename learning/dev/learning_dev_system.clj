@@ -7,12 +7,15 @@
             [com.stuartsierra.component :as component]))
 
 (def dev-config {:port 3000
-                 :internal-api-port 3001})
+                 :internal-api-port 3001
+                 :redirect-urls {:login "http://localhost:4000"
+                                 :learning "http://localhost:3000"}})
 
 (defn dev-system [dev-options]
   (merge (sys/prod-system dev-options)
          {:ring-handler (component/using
-                         (dev-ring-handler-component)
+                         (dev-ring-handler-component {:login "http://localhost:4000"
+                                                      :learning "http://localhost:3000"})
                          [:event-store :read-model :session-store])
           :session-store (simple-session-store)
           :event-store (component/using

@@ -5,14 +5,16 @@
             [studyflow.components.session-store :as session-store]))
 
 (defn redirect-login [req]
+(let [login-url (get-in req [:redirect-urls :login])
+      learning-url (get-in req [:redirect-urls :learning])]
   {:status 302
-   :headers {"Location" "http://localhost:4000/"}
-   :cookies {"studyflow_redir_to" {:value (str "http://localhost:3000" (get req :uri))
+   :headers {"Location" login-url}
+   :cookies {"studyflow_redir_to" {:value (str learning-url (get req :uri))
                                    :path "/"}
              "studyflow_session" {:value ""
                                   :path "/"
                                   :max-age -1}}
-   :body nil})
+   :body nil}))
 
 (defn wrap-student [handler read-model]
   (fn [req]
