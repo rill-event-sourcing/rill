@@ -9,4 +9,5 @@
                  [clj-http "0.9.1"]
                  [com.velisco/tagged "0.3.4"]
                  [me.raynes/conch "0.7.0"]
-                 [identifiers "1.1.0"]])
+                 [identifiers "1.1.0"]]
+  :aot [rill.cli])
