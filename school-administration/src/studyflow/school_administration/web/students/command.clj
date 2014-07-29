@@ -6,13 +6,14 @@
             [rill.uuid :refer [new-id uuid]]
             [ring.util.response :refer [redirect]]
             [studyflow.school-administration.student :as student]
-            [studyflow.school-administration.web.command-util :refer :all]))
+            [studyflow.school-administration.web.command-util :refer :all]
+            [clojure.tools.logging :as log]))
 
 (defn redirect-to-index []
   (redirect "/list-students"))
 
 (defn redirect-to-edit [id]
- (redirect (str "/edit-student/" id)))
+  (redirect (str "/edit-student/" id)))
 
 (defn redirect-to-new []
   (redirect "/new-student"))
@@ -41,12 +42,12 @@
               version (Long/parseLong expected-version)
               department-id (if (not= "" department-id) (uuid department-id))]
           (-> event-store
-              (try-command (student/change-department! student-id version department-id))
-              (result->response (redirect-to-index)
-                                (redirect-to-edit student-id)
-                                params))))
+                (try-command (student/change-department! student-id version department-id))
+                (result->response (redirect-to-index)
+                                  (redirect-to-edit student-id)
+                                  params))))
 
-    (POST "/change-student-credentials" {:keys [event-store]
+  (POST "/change-student-credentials" {:keys [event-store]
                                        {:keys [student-id expected-version email original-email password] :as params} :params}
         (let [id (uuid student-id)
               version (Long/parseLong expected-version)
