@@ -98,8 +98,8 @@
 (defmethod handle-command ::CreateFromEduRouteCredentials!
   [student {:keys [student-id full-name edu-route-id]}]
   {:pre [(nil? student)]}
-  [(events/created student-id full-name)
-   (events/edu-route-credentials-added student-id edu-route-id)])
+  [:ok [(events/created student-id full-name)
+        (events/edu-route-credentials-added student-id edu-route-id)]])
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
