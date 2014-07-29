@@ -15,9 +15,7 @@
     (let [student-id (uuid/new-id)
           stream-id student-id
           from-version -1
-          events [{message/type :studyflow.school-administration.student.events/Created
-                   :student-id student-id
-                   :full-name "Dev Student One"}
+          events [(events-student/created student-id "Dev Student One")
                   (events-student/credentials-added student-id
                                                     {:email "dev-student-one@studyflow.nl"
                                                      :encrypted-password (bcrypt/encrypt "student")})]]
