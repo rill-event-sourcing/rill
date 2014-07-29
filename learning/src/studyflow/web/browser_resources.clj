@@ -5,7 +5,7 @@
             [ring.middleware.file-info :as file-info]
             [studyflow.web.routes :as routes]))
 
-(html/deftemplate course-frame "templates/courses.html"
+(html/deftemplate course-frame "learning/templates/courses.html"
   [student]
   [:span.student-full-name] (html/content (get student :full-name))
   [:input#student-id] (html/set-attr :value (str (get student :student-id))))
@@ -17,5 +17,5 @@
                       {:status 200
                        :headers {"Content-Type" "text/html"}
                        :body (apply str (course-frame (get req :student)))}))
-      (wrap-resource "/")
+      (wrap-resource "learning/public")
       file-info/wrap-file-info))

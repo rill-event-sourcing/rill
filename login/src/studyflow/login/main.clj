@@ -174,7 +174,8 @@
 (def studyflow-site-defaults
   (-> site-defaults ;; secure-site-defaults
       (assoc-in [:session :cookie-name] "studyflow_session")
-      (assoc-in [:security :anti-forgery] false)))
+      (assoc-in [:security :anti-forgery] false)
+      (assoc-in [:static :resources] "login/public")))
 
 (def app
   (-> (var actions)

@@ -27,9 +27,9 @@
     (assoc component :handler
            (-> (web/make-request-handler (:store event-store) (:read-model read-model) session-store redirect-urls)
                (wrap-dev-cljs
-                "<script type=\"text/javascript\" src=\"/public/js/studyflow.js\"></script>"
-                "<script src=\"/dev/public/js/react_0.9.0_local_copy.js\" type=\"text/javascript\"></script>
-                 <script src=\"/public/js/studyflow-dev.js\" type=\"text/javascript\"></script>
+                "<script type=\"text/javascript\" src=\"/js/studyflow.js\"></script>"
+                "<script src=\"/js/react_0.9.0_local_copy.js\" type=\"text/javascript\"></script>
+                 <script src=\"/js/studyflow-dev.js\" type=\"text/javascript\"></script>
                  <script type=\"text/javascript\">goog.require('studyflow.web.core');</script>"))))
   (stop [component]
     (info "Stopping handler")

@@ -25,7 +25,7 @@
 
   :profiles {:dev
              {:source-paths ["dev"]
-              :resource-paths ["dev/resources"]
+              :resource-paths ["dev/resources" "generated"]
               :dependencies
               [[org.clojure/tools.trace "0.7.5"]
                [org.clojure/tools.namespace "0.2.5"]
@@ -43,11 +43,11 @@
   :aliases {"server" ["run" "-m" "studyflow.main"]
             "validate-course-material" ["run" "-m" "studyflow.cli.validate-course-material-json"]}
   :cljsbuild {:builds {:dev {:source-paths ["cljs/src"]
-                             :compiler {:output-to "resources/public/js/studyflow-dev.js"
-                                        :output-dir "resources/public/js/out"
+                             :compiler {:output-to "generated/learning/public/js/studyflow-dev.js"
+                                        :output-dir "generated/learning/public/js/out"
                                         :optimizations :whitespace}}
                        :prod {:source-paths ["cljs/src"]
-                              :compiler {:output-to "resources/public/js/studyflow.js"
+                              :compiler {:output-to "generated/learning/public/js/studyflow.js"
                                          :optimizations :advanced
                                          :elide-asserts true
                                          :pretty-print false
