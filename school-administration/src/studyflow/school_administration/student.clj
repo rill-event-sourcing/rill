@@ -61,15 +61,18 @@
   :encrypted-password s/Str)
 
 (defmethod handle-command ::ChangeCredentials!
-  [student {:keys [student-id email encrypted-password]}]
+  [{:keys [has-email-credentials?] :as student} {:keys [student-id email encrypted-password]}]
   {:pre [student]}
   (cond
    (= "" (str/trim email))
    [:rejected {:email [(:can-not-be-blank errors)]}]
 
    encrypted-password
-   [:ok [(events/credentials-changed student-id {:email email
-                                                 :encrypted-password encrypted-password})]]
+   [:ok [(if has-email-credentials?
+           (events/credentials-changed student-id {:email email
+                                                   :encrypted-password encrypted-password})
+           (events/credentials-added student-id {:email email
+                                                 :encrypted-password encrypted-password}))]]
 
    :else
    [:ok [(events/email-changed student-id email)]]))
@@ -78,6 +81,11 @@
   [student {:keys [credentials]}]
   (assoc student :credentials credentials))
 
+(defmethod handle-event ::events/CredentialsAdded
+  [student {:keys [credentials]}]
+  (assoc student
+    :credentials credentials
+    :has-email-credentials? true))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; create via edu route
