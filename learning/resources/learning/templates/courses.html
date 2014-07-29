@@ -19,7 +19,12 @@
 
   <body>
     <input id="student-id" type="hidden" value=""/>
-    <div>Welcome, <span class="student-full-name">STUDENT FULL NAME</span></div>
+    <div>Welcome, <span class="student-full-name">STUDENT FULL NAME</span>
+      <form method="post" id="logout-form" action="LOGOUT_ACTION">
+        <input type="hidden" name="_method" value="DELETE" />
+        <button type="submit">logout</button>
+      </form>
+    </div>
     <div class="container">
       <div id="app">
       </div>

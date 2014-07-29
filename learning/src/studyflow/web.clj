@@ -20,7 +20,7 @@
   (-> (combine-ring-handlers
        (-> (combine-ring-handlers
             (api/make-request-handler event-store read-model)
-            (browser-resources/make-request-handler))
+            (wrap-redirect-urls (browser-resources/make-request-handler) redirect-urls))
            (authentication/wrap-authentication read-model session-store)
            (wrap-redirect-urls redirect-urls))
        status/status-handler
