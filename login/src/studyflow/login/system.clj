@@ -80,3 +80,4 @@
                                                                      :user "admin"
                                                                      :password "changeit"}
                                                                     event-store-config)) [])))
+

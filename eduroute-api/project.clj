@@ -1,4 +1,4 @@
-(defproject nl.studyflow/eduroute-api "0.0.2"
+(defproject nl.studyflow/eduroute-api "0.0.3"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies []

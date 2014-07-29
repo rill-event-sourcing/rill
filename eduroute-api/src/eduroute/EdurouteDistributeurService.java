@@ -30,7 +30,7 @@ public class EdurouteDistributeurService
     private final static Logger logger = Logger.getLogger(eduroute.EdurouteDistributeurService.class.getName());
 
     static {
-        URL url = eduroute.EdurouteDistributeurService.class.getResource("META-INF/wsdl/uitgeverAPI.wsdl");
+        URL url = eduroute.EdurouteDistributeurService.class.getClassLoader().getResource("META-INF/wsdl/uitgeverAPI.wsdl");
         EDUROUTEDISTRIBUTEURSERVICE_WSDL_LOCATION = url;
     }
 
