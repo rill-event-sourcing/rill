@@ -11,13 +11,18 @@
   [r]
   (resp/not-found (str "Not found.\n" (pr-str r))))
 
+(defn wrap-redirect-urls [handler redirect-urls]
+  (fn [req]
+    (handler (assoc req :redirect-urls redirect-urls))))
+
 (defn make-request-handler
-  [event-store read-model session-store]
+  [event-store read-model session-store redirect-urls]
   (-> (combine-ring-handlers
        (-> (combine-ring-handlers
             (api/make-request-handler event-store read-model)
             (browser-resources/make-request-handler))
-           (authentication/wrap-authentication read-model session-store))
+           (authentication/wrap-authentication read-model session-store)
+           (wrap-redirect-urls redirect-urls))
        status/status-handler
        fallback-handler)
       wrap-logging))

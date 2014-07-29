@@ -23,8 +23,7 @@
                          (map prefix-keyword (vals deps)))))))))
 
 (defn make-system [_]
-  (let [learning (-> (learning-dev-system/dev-system (assoc learning-dev-system/dev-config
-                                                       :jetty-port 3000))
+  (let [learning (-> (learning-dev-system/dev-system learning-dev-system/dev-config)
                      (dissoc :event-store :session-store)
                      (namespace-system :learning [:event-store :session-store]))
         login (-> (login-dev-system/make-system {:jetty-port 4000
