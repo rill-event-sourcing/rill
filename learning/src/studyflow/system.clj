@@ -11,7 +11,7 @@
 
 (defn prod-system [config-options]
   (log/info "Running the production system")
-  (let [{:keys [port event-store-config internal-api-port session-store-config]} config-options]
+  (let [{:keys [port event-store-config internal-api-port session-store-config redirect-urls]} config-options]
     (component/system-map
      :config-options config-options
      :publishing-api-handler (component/using
@@ -22,7 +22,7 @@
                             [:publishing-api-handler])
      :session-store (redis-session-store session-store-config)
      :ring-handler (component/using
-                    (ring-handler-component)
+                    (ring-handler-component redirect-urls)
                     [:event-store :read-model :session-store])
      :jetty (component/using
              (jetty-component port)
