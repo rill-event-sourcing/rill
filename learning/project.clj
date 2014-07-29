@@ -22,10 +22,10 @@
                  [identifiers "1.0.0"]
                  [rill "0.1.0-SNAPSHOT"]
                  [studyflow/components "0.1.0-SNAPSHOT"]]
-
+  :resource-paths ["resources" "generated"]
   :profiles {:dev
              {:source-paths ["dev"]
-              :resource-paths ["dev/resources" "generated"]
+              :resource-paths ["dev/resources" "resources" "generated"]
               :dependencies
               [[org.clojure/tools.trace "0.7.5"]
                [org.clojure/tools.namespace "0.2.5"]
