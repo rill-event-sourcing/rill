@@ -5,5 +5,5 @@ default: test
 test:
 	lein test && echo "OK"
 
-deploy:
+deploy: test
 	lein install && lein uberjar && cap production build
