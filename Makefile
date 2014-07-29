@@ -2,7 +2,7 @@ default: test
 
 .PHONY: test deploy
 
-deploy:
+deploy: test
 	cd learning && make deploy
 	cd login && make deploy
 	cd school-administration && make deploy
@@ -14,3 +14,4 @@ test:
 	cd publishing && make test
 	cd login && make test
 	cd school-administration && make test
+
