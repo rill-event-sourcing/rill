@@ -6,4 +6,4 @@ test:
 	lein test && echo "OK"
 
 deploy: test
-	lein install && lein uberjar && cap production build
+	lein install && lein do cljsbuild clean, cljsbuild once prod && lein uberjar && cap production build
