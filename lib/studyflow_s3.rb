@@ -52,6 +52,7 @@ namespace :deploy do
       set :release_file, "#{ fetch(:application) }-#{ fetch(:current_revision) }*.jar"
       execute :mkdir, '-p', release_path
       execute "s3cmd get #{ fetch(:s3path) }/#{ fetch(:release_file) } #{ release_path }/"
+      execute "cd #{ release_path } && ls -r | sed 1d | while read i ; do echo \" -> deleting older release $i\" ; rm \"\$i\"; done"
       execute "ln -fs  #{ release_path }/#{ fetch(:release_file) } #{ release_path }/#{ fetch(:supervisor_name) }.jar"
     end
   end
@@ -59,7 +60,7 @@ namespace :deploy do
   desc 'update repository'
   task update: :clone do
     on roles(:app) do
-      execute("cd #{ repo_path } && git remote update")
+      execute "cd #{ repo_path } && git remote update"
     end
   end
 
