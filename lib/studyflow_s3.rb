@@ -65,6 +65,7 @@ namespace :deploy do
   desc 'download application from S3'
   task create_release2: :update do
     on roles(:app) do
+      set :current_revision, ENV['revision'] if ENV['revision']
       unless fetch(:current_revision).to_s.length == 40
         last_commit = capture("cd #{ repo_path } && git #{ fetch(:git_environments_vars) } rev-parse #{ fetch(:branch) }")
         ask :current_revision, last_commit

@@ -1,4 +1,4 @@
-set :application, 'my_app_name'
+set :application, 'publish'
 set :repo_url, 'git@gitlab.studyflow.nl:studyflow/gibbon.git'
 set :deploy_to, '/rails'
 set :log_level, :info
