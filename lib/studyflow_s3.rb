@@ -21,8 +21,10 @@ namespace :deploy do
       if ['staging', 'monday-develop'].include?(branch)
         info " -> deploying branch: #{ branch }!"
         set :branch, branch
-        last_commit = capture("git rev-parse HEAD")
-        set :current_revision, last_commit
+        with fetch(:git_environmental_variables) do
+          last_commit = capture("git rev-parse HEAD")
+          set :current_revision, last_commit
+        end
         info " -> deploying commit: #{ last_commit }!"
         info " -> uploading jars to S3..."
         invoke "deploy:upload"
@@ -79,8 +81,10 @@ namespace :deploy do
   task create_release2: :update do
     on roles(:app) do
       unless fetch(:current_revision).to_s.length == 40
-        last_commit = capture("cd #{ repo_path } && git rev-parse #{ fetch(:branch) }")
-        ask :current_revision, last_commit
+        with fetch(:git_environmental_variables) do
+          last_commit = capture("cd #{ repo_path } && git rev-parse #{ fetch(:branch) }")
+          ask :current_revision, last_commit
+        end
       end
       throw "no valid release SHA given! aborting..." unless fetch(:current_revision).to_s.length == 40
       set :release_file, "#{ fetch(:application) }-#{ fetch(:current_revision) }*.jar"
@@ -94,7 +98,9 @@ namespace :deploy do
   desc 'update repository'
   task update: :clone do
     on roles(:app) do
-      execute "cd #{ repo_path } && git remote update"
+      with fetch(:git_environmental_variables) do
+        execute "cd #{ repo_path } && git remote update"
+      end
     end
   end
 
@@ -104,7 +110,9 @@ namespace :deploy do
       if test("[ -d #{ repo_path} ]")
         info t(:mirror_exists, at: repo_path)
       else
-        execute("git clone --mirror #{ fetch(:repo_url) } #{ repo_path }")
+        with fetch(:git_environmental_variables) do
+          execute("git clone --mirror #{ fetch(:repo_url) } #{ repo_path }")
+        end
       end
     end
   end
