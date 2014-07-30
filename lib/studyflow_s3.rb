@@ -18,7 +18,7 @@ namespace :deploy do
     run_locally do
       branch = capture("git rev-parse --abbrev-ref HEAD")
       info " -> running on branch: #{ branch }"
-      if ['staging'].include?(branch)
+      if ['staging', 'monday-develop'].include?(branch)
         info " -> deploying branch: #{ branch }!"
         set :branch, branch
         last_commit = capture("git rev-parse HEAD")
