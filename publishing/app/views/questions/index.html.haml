@@ -11,7 +11,7 @@
           %tr
             %th.col-md-2 Name
             %th.col-md-8 Title
-            %th.col-md-1 Published
+            %th.col-md-1 Active
             %th.col-md-1 Remove
 
         %tbody
@@ -22,10 +22,10 @@
               %td
                 - if question.active?
                   = link_to deactivate_chapter_section_question_path(@chapter, @section, question), method: :post do
-                    %span.glyphicon.glyphicon-eye-open
+                    %span.glyphicon.glyphicon-ok
                 - else
                   = link_to activate_chapter_section_question_path(@chapter, @section, question), method: :post do
-                    %span.glyphicon.glyphicon-ban-circle
+                    %span.glyphicon.glyphicon-remove
               %td
                 = link_to chapter_section_question_path(@chapter, @section, question), method: :delete, data: { confirm: "Are you sure you want to delete this question?" } do
                   %span.glyphicon.glyphicon-trash

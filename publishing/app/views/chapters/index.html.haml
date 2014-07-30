@@ -13,11 +13,11 @@
               %th.col-md-3  Chapter title
               %th.col-md-6  Chapter description
               %th.col-md-1  Order
-              %th.col-md-1  Published
+              %th.col-md-1  Active
               %th.col-md-1  Actions
 
           %tbody
-            -@chapters.each do |chapter|
+            - @chapters.each do |chapter|
               %tr{class: chapter.active? ? "success" : "danger"}
                 %td= link_to chapter.title, chapter
                 %td= chapter.description
@@ -29,10 +29,10 @@
                 %td
                   - if chapter.active?
                     = link_to deactivate_chapter_path(chapter), method: :post do
-                      %span.glyphicon.glyphicon-eye-open
+                      %span.glyphicon.glyphicon-ok
                   - else
                     = link_to activate_chapter_path(chapter), method: :post do
-                      %span.glyphicon.glyphicon-ban-circle
+                      %span.glyphicon.glyphicon-remove
                 %td
                   = link_to edit_chapter_path(chapter) do
                     %span.glyphicon.glyphicon-pencil

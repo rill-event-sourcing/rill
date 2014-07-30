@@ -4,7 +4,7 @@
       %th.col-md-3{colspan: 2}  Section title
       %th.col-md-6  Section description
       %th.col-md-1  Order
-      %th.col-md-1  Published
+      %th.col-md-1  Active
       %th.col-md-1  Actions
 
   %tbody
@@ -21,10 +21,10 @@
         %td
           - if section.active?
             = link_to deactivate_chapter_section_path(@chapter,section), method: :post do
-              %span.glyphicon.glyphicon-eye-open
+              %span.glyphicon.glyphicon-ok
           - else
             = link_to activate_chapter_section_path(@chapter,section), method: :post do
-              %span.glyphicon.glyphicon-ban-circle
+              %span.glyphicon.glyphicon-remove
         %td
           = link_to edit_chapter_section_path(@chapter, section) do
             %span.glyphicon.glyphicon-pencil
