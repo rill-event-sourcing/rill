@@ -9,33 +9,23 @@ set :log_level, :info
 # set :keep_releases, 5
 
 
-desc 'Compile and deploy the application'
-task :build_deploy => ["deploy:build_deploy"]
+desc 'Compile and then upload application to S3'
+task :build => ["deploy:build"]
 
 
 namespace :deploy do
 
 
   #############################################################################################
-  # build and deploy staging branch
+  # building
 
-  desc 'deploy staging branch'
-  task :build_deploy do
+  desc 'Compile and then upload application to S3'
+  task :build do
     run_locally do
-      branch = capture("git rev-parse --abbrev-ref HEAD")
-      info " -> running on branch: #{ branch }"
-      if ['staging'].include?(branch)
-        info " -> deploying branch: #{ branch }!"
-        set :branch, branch
-        last_commit = capture("git rev-parse HEAD")
-        set :current_revision, last_commit
-        info " -> deploying commit: #{ last_commit }!"
-        info " -> start deploying..."
-        invoke "deploy"
-        info " -> done deploying"
-      else
-        info " NOT deploying branch: #{ branch }!"
-      end
+      info " -> uploading tar to S3..."
+      # invoke "deploy:upload"
+      info " NOT uploading publishing app! :-("
+      info " -> done uploading"
     end
   end
 

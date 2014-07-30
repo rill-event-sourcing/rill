@@ -9,4 +9,4 @@ prepare-db:
 	bundle exec rake db:drop db:create db:migrate db:seed
 
 deploy: test
-	cap staging build_deploy
+	cap production build

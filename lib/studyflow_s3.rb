@@ -2,45 +2,29 @@
 
 Rake::Task["deploy:updating"].clear_actions
 
-desc 'Compile and deploy the application'
-task :build_deploy => ["deploy:build_deploy"]
 
 desc 'Compile and then upload application to S3'
-task :build => ["deploy:upload"]
+task :build => ["deploy:build"]
+
 
 namespace :deploy do
 
   #############################################################################################
-  # build and deploy staging branch
+  # building
 
-  desc 'deploy staging branch'
-  task :build_deploy do
+  desc 'Compile and then upload application to S3'
+  task :build do
     run_locally do
-      branch = capture("git rev-parse --abbrev-ref HEAD")
-      info " -> running on branch: #{ branch }"
-      if ['staging', 'monday-develop'].include?(branch)
-        info " -> deploying branch: #{ branch }!"
-        set :branch, branch
-        last_commit = capture("git #{ fetch(:git_environments_vars) } rev-parse HEAD")
-        set :current_revision, last_commit
-        info " -> deploying commit: #{ last_commit }!"
-        info " -> uploading jars to S3..."
-        invoke "deploy:upload"
-        info " -> start deploying..."
-        invoke "deploy"
-        info " -> done deploying"
-      else
-        info " NOT deploying branch: #{ branch }!"
-        info " -> uploading jars to S3..."
-        invoke "deploy:upload"
-        info " -> done uploading"
-      end
+      info " -> uploading jar to S3..."
+      invoke "deploy:upload"
+      info " -> done uploading"
     end
   end
 
   task :set_git_environment do
     set :git_environments_vars, " GIT_ASKPASS=/bin/echo GIT_SSH=#{fetch(:tmp_dir)}/#{fetch(:application)}/git-ssh.sh"
   end
+
 
   #############################################################################################
   # upload builded jar file
