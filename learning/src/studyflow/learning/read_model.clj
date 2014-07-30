@@ -54,3 +54,9 @@
 (defn get-student
   [model student-id]
   (get-in model [:students student-id]))
+
+(defn get-course-id
+  "We currenly assume that there is only one course in the system"
+  [model]
+  (first (keys (:courses model))))
+

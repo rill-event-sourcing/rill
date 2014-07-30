@@ -5,7 +5,8 @@
             [studyflow.web.browser-resources :as browser-resources]
             [studyflow.web.handler-tools :refer [combine-ring-handlers]]
             [studyflow.web.logging :refer [wrap-logging]]
-            [studyflow.web.status :as status]))
+            [studyflow.web.status :as status]
+            [studyflow.web.start :as start]))
 
 (defn fallback-handler
   [r]
@@ -19,6 +20,7 @@
   [event-store read-model session-store redirect-urls]
   (-> (combine-ring-handlers
        (-> (combine-ring-handlers
+            (start/make-request-handler read-model)
             (api/make-request-handler event-store read-model)
             (wrap-redirect-urls (browser-resources/make-request-handler) redirect-urls))
            (authentication/wrap-authentication read-model session-store)
