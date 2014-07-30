@@ -2,11 +2,42 @@
 
 Rake::Task["deploy:updating"].clear_actions
 
+desc 'Compile and deploy the application'
+task :build_deploy => ["deploy:build_deploy"]
+
 desc 'Compile and then upload application to S3'
 task :build => ["deploy:upload"]
 
-
 namespace :deploy do
+
+  #############################################################################################
+  # build and deploy staging branch
+
+  desc 'deploy staging branch'
+  task :build_deploy do
+    run_locally do
+      branch = capture("git rev-parse --abbrev-ref HEAD")
+      info " -> running on branch: #{ branch }"
+      if ['staging'].include?(branch)
+        info " -> deploying branch: #{ branch }!"
+        set :branch, branch
+        last_commit = capture("git rev-parse HEAD")
+        set :current_revision, last_commit
+        info " -> deploying commit: #{ last_commit }!"
+        info " -> uploading jars to S3..."
+        invoke "deploy:upload"
+        info " -> start deploying..."
+        invoke "deploy"
+        info " -> done deploying"
+      else
+        info " NOT deploying branch: #{ branch }!"
+        info " -> uploading jars to S3..."
+        invoke "deploy:upload"
+        info " -> done uploading"
+      end
+    end
+  end
+
 
   #############################################################################################
   # upload builded jar file
@@ -17,6 +48,7 @@ namespace :deploy do
       execute "s3cmd --multipart-chunk-size-mb=5 put target/*-SNAPSHOT-standalone.jar #{ fetch(:s3path) }/#{ fetch(:release_file) }"
     end
   end
+
 
   #############################################################################################
   # running
@@ -46,9 +78,11 @@ namespace :deploy do
   desc 'download application from S3'
   task create_release2: :update do
     on roles(:app) do
-      last_commit = capture("cd #{ repo_path } && git rev-parse #{ fetch(:branch) }")
-      ask :current_revision, last_commit || ""
-      throw "no valid release SHA given! aborting..." unless fetch(:current_revision).length == 40
+      unless fetch(:current_revision).to_s.length == 40
+        last_commit = capture("cd #{ repo_path } && git rev-parse #{ fetch(:branch) }")
+        ask :current_revision, last_commit
+      end
+      throw "no valid release SHA given! aborting..." unless fetch(:current_revision).to_s.length == 40
       set :release_file, "#{ fetch(:application) }-#{ fetch(:current_revision) }*.jar"
       execute :mkdir, '-p', release_path
       execute "s3cmd get #{ fetch(:s3path) }/#{ fetch(:release_file) } #{ release_path }/"
