@@ -68,7 +68,7 @@
                                        (events/question-assigned section-id student-id question-id)])))))
 
     (testing "with an incorrect answer"
-      (let [inputs {"_INPUT_1_" "6"
+      (let [inputs {"_INPUT_1_" "7"
                     "_INPUT_2_" "notcorrect"}]
         (is (command-result= [:ok [(events/question-answered-incorrectly section-id student-id question-id inputs)]]
                              (execute (commands/check-answer! section-id student-id 1 course-id question-id inputs)
