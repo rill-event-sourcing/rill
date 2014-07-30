@@ -37,5 +37,5 @@
 
 (deftest test-command-handler
   (testing "Publishing commands"
-    (is (= (map message/type (handle-command nil (commands/publish! (:id fixture/course-edn) fixture/course-edn)))
+    (is (= (map message/type (second (handle-command nil (commands/publish! (:id fixture/course-edn) fixture/course-edn))))
            [::events/Published]))))

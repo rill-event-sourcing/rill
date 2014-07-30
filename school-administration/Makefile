@@ -5,5 +5,5 @@ default: test
 test:
 	STUDYFLOW_ENV=test lein test && echo "OK"
 
-deploy:
-	cap production build
+deploy: test
+	lein uberjar && lein install && cap production build

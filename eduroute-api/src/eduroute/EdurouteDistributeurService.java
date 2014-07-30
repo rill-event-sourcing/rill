@@ -21,7 +21,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.1
  * 
  */
-@WebServiceClient(name = "EdurouteDistributeurService", targetNamespace = "urn:edurouteNamespace", wsdlLocation = "file:/Users/steven/projects/studyflow/gibbon/login/src/eduroute/uitgeverAPI.wsdl")
+@WebServiceClient(name = "EdurouteDistributeurService", targetNamespace = "urn:edurouteNamespace", wsdlLocation = "META-INF/wsdl/uitgeverAPI.wsdl")
 public class EdurouteDistributeurService
     extends Service
 {
@@ -30,15 +30,7 @@ public class EdurouteDistributeurService
     private final static Logger logger = Logger.getLogger(eduroute.EdurouteDistributeurService.class.getName());
 
     static {
-        URL url = null;
-        try {
-            URL baseUrl;
-            baseUrl = eduroute.EdurouteDistributeurService.class.getResource(".");
-            url = new URL(baseUrl, "file:/Users/steven/projects/studyflow/gibbon/login/src/eduroute/uitgeverAPI.wsdl");
-        } catch (MalformedURLException e) {
-            logger.warning("Failed to create URL for the wsdl Location: 'file:/Users/steven/projects/studyflow/gibbon/login/src/eduroute/uitgeverAPI.wsdl', retrying as a local file");
-            logger.warning(e.getMessage());
-        }
+        URL url = eduroute.EdurouteDistributeurService.class.getClassLoader().getResource("META-INF/wsdl/uitgeverAPI.wsdl");
         EDUROUTEDISTRIBUTEURSERVICE_WSDL_LOCATION = url;
     }
 

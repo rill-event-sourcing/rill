@@ -9,10 +9,14 @@
 (def students
   [{:id (new-id)
     :full-name "Joost Diepenmaat"
-    :version 314}
+    :version 314
+    :school nil
+    :department nil}
    {:id (new-id)
     :full-name "Steven Thonus"
-    :version 272}])
+    :version 272
+    :school nil
+    :department nil}])
 
 (deftest test-list-students
   (is (empty? (m/list-students nil)))

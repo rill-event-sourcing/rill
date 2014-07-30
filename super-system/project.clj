@@ -2,10 +2,16 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [studyflow/login "0.1.0-SNAPSHOT"]
                  [studyflow/learning "0.1.0-SNAPSHOT"]
-                 #_[studyflow/school-administration "0.1.0-SNAPSHOT"]
+                 [studyflow/school-administration "0.1.0-SNAPSHOT"]
                  [com.stuartsierra/component "0.2.1"]
                  [org.clojure/tools.logging "0.2.6"]
                  [org.slf4j/slf4j-log4j12 "1.7.5"]]
+  :test-paths ["../learning/test"
+               "../school-administration/test"
+               "../login/test"
+               "../edu-route-api/test"
+               "../lib/rill/test"
+               "../lib/components/test"]
   :profiles {:dev
              {:source-paths ["dev"]
               :resource-paths ["dev/resources"]

@@ -7,7 +7,7 @@ RSpec.describe HomeController, :type => :controller do
     session[:course_id] = @course.id
     controller.send :set_my_course
 
-    @url = "http://localhost:3000/api/internal/course/#{ @course.id }"
+    @url = "#{StudyflowPublishing::Application.config.learning_server}/api/internal/course/#{ @course.id }"
     @headers = { 'Content-Type' => 'application/json' }
     @body = JSON.pretty_generate(@course.to_publishing_format)
   end
@@ -50,7 +50,6 @@ RSpec.describe HomeController, :type => :controller do
       expect(response).to redirect_to root_path
       expect(controller.flash[:alert]).to eq "Course '#{ @course }' was NOT published!"
     end
-
   end
 
 end

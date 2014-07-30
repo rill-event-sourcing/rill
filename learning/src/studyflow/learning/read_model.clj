@@ -47,3 +47,16 @@
        question))
    (:questions section)))
 
+(defn set-student
+  [model student-id student]
+  (assoc-in model [:students student-id] student))
+
+(defn get-student
+  [model student-id]
+  (get-in model [:students student-id]))
+
+(defn get-course-id
+  "We currenly assume that there is only one course in the system"
+  [model]
+  (first (keys (:courses model))))
+

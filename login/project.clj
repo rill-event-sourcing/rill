@@ -8,7 +8,7 @@
                  [crypto-password "0.1.3"]
                  [environ "0.5.0"]
                  [hiccup "1.0.5"]
-                 [nl.studyflow/eduroute-api "0.0.1"]
+                 [nl.studyflow/eduroute-api "0.0.3"]
                  [org.clojure/clojure "1.6.0"]
                  [org.clojure/core.async "0.1.303.0-886421-alpha"]
                  [org.clojure/data.json "0.2.5"]

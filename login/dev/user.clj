@@ -2,7 +2,8 @@
   (:require [clojure.tools.logging :as log]
             [studyflow.login.system :as system]
             [com.stuartsierra.component :as component]
-            [clojure.tools.namespace.repl :refer [refresh]])
+            [clojure.tools.namespace.repl :refer [refresh]]
+            [login-dev-system])
   (:import [org.apache.log4j Logger]))
 
 
@@ -17,7 +18,7 @@
 (defonce system nil)
 
 (defn init []
-  (alter-var-root #'system (constantly (system/make-system {:jetty-port 4000}))))
+  (alter-var-root #'system (constantly (login-dev-system/make-system login-dev-system/dev-config))))
 
 (defn start []
   (bootstrap-emacs)

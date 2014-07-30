@@ -13,10 +13,6 @@
   [m]
   (dissoc m id type number))
 
-(defmulti strict-map->Message
-  (fn [s m]
-    s))
-
 (defn ->type-keyword
   [ns sym]
   (keyword (name (ns-name ns)) (name sym)))
@@ -28,16 +24,29 @@
 
 (defmulti primary-aggregate-id
   "The id of the aggregate that will handle this message"
-  ::type)
+  type)
+
+(defn make-message
+  "Create a new message with type `message-type` and data"
+  [message-type data]
+  (assoc data
+    type message-type
+    id (new-id)))
 
 (defmacro defmessage
   [name & params]
-  {:pre [(every? keyword? (take-nth 2 params))]}
+  {:pre [(every? keyword? (take-nth 2 (butlast params)))]}
   (let [type-keyword (->type-keyword (ns-name *ns*) name)
-        name-str (clojure.core/name name)]
+        name-str (clojure.core/name name)
+        primary-aggregate-id-fn (if (even? (count params))
+                                  (keyword (first params))
+                                  (last params))
+        params (if (even? (count params))
+                 params
+                 (butlast params))]
     `(do (def ~name ~(into {::id s/Uuid
                             ::type type-keyword}
-                           (map vec (partition-all 2 params))))
+                           (map vec (partition 2 params))))
 
          (defn ~(symbol (str "map->" name-str))
            ~(str "Inserts a " name-str " rill.message/type tag into the given map.")
@@ -45,25 +54,16 @@
            (assoc params# ::type ~type-keyword))
 
          ~(let [args (params->args params)
-                ks (mapv keyword args)
-                id-arg (gensym "msg_id_")]
-            `(do (defn ~(symbol (str "->" name-str))
-                   ~(str "Constructs a " name-str " message from the positional arguments.")
-                   ~(vec (into [id-arg] args))
-                   ~(into {::id id-arg
-                           ::type type-keyword}
-                          (zipmap ks args)))
-                 (defn ~(symbol (lisp-name name-str))
-                   ~(str "Create a new " name-str " message from the positional arguments. Automatically generates a new message id.")
-                   ~(vec args)
-                   ~(into {::id `(new-id)
-                           ::type type-keyword}
-                          (zipmap ks args)))))
+                ks (mapv keyword args)]
+            `(defn ~(symbol (lisp-name name-str))
+               ~(str "Create a new " name-str " message from the positional arguments. Automatically generates a new message id.")
+               ~(vec args)
+               ~(make-message type-keyword (zipmap ks args))))
 
          (defmethod primary-aggregate-id
            ~type-keyword
            [message#]
-           (~(keyword (first params)) message#)))))
+           (~primary-aggregate-id-fn message#)))))
 
 (defmacro defcommand
   [name & params]

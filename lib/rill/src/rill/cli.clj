@@ -3,10 +3,12 @@
             [rill.event-channel :refer [event-channel]]
             [rill.event-stream :refer [all-events-stream-id]]
             [rill.event-store.atom-store.event :refer [unprocessable?]]
-            [clojure.core.async :refer [<!!]]))
+            [clojure.core.async :refer [<!!]])
+  (:gen-class))
 
-(defn -main [& args]
-  (let [ch (event-channel (atom-event-store "http://127.0.0.1:2113" {:user "admin" :password "changeit"})
+(defn -main [url user password]
+  {:pre [url user password]}
+  (let [ch (event-channel (atom-event-store url {:user user :password password})
                           all-events-stream-id -1 0)]
     (println "Printing all events...")
     (loop []

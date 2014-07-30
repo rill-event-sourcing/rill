@@ -5,5 +5,5 @@ default: test
 test:
 	lein test && echo "OK"
 
-deploy:
-	cap production build
+deploy: test
+	lein cljsbuild clean && lein trampoline cljsbuild once prod && lein uberjar && lein install && cap production build

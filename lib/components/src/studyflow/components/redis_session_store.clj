@@ -22,5 +22,9 @@
   (get-role [store session-id]
     (:role (wcar client (car/get session-id)))))
 
-(defn redis-session-store []
-  (->RedisSessionStore {:pool {} :spec {}}))
+(defn redis-session-store
+  ([config]
+     (->RedisSessionStore {:pool {} :spec config}))
+  ([]
+     (redis-session-store {})))
+

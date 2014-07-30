@@ -99,5 +99,6 @@ Rails.application.configure do
 
   config.auth_server = "https://login-beta.studyflow.nl"
   config.redis_server = "login-beta.studyflow.nl"
+  config.learning_server = "10.129.180.107:3001"
   config.cookie_domain = "studyflow.nl"
 end

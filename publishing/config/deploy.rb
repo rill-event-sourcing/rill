@@ -8,7 +8,29 @@ set :log_level, :info
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
 # set :keep_releases, 5
 
+
+desc 'Compile and then upload application to S3'
+task :build => ["deploy:build"]
+
+
 namespace :deploy do
+
+
+  #############################################################################################
+  # building
+
+  desc 'Compile and then upload application to S3'
+  task :build do
+    run_locally do
+      info " -> uploading tar to S3..."
+      # invoke "deploy:upload"
+      info " NOT uploading publishing app! :-("
+      info " -> done uploading"
+    end
+  end
+
+
+  #############################################################################################
 
   desc 'Restart application'
   task :restart do

@@ -9,58 +9,52 @@
             [cljs.core.async :refer [<!] :as async])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
+(defn basic-error-handler [res]
+  (println "Error handler" res)
+  (println res))
+
+(defn command-error-handler [cursor]
+  (fn [res]
+    (om/update! cursor
+                [:aggregates :failed]
+                true)))
+
+(defn command-section-test-aggregate-handler [cursor section-id]
+  (fn [res]
+    (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
+      (om/transact! cursor
+                    [:aggregates section-id]
+                    (fn [agg]
+                      (aggregates/apply-events agg aggregate-version events))))))
+
 (defn try-command [cursor command]
   (prn :try-command command)
   (let [[command-type & args] command]
     (condp = command-type
       "section-test-commands/init"
-      (let [[section-id] args
-            course-id (get-in @cursor [:static :course-id])
-            section-test-id (str "student-idDEFAULT_STUDENT_IDsection-id" section-id)]
-        (PUT (str "/api/section-test-init/" course-id "/" section-id "/" section-test-id)
+      (let [[section-id student-id] args
+            course-id (get-in @cursor [:static :course-id])]
+        (PUT (str "/api/section-test-init/" course-id "/" section-id "/" student-id)
              {:format :json
-              :handler (fn [res]
-                         (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
-                           (om/transact! cursor
-                                         [:aggregates section-test-id]
-                                         (fn [agg]
-                                           (aggregates/apply-events agg aggregate-version events)))))
+              :handler (command-section-test-aggregate-handler cursor section-id)
+              :error-handler (command-error-handler cursor)
               }))
 
       "section-test-commands/check-answer"
-      (let [[section-test-id section-test-aggregate-version section-id course-id question-id inputs] args]
-        (PUT (str "/api/section-test-check-answer/" section-test-id "/"  section-id "/" course-id "/" question-id)
+      (let [[section-id student-id section-test-aggregate-version course-id question-id inputs] args]
+        (PUT (str "/api/section-test-check-answer/" section-id "/" student-id "/" course-id "/" question-id)
              {:params {:expected-version section-test-aggregate-version
                        :inputs inputs}
               :format :json
-              :handler (fn [res]
-                         (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
-                           (om/transact! cursor
-                                         [:aggregates section-test-id]
-                                         (fn [agg]
-                                           (aggregates/apply-events agg aggregate-version events)))))
-              :error-handler (fn [res]
-                               (om/update! cursor
-                                           [:aggregates :failed]
-                                           true)
-                               )}))
+              :handler (command-section-test-aggregate-handler cursor section-id)
+              :error-handler (command-error-handler cursor)}))
       "section-test-commands/next-question"
-      (let [[section-test-id] args]
-        (let [[section-test-id section-test-aggregate-version section-id course-id] args]
-          (PUT (str "/api/section-test-next-question/" section-test-id "/"  section-id "/" course-id)
-               {:params {:expected-version section-test-aggregate-version}
-                :format :json
-                :handler (fn [res]
-                           (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
-                             (om/transact! cursor
-                                           [:aggregates section-test-id]
-                                           (fn [agg]
-                                             (aggregates/apply-events agg aggregate-version events)))))
-                :error-handler (fn [res]
-                                 (om/update! cursor
-                                             [:aggregates :failed]
-                                             true)
-                                 )})))
+      (let [[section-id student-id section-test-aggregate-version course-id] args]
+        (PUT (str "/api/section-test-next-question/" section-id "/" student-id "/" course-id)
+             {:params {:expected-version section-test-aggregate-version}
+              :format :json
+              :handler (command-section-test-aggregate-handler cursor section-id)
+              :error-handler (command-error-handler cursor)}))
       nil)))
 
 ;; a bit silly to use an Om component for something that is not UI,
@@ -91,9 +85,7 @@
                          (let [course-data (json-edn/json->edn res)]
                            (om/update! cursor
                                        [:view :course-material] course-data)))
-              :error-handler (fn [res]
-                               (println "Error handler" res)
-                               (println res))}))
+              :error-handler basic-error-handler}))
       om/IRender
       (render [_]
         (om/build widgets cursor)))))
@@ -101,14 +93,14 @@
 (defn find-event [name events]
   (first (filter #(gstring/endsWith (:type %) name) events)))
 
-(defn handle-replay-events-or-init [cursor section-test-id section-id events aggregate-version]
+(defn handle-replay-events-or-init [cursor section-id student-id events aggregate-version]
   (if (seq events)
     (om/transact! cursor
-                  [:aggregates section-test-id]
+                  [:aggregates section-id]
                   (fn [agg]
                     (aggregates/apply-events agg aggregate-version events)))
     ;; we got no events back, init the test first
-    (try-command cursor ["section-test-commands/init" section-id])
+    (try-command cursor ["section-test-commands/init" section-id student-id])
     ))
 
 (defn listen [tx-report cursor]
@@ -118,21 +110,21 @@
      (if-let [{:keys [chapter-id section-id tab-questions]} (get-in new-state path)]
        (if (contains? tab-questions section-id)
          ;; for question tab
-         (let [section-test-id (str "student-idDEFAULT_STUDENT_IDsection-id" section-id)]
-           (prn "Load aggregate: " section-test-id (get-in new-state path) )
-           (when-not (contains? (get new-state :aggregates) section-test-id)
-             (om/update! cursor [:aggregates section-test-id] false)
-             (GET (str "/api/section-test-replay/" section-test-id)
+         (let [student-id (get-in new-state [:static :student-id])]
+           (prn "Load aggregate: " section-id (get-in new-state path) )
+           (when-not (contains? (get new-state :aggregates) section-id)
+             (om/update! cursor [:aggregates section-id] false)
+             (GET (str "/api/section-test-replay/" section-id "/" student-id)
                   {:format :json
                    :handler (fn [res]
                               (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
-                                (handle-replay-events-or-init cursor section-test-id section-id events aggregate-version)))
+                                (handle-replay-events-or-init cursor section-id student-id events aggregate-version)))
                    :error-handler (fn [res]
                                     ;; currently the api
                                     ;; gives a 401 when
                                     ;; there are no events
                                     ;; for an aggregate
-                                    (handle-replay-events-or-init cursor section-test-id section-id [] -1)
+                                    (handle-replay-events-or-init cursor section-id student-id [] -1)
                                     )})))
          ;; for explanation tab
          (when section-id
@@ -151,9 +143,7 @@
                                               #(assoc-in %
                                                          [:view :section (:id section-data) :data]
                                                          section-data))))
-                   :error-handler (fn [res]
-                                    (println "Error handler" res)
-                                    (println res))}))))
+                   :error-handler basic-error-handler}))))
        nil)
 
      (let [[view section _ test _ & more] path]
@@ -175,8 +165,6 @@
                                         #(assoc-in %
                                                    [:view :section section-id :test (:id question-data)]
                                                    question-data))))
-             :error-handler (fn [res]
-                              (println "Error handler" res)
-                              (println res))})))
+             :error-handler basic-error-handler})))
 
     :else nil))

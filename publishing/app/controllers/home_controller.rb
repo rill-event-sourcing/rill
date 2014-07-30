@@ -11,16 +11,17 @@ class HomeController < ApplicationController
     throw Exception.new("Publishing without course selected!") unless course
 
     course_json = JSON.pretty_generate(course.to_publishing_format)
-    url = "http://localhost:3000/api/internal/course/#{ course.id }"
+    url = "#{StudyflowPublishing::Application.config.learning_server}/api/internal/course/#{ course.id }"
 
     begin
       publish_response =  HTTParty.put(url,
                                        headers: { 'Content-Type' => 'application/json' },
                                        body: course_json,
-                                       timeout: 30
-                                       )
+                                       timeout: 30)
     rescue Errno::ECONNREFUSED
+      flash[:alert] = "Connection refused"
     rescue Net::ReadTimeout
+      flash[:alert] = "Timeout"
     end
 
     if publish_response && publish_response.code == 200

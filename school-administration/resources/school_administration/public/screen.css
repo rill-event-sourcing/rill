@@ -1,0 +1,206 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background-image: url('bg.jpg');
+  box-sizing: border-box;
+}
+body {
+  margin: 0 auto;
+  padding: 0;
+  max-width: 75em;
+  box-sizing: border-box;
+  background: #ffffff;
+  border: solid #e0e0e0 1px;
+  border-top: none;
+  position: relative;
+  box-shadow: 0px 0px 50px #000;
+}
+
+html, input, select, button {
+  font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+  font-size: 11pt;
+}
+
+div.body {
+  padding: 20px;
+}
+
+h1 {
+  position: absolute;
+  top: 0;
+  margin: .4em .70em;
+}
+header nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: block;
+  text-align: right;
+}
+header nav ul li {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+header nav ul li a {
+  display: inline-block;
+  margin: 0;
+  padding: 1em;
+  color: #000;
+}
+header nav ul li a:link, header nav ul li a:visited {
+  background: #ddd;
+}
+header nav ul li a:focus {
+  background: #eee;
+}
+
+table {
+  margin: 2em 0 1em 0;
+  border-collapse: collapse;
+  width: 100%;
+}
+th, td {
+  text-align: left;
+  padding: .5em;
+  min-width: 10em;
+}
+th.number, td.number {
+  min-width: 0;
+  text-align: right;
+}
+th.actions, td.actions {
+  min-width: 0;
+  text-align: right;
+}
+th:first-child, td:first-child {
+  border-left: solid #888 1pt;
+}
+th:last-child, td:last-child {
+  border-right: solid #888 1pt;
+}
+tbody tr:first-child td {
+  border-top: solid #888 1pt;
+}
+tbody tr:last-child td {
+  border-bottom: solid #888 1pt;
+}
+
+tr:nth-child(odd) td {
+  background-color: #f8f8f8;
+}
+
+.no-records {
+  font-style: italic;
+}
+.warning {
+  margin: 2em auto;
+  color: #f00;
+  font-size: larger;
+  font-weight: bold;
+}
+
+div.field {
+  margin-top: 1em;
+}
+div.field:first-child {
+  margin-top: 0;
+}
+label {
+  min-width: 10em;
+  text-align: right;
+  margin-right: .5em;
+  display: inline-block;
+}
+fieldset {
+  border-color: #ddd;
+  padding: 1em;
+}
+legend {
+  color: #888;
+}
+form {
+  margin-bottom: 1em;
+}
+form:last-child {
+  margin-bottom: 0;
+}
+form fieldset {
+  display: inline-block;
+  width: auto;
+}
+input, select {
+  min-width: 20em;
+  padding: .25em;
+}
+a {
+  outline: none;
+}
+input {
+  border: solid #ddd 2px;
+}
+input:focus, button:focus, a:focus, select:focus {
+  box-shadow: 0 0 5px rgba(0,0,255,.5);
+}
+button, a.button {
+  border: solid #ddd 2pt;
+  border-radius: 5px;
+  padding: .25em .75em;
+  background: #eee;
+  color: #000;
+  text-decoration: none;
+  display: inline-block;
+}
+button:focus, a.button:focus {
+  background: #ccc;
+}
+button:active, a.button:active {
+  background: #aaa;
+}
+div.actions {
+  margin-top: 1em;
+}
+div.actions button.primary, div.actions a.primary {
+  float: right;
+  background: #080;
+  border-color: #0a0;
+  color: #fff;
+  font-weight: bold;
+}
+div.actions button.primary:focus, div.actions a.primary:focus {
+  background: #040;
+}
+div.actions button.primary:active, div.actions a.primary:active {
+  background: #020;
+}
+div.actions:after {
+  content: ' ';
+  font-size: 0;
+  clear: both;
+  display: block;
+}
+
+input[type=radio], input[type=checkbox] {
+  min-width: 0;
+}
+
+ul.errors {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  text-align: right;
+  padding: .25em;
+}
+ul.errors li {
+  color: #f00;
+  display: inline;
+}
+ul.errors li:after {
+  content: ', ';
+  color: #000;
+}
+ul.errors li:last-child:after {
+  content: '';
+}

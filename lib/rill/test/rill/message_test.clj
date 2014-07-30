@@ -13,10 +13,8 @@
 
 (deftest test-defmessage
   (testing "generated constructors"
-    (is (= (->FooMessage 123 456)
-           {::message/type ::FooMessage
-            ::message/id 123
-            :my-id 456}))
+    (is (= (message/type (foo-message 456))
+           ::FooMessage))
     (is (= (:my-id (foo-message 456))
            456))))
 

@@ -3,25 +3,37 @@
             [studyflow.learning.course-material :as m]
             [schema.core :as s]))
 
+(defn section-test-id
+  [{:keys [section-id student-id]}]
+  (str "section-test:" section-id ":" student-id))
+
 (defevent Created
-  :section-test-id m/Id
+  :section-id m/Id
+  :student-id m/Id
   :course-id m/Id
-  :section-id m/Id)
+  section-test-id)
 
 (defevent QuestionAssigned
-  :section-test-id m/Id
-  :course-id m/Id
-  :question-id m/Id)
+  :section-id m/Id
+  :student-id m/Id
+  :question-id m/Id
+  section-test-id)
 
 (defevent QuestionAnsweredCorrectly
-  :section-test-id m/Id
+  :section-id m/Id
+  :student-id m/Id
   :question-id m/Id
-  :inputs {m/FieldName s/Str})
+  :inputs {m/FieldName s/Str}
+  section-test-id)
 
 (defevent QuestionAnsweredIncorrectly
-  :section-test-id m/Id
+  :section-id m/Id
+  :student-id m/Id
   :question-id m/Id
-  :inputs {m/FieldName s/Str})
+  :inputs {m/FieldName s/Str}
+  section-test-id)
 
 (defevent Finished
-  :section-test-id m/Id)
+  :section-id m/Id
+  :student-id m/Id
+  section-test-id)

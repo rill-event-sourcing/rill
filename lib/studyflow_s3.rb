@@ -2,10 +2,9 @@
 
 Rake::Task["deploy:updating"].clear_actions
 
+
 desc 'Compile and then upload application to S3'
-task :build => ["deploy:build",
-                "deploy:upload",
-                "deploy:clean_s3"]
+task :build => ["deploy:build"]
 
 
 namespace :deploy do
@@ -13,28 +12,30 @@ namespace :deploy do
   #############################################################################################
   # building
 
-  desc 'Build application for deployment'
-  task build: :new_release_path2 do
+  desc 'Compile and then upload application to S3'
+  task :build do
     run_locally do
-      execute "mkdir -p s3output && rm -Rf s3output/*"
-      execute "lein uberjar"
-      execute "cp target/*-SNAPSHOT-standalone.jar s3output/#{ fetch(:release_file) }"
+      info " -> uploading jar to S3..."
+      invoke "deploy:upload"
+      info " -> done uploading"
     end
   end
+
+  task :set_git_environment do
+    set :git_environments_vars, " GIT_ASKPASS=/bin/echo GIT_SSH=#{fetch(:tmp_dir)}/#{fetch(:application)}/git-ssh.sh"
+  end
+
+
+  #############################################################################################
+  # upload builded jar file
 
   desc 'Upload jar-file to S3'
   task upload: :new_release_path2 do
     run_locally do
-      execute "s3cmd --multipart-chunk-size-mb=5 put s3output/#{ fetch(:release_file) } #{ fetch(:s3path) }/"
+      execute "s3cmd --multipart-chunk-size-mb=5 put target/*-SNAPSHOT-standalone.jar #{ fetch(:s3path) }/#{ fetch(:release_file) }"
     end
   end
 
-  desc 'Cleanup S3 output directory'
-  task :clean_s3 do
-    run_locally do
-      execute "rm -Rf s3output"
-    end
-  end
 
   #############################################################################################
   # running
@@ -64,20 +65,23 @@ namespace :deploy do
   desc 'download application from S3'
   task create_release2: :update do
     on roles(:app) do
-      last_commit = capture("cd #{ repo_path } && git rev-parse #{ fetch(:branch) }")
-      ask :current_revision, last_commit || ""
-      throw "no valid release SHA given! aborting..." unless fetch(:current_revision).length == 40
+      unless fetch(:current_revision).to_s.length == 40
+        last_commit = capture("cd #{ repo_path } && git #{ fetch(:git_environments_vars) } rev-parse #{ fetch(:branch) }")
+        ask :current_revision, last_commit
+      end
+      throw "no valid release SHA given! aborting..." unless fetch(:current_revision).to_s.length == 40
       set :release_file, "#{ fetch(:application) }-#{ fetch(:current_revision) }*.jar"
       execute :mkdir, '-p', release_path
       execute "s3cmd get #{ fetch(:s3path) }/#{ fetch(:release_file) } #{ release_path }/"
-      execute "ln -s  #{ release_path }/#{ fetch(:release_file) } #{ release_path }/#{ fetch(:supervisor_name) }.jar"
+      execute "cd #{ release_path } && ls -r | sed 1d | while read i ; do echo \" -> deleting older release $i\" ; rm \"\$i\"; done"
+      execute "ln -fs  #{ release_path }/#{ fetch(:release_file) } #{ release_path }/#{ fetch(:supervisor_name) }.jar"
     end
   end
 
   desc 'update repository'
   task update: :clone do
     on roles(:app) do
-      execute("cd #{ repo_path } && git remote update")
+      execute "cd #{ repo_path } && git #{ fetch(:git_environments_vars) } remote update"
     end
   end
 
@@ -87,14 +91,14 @@ namespace :deploy do
       if test("[ -d #{ repo_path} ]")
         info t(:mirror_exists, at: repo_path)
       else
-        execute("git clone --mirror #{ fetch(:repo_url) } #{ repo_path }")
+        execute("git #{ fetch(:git_environments_vars) } clone --mirror #{ fetch(:repo_url) } #{ repo_path }")
       end
     end
   end
 
   task :new_release_path2 do
     run_locally do
-      set :current_revision, capture("git rev-parse #{ fetch(:branch) }")
+      set :current_revision, capture("git rev-parse HEAD")
       set :release_file, "#{ fetch(:application) }-#{ fetch(:current_revision) }-#{ Time.now.strftime("%Y%m%dT%H%M%S") }.jar"
     end
   end
