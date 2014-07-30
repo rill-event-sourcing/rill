@@ -20,10 +20,8 @@ class HomeController < ApplicationController
                                        timeout: 30)
     rescue Errno::ECONNREFUSED
       flash[:alert] = "Connection refused"
-      redirect_to root_path
     rescue Net::ReadTimeout
       flash[:alert] = "Timeout"
-      redirect_to root_path
     end
 
     if publish_response && publish_response.code == 200
