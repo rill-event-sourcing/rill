@@ -24,7 +24,7 @@ namespace :deploy do
     run_locally do
       info " -> uploading tar to S3..."
       # invoke "deploy:upload"
-      info " NOT uploading publishing app! :-("
+      info " -> NOT uploading publishing app! :-("
       info " -> done uploading"
     end
   end
