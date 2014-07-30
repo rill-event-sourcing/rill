@@ -39,6 +39,6 @@ Rails.application.configure do
 
   config.auth_server = "http://localhost:4000"
   config.redis_server = "localhost"
-  config.learning_server = "http://localhost:3000"
+  config.learning_server = "http://localhost:3001"
   config.cookie_domain = "localhost"
 end
