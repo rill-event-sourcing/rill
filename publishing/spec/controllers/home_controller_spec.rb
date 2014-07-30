@@ -54,6 +54,5 @@ RSpec.describe HomeController, :type => :controller do
     #   #expect(controller.flash[:alert]).to eq "Course '#{ @course }' was NOT published!"
     # end
 
-  end
 
 end
