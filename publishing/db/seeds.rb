@@ -80,9 +80,9 @@ grouping_question_2_multiple_choice_input_choice2 = Choice.create(multiple_choic
 grouping_question_2_multiple_choice_input_choice3 = Choice.create(multiple_choice_input: grouping_question_2_multiple_choice_input, value: "notcorrect", correct: true)
 
 
-grouping_question_3 = Question.create(text: "Grouping question 3 text _INPUT_1_", worked_out_answer: "Content, more content!", quizzable: grouping_by_10)
-grouping_question_3_line_input = LineInput.create(question: grouping_question_3, width: 120)
-grouping_question_3_line_input_answer = Answer.create(value: "Grouping Question 3 Line input answer value", line_input: grouping_question_3_line_input)
+#grouping_question_3 = Question.create(text: "Grouping question 3 text _INPUT_1_", worked_out_answer: "Content, more content!", quizzable: grouping_by_10)
+#grouping_question_3_line_input = LineInput.create(question: grouping_question_3, width: 120)
+#grouping_question_3_line_input_answer = Answer.create(value: "Grouping Question 3 Line input answer value", line_input: grouping_question_3_line_input)
 
 ## Add some questions to the course for the entry test
 
