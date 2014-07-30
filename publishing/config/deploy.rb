@@ -8,7 +8,39 @@ set :log_level, :info
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
 # set :keep_releases, 5
 
+
+desc 'Compile and deploy the application'
+task :build_deploy => ["deploy:build_deploy"]
+
+
 namespace :deploy do
+
+
+  #############################################################################################
+  # build and deploy staging branch
+
+  desc 'deploy staging branch'
+  task :build_deploy do
+    run_locally do
+      branch = capture("git rev-parse --abbrev-ref HEAD")
+      info " -> running on branch: #{ branch }"
+      if ['staging'].include?(branch)
+        info " -> deploying branch: #{ branch }!"
+        set :branch, branch
+        last_commit = capture("git rev-parse HEAD")
+        set :current_revision, last_commit
+        info " -> deploying commit: #{ last_commit }!"
+        info " -> start deploying..."
+        invoke "deploy"
+        info " -> done deploying"
+      else
+        info " NOT deploying branch: #{ branch }!"
+      end
+    end
+  end
+
+
+  #############################################################################################
 
   desc 'Restart application'
   task :restart do
