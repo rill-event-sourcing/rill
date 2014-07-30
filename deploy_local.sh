@@ -1,5 +1,8 @@
 #!/bin/bash
 
+PATH=/home/studyflow/.rvm/gems/ruby-2.1.2/bin:/home/studyflow/.rvm/gems/ruby-2.1.2@global/bin:/home/studyflow/.rvm/rubies/ruby-2.1.2/bin:/home/studyflow/.rvm/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+source '/home/studyflow/.rvm/scripts/rvm'
+
 if [ "$#" -ne 2 ]
 then
     echo "Usage: $0 <environment> <full git sha>"
