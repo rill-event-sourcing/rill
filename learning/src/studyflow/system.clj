@@ -19,7 +19,7 @@
                               [:event-store])
      :publishing-api-jetty (component/using
                             (jetty-component internal-api-port)
-                            [:publishing-api-handler])
+                            {:ring-handler :publishing-api-handler})
      :session-store (redis-session-store session-store-config)
      :ring-handler (component/using
                     (ring-handler-component redirect-urls)
