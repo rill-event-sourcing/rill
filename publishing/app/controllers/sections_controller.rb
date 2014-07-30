@@ -49,6 +49,13 @@ class SectionsController < ApplicationController
     redirect_to chapter_sections_path(@chapter)
   end
 
+
+  def toggle_activation
+    @section.active? ? @section.deactivate : @section.activate
+    redirect_to chapter_section_path(@chapter,@section)
+  end
+
+
   def moveup
     @section.move_higher
     redirect_to chapter_sections_path, notice: 'Section was successfully moved up.'
@@ -59,7 +66,7 @@ class SectionsController < ApplicationController
     redirect_to chapter_sections_path, notice: 'Section was successfully moved down.'
   end
 
-private
+  private
 
   def set_param_objects
     @course = Course.current

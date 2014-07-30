@@ -9,6 +9,7 @@ Rails.application.routes.draw do
       post 'deactivate'
       post 'moveup'
       post 'movedown'
+      post 'toggle_activation'
     end
 
     resources :sections do
@@ -17,6 +18,7 @@ Rails.application.routes.draw do
         post 'deactivate'
         post 'moveup'
         post 'movedown'
+        post 'toggle_activation'
       end
       resources :subsections do
         collection do
@@ -28,6 +30,7 @@ Rails.application.routes.draw do
         member do
           post 'activate'
           post 'deactivate'
+          post 'toggle_activation'
           post 'moveup'
           post 'movedown'
           get 'preview'

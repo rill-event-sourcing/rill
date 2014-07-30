@@ -1,7 +1,13 @@
 %form.form-horizontal#question-form{action: chapter_section_question_path(@chapter,@section,@question), role: :form}
   %div.row
     %div.col-md-9
-      %h2 Editing question
+      %h2
+        Editing question
+        - if @question.active?
+          = link_to "Active", toggle_activation_chapter_section_question_path(@chapter,@section,@question), class: "label label-success", method: :post
+        - else
+          = link_to "Not active", toggle_activation_chapter_section_question_path(@chapter,@section,@question), class: "label label-danger", method: :post
+
     %div.col-md-1
       %span.btn.btn-primary.btn-lg.save Save
     %div.col-md-2

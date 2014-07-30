@@ -49,6 +49,11 @@ class ChaptersController < ApplicationController
     redirect_to chapters_path
   end
 
+  def toggle_activation
+    @chapter.active? ? @chapter.deactivate : @chapter.activate
+    redirect_to @chapter
+  end
+
   def moveup
     @chapter.move_higher
     redirect_to chapters_path, notice: 'Chapter was successfully moved up.'
