@@ -1,6 +1,21 @@
 default: test
 
-.PHONY: test deploy
+.PHONY: test deploy install clean
+
+install:
+	cd lib/rill && lein install
+	cd lib/components && lein install
+	cd learning && lein install
+	cd login && lein install
+	cd school-administration && lein install
+
+clean:
+	cd lib/rill && lein clean
+	cd lib/components && lein clean
+	cd learning && lein clean
+	cd login && lein clean
+	cd school-administration && lein clean
+
 
 deploy: test
 	cd learning && make deploy
