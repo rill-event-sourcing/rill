@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140723144140) do
+ActiveRecord::Schema.define(version: 20140730135449) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -69,7 +69,7 @@ ActiveRecord::Schema.define(version: 20140723144140) do
     t.text     "text"
     t.text     "worked_out_answer"
     t.datetime "deleted_at"
-    t.boolean  "active",                      default: false
+    t.boolean  "active",                      default: true
     t.integer  "max_inputs",        limit: 2
     t.datetime "created_at"
     t.datetime "updated_at"
