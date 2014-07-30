@@ -17,8 +17,7 @@ class HomeController < ApplicationController
       publish_response =  HTTParty.put(url,
                                        headers: { 'Content-Type' => 'application/json' },
                                        body: course_json,
-                                       timeout: 30
-                                       )
+                                       timeout: 30)
     rescue Errno::ECONNREFUSED
       flash[:alert] = "Connection refused"
       redirect_to root_path
@@ -30,7 +29,7 @@ class HomeController < ApplicationController
     if publish_response && publish_response.code == 200
       redirect_to root_path, notice: "Course '#{ course }' was succesfully published!"
     else
-      flash[:alert] = "Course '#{ course }' was NOT published! #{publish_response.inspect}"
+      flash[:alert] = "Course '#{ course }' was NOT published!"
       redirect_to root_path
     end
   end
