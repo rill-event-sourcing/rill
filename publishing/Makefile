@@ -17,6 +17,7 @@ build:
 upload:
 	SHA=`git rev-parse HEAD` && \
 	DATE=`date +'%Y%m%d-%H%M%S'` && \
-	S3_FILE="s3://studyflow-server-images/$$SHA/$$DATE-studyflow_publish.jar" && \
+	S3_FILE="s3://studyflow-server-images/$$SHA/$$DATE-studyflow_publish.tar" && \
 	s3cmd --multipart-chunk-size-mb=5 put studyflow_publish.tar $$S3_FILE && \
-	rm -f studyflow_publish.tar
+	rm -f studyflow_publish.tar && \
+	rm -Rf public/assets

@@ -1,6 +1,0 @@
-source 'https://rubygems.org'
-# ruby '2.1.2'
-
-gem 'capistrano', '~> 3.0.1'
-gem "capistrano-scm-copy"
-
