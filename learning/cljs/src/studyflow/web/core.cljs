@@ -135,6 +135,17 @@
                               :open "_")))
                 streak))))))
 
+(defn focused-input [js-props]
+  (fn [cursor owner]
+    (reify
+      om/IRender
+      (render [_]
+        (dom/input js-props))
+      om/IDidMount
+      (did-mount [_]
+        (when-let [input-field (om/get-node owner "_INPUT_1_")]
+          (.focus input-field))))))
+
 (defn question-panel [cursor owner {:keys [section-test
                                            section-id
                                            student-id
@@ -147,16 +158,13 @@
       (let [text (:text question-data)
             first-part (.replace text (re-pattern (str "_INPUT_1_.*$")) "")
             last-part (.replace text (re-pattern (str "^.*_INPUT_1_")) "")
-            current-answer (get-in cursor [:view :section section-id :test :questions question-id :answer])
+            question-index (:question-index question)
+            current-answer (get-in cursor [:view :section section-id :test :questions [question-id question-index] :answer] "")
             answer-correct (when (contains? question :correct)
                              (:correct question))
             course-id (get-in cursor [:static :course-id])
             section-test-aggregate-version (:aggregate-version section-test)
             check-answer (fn []
-                           (om/update!
-                            cursor
-                            [:view :section section-id :test :questions question-id :answer]
-                            nil)
                            (async/put! (om/get-shared owner :command-channel)
                                        ["section-test-commands/check-answer"
                                         section-id
@@ -171,16 +179,17 @@
                  (dom/div #js {:dangerouslySetInnerHTML #js {:__html first-part}} nil)
                  (if answer-correct
                    (dom/div nil (pr-str (:inputs question)))
-                   (dom/input #js {:value current-answer
+                   (om/build (focused-input
+                              #js {:value current-answer
                                    :ref "_INPUT_1_"
                                    :onChange (fn [event]
                                                (om/update!
                                                 cursor
-                                                [:view :section section-id :test :questions question-id :answer]
+                                                [:view :section section-id :test :questions [question-id question-index] :answer]
                                                 (.. event -target -value)))
                                    :onKeyPress (fn [event]
                                                  (when (= (.-keyCode event) 13) ;; enter
-                                                   (check-answer)))}))
+                                                   (check-answer)))}) cursor))
                  (when-not (nil? answer-correct)
                    (dom/div nil (str "Marked as: " answer-correct
                                      (when answer-correct
@@ -200,16 +209,11 @@
                      (dom/button #js {:onClick (fn []
                                                  (js/alert "Well done, continue or go to next section"))}
                                  "Correct! Finished Section"))
-                   (om/build (click-once-button (if (seq (get-in cursor [:view :section section-id :test :questions question-id :answer]))
+                   (om/build (click-once-button (if (seq current-answer)
                                                   "Check"
                                                   "Check [DISABLED]")
                                                 (fn []
-                                                  (check-answer))) cursor)))))
-    om/IDidMount
-    (did-mount [_]
-      (when-let [input-field (om/get-node owner "_INPUT_1_")]
-        (prn "input-field" input-field)
-        (.focus input-field)))))
+                                                  (check-answer))) cursor)))))))
 
 (defn section-test [cursor owner]
   (reify

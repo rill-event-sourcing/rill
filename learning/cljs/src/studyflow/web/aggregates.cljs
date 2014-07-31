@@ -20,7 +20,8 @@
     "studyflow.learning.section-test.events/QuestionAssigned"
     (let [question-id (:question-id event)]
       (-> agg
-          (update-in [:questions] conj {:question-id question-id})
+          (update-in [:questions] conj {:question-id question-id
+                                        :question-index (count (:questions agg))})
           (update-in [:streak]
                      conj [question-id :open])))
     "studyflow.learning.section-test.events/QuestionAnsweredCorrectly"
