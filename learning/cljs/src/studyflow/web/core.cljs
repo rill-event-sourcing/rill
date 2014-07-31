@@ -153,6 +153,10 @@
             course-id (get-in cursor [:static :course-id])
             section-test-aggregate-version (:aggregate-version section-test)
             check-answer (fn []
+                           (om/update!
+                            cursor
+                            [:view :section section-id :test :questions question-id :answer]
+                            nil)
                            (async/put! (om/get-shared owner :command-channel)
                                        ["section-test-commands/check-answer"
                                         section-id
@@ -200,12 +204,7 @@
                                                   "Check"
                                                   "Check [DISABLED]")
                                                 (fn []
-                                                  (om/update!
-                                                   cursor
-                                                   [:view :section section-id :test :questions question-id :answer]
-                                                   nil)
-                                                  (check-answer)
-                                                  )) cursor)))))
+                                                  (check-answer))) cursor)))))
     om/IDidMount
     (did-mount [_]
       (when-let [input-field (om/get-node owner "_INPUT_1_")]
