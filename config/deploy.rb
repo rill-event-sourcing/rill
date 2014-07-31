@@ -6,6 +6,7 @@ set :s3path, "s3://studyflow-server-images"
 desc 'Deploy application from S3'
 task :deploy => ["deploy:check", "deploy:update", "deploy:symlink", "deploy:restart"]
 
+
 namespace :deploy do
 
   desc "check for revisions and directories"
@@ -75,3 +76,7 @@ def release_roles(*names)
   names << { exclude: :no_release } unless names.last.is_a? Hash
   roles(*names)
 end
+
+
+after 'deploy:restart', 'appsignal:set_version'
+after 'deploy:restart', 'appsignal:deploy'
