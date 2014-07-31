@@ -44,15 +44,41 @@
 
   (testing "answering questions"
     (testing "with a correct answer"
-      (let [inputs {"_INPUT_1_" "6"}]
+      (let [inputs {"_INPUT_1_" "6"
+                    "_INPUT_2_" "notcorrect"}] ;; UGH! somebody put that in as the only correct answer... :-(
         (is (command-result= [:ok [(events/question-answered-correctly section-id student-id question-id inputs)]]
                              (execute (commands/check-answer! section-id student-id 1 course-id question-id inputs)
                                       [fixture/course-published-event
                                        (events/created section-id student-id course-id)
                                        (events/question-assigned section-id student-id question-id)])))))
 
-    (testing "with an incorrect answer"
+    (testing "with incomplete answers"
       (let [inputs {"_INPUT_1_" "7"}]
+        (is (command-result= [:ok [(events/question-answered-incorrectly section-id student-id question-id inputs)]]
+                             (execute (commands/check-answer! section-id student-id 1 course-id question-id inputs)
+                                      [fixture/course-published-event
+                                       (events/created section-id student-id course-id)
+                                       (events/question-assigned section-id student-id question-id)]))))
+
+      (let [inputs {"_INPUT_1_" "8"}]
+        (is (command-result= [:ok [(events/question-answered-incorrectly section-id student-id question-id inputs)]]
+                             (execute (commands/check-answer! section-id student-id 1 course-id question-id inputs)
+                                      [fixture/course-published-event
+                                       (events/created section-id student-id course-id)
+                                       (events/question-assigned section-id student-id question-id)])))))
+
+    (testing "with an incorrect answer"
+      (let [inputs {"_INPUT_1_" "7"
+                    "_INPUT_2_" "notcorrect"}]
+        (is (command-result= [:ok [(events/question-answered-incorrectly section-id student-id question-id inputs)]]
+                             (execute (commands/check-answer! section-id student-id 1 course-id question-id inputs)
+                                      [fixture/course-published-event
+                                       (events/created section-id student-id course-id)
+                                       (events/question-assigned section-id student-id question-id)]))))
+
+
+      (let [inputs {"_INPUT_1_" "8"
+                    "_INPUT_2_" "oasdkay"}]
         (is (command-result= [:ok [(events/question-answered-incorrectly section-id student-id question-id inputs)]]
                              (execute (commands/check-answer! section-id student-id 1 course-id question-id inputs)
                                       [fixture/course-published-event
@@ -61,7 +87,8 @@
 
     (testing "next question"
       (testing "with a correct answer"
-        (let [inputs {"_INPUT_1_" "6"}]
+        (let [inputs {"_INPUT_1_" "6"
+                      "_INPUT_2_" "notcorrect"}]
           (let [[status [event]] (execute (commands/next-question! section-id student-id 2 course-id)
                                           [fixture/course-published-event
                                            (events/created section-id student-id course-id)

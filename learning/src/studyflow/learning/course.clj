@@ -31,13 +31,28 @@
   (find-by-id (questions-for-section course section-id)
               question-id))
 
-(defn answer-correct?
-  [{:keys [line-input-fields] :as question} input-values]
-  {:pre [question line-input-fields]}
+(defn line-input-fields-answers-correct?
+  [input-fields input-values]
   (every? (fn [{:keys [name correct-answers]}]
             (when-let [value (get input-values name)]
               (contains? correct-answers value)))
-          line-input-fields))
+          input-fields))
+
+(defn multiple-choice-input-fields-answers-correct?
+  [input-fields input-values]
+  (every? (fn [{:keys [name choices]}]
+            (when-let [given-value (get input-values name)]
+              (some (fn [{:keys [value correct]}]
+                      (and correct
+                           (= value given-value)))
+                    choices)))
+          input-fields))
+
+(defn answer-correct?
+  [{:keys [line-input-fields multiple-choice-input-fields] :as question} input-values]
+  {:pre [question]}
+  (and (line-input-fields-answers-correct? line-input-fields input-values)
+       (multiple-choice-input-fields-answers-correct? multiple-choice-input-fields input-values)))
 
 (defmethod handle-event ::events/Published
   [_ event]
