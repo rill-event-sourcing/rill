@@ -1,5 +1,6 @@
 (ns studyflow.web.core
   (:require [goog.dom :as gdom]
+            [goog.string :as gstring]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [studyflow.web.service :as service]
@@ -23,6 +24,23 @@
                                              :section-id nil
                                              :tab-questions #{}}}
                       :aggregates {}}))
+
+(defn split-text-and-inputs [text inputs]
+  (reduce
+   (fn [pieces input]
+     (loop [[p & ps] pieces
+            out []]
+       (if-not p
+         out
+         (if (gstring/contains p input)
+          (let [[before & after] (string/split p (re-pattern input))]
+            (-> out
+                (into [before input])
+                (into after)
+                (into ps)))
+          (recur ps (conj out p))))))
+   [text]
+   inputs))
 
 (defn history-link [selected-path]
   (str "#" (url-history/path->token selected-path)))
@@ -155,10 +173,7 @@
   (reify
     om/IRender
     (render [_]
-      (let [text (:text question-data)
-            first-part (.replace text (re-pattern (str "_INPUT_1_.*$")) "")
-            last-part (.replace text (re-pattern (str "^.*_INPUT_1_")) "")
-            question-index (:question-index question)
+      (let [question-index (:question-index question)
             current-answers (->> (get-in cursor [:view :section section-id :test :questions [question-id question-index] :answer] {})
                                 ;; deref permanently
                                 (into {}))
@@ -199,36 +214,42 @@
                                                                     (dom/input props)))))]
                                (let [input-name (:name li)]
                                  [input-name
-                                 (dom-fn
-                                  input-name
-                                  #js {:value (get current-answers input-name)
-                                       :ref input-name
-                                       :onChange (fn [event]
-                                                   (om/update!
-                                                    cursor
-                                                    [:view :section section-id :test :questions [question-id question-index] :answer input-name]
-                                                    (.. event -target -value)))
-                                       :onKeyPress (fn [event]
-                                                     (when (= (.-keyCode event) 13) ;; enter
-                                                       (check-answer)))})]))))
+                                  (dom/span nil
+                                            (when-let [prefix (:prefix li)]
+                                              (str prefix " "))
+                                            (dom-fn
+                                             input-name
+                                             #js {:value (get current-answers input-name)
+                                                  :ref input-name
+                                                  :onChange (fn [event]
+                                                              (om/update!
+                                                               cursor
+                                                               [:view :section section-id :test :questions [question-id question-index] :answer input-name]
+                                                               (.. event -target -value)))
+                                                  :onKeyPress (fn [event]
+                                                                (when (= (.-keyCode event) 13) ;; enter
+                                                                  (check-answer)))})
+                                            (when-let [suffix (:suffix li)]
+                                              (str " " suffix)))]))))
             answering-allowed (every? (fn [input-name]
                                         (seq (get current-answers input-name)))
                                       (keys inputs))]
         (dom/div #js {:className "col-md-12 panel panel-default"}
                  (dom/div nil (pr-str question-data))
                  (om/build streak-box (:streak section-test))
-                 (dom/div #js {:dangerouslySetInnerHTML #js {:__html first-part}} nil)
                  (if answer-correct
                    (dom/div nil (pr-str (:inputs question)))
                    (apply dom/div nil
-                          (-> ["List of inputs here"]
-                              (into (vals inputs))
-                              (into ["some text here"]))))
+                          (for [text-or-input (split-text-and-inputs (:text question-data)
+                                                                     (keys inputs))]
+                            (if-let [input (get inputs text-or-input)]
+                              input
+                              (dom/span nil text-or-input)))
+))
                  (when-not (nil? answer-correct)
                    (dom/div nil (str "Marked as: " answer-correct
                                      (when answer-correct
                                        " have some balloons"))))
-                 (dom/div #js {:dangerouslySetInnerHTML #js {:__html last-part}} nil)
                  (if answer-correct
                    (if-not (:finished section-test)
                      (dom/button #js {:onClick (fn []
