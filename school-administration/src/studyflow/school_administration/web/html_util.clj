@@ -9,7 +9,7 @@
 
 (def ^:dynamic *current-nav-uri* nil)
 
-(defn layout [{:keys [title warning]} & body]
+(defn layout [{:keys [title warning message]} & body]
   (html5
    [:head
     [:title (h (str/join " - " [title app-title]))]
@@ -25,6 +25,7 @@
      [:h1 (h title)]]
     [:div.body
      (when warning [:div.warning (h warning)])
+     (when message [:div.message (h message)])
      [:div.container body]]
     [:footer]]))
 

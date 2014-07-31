@@ -101,6 +101,12 @@ tr:nth-child(odd) td {
   font-size: larger;
   font-weight: bold;
 }
+.message {
+  margin: 2em auto;
+  color: #880;
+  font-size: larger;
+  font-weight: bold;
+}
 
 div.field {
   margin-top: 1em;
@@ -203,4 +209,10 @@ ul.errors li:after {
 }
 ul.errors li:last-child:after {
   content: '';
+}
+
+textarea.tab-delimited-data {
+    min-width: 75em;
+    min-height: 10em;
+    white-space: pre;
 }

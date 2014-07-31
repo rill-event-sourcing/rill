@@ -72,6 +72,20 @@
         (field-errors (:status errors))]
        [:div.actions
         [:button.primary {:type "submit"} "Update"]
+        (cancel-button school-id)]])
+
+     (form/form-to
+      [:post (str "/import-students/" school-id)]
+      [:fieldset
+       [:legend "Import students"]
+       (anti-forgery-field)
+       (form/hidden-field "department-id" id)
+       (form/hidden-field "expected-version version")
+       [:div.field
+        (form/label "student-data" "Student data; copy and paste from Excel") [:br]
+        (form/text-area {:class "tab-delimited-data" :wrap "off"} "student-data")]
+       [:div.actions
+        [:button.primary {:type "submit"} "Import new students"]
         (cancel-button school-id)]]))))
 
 

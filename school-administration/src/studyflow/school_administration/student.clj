@@ -205,3 +205,14 @@
 (defmethod handle-event ::events/ClassAssigned
   [student {:keys [class-name]}]
   (assoc student :class-name class-name))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Importing students
+
+(defn full-name
+  [first-name infix last-name]
+  (if (and infix
+           (not= "" infix))
+    (str first-name " " last-name)
+    (str first-name " " infix " " last-name)))
