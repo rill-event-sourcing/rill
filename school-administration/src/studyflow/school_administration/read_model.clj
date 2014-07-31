@@ -113,4 +113,12 @@
 
 (defn set-student-department
   [model id department-id]
-  (assoc-in model [:students id :department-id] department-id))
+  (update-in model [:students id]
+             (fn [student]
+               (-> student
+                   (assoc :department-id department-id)
+                   (dissoc :class-name)))))
+
+(defn set-student-class-name
+  [model id name]
+  (assoc-in model [:students id :class-name] name))

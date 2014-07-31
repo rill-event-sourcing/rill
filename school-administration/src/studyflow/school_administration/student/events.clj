@@ -41,3 +41,9 @@
 (defevent DepartmentChanged
   :student-id s/Uuid
   :department-id s/Uuid)
+
+(defevent ClassAssigned
+  :student-id s/Uuid
+  :department-id s/Uuid
+  :class-name s/Str)
+
