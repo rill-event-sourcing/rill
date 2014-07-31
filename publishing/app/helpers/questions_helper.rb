@@ -1,7 +1,20 @@
 module QuestionsHelper
 
-  def question_text_to_html(question)
-    html = question.text.html_safe
+  def render_latex(question)
+    regexp = /<math>(.*?)<\/math>/m
+    matches = question.text.scan(regexp)
+    text = question.text
+    matches.each do |array_of_matches|
+      match = array_of_matches.first
+      rendered_formula = HTTParty.post("http://localhost:16000/", body: "#{match}").parsed_response
+      text.gsub!("<math>#{match}</math>", rendered_formula)
+    end
+    question.text = text
+  end
+
+
+  def question_text_to_html(question,text)
+    html = text.html_safe
     question.inputs.each do |input|
       input_html = input_to_html(input)
       html.gsub!(input.name, input_html)
