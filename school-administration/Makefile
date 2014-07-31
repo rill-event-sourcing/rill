@@ -5,5 +5,11 @@ default: test
 test:
 	STUDYFLOW_ENV=test lein test && echo "OK"
 
-deploy: test
-	lein uberjar && lein install && cap production build
+build:
+	lein uberjar
+
+upload:
+	SHA=`git rev-parse HEAD` && \
+	DATE=`date +'%Y%m%d-%H%M%S'` && \
+	S3_FILE="s3://studyflow-server-images/$$SHA/$$DATE-studyflow_school.jar" && \
+	s3cmd --multipart-chunk-size-mb=5 put target/*-SNAPSHOT-standalone.jar $$S3_FILE
