@@ -10,7 +10,6 @@ prepare-db:
 
 build:
 	rm -f studyflow_publish.tar && \
-	bundle package --no-install && \
 	bundle install --deployment --without="development test" && \
 	tar -zcf studyflow_publish.tar *
 
