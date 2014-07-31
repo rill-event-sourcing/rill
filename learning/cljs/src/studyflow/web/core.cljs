@@ -182,14 +182,15 @@
                                   (apply dom/ul nil
                                          (for [choice (map :value (:choices mc))]
                                            (dom/li nil
-                                                   (dom/input #js {:type "radio"
+                                                   (dom/input #js {:id choice
+                                                                   :type "radio"
                                                                    :checked (= choice (get current-answers input-name))
                                                                    :onChange (fn [event]
                                                                                (om/update!
                                                                                 cursor
                                                                                 [:view :section section-id :test :questions [question-id question-index] :answer input-name]
                                                                                 choice))}
-                                                              choice))))])))
+                                                              (dom/label #js {:htmlFor choice} choice)))))])))
                        (into (for [[li dom-fn] (map list
                                                     (:line-input-fields question-data)
                                                     (cons (fn [ref props]
