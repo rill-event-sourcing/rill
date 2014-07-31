@@ -135,7 +135,7 @@
                               :open "_")))
                 streak))))))
 
-(defn focused-input [js-props]
+(defn focused-input [name js-props]
   (fn [cursor owner]
     (reify
       om/IRender
@@ -143,7 +143,7 @@
         (dom/input js-props))
       om/IDidMount
       (did-mount [_]
-        (when-let [input-field (om/get-node owner "_INPUT_1_")]
+        (when-let [input-field (om/get-node owner name)]
           (.focus input-field))))))
 
 (defn question-panel [cursor owner {:keys [section-test
@@ -159,7 +159,9 @@
             first-part (.replace text (re-pattern (str "_INPUT_1_.*$")) "")
             last-part (.replace text (re-pattern (str "^.*_INPUT_1_")) "")
             question-index (:question-index question)
-            current-answer (get-in cursor [:view :section section-id :test :questions [question-id question-index] :answer] "")
+            current-answers (->> (get-in cursor [:view :section section-id :test :questions [question-id question-index] :answer] {})
+                                ;; deref permanently
+                                (into {}))
             answer-correct (when (contains? question :correct)
                              (:correct question))
             course-id (get-in cursor [:static :course-id])
@@ -172,24 +174,55 @@
                                         section-test-aggregate-version
                                         course-id
                                         question-id
-                                        {"_INPUT_1_" current-answer}]))]
+                                        current-answers]))
+            inputs (-> {}
+                       (into (for [mc (:multiple-choice-input-fields question-data)]
+                               (let [input-name (:name mc)]
+                                 [input-name
+                                  (apply dom/ul nil
+                                         (for [choice (map :value (:choices mc))]
+                                           (dom/li nil
+                                                   (dom/input #js {:type "radio"
+                                                                   :checked (= choice (get current-answers input-name))
+                                                                   :onChange (fn [event]
+                                                                               (om/update!
+                                                                                cursor
+                                                                                [:view :section section-id :test :questions [question-id question-index] :answer input-name]
+                                                                                choice))}
+                                                              choice))))])))
+                       (into (for [[li dom-fn] (map list
+                                                    (:line-input-fields question-data)
+                                                    (cons (fn [ref props]
+                                                            (om/build (focused-input ref props) cursor))
+                                                          (repeat (fn [ref props]
+                                                                    (dom/input props)))))]
+                               (let [input-name (:name li)]
+                                 [input-name
+                                 (dom-fn
+                                  input-name
+                                  #js {:value (get current-answers input-name)
+                                       :ref input-name
+                                       :onChange (fn [event]
+                                                   (om/update!
+                                                    cursor
+                                                    [:view :section section-id :test :questions [question-id question-index] :answer input-name]
+                                                    (.. event -target -value)))
+                                       :onKeyPress (fn [event]
+                                                     (when (= (.-keyCode event) 13) ;; enter
+                                                       (check-answer)))})]))))
+            answering-allowed (every? (fn [input-name]
+                                        (seq (get current-answers input-name)))
+                                      (keys inputs))]
         (dom/div #js {:className "col-md-12 panel panel-default"}
                  (dom/div nil (pr-str question-data))
                  (om/build streak-box (:streak section-test))
                  (dom/div #js {:dangerouslySetInnerHTML #js {:__html first-part}} nil)
                  (if answer-correct
                    (dom/div nil (pr-str (:inputs question)))
-                   (om/build (focused-input
-                              #js {:value current-answer
-                                   :ref "_INPUT_1_"
-                                   :onChange (fn [event]
-                                               (om/update!
-                                                cursor
-                                                [:view :section section-id :test :questions [question-id question-index] :answer]
-                                                (.. event -target -value)))
-                                   :onKeyPress (fn [event]
-                                                 (when (= (.-keyCode event) 13) ;; enter
-                                                   (check-answer)))}) cursor))
+                   (apply dom/div nil
+                          (-> ["List of inputs here"]
+                              (into (vals inputs))
+                              (into ["some text here"]))))
                  (when-not (nil? answer-correct)
                    (dom/div nil (str "Marked as: " answer-correct
                                      (when answer-correct
@@ -209,7 +242,7 @@
                      (dom/button #js {:onClick (fn []
                                                  (js/alert "Well done, continue or go to next section"))}
                                  "Correct! Finished Section"))
-                   (om/build (click-once-button (if (seq current-answer)
+                   (om/build (click-once-button (if answering-allowed
                                                   "Check"
                                                   "Check [DISABLED]")
                                                 (fn []
