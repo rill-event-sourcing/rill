@@ -183,4 +183,25 @@
 
 (defmethod handle-event ::events/DepartmentChanged
   [student {:keys [department-id]}]
-  (assoc student :department-id department-id))
+  (-> student
+      (assoc :department-id department-id)
+      (dissoc :class-name)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; associate with class
+
+(defcommand ChangeClass!
+  :student-id s/Uuid
+  :expected-version s/Int
+  :class-name s/Str)
+
+(defmethod handle-command ::ChangeClass!
+  [{original-class-name :class-name :keys [department-id] :as student} {:keys [student-id class-name]}]
+  {:pre [student]}
+  (if department-id
+    [:ok [(events/class-assigned student-id department-id class-name)]]
+    [:rejected {:class-name ["You must set a department before assigning a class"]}]))
+
+(defmethod handle-event ::events/ClassAssigned
+  [student {:keys [class-name]}]
+  (assoc student :class-name class-name))

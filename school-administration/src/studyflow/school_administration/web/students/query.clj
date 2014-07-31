@@ -27,16 +27,18 @@
         [:th.email "E-mail"]
         [:th.department "School"]
         [:th.department "Department"]
+        [:th.department "Class"]
         [:th.actions]]]
       [:tbody
-       (map (fn [{:keys [id full-name email]
-                 {department-name :name} :department
-                 {school-name :name} :school}]
+       (map (fn [{:keys [id full-name email class-name]
+                  {department-name :name} :department
+                  {school-name :name} :school}]
               [:tr.student
                [:td.name (h full-name)]
                [:td.email (h email)]
                [:td.school (h school-name)]
                [:td.department (h department-name)]
+               [:td.class-name (h class-name)]
                [:td.actions
                 [:a.button.edit {:href (str "/edit-student/" id)} "Edit"]]])
             students)]]
@@ -60,7 +62,7 @@
       (cancel-button)]])))
 
 (defn render-edit [student departments post-params {:keys [errors] :as options}]
-  (let [{:keys [id version full-name email department]} (merge student post-params)
+  (let [{:keys [id version full-name email department class-name]} (merge student post-params)
         {original-email :email, original-full-name :full-name} student]
     (layout
      (merge {:title (str "Edit student: " original-full-name)} options)
@@ -103,6 +105,24 @@
        [:div.actions
         [:button.primary {:type "submit"} "Update"]
         (cancel-button)]])
+
+     (when department
+       (form/form-to
+        [:post "/change-student-class"]
+
+        [:fieldset
+         [:legend "Class"]
+         (anti-forgery-field)
+         (form/hidden-field "student-id" id)
+         (form/hidden-field "department-id" (:id department))
+         (form/hidden-field "expected-version" version)
+         [:div.field
+          (form/label "class-name" "Class")
+          (form/text-field {:placeholder "ex. HAVO 3f"} "class-name" class-name)
+          (field-errors (:class-name errors))]
+         [:div.actions
+          [:button.primary {:type "submit"} "Update"]
+          (cancel-button)]]))
 
      (form/form-to
       [:post "/change-student-credentials"]

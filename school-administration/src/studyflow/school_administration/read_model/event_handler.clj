@@ -53,6 +53,12 @@
       (m/set-student-department student-id department-id)
       (m/set-aggregate-version student-id number)))
 
+(defmethod handle-event ::student-events/ClassAssigned
+  [model {:keys [student-id class-name ::message/number]}]
+  (-> model
+      (m/set-student-class-name student-id class-name)
+      (m/set-aggregate-version student-id number)))
+
 (defmethod handle-event ::school-events/Created
   [model {:keys [school-id name brin ::message/number]}]
   (-> model

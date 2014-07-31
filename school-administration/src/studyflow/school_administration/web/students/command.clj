@@ -47,6 +47,18 @@
                                 (redirect-to-edit student-id)
                                 params))))
 
+  (POST "/change-student-class" {:keys [event-store]
+                                      {:keys [student-id expected-version class-name] :as params} :params}
+        (let [student-id (uuid student-id)
+              version (Long/parseLong expected-version)]
+          (-> event-store
+              (try-command (student/change-class! student-id version (if (= class-name "")
+                                                                       nil
+                                                                       class-name)))
+              (result->response (redirect-to-index)
+                                (redirect-to-edit student-id)
+                                params))))
+
   (POST "/change-student-credentials" {:keys [event-store]
                                        {:keys [student-id expected-version email original-email password] :as params} :params}
         (let [id (uuid student-id)
