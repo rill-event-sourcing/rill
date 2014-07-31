@@ -27,36 +27,39 @@
           = link_to 'Chapters', chapters_path
           %small= "(#{ @course.chapters.length } chapters)"
         - @course.chapters.each do |chapter|
-          %h4= link_to chapter.title, chapter
-          %table.table.table-bordered
-            %thead
-              %tr
-                %th{colspan: 2}
-                  Section
-                  %span.pull-right
-                    = "#{chapter.sections.active.length} / #{chapter.sections.length} published"
-                %th
-                  %span.pull-right # subsections
-                %th
-                  %span.pull-right # questions
-            %tbody
-              - chapter.sections.each_with_index do |section, index|
-                %tr{class: section.active? ? "success" : "danger", id: "section-row"}
-                  %td= index + 1
-                  %td
-                    = link_to section.title, [chapter, section]
-                  %td
-                    %span.label.label-primary.pull-right
-                      = "#{section.subsections.length}"
-                  %td
-                    %span.label.label-success.pull-right= section.questions.length
+          %div.panel{class: chapter.active? ? "panel-success" : "panel-danger"}
+            %div.panel-heading
+              %h4= link_to chapter.title, chapter
+            %div.panel-body.success
+              %table.table.table-bordered
+                %thead
+                  %tr
+                    %th{colspan: 2}
+                      Section
+                      %span.pull-right
+                        = "#{chapter.sections.active.length} / #{chapter.sections.length} published"
+                    %th
+                      %span.pull-right # subsections
+                    %th
+                      %span.pull-right # questions
+                %tbody
+                  - chapter.sections.each_with_index do |section, index|
+                    %tr{class: section.active? ? "success" : "danger", id: "section-row"}
+                      %td= index + 1
+                      %td
+                        = link_to section.title, [chapter, section]
+                      %td
+                        %span.label.label-primary.pull-right
+                          = "#{section.subsections.length}"
+                      %td
+                        %span.label.label-success.pull-right= section.questions.length
       %div.col-md-2
         %strong Guide:
         %table.table.table-condensed.table-bordered
           %tr
-            %td.success Element published
+            %td.success Element active
             %tr
-            %td.danger Element not published
+            %td.danger Element not active
 - else
   %div.container
     %div.alert.alert-warning Please select a course from the dropdown on the top right.

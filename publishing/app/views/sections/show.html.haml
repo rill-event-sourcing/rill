@@ -1,8 +1,14 @@
 %div.container
   %div.row
     %div.col-md-8.col-md-offset-2
-      %h2= @section.title
-      %div.panel.panel-default
+      %h2
+        = @section.title
+        - if @section.active?
+          = link_to "Active", toggle_activation_chapter_section_path(@chapter,@section), class: "label label-success", method: :post
+        - else
+          = link_to "Not active", toggle_activation_chapter_section_path(@chapter,@section), class: "label label-danger", method: :post
+
+      %div.panel.panel-default{style: "margin-top:30px;"}
         %div.panel-heading
           %strong Section description:
         %div.panel-body= @section.description

@@ -1,8 +1,14 @@
 %div.container
   %div.row
     %div.col-md-8.col-md-offset-2
-      %h2= @chapter.title
-      %div.panel.panel-default
+      %h2
+        = @chapter.title
+        - if @chapter.active?
+          = link_to "Active", toggle_activation_chapter_path(@chapter), class: "label label-success", method: :post
+        - else
+          = link_to "Not active", toggle_activation_chapter_path(@chapter), class: "label label-danger", method: :post
+
+      %div.panel.panel-default{style: "margin-top:30px;"}
         %div.panel-heading
           %strong Chapter description:
         %div.panel-body= @chapter.description
@@ -11,4 +17,4 @@
       = link_to 'New Section', new_chapter_section_path(@chapter), class: "btn btn-success"
   %div.row
     %div.col-md-8.col-md-offset-2
-      =render 'sections/index'
+      = render 'sections/index'

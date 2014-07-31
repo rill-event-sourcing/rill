@@ -42,6 +42,13 @@ class QuestionsController < ApplicationController
     redirect_to chapter_section_questions_path(@chapter,@section)
   end
 
+
+  def toggle_activation
+    @question.active? ? @question.deactivate : @question.activate
+    redirect_to edit_chapter_section_question_path(@chapter, @section, @question)
+  end
+
+
   def deactivate
     @question.deactivate
     redirect_to chapter_section_questions_path(@chapter,@section)
