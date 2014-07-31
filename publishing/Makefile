@@ -10,7 +10,7 @@ prepare-db:
 
 build:
 	rm -f studyflow_publish.tar && \
-	bundle install --deployment --without="development test" && \
+	bundle exec rake assets:precompile && \
 	tar -zcf studyflow_publish.tar *
 
 upload:

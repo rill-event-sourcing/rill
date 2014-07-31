@@ -35,7 +35,7 @@ namespace :deploy do
       within release_path do
         execute :tar, "-zxf", "*.tar"
         execute :rm, "-f", "*.tar"
-        execute :bundle, :install, "--local, "--without='development test'"
+        execute :bundle, :install, "--without='development test'"
       end
     end
   end

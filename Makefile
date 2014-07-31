@@ -24,13 +24,13 @@ test:
 	cd publishing && make test
 	cd school-administration && make test
 
-deploy:
+build:
 	cd learning && make build
 	cd login && make build
 	cd publishing && make build
 	cd school-administration && make build
 
-upload: deploy
+upload: build
 	cd learning && make upload
 	cd login && make upload
 	cd publishing && make upload
