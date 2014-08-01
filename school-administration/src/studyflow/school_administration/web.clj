@@ -14,7 +14,7 @@
            (log/error e)
            (-> (resource-response "public/500.html")
                (assoc :status 500)
-               (update-in [:headers] conj ["Content-Type" "text/html"]))))))
+               (assoc-in [:headers "Content-Type"] "text/html"))))))
 
 (defn make-request-handler [event-store read-model]
   (-> (fn [{:keys [uri] :as req}]
