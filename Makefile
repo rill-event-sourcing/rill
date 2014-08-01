@@ -2,12 +2,13 @@ default: test
 
 .PHONY: test default install
 
-lein:
-	curl -O https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
-	chmod 755 ./lein
 
-test: lein
-	./lein test
+test:
+	dropdb --if-exists rill_test
+	createdb rill_test
+	psql rill_test < psql_schema.sql
+	PSQL_EVENT_STORE_URI="postgresql://localhost:5432/rill_test" lein test
+	dropdb --if-exists rill_test
 
-install: lein
-	./lein install
+install:
+	lein install
