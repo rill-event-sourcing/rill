@@ -66,7 +66,7 @@
                                     "Chapter: "
                                     (:title chapter)))
                    (dom/div #js {:className "panel panel-default"}
-                            (apply dom/ul nil
+                            (apply dom/ul #js {:className "section-nav"}
                                    (for [{:keys [title]
                                           section-id :id
                                           :as section} (:sections chapter)]
@@ -74,10 +74,10 @@
                                                            (assoc :chapter-id chapter-id
                                                                   :section-id section-id)
                                                            history-link)}
-                                            (dom/li #js {:data-id section-id}
-                                                    title
-                                                    (when (= section-id
-                                                             (get-in cursor [:view :selected-path :section-id])) "[selected]")))))))
+                                            (dom/li #js {:data-id section-id
+                                                         :className (when (= section-id
+                                                                             (get-in cursor [:view :selected-path :section-id])) "selected")}
+                                                    title))))))
           (dom/h2 nil "No content ... spinner goes here"))))
     om/IWillUnmount
     (will-unmount [_]
