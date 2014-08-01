@@ -9,5 +9,7 @@
                  [clj-http "0.9.1"]
                  [com.velisco/tagged "0.3.4"]
                  [me.raynes/conch "0.7.0"]
-                 [identifiers "1.1.0"]]
+                 [identifiers "1.1.0"]
+                 [org.clojure/java.jdbc "0.3.4"]
+                 [postgresql "9.1-901.jdbc4"]]
   :aot [rill.cli])
