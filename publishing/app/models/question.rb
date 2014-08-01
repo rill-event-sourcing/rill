@@ -37,8 +37,8 @@ class Question < ActiveRecord::Base
   def to_publishing_format
     {
       id: id,
-      text: text,
-      worked_out_answer: worked_out_answer,
+      text: render_latex(text),
+      worked_out_answer: render_latex(worked_out_answer),
       line_input_fields: line_inputs.map(&:to_publishing_format),
       multiple_choice_input_fields: multiple_choice_inputs.map(&:to_publishing_format)
     }
