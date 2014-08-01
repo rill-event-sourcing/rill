@@ -41,6 +41,7 @@ returns false when we should not continue pushing."
     (thread (try
               (do (log/info ["started event listen thread"])
                   (event-channel-listen!! event-store stream-id from-version ch))
-              (catch Exception e                (log/error e)
+              (catch Exception e
+                (log/error e "Exception in event channel listener")
                 (throw e))))
     ch))
