@@ -117,18 +117,20 @@
     (do (om/update! cursor [:view :section section-id :test question-id] nil)
       nil)))
 
-(defn click-once-button [value onclick]
+(defn click-once-button [value enabled onclick]
   (fn [cursor owner]
     (reify
-     om/IRender
-     (render [_]
-       (dom/button #js {:onClick
-                        (fn [_]
-                          (onclick)
-                          (om/set-state! owner :disabled true))}
-                   value
-                   (when (om/get-state owner :disabled)
-                     "[DISABLED]"))))))
+      om/IInitState
+      (init-state [_]
+        {:enabled enabled})
+      om/IRender
+      (render [_]
+        (dom/button #js {:onClick
+                         (fn [_]
+                           (onclick)
+                           (om/set-state! owner :enabled false))
+                         :disabled (not (om/get-state owner :enabled))}
+                    value)))))
 
 (defn section-explanation [section owner]
   (reify
@@ -316,14 +318,10 @@
                      (dom/button #js {:onClick (fn []
                                                  (js/alert "Well done, continue or go to next section"))}
                                  "Correct! Finished Section"))
-                   (om/build (click-once-button (if answering-allowed
-                                                  "Check"
-                                                  "Check [DISABLED]")
+                   (om/build (click-once-button "Check"
+                                                answering-allowed
                                                 (fn []
-                                                  (check-answer))) cursor)))))
-    om/IWillMount
-    (will-mount [_]
-      (prn "Question-panel mounted"))))
+                                                  (check-answer))) cursor)))))))
 
 (defn section-test [cursor owner]
   (reify
