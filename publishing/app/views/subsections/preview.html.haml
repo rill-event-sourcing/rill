@@ -1,4 +1,4 @@
 - @section.subsections.each do |subsection|
   %div.panel.panel-default
     %div.panel-body
-      = subsection.text.html_safe
+      = render_latex(subsection.text).html_safe

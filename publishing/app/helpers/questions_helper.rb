@@ -1,6 +1,7 @@
 module QuestionsHelper
 
   def question_text_to_html(question)
+    question.text = render_latex(question.text)
     html = question.text.html_safe
     question.inputs.each do |input|
       input_html = input_to_html(input)
@@ -11,7 +12,7 @@ module QuestionsHelper
   end
 
   def question_worked_out_answer_to_html(question)
-    question.worked_out_answer.html_safe
+    question.worked_out_answer = render_latex(question.worked_out_answer).html_safe
   end
 
   def input_to_html(input)
@@ -36,7 +37,7 @@ module QuestionsHelper
 
   def multiple_choice_input_to_html(input)
     content_tag(:div, style: "width: 300px;") do
-      input.choices.map{|ch| content_tag(:button, ch.value.html_safe, class: "btn #{ ch.correct ? 'btn-success' : 'btn-default' } btn-block") }.join('').html_safe
+      input.choices.map{|ch| content_tag(:button, render_latex(ch.value).html_safe, class: "btn #{ ch.correct ? 'btn-success' : 'btn-default' } btn-block") }.join('').html_safe
     end
   end
 
