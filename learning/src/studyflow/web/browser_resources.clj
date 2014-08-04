@@ -8,9 +8,9 @@
 
 (html/deftemplate course-frame "learning/templates/courses.html"
   [student login-url]
-  [:span.student-full-name] (html/content (:full-name student))
+  [:input#student-full-name] (html/set-attr :value (:full-name student))
   [:input#student-id] (html/set-attr :value (str (:student-id student)))
-  [:form#logout-form] (html/set-attr :action login-url))
+  [:input#logout-target] (html/set-attr :value login-url))
 
 (defn make-request-handler
   []

@@ -83,7 +83,7 @@
                                        [:view :course-material] course-data)))
               :error-handler basic-error-handler}))
       "data/navigation"
-      (let [[chapter-id] args]
+      (let [[chapter-id student-id] args]
         (prn "chapter-id: " chapter-id)
         (prn "chapter from: " (get-in @cursor [:view :course-material :chapters]))
         (let [chapter (some (fn [chapter]
@@ -91,22 +91,21 @@
                                 chapter))
                             (get-in @cursor [:view :course-material :chapters]))]
           (doseq [section-id (map :id (:sections chapter))]
-            (let [student-id (get-in @cursor [:static :student-id])]
-              (prn "Load aggregate: " section-id)
-              (when-not (contains? (get @cursor :aggregates) section-id)
-                (om/update! cursor [:aggregates section-id] false)
-                (GET (str "/api/section-test-replay/" section-id "/" student-id)
-                     {:format :json
-                      :handler (fn [res]
-                                 (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
-                                   (handle-replay-events cursor section-id events aggregate-version)))
-                      :error-handler (fn [res]
-                                       ;; currently the api
-                                       ;; gives a 401 when
-                                       ;; there are no events
-                                       ;; for an aggregate
-                                       (handle-replay-events cursor section-id [] -1)
-                                       )}))))))
+            (prn "Load aggregate: " section-id)
+            (when-not (contains? (get @cursor :aggregates) section-id)
+              (om/update! cursor [:aggregates section-id] false)
+              (GET (str "/api/section-test-replay/" section-id "/" student-id)
+                   {:format :json
+                    :handler (fn [res]
+                               (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
+                                 (handle-replay-events cursor section-id events aggregate-version)))
+                    :error-handler (fn [res]
+                                     ;; currently the api
+                                     ;; gives a 401 when
+                                     ;; there are no events
+                                     ;; for an aggregate
+                                     (handle-replay-events cursor section-id [] -1)
+                                     )})))))
       "data/section-explanation"
       (let [_ (prn "section explanation get data" args)
             [chapter-id section-id] args

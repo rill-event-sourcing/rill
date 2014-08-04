@@ -13,11 +13,11 @@
 (defn section-test-progress [section-test-agg]
   (cond
    (:finished section-test-agg)
-   "section-test DONE"
+   :finished
    section-test-agg
-   "section-test in progress"
+   :in-progress
    :else ;; nil and false
-   "section-test-not-started"))
+   :not-started))
 
 (defn handle-event [agg event]
   (condp = (:type event)
