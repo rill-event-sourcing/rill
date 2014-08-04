@@ -1,6 +1,8 @@
 (ns studyflow.web.core
   (:require [goog.dom :as gdom]
             [goog.string :as gstring]
+            [goog.events :as gevents]
+            [goog.events.KeyHandler]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [studyflow.web.aggregates :as aggregates]
@@ -117,7 +119,8 @@
     (do (om/update! cursor [:view :section section-id :test question-id] nil)
       nil)))
 
-(defn click-once-button [value enabled onclick]
+(defn click-once-button [value onclick & {:keys [enabled]
+                                          :or {enabled true}}]
   (fn [cursor owner]
     (reify
       om/IInitState
@@ -230,15 +233,6 @@
                              (:correct question))
             course-id (get-in cursor [:static :course-id])
             section-test-aggregate-version (:aggregate-version section-test)
-            check-answer (fn []
-                           (async/put! (om/get-shared owner :command-channel)
-                                       ["section-test-commands/check-answer"
-                                        section-id
-                                        student-id
-                                        section-test-aggregate-version
-                                        course-id
-                                        question-id
-                                        current-answers]))
             inputs (-> {}
                        (into (for [mc (:multiple-choice-input-fields question-data)]
                                (let [input-name (:name mc)]
@@ -274,20 +268,32 @@
                                                               (om/update!
                                                                cursor
                                                                [:view :section section-id :test :questions [question-id question-index] :answer input-name]
-                                                               (.. event -target -value)))
-                                                  :onKeyPress (fn [event]
-                                                                (when (= (.-keyCode event) 13) ;; enter
-                                                                  (check-answer)))})
+                                                               (.. event -target -value)))})
                                             (when-let [suffix (:suffix li)]
                                               (str " " suffix)))]))))
             answering-allowed (every? (fn [input-name]
                                         (seq (get current-answers input-name)))
-                                      (keys inputs))]
+                                      (keys inputs))
+            _ (om/set-state! owner :check-answer
+                             (fn []
+                               (when answering-allowed
+                                 (async/put! (om/get-shared owner :command-channel)
+                                             ["section-test-commands/check-answer"
+                                              section-id
+                                              student-id
+                                              section-test-aggregate-version
+                                              course-id
+                                              question-id
+                                              current-answers])
+                                 (om/set-state! owner :check-answer nil))))
+            check-answer (fn []
+                           (when-let [f (om/get-state owner :check-answer)]
+                             (f)))]
         (dom/div #js {:id "m-section"}
                  #_(dom/div #js {:id "m-modal"
-                               :className "show"}
-                          (dom/div #js {:className "modal_inner"}
-                                   "MODAL CONTENT HERE"))
+                                 :className "show"}
+                            (dom/div #js {:className "modal_inner"}
+                                     "MODAL CONTENT HERE"))
                  (dom/div nil (pr-str question-data))
                  (om/build streak-box (:streak section-test))
                  (if answer-correct
@@ -307,7 +313,6 @@
                             (if-not (:finished section-test)
                               (om/build (click-once-button
                                          "Goed! Volgende vraag"
-                                         true
                                          (fn []
                                            (async/put! (om/get-shared owner :command-channel)
                                                        ["section-test-commands/next-question"
@@ -317,13 +322,21 @@
                                                         course-id])
                                            (prn "next question command"))) cursor)
                               (om/build (click-once-button "Goed, voltooi paragraaf"
-                                                           true
                                                            (fn []
                                                              (js/alert "Well done, continue or go to next section"))) cursor))
                             (om/build (click-once-button "Nakijken"
-                                                         answering-allowed
                                                          (fn []
-                                                           (check-answer))) cursor))))))))
+                                                           (check-answer))
+                                                         :enabled answering-allowed) cursor))))))
+    om/IDidMount
+    (did-mount [_]
+      (let [key-handler (goog.events.KeyHandler. js/document)]
+        (goog.events/listen key-handler
+                            goog.events.KeyHandler.EventType.KEY
+                            (fn [e]
+                              (when (= (.-keyCode e) 13) ;;enter
+                                (when-let [f (om/get-state owner :check-answer)]
+                                  (f)))))))))
 
 (defn section-test [cursor owner]
   (reify
@@ -357,10 +370,10 @@
                                                                :student-id student-id}})
                        (dom/div nil
                                 (dom/header #js {:id "m-top_header"})
-                                (dom/article #js {:id "m-section"} "Loading question ..."))))
+                                (dom/article #js {:id "m-section"} "Vraag laden"))))
                    (dom/div nil
                             (dom/header #js {:id "m-top_header"})
-                            (dom/article #js {:id "m-section"} "Starting test for this section"))))))))
+                            (dom/article #js {:id "m-section"} "Vragen voor deze paragraaf aan het laden"))))))))
 
 (defn section-panel [cursor owner]
   (let [load-data (fn []
