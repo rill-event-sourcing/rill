@@ -10,6 +10,15 @@
     (conj streak [question-id result])
     ))
 
+(defn section-test-progress [section-test-agg]
+  (cond
+   (:finished section-test-agg)
+   "section-test DONE"
+   section-test-agg
+   "section-test in progress"
+   :else ;; nil and false
+   "section-test-not-started"))
+
 (defn handle-event [agg event]
   (condp = (:type event)
     "studyflow.learning.section-test.events/Created"

@@ -3,6 +3,7 @@
             [goog.string :as gstring]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
+            [studyflow.web.aggregates :as aggregates]
             [studyflow.web.service :as service]
             [studyflow.web.history :as url-history]
             [clojure.string :as string]
@@ -49,7 +50,45 @@
   (reify
     om/IWillMount
     (will-mount [_]
-      (println "Navigation will mount"))
+      (println "Navigation will mount" (get-in cursor [:view :selected-path :chapter-id])
+               (get-in cursor [:view :course-material]))
+      (let [chapter-id (get-in cursor [:view :selected-path :chapter-id])]
+        (async/put! (om/get-shared owner :data-channel)
+                    ["data/navigation" chapter-id])))
+    om/IRender
+    (render [_]
+      (let [chapter-id (get-in cursor [:view :selected-path :chapter-id])
+            course (get-in cursor [:view :course-material])
+            chapter (some (fn [{:keys [id] :as chapter}]
+                                 (when (= id chapter-id)
+                                   chapter)) (:chapters course))]
+        (dom/div nil
+                 (dom/div #js {:className "panel panel-default"}
+                          (dom/a #js {:href ""}
+                                 "< Dashboard")
+                          (dom/h1 nil "Course: "(:name course))
+                          (dom/h1 #js {:data-id (:id course)}
+                                  "Chapter: "
+                                  (:title chapter)))
+                 (dom/div #js {:className "panel panel-default"}
+                          (apply dom/ul #js {:className "section-nav"}
+                                 (for [{:keys [title]
+                                        section-id :id
+                                        :as section} (:sections chapter)]
+                                   (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
+                                                         (assoc :chapter-id chapter-id
+                                                                :section-id section-id)
+                                                         history-link)}
+                                          (dom/li #js {:data-id section-id
+                                                       :className (when (= section-id
+                                                                           (get-in cursor [:view :selected-path :section-id])) "selected")}
+                                                  title
+                                                  (pr-str "section test progress"
+                                                          (aggregates/section-test-progress
+                                                           (get-in cursor [:aggregates section-id])))))))))))))
+
+(defn navigation-panel [cursor owner]
+  (reify
     om/IRender
     (render [_]
       (let [chapter-id (get-in cursor [:view :selected-path :chapter-id])
@@ -57,31 +96,8 @@
         (if-let [chapter (some (fn [{:keys [id] :as chapter}]
                                  (when (= id chapter-id)
                                    chapter)) (:chapters course))]
-          (dom/div nil
-                   (dom/div #js {:className "panel panel-default"}
-                            (dom/a #js {:href ""}
-                                   "< Dashboard")
-                            (dom/h1 nil "Course: "(:name course))
-                            (dom/h1 #js {:data-id (:id course)}
-                                    "Chapter: "
-                                    (:title chapter)))
-                   (dom/div #js {:className "panel panel-default"}
-                            (apply dom/ul #js {:className "section-nav"}
-                                   (for [{:keys [title]
-                                          section-id :id
-                                          :as section} (:sections chapter)]
-                                     (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
-                                                           (assoc :chapter-id chapter-id
-                                                                  :section-id section-id)
-                                                           history-link)}
-                                            (dom/li #js {:data-id section-id
-                                                         :className (when (= section-id
-                                                                             (get-in cursor [:view :selected-path :section-id])) "selected")}
-                                                    title))))))
-          (dom/h2 nil "No content ... spinner goes here"))))
-    om/IWillUnmount
-    (will-unmount [_]
-      (println "Navigation will unmount"))))
+          (om/build navigation cursor)
+          (dom/h2 nil "Loading navigation"))))))
 
 (defn question-by-id [cursor section-id question-id]
   (if-let [question (get-in cursor [:view :section section-id :test question-id])]
@@ -102,36 +118,55 @@
                    (when (om/get-state owner :disabled)
                      "[DISABLED]"))))))
 
-(defn section-explanation [cursor owner]
+(defn section-explanation [section owner]
   (reify
     om/IRender
     (render [_]
-      (let [{:keys [chapter-id section-id tab-questions]} (get-in cursor [:view :selected-path])]
-        (apply dom/div #js {:className "row"}
-               (apply dom/div #js {:className "col-md-12 panel panel-default"}
-                      (when (get-in cursor [:view :selected-path :section-id])
-                        [(dom/div #js {:className "col-md-8"} "?????? title is what ????")
-                         (dom/div #js {:className "col-md-4"}
-                                  (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
-                                                        (update-in [:tab-questions]
-                                                                   conj section-id)
-                                                        history-link)}
-                                         "=> Vragen"))]))
-               (if-let [section (get-in cursor [:view :section section-id :data])]
-                 (let [subsections (get section :subsections)]
-                   [(apply dom/div #js {:className "col-md-8 panel panel-default"}
-                           (mapcat (fn [{:keys [title text id] :as subsection}]
-                                     [(dom/h3 nil title)
-                                      (dom/div nil
-                                               (pr-str (repeat 100 text)))])
-                                   subsections))
-                    (dom/div #js {:className "col-md-4 panel panel-default"}
-                             (apply dom/ul nil
-                                    (for [{:keys [title id]
-                                           :as subsection} subsections]
-                                      (dom/li nil title))))])
-                 ["Loading section data..."])
-)))))
+      (let [subsections (get section :subsections)]
+        (dom/div nil
+                 (apply dom/div #js {:className "col-md-8 panel panel-default"}
+                        (mapcat (fn [{:keys [title text id] :as subsection}]
+                                  [(dom/h3 nil title)
+                                   (dom/div nil
+                                            (pr-str (repeat 100 text)))])
+                                subsections))
+                 (dom/div #js {:className "col-md-4 panel panel-default"}
+                          (apply dom/ul nil
+                                 (for [{:keys [title id]
+                                        :as subsection} subsections]
+                                   (dom/li nil title)))))))))
+
+(defn section-explanation-panel [cursor owner]
+  (let [load-data (fn []
+                    (let [{:keys [chapter-id section-id]} (get-in cursor [:view :selected-path])]
+                      (async/put! (om/get-shared owner :data-channel)
+                                  ["data/section-explanation" chapter-id section-id])))]
+    (reify
+      om/IRender
+      (render [_]
+        (let [{:keys [chapter-id section-id]} (get-in cursor [:view :selected-path])
+              student-id (get-in cursor [:static :student-id])]
+          (dom/div #js {:className "row"}
+                   (dom/div #js {:className "col-md-12 panel panel-default"}
+                            (dom/div #js {:className "col-md-8"} "?????? title is what ????")
+                            (dom/div #js {:className "col-md-4"}
+                                     (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
+                                                           (update-in [:tab-questions]
+                                                                      conj section-id)
+                                                           history-link)
+                                                 :onClick (fn [e]
+                                                            (async/put! (om/get-shared owner :command-channel)
+                                                                        ["section-test-commands/init-when-nil"
+                                                                         section-id
+                                                                         student-id])
+                                                            true)}
+                                            "=> Vragen")))
+                   (if-let [section (get-in cursor [:view :section section-id :data])]
+                     (om/build section-explanation section)
+                     (do
+                       (load-data) ;; hacky should go through will-mount?
+                       "Loading section data..."))
+                   ))))))
 
 (defn streak-box [streak owner]
   (reify
@@ -268,7 +303,10 @@
                                                   "Check"
                                                   "Check [DISABLED]")
                                                 (fn []
-                                                  (check-answer))) cursor)))))))
+                                                  (check-answer))) cursor)))))
+    om/IWillMount
+    (will-mount [_]
+      (prn "Question-panel mounted"))))
 
 (defn section-test [cursor owner]
   (reify
@@ -308,13 +346,16 @@
   (reify
     om/IRender
     (render [_]
+      (prn "render section panel")
       (let [{:keys [chapter-id section-id tab-questions]} (get-in cursor [:view :selected-path])
             tab-selection (if (contains? tab-questions section-id)
                             :questions
-                            :explanation)]
+                            :explanation)
+            section (get-in cursor [:view :section section-id :data])
+            selected-path (get-in cursor [:view :selected-path])]
         (if (= tab-selection :explanation)
           (if section-id
-            (om/build section-explanation cursor)
+            (om/build section-explanation-panel cursor)
             (dom/div nil "Select a section"))
           (om/build section-test cursor))))))
 
@@ -333,6 +374,11 @@
 
 (defn dashboard [cursor owner]
   (reify
+    om/IWillMount
+    (will-mount [_]
+      (prn "Dashboard will mount")
+      (async/put! (om/get-shared owner :data-channel)
+                  ["data/dashboard"]))
     om/IRender
     (render [_]
       (apply dom/div nil
@@ -370,7 +416,7 @@
                  (om/build dashboard cursor)
                  (dom/div #js {:className "row"}
                           (dom/div #js {:className "col-md-4"}
-                                   (om/build navigation cursor))
+                                   (om/build navigation-panel cursor))
                           (dom/div #js {:className "col-md-8"}
                            (om/build section-panel cursor))))))
     om/IWillUnmount
@@ -387,4 +433,5 @@
     :tx-listen (fn [tx-report cursor]
                  (service/listen tx-report cursor)
                  (url-history/listen tx-report cursor))
-    :shared {:command-channel (async/chan)}}))
+    :shared {:command-channel (async/chan)
+             :data-channel (async/chan)}}))
