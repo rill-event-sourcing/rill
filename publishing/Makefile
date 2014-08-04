@@ -10,8 +10,10 @@ prepare-db:
 
 build:
 	rm -f studyflow_publish.tar && \
-	bundle exec rake assets:precompile && \
-	tar -zcf studyflow_publish.tar *
+	rm -Rf public/assets && \
+	RAILS_ENV=production rake assets:clean assets:precompile && \
+	tar -zcf studyflow_publish.tar * && \
+	rm -Rf public/assets
 
 upload:
 	SHA=`git rev-parse HEAD` && \
