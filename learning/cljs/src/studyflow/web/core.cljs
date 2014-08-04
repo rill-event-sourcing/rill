@@ -426,11 +426,13 @@
     (render [_]
       (dom/div nil
                (when (get-in cursor [:aggregates :failed])
-                 (dom/div #js {:className "reload-alert"}
-                          (dom/h1 nil "You are out of sync with the server. Please reload the page")
-                          (dom/button #js {:onClick (fn [e]
-                                                      (.reload js/location true))}
-                                      "Reload page")))
+                 (dom/div #js {:id "m-modal"
+                               :className "show"}
+                          (dom/div #js {:className "modal_inner"}
+                                   (dom/h1 nil "Je bent niet meer up-to-date met de server. Herlaad de pagina.")
+                                   (dom/button #js {:onClick (fn [e]
+                                                               (.reload js/location true))}
+                                               "Herlaad de pagina"))))
                (if-not (get-in cursor [:view :selected-path :chapter-id])
                  (om/build dashboard cursor)
                  (dom/div nil
