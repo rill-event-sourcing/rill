@@ -125,7 +125,8 @@
         {:enabled enabled})
       om/IRender
       (render [_]
-        (dom/button #js {:onClick
+        (dom/button #js {:className "button green pull-right"
+                         :onClick
                          (fn [_]
                            (onclick)
                            (om/set-state! owner :enabled false))
@@ -153,53 +154,47 @@
                )))))
 
 (defn section-explanation-panel [cursor owner]
-  (let [load-data (fn []
-                    (let [{:keys [chapter-id section-id]} (get-in cursor [:view :selected-path])]
-                      (async/put! (om/get-shared owner :data-channel)
-                                  ["data/section-explanation" chapter-id section-id])))]
-    (reify
-      om/IRender
-      (render [_]
-        (let [{:keys [chapter-id section-id]} (get-in cursor [:view :selected-path])
-              student-id (get-in cursor [:static :student :id])
-              section (get-in cursor [:view :section section-id :data])]
-          (dom/div nil
-                   (dom/header #js {:id "m-top_header"}
-                               (dom/h1 #js {:className "page_heading"}
-                                       (:title section))
-                               (dom/a #js {:className "button white small questions"
-                                           :href (-> (get-in cursor [:view :selected-path])
-                                                     (update-in [:tab-questions]
-                                                             conj section-id)
-                                                     history-link)
-                                           :onClick (fn [e]
-                                                      (async/put! (om/get-shared owner :command-channel)
-                                                                  ["section-test-commands/init-when-nil"
-                                                                   section-id
-                                                                   student-id])
-                                                      true)}
-                                      "Vragen"))
-                   (if section
-                     (om/build section-explanation section)
-                     (do
-                       (load-data) ;; hacky should go through will-mount?
-                       (dom/article #js {:id "m-section"}
-                                    "Loading section data...")))
-                   ))))))
+  (reify
+    om/IRender
+    (render [_]
+      (let [{:keys [chapter-id section-id]} (get-in cursor [:view :selected-path])
+            student-id (get-in cursor [:static :student :id])
+            section (get-in cursor [:view :section section-id :data])]
+        (dom/div nil
+                 (dom/header #js {:id "m-top_header"}
+                             (dom/h1 #js {:className "page_heading"}
+                                     (:title section))
+                             (dom/a #js {:className "button white small questions"
+                                         :href (-> (get-in cursor [:view :selected-path])
+                                                   (update-in [:tab-questions]
+                                                              conj section-id)
+                                                   history-link)
+                                         :onClick (fn [e]
+                                                    (async/put! (om/get-shared owner :command-channel)
+                                                                ["section-test-commands/init-when-nil"
+                                                                 section-id
+                                                                 student-id])
+                                                    true)}
+                                    "Vragen"))
+                 (if section
+                   (om/build section-explanation section)
+                   (dom/article #js {:id "m-section"}
+                                "Loading section data..."))
+                 )))))
 
 (defn streak-box [streak owner]
   (reify
     om/IRender
     (render [_]
       (let [streak
-            (if (< (count streak) 4)
-              (take 4 (concat streak (repeat 4 [nil :open])))
+            (if (< (count streak) 5)
+              (take 5 (concat streak (repeat 5 [nil :open])))
               streak)]
         (apply dom/div #js {:className "streak-box"}
                (map-indexed
                 (fn [idx [question-id result]]
-                  (dom/span #js {:className (if (<= (- (count streak) 4) idx)
-                                              "last-four"
+                  (dom/span #js {:className (if (<= (- (count streak) 5) idx)
+                                              "last-five"
                                               "old")}
                             (condp = result
                               :correct "V"
@@ -229,8 +224,8 @@
     (render [_]
       (let [question-index (:question-index question)
             current-answers (->> (get-in cursor [:view :section section-id :test :questions [question-id question-index] :answer] {})
-                                ;; deref permanently
-                                (into {}))
+                                 ;; deref permanently
+                                 (into {}))
             answer-correct (when (contains? question :correct)
                              (:correct question))
             course-id (get-in cursor [:static :course-id])
@@ -288,7 +283,11 @@
             answering-allowed (every? (fn [input-name]
                                         (seq (get current-answers input-name)))
                                       (keys inputs))]
-        (dom/div #js {:className "col-md-12 panel panel-default"}
+        (dom/div #js {:id "m-section"}
+                 #_(dom/div #js {:id "m-modal"
+                               :className "show"}
+                          (dom/div #js {:className "modal_inner"}
+                                   "MODAL CONTENT HERE"))
                  (dom/div nil (pr-str question-data))
                  (om/build streak-box (:streak section-test))
                  (if answer-correct
@@ -298,30 +297,31 @@
                                                                      (keys inputs))]
                             (if-let [input (get inputs text-or-input)]
                               input
-                              (dom/span nil text-or-input)))
-))
+                              (dom/span nil text-or-input)))))
                  (when-not (nil? answer-correct)
                    (dom/div nil (str "Marked as: " answer-correct
                                      (when answer-correct
                                        " have some balloons"))))
-                 (if answer-correct
-                   (if-not (:finished section-test)
-                     (dom/button #js {:onClick (fn []
-                                                 (async/put! (om/get-shared owner :command-channel)
-                                                             ["section-test-commands/next-question"
-                                                              section-id
-                                                              student-id
-                                                              section-test-aggregate-version
-                                                              course-id])
-                                                 (prn "next question command"))}
-                                 "Correct! Next Question")
-                     (dom/button #js {:onClick (fn []
-                                                 (js/alert "Well done, continue or go to next section"))}
-                                 "Correct! Finished Section"))
-                   (om/build (click-once-button "Check"
-                                                answering-allowed
-                                                (fn []
-                                                  (check-answer))) cursor)))))))
+                 (dom/div #js {:id "m-question_bar"}
+                          (if answer-correct
+                            (if-not (:finished section-test)
+                              (om/build (click-once-button
+                                         "Goed! Volgende vraag"
+                                         (fn []
+                                           (async/put! (om/get-shared owner :command-channel)
+                                                       ["section-test-commands/next-question"
+                                                        section-id
+                                                        student-id
+                                                        section-test-aggregate-version
+                                                        course-id])
+                                           (prn "next question command"))) cursor)
+                              (om/build (click-once-button "Goed, voltooi paragraaf"
+                                                           (fn []
+                                                             (js/alert "Well done, continue or go to next section"))) cursor))
+                            (om/build (click-once-button "Nakijken"
+                                                         answering-allowed
+                                                         (fn []
+                                                           (check-answer))) cursor))))))))
 
 (defn section-test [cursor owner]
   (reify
@@ -329,20 +329,19 @@
     (render [_]
       (let [section-id (get-in cursor [:view :selected-path :section-id])
             student-id (get-in cursor [:static :student :id])
-            section-test (get-in cursor [:aggregates section-id])]
-        (dom/div #js {:className "row"}
-                 (dom/div #js {:className "col-md-12 panel panel-default"}
-                          (dom/div #js {:className "col-md-4"}
-                                   (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
-                                                         (update-in [:tab-questions]
-                                                                    disj section-id)
-                                                         history-link)}
-                                          "<= Explanation"))
-                          (dom/div #js {:className "col-md-4"}
-                                   "???? Some title ????")
-                          (when section-test
-                            (dom/div #js {:className "col-md-4"}
-                                     (om/build streak-box (:streak section-test)))))
+            section-test (get-in cursor [:aggregates section-id])
+            section-title (get-in cursor [:view :section section-id :data :title])]
+        (prn "section-title " section-title (get-in cursor [:view :section section-id :data]))
+        (dom/div nil
+                 (dom/header #js {:id "m-top_header"}
+                             (dom/h1 #js {:className "page_heading"}
+                                     section-title)
+                             (dom/a #js {:className "button white small questions"
+                                         :href (-> (get-in cursor [:view :selected-path])
+                                                   (update-in [:tab-questions]
+                                                              disj section-id)
+                                                   history-link)}
+                                      "Uitleg"))
                  (if section-test
                    (let [questions (:questions section-test)
                          question (peek questions)
@@ -354,28 +353,37 @@
                                                                :question-id question-id
                                                                :section-id section-id
                                                                :student-id student-id}})
-                       (dom/div nil "Loading question ...")))
-                   (dom/div nil "Starting test for this section")))))))
+                       (dom/div nil
+                                (dom/header #js {:id "m-top_header"})
+                                (dom/article #js {:id "m-section"} "Loading question ..."))))
+                   (dom/div nil
+                            (dom/header #js {:id "m-top_header"})
+                            (dom/article #js {:id "m-section"} "Starting test for this section"))))))))
 
 (defn section-panel [cursor owner]
-  (reify
-    om/IRender
-    (render [_]
-      (let [{:keys [chapter-id section-id tab-questions]} (get-in cursor [:view :selected-path])
-            tab-selection (if (contains? tab-questions section-id)
-                            :questions
-                            :explanation)
-            section (get-in cursor [:view :section section-id :data])
-            selected-path (get-in cursor [:view :selected-path])]
-        (dom/section #js {:id "main"}
-                     (if (= tab-selection :explanation)
-                       (if section-id
-                         (om/build section-explanation-panel cursor)
-                         (dom/div nil
-                                  (dom/header #js {:id "m-top_header"})
-                                  (dom/article #js {:id "m-section"}
-                                               "Select a section")))
-                       (om/build section-test cursor)))))))
+  (let [load-data (fn []
+                    (let [{:keys [chapter-id section-id]} (get-in cursor [:view :selected-path])]
+                      (when (and chapter-id section-id)
+                        (async/put! (om/get-shared owner :data-channel)
+                                    ["data/section-explanation" chapter-id section-id]))))]
+    (reify
+      om/IRender
+      (render [_]
+        (let [{:keys [chapter-id section-id tab-questions]} (get-in cursor [:view :selected-path])
+              tab-selection (if (contains? tab-questions section-id)
+                              :questions
+                              :explanation)
+              selected-path (get-in cursor [:view :selected-path])]
+          (load-data) ;; hacky should go through will-mount?/will-update?
+          (dom/section #js {:id "main"}
+                       (if (= tab-selection :explanation)
+                         (if section-id
+                           (om/build section-explanation-panel cursor)
+                           (dom/div nil
+                                    (dom/header #js {:id "m-top_header"})
+                                    (dom/article #js {:id "m-section"}
+                                                 "Select a section")))
+                         (om/build section-test cursor))))))))
 
 (defn dashboard [cursor owner]
   (reify
