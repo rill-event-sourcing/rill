@@ -216,6 +216,46 @@
         (when-let [input-field (om/get-node owner name)]
           (.focus input-field))))))
 
+(defn question-inputs [cursor section-id question-id question-index question-data current-answers]
+  (-> {}
+      (into (for [mc (:multiple-choice-input-fields question-data)]
+              (let [input-name (:name mc)]
+                [input-name
+                 (apply dom/ul nil
+                        (for [choice (map :value (:choices mc))]
+                          (dom/li nil
+                                  (dom/input #js {:id choice
+                                                  :type "radio"
+                                                  :checked (= choice (get current-answers input-name))
+                                                  :onChange (fn [event]
+                                                              (om/update!
+                                                               cursor
+                                                               [:view :section section-id :test :questions [question-id question-index] :answer input-name]
+                                                               choice))}
+                                             (dom/label #js {:htmlFor choice} choice)))))])))
+      (into (for [[li dom-fn] (map list
+                                   (:line-input-fields question-data)
+                                   (cons (fn [ref props]
+                                           (om/build (focused-input ref props) cursor))
+                                         (repeat (fn [ref props]
+                                                   (dom/input props)))))]
+              (let [input-name (:name li)]
+                [input-name
+                 (dom/span nil
+                           (when-let [prefix (:prefix li)]
+                             (str prefix " "))
+                           (dom-fn
+                            input-name
+                            #js {:value (get current-answers input-name)
+                                 :ref input-name
+                                 :onChange (fn [event]
+                                             (om/update!
+                                              cursor
+                                              [:view :section section-id :test :questions [question-id question-index] :answer input-name]
+                                              (.. event -target -value)))})
+                           (when-let [suffix (:suffix li)]
+                             (str " " suffix)))])))))
+
 (defn question-panel [cursor owner {:keys [section-test
                                            section-id
                                            student-id
@@ -233,44 +273,7 @@
                              (:correct question))
             course-id (get-in cursor [:static :course-id])
             section-test-aggregate-version (:aggregate-version section-test)
-            inputs (-> {}
-                       (into (for [mc (:multiple-choice-input-fields question-data)]
-                               (let [input-name (:name mc)]
-                                 [input-name
-                                  (apply dom/ul nil
-                                         (for [choice (map :value (:choices mc))]
-                                           (dom/li nil
-                                                   (dom/input #js {:id choice
-                                                                   :type "radio"
-                                                                   :checked (= choice (get current-answers input-name))
-                                                                   :onChange (fn [event]
-                                                                               (om/update!
-                                                                                cursor
-                                                                                [:view :section section-id :test :questions [question-id question-index] :answer input-name]
-                                                                                choice))}
-                                                              (dom/label #js {:htmlFor choice} choice)))))])))
-                       (into (for [[li dom-fn] (map list
-                                                    (:line-input-fields question-data)
-                                                    (cons (fn [ref props]
-                                                            (om/build (focused-input ref props) cursor))
-                                                          (repeat (fn [ref props]
-                                                                    (dom/input props)))))]
-                               (let [input-name (:name li)]
-                                 [input-name
-                                  (dom/span nil
-                                            (when-let [prefix (:prefix li)]
-                                              (str prefix " "))
-                                            (dom-fn
-                                             input-name
-                                             #js {:value (get current-answers input-name)
-                                                  :ref input-name
-                                                  :onChange (fn [event]
-                                                              (om/update!
-                                                               cursor
-                                                               [:view :section section-id :test :questions [question-id question-index] :answer input-name]
-                                                               (.. event -target -value)))})
-                                            (when-let [suffix (:suffix li)]
-                                              (str " " suffix)))]))))
+            inputs (question-inputs cursor section-id question-id question-index question-data current-answers)
             answering-allowed (every? (fn [input-name]
                                         (seq (get current-answers input-name)))
                                       (keys inputs))
