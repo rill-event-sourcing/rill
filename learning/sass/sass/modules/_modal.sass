@@ -1,0 +1,18 @@
+#m-modal
+  top: 0
+  bottom: 0
+  left: 0
+  right: 0
+  position: fixed
+  background: rgba(0,0,0,0.3)
+  z-index: 900
+  display: none
+  &.show
+    display: block
+
+  .modal_inner
+    width: 600px
+    height: 400px
+    +border-radius(3px)
+    background: white
+    margin: 120px auto

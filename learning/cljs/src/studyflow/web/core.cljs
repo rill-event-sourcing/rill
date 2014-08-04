@@ -101,7 +101,7 @@
     (render [_]
       (let [chapter-id (get-in cursor [:view :selected-path :chapter-id])
             course (get-in cursor [:view :course-material])]
-        (dom/nav #js {:id "mod-sidenav"}
+        (dom/nav #js {:id "m-sidenav"}
                  (dom/a #js {:className "dashboard_link"
                              :href ""}
                         "Terug naar Dashboard")
@@ -137,15 +137,15 @@
     om/IRender
     (render [_]
       (let [subsections (get section :subsections)]
-        (apply dom/article #js {:id "mod-section"}
-               #_(dom/nav #js {:id "mod-minimap"}
+        (apply dom/article #js {:id "m-section"}
+               #_(dom/nav #js {:id "m-minimap"}
                           (apply dom/ul nil
                                  (for [{:keys [title id]
                                         :as subsection} subsections]
                                    (dom/li nil title))))
                (mapcat (fn [{:keys [title text id] :as subsection}]
                          [(dom/h3 nil title)
-                          (dom/section #js {:className "mod-subsection"}
+                          (dom/section #js {:className "m-subsection"}
                                        (dom/p nil (pr-str (repeat 100 text)))
                                        (dom/img #js {:src "https://docs.google.com/drawings/d/1KW5VHUM-M54OkVL14dZX-awRFefqH49RWcLHaG4kTac/pub?w=750&amp;h=196"})
                                        )])
@@ -164,7 +164,7 @@
               student-id (get-in cursor [:static :student :id])
               section (get-in cursor [:view :section section-id :data])]
           (dom/div nil
-                   (dom/header #js {:id "mod-top_header"}
+                   (dom/header #js {:id "m-top_header"}
                                (dom/h1 #js {:className "page_heading"}
                                        (:title section))
                                (dom/a #js {:className "button white small questions"
@@ -183,7 +183,7 @@
                      (om/build section-explanation section)
                      (do
                        (load-data) ;; hacky should go through will-mount?
-                       (dom/article #js {:id "mod-section"}
+                       (dom/article #js {:id "m-section"}
                                     "Loading section data...")))
                    ))))))
 
@@ -372,8 +372,8 @@
                        (if section-id
                          (om/build section-explanation-panel cursor)
                          (dom/div nil
-                                  (dom/header #js {:id "mod-top_header"})
-                                  (dom/article #js {:id "mod-section"}
+                                  (dom/header #js {:id "m-top_header"})
+                                  (dom/article #js {:id "m-section"}
                                                "Select a section")))
                        (om/build section-test cursor)))))))
 
