@@ -307,6 +307,7 @@
                             (if-not (:finished section-test)
                               (om/build (click-once-button
                                          "Goed! Volgende vraag"
+                                         true
                                          (fn []
                                            (async/put! (om/get-shared owner :command-channel)
                                                        ["section-test-commands/next-question"
@@ -316,6 +317,7 @@
                                                         course-id])
                                            (prn "next question command"))) cursor)
                               (om/build (click-once-button "Goed, voltooi paragraaf"
+                                                           true
                                                            (fn []
                                                              (js/alert "Well done, continue or go to next section"))) cursor))
                             (om/build (click-once-button "Nakijken"
