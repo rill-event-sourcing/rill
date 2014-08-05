@@ -3,7 +3,7 @@
             [rill.event-stream :refer [all-events-stream-id]]
             [clojure.java.jdbc :as sql]
             [rill.message :as message]
-            [miner.tagged :as tagged]
+            [taoensso.nippy :as nippy]
             [clojure.tools.logging :as log]))
 
 (defrecord PsqlEventStore [spec]
@@ -14,7 +14,7 @@
                    (or (message/number cursor)
                        (throw (ex-info (str "Not a valid cursor: " cursor) {:cursor cursor}))))]
       (or (seq (map (fn [r]
-                      (with-meta (assoc (tagged/read-string (:payload r))
+                      (with-meta (assoc (nippy/thaw (:payload r))
                                    ::message/number (or (:insert_order r)
                                                         (:stream_order r)))
                         {:cursor (or (:insert_order r)
@@ -25,10 +25,10 @@
                       (sql/query spec ["SELECT payload, stream_order FROM rill_events WHERE stream_id = ? AND stream_order > ? ORDER BY insert_order ASC"
                                        (str stream-id)
                                        cursor]))))
-          (when (< 0 wait-for-seconds)
-            (Thread/sleep 200)
-            nil))))
-  
+          (do (when (< 0 wait-for-seconds)
+                (Thread/sleep 200))
+              []))))
+
   (append-events [this stream-id from-version events]
     (try
       (apply sql/db-do-prepared spec "INSERT INTO rill_events (event_id, stream_id, stream_order, payload) VALUES (?, ?, ?, ?)"
@@ -36,10 +36,12 @@
                             [(str (message/id e))
                              (str stream-id)
                              (+ 1 i from-version)
-                            (pr-str e)])
-              events))
+                             (nippy/freeze e)])
+                          events))
       true
       (catch org.postgresql.util.PSQLException e
+        nil)
+      (catch java.sql.BatchUpdateException e
         nil))))
 
 (defn psql-event-store [spec]
