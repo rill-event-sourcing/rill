@@ -22,6 +22,16 @@
 (defn command-section-test-aggregate-handler [cursor section-id]
   (fn [res]
     (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
+      (when-let [new-notification-events
+                 (seq (filter
+                       (comp #{"studyflow.learning.section-test.events/Finished"
+                               "studyflow.learning.section-test.events/StreakCompleted"} :type)
+                       events))]
+        (om/transact! cursor
+                      [:view :notification-events]
+                      (fn [notification-events]
+                        (into notification-events
+                              new-notification-events))))
       (om/transact! cursor
                     [:aggregates section-id]
                     (fn [agg]
