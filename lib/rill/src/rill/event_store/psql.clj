@@ -15,12 +15,11 @@
                        (throw (ex-info (str "Not a valid cursor: " cursor) {:cursor cursor}))))]
       (or (seq (map (fn [r]
                       (with-meta (assoc (nippy/thaw (:payload r))
-                                   ::message/number (or (:stream_order r)
-                                                        (:insert_order r)))
-                        {:cursor (or (:stream_order r)
-                                     (:insert_order r))}))
+                                   ::message/number (:stream_order r))
+                        {:cursor (or (:insert_order r)
+                                     (:stream_order r))}))
                     (if (= stream-id all-events-stream-id)
-                      (sql/query spec ["SELECT payload, insert_order FROM rill_events WHERE insert_order > ? ORDER BY insert_order ASC"
+                      (sql/query spec ["SELECT payload, stream_order, insert_order FROM rill_events WHERE insert_order > ? ORDER BY insert_order ASC"
                                        cursor])
                       (sql/query spec ["SELECT payload, stream_order FROM rill_events WHERE stream_id = ? AND stream_order > ? ORDER BY insert_order ASC"
                                        (str stream-id)

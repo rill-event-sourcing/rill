@@ -12,7 +12,6 @@
   "push event to channel.
   returns false when we should not continue pushing."
   [ch event]
-  (log/debug "Pushing" event "to channel")
   (boolean (>!! ch event)))
 
 (defn push-events!!  [ch cursor events]
@@ -34,7 +33,6 @@
   "Push events from stream into ch. Blocking"
   [event-store stream-id cursor ch]
   (loop [cursor cursor at-head false]
-    (log/debug [:listen!! stream-id cursor])
     (when-let [new-cursor (push-events!! ch cursor (store/retrieve-events-since event-store stream-id cursor long-poll-seconds))]
       (when (not at-head)
         (push-event!! ch (caught-up (Date.)))
