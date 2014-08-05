@@ -116,6 +116,7 @@ save = ->
   form  = $("#question-form")
   url = form.attr("action")
   $("#edit-time").html('<img src="/spinner.gif" alt="Wait" />')
+  sanitizeRichText()
   $.ajax url,
     type: 'PUT'
     dataType: 'json'
