@@ -261,6 +261,7 @@
                            (when-let [suffix (:suffix li)]
                              (str " " suffix)))])))))
 
+(def key-listener (atom nil)) ;; should go into either cursor or local state
 (defn question-panel [cursor owner {:keys [section-test
                                            section-id
                                            student-id
@@ -339,12 +340,16 @@
     om/IDidMount
     (did-mount [_]
       (let [key-handler (goog.events.KeyHandler. js/document)]
-        (goog.events/listen key-handler
-                            goog.events.KeyHandler.EventType.KEY
-                            (fn [e]
-                              (when (= (.-keyCode e) 13) ;;enter
-                                (when-let [f (om/get-state owner :check-answer)]
-                                  (f)))))))))
+        (when-let [key @key-listener]
+          (goog.events/unlistenByKey key))
+        (->> (goog.events/listen key-handler
+                                goog.events.KeyHandler.EventType.KEY
+                                (fn [e]
+                                  (when (= (.-keyCode e) 13) ;;enter
+                                    (when-let [f (om/get-render-state owner :check-answer)]
+                                      (.log js/console "F is " f)
+                                      (f)))))
+             (reset! key-listener))))))
 
 (defn section-test [cursor owner]
   (reify
