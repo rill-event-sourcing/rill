@@ -7,9 +7,7 @@
 (defn -main [jetty-port event-store-uri]
   (log/info "Studyflow school administration app")
   (let [s (-> (system/prod-system {:port (Long/parseLong jetty-port)
-                                   :event-store-config {:uri event-store-uri
-                                                        :user "admin"
-                                                        :password "changeit"}})
+                                   :event-store-config event-store-uri})
               component/start)]
     (.addShutdownHook (Runtime/getRuntime)
                       (Thread. (fn []

@@ -7,6 +7,7 @@
             [studyflow.system.components.publishing-api :refer [publishing-api-component]]
             [studyflow.system.components.read-model :refer [read-model-component]]
             [studyflow.system.components.ring-handler :refer [ring-handler-component]]
+            [rill.event-store.psql :refer [psql-event-store]]
             [clojure.tools.logging :as log]))
 
 (defn prod-system [config-options]
@@ -31,7 +32,7 @@
                      (event-channel-component)
                      [:event-store])
      :event-store (component/using
-                   (atom-event-store-component event-store-config)
+                   (psql-event-store event-store-config)
                    [])
      :read-model (component/using
                   (read-model-component)

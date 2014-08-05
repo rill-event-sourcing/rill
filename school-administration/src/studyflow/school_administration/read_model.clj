@@ -122,3 +122,14 @@
 (defn set-student-class-name
   [model id name]
   (assoc-in model [:students id :class-name] name))
+
+
+;; catchup
+
+(defn caught-up
+  [model]
+  (assoc model :caught-up true))
+
+(defn caught-up?
+  [model]
+  (boolean (:caught-up model)))
