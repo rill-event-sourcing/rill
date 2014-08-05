@@ -214,7 +214,9 @@
       om/IDidMount
       (did-mount [_]
         (when-let [input-field (om/get-node owner name)]
-          (.focus input-field))))))
+          (.focus input-field)
+          (set! (.-value input-field) (.-value input-field))
+          )))))
 
 (defn question-inputs [cursor section-id question-id question-index question-data current-answers]
   (-> {}
@@ -247,6 +249,7 @@
                            (dom-fn
                             input-name
                             #js {:value (get current-answers input-name)
+                                 :react-key input-name
                                  :ref input-name
                                  :onChange (fn [event]
                                              (om/update!
