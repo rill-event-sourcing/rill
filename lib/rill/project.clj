@@ -11,5 +11,6 @@
                  [me.raynes/conch "0.7.0"]
                  [identifiers "1.1.0"]
                  [org.clojure/java.jdbc "0.3.4"]
-                 [postgresql "9.1-901.jdbc4"]]
+                 [postgresql "9.1-901.jdbc4"]
+                 [com.taoensso/nippy "2.6.3"]]
   :aot [rill.cli])
