@@ -2,6 +2,7 @@
   (:require [com.stuartsierra.component :as component]
             [studyflow.components.event-channel :refer [event-channel-component]]
             [studyflow.components.atom-event-store :refer [atom-event-store-component]]
+            [rill.event-store.psql :refer [psql-event-store]]
             [studyflow.components.jetty :refer [jetty-component]]
             [studyflow.school-administration.eduroute-listener :refer [eduroute-listener-component]]
             [studyflow.school-administration.system.components.read-model :refer [read-model-component]]
@@ -23,7 +24,7 @@
                      (event-channel-component)
                      [:event-store])
      :event-store (component/using
-                   (atom-event-store-component event-store-config)
+                   (psql-event-store event-store-config)
                    [])
      :read-model (component/using
                   (read-model-component)

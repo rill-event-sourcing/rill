@@ -7,9 +7,7 @@
   (let [system (system/make-system {:jetty-port (Long/parseLong jetty-port)
                                     :default-redirect-paths {"editor" publishing-url
                                                              "student" learning-url}
-                                    :event-store-config {:uri event-store-uri
-                                                        :user "admin"
-                                                        :password "changeit"}
+                                    :event-store-config event-store-uri
                                     :session-store-config {:uri session-store-uri}
                                     :session-max-age (Long/parseLong session-max-age)
                                     :cookie-domain cookie-domain})]
