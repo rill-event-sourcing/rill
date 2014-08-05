@@ -23,7 +23,7 @@ class Subsection < ActiveRecord::Base
     {
       id: id,
       title: title,
-      text: text
+      text: render_latex(text)
     }
   end
 
