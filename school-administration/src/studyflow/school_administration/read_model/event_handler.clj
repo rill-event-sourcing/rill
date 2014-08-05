@@ -98,7 +98,6 @@
 
 (defmethod handle-event ::event-channel/CaughtUp
   [model _]
-  (prn "read model up to date")
   (m/caught-up model))
 
 
