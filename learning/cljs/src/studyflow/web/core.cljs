@@ -218,7 +218,9 @@
           (set! (.-value input-field) (.-value input-field))
           )))))
 
-(defn question-inputs [cursor section-id question-id question-index question-data current-answers]
+(defn question-inputs
+  "mapping from input-name to react dom element for input type"
+  [cursor section-id question-id question-index question-data current-answers]
   (-> {}
       (into (for [mc (:multiple-choice-input-fields question-data)]
               (let [input-name (:name mc)]
