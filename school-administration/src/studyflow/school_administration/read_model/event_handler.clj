@@ -1,5 +1,6 @@
 (ns studyflow.school-administration.read-model.event-handler
   (:require [rill.message :as message]
+            [rill.event-channel :as event-channel]
             [studyflow.school-administration.read-model :as m]
             [studyflow.school-administration.department.events :as department-events]
             [studyflow.school-administration.school.events :as school-events]
@@ -92,3 +93,12 @@
   (-> model
       (m/set-department-sales-data department-id licenses-sold status)
       (m/set-aggregate-version department-id number)))
+
+;; ready for display
+
+(defmethod handle-event ::event-channel/CaughtUp
+  [model _]
+  (prn "read model up to date")
+  (m/caught-up model))
+
+
