@@ -1,7 +1,10 @@
 (ns rill.event-channel
   (:require [clojure.core.async :refer [thread >!! chan]]
             [rill.event-store :as store]
-            [clojure.tools.logging :as log]))
+            [rill.message :refer [defevent]]
+            [clojure.tools.logging :as log]
+            [schema.core :as s])
+  (:import (java.util Date)))
 
 (def long-poll-seconds 20)
 
@@ -25,12 +28,19 @@ returns false when we should not continue pushing."
     (log/debug "pushed - " r)
     r))
 
+;; This is the event you get from a channel when it has
+;; caught up with the current head of the event stream
+
+(defevent CaughtUp
+  :timestamp s/Inst)
+
 (defn event-channel-listen!!
   "Push events from stream into ch. Blocking"
   [event-store stream-id cursor ch]
   (loop [cursor cursor]
     (log/debug [:listen!! stream-id cursor])
     (when-let [new-cursor (push-events!! ch cursor (store/retrieve-events-since event-store stream-id cursor long-poll-seconds))]
+      (push-event!! ch (caught-up (Date.)))
       (recur new-cursor))))
 
 (defn event-channel
