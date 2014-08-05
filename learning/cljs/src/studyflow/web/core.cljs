@@ -280,12 +280,13 @@
             course-id (get-in cursor [:static :course-id])
             section-test-aggregate-version (:aggregate-version section-test)
             inputs (question-inputs cursor section-id question-id question-index question-data current-answers)
-            answering-allowed (every? (fn [input-name]
-                                        (seq (get current-answers input-name)))
-                                      (keys inputs))
-            _ (om/set-state! owner :check-answer
+            answering-allowed (and (not answer-correct)
+                                   (every? (fn [input-name]
+                                             (seq (get current-answers input-name)))
+                                           (keys inputs)))
+            _ (om/set-state! owner :submit
                              (fn []
-                               (when answering-allowed
+                               (if answering-allowed
                                  (async/put! (om/get-shared owner :command-channel)
                                              ["section-test-commands/check-answer"
                                               section-id
@@ -294,10 +295,16 @@
                                               course-id
                                               question-id
                                               current-answers])
-                                 (om/set-state! owner :check-answer nil))))
-            check-answer (fn []
-                           (when-let [f (om/get-state owner :check-answer)]
-                             (f)))]
+                                 (async/put! (om/get-shared owner :command-channel)
+                                             ["section-test-commands/next-question"
+                                              section-id
+                                              student-id
+                                              section-test-aggregate-version
+                                              course-id]))
+                               (om/set-state! owner :submit nil)))
+            submit (fn []
+                     (when-let [f (om/get-state owner :submit)]
+                       (f)))]
         (dom/div #js {:id "m-section"}
                  #_(dom/div #js {:id "m-modal"
                                  :className "show"}
@@ -323,19 +330,14 @@
                               (om/build (click-once-button
                                          "Goed! Volgende vraag"
                                          (fn []
-                                           (async/put! (om/get-shared owner :command-channel)
-                                                       ["section-test-commands/next-question"
-                                                        section-id
-                                                        student-id
-                                                        section-test-aggregate-version
-                                                        course-id])
+                                           (submit)
                                            (prn "next question command"))) cursor)
                               (om/build (click-once-button "Goed, voltooi paragraaf"
                                                            (fn []
                                                              (js/alert "Well done, continue or go to next section"))) cursor))
                             (om/build (click-once-button "Nakijken"
                                                          (fn []
-                                                           (check-answer))
+                                                           (submit))
                                                          :enabled answering-allowed) cursor))))))
     om/IDidMount
     (did-mount [_]
@@ -346,7 +348,7 @@
                                 goog.events.KeyHandler.EventType.KEY
                                 (fn [e]
                                   (when (= (.-keyCode e) 13) ;;enter
-                                    (when-let [f (om/get-render-state owner :check-answer)]
+                                    (when-let [f (om/get-render-state owner :submit)]
                                       (.log js/console "F is " f)
                                       (f)))))
              (reset! key-listener))))))
