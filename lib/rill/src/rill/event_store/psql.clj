@@ -30,19 +30,26 @@
               []))))
 
   (append-events [this stream-id from-version events]
-    (try
-      (apply sql/db-do-prepared spec "INSERT INTO rill_events (event_id, stream_id, stream_order, payload) VALUES (?, ?, ?, ?)"
-             (map-indexed (fn [i e]
-                            [(str (message/id e))
-                             (str stream-id)
-                             (+ 1 i from-version)
-                             (nippy/freeze e)])
-                          events))
-      true
-      (catch org.postgresql.util.PSQLException e
-        nil)
-      (catch java.sql.BatchUpdateException e
-        nil))))
+    (if (= from-version -2) ;; generate our own stream_order
+      (apply  sql/db-do-prepared spec "INSERT INTO rill_events (event_id, stream_id, stream_order, payload) VALUES (?, ?, (SELECT(COALESCE(MAX(stream_order),-1)+1) FROM rill_events WHERE stream_id=?), ?)"
+              (map-indexed (fn [i e]
+                             [(str (message/id e))
+                              (str stream-id)
+                              (str stream-id)
+                              (nippy/freeze e)])
+                           events))
+      (try (apply sql/db-do-prepared spec "INSERT INTO rill_events (event_id, stream_id, stream_order, payload) VALUES (?, ?, ?, ?)"
+                  (map-indexed (fn [i e]
+                                 [(str (message/id e))
+                                  (str stream-id)
+                                  (+ 1 i from-version)
+                                  (nippy/freeze e)])
+                               events))
+           true
+           (catch org.postgresql.util.PSQLException e
+             nil)
+           (catch java.sql.BatchUpdateException e
+             nil)))))
 
 (defn psql-event-store [spec]
   (let [es (->PsqlEventStore spec)]

@@ -1,9 +1,9 @@
 CREATE TABLE rill_events (
-       event_id VARCHAR(200), 
-       stream_id VARCHAR(512),
-       insert_order BIGSERIAL UNIQUE,
-       stream_order BIGINT,
-       payload BYTEA,
+       event_id VARCHAR(200) NOT NULL, 
+       stream_id VARCHAR(512) NOT NULL,
+       insert_order BIGSERIAL UNIQUE NOT NULL,
+       stream_order BIGINT NOT NULL,
+       payload BYTEA NOT NULL,
        UNIQUE(stream_id, stream_order)
 );
 
