@@ -8,7 +8,10 @@
 
 (defn section
   [m course-id section-id]
-  (model/get-section (model/get-course m course-id) section-id))
+  (-> m
+      (model/get-course course-id)
+      (model/get-section section-id)
+      (dissoc :questions)))
 
 (defn remove-answers [question]
   (-> question
