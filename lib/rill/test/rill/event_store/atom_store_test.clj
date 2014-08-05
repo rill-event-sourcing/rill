@@ -73,7 +73,10 @@
             write-chunk-size 12
             num-messages 1000
             throughput-events (map gen-event (range num-messages))
-            recieve (event-channel store throughput-stream-id -1 10)]
+            recieve (async/filter< (fn [e]
+                                     (not= (message/type e)
+                                           :rill.event-channel/CaughtUp))
+                                   (event-channel store throughput-stream-id -1 10))]
         (println "Writing and recieving" num-messages "messages")
         (time
          (let [post (async/thread
