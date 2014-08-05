@@ -10,23 +10,19 @@
 
 (defn push-event!!
   "push event to channel.
-returns false when we should not continue pushing."
+  returns false when we should not continue pushing."
   [ch event]
   (log/debug "Pushing" event "to channel")
   (boolean (>!! ch event)))
 
-(defn push-events!!
-  [ch cursor events]
-  (log/debug "pushing" (count events) "events to channel")
-  (let [r (loop [cursor cursor
-                 [event & events] events]
-            (if event
-              (if (push-event!! ch event)
-                (recur (:cursor (meta event)) events)
-                nil)
-              cursor))]
-    (log/debug "pushed - " r)
-    r))
+(defn push-events!!  [ch cursor events]
+  (loop [cursor cursor
+         [event & events] events]
+    (if event
+      (if (push-event!! ch event)
+        (recur (:cursor (meta event)) events)
+        nil)
+      cursor)))
 
 ;; This is the event you get from a channel when it has
 ;; caught up with the current head of the event stream
@@ -37,11 +33,13 @@ returns false when we should not continue pushing."
 (defn event-channel-listen!!
   "Push events from stream into ch. Blocking"
   [event-store stream-id cursor ch]
-  (loop [cursor cursor]
+  (loop [cursor cursor at-head false]
     (log/debug [:listen!! stream-id cursor])
     (when-let [new-cursor (push-events!! ch cursor (store/retrieve-events-since event-store stream-id cursor long-poll-seconds))]
-      (push-event!! ch (caught-up (Date.)))
-      (recur new-cursor))))
+      (when (not at-head)
+        (push-event!! ch (caught-up (Date.)))
+        (log/info "Caught up with head of event stream."))
+      (recur new-cursor true))))
 
 (defn event-channel
   "Start an event listener in a new thread and returns a channel
