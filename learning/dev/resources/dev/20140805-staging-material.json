@@ -187,19 +187,7 @@
                 }
               ],
               "multiple_choice_input_fields": [
-                {
-                  "name": "_INPUT_2_",
-                  "choices": [
-                    {
-                      "value": "",
-                      "correct": false
-                    },
-                    {
-                      "value": "",
-                      "correct": false
-                    }
-                  ]
-                }
+                
               ]
             },
             {
