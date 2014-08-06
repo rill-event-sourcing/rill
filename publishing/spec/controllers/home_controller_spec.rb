@@ -21,7 +21,10 @@ RSpec.describe HomeController, :type => :controller do
   end
 
   describe "POST publish" do
-    it "should publish the course material" do
+
+
+
+    it "should publish the course material when there are no errors" do
       expect{post :publish}.not_to raise_error(Exception)
     end
 

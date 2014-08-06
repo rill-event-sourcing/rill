@@ -20,6 +20,11 @@ class Course < ActiveRecord::Base
     "#{name}"
   end
 
+  def errors_when_publishing
+    errors = chapters.active.map(&:errors_when_publishing).flatten
+  end
+
+
   def to_publishing_format
     {
       id: id,

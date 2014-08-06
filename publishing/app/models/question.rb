@@ -44,6 +44,24 @@ class Question < ActiveRecord::Base
     }
   end
 
+  def inputs_referenced_exactly_once?
+    inputs.find_all{|input| text.scan(input.name).length != 1}.empty?
+  end
+
+  def nonexisting_inputs_referenced?
+    input_names = inputs.map(&:name)
+    text.scan(/_INPUT_.*?_/).find_all{|match| !input_names.include? match}.any?
+  end
+
+  def errors_when_publishing
+    errors = []
+    errors << "No Inputs on question '#{name}', in '#{quizzable}'" if inputs.count == 0
+    errors << "Error in input referencing in question '#{name}', in '#{quizzable}'" unless inputs_referenced_exactly_once?
+    errors << "Nonexisting inputs referenced in question '#{name}', in '#{quizzable}'" if nonexisting_inputs_referenced?
+    errors << inputs.map(&:errors_when_publishing)
+    errors.flatten
+  end
+
   def as_full_json
     {
       id: id,
