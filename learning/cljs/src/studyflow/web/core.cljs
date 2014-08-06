@@ -222,48 +222,55 @@
           (set! (.-value input-field) (.-value input-field))
           )))))
 
-(defn question-inputs
-  "mapping from input-name to react dom element for input type"
-  [cursor section-id question-id question-index question-data current-answers]
-  (-> {}
-      (into (for [mc (:multiple-choice-input-fields question-data)]
-              (let [input-name (:name mc)]
-                [input-name
-                 (apply dom/ul nil
-                        (for [choice (map :value (:choices mc))]
-                          (dom/li nil
-                                  (dom/input #js {:id choice
-                                                  :type "radio"
-                                                  :checked (= choice (get current-answers input-name))
-                                                  :onChange (fn [event]
-                                                              (om/update!
-                                                               cursor
-                                                               [:view :section section-id :test :questions [question-id question-index] :answer input-name]
-                                                               choice))}
-                                             (dom/label #js {:htmlFor choice} choice)))))])))
-      (into (for [[li dom-fn] (map list
-                                   (:line-input-fields question-data)
-                                   (cons (fn [ref props]
-                                           (om/build (focused-input ref props) cursor))
-                                         (repeat (fn [ref props]
-                                                   (dom/input props)))))]
-              (let [input-name (:name li)]
-                [input-name
-                 (dom/span nil
-                           (when-let [prefix (:prefix li)]
-                             (str prefix " "))
-                           (dom-fn
-                            input-name
-                            #js {:value (get current-answers input-name)
-                                 :react-key input-name
-                                 :ref input-name
-                                 :onChange (fn [event]
-                                             (om/update!
-                                              cursor
-                                              [:view :section section-id :test :questions [question-id question-index] :answer input-name]
-                                              (.. event -target -value)))})
-                           (when-let [suffix (:suffix li)]
-                             (str " " suffix)))])))))
+(defn input-builders
+  "mapping from input-name to create react dom element for input type"
+  [cursor section-id question-id question-index question-data current-answers submitted-answers answer-correct]
+  (let [disabled answer-correct
+        current-answers (if disabled
+                          (zipmap (map name (keys submitted-answers))
+                                  (vals submitted-answers))
+                          current-answers)]
+    (-> {}
+        (into (for [mc (:multiple-choice-input-fields question-data)]
+                (let [input-name (:name mc)]
+                  [input-name
+                   (apply dom/ul nil
+                          (for [choice (map :value (:choices mc))]
+                            (dom/li nil
+                                    (dom/input #js {:id choice
+                                                    :type "radio"
+                                                    :checked (= choice (get current-answers input-name))
+                                                    :disabled disabled
+                                                    :onChange (fn [event]
+                                                                (om/update!
+                                                                 cursor
+                                                                 [:view :section section-id :test :questions [question-id question-index] :answer input-name]
+                                                                 choice))}
+                                               (dom/label #js {:htmlFor choice} choice)))))])))
+        (into (for [[li dom-fn] (map list
+                                     (:line-input-fields question-data)
+                                     (cons (fn [ref props]
+                                             (om/build (focused-input ref props) cursor))
+                                           (repeat (fn [ref props]
+                                                     (dom/input props)))))]
+                (let [input-name (:name li)]
+                  [input-name
+                   (dom/span nil
+                             (when-let [prefix (:prefix li)]
+                               (str prefix " "))
+                             (dom-fn
+                              input-name
+                              #js {:value (get current-answers input-name)
+                                   :react-key input-name
+                                   :ref input-name
+                                   :disabled disabled
+                                   :onChange (fn [event]
+                                               (om/update!
+                                                cursor
+                                                [:view :section section-id :test :questions [question-id question-index] :answer input-name]
+                                                (.. event -target -value)))})
+                             (when-let [suffix (:suffix li)]
+                               (str " " suffix)))]))))))
 
 (defn modal [cursor section-id content continue-button-text continue-button-onclick]
   (do
@@ -297,7 +304,7 @@
             progress-modal (get-in cursor [:view :progress-modal section-id])
             course-id (get-in cursor [:static :course-id])
             section-test-aggregate-version (:aggregate-version section-test)
-            inputs (question-inputs cursor section-id question-id question-index question-data current-answers)
+            inputs (input-builders cursor section-id question-id question-index question-data current-answers (:inputs question) answer-correct)
             answering-allowed (and (not answer-correct)
                                    (every? (fn [input-name]
                                              (seq (get current-answers input-name)))
@@ -313,7 +320,6 @@
                                               course-id
                                               question-id
                                               current-answers]))
-                               (prn "submit: " answer-correct finished-last-action progress-modal)
                                (when answer-correct
                                  (when (and finished-last-action
                                             (= progress-modal :launchable))
@@ -390,20 +396,13 @@
                                             (submit)))
                                    nil))
                                notification-events)))
-                 (dom/div nil (pr-str question-data))
                  (om/build streak-box (:streak section-test))
-                 (if answer-correct
-                   (dom/div nil (pr-str (:inputs question)))
-                   (apply dom/div nil
-                          (for [text-or-input (split-text-and-inputs (:text question-data)
-                                                                     (keys inputs))]
-                            (if-let [input (get inputs text-or-input)]
-                              input
-                              (dom/span #js {:dangerouslySetInnerHTML #js {:__html text-or-input}} nil)))))
-                 (when-not (nil? answer-correct)
-                   (dom/div nil (str "Marked as: " answer-correct
-                                     (when answer-correct
-                                       " have some balloons"))))
+                 (apply dom/div nil
+                        (for [text-or-input (split-text-and-inputs (:text question-data)
+                                                                   (keys inputs))]
+                          (if-let [input (get inputs text-or-input)]
+                            input
+                            (dom/span #js {:dangerouslySetInnerHTML #js {:__html text-or-input}} nil))))
                  (dom/div #js {:id "m-question_bar"}
                           (if answer-correct
                             (if (and finished-last-action
