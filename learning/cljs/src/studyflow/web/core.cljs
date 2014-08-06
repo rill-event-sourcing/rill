@@ -215,6 +215,8 @@
       (did-mount [_]
         (when-let [input-field (om/get-node owner name)]
           (.focus input-field)
+          ;; this prevents the caret from being places in the
+          ;; beginning rather than the end of the input field
           (set! (.-value input-field) (.-value input-field))
           )))))
 
