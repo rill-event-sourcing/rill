@@ -24,9 +24,13 @@
    :width s/Int
    :correct-answers  #{s/Str}})
 
+(def Tool
+  (s/enum "pen_and_paper" "calculator"))
+
 (def SectionQuestion
   {:id Id
    :text RichText
+   :tools #{Tool}
    :worked-out-answer RichText
    :line-input-fields #{LineInputField}
    :multiple-choice-input-fields #{MultipleChoiceInputField}})
