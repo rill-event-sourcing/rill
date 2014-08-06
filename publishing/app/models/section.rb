@@ -26,6 +26,12 @@ class Section < ActiveRecord::Base
     "#{title}"
   end
 
+  def errors_when_publishing
+    errors = []
+    errors << questions.active.map(&:errors_when_publishing)
+    errors.flatten
+  end
+
   def to_publishing_format
     {
       id: id,

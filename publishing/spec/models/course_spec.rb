@@ -10,6 +10,7 @@ RSpec.describe Course, type: :model do
     create(:course, name: 'B')
     create(:course, name: 'C')
     @course = create(:course, name: 'A')
+    @chapter = create(:chapter, course: @course, active: true)
   end
 
   it "should return name when asked for its string" do

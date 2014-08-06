@@ -54,4 +54,25 @@ RSpec.describe Question, :type => :model do
     expect(@question.max_inputs).to eq (max_inputs+1)
   end
 
+  it "should detect when inputs are referenced exactly once" do
+   expect(@question.errors_when_publishing).to include("No Inputs on question '#{@question.name}', in '#{@question.quizzable}'")
+   create(:line_input, question: @question)
+   expect(@question.errors_when_publishing).not_to include("No Inputs on question '#{@question.name}', in '#{@question.quizzable}'")
+  end
+
+  it "should make sure all inputs are referenced" do
+    @input = create(:line_input, question: @question)
+    expect(@question.errors_when_publishing).to include("Error in input referencing in question '#{@question.name}', in '#{@question.quizzable}'")
+    @question.text = "#{@input.name}"
+    expect(@question.errors_when_publishing).not_to include("Error in input referencing in question '#{@question.name}', in '#{@question.quizzable}'")
+  end
+
+  it "should make sure nonexisisting inputs are not referenced" do
+    @input = create(:line_input, question: @question)
+    @question.text = "_INPUT_#{@input.position+1}_"
+    expect(@question.errors_when_publishing).to include("Nonexisting inputs referenced in question '#{@question.name}', in '#{@question.quizzable}'")
+    @question.text = "_INPUT_#{@input.position}_"
+    expect(@question.errors_when_publishing).not_to include("Nonexisting inputs referenced in question '#{@question.name}', in '#{@question.quizzable}'")
+  end
+
 end
