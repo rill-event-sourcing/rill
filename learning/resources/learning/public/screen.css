@@ -12,3 +12,7 @@ body {
 .reload-alert {
     border: 2px solid red;
 }
+
+.section-nav li.selected {
+    background-color: green;
+}
