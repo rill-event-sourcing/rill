@@ -399,7 +399,7 @@
                                                                      (keys inputs))]
                             (if-let [input (get inputs text-or-input)]
                               input
-                              (dom/span nil text-or-input)))))
+                              (dom/span #js {:dangerouslySetInnerHTML #js {:__html text-or-input}} nil)))))
                  (when-not (nil? answer-correct)
                    (dom/div nil (str "Marked as: " answer-correct
                                      (when answer-correct
