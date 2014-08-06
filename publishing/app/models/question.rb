@@ -1,7 +1,7 @@
 class Question < ActiveRecord::Base
   include Trashable, Activateable
 
-  before_save :set_default_text
+  before_save :set_default_text, :set_default_tools
 
   belongs_to :quizzable, polymorphic: true, touch: true
 
@@ -13,6 +13,8 @@ class Question < ActiveRecord::Base
 
   scope :active, -> { where(active: true) }
   scope :for_short_uuid, ->(id) { where(["SUBSTRING(CAST(id AS VARCHAR), 1, 8) = ?", id]) }
+
+  serialize :tools, Hash
 
   def self.find_by_uuid(id, with_404 = true)
     questions = for_short_uuid(id)
@@ -32,6 +34,10 @@ class Question < ActiveRecord::Base
   def set_default_text
     self.text ||= ""
     self.worked_out_answer ||= ""
+  end
+
+  def set_default_tools
+    self.tools ||= Tools.default
   end
 
   def to_publishing_format
