@@ -387,10 +387,6 @@
                                             (submit)))
                                    nil))
                                notification-events)))
-                 #_(dom/div #js {:id "m-modal"
-                                 :className "show"}
-                            (dom/div #js {:className "modal_inner"}
-                                     "MODAL CONTENT HERE"))
                  (dom/div nil (pr-str question-data))
                  (om/build streak-box (:streak section-test))
                  (if answer-correct
