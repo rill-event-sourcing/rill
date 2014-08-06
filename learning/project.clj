@@ -45,6 +45,7 @@
   :cljsbuild {:builds {:dev {:source-paths ["cljs/src"]
                              :compiler {:output-to "generated/learning/public/js/studyflow-dev.js"
                                         :output-dir "generated/learning/public/js/out"
+                                        :source-map "generated/learning/public/js/studyflow-dev.sourcemap"
                                         :optimizations :whitespace}}
                        :prod {:source-paths ["cljs/src"]
                               :compiler {:output-to "generated/learning/public/js/studyflow.js"
