@@ -9,6 +9,19 @@
             [cljs.core.async :refer [<!] :as async])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
+(defn add-forward-section-links [course-data]
+  (let [section-links (for [chapter (:chapters course-data)
+                            section (:sections chapter)]
+                        {:chapter-id (:id chapter)
+                         :section-id (:id section)})
+        forward-links (-> []
+                          (into (rest section-links))
+                          ;; last section links back to dashboard
+                          (conj {:chapter-id nil
+                                 :section-id nil}))
+        section-links (zipmap section-links forward-links)]
+    (assoc course-data :forward-section-links section-links)))
+
 (defn basic-error-handler [res]
   (println "Error handler" res)
   (println res))
@@ -88,7 +101,8 @@
                   (get-in @cursor [:static :course-id]))
              {:params {}
               :handler (fn [res]
-                         (let [course-data (json-edn/json->edn res)]
+                         (let [course-data (-> (json-edn/json->edn res)
+                                               add-forward-section-links)]
                            (om/update! cursor
                                        [:view :course-material] course-data)))
               :error-handler basic-error-handler}))

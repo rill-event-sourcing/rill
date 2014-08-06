@@ -336,6 +336,9 @@
                                  (do
                                    (om/update! cursor
                                                [:view :selected-path]
+                                               (-> (get-in @cursor [:view :selected-path])
+                                                   (merge (get-in @cursor [:view :course-material :forward-section-links
+                                                                          {:chapter-id chapter-id :section-id section-id}])))
                                                {:chapter-id nil
                                                 :section-id nil
                                                 :tab-questions #{}})
@@ -434,7 +437,7 @@
   (reify
     om/IRender
     (render [_]
-      (let [section-id (get-in cursor [:view :selected-path :section-id])
+      (let [{:keys [chapter-id section-id]} (get-in cursor [:view :selected-path])
             student-id (get-in cursor [:static :student :id])
             section-test (get-in cursor [:aggregates section-id])
             section-title (get-in cursor [:view :section section-id :data :title])]
@@ -459,7 +462,8 @@
                                                                :question-data question-data
                                                                :question-id question-id
                                                                :section-id section-id
-                                                               :student-id student-id}})
+                                                               :student-id student-id
+                                                               :chapter-id chapter-id}})
                        (dom/div nil
                                 (dom/header #js {:id "m-top_header"})
                                 (dom/article #js {:id "m-section"} "Vraag laden")
