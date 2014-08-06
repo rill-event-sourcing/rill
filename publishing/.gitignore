@@ -75,3 +75,4 @@ pickle-email-*.html
 # Environment files that may contain sensitive data
 .env
 .powenv
+studyflow_publish.tar
