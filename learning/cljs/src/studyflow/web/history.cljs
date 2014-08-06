@@ -8,28 +8,23 @@
 (def history (Html5History.))
 
 (defn token->path [token]
-  (let [chapter-id (-> token
-                       (.replace #"section-.*$" "")
-                       (.replace "chapter-" ""))
-        section-id (-> token
-                       (.replace #"tab-.*$" "")
-                       (.replace #".*section-" ""))
-        section-id (when (seq section-id)
-                     section-id)
-        tab-ids (-> token
-                   (.replace  #".*tab-" "")
-                   (string/split "|")
-                   set)]
-    (when (seq chapter-id)
-      {:chapter-id chapter-id
-       :section-id section-id
-       :tab-questions tab-ids})))
+  (let [[dashboard-token chapter-id section-id question-token] (string/split token #"/")]
+    {:dashboard (not= dashboard-token "learning")
+     :chapter-id (when (seq chapter-id)
+                   chapter-id)
+     :section-id (when (seq section-id)
+                   section-id)
+     :section-tab (if (= question-token "questions")
+                    :questions
+                    :explanation)}))
 
 (defn path->token [path]
-  (let [{:keys [chapter-id section-id tab-questions]} path]
-    (when chapter-id
-      (let [tab-questions (string/join "|" tab-questions)]
-        (str "chapter-" chapter-id "section-" section-id "tab-" tab-questions)))))
+  (let [{:keys [dashboard chapter-id section-id section-tab]} path]
+    (string/join "/" [(if dashboard "dashboard" "learning")
+                      chapter-id section-id
+                      (if (= section-tab :questions)
+                        "questions"
+                        "text")])))
 
 (defn wrap-history [widgets]
   (fn [cursor owner]
@@ -40,8 +35,8 @@
                         (fn [event]
                           (when-let [path (token->path (.-token event))]
                             (om/update! cursor
-                                          [:view :selected-path]
-                                          path)))))
+                                        [:view :selected-path]
+                                        path)))))
       om/IRender
       (render [_]
         (om/build widgets cursor))
@@ -56,4 +51,3 @@
     (when (= path [:view :selected-path])
       (when-let [token (path->token (get-in new-state [:view :selected-path]))]
         (.setToken history token)))))
-

@@ -16,14 +16,20 @@
   (fn [req]
     (handler (assoc req :redirect-urls redirect-urls))))
 
+(defn wrap-read-model
+  [handler read-model-atom]
+  (fn [request]
+    (handler (assoc request :read-model @read-model-atom))))
+
 (defn make-request-handler
   [event-store read-model session-store redirect-urls]
   (-> (combine-ring-handlers
        (-> (combine-ring-handlers
-            (start/make-request-handler read-model)
-            (api/make-request-handler event-store read-model)
+            start/handler
+            (api/make-request-handler event-store)
             (wrap-redirect-urls (browser-resources/make-request-handler) redirect-urls))
-           (authentication/wrap-authentication read-model session-store)
+           (authentication/wrap-authentication session-store)
+           (wrap-read-model read-model)
            (wrap-redirect-urls redirect-urls))
        status/status-handler
        fallback-handler)
