@@ -383,7 +383,18 @@
                                    "studyflow.web.ui/FinishedModal"
                                    (modal cursor
                                           section-id
-                                          (dom/h1 nil "Klaar met de sectie!")
+                                          (dom/div nil
+                                                   (dom/h1 nil "Klaar met de sectie!")
+                                                   (dom/button #js {:onClick (fn [e]
+                                                                               (om/update! cursor
+                                                                                           [:view :progress-modal section-id]
+                                                                                           :dismissed)
+                                                                               (om/transact! cursor
+                                                                                             [:view :notification-events]
+                                                                                             (fn [ne]
+                                                                                               (into [] (remove (fn [event]
+                                                                                                                  (= (:type event) "studyflow.web.ui/FinishedModal")) ne)))))}
+                                                               "Dooroefenen in de paragraaf"))
                                           "Naar de volgende sectie"
                                           (fn [e]
                                             (submit)))
