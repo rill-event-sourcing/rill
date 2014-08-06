@@ -15,6 +15,11 @@ RSpec.describe Question, :type => :model do
     expect(@question.text).to eq ""
   end
 
+  it "should default have 'pen & paper' as tools" do
+    @question = create(:question)
+    expect(@question.tools).to eq Tools.default
+  end
+
   it "should return an abbreviated uuid" do
     id = @question.id.to_s
     expect(@question.to_param).to eq id[0,8]

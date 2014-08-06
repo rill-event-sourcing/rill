@@ -1,10 +1,10 @@
 class Tools
   def self.all
-    ["pen & paper", "calculator"]
+    ["pen_and_paper", "calculator"]
   end
 
   def self.default
-    {"pen & paper" => true}
+    {"pen_and_paper" => true}
   end
 
 end

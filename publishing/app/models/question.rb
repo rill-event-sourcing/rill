@@ -1,7 +1,8 @@
 class Question < ActiveRecord::Base
   include Trashable, Activateable
 
-  before_save :set_default_text, :set_default_tools
+  before_save :set_default_text
+  after_create :set_default_tools
 
   belongs_to :quizzable, polymorphic: true, touch: true
 
@@ -37,13 +38,14 @@ class Question < ActiveRecord::Base
   end
 
   def set_default_tools
-    self.tools ||= Tools.default
+    self.tools = Tools.default
   end
 
   def to_publishing_format
     {
       id: id,
       text: render_latex(text),
+      tools: tools.keys,
       worked_out_answer: render_latex(worked_out_answer),
       line_input_fields: line_inputs.map(&:to_publishing_format),
       multiple_choice_input_fields: multiple_choice_inputs.map(&:to_publishing_format)
