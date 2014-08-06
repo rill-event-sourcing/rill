@@ -32,19 +32,16 @@
                 [:aggregates :failed]
                 true)))
 
-(defn command-section-test-aggregate-handler [cursor section-id]
+(defn command-section-test-aggregate-handler [cursor notification-channel section-id]
   (fn [res]
     (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
-      (when-let [new-notification-events
+      (when-let [notification-events
                  (seq (filter
                        (comp #{"studyflow.learning.section-test.events/Finished"
                                "studyflow.learning.section-test.events/StreakCompleted"} :type)
                        events))]
-        (om/transact! cursor
-                      [:view :notification-events]
-                      (fn [notification-events]
-                        (into notification-events
-                              new-notification-events))))
+        (doseq [event notification-events]
+          (async/put! notification-channel event)))
       (om/transact! cursor
                     [:aggregates section-id]
                     (fn [agg]
@@ -58,7 +55,7 @@
                     (aggregates/apply-events agg aggregate-version events)
                     nil))))
 
-(defn try-command [cursor command]
+(defn try-command [cursor notification-channel command]
   (prn :try-command command)
   (let [[command-type & args] command]
     (condp = command-type
@@ -70,7 +67,7 @@
           (om/update! cursor [:aggregates section-id] false)
           (PUT (str "/api/section-test-init/" course-id "/" section-id "/" student-id)
                {:format :json
-                :handler (command-section-test-aggregate-handler cursor section-id)
+                :handler (command-section-test-aggregate-handler cursor notification-channel section-id)
                 :error-handler (command-error-handler cursor)
                 })))
 
@@ -80,14 +77,14 @@
              {:params {:expected-version section-test-aggregate-version
                        :inputs inputs}
               :format :json
-              :handler (command-section-test-aggregate-handler cursor section-id)
+              :handler (command-section-test-aggregate-handler cursor notification-channel section-id)
               :error-handler (command-error-handler cursor)}))
       "section-test-commands/next-question"
       (let [[section-id student-id section-test-aggregate-version course-id] args]
         (PUT (str "/api/section-test-next-question/" section-id "/" student-id "/" course-id)
              {:params {:expected-version section-test-aggregate-version}
               :format :json
-              :handler (command-section-test-aggregate-handler cursor section-id)
+              :handler (command-section-test-aggregate-handler cursor notification-channel section-id)
               :error-handler (command-error-handler cursor)}))
       nil)))
 
@@ -169,10 +166,11 @@
         ;; todo
 
         ;; commands from UI
-        (let [command-channel (om/get-shared owner :command-channel)]
+        (let [command-channel (om/get-shared owner :command-channel)
+              notification-channel (om/get-shared owner :notification-channel)]
             (go (loop []
                (when-let [command (<! command-channel)]
-                 (try-command cursor command)
+                 (try-command cursor notification-channel command)
                  (recur)))))
 
         ;; data requests from UI

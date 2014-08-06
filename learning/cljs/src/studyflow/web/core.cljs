@@ -9,8 +9,8 @@
             [studyflow.web.service :as service]
             [studyflow.web.history :as url-history]
             [clojure.string :as string]
-            [cljs.core.async :as async]))
-
+            [cljs.core.async :as async])
+  (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (enable-console-print!)
 
@@ -33,11 +33,7 @@
                                :logout-target (logout-target-for-page)}
                       :view {:selected-path {:chapter-id nil
                                              :section-id nil
-                                             :tab-questions #{}}
-                             :notification-events [] ;; events from
-                             ;; aggregates that mostly launch modals,
-                             ;; but not during replay of events
-                             }
+                                             :tab-questions #{}}}
                       :aggregates {}}))
 
 (defn split-text-and-inputs [text inputs]
@@ -273,16 +269,12 @@
                                (str " " suffix)))]))))))
 
 (defn modal [cursor section-id content continue-button-text continue-button-onclick]
-  (do
-    (om/update! cursor
-                [:view :progress-modal section-id]
-                :showed)
-    (dom/div #js {:id "m-modal"
-                  :className "show"}
-             (dom/div #js {:className "modal_inner"}
-                      content
-                      (dom/button #js {:onClick continue-button-onclick}
-                                  continue-button-text)))))
+  (dom/div #js {:id "m-modal"
+                :className "show"}
+           (dom/div #js {:className "modal_inner"}
+                    content
+                    (dom/button #js {:onClick continue-button-onclick}
+                                continue-button-text))))
 
 (def key-listener (atom nil)) ;; should go into either cursor or local state
 (defn question-panel [cursor owner {:keys [section-test
@@ -292,6 +284,26 @@
                                            question-data
                                            chapter-id question-id] :as opts}]
   (reify
+    om/IWillMount
+    (will-mount [_]
+      (let [notification-channel (om/get-shared owner :notification-channel)]
+        (go (loop []
+              (when-let [event (<! notification-channel)]
+                (condp = (:type event)
+                  "studyflow.learning.section-test.events/Finished"
+                  (om/update! cursor
+                              [:view :progress-modal]
+                              :launchable)
+                  "studyflow.web.ui/FinishedModal"
+                  (om/update! cursor
+                              [:view :progress-modal]
+                              :show-finish-modal)
+                  "studyflow.learning.section-test.events/StreakCompleted"
+                  (om/update! cursor
+                              [:view :progress-modal]
+                              :show-streak-completed-modal)
+                  nil)
+                (recur))))))
     om/IRender
     (render [_]
       (let [question-index (:question-index question)
@@ -301,7 +313,7 @@
             answer-correct (when (contains? question :correct)
                              (:correct question))
             finished-last-action (aggregates/finished-last-action section-test)
-            progress-modal (get-in cursor [:view :progress-modal section-id])
+            progress-modal (get-in cursor [:view :progress-modal])
             course-id (get-in cursor [:static :course-id])
             section-test-aggregate-version (:aggregate-version section-test)
             inputs (input-builders cursor section-id question-id question-index question-data current-answers (:inputs question) answer-correct)
@@ -323,90 +335,59 @@
                                (when answer-correct
                                  (when (and finished-last-action
                                             (= progress-modal :launchable))
-                                   (om/transact! cursor [:view :notification-events]
-                                                 (fn [ne]
-                                                   (conj ne {:type "studyflow.web.ui/FinishedModal"}))))
+                                   (let [notification-channel (om/get-shared owner :notification-channel)]
+                                     (async/put! notification-channel {:type "studyflow.web.ui/FinishedModal"})))
                                  (when (or (not finished-last-action)
                                            (or (not progress-modal)
                                                (= progress-modal :dismissed)))
-                                   (om/update! cursor
-                                               [:view :progress-modal section-id]
-                                               nil)
                                    (async/put! (om/get-shared owner :command-channel)
                                                ["section-test-commands/next-question"
                                                 section-id
                                                 student-id
                                                 section-test-aggregate-version
                                                 course-id])))
-                               (when (= progress-modal :showed)
+                               (when (or (= progress-modal :show-finish-modal)
+                                         (= progress-modal :show-streak-completed-modal))
                                  (do
                                    (om/update! cursor
                                                [:view :selected-path]
                                                (-> (get-in @cursor [:view :selected-path])
                                                    (merge (get-in @cursor [:view :course-material :forward-section-links
-                                                                          {:chapter-id chapter-id :section-id section-id}])))
+                                                                           {:chapter-id chapter-id :section-id section-id}])))
                                                {:chapter-id nil
                                                 :section-id nil
                                                 :tab-questions #{}})
                                    (om/update! cursor
-                                               [:view :progress-modal section-id]
-                                               :dismissed)
-                                   (om/transact! cursor
-                                                 [:view :notification-events]
-                                                 (fn [ne]
-                                                   (let [event-types #{"studyflow.web.ui/FinishedModal"
-                                                                       "studyflow.learning.section-test.events/StreakCompleted"}]
-                                                     (into [] (remove (fn [event]
-                                                                        (contains? event-types (:type event))) ne)))))))
+                                               [:view :progress-modal]
+                                               :dismissed)))
                                (om/set-state! owner :submit nil)))
             submit (fn []
                      (when-let [f (om/get-state owner :submit)]
                        (f)))]
         (dom/div #js {:id "m-section"}
-                 (when-let [notification-events (->> (get-in cursor [:view :notification-events])
-                                                     (map (partial into {})) ;;deref from cursor
-                                                     seq)]
-                   (apply dom/div nil
-                          (map (fn [event]
-                                 (condp = (:type event)
-                                   "studyflow.learning.section-test.events/Finished"
-                                   (do (om/transact! cursor
-                                                     [:view :notification-events]
-                                                     (fn [ne]
-                                                       (let [event-types #{"studyflow.learning.section-test.events/Finished"}]
-                                                         (into [] (remove (fn [event]
-                                                                            (contains? event-types (:type event))) ne)))))
-                                       (om/update! cursor
-                                                   [:view :progress-modal section-id]
-                                                   :launchable)
-                                       nil)
-                                   "studyflow.web.ui/FinishedModal"
-                                   (modal cursor
-                                          section-id
-                                          (dom/div nil
-                                                   (dom/h1 nil "Klaar met de sectie!")
-                                                   (dom/button #js {:onClick (fn [e]
-                                                                               (om/update! cursor
-                                                                                           [:view :progress-modal section-id]
-                                                                                           :dismissed)
-                                                                               (om/transact! cursor
-                                                                                             [:view :notification-events]
-                                                                                             (fn [ne]
-                                                                                               (into [] (remove (fn [event]
-                                                                                                                  (= (:type event) "studyflow.web.ui/FinishedModal")) ne)))))}
-                                                               "Dooroefenen in de paragraaf"))
-                                          "Naar de volgende sectie"
-                                          (fn [e]
-                                            (submit)))
-                                   "studyflow.learning.section-test.events/StreakCompleted"
-                                   (modal cursor
-                                          section-id
-                                          (dom/h1 nil "StreakCompleted")
-                                          "Naar de volgende sectie"
-                                          (fn [e]
-                                            (submit)))
-                                   nil))
-                               notification-events)))
+                 (let [progress-modal (get-in cursor [:view :progress-modal])]
+                   (condp = progress-modal
+                     :show-finish-modal
+                     (modal cursor
+                            section-id
+                            (dom/div nil
+                                     (dom/h1 nil "Klaar met de sectie!")
+                                     (dom/button #js {:onClick (fn [e]
+                                                                 (om/update! cursor
+                                                                             [:view :progress-modal]
+                                                                             :dismissed))}
+                                                 "Dooroefenen in de paragraaf"))
+                            "Naar de volgende sectie"
+                            (fn [e]
+                              (submit)))
+                     :show-streak-completed-modal
+                     (modal cursor
+                            section-id
+                            (dom/h1 nil "StreakCompleted")
+                            "Naar de volgende sectie"
+                            (fn [e]
+                              (submit)))
+                     nil))
                  (om/build streak-box (:streak section-test))
                  (apply dom/div nil
                         (for [text-or-input (split-text-and-inputs (:text question-data)
@@ -573,4 +554,5 @@
                  (service/listen tx-report cursor)
                  (url-history/listen tx-report cursor))
     :shared {:command-channel (async/chan)
-             :data-channel (async/chan)}}))
+             :data-channel (async/chan)
+             :notification-channel (async/chan)}}))
