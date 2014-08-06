@@ -265,6 +265,18 @@
                            (when-let [suffix (:suffix li)]
                              (str " " suffix)))])))))
 
+(defn modal [cursor section-id content continue-button-text continue-button-onclick]
+  (do
+    (om/update! cursor
+                [:view :progress-modal section-id]
+                :showed)
+    (dom/div #js {:id "m-modal"
+                  :className "show"}
+             (dom/div #js {:className "modal_inner"}
+                      content
+                      (dom/button #js {:onClick continue-button-onclick}
+                                  continue-button-text)))))
+
 (def key-listener (atom nil)) ;; should go into either cursor or local state
 (defn question-panel [cursor owner {:keys [section-test
                                            section-id
@@ -282,7 +294,7 @@
             answer-correct (when (contains? question :correct)
                              (:correct question))
             finished-last-action (aggregates/finished-last-action section-test)
-            finished-modal-dismissed (get-in cursor [:view :section section-id :test :finished-modal-dismissed])
+            progress-modal (get-in cursor [:view :progress-modal section-id])
             course-id (get-in cursor [:static :course-id])
             section-test-aggregate-version (:aggregate-version section-test)
             inputs (question-inputs cursor section-id question-id question-index question-data current-answers)
@@ -301,21 +313,42 @@
                                               course-id
                                               question-id
                                               current-answers]))
+                               (prn "submit: " answer-correct finished-last-action progress-modal)
                                (when answer-correct
-                                 (if finished-last-action
-                                   (do
-                                     (om/transact! cursor [:view :notification-events]
-                                                   (fn [ne]
-                                                     (conj ne {:type "studyflow.web.ui/FinishedModal"})))
-                                     (om/transact! cursor [:view :notification-events]
-                                                   [:view :section section-id :test :finished-modal-dismissed]
-                                                   true))
+                                 (when (and finished-last-action
+                                            (= progress-modal :launchable))
+                                   (om/transact! cursor [:view :notification-events]
+                                                 (fn [ne]
+                                                   (conj ne {:type "studyflow.web.ui/FinishedModal"}))))
+                                 (when (or (not finished-last-action)
+                                           (or (not progress-modal)
+                                               (= progress-modal :dismissed)))
+                                   (om/update! cursor
+                                               [:view :progress-modal section-id]
+                                               nil)
                                    (async/put! (om/get-shared owner :command-channel)
                                                ["section-test-commands/next-question"
                                                 section-id
                                                 student-id
                                                 section-test-aggregate-version
                                                 course-id])))
+                               (when (= progress-modal :showed)
+                                 (do
+                                   (om/update! cursor
+                                               [:view :selected-path]
+                                               {:chapter-id nil
+                                                :section-id nil
+                                                :tab-questions #{}})
+                                   (om/update! cursor
+                                               [:view :progress-modal section-id]
+                                               :dismissed)
+                                   (om/transact! cursor
+                                                 [:view :notification-events]
+                                                 (fn [ne]
+                                                   (let [event-types #{"studyflow.web.ui/FinishedModal"
+                                                                       "studyflow.learning.section-test.events/StreakCompleted"}]
+                                                     (into [] (remove (fn [event]
+                                                                        (contains? event-types (:type event))) ne)))))))
                                (om/set-state! owner :submit nil)))
             submit (fn []
                      (when-let [f (om/get-state owner :submit)]
@@ -327,30 +360,31 @@
                    (apply dom/div nil
                           (map (fn [event]
                                  (condp = (:type event)
+                                   "studyflow.learning.section-test.events/Finished"
+                                   (do (om/transact! cursor
+                                                     [:view :notification-events]
+                                                     (fn [ne]
+                                                       (let [event-types #{"studyflow.learning.section-test.events/Finished"}]
+                                                         (into [] (remove (fn [event]
+                                                                            (contains? event-types (:type event))) ne)))))
+                                       (om/update! cursor
+                                                   [:view :progress-modal section-id]
+                                                   :launchable)
+                                       nil)
                                    "studyflow.web.ui/FinishedModal"
-                                   (dom/div #js {:id "m-modal"
-                                                 :className "show"}
-                                            (dom/div #js {:className "modal_inner"}
-                                                     (dom/h1 nil "Klaar met de sectie!")
-                                                     (dom/button #js {:onClick
-                                                                      (fn [e]
-                                                                        (om/transact! cursor
-                                                                                      [:view :notification-events]
-                                                                                      (fn [ne]
-                                                                                        (into [] (remove #{event} ne)))))}
-                                                                 "dismiss")))
+                                   (modal cursor
+                                          section-id
+                                          (dom/h1 nil "Klaar met de sectie!")
+                                          "Naar de volgende sectie"
+                                          (fn [e]
+                                            (submit)))
                                    "studyflow.learning.section-test.events/StreakCompleted"
-                                   (dom/div #js {:id "m-modal"
-                                                 :className "show"}
-                                            (dom/div #js {:className "modal_inner"}
-                                                     (dom/h1 nil "StreakCompleted")
-                                                     (dom/button #js {:onClick
-                                                                      (fn [e]
-                                                                        (om/transact! cursor
-                                                                                      [:view :notification-events]
-                                                                                      (fn [ne]
-                                                                                        (into [] (remove #{event} ne)))))}
-                                                                 "dismiss")))
+                                   (modal cursor
+                                          section-id
+                                          (dom/h1 nil "StreakCompleted")
+                                          "Naar de volgende sectie"
+                                          (fn [e]
+                                            (submit)))
                                    nil))
                                notification-events)))
                  #_(dom/div #js {:id "m-modal"
@@ -374,7 +408,7 @@
                  (dom/div #js {:id "m-question_bar"}
                           (if answer-correct
                             (if (and finished-last-action
-                                     (not finished-modal-dismissed))
+                                     (= progress-modal :launchable))
                               (om/build (click-once-button "Goed, voltooi paragraaf"
                                                            (fn []
                                                              (submit))) cursor)
@@ -393,11 +427,11 @@
         (when-let [key @key-listener]
           (goog.events/unlistenByKey key))
         (->> (goog.events/listen key-handler
-                                goog.events.KeyHandler.EventType.KEY
-                                (fn [e]
-                                  (when (= (.-keyCode e) 13) ;;enter
-                                    (when-let [f (om/get-render-state owner :submit)]
-                                      (f)))))
+                                 goog.events.KeyHandler.EventType.KEY
+                                 (fn [e]
+                                   (when (= (.-keyCode e) 13) ;;enter
+                                     (when-let [f (om/get-render-state owner :submit)]
+                                       (f)))))
              (reset! key-listener))))))
 
 (defn section-test [cursor owner]
@@ -432,10 +466,12 @@
                                                                :student-id student-id}})
                        (dom/div nil
                                 (dom/header #js {:id "m-top_header"})
-                                (dom/article #js {:id "m-section"} "Vraag laden"))))
+                                (dom/article #js {:id "m-section"} "Vraag laden")
+                                (dom/div #js {:id "m-question_bar"}))))
                    (dom/div nil
                             (dom/header #js {:id "m-top_header"})
-                            (dom/article #js {:id "m-section"} "Vragen voor deze paragraaf aan het laden"))))))))
+                            (dom/article #js {:id "m-section"} "Vragen voor deze paragraaf aan het laden")
+                            (dom/div #js {:id "m-question_bar"}))))))))
 
 (defn section-panel [cursor owner]
   (let [load-data (fn []
