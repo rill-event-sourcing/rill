@@ -1,5 +1,6 @@
 (ns studyflow.learning.section-test-test
-  (:require [studyflow.learning.section-test :as section-test]
+  (:require [clojure.tools.logging :as log]
+            [studyflow.learning.section-test :as section-test]
             [studyflow.learning.section-test.events :as events]
             [studyflow.learning.section-test.commands :as commands]
             [studyflow.learning.course.fixture :as fixture]
@@ -106,3 +107,91 @@
                                  (events/created section-id student-id course-id)
                                  (events/question-assigned section-id student-id question-id)
                                  (events/question-answered-incorrectly section-id student-id question-id inputs)]))))))))
+
+
+(deftest test-continue-practice
+  (testing "the first streaks marks a section as finished, afterward you can continue practising and completing streaks"
+    (let [inputs {"_INPUT_1_" "6"
+                  "_INPUT_2_" "notcorrect"}] ;; notcorrect is actually
+      ;; the correct answer
+      (testing "first five in a row correctly mark section as finished"
+        (let [upto-fifth-q-stream
+              (-> [fixture/course-published-event
+                   (events/created section-id student-id course-id)]
+                  (into (reduce into []
+                                (repeat 4 [(events/question-assigned section-id student-id question-id)
+                                           (events/question-answered-correctly section-id student-id question-id inputs)])))
+                  (conj (events/question-assigned section-id student-id question-id)))
+              [status [correctly-answered-event finished-event :as events]]
+              (execute (commands/check-answer! section-id student-id 9 course-id question-id inputs)
+                       upto-fifth-q-stream)]
+          (is (= :ok status))
+          (is (= (message/type correctly-answered-event)
+                 ::events/QuestionAnsweredCorrectly))
+          (is (= (message/type finished-event)
+                 ::events/Finished))
+          (let [finished-stream (into upto-fifth-q-stream events)]
+            (testing "after a finished section-test you can continue"
+              (let [[status [assigned-event :as events]]
+                    (execute (commands/next-question! section-id student-id 11 course-id)
+                             finished-stream)]
+                (is (= :ok status))
+                (is (= (message/type assigned-event)
+                       ::events/QuestionAssigned))))
+            (testing "the sixth correct answer after a finish won't generate a StreakCompleted"
+              (let [continue-stream (conj finished-stream
+                                          (events/question-assigned section-id student-id question-id))
+                    [status [answered-correctly-event :as events]]
+                    (execute (commands/check-answer! section-id student-id 12 course-id question-id inputs)
+                             continue-stream)]
+                (is (= status :ok))
+                (is (= (message/type answered-correctly-event)
+                       ::events/QuestionAnsweredCorrectly))
+                (is (= (count events) 1))))
+            (testing "after finished for another streak a StreakCompleted is generated"
+              (let [continue-stream (into finished-stream
+                                          (interpose
+                                           (events/question-answered-correctly section-id student-id question-id inputs)
+                                           (repeat 5 (events/question-assigned section-id student-id question-id))))
+                    [status [answered-correctly-event streak-event :as events]]
+                    (execute (commands/check-answer! section-id student-id 20 course-id question-id inputs)
+                             continue-stream)]
+                (is (= status :ok))
+                (is (= (message/type answered-correctly-event)
+                       ::events/QuestionAnsweredCorrectly))
+                (is (= (message/type streak-event)
+                       ::events/StreakCompleted))))
+            (testing "after a StreakCompleted for another streak a StreakCompleted is generated"
+              (let [continue-stream (-> finished-stream
+                                        (into (interleave
+                                               (repeat 5 (events/question-assigned section-id student-id question-id))
+                                               (repeat 5 (events/question-answered-correctly section-id student-id question-id inputs))))
+                                        (conj (events/streak-completed section-id student-id))
+                                        (into (interpose
+                                               (events/question-answered-correctly section-id student-id question-id inputs)
+                                               (repeat 5 (events/question-assigned section-id student-id question-id)))))
+                    [status [answered-correctly-event streak-event :as events]]
+                    (execute (commands/check-answer! section-id student-id 31 course-id question-id inputs)
+                             continue-stream)]
+                (is (= status :ok))
+                (is (= (message/type answered-correctly-event)
+                       ::events/QuestionAnsweredCorrectly))
+                (is (= (message/type streak-event)
+                       ::events/StreakCompleted))))
+            (testing "after a wrong answer and then another streak a StreakCompleted is generated"
+              (let [continue-stream (-> finished-stream
+                                        (into [(events/question-assigned section-id student-id question-id)
+                                               (events/question-answered-incorrectly section-id student-id question-id inputs)])
+                                        (into (interpose
+                                               (events/question-answered-correctly section-id student-id question-id inputs)
+                                               (repeat 5 (events/question-assigned section-id student-id question-id)))))
+                    [status [answered-correctly-event streak-event :as events]]
+                    (execute (commands/check-answer! section-id student-id 22 course-id question-id inputs)
+                             continue-stream)]
+                (is (= status :ok))
+                (is (= (message/type answered-correctly-event)
+                       ::events/QuestionAnsweredCorrectly))
+                (is (= (message/type streak-event)
+                       ::events/StreakCompleted))
+                ))))))))
+

@@ -1,5 +1,6 @@
 (ns studyflow.learning.section-test
-  (:require [studyflow.learning.section-test.events :as events]
+  (:require [clojure.tools.logging :as log]
+            [studyflow.learning.section-test.events :as events]
             [studyflow.learning.section-test.commands :as commands]
             [studyflow.learning.course :as course]
             [rill.aggregate :refer [handle-event handle-command aggregate-ids]]
@@ -36,7 +37,8 @@
   [this {:keys [question-id]}]
   (assoc this
     :current-question-id question-id
-    :current-question-status nil))
+    :current-question-status nil
+    :question-finished? nil))
 
 (defn track-streak-correct
   [{:keys [streak-length current-question-status] :as this}]
@@ -74,18 +76,30 @@
 
 (defn correct-answer-will-finish-test?
   "Given that the next answer will be correct, check if it should trigger a Finished event"
-  [{:keys [streak-length current-question-status]}]
-  (and (nil? current-question-status)
+  [{:keys [streak-length current-question-status finished?]}]
+  (and (not finished?)
+       (nil? current-question-status)
+       (= streak-length (dec streak-length-to-finish-test))))
+
+(defn correct-answer-will-complete-streak?
+  "Given that the next answer will be correct, check if it should trigger a StreakCompleted event"
+  [{:keys [finished? streak-length current-question-status]}]
+  (and finished?
+       (nil? current-question-status)
        (= streak-length (dec streak-length-to-finish-test))))
 
 (defmethod handle-command ::commands/CheckAnswer!
-  [{:keys [current-question-id section-id student-id finished?] :as this} {:keys [inputs question-id] :as command} course]
-  {:pre [(= current-question-id question-id) (not finished?)]}
+  [{:keys [current-question-id section-id student-id question-finished? finished?] :as this} {:keys [inputs question-id] :as command} course]
+  {:pre [(= current-question-id question-id)
+         (not question-finished?)]}
   (if (course/answer-correct? (course/question-for-section course section-id question-id) inputs)
     (if (correct-answer-will-finish-test? this)
       [:ok [(events/question-answered-correctly section-id student-id question-id inputs)
             (events/finished section-id student-id)]]
-      [:ok [(events/question-answered-correctly section-id student-id question-id inputs)]])
+      (if (correct-answer-will-complete-streak? this)
+        [:ok [(events/question-answered-correctly section-id student-id question-id inputs)
+              (events/streak-completed section-id student-id)]]
+        [:ok [(events/question-answered-correctly section-id student-id question-id inputs)]]))
     [:ok [(events/question-answered-incorrectly section-id student-id question-id inputs)]]))
 
 (defmethod aggregate-ids ::commands/NextQuestion!
@@ -99,4 +113,11 @@
 
 (defmethod handle-event ::events/Finished
   [section-test event]
-  (assoc section-test :finished? true))
+  (assoc section-test
+    :finished? true
+    :streak-length 0))
+
+(defmethod handle-event ::events/StreakCompleted
+  [section-test event]
+  (assoc section-test
+    :streak-length 0))

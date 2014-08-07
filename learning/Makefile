@@ -6,7 +6,7 @@ test:
 	lein test && echo "OK"
 
 build:
-	lein cljsbuild clean && lein trampoline cljsbuild once prod && lein uberjar
+	cd sass && bundle install && compass compile && cd .. && lein cljsbuild clean && lein trampoline cljsbuild once prod && lein uberjar
 
 upload:
 	SHA=`git rev-parse HEAD` && \

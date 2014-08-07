@@ -37,3 +37,8 @@
   :section-id m/Id
   :student-id m/Id
   section-test-id)
+
+(defevent StreakCompleted
+  :section-id m/Id
+  :student-id m/Id
+  section-test-id)

@@ -10,6 +10,20 @@
     (conj streak [question-id result])
     ))
 
+(defn section-test-progress [section-test-agg]
+  (cond
+   (:finished section-test-agg)
+   :finished
+   section-test-agg
+   :in-progress
+   :else ;; nil and false
+   :not-started))
+
+(defn finished-last-action [section-test-agg]
+  (and (:finished section-test-agg)
+       (= (count (:questions section-test-agg))
+          (:finished-at section-test-agg))))
+
 (defn handle-event [agg event]
   (condp = (:type event)
     "studyflow.learning.section-test.events/Created"
@@ -53,7 +67,9 @@
                                   :inputs inputs)
                                 q)))))))
     "studyflow.learning.section-test.events/Finished"
-    (assoc agg :finished true)
+    (assoc agg
+      :finished true
+      :finished-at (count (:questions agg)))
     (do
       (prn "Aggregate can't handle event: " event)
       agg)))
