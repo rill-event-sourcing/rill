@@ -60,7 +60,6 @@
   (coerce/coercer CourseMaterial schema-tools/schema-coercion-matcher))
 
 (defn question-text-to-tree [question]
-  ;;html-snippet
   (let [input-names (-> #{}
                         (into (map :name (:line-input-fields question)))
                         (into (map :name (:multiple-choice-input-fields question))))
@@ -72,35 +71,33 @@
                                          (str "<input name=\"" input-name "\"/>")))
                        question-text
                        input-names)
-        ;; html-snippet doesn't add html/body, need out own root
+        ;; html-snippet doesn't add html/body, need our own root
         tags {:tag :div
               :attrs nil
               :content (html/html-snippet question-text)}]
     tags))
 
 (defn transform-question-text-to-tree [course-material]
-  (let [res (walk/prewalk
-             (fn [node]
-               (if (map? node)
-                 (if-let [qs-node (get node :questions)]
-                   ;; super defensive in case :questions appear anywhere else
-                   (if (every? (fn [q-node]
-                                 (and (contains? q-node :id)
-                                      (contains? q-node :text)
-                                      (contains? q-node :worked-out-answer)
-                                      (contains? q-node :line-input-fields)
-                                      (contains? q-node :multiple-choice-input-fields)))
-                               qs-node)
-                       (update-in node [:questions]
-                               (fn [qs]
-                                 (mapv #(assoc % :tag-tree
-                                               (question-text-to-tree %)) qs)))
-                       node)
-                   node)
-                 node))
-             course-material)]
-    (log/warn "Course-Material" res)
-    res))
+  (walk/prewalk
+   (fn [node]
+     (if (map? node)
+       (if-let [qs-node (get node :questions)]
+         ;; super defensive in case :questions appear anywhere else
+         (if (every? (fn [q-node]
+                       (and (contains? q-node :id)
+                            (contains? q-node :text)
+                            (contains? q-node :worked-out-answer)
+                            (contains? q-node :line-input-fields)
+                            (contains? q-node :multiple-choice-input-fields)))
+                     qs-node)
+           (update-in node [:questions]
+                      (fn [qs]
+                        (mapv #(assoc % :tag-tree
+                                      (question-text-to-tree %)) qs)))
+           node)
+         node)
+       node))
+   course-material))
 
 (def parse-course-material
   (comp
