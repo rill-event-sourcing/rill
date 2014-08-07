@@ -31,23 +31,30 @@
     (is (= test-q-title
            "TESTABLE QUESTIONS"))
     (is (= (:text test-q)
-           "some prefix text <p>123 into _INPUT_1_ </p>\r\n\r\n<p> 456 into _INPUT_2_ </p> some stuff after"))
+           "some prefix <p class=\"some-class\">Multiple choice B: _INPUT_1_ </p> text <p>123 into _INPUT_2_ </p>\r\n\r\n<p> 456 into _INPUT_4_ </p> some stuff after"))
     (is (= (:tag-tree test-q)
            '{:tag :div,
              :attrs nil,
              :content
-             ("some prefix text "
+             ("some prefix "
+              {:tag :p,
+               :attrs {:class "some-class"},
+               :content
+               ("Multiple choice B: "
+                {:tag :input, :attrs {:name "_INPUT_1_"}, :content nil}
+                " ")}
+              " text "
               {:tag :p,
                :attrs nil,
                :content
                ("123 into "
-                {:tag :input, :attrs {:name "_INPUT_1_"}, :content nil}
+                {:tag :input, :attrs {:name "_INPUT_2_"}, :content nil}
                 " ")}
               "\n\n"
               {:tag :p,
                :attrs nil,
                :content
                (" 456 into "
-                {:tag :input, :attrs {:name "_INPUT_2_"}, :content nil}
+                {:tag :input, :attrs {:name "_INPUT_4_"}, :content nil}
                 " ")}
               " some stuff after")}))))
