@@ -37,6 +37,16 @@ namespace :deploy do
         execute :tar, "-zxf", "*.tar"
         execute :rm, "-f", "*.tar"
         execute :bundle, :install, "--without='development test'"
+        invoke "deploy:migrate"
+      end
+    end
+  end
+
+  desc "migrate the publishing database"
+  task :migrate do
+    on release_roles(:publish) do |host|
+      within release_path do
+        execute :bundle, "exec rake db:migrate RAILS_ENV=#{ fetch(:stage) }"
       end
     end
   end
