@@ -2,6 +2,6 @@
 
 FactoryGirl.define do
   factory :line_input do
-    question
+    inputable { |a| a.association(:question) }
   end
 end

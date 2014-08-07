@@ -29,6 +29,10 @@ class Section < ActiveRecord::Base
     "#{title}"
   end
 
+  def parent
+    chapter
+  end
+
   def errors_when_publishing
     errors = []
     errors << questions.active.map(&:errors_when_publishing)
@@ -56,7 +60,7 @@ class Section < ActiveRecord::Base
   def to_param
     "#{id[0,8]}"
   end
-  
+
   def increase_max_position
     max_inputs if increment!(:max_inputs)
   end
