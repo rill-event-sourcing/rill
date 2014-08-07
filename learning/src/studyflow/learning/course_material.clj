@@ -19,7 +19,7 @@
 
 (def MultipleChoiceInputField
   {:name FieldName
-   :choices #{Choice}})
+   :choices [Choice]})
 
 (def LineInputField
   {:name FieldName
@@ -32,8 +32,8 @@
   {:id Id
    :text RichText
    :worked-out-answer RichText
-   :line-input-fields #{LineInputField}
-   :multiple-choice-input-fields #{MultipleChoiceInputField}})
+   :line-input-fields [LineInputField]
+   :multiple-choice-input-fields [MultipleChoiceInputField]})
 
 (def SubSection
   {:id Id
