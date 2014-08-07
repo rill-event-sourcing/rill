@@ -19,6 +19,13 @@
   :question-id m/Id
   section-test-id)
 
+(defevent AnswerRevealed
+  :section-id m/Id
+  :student-id m/Id
+  :question-id m/Id
+  :answer s/Str
+  section-test-id)
+
 (defevent QuestionAnsweredCorrectly
   :section-id m/Id
   :student-id m/Id

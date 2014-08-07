@@ -38,7 +38,8 @@
   (assoc this
     :current-question-id question-id
     :current-question-status nil
-    :question-finished? nil))
+    :question-finished? nil
+    :answer-revealed? nil))
 
 (defn track-streak-correct
   [{:keys [streak-length current-question-status] :as this}]
@@ -53,6 +54,16 @@
   (assoc this
     :current-question-status :answered-incorrectly
     :streak-length 0))
+
+(defmethod handle-event ::events/AnswerRevealed
+  [{:keys [current-question-id current-question-status streak-length] :as this} {:keys [question-id]}]
+  {:pre [(= current-question-id question-id)]}
+  (-> this
+      (assoc :answer-revealed? true)
+      (cond->
+       (nil? current-question-status)
+       (assoc :current-question-status :answer-revealed))
+      (assoc :streak-length 0)))
 
 (defmethod handle-event ::events/QuestionAnsweredCorrectly
   [{:keys [current-question-id current-question-status streak-length] :as this} {:keys [question-id]}]
@@ -101,6 +112,18 @@
               (events/streak-completed section-id student-id)]]
         [:ok [(events/question-answered-correctly section-id student-id question-id inputs)]]))
     [:ok [(events/question-answered-incorrectly section-id student-id question-id inputs)]]))
+
+(defmethod aggregate-ids ::commands/RevealAnswer!
+  [{:keys [course-id]}]
+  [course-id])
+
+(defmethod handle-command ::commands/RevealAnswer!
+  [{:keys [current-question-id section-id student-id question-finished? answer-revealed?] :as this} {:keys [question-id] :as command} course]
+  {:pre [(= current-question-id question-id)
+         (not question-finished?)
+         (not answer-revealed?)]}
+  (let [answer (:worked-out-answer (course/question-for-section course section-id question-id))]
+    [:ok [(events/answer-revealed section-id student-id question-id answer)]]))
 
 (defmethod aggregate-ids ::commands/NextQuestion!
   [{:keys [course-id]}]
