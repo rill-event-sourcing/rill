@@ -72,7 +72,6 @@
                             (when (= id chapter-id)
                               chapter)) (:chapters course))]
         (dom/div nil
-                 (dom/h1 nil "Course: "(:name course))
                  (dom/h1 #js {:data-id (:id course)
                               :className "chapter_title"}
                          (:title chapter))
@@ -105,7 +104,9 @@
             course (get-in cursor [:view :course-material])]
         (dom/nav #js {:id "m-sidenav"}
                  (dom/a #js {:className "dashboard_link"
-                             :href "#"}
+                             :href  (-> (get-in cursor [:view :selected-path])
+                                        (assoc :dashboard true)
+                                        history-link)}
                         "Terug naar Dashboard")
                  (if-let [chapter (some (fn [{:keys [id] :as chapter}]
                                           (when (= id chapter-id)
