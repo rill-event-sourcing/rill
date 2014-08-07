@@ -11,8 +11,8 @@ RSpec.describe Section, type: :model do
     @section2 = create(:section, title: 'C', position: 3)
     @section3 = create(:section, title: 'A', position: 1)
     @subsection1 = create(:subsection, title: "A", text: "A content", section: @section1)
-    @subsection2 = create(:subsection, title: "B", text: "A content", section: @section1)
-    @subsection3 = create(:subsection, title: "C", text: "A content", section: @section1)
+    @subsection2 = create(:subsection, title: "B", text: "B content", section: @section1)
+    @subsection3 = create(:subsection, title: "C", text: "C content", section: @section1)
   end
 
 
@@ -73,5 +73,39 @@ RSpec.describe Section, type: :model do
     }
     expect(@section1.as_full_json).to eq obj
   end
+
+  it "should set correctly max position for the first created input" do
+    expect(@section1.max_inputs).to eq nil
+    @input = create(:line_input, inputable: @section1)
+    expect(@section1.max_inputs).to eq 1
+  end
+
+  it "should increase max position when new inputs are generated" do
+    @input = create(:line_input, inputable: @section1)
+    max_inputs = @section1.max_inputs
+    @input2 = create(:line_input, inputable: @section1)
+    expect(@section1.max_inputs).to eq (max_inputs+1)
+  end
+
+  it "should make sure all inputs are referenced" do
+    @input = create(:line_input, inputable: @section1)
+    expect(@section1.errors_when_publishing).to include("Error in input referencing in section '#{@section1.name}', in '#{@section1.parent}'")
+    @section1.subsections.first.text = "#{@input.name}"
+    expect(@section1.errors_when_publishing).not_to include("Error in input referencing in section '#{@section1.name}', in '#{@section1.parent}'")
+  end
+
+  it "should make sure nonexisisting inputs are not referenced" do
+    @input = create(:line_input, inputable: @section1)
+    @subsection3 = create(:subsection, title: "A", text: "_INPUT_#{@input.position+1}_", section: @section1)
+
+    expect(@section1.errors_when_publishing).to include("Nonexisting inputs referenced in section '#{@section1.name}', in '#{@section1.parent}'")
+
+    @subsection3.destroy!
+    @section1.reload
+
+    @subsection3 = create(:subsection, title: "A", text: "_INPUT_#{@input.position}_", section: @section1)
+    expect(@section1.errors_when_publishing).not_to include("Nonexisting inputs referenced in section '#{@section1.name}', in '#{@section1.parent}'")
+  end
+
 
 end
