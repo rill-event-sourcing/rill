@@ -92,7 +92,6 @@ bindAddInputButton = ->
           $('#inputs-list').append(data)
           bindDeleteInputButtons()
           bindAddAnswerButton()
-          bindAddChoiceButton()
           bindCopyToClipboardButton()
           refreshPreview()
 
