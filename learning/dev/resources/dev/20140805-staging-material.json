@@ -60,6 +60,7 @@
             {
               "id": "57472eb7-cbba-462d-b1e6-4c5cdd11990d",
               "text": "<p>Meintje heeft € 75,- in haar portemonnee. Ze heeft € 5,- in muntgeld.</p>\r\n\r\n<p class=”question_title”>Hoeveel briefjes van € 10,- kan Meintje maximaal in haar portemonnee hebben?</p>\r\n\r\n_INPUT_1_\r\n<math>\\frac{\\begin{alignat}\r\n330&,4\\\\\r\n97&,773 -\r\n\\end{alignat}}{}</math>",
+              "tools": ["pen_and_paper"],
               "worked_out_answer": "",
               "line_input_fields": [
                 {
