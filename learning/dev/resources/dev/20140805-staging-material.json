@@ -6,6 +6,43 @@
       "id": "1e8d8c4b-0581-4400-bd7d-a66d0500621e",
       "title": "1 Het positie stelsel",
       "sections": [
+          {"id": "98b3997f-63db-4f1d-b89e-5378e5f19514",
+          "title": "TESTABLE QUESTIONS",
+          "subsections": [{
+              "id":  "1441b3e0-1a1e-4d2f-aa82-1622ec81433a",
+              "title": "First subsection",
+              "text": "some text in latin"
+          }],
+          "questions": [
+            {
+              "id":  "1441b3e0-1a1e-4d2f-aa82-1622ec81433a",
+              "text": "some prefix text <p>123 into _INPUT_1_ </p>\r\n\r\n<p> 456 into _INPUT_2_ </p> some stuff after",
+              "worked_out_answer": "",
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "prefix": "pre",
+                  "suffix": "suf",
+                  "width": 150,
+                  "correct_answers": [
+                    "123"
+                  ]
+                },
+                  {
+                      "name": "_INPUT_2_",
+                      "prefix": "pre",
+                      "suffix": "suf",
+                      "width": 150,
+                      "correct_answers": [
+                          "456"
+                      ]
+                  }
+              ],
+              "multiple_choice_input_fields": [
+
+              ]
+            }
+          ]},
         {
           "id": "f9f70918-0e8c-4cee-9fa5-0bdeadc1cf02",
           "title": "Groeperen per 10",

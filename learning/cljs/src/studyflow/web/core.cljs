@@ -9,6 +9,7 @@
             [studyflow.web.service :as service]
             [studyflow.web.history :as url-history]
             [clojure.string :as string]
+            [clojure.walk :as walk]
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
@@ -213,6 +214,7 @@
         (dom/input js-props))
       om/IDidMount
       (did-mount [_]
+        (prn "DID_MOUNT INput box")
         (when-let [input-field (om/get-node owner name)]
           (.focus input-field)
           ;; this prevents the caret from being places in the
@@ -245,22 +247,21 @@
                                                                  [:view :section section-id :test :questions [question-id question-index] :answer input-name]
                                                                  choice))}
                                                (dom/label #js {:htmlFor choice} choice)))))])))
-        (into (for [[li dom-fn] (map list
-                                     (:line-input-fields question-data)
-                                     (cons (fn [ref props]
-                                             (om/build (focused-input ref props) cursor))
-                                           (repeat (fn [ref props]
-                                                     (dom/input props)))))]
+        (into (for [[li ref] (map list
+                                  (:line-input-fields question-data)
+                                  (into ["FOCUSED_INPUT"]
+                                        (rest (map :name (:line-input-fields question-data)))))]
                 (let [input-name (:name li)]
                   [input-name
                    (dom/span nil
                              (when-let [prefix (:prefix li)]
                                (str prefix " "))
-                             (dom-fn
-                              input-name
+                             (dom/input
                               #js {:value (get current-answers input-name)
-                                   :react-key input-name
-                                   :ref input-name
+                                   :react-key ref #_input-name
+                                   :ref (do
+                                          (prn "REF as input-name" ref)
+                                          ref)
                                    :disabled disabled
                                    :onChange (fn [event]
                                                (om/update!
@@ -390,13 +391,40 @@
                             (fn [e]
                               (submit)))
                      nil))
+                 (dom/div nil (str "haha" (pr-str (:tag-tree question-data))))
+                 (dom/div nil "----")
+                 (dom/div nil (walk/postwalk (fn [node]
+                                               (cond
+                                                (string? node)
+                                                [node]
+                                                (and (map? node)
+                                                     (contains? node :tag)
+                                                     (contains? node :attrs)
+                                                     (contains? node :content))
+                                                (apply dom/span nil
+                                                       "reg"
+                                                       node)
+                                                (seq node)
+                                                
+                                                :else
+                                                [node]))
+                                             {:tag :div
+                                              :attrs nil
+                                              :content ["hello world"]}
+                                             #_(om/value (:tag-tree question-data))))
+                 (dom/div nil "####")
                  (om/build streak-box (:streak section-test))
                  (apply dom/div nil
                         (for [text-or-input (split-text-and-inputs (:text question-data)
                                                                    (keys inputs))]
                           (if-let [input (get inputs text-or-input)]
                             input
-                            (dom/span #js {:dangerouslySetInnerHTML #js {:__html text-or-input}} nil))))
+                            (dom/span
+                             #js {:dangerouslySetInnerHTML #js {:__html text-or-input}}
+                             nil
+                             ;;nil
+                             ;;text-or-input
+                             ))))
                  (dom/div #js {:id "m-question_bar"}
                           (if answer-correct
                             (if (and finished-last-action
@@ -415,6 +443,19 @@
                                                          :enabled answering-allowed) cursor))))))
     om/IDidMount
     (did-mount [_]
+      
+      
+        (prn "focus INput box")
+        (when-let [input-field (om/get-node owner "FOCUSED_INPUT")]
+          (prn "focus first input" input-field)
+          (.focus input-field)
+          ;; this prevents the caret from being places in the
+          ;; beginning rather than the end of the input field
+          (set! (.-value input-field) (.-value input-field))
+          )
+      
+      
+      
       (let [key-handler (goog.events.KeyHandler. js/document)]
         (when-let [key @key-listener]
           (goog.events/unlistenByKey key))
