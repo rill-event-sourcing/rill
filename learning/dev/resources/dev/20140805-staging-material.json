@@ -16,11 +16,11 @@
           "questions": [
             {
               "id":  "1441b3e0-1a1e-4d2f-aa82-1622ec81433a",
-              "text": "some prefix text <p>123 into _INPUT_1_ </p>\r\n\r\n<p> 456 into _INPUT_2_ </p> some stuff after",
+              "text": "some prefix <p class=\"some-class\">Multiple choice B: _INPUT_1_ </p> text <p>123 into _INPUT_2_ </p>\r\n\r\n<p> 456 into _INPUT_4_ </p> some stuff after",
               "worked_out_answer": "",
               "line_input_fields": [
                 {
-                  "name": "_INPUT_1_",
+                  "name": "_INPUT_2_",
                   "prefix": "pre",
                   "suffix": "suf",
                   "width": 150,
@@ -29,7 +29,7 @@
                   ]
                 },
                   {
-                      "name": "_INPUT_2_",
+                      "name": "_INPUT_4_",
                       "prefix": "pre",
                       "suffix": "suf",
                       "width": 150,
@@ -39,7 +39,23 @@
                   }
               ],
               "multiple_choice_input_fields": [
-
+                  {
+                  "name": "_INPUT_1_",
+                  "choices": [
+                    {
+                      "value": "answer A",
+                      "correct": false
+                    },
+                    {
+                      "value": "answer B",
+                      "correct": true
+                    },
+                    {
+                      "value": "answer C",
+                      "correct": false
+                    }
+                  ]
+                }
               ]
             }
           ]},
