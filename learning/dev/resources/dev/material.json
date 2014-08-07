@@ -32,7 +32,7 @@
             },
             {
               "id": "33624b2a-4ee9-46b7-a237-056b43c2e45b",
-              "title": "Summing up in big groups",
+              "title": "Summing up in big groups _INPUT_1_",
               "text": "Keep adding!"
             },
             {
@@ -114,6 +114,17 @@
                 }
               ]
             }
+          ],
+          "inputs": [
+            {
+              "name": "_INPUT_1_",
+              "prefix": "666",
+              "suffix": "euros",
+              "width": 150,
+              "correct_answers": [
+                "123"
+              ]
+            }
           ]
         },
         {
@@ -152,6 +163,9 @@
             }
           ],
           "questions": [
+
+          ],
+          "inputs": [
 
           ]
         }
