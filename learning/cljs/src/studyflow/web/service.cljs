@@ -70,7 +70,13 @@
                 :handler (command-section-test-aggregate-handler cursor notification-channel section-id)
                 :error-handler (command-error-handler cursor)
                 })))
-
+      "section-test-commands/reveal-worked-out-answer"
+      (let [[section-id student-id section-test-aggregate-version course-id question-id] args]
+        (PUT (str "/api/section-test-reveal-worked-out-answer/" section-id "/" student-id "/" course-id "/" question-id)
+             {:params {:expected-version section-test-aggregate-version}
+              :format :json
+              :handler (command-section-test-aggregate-handler cursor notification-channel section-id)
+              :error-handler (command-error-handler cursor)}))
       "section-test-commands/check-answer"
       (let [[section-id student-id section-test-aggregate-version course-id question-id inputs] args]
         (PUT (str "/api/section-test-check-answer/" section-id "/" student-id "/" course-id "/" question-id)

@@ -38,6 +38,19 @@
                                         :question-index (count (:questions agg))})
           (update-in [:streak]
                      conj [question-id :open])))
+    "studyflow.learning.section-test.events/AnswerRevealed"
+    (let [question-id (:question-id event)
+          answer (:answer event)]
+      (-> agg
+          (update-in [:streak]
+                     conj-streak question-id :revealed)
+          (update-in [:questions]
+                     (fn [qs]
+                       (vec (for [q qs]
+                              (if (= question-id (:question-id q))
+                                (assoc q
+                                  :worked-out-answer answer)
+                                q)))))))
     "studyflow.learning.section-test.events/QuestionAnsweredCorrectly"
     (let [question-id (:question-id event)
           inputs (:inputs event)]

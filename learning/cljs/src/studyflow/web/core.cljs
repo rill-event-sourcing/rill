@@ -202,6 +202,7 @@
                             (condp = result
                               :correct "V"
                               :incorrect "X"
+                              :revealed "?"
                               :open "_")))
                 streak))))))
 
@@ -352,7 +353,8 @@
                                (om/set-state! owner :submit nil)))
             submit (fn []
                      (when-let [f (om/get-state owner :submit)]
-                       (f)))]
+                       (f)))
+            revealed-answer (get question :worked-out-answer)]
         (dom/div #js {:id "m-section"}
                  (let [progress-modal (get-in cursor [:view :progress-modal])]
                    (condp = progress-modal
@@ -385,6 +387,10 @@
                           (if-let [input (get inputs text-or-input)]
                             input
                             (dom/span #js {:dangerouslySetInnerHTML #js {:__html text-or-input}} nil))))
+                 (when revealed-answer
+                   (dom/div nil
+                            "Het uitgewerkte antwoord is: "
+                            revealed-answer))
                  (dom/div #js {:id "m-question_bar"}
                           (if answer-correct
                             (if (and finished-last-action
@@ -397,10 +403,25 @@
                                          (fn []
                                            (submit)
                                            (prn "next question command"))) cursor))
-                            (om/build (click-once-button "Nakijken"
-                                                         (fn []
-                                                           (submit))
-                                                         :enabled answering-allowed) cursor))))))
+                            (dom/div nil
+                                     (om/build (click-once-button "Nakijken"
+                                                          (fn []
+                                                            (submit))
+                                                          :enabled answering-allowed) cursor)
+                                     (when-not answer-correct
+                                         (dom/button #js {:className "button grey pull-right"
+                                                          :disabled
+                                                          (boolean revealed-answer)
+                                                          :onClick
+                                                          (fn [e]
+                                                            (async/put! (om/get-shared owner :command-channel)
+                                                                        ["section-test-commands/reveal-worked-out-answer"
+                                                                         section-id
+                                                                         student-id
+                                                                         section-test-aggregate-version
+                                                                         course-id
+                                                                         question-id]))}
+                                                     "Toon antwoord"))))))))
     om/IDidMount
     (did-mount [_]
       (let [key-handler (goog.events.KeyHandler. js/document)]
