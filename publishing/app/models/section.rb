@@ -7,6 +7,9 @@ class Section < ActiveRecord::Base
   has_many :subsections, -> { order(:position) }
   has_many :questions, as: :quizzable
 
+  has_many :inputs, as: :inputable
+  has_many :line_inputs, as: :inputable
+
   validates :chapter, presence: true
   validates :title, presence: true
 
@@ -52,6 +55,10 @@ class Section < ActiveRecord::Base
 
   def to_param
     "#{id[0,8]}"
+  end
+  
+  def increase_max_position
+    max_inputs if increment!(:max_inputs)
   end
 
 end

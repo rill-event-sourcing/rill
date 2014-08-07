@@ -74,12 +74,90 @@ updateViewPositions = ->
   $(".subsection-position").each (position) ->
     this.value = position
 
+###########################################
+# Input
+
+bindAddInputButton = ->
+  $('#add-input').unbind()
+  $('#add-input').bind 'click', (event) ->
+    inputType = $('#input-type option:selected').val()
+    url = $(event.currentTarget).data('url')
+    $.ajax url,
+        type: 'POST'
+        dataType: 'html'
+        data: 'input_type=' + inputType
+        error: (jqXHR, textStatus, errorThrown) ->
+          console.log "AJAX Error: #{ textStatus }"
+        success: (data, textStatus, jqXHR) ->
+          $('#inputs-list').append(data)
+          bindDeleteInputButtons()
+          bindAddAnswerButton()
+          bindAddChoiceButton()
+          bindCopyToClipboardButton()
+          refreshPreview()
+
+bindDeleteInputButtons = ->
+  $('.delete-input').unbind()
+  $('.delete-input').bind 'click', (event) ->
+    if confirm('Are you sure you want to delete this?')
+      deleteItem = $(event.currentTarget).data('item')
+      url = $(event.currentTarget).data('url')
+      $.ajax url,
+        type: 'DELETE'
+        dataType: 'json'
+        error: (jqXHR, textStatus, errorThrown) ->
+          console.log "AJAX Error: #{ textStatus }"
+        success: (data, textStatus, jqXHR) ->
+          $('#' + deleteItem).remove()
+          refreshPreview()
+
+bindAddAnswerButton = ->
+  $('.add-answer').unbind()
+  $('.add-answer').bind 'click', (event) ->
+    url = $(event.currentTarget).data('url')
+    $.ajax url,
+        type: 'POST'
+        dataType: 'html'
+        error: (jqXHR, textStatus, errorThrown) ->
+          console.log "AJAX Error: #{ textStatus }"
+        success: (data, textStatus, jqXHR) ->
+          inputItem = $(event.currentTarget).data('item')
+          list = $('#' + inputItem + ' .answers-list')
+          list.append(data)
+          bindDeleteAnswerButtons()
+          refreshPreview()
+
+bindDeleteAnswerButtons = ->
+  $('.delete-answer').unbind()
+  $('.delete-answer').bind 'click', (event) ->
+    if confirm('Are you sure you want to delete this?')
+      deleteItem = $(event.currentTarget).data('item')
+      url = $(event.currentTarget).data('url')
+      $.ajax url,
+        type: 'DELETE'
+        dataType: 'json'
+        error: (jqXHR, textStatus, errorThrown) ->
+          console.log "AJAX Error: #{ textStatus }"
+        success: (data, textStatus, jqXHR) ->
+          $('#' + deleteItem).remove()
+          refreshPreview()
+
+bindCopyToClipboardButton = ->
+  new ZeroClipboard($(".copy-button"))
+
 ################################################################################
 
 # on load run:
 $ ->
   bindAddButtons()
   bindDeleteButtons()
+
+  bindAddInputButton()
+  bindDeleteInputButtons()
+  bindAddAnswerButton()
+  bindDeleteAnswerButtons()
+  bindCopyToClipboardButton()
+
   bindSaveButton()
   initializeAutoSave()
 

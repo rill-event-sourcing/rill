@@ -3,9 +3,9 @@ class InputsController < ApplicationController
 
   def create
     if params[:input_type] == 'line-input'
-      @input = @question.line_inputs.build
+      @input = @inputable.line_inputs.build
     elsif params[:input_type] == 'multiple-choice'
-      @input = @question.multiple_choice_inputs.build
+      @input = @inputable.multiple_choice_inputs.build
     else
       raise "unknown input type"
     end
@@ -21,11 +21,18 @@ class InputsController < ApplicationController
     render json: { status: :ok }
   end
 
-private
+  private
 
   def set_param_objects
-    @question = Question.find_by_uuid(params[:question_id])
-    @input = @question.inputs.find_by_uuid(params[:id], false) if params[:id]
+    if params[:question_id]
+      @inputable = @question = Question.find_by_uuid(params[:question_id])
+      @input = @question.inputs.find_by_uuid(params[:id], false) if params[:id]
+    end
+    if params[:section_id]
+      @inputable = @section = Section.find_by_uuid(params[:section_id])
+      @input = @section.inputs.find_by_uuid(params[:id], false) if params[:id]
+    end
+
   end
 
 end

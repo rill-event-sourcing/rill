@@ -12,9 +12,10 @@
           = l @section.updated_at, format: :long
   %div.row
     %div.col-md-6
+      = render partial: 'inputs'
       = render partial: 'new'
       - @section.subsections.each_with_index do |subsection, index|
-        -@subsection, @index = subsection, index
+        - @subsection, @index = subsection, index
         = render partial: 'edit'
 
     %div.col-md-6

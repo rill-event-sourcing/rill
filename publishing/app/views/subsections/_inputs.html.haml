@@ -1,0 +1,10 @@
+%div.panel.panel-default
+  %div.panel-heading
+    %div.col-md-4
+      %select.form-control#input-type
+        %option line-input
+    %span.btn.btn-default#add-input{data: { url: inputs_path(section_id: @section.to_param) } } Add
+
+  %div.panel-body#inputs-list
+    - @section.inputs.each do |input|
+      = render partial: 'inputs/edit', locals: {input: input}

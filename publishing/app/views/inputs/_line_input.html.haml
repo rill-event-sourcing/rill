@@ -13,7 +13,11 @@
           = text_field_tag "line_inputs[#{input.id}][width]", input.width, class: "form-control"
           %div.input-group-addon px
   %div.col-md-2
-    %span.pull-right.btn.btn-default.glyphicon.glyphicon-plus.add-answer{data: { item: "input-#{ input.id }", url: input_answers_path(input, question_id: @question.to_param) } }
+    - if @question
+      %span.pull-right.btn.btn-default.glyphicon.glyphicon-plus.add-answer{data: { item: "input-#{ input.id }", url: input_answers_path(input, question_id: @question.to_param) } }
+    - else
+      %span.pull-right.btn.btn-default.glyphicon.glyphicon-plus.add-answer{data: { item: "input-#{ input.id }", url: input_answers_path(input, section_id: @section.to_param) } }
+
   %div.answers-list
     %div.col-md-12{style: 'margin-top:20px;'}
       %strong Correct answers:
