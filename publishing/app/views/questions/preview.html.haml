@@ -1,7 +1,7 @@
 %div.panel.panel-default
   %div.panel-heading Question preview
   %div.panel-body
-    = question_text_to_html(@question)
+    = text_to_html(@question.inputs, @question.text)
 %div.panel.panel-default
   %div.panel-heading Worked out answer preview
   %div.panel-body
