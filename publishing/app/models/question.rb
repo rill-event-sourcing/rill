@@ -6,9 +6,9 @@ class Question < ActiveRecord::Base
 
   belongs_to :quizzable, polymorphic: true, touch: true
 
-  has_many :inputs, dependent: :destroy
-  has_many :line_inputs
-  has_many :multiple_choice_inputs
+  has_many :inputs, as: :inputable
+  has_many :line_inputs, as: :inputable
+  has_many :multiple_choice_inputs, as: :inputable
 
   default_scope { order(:name, :text) }
 
@@ -26,6 +26,10 @@ class Question < ActiveRecord::Base
 
   def to_s
     text.blank? ? "blank" : text
+  end
+
+  def parent
+    quizzable
   end
 
   def to_param

@@ -4,8 +4,8 @@ class LineInput < Input
 
   def errors_when_publishing
     errors = []
-    errors << "No correct answer for line input #{name} in question '#{question.name}', in '#{question.quizzable}'" if answers.empty?
-    errors << "Empty correct answer for line input #{name} in question '#{question.name}', in '#{question.quizzable}'" unless answers.find_all{|answer| answer.value.blank?}.empty?
+    errors << "No correct answer for line input #{name} in #{inputable_type} '#{inputable.name}', in '#{inputable.parent}'" if answers.empty?
+    errors << "Empty correct answer for line input #{name} in #{inputable_type} '#{inputable.name}', in '#{inputable.parent}'" unless answers.find_all{|answer| answer.value.blank?}.empty?
     errors
   end
 
