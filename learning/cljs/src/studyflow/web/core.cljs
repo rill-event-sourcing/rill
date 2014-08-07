@@ -206,21 +206,39 @@
                               :open "_")))
                 streak))))))
 
-(defn focused-input [name js-props]
-  (fn [cursor owner]
-    (reify
-      om/IRender
-      (render [_]
-        (dom/input js-props))
-      om/IDidMount
-      (did-mount [_]
-        (prn "DID_MOUNT INput box")
-        (when-let [input-field (om/get-node owner name)]
-          (.focus input-field)
-          ;; this prevents the caret from being places in the
-          ;; beginning rather than the end of the input field
-          (set! (.-value input-field) (.-value input-field))
-          )))))
+(def html->om
+  {"a" dom/a, "b" dom/b, "big" dom/big, "br" dom/br, "dd" dom/dd, "div" dom/div,
+   "dl" dom/dl, "dt" dom/dt, "em" dom/em, "fieldset" dom/fieldset,
+   "h1" dom/h1, "h2" dom/h2, "h3" dom/h3, "h4" dom/h4, "h5" dom/h5, "h6" dom/h6,
+   "hr" dom/hr, "i" dom/i, "li" dom/li, "ol" dom/ol, "p" dom/p, "pre" dom/pre,
+   "q" dom/q,"s" dom/s,"small" dom/small, "span" dom/span, "strong" dom/strong,
+   "sub" dom/sub, "sup" dom/sup, "table" dom/table, "tbody" dom/tbody, "td" dom/td,
+   "tfoot" dom/tfoor, "th" dom/th, "thead" dom/thead, "tr" dom/tr, "u" dom/u,
+   "ul" dom/ul})
+
+(defn tag-tree-to-om [tag-tree inputs]
+  (let [descent (fn descent [tag-tree]
+                  (cond
+                   (and (map? tag-tree)
+                        (contains? tag-tree :tag)
+                        (contains? tag-tree :attrs)
+                        (contains? tag-tree :content))
+                   (let [{:keys [tag attrs content] :as node} tag-tree]
+                     (if-let [build-fn (get html->om tag)]
+                       (apply build-fn
+                              #js {:className (:class attrs)}
+                              (map descent content))
+                       (cond
+                        (= tag "img")
+                        (dom/img #js {:src (:src attrs)})
+                        (= tag "input")
+                        (get inputs (:name attrs))
+                        :else
+                        (apply dom/span #js {:className "default-html-to-om"}
+                               (map descent content)))))
+                   (string? tag-tree)
+                   tag-tree))]
+    (descent tag-tree)))
 
 (defn input-builders
   "mapping from input-name to create react dom element for input type"
@@ -257,11 +275,9 @@
                              (when-let [prefix (:prefix li)]
                                (str prefix " "))
                              (dom/input
-                              #js {:value (get current-answers input-name)
-                                   :react-key ref #_input-name
-                                   :ref (do
-                                          (prn "REF as input-name" ref)
-                                          ref)
+                              #js {:value (get current-answers input-name "")
+                                   :react-key (str question-id "-" question-index "-" ref)
+                                   :ref ref
                                    :disabled disabled
                                    :onChange (fn [event]
                                                (om/update!
@@ -278,6 +294,11 @@
                     content
                     (dom/button #js {:onClick continue-button-onclick}
                                 continue-button-text))))
+
+(defn focus-input-box [owner]
+  (when-let [input-field (om/get-node owner "FOCUSED_INPUT")]
+    (when (= "" (.-value input-field))
+      (.focus input-field))))
 
 (def key-listener (atom nil)) ;; should go into either cursor or local state
 (defn question-panel [cursor owner {:keys [section-test
@@ -391,40 +412,11 @@
                             (fn [e]
                               (submit)))
                      nil))
-                 (dom/div nil (str "haha" (pr-str (:tag-tree question-data))))
-                 (dom/div nil "----")
-                 (dom/div nil (walk/postwalk (fn [node]
-                                               (cond
-                                                (string? node)
-                                                [node]
-                                                (and (map? node)
-                                                     (contains? node :tag)
-                                                     (contains? node :attrs)
-                                                     (contains? node :content))
-                                                (apply dom/span nil
-                                                       "reg"
-                                                       node)
-                                                (seq node)
-                                                
-                                                :else
-                                                [node]))
-                                             {:tag :div
-                                              :attrs nil
-                                              :content ["hello world"]}
-                                             #_(om/value (:tag-tree question-data))))
-                 (dom/div nil "####")
                  (om/build streak-box (:streak section-test))
-                 (apply dom/div nil
-                        (for [text-or-input (split-text-and-inputs (:text question-data)
-                                                                   (keys inputs))]
-                          (if-let [input (get inputs text-or-input)]
-                            input
-                            (dom/span
-                             #js {:dangerouslySetInnerHTML #js {:__html text-or-input}}
-                             nil
-                             ;;nil
-                             ;;text-or-input
-                             ))))
+                 (dom/div nil
+                          (tag-tree-to-om
+                               (om/value (:tag-tree question-data))
+                               inputs))
                  (dom/div #js {:id "m-question_bar"}
                           (if answer-correct
                             (if (and finished-last-action
@@ -441,21 +433,12 @@
                                                          (fn []
                                                            (submit))
                                                          :enabled answering-allowed) cursor))))))
+    om/IDidUpdate
+    (did-update [_ _ _]
+      (focus-input-box owner))
     om/IDidMount
     (did-mount [_]
-      
-      
-        (prn "focus INput box")
-        (when-let [input-field (om/get-node owner "FOCUSED_INPUT")]
-          (prn "focus first input" input-field)
-          (.focus input-field)
-          ;; this prevents the caret from being places in the
-          ;; beginning rather than the end of the input field
-          (set! (.-value input-field) (.-value input-field))
-          )
-      
-      
-      
+      (focus-input-box owner)
       (let [key-handler (goog.events.KeyHandler. js/document)]
         (when-let [key @key-listener]
           (goog.events/unlistenByKey key))
