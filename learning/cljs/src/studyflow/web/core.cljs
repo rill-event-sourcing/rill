@@ -147,14 +147,10 @@
                                  (for [{:keys [title id]
                                         :as subsection} subsections]
                                    (dom/li nil title))))
-               (mapcat (fn [{:keys [title text id] :as subsection}]
-                         [(dom/h3 nil title)
-                          (dom/section #js {:className "m-subsection"}
-                                       (dom/p nil (pr-str (repeat 100 text)))
-                                       (dom/img #js {:src "https://docs.google.com/drawings/d/1KW5VHUM-M54OkVL14dZX-awRFefqH49RWcLHaG4kTac/pub?w=750&amp;h=196"})
-                                       )])
-                       subsections)
-               )))))
+               (map (fn [{:keys [title text id] :as subsection}]
+                      (dom/section #js {:className "m-subsection"}
+                                   (dom/span #js {:dangerouslySetInnerHTML #js {:__html text}})))
+                    subsections))))))
 
 (defn section-explanation-panel [cursor owner]
   (reify
@@ -260,9 +256,9 @@
   [tools]
   (apply dom/div #js {:id "toolbox"}
          (map (fn [tool]
-                (dom/div #js {:id tool} tool)
-                ) tools)
-         ))
+                (dom/div #js {:id tool} tool))
+              tools)))
+
 (def key-listener (atom nil)) ;; should go into either cursor or local state
 
 (defn question-panel [cursor owner {:keys [section-test
