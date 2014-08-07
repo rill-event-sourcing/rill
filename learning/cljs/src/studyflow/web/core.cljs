@@ -205,21 +205,6 @@
                               :open "_")))
                 streak))))))
 
-(defn focused-input [name js-props]
-  (fn [cursor owner]
-    (reify
-      om/IRender
-      (render [_]
-        (dom/input js-props))
-      om/IDidMount
-      (did-mount [_]
-        (when-let [input-field (om/get-node owner name)]
-          (.focus input-field)
-          ;; this prevents the caret from being places in the
-          ;; beginning rather than the end of the input field
-          (set! (.-value input-field) (.-value input-field))
-          )))))
-
 (defn input-builders
   "mapping from input-name to create react dom element for input type"
   [cursor section-id question-id question-index question-data current-answers submitted-answers answer-correct]
@@ -245,19 +230,13 @@
                                                                  [:view :section section-id :test :questions [question-id question-index] :answer input-name]
                                                                  choice))}
                                                (dom/label #js {:htmlFor choice} choice)))))])))
-        (into (for [[li dom-fn] (map list
-                                     (:line-input-fields question-data)
-                                     (cons (fn [ref props]
-                                             (om/build (focused-input ref props) cursor))
-                                           (repeat (fn [ref props]
-                                                     (dom/input props)))))]
+        (into (for [li (:line-input-fields question-data)]
                 (let [input-name (:name li)]
                   [input-name
                    (dom/span nil
                              (when-let [prefix (:prefix li)]
                                (str prefix " "))
-                             (dom-fn
-                              input-name
+                             (dom/input
                               #js {:value (get current-answers input-name)
                                    :react-key input-name
                                    :ref input-name
