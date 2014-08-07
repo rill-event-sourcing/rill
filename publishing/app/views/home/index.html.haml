@@ -1,4 +1,4 @@
--if Course.current
+- if Course.current
   - @course = Course.current
   %div.container
     %div.row
@@ -20,6 +20,14 @@
     -#         - @course.questions.each do |question|
     -#           %tr{class: question.active? ? "success" : "danger"}
     -#             %td= link_to question.to_s.truncate(90, omission: '...'), edit_question_path(question)
+
+    - errors = @course.errors_when_publishing
+    - unless errors.empty?
+      %div.row
+        %div.alert.alert-danger.col-md-8.col-md-offset-2
+          %ul
+            - errors.each do |error|
+              %li= error
 
     %div.row{style: "margin-top:10px;"}
       %div.col-md-8.col-md-offset-2

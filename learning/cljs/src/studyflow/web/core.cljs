@@ -44,12 +44,12 @@
        (if-not p
          out
          (if (gstring/contains p input)
-          (let [[before & after] (string/split p (re-pattern input))]
-            (-> out
-                (into [before input])
-                (into after)
-                (into ps)))
-          (recur ps (conj out p))))))
+           (let [[before & after] (string/split p (re-pattern input))]
+             (-> out
+                 (into [before input])
+                 (into after)
+                 (into ps)))
+           (recur ps (conj out p))))))
    [text]
    inputs))
 
@@ -117,7 +117,7 @@
   (if-let [question (get-in cursor [:view :section section-id :test question-id])]
     question
     (do (om/update! cursor [:view :section section-id :test question-id] nil)
-      nil)))
+        nil)))
 
 (defn click-once-button [value onclick & {:keys [enabled]
                                           :or {enabled true}}]
@@ -257,7 +257,15 @@
                     (dom/button #js {:onClick continue-button-onclick}
                                 continue-button-text))))
 
+(defn tool-box
+  [tools]
+  (apply dom/div #js {:id "toolbox"}
+         (map (fn [tool]
+                (dom/div #js {:id tool} tool)
+                ) tools)
+         ))
 (def key-listener (atom nil)) ;; should go into either cursor or local state
+
 (defn question-panel [cursor owner {:keys [section-test
                                            section-id
                                            student-id
@@ -370,6 +378,7 @@
                               (submit)))
                      nil))
                  (om/build streak-box (:streak section-test))
+                 (tool-box (:tools question-data))
                  (apply dom/div nil
                         (for [text-or-input (split-text-and-inputs (:text question-data)
                                                                    (keys inputs))]
@@ -404,6 +413,7 @@
                                      (when-let [f (om/get-render-state owner :submit)]
                                        (f)))))
              (reset! key-listener))))))
+
 
 (defn section-test [cursor owner]
   (reify
@@ -493,16 +503,16 @@
              (if-let [course (get-in cursor [:view :course-material])]
                [(dom/h1 nil (:name course))
                 (apply dom/ul nil
-                        (for [{:keys [title]
-                               chapter-id :id
-                               :as chapter} (:chapters course)]
-                          (dom/li #js {:data-id chapter-id}
-                                  (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
-                                                        (assoc :chapter-id chapter-id)
-                                                        history-link)}
-                                         title
-                                         (when (= chapter-id
-                                                  (get-in cursor [:view :selected-path :chapter-id])) "[selected]")))))]
+                       (for [{:keys [title]
+                              chapter-id :id
+                              :as chapter} (:chapters course)]
+                         (dom/li #js {:data-id chapter-id}
+                                 (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
+                                                       (assoc :chapter-id chapter-id)
+                                                       history-link)}
+                                        title
+                                        (when (= chapter-id
+                                                 (get-in cursor [:view :selected-path :chapter-id])) "[selected]")))))]
                [(dom/h2 nil "No content ... spinner goes here")])))))
 
 (defn widgets [cursor owner]

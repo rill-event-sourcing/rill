@@ -5,12 +5,29 @@ RSpec.describe LineInput, type: :model do
   it {is_expected.to have_many :answers}
 
   before do
-    @line_input = create(:line_input)
+    @question = create(:question)
+    @line_input = create(:line_input, question: @question)
+    @line_input_with_answer = create(:line_input, question: @question)
+    @answer = create(:answer, value: "something", line_input: @line_input_with_answer)
   end
 
   it "should return an abbreviated uuid" do
     id = @line_input.id.to_s
     expect(@line_input.to_param).to eq id[0,8]
+  end
+
+  it "should make sure there are correct answers" do
+    expect(@line_input.errors_when_publishing).to include( "No correct answer for line input #{@line_input.name} in question '#{@question.name}', in '#{@question.quizzable}'")
+    expect(@line_input_with_answer.errors_when_publishing).not_to include( "No correct answer for line input #{@line_input_with_answer.name} in question '#{@question.name}', in '#{@question.quizzable}'")
+  end
+
+  it "should make sure correct answers are nonempty" do
+    expect(@line_input_with_answer.errors_when_publishing).not_to include("Empty correct answer for line input #{@line_input_with_answer.name} in question '#{@question.name}', in '#{@question.quizzable}'")
+
+    line_input_with_empty_answer = create(:line_input, question: @question)
+    empty_answer = create(:answer, value: "", line_input: line_input_with_empty_answer)
+
+    expect(line_input_with_empty_answer.errors_when_publishing).to include("Empty correct answer for line input #{line_input_with_empty_answer.name} in question '#{@question.name}', in '#{@question.quizzable}'")
   end
 
 end
