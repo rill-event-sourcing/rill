@@ -18,18 +18,18 @@ RSpec.describe MultipleChoiceInput, type: :model do
   end
 
   it "should make sure there are choices to select" do
-    expect(@mc.errors_when_publishing).to include("No choice for #{@mc.name} in question #{@mc.question_id[0,8]}")
-    expect(@mc_with_choice.errors_when_publishing).not_to include("No choice for #{@mc_with_choice.name} in question #{@mc_with_choice.question_id[0,8]}")
+    expect(@mc.errors_when_publishing).to include("No choice for #{@mc.name} in question '#{@mc.question.name}' in '#{@mc.question.quizzable}'")
+    expect(@mc_with_choice.errors_when_publishing).not_to include("No choice for #{@mc_with_choice.name} in question #{@mc_with_choice.question.name} in '#{@mc_with_choice.question.quizzable}'")
   end
 
   it "should make sure at least one choice is marked as correct" do
-    expect(@mc.errors_when_publishing).to include("No correct choice for #{@mc.name} in question #{@mc.question_id[0,8]}")
-    expect(@mc_with_choice.errors_when_publishing).not_to include("No correct choice for #{@mc_with_choice.name} in question #{@mc_with_choice.question_id[0,8]}")
+    expect(@mc.errors_when_publishing).to include("No correct choice for #{@mc.name} in question '#{@mc.question.name}' in '#{@mc.question.quizzable}'")
+    expect(@mc_with_choice.errors_when_publishing).not_to include("No correct choice for #{@mc_with_choice.name} in question #{@mc_with_choice.question.name} in '#{@mc_with_choice.question.quizzable}'")
   end
 
-  it "should make sure every choices is non empty" do
-    expect(@mc_with_choice.errors_when_publishing).not_to include("Empty choice for #{@mc_with_choice.name} in question #{@mc_with_choice.question_id[0,8]}")
-    expect(@mc_with_empty_choice.errors_when_publishing).to include("Empty choice for #{@mc_with_empty_choice.name} in question #{@mc_with_empty_choice.question_id[0,8]}")
+  it "should make sure every choice is non empty" do
+    expect(@mc_with_choice.errors_when_publishing).not_to include("Empty choice for #{@mc_with_choice.name} in question '#{@mc_with_choice.question.name}' in '#{@mc_with_choice.question.quizzable}'")
+    expect(@mc_with_empty_choice.errors_when_publishing).to include("Empty choice for #{@mc_with_empty_choice.name} in question '#{@mc_with_empty_choice.question.name}' in '#{@mc_with_empty_choice.question.quizzable}'")
   end
 
 end
