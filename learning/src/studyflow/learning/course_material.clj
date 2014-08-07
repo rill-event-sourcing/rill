@@ -48,6 +48,7 @@
   {:id Id
    :title PlainText
    :subsections [SubSection]
+   :line-input-fields #{LineInputField}
    :questions #{SectionQuestion}})
 
 (def Chapter

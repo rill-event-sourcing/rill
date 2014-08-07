@@ -115,7 +115,7 @@
               ]
             }
           ],
-          "inputs": [
+          "line_input_fields": [
             {
               "name": "_INPUT_1_",
               "prefix": "666",
@@ -165,7 +165,7 @@
           "questions": [
 
           ],
-          "inputs": [
+          "line_input_fields": [
 
           ]
         }

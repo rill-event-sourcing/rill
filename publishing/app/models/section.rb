@@ -43,7 +43,7 @@ class Section < ActiveRecord::Base
       title: title,
       subsections: subsections.map(&:to_publishing_format),
       questions: questions.active.map(&:to_publishing_format),
-      inputs: inputs.map(&:to_publishing_format)
+      line_input_fields: line_inputs.map(&:to_publishing_format)
     }
   end
 
