@@ -33,12 +33,12 @@
        (if-not p
          out
          (if (gstring/contains p input)
-          (let [[before & after] (string/split p (re-pattern input))]
-            (-> out
-                (into [before input])
-                (into after)
-                (into ps)))
-          (recur ps (conj out p))))))
+           (let [[before & after] (string/split p (re-pattern input))]
+             (-> out
+                 (into [before input])
+                 (into after)
+                 (into ps)))
+           (recur ps (conj out p))))))
    [text]
    inputs))
 
@@ -87,20 +87,20 @@
   (if-let [question (get-in cursor [:view :section section-id :test question-id])]
     question
     (do (om/update! cursor [:view :section section-id :test question-id] nil)
-      nil)))
+        nil)))
 
 (defn click-once-button [value onclick]
   (fn [cursor owner]
     (reify
-     om/IRender
-     (render [_]
-       (dom/button #js {:onClick
-                        (fn [_]
-                          (onclick)
-                          (om/set-state! owner :disabled true))}
-                   value
-                   (when (om/get-state owner :disabled)
-                     "[DISABLED]"))))))
+      om/IRender
+      (render [_]
+        (dom/button #js {:onClick
+                         (fn [_]
+                           (onclick)
+                           (om/set-state! owner :disabled true))}
+                    value
+                    (when (om/get-state owner :disabled)
+                      "[DISABLED]"))))))
 
 (defn section-explanation [cursor owner]
   (reify
@@ -131,7 +131,7 @@
                                            :as subsection} subsections]
                                       (dom/li nil title))))])
                  ["Loading section data..."])
-)))))
+               )))))
 
 (defn streak-box [streak owner]
   (reify
@@ -164,6 +164,14 @@
         (when-let [input-field (om/get-node owner name)]
           (.focus input-field))))))
 
+(defn tool-box
+  [tools]
+  (apply dom/div #js {:id "toolbox"}
+         (map (fn [tool]
+                (dom/div #js {:id tool} tool)
+                ) tools)
+         ))
+
 (defn question-panel [cursor owner {:keys [section-test
                                            section-id
                                            student-id
@@ -175,8 +183,8 @@
     (render [_]
       (let [question-index (:question-index question)
             current-answers (->> (get-in cursor [:view :section section-id :test :questions [question-id question-index] :answer] {})
-                                ;; deref permanently
-                                (into {}))
+                                 ;; deref permanently
+                                 (into {}))
             answer-correct (when (contains? question :correct)
                              (:correct question))
             course-id (get-in cursor [:static :course-id])
@@ -240,12 +248,13 @@
                  (if answer-correct
                    (dom/div nil (pr-str (:inputs question)))
                    (apply dom/div nil
+                          (tool-box (:tools question-data))
                           (for [text-or-input (split-text-and-inputs (:text question-data)
                                                                      (keys inputs))]
                             (if-let [input (get inputs text-or-input)]
                               input
                               (dom/span nil text-or-input)))
-))
+                          ))
                  (when-not (nil? answer-correct)
                    (dom/div nil (str "Marked as: " answer-correct
                                      (when answer-correct
@@ -340,16 +349,16 @@
              (if-let [course (get-in cursor [:view :course-material])]
                [(dom/h1 nil (:name course))
                 (apply dom/ul nil
-                        (for [{:keys [title]
-                               chapter-id :id
-                               :as chapter} (:chapters course)]
-                          (dom/li #js {:data-id chapter-id}
-                                  (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
-                                                        (assoc :chapter-id chapter-id)
-                                                        history-link)}
-                                         title
-                                         (when (= chapter-id
-                                                  (get-in cursor [:view :selected-path :chapter-id])) "[selected]")))))]
+                       (for [{:keys [title]
+                              chapter-id :id
+                              :as chapter} (:chapters course)]
+                         (dom/li #js {:data-id chapter-id}
+                                 (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
+                                                       (assoc :chapter-id chapter-id)
+                                                       history-link)}
+                                        title
+                                        (when (= chapter-id
+                                                 (get-in cursor [:view :selected-path :chapter-id])) "[selected]")))))]
                [(dom/h2 nil "No content ... spinner goes here")])))))
 
 (defn widgets [cursor owner]
@@ -372,7 +381,7 @@
                           (dom/div #js {:className "col-md-4"}
                                    (om/build navigation cursor))
                           (dom/div #js {:className "col-md-8"}
-                           (om/build section-panel cursor))))))
+                                   (om/build section-panel cursor))))))
     om/IWillUnmount
     (will-unmount [_]
       (println "widget will unmount"))))

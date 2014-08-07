@@ -16,10 +16,19 @@
           Saved on:
           = l @section.updated_at, format: :long
   %div.row{style: "padding-bottom: 10px;"}
-    %div.col-md-12
+    %div.col-md-4
       %div.input-group
         %span.input-group-addon Name:
         = text_field :question, :name, style: "width: 100px;", class: "form-control", maxlength: 5
+
+    %div.col-md-8
+      %div.input-group
+        %span.input-group-addon Tools:
+        - Tools.all.each do |tool|
+          %div.checkbox.btn.btn-default
+            %label
+              = check_box_tag "question[tools][#{ tool }]", 1, @question.tools.include?(tool)
+              = tool
 
   %div.row
     %div.col-md-6
