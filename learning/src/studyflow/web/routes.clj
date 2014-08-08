@@ -15,6 +15,7 @@
 (defroute get-course-page :get "/course/:course-id")
 
 (defroute section-test-init :put "/api/section-test-init/:course-id/:section-id/:student-id")
+(defroute section-test-reveal-worked-out-answer :put "/api/section-test-reveal-worked-out-answer/:section-id/:student-id/:course-id/:question-id")
 (defroute section-test-check-answer :put "/api/section-test-check-answer/:section-id/:student-id/:course-id/:question-id")
 (defroute section-test-next-question :put "/api/section-test-next-question/:section-id/:student-id/:course-id")
 

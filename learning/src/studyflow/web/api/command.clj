@@ -25,6 +25,16 @@ commands."
                                     (uuid course-id)))))
 
    (clout/handle
+    routes/section-test-reveal-worked-out-answer
+    (authorization/wrap-student-authorization
+     (fn [{{:keys [section-id student-id course-id question-id]} :params body :body}]
+       (let [{:keys [expected-version]} body]
+         (section-test-commands/reveal-answer! (uuid section-id)
+                                              (uuid student-id)
+                                              expected-version
+                                              (uuid course-id)
+                                              (uuid question-id))))))
+   (clout/handle
     routes/section-test-check-answer
     (authorization/wrap-student-authorization
      (fn [{{:keys [section-id student-id course-id question-id]} :params body :body}]

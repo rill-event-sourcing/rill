@@ -195,3 +195,45 @@
                        ::events/StreakCompleted))
                 ))))))))
 
+(deftest test-reveal-worked-out-answer
+  (let [answers {"_INPUT_1_" "doesn't matter"
+                 "_INPUT_2_" "doesn't matter"}
+        first-question-stream
+        [fixture/course-published-event
+         (events/created section-id student-id course-id)
+         (events/question-assigned section-id student-id question-id)]
+        [status [revealed-event :as events]]
+        (execute (commands/reveal-answer! section-id student-id 1 course-id question-id)
+                 first-question-stream)]
+    (testing "can request answer for assigned question"
+      (is (= :ok status))
+      (is (= (message/type revealed-event)
+             ::events/AnswerRevealed))
+      (is (= (count events) 1)))
+    (let [inputs {"_INPUT_1_" "6"
+                  "_INPUT_2_" "notcorrect"}
+          answered-stream (conj first-question-stream
+                                (events/question-answered-correctly section-id student-id question-id inputs))]
+      (testing "cannot ask for answer for answered question"
+        (is (thrown? AssertionError
+                     (execute (commands/reveal-answer! section-id student-id 2 course-id question-id)
+                              answered-stream)))))
+    (testing "can ask for answer after answering incorrectly"
+      (let [inputs {"_INPUT_1_" "wrong"
+                    "_INPUT_2_" "wrong"}
+            answered-stream (conj first-question-stream
+                                  (events/question-answered-incorrectly section-id student-id question-id inputs))
+            [status [revealed-event :as events]]
+            (execute (commands/reveal-answer! section-id student-id 2 course-id question-id)
+                     answered-stream)]
+        (is (= :ok status))
+        (is (= (message/type revealed-event)
+               ::events/AnswerRevealed))
+        (is (= (count events) 1))))
+    (testing "cannot ask for answer after it has been revealed already"
+        (let [revealed-stream (conj first-question-stream
+                                    (events/answer-revealed section-id student-id question-id answers))]
+          (is (thrown? AssertionError
+                       (execute (commands/reveal-answer! section-id student-id 2 course-id question-id)
+                                revealed-stream)))))))
+

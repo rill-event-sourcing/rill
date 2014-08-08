@@ -13,6 +13,14 @@
   :inputs {m/FieldName s/Str}
   section-test-id)
 
+(defcommand RevealAnswer!
+  :section-id m/Id
+  :student-id m/Id
+  :expected-version s/Int
+  :course-id m/Id
+  :question-id m/Id
+  section-test-id)
+
 (defcommand Init!
   :section-id m/Id
   :student-id m/Id
