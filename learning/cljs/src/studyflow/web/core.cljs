@@ -150,7 +150,8 @@
   (reify
     om/IRender
     (render [_]
-      (let [subsections (get section :subsections)]
+      (let [subsections (get section :subsections)
+            inputs (input-builders-subsection cursor section)]
         (apply dom/article #js {:id "m-section"}
                #_(dom/nav #js {:id "m-minimap"}
                           (apply dom/ul nil
@@ -159,7 +160,17 @@
                                    (dom/li nil title))))
                (map (fn [{:keys [title text id] :as subsection}]
                       (dom/section #js {:className "m-subsection"}
-                                   (dom/span #js {:dangerouslySetInnerHTML #js {:__html text}})))
+
+                                   (apply dom/div nil
+                                          (for [text-or-input (split-text-and-inputs text
+                                                                                     (keys inputs))]
+                                            (if-let [input (get inputs text-or-input)]
+                                              input
+                                              (dom/span #js {:dangerouslySetInnerHTML #js {:__html text-or-input}} nil))))
+
+
+                                   ))
+
                     subsections))))))
 
 (defn section-explanation-panel [cursor owner]
@@ -238,6 +249,24 @@
                    (string? tag-tree)
                    tag-tree))]
     (descent tag-tree)))
+
+(defn input-builders-subsection
+  "mapping from input-name to create react dom element for input type"
+  [cursor section]
+  (-> {}
+      (into (for [li (:line-input-fields section)]
+              (let [input-name (:name li)]
+                [input-name
+                 (dom/span nil
+                           (when-let [prefix (:prefix li)]
+                             (str prefix " "))
+                           (dom/input
+                            #js {:value "value"
+                                 :react-key input-name
+                                 :ref input-name
+                                 })
+                           (when-let [suffix (:suffix li)]
+                             (str " " suffix)))])))))
 
 (defn input-builders
   "mapping from input-name to create react dom element for input type"
