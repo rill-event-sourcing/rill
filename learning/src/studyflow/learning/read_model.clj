@@ -7,9 +7,15 @@
   (assoc course :sections-by-id
          (into {} (map #(vector (:id %) %) (mapcat :sections (:chapters course))))))
 
+(defn set-student-section-status
+  [model section-id student-id status]
+  (assoc-in model [:section-statuses section-id student-id] status))
+
 (defn set-course
   [model id material]
-  (assoc-in model [:courses id] (index-course material)))
+  (-> model 
+      (assoc-in [:courses id] (index-course material))
+      (assoc-in [:course-ids (:name material)] id)))
 
 (defn remove-course
   [model id]
@@ -20,20 +26,23 @@
   (get-in model [:courses id]))
 
 (defn section-leaf
-  [section]
-  (select-keys section [:id :title]))
+  [model section student-id]
+  (-> section
+      (select-keys [:id :title])
+      (assoc :status (get-in model [:section-statuses (:id section) student-id]))))
 
 (defn chapter-tree
-  [chapter]
+  [model chapter student-id]
   {:id (:id chapter)
    :title (:title chapter)
-   :sections (mapv section-leaf (:sections chapter))})
+   :sections (mapv #(section-leaf model % student-id) (:sections chapter))})
 
 (defn course-tree
-  [course]
-  {:name (:name course)
-   :id (:id course)
-   :chapters (mapv chapter-tree (:chapters course))})
+  [model course-id student-id]
+  (let [course (get-course model course-id)]
+    {:name (:name course)
+     :id (:id course)
+     :chapters (mapv #(chapter-tree model % student-id) (:chapters course))}))
 
 (defn get-section
   [course section-id]
@@ -55,8 +64,11 @@
   [model student-id]
   (get-in model [:students student-id]))
 
-(defn get-course-id
+(defn get-course-name
   "We currenly assume that there is only one course in the system"
   [model]
-  (first (keys (:courses model))))
+  (first (keys (:course-ids model))))
 
+(defn get-course-id
+  [model course-name]
+  (get (:course-ids model) course-name))

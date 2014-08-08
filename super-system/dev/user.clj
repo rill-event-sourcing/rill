@@ -35,7 +35,8 @@
 (defn go []
   (bootstrap-emacs)
   (init)
-  (start))
+  (start)
+  :started)
 
 (defn reset []
   (stop)

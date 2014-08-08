@@ -6,9 +6,9 @@
             [studyflow.web.json-middleware :refer [wrap-json-io]]))
 
 (defn make-request-handler
-  [event-store read-model]
+  [event-store]
   (-> (combine-ring-handlers
        (replay-api/make-request-handler event-store)
-       (query-api/make-request-handler read-model)
+       query-api/handler
        (command-api/make-request-handler event-store))
       wrap-json-io))

@@ -99,16 +99,19 @@
   (let [[command-type & args] command]
     (condp = command-type
       "data/dashboard"
-      (when-not (get-in @cursor [:view :course-material])
-        (GET (str "/api/course-material/"
-                  (get-in @cursor [:static :course-id]))
-             {:params {}
-              :handler (fn [res]
-                         (let [course-data (-> (json-edn/json->edn res)
-                                               add-forward-section-links)]
-                           (om/update! cursor
-                                       [:view :course-material] course-data)))
-              :error-handler basic-error-handler}))
+      (let [[student-id] args]
+        (when-not (get-in @cursor [:view :course-material])
+          (GET (str "/api/course-material/"
+                    (get-in @cursor [:static :course-id])
+                    "/"
+                    student-id)
+               {:params {}
+                :handler (fn [res]
+                           (let [course-data (-> (json-edn/json->edn res)
+                                                 add-forward-section-links)]
+                             (om/update! cursor
+                                         [:view :course-material] course-data)))
+                :error-handler basic-error-handler})))
       "data/navigation"
       (let [[chapter-id student-id] args]
         (prn "chapter-id: " chapter-id)
@@ -174,10 +177,10 @@
         ;; commands from UI
         (let [command-channel (om/get-shared owner :command-channel)
               notification-channel (om/get-shared owner :notification-channel)]
-            (go (loop []
-               (when-let [command (<! command-channel)]
-                 (try-command cursor notification-channel command)
-                 (recur)))))
+          (go (loop []
+                (when-let [command (<! command-channel)]
+                  (try-command cursor notification-channel command)
+                  (recur)))))
 
         ;; data requests from UI
         (let [data-channel (om/get-shared owner :data-channel)]

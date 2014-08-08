@@ -1,12 +1,15 @@
 default: test
 
-.PHONY: test default deploy
+.PHONY: test default deploy css
 
 test:
 	lein test && echo "OK"
 
-build:
-	cd sass && bundle install && compass compile && cd .. && lein cljsbuild clean && lein trampoline cljsbuild once prod && lein uberjar
+css:
+	cd sass && bundle install && compass compile
+
+build: css
+	lein cljsbuild clean && lein trampoline cljsbuild once prod && lein uberjar
 
 upload:
 	SHA=`git rev-parse HEAD` && \
