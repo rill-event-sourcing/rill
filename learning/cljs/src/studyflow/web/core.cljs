@@ -149,16 +149,13 @@
 (defn section-input-field
   [cursor owner {:keys [field section]}]
   (let [field-name (:name field)
+        correct-answers (:correct-answers field)
         section-id (:id section)]
     (reify
       om/IRender
       (render [_]
         (println [:render-field field section])
         (dom/span nil
-                  (when-let [prefix (:prefix field)]
-                    (str prefix " "))
-                  (when (get-in cursor [:view :section section-id :input field-name :show-result])
-                    (dom/span nil "Ik weet het ook niet"))
                   (dom/input
                    #js {:react-key (:name field)
                         :ref (:name field)
@@ -168,16 +165,23 @@
                                      cursor
                                      [:view :section section-id :input field-name :given-answer]
                                      (.. event -target -value)))})
-                  (when-let [suffix (:suffix field)]
-                    (str " " suffix))
-                  (dom/input
-                   #js {:type "submit"
-                        :value "check"
-                        :onClick (fn [event]
-                                   (om/update!
-                                    cursor
-                                    [:view :section section-id :input field-name :show-result]
-                                    true))}))))))
+
+                  (let [input-state (get-in cursor [:view :section section-id :input field-name :input-state])
+                        given-answer (get-in cursor [:view :section section-id :input field-name :given-answer])]
+                    (println :correct-answers correct-answers :given-answer given-answer :ok? (contains? (set correct-answers) given-answer))
+                    (case input-state
+                      :answered (if (contains? correct-answers given-answer)
+                                   (dom/div nil "Well done")
+                                   (dom/div nil "Not well done"))
+                      (dom/input
+                       #js {:type "submit"
+                            :value "change state"
+                            :onClick (fn [event]
+                                       (om/update!
+                                        cursor
+                                        [:view :section section-id :input field-name :input-state]
+                                        :answered))}))
+                    ))))))
 
 (defn input-builders-subsection
   "mapping from input-name to create react dom element for input type"
