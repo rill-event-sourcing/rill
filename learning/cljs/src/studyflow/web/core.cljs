@@ -113,7 +113,7 @@
                                           (when (= id chapter-id)
                                             chapter)) (:chapters course))]
                    (om/build navigation cursor)
-                   (dom/h2 nil "Loading navigation")))))))
+                   (dom/h2 nil "Navigatie laden")))))))
 
 (defn question-by-id [cursor section-id question-id]
   (if-let [question (get-in cursor [:view :section section-id :test question-id])]
@@ -173,7 +173,7 @@
                  (if section
                    (om/build section-explanation section)
                    (dom/article #js {:id "m-section"}
-                                "Loading section data..."))
+                                "Tekst laden"))
                  )))))
 
 (defn streak-box [streak owner]
@@ -544,7 +544,7 @@
                            (dom/div nil
                                     (dom/header #js {:id "m-top_header"})
                                     (dom/article #js {:id "m-section"}
-                                                 "Select a section")))
+                                                 "Maak een keuze uit het menu")))
                          (om/build section-test cursor))))))))
 
 (defn sections-navigation [cursor chapter]
@@ -598,7 +598,7 @@
                    (apply dom/ul nil
                           (map (partial chapter-navigation cursor chapter-id course)
                                (:chapters course))))
-          (dom/h2 nil "No content ... spinner goes here"))))))
+          (dom/h2 nil "Materiaal laden"))))))
 
 (defn dashboard-top-header
   [cursor owner]
