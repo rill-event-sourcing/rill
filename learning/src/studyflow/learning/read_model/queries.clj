@@ -19,13 +19,13 @@
                    (->> (for [input inputs]
                           (update-in input [:choices]
                                      (fn [choices]
-                                       (into #{} (map #(dissoc % :correct) choices)))))
-                        (into #{}))))
+                                       (mapv #(dissoc % :correct) choices))))
+                        (into []))))
       (update-in [:line-input-fields]
                  (fn [inputs]
                    (->> (for [input inputs]
                           (dissoc input :correct-answers))
-                        (into #{}))))
+                        (into []))))
       (dissoc :worked-out-answer)))
 
 (defn question
