@@ -63,13 +63,19 @@
       (let [[section-id student-id] args
             course-id (get-in @cursor [:static :course-id])]
         (prn "DO section-test-init?" (get-in @cursor [:aggregates section-id]) (contains? (get @cursor :aggregates) section-id))
-        (when (nil? (get-in @cursor [:aggregates section-id]))
-          (om/update! cursor [:aggregates section-id] false)
-          (PUT (str "/api/section-test-init/" course-id "/" section-id "/" student-id)
-               {:format :json
-                :handler (command-section-test-aggregate-handler cursor notification-channel section-id)
-                :error-handler (command-error-handler cursor)
-                })))
+        (GET (str "/api/section-test-replay/" section-id "/" student-id)
+             {:format :json
+              :handler (fn [res]
+                         ;; when there's any event the section-test
+                         ;; was already started
+                         )
+              :error-handler (fn [res]
+                               ;; 401 = no current events for section test
+                               (PUT (str "/api/section-test-init/" course-id "/" section-id "/" student-id)
+                                    {:format :json
+                                     :handler (command-section-test-aggregate-handler cursor notification-channel section-id)
+                                     :error-handler (command-error-handler cursor)
+                                     }))}))
       "section-test-commands/reveal-worked-out-answer"
       (let [[section-id student-id section-test-aggregate-version course-id question-id] args]
         (PUT (str "/api/section-test-reveal-worked-out-answer/" section-id "/" student-id "/" course-id "/" question-id)
@@ -100,18 +106,17 @@
     (condp = command-type
       "data/dashboard"
       (let [[student-id] args]
-        (when-not (get-in @cursor [:view :course-material])
-          (GET (str "/api/course-material/"
-                    (get-in @cursor [:static :course-id])
-                    "/"
-                    student-id)
-               {:params {}
-                :handler (fn [res]
-                           (let [course-data (-> (json-edn/json->edn res)
-                                                 add-forward-section-links)]
-                             (om/update! cursor
-                                         [:view :course-material] course-data)))
-                :error-handler basic-error-handler})))
+        (GET (str "/api/course-material/"
+                  (get-in @cursor [:static :course-id])
+                  "/"
+                  student-id)
+             {:params {}
+              :handler (fn [res]
+                         (let [course-data (-> (json-edn/json->edn res)
+                                               add-forward-section-links)]
+                           (om/update! cursor
+                                       [:view :course-material] course-data)))
+              :error-handler basic-error-handler}))
       "data/navigation"
       (let [[chapter-id student-id] args]
         (prn "chapter-id: " chapter-id)
@@ -148,9 +153,7 @@
                     "/section/" section-id)
                {:params {}
                 :handler (fn [res]
-                           (println "Service heard: " res)
                            (let [section-data (json-edn/json->edn res)]
-                             (println "section: " section-data)
                              (om/transact! cursor
                                            #(assoc-in %
                                                       [:view :section (:id section-data) :data]

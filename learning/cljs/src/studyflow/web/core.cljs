@@ -168,13 +168,7 @@
                              (dom/a #js {:className "button white small questions"
                                          :href (-> (get-in cursor [:view :selected-path])
                                                    (assoc :section-tab :questions)
-                                                   history-link)
-                                         :onClick (fn [e]
-                                                    (async/put! (om/get-shared owner :command-channel)
-                                                                ["section-test-commands/init-when-nil"
-                                                                 section-id
-                                                                 student-id])
-                                                    true)}
+                                                   history-link)}
                                     "Vragen"))
                  (if section
                    (om/build section-explanation section)
@@ -249,10 +243,12 @@
         (into (for [mc (:multiple-choice-input-fields question-data)]
                 (let [input-name (:name mc)]
                   [input-name
-                   (apply dom/ul nil
+                   ;; WARNING using dom/ul & dom/li here breaks
+                   (apply dom/span #js {:className "mc-list"}
                           (for [choice (map :value (:choices mc))]
-                            (dom/li nil
+                            (dom/span #js {:className "mc-choice"}
                                     (dom/input #js {:id choice
+                                                    :react-key (str question-id "-" question-index "-" input-name "-" choice)
                                                     :type "radio"
                                                     :checked (= choice (get current-answers input-name))
                                                     :disabled disabled
@@ -304,14 +300,15 @@
                 (dom/div #js {:id tool} tool))
               tools)))
 
+(defn single-question-panel [tag-tree inputs]
+  (dom/div nil
+           (tag-tree-to-om
+            (om/value tag-tree)
+            inputs)))
+
 (def key-listener (atom nil)) ;; should go into either cursor or local state
 
-(defn question-panel [cursor owner {:keys [section-test
-                                           section-id
-                                           student-id
-                                           question
-                                           question-data
-                                           chapter-id question-id] :as opts}]
+(defn question-panel [cursor owner]
   (reify
     om/IWillMount
     (will-mount [_]
@@ -335,7 +332,14 @@
                 (recur))))))
     om/IRender
     (render [_]
-      (let [question-index (:question-index question)
+      (let [{:keys [chapter-id section-id]} (get-in cursor [:view :selected-path])
+            student-id (get-in cursor [:static :student :id])
+            section-test (get-in cursor [:aggregates section-id])
+            questions (:questions section-test)
+            question (peek questions)
+            question-id (:question-id question)
+            question-data (question-by-id cursor section-id question-id)
+            question-index (:question-index question)
             current-answers (->> (get-in cursor [:view :section section-id :test :questions [question-id question-index] :answer] {})
                                  ;; deref permanently
                                  (into {}))
@@ -420,10 +424,8 @@
                      nil))
                  (om/build streak-box (:streak section-test))
                  (tool-box (:tools question-data))
-                 (dom/div nil
-                          (tag-tree-to-om
-                               (om/value (:tag-tree question-data))
-                               inputs))
+                 (single-question-panel (:tag-tree question-data)
+                                        inputs)
                  (when revealed-answer
                    (dom/div nil
                             "Het uitgewerkte antwoord is: "
@@ -445,21 +447,21 @@
                                                                   (fn []
                                                                     (submit))
                                                                   :enabled answering-allowed)
-                                                                  cursor)
+                                               cursor)
                                      (when-not answer-correct
-                                         (dom/button #js {:className "button grey pull-right"
-                                                          :disabled
-                                                          (boolean revealed-answer)
-                                                          :onClick
-                                                          (fn [e]
-                                                            (async/put! (om/get-shared owner :command-channel)
-                                                                        ["section-test-commands/reveal-worked-out-answer"
-                                                                         section-id
-                                                                         student-id
-                                                                         section-test-aggregate-version
-                                                                         course-id
-                                                                         question-id]))}
-                                                     "Toon antwoord"))))))))
+                                       (dom/button #js {:className "button grey pull-right"
+                                                        :disabled
+                                                        (boolean revealed-answer)
+                                                        :onClick
+                                                        (fn [e]
+                                                          (async/put! (om/get-shared owner :command-channel)
+                                                                      ["section-test-commands/reveal-worked-out-answer"
+                                                                       section-id
+                                                                       student-id
+                                                                       section-test-aggregate-version
+                                                                       course-id
+                                                                       question-id]))}
+                                                   "Toon antwoord"))))))))
     om/IDidUpdate
     (did-update [_ _ _]
       (focus-input-box owner))
@@ -477,6 +479,22 @@
                                        (f)))))
              (reset! key-listener))))))
 
+(defn section-test-loading [cursor owner]
+  (reify
+    om/IDidMount
+    (did-mount [_]
+      (let [{:keys [section-id]} (get-in cursor [:view :selected-path])
+            student-id (get-in cursor [:static :student :id])]
+        (async/put! (om/get-shared owner :command-channel)
+                    ["section-test-commands/init-when-nil"
+                     section-id
+                     student-id])))
+    om/IRender
+    (render [_]
+      (dom/div nil
+               (dom/header #js {:id "m-top_header"})
+               (dom/article #js {:id "m-section"} "Vragen voor deze paragraaf aan het laden")
+               (dom/div #js {:id "m-question_bar"})))))
 
 (defn section-test [cursor owner]
   (reify
@@ -486,7 +504,6 @@
             student-id (get-in cursor [:static :student :id])
             section-test (get-in cursor [:aggregates section-id])
             section-title (get-in cursor [:view :section section-id :data :title])]
-        (prn "section-title " section-title (get-in cursor [:view :section section-id :data]))
         (dom/div nil
                  (dom/header #js {:id "m-top_header"}
                              (dom/h1 #js {:className "page_heading"}
@@ -501,21 +518,12 @@
                          question (peek questions)
                          question-id (:question-id question)]
                      (if-let [question-data (question-by-id cursor section-id question-id)]
-                       (om/build question-panel cursor {:opts {:section-test section-test
-                                                               :question question
-                                                               :question-data question-data
-                                                               :question-id question-id
-                                                               :section-id section-id
-                                                               :student-id student-id
-                                                               :chapter-id chapter-id}})
+                       (om/build question-panel cursor)
                        (dom/div nil
                                 (dom/header #js {:id "m-top_header"})
                                 (dom/article #js {:id "m-section"} "Vraag laden")
                                 (dom/div #js {:id "m-question_bar"}))))
-                   (dom/div nil
-                            (dom/header #js {:id "m-top_header"})
-                            (dom/article #js {:id "m-section"} "Vragen voor deze paragraaf aan het laden")
-                            (dom/div #js {:id "m-question_bar"}))))))))
+                   (om/build section-test-loading cursor)))))))
 
 (defn section-panel [cursor owner]
   (let [load-data (fn []
@@ -554,7 +562,8 @@
                                                (when (= section-id
                                                         (get-in cursor [:view :selected-path :section-id]))
                                                  "selected ")
-                                               (or status ""))}
+                                               (get {"finished" "finished"
+                                                     "in-progress" "in_progress"} status ""))}
                           title)))))
 
 (defn chapter-navigation [cursor selected-chapter-id course chapter]
@@ -593,16 +602,19 @@
 
 (defn dashboard-top-header
   [cursor owner]
-  (dom/header #js {:id "m-top_header"}
-              (get-in cursor [:static :student :full-name])
-              (dom/form #js {:method "POST"
-                             :action (get-in cursor [:static :logout-target])
-                             :id "logout-form"}
-                        (dom/input #js {:type "hidden"
-                                        :name "_method"
-                                        :value "DELETE"})
-                        (dom/button #js {:type "submit"}
-                                    "Uitloggen"))))
+  (reify
+    om/IRender
+    (render [_]
+      (dom/header #js {:id "m-top_header"}
+                  (get-in cursor [:static :student :full-name])
+                  (dom/form #js {:method "POST"
+                                 :action (get-in cursor [:static :logout-target])
+                                 :id "logout-form"}
+                            (dom/input #js {:type "hidden"
+                                            :name "_method"
+                                            :value "DELETE"})
+                            (dom/button #js {:type "submit"}
+                                        "Uitloggen"))))))
 
 (defn dashboard [cursor owner]
   (reify
