@@ -146,12 +146,53 @@
                          :disabled (not (om/get-state owner :enabled))}
                     value)))))
 
+(defn section-input-field
+  [cursor owner {:keys [field section]}]
+  (let [field-name (:name field)
+        section-id (:id section)]
+    (reify
+      om/IRender
+      (render [_]
+        (println [:render-field field section])
+        (dom/span nil
+                  (when-let [prefix (:prefix field)]
+                    (str prefix " "))
+                  (when (get-in cursor [:view :section section-id :input field-name :show-result])
+                    (dom/span nil "Ik weet het ook niet"))
+                  (dom/input
+                   #js {:react-key (:name field)
+                        :ref (:name field)
+                        :value (get-in cursor [:view :section section-id :input field-name :given-answer])
+                        :onChange (fn [event]
+                                    (om/update!
+                                     cursor
+                                     [:view :section section-id :input field-name :given-answer]
+                                     (.. event -target -value)))})
+                  (when-let [suffix (:suffix field)]
+                    (str " " suffix))
+                  (dom/input
+                   #js {:type "submit"
+                        :value "check"
+                        :onClick (fn [event]
+                                   (om/update!
+                                    cursor
+                                    [:view :section section-id :input field-name :show-result]
+                                    true))}))))))
+
+(defn input-builders-subsection
+  "mapping from input-name to create react dom element for input type"
+  [cursor section]
+  (-> {}
+      (into (for [li (:line-input-fields section)]
+              [(:name li) (om/build section-input-field cursor {:opts {:field li :section section}})]))))
+
 (defn section-explanation [section owner]
   (reify
     om/IRender
     (render [_]
       (let [subsections (get section :subsections)
-            inputs (input-builders-subsection cursor section)]
+            inputs (input-builders-subsection section section)]
+        (println [:inputs! inputs])
         (apply dom/article #js {:id "m-section"}
                #_(dom/nav #js {:id "m-minimap"}
                           (apply dom/ul nil
@@ -249,24 +290,6 @@
                    (string? tag-tree)
                    tag-tree))]
     (descent tag-tree)))
-
-(defn input-builders-subsection
-  "mapping from input-name to create react dom element for input type"
-  [cursor section]
-  (-> {}
-      (into (for [li (:line-input-fields section)]
-              (let [input-name (:name li)]
-                [input-name
-                 (dom/span nil
-                           (when-let [prefix (:prefix li)]
-                             (str prefix " "))
-                           (dom/input
-                            #js {:value "value"
-                                 :react-key input-name
-                                 :ref input-name
-                                 })
-                           (when-let [suffix (:suffix li)]
-                             (str " " suffix)))])))))
 
 (defn input-builders
   "mapping from input-name to create react dom element for input type"
@@ -633,6 +656,7 @@
                                                      "in-progress" "in_progress"} status ""))}
                           title)))))
 
+
 (defn chapter-navigation [cursor selected-chapter-id course chapter]
   (let [selected? (= selected-chapter-id (:id chapter))]
     (dom/li nil
@@ -682,6 +706,8 @@
                                             :value "DELETE"})
                             (dom/button #js {:type "submit"}
                                         "Uitloggen"))))))
+
+
 
 (defn dashboard [cursor owner]
   (reify
