@@ -164,23 +164,36 @@
                                     (om/update!
                                      cursor
                                      [:view :section section-id :input field-name :given-answer]
-                                     (.. event -target -value)))})
+                                     (.. event -target -value))
+                                    (om/update!
+                                     cursor
+                                     [:view :section section-id :input field-name :input-state]
+                                     :answering))})
 
                   (let [input-state (get-in cursor [:view :section section-id :input field-name :input-state])
                         given-answer (get-in cursor [:view :section section-id :input field-name :given-answer])]
-                    (println :correct-answers correct-answers :given-answer given-answer :ok? (contains? (set correct-answers) given-answer))
                     (case input-state
-                      :answered (if (contains? correct-answers given-answer)
-                                   (dom/div nil "Well done")
-                                   (dom/div nil "Not well done"))
-                      (dom/input
-                       #js {:type "submit"
-                            :value "change state"
-                            :onClick (fn [event]
-                                       (om/update!
-                                        cursor
-                                        [:view :section section-id :input field-name :input-state]
-                                        :answered))}))
+                      :answering (dom/input
+                                  #js {:type "submit"
+                                       :value "Check answer"
+                                       :onClick (fn [event]
+                                                  (om/update!
+                                                   cursor
+                                                   [:view :section section-id :input field-name :input-state]
+                                                   :answered))})
+                      :revealed (dom/div nil "Bohoo revealed")
+                      :answered (if (contains? (set correct-answers) given-answer)
+                                  (dom/div nil "✓")
+                                  (dom/div nil "✗"
+                                           (dom/input
+                                            #js {:type "submit"
+                                                 :value "Show answer"
+                                                 :onClick (fn [event]
+                                                            (om/update!
+                                                             cursor
+                                                             [:view :section section-id :input field-name :input-state]
+                                                             :revealed))})))
+                      nil)
                     ))))))
 
 (defn input-builders-subsection
