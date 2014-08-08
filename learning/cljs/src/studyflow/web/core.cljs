@@ -160,15 +160,18 @@
                    #js {:react-key (:name field)
                         :ref (:name field)
                         :value (get-in cursor [:view :section section-id :input field-name :given-answer])
+                        :disabled (get-in cursor [:view :section section-id :input field-name :input-disabled])
+                        :onFocus (fn [event]
+                                   (om/update!
+                                    cursor
+                                    [:view :section section-id :input field-name :input-state]
+                                    :answering))
                         :onChange (fn [event]
                                     (om/update!
                                      cursor
                                      [:view :section section-id :input field-name :given-answer]
                                      (.. event -target -value))
-                                    (om/update!
-                                     cursor
-                                     [:view :section section-id :input field-name :input-state]
-                                     :answering))})
+                                    )})
 
                   (let [input-state (get-in cursor [:view :section section-id :input field-name :input-state])
                         given-answer (get-in cursor [:view :section section-id :input field-name :given-answer])]
@@ -181,14 +184,22 @@
                                                    cursor
                                                    [:view :section section-id :input field-name :input-state]
                                                    :answered))})
-                      :revealed (dom/div nil "Bohoo revealed")
+                      :revealed (dom/div nil (first correct-answers))
                       :answered (if (contains? (set correct-answers) given-answer)
-                                  (dom/div nil "✓")
+                                  (do  (om/update!
+                                        cursor
+                                        [:view :section section-id :input field-name :input-disabled]
+                                        true)
+                                       (dom/div nil "✓"))
                                   (dom/div nil "✗"
                                            (dom/input
                                             #js {:type "submit"
                                                  :value "Show answer"
                                                  :onClick (fn [event]
+                                                            (om/update!
+                                                             cursor
+                                                             [:view :section section-id :input field-name :input-disabled]
+                                                             true)
                                                             (om/update!
                                                              cursor
                                                              [:view :section section-id :input field-name :input-state]
