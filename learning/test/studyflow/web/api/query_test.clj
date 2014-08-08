@@ -5,7 +5,8 @@
             [ring.mock.request :refer [request]]
             [studyflow.web.routes :as routes]
             [clout-link.route :refer [uri-for]]
-            [studyflow.web.api.query :refer [make-request-handler wrap-read-model]]
+            [studyflow.web :refer [wrap-read-model]]
+            [studyflow.web.api.query :as query]
             [studyflow.learning.read-model.event-handler :refer [init-model]]
             [studyflow.learning.course.fixture :as fixture] 
             [studyflow.learning.course.events :as events]))
@@ -15,9 +16,9 @@
 (def model (init-model [(events/published course-id material)]))
 
 (deftest test-query-api
-  (let [handler (make-request-handler (atom model))]
+  (let [handler (wrap-read-model query/handler (atom model))]
     (testing "course material hierarchy"
-      (is (= (:id (:body (handler (request :get (uri-for routes/query-course-material (str course-id))))))
+      (is (= (:id (:body (handler (request :get (uri-for routes/query-course-material (str course-id) (str (new-id)))))))
              course-id)))
 
     (testing "section queries"

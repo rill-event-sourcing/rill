@@ -10,9 +10,9 @@
   "This handler returns data for the json api (or nil)"
   (combine-ring-handlers
    (clout/handle routes/query-course-material
-                 (fn [{model :read-model {course-id :course-id} :params}]
+                 (fn [{model :read-model {:keys [course-id student-id]} :params}]
                    (debug "Query handler for " course-id "with model: " model)
-                   (if-let [course  (queries/course-material model (uuid course-id))]
+                   (if-let [course  (queries/course-material model (uuid course-id) (uuid student-id))]
                      {:status 200 :body course}
                      {:status 400})))
    (clout/handle routes/query-section
@@ -28,12 +28,3 @@
                      {:status 200 :body question}
                      {:status 400})))))
 
-(defn wrap-read-model
-  [f read-model-atom]
-  (fn [r]
-    (f (assoc r :read-model @read-model-atom))))
-
-(defn make-request-handler
-  [read-model]
-  (-> handler
-      (wrap-read-model read-model)))

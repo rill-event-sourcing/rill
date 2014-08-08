@@ -45,6 +45,7 @@
             {
               "id": "3e09e382-266c-4b16-9020-c5a071c2e2a4",
               "text": "And now, for something completely different _INPUT_2_ and _INPUT_1_",
+              "tools": ["pen_and_paper"],
               "worked_out_answer": "This is supposed to explain",
               "line_input_fields": [
                 {
@@ -81,6 +82,7 @@
             {
               "id": "fe9d41b5-4aa8-4dff-8e65-44fae2459c3f",
               "text": "Grouping question 1 text _INPUT_1_ and of course _INPUT_2_",
+              "tools": ["pen_and_paper"],
               "worked_out_answer": "Something something here",
               "line_input_fields": [
                 {

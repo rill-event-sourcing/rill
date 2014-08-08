@@ -2,9 +2,8 @@
   (:require [studyflow.learning.read-model :as model]))
 
 (defn course-material
-  [m course-id]
-  (when-let [course (model/get-course m course-id)]
-    (model/course-tree course)))
+  [m course-id student-id]
+  (model/course-tree m course-id student-id))
 
 (defn section
   [m course-id section-id]

@@ -16,8 +16,7 @@
 (enable-console-print!)
 
 (defn course-id-for-page []
-  (let [loc (.. js/document -location -pathname)]
-    (last (string/split loc "/"))))
+  (.-value (gdom/getElement "course-id")))
 
 (defn student-id-for-page []
   (.-value (gdom/getElement "student-id")))
@@ -34,7 +33,8 @@
                                :logout-target (logout-target-for-page)}
                       :view {:selected-path {:chapter-id nil
                                              :section-id nil
-                                             :tab-questions #{}}}
+                                             :dashboard true
+                                             :section-tab nil}}
                       :aggregates {}}))
 
 (defn split-text-and-inputs [text inputs]
@@ -45,12 +45,12 @@
        (if-not p
          out
          (if (gstring/contains p input)
-          (let [[before & after] (string/split p (re-pattern input))]
-            (-> out
-                (into [before input])
-                (into after)
-                (into ps)))
-          (recur ps (conj out p))))))
+           (let [[before & after] (string/split p (re-pattern input))]
+             (-> out
+                 (into [before input])
+                 (into after)
+                 (into ps)))
+           (recur ps (conj out p))))))
    [text]
    inputs))
 
@@ -73,7 +73,6 @@
                             (when (= id chapter-id)
                               chapter)) (:chapters course))]
         (dom/div nil
-                 (dom/h1 nil "Course: "(:name course))
                  (dom/h1 #js {:data-id (:id course)
                               :className "chapter_title"}
                          (:title chapter))
@@ -106,7 +105,9 @@
             course (get-in cursor [:view :course-material])]
         (dom/nav #js {:id "m-sidenav"}
                  (dom/a #js {:className "dashboard_link"
-                             :href ""}
+                             :href  (-> (get-in cursor [:view :selected-path])
+                                        (assoc :dashboard true)
+                                        history-link)}
                         "Terug naar Dashboard")
                  (if-let [chapter (some (fn [{:keys [id] :as chapter}]
                                           (when (= id chapter-id)
@@ -118,7 +119,7 @@
   (if-let [question (get-in cursor [:view :section section-id :test question-id])]
     question
     (do (om/update! cursor [:view :section section-id :test question-id] nil)
-      nil)))
+        nil)))
 
 (defn click-once-button [value onclick & {:keys [enabled]
                                           :or {enabled true}}]
@@ -148,14 +149,10 @@
                                  (for [{:keys [title id]
                                         :as subsection} subsections]
                                    (dom/li nil title))))
-               (mapcat (fn [{:keys [title text id] :as subsection}]
-                         [(dom/h3 nil title)
-                          (dom/section #js {:className "m-subsection"}
-                                       (dom/p nil (pr-str (repeat 100 text)))
-                                       (dom/img #js {:src "https://docs.google.com/drawings/d/1KW5VHUM-M54OkVL14dZX-awRFefqH49RWcLHaG4kTac/pub?w=750&amp;h=196"})
-                                       )])
-                       subsections)
-               )))))
+               (map (fn [{:keys [title text id] :as subsection}]
+                      (dom/section #js {:className "m-subsection"}
+                                   (dom/span #js {:dangerouslySetInnerHTML #js {:__html text}})))
+                    subsections))))))
 
 (defn section-explanation-panel [cursor owner]
   (reify
@@ -170,8 +167,7 @@
                                      (:title section))
                              (dom/a #js {:className "button white small questions"
                                          :href (-> (get-in cursor [:view :selected-path])
-                                                   (update-in [:tab-questions]
-                                                              conj section-id)
+                                                   (assoc :section-tab :questions)
                                                    history-link)
                                          :onClick (fn [e]
                                                     (async/put! (om/get-shared owner :command-channel)
@@ -203,6 +199,7 @@
                             (condp = result
                               :correct "V"
                               :incorrect "X"
+                              :revealed "?"
                               :open "_")))
                 streak))))))
 
@@ -300,7 +297,15 @@
     (when (= "" (.-value input-field))
       (.focus input-field))))
 
+(defn tool-box
+  [tools]
+  (apply dom/div #js {:id "toolbox"}
+         (map (fn [tool]
+                (dom/div #js {:id tool} tool))
+              tools)))
+
 (def key-listener (atom nil)) ;; should go into either cursor or local state
+
 (defn question-panel [cursor owner {:keys [section-test
                                            section-id
                                            student-id
@@ -387,7 +392,8 @@
                                (om/set-state! owner :submit nil)))
             submit (fn []
                      (when-let [f (om/get-state owner :submit)]
-                       (f)))]
+                       (f)))
+            revealed-answer (get question :worked-out-answer)]
         (dom/div #js {:id "m-section"}
                  (let [progress-modal (get-in cursor [:view :progress-modal])]
                    (condp = progress-modal
@@ -413,10 +419,15 @@
                               (submit)))
                      nil))
                  (om/build streak-box (:streak section-test))
+                 (tool-box (:tools question-data))
                  (dom/div nil
                           (tag-tree-to-om
                                (om/value (:tag-tree question-data))
                                inputs))
+                 (when revealed-answer
+                   (dom/div nil
+                            "Het uitgewerkte antwoord is: "
+                            revealed-answer))
                  (dom/div #js {:id "m-question_bar"}
                           (if answer-correct
                             (if (and finished-last-action
@@ -429,10 +440,26 @@
                                          (fn []
                                            (submit)
                                            (prn "next question command"))) cursor))
-                            (om/build (click-once-button "Nakijken"
-                                                         (fn []
-                                                           (submit))
-                                                         :enabled answering-allowed) cursor))))))
+                            (dom/div nil
+                                     (om/build (click-once-button "Nakijken"
+                                                                  (fn []
+                                                                    (submit))
+                                                                  :enabled answering-allowed)
+                                                                  cursor)
+                                     (when-not answer-correct
+                                         (dom/button #js {:className "button grey pull-right"
+                                                          :disabled
+                                                          (boolean revealed-answer)
+                                                          :onClick
+                                                          (fn [e]
+                                                            (async/put! (om/get-shared owner :command-channel)
+                                                                        ["section-test-commands/reveal-worked-out-answer"
+                                                                         section-id
+                                                                         student-id
+                                                                         section-test-aggregate-version
+                                                                         course-id
+                                                                         question-id]))}
+                                                     "Toon antwoord"))))))))
     om/IDidUpdate
     (did-update [_ _ _]
       (focus-input-box owner))
@@ -450,6 +477,7 @@
                                        (f)))))
              (reset! key-listener))))))
 
+
 (defn section-test [cursor owner]
   (reify
     om/IRender
@@ -465,10 +493,9 @@
                                      section-title)
                              (dom/a #js {:className "button white small questions"
                                          :href (-> (get-in cursor [:view :selected-path])
-                                                   (update-in [:tab-questions]
-                                                              disj section-id)
+                                                   (assoc :section-tab :explanation)
                                                    history-link)}
-                                      "Uitleg"))
+                                    "Uitleg"))
                  (if section-test
                    (let [questions (:questions section-test)
                          question (peek questions)
@@ -499,14 +526,11 @@
     (reify
       om/IRender
       (render [_]
-        (let [{:keys [chapter-id section-id tab-questions]} (get-in cursor [:view :selected-path])
-              tab-selection (if (contains? tab-questions section-id)
-                              :questions
-                              :explanation)
+        (let [{:keys [chapter-id section-id section-tab]} (get-in cursor [:view :selected-path])
               selected-path (get-in cursor [:view :selected-path])]
           (load-data) ;; hacky should go through will-mount?/will-update?
           (dom/section #js {:id "main"}
-                       (if (= tab-selection :explanation)
+                       (if (= section-tab :explanation)
                          (if section-id
                            (om/build section-explanation-panel cursor)
                            (dom/div nil
@@ -515,40 +539,84 @@
                                                  "Select a section")))
                          (om/build section-test cursor))))))))
 
+(defn sections-navigation [cursor chapter]
+  (apply dom/ul nil
+         (for [{:keys [title status]
+                section-id :id
+                :as section} (:sections chapter)]
+           (dom/li #js {:data-id section-id}
+                   (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
+                                         (assoc :chapter-id (:id chapter)
+                                                :section-id section-id
+                                                :dashboard false)
+                                         history-link)
+                               :className (str "section_link "
+                                               (when (= section-id
+                                                        (get-in cursor [:view :selected-path :section-id]))
+                                                 "selected ")
+                                               (or status ""))}
+                          title)))))
+
+(defn chapter-navigation [cursor selected-chapter-id course chapter]
+  (let [selected? (= selected-chapter-id (:id chapter))]
+    (dom/li nil
+            (dom/h1 #js {:data-id (:id course)
+                         :className "chapter_title"}
+                    (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
+                                          (assoc :chapter-id (:id chapter)
+                                                 :section-id nil
+                                                 :dashboard true)
+                                          history-link)}
+                           (:title chapter)))
+            (when selected?
+              (sections-navigation cursor chapter)))))
+
+(defn dashboard-navigation [cursor owner]
+  (reify
+    om/IWillMount
+    (will-mount [_]
+      (let [chapter-id (get-in cursor [:view :selected-path :chapter-id])
+            student-id (get-in cursor [:static :student :id])]
+        (async/put! (om/get-shared owner :data-channel)
+                    ["data/navigation" chapter-id student-id])))
+    om/IRender
+    (render [_]
+      (let [course (get-in cursor [:view :course-material])
+            chapter-id (or (get-in cursor [:view :selected-path :chapter-id]) (:id (first (:chapters course))))]
+
+        (if course
+          (dom/div nil
+                   (apply dom/ul nil
+                          (map (partial chapter-navigation cursor chapter-id course)
+                               (:chapters course))))
+          (dom/h2 nil "No content ... spinner goes here"))))))
+
+(defn dashboard-top-header
+  [cursor owner]
+  (dom/header #js {:id "m-top_header"}
+              (get-in cursor [:static :student :full-name])
+              (dom/form #js {:method "POST"
+                             :action (get-in cursor [:static :logout-target])
+                             :id "logout-form"}
+                        (dom/input #js {:type "hidden"
+                                        :name "_method"
+                                        :value "DELETE"})
+                        (dom/button #js {:type "submit"}
+                                    "Uitloggen"))))
+
 (defn dashboard [cursor owner]
   (reify
     om/IWillMount
     (will-mount [_]
       (async/put! (om/get-shared owner :data-channel)
-                  ["data/dashboard"]))
+                  ["data/dashboard" (get-in cursor [:static :student :id])]))
     om/IRender
     (render [_]
-      (apply dom/div nil
-             "Dashboard"
-             (dom/span nil
-                       (str "Ingelogd als: " (get-in cursor [:static :student :full-name])))
-             (dom/form #js {:method "POST"
-                            :action (get-in cursor [:static :logout-target])
-                            :id "logout-form"}
-                       (dom/input #js {:type "hidden"
-                                       :name "_method"
-                                       :value "DELETE"})
-                       (dom/button #js {:type "submit"}
-                                   "Uitloggen"))
-             (if-let [course (get-in cursor [:view :course-material])]
-               [(dom/h1 nil (:name course))
-                (apply dom/ul nil
-                        (for [{:keys [title]
-                               chapter-id :id
-                               :as chapter} (:chapters course)]
-                          (dom/li #js {:data-id chapter-id}
-                                  (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
-                                                        (assoc :chapter-id chapter-id)
-                                                        history-link)}
-                                         title
-                                         (when (= chapter-id
-                                                  (get-in cursor [:view :selected-path :chapter-id])) "[selected]")))))]
-               [(dom/h2 nil "No content ... spinner goes here")])))))
+      (dom/div #js {:id "m-dashboard"}
+               "Dashboard"
+               (om/build dashboard-top-header cursor)
+               (dom/section #js {:id "main"}
+                            (om/build dashboard-navigation cursor))))))
 
 (defn widgets [cursor owner]
   (reify
@@ -563,7 +631,7 @@
                                    (dom/button #js {:onClick (fn [e]
                                                                (.reload js/location true))}
                                                "Herlaad de pagina"))))
-               (if-not (get-in cursor [:view :selected-path :chapter-id])
+               (if (get-in cursor [:view :selected-path :dashboard])
                  (om/build dashboard cursor)
                  (dom/div nil
                           (om/build section-panel cursor)

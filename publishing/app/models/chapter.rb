@@ -33,6 +33,14 @@ class Chapter < ActiveRecord::Base
     }
   end
 
+  def errors_when_publishing
+    errors = []
+    errors << sections.active.map(&:errors_when_publishing)
+    p "hello #{errors}"
+    errors.flatten
+  end
+
+
   def to_param
     "#{id[0,8]}"
   end

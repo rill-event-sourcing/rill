@@ -14,12 +14,12 @@
              "studyflow_session" {:value ""
                                   :path "/"
                                   :max-age -1}}
-   :body nil}))
+   "body" nil}))
 
-(defn wrap-student [handler read-model]
-  (fn [req]
+(defn wrap-student [handler]
+  (fn [{:keys [read-model] :as req}]
     (if-let [student-id (get req :student-id)]
-      (if-let [student (read-model/get-student @read-model student-id)]
+      (if-let [student (read-model/get-student read-model student-id)]
         (handler (assoc req :student (assoc student :student-id student-id)))
         (do
           (log/warn "Can't find student through session, perhaps re-logging in will work")
@@ -48,9 +48,9 @@
       (handler (assoc req :session-id session-id))
       (redirect-login req))))
 
-(defn wrap-authentication [handler read-model session-store]
+(defn wrap-authentication [handler session-store]
   (-> handler
-      (wrap-student read-model)
+      wrap-student
       (wrap-student-id session-store)
       wrap-check-cookie
       cookies/wrap-cookies))
