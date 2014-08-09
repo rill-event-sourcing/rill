@@ -320,6 +320,28 @@
             (om/value tag-tree)
             inputs)))
 
+(defn reveal-answer-button [cursor owner]
+  (reify
+    om/IRender
+    (render [_]
+      (let [{:keys [revealed-answer question-id question-data section-id student-id section-test-aggregate-version course-id]} cursor
+            can-reveal-answer (get question-data :has-worked-out-answer)]
+        (if can-reveal-answer
+          (dom/button #js {:className "button grey pull-right"
+                           :disabled
+                           (boolean revealed-answer)
+                           :onClick
+                           (fn [e]
+                             (async/put! (om/get-shared owner :command-channel)
+                                         ["section-test-commands/reveal-worked-out-answer"
+                                          section-id
+                                          student-id
+                                          section-test-aggregate-version
+                                          course-id
+                                          question-id]))}
+                      "Toon antwoord")
+          (dom/span nil nil))))))
+
 (def key-listener (atom nil)) ;; should go into either cursor or local state
 
 (defn question-panel [cursor owner]
@@ -465,21 +487,16 @@
                                                                   (fn []
                                                                     (submit))
                                                                   :enabled answering-allowed)
-                                               cursor)
-                                     (when-not answer-correct
-                                       (dom/button #js {:className "button grey pull-right"
-                                                        :disabled
-                                                        (boolean revealed-answer)
-                                                        :onClick
-                                                        (fn [e]
-                                                          (async/put! (om/get-shared owner :command-channel)
-                                                                      ["section-test-commands/reveal-worked-out-answer"
-                                                                       section-id
-                                                                       student-id
-                                                                       section-test-aggregate-version
-                                                                       course-id
-                                                                       question-id]))}
-                                                   "Toon antwoord"))))))))
+                                               cursor)))
+                          (om/build reveal-answer-button
+                                    {:revealed-answer revealed-answer
+                                     :question-id question-id
+                                     :question-data question-data
+
+                                     :section-id section-id
+                                     :student-id student-id
+                                     :section-test-aggregate-version section-test-aggregate-version
+                                     :course-id course-id})))))
     om/IDidUpdate
     (did-update [_ _ _]
       (focus-input-box owner))
