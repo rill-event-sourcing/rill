@@ -1,6 +1,7 @@
 (ns studyflow.learning.section-test.events
   (:require [rill.message :refer [defevent]]
-            [studyflow.learning.course-material :as m]
+            [studyflow.learning.material :as m]
+            [studyflow.learning.course-material :as cm]
             [schema.core :as s]))
 
 (defn section-test-id
@@ -10,7 +11,7 @@
 (defevent Created
   :section-id m/Id
   :student-id m/Id
-  :course-id m/Id
+  :course-id cm/CourseId
   section-test-id)
 
 (defevent QuestionAssigned

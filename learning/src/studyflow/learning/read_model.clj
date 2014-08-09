@@ -37,12 +37,29 @@
    :title (:title chapter)
    :sections (mapv #(section-leaf model % student-id) (:sections chapter))})
 
+(defn get-student-entry-quiz-status [model entry-quiz-id student-id]
+  (get-in model [:entry-quiz-statusses student-id]))
+
+(defn set-entry-quiz [model entry-quiz-id material]
+  (let [for-course (:course-id material)]
+    (-> model
+        (assoc-in [:entry-quizes entry-quiz-id] material)
+        (assoc-in [:entry-quizes-by-course for-course] material))))
+
+(defn entry-quiz [model course-id student-id]
+  (when-let [entry-quiz (get-in model [:entry-quizes-by-course course-id])]
+    (-> (select-keys entry-quiz [:id :name :description])
+        (assoc :status (get-student-entry-quiz-status model (:id entry-quiz) student-id)))))
+
 (defn course-tree
   [model course-id student-id]
   (let [course (get-course model course-id)]
-    {:name (:name course)
-     :id (:id course)
-     :chapters (mapv #(chapter-tree model % student-id) (:chapters course))}))
+    (merge
+     {:name (:name course)
+      :id (:id course)
+      :chapters (mapv #(chapter-tree model % student-id) (:chapters course))}
+     (when-let [entry-quiz (entry-quiz model (:id course) student-id)]
+       {:entry-quiz entry-quiz}))))
 
 (defn get-section
   [course section-id]

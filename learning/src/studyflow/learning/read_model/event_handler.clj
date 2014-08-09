@@ -1,7 +1,8 @@
 (ns studyflow.learning.read-model.event-handler
   (:require [clojure.tools.logging :as log]
             [studyflow.learning.read-model :as m]
-            [studyflow.learning.course.events :as events]
+            [studyflow.learning.course.events :as course-events]
+            [studyflow.learning.entry-quiz.events :as entry-quiz-events]
             [studyflow.learning.section-test.events :as section-test]
             [rill.event-channel :as event-channel]
             [rill.message :as message]))
@@ -18,17 +19,25 @@
   [initial-events]
   (update-model nil initial-events))
 
-(defmethod handle-event ::events/Published
+(defmethod handle-event ::course-events/Published
   [model event]
   (m/set-course model (:course-id event) (:material event)))
 
-(defmethod handle-event ::events/Updated
+(defmethod handle-event ::course-events/Updated
   [model event]
   (m/set-course model (:course-id event) (:material event)))
 
-(defmethod handle-event ::events/Deleted
+(defmethod handle-event ::course-events/Deleted
   [model event]
   (m/remove-course model (:course-id event)))
+
+(defmethod handle-event ::entry-quiz-events/Published
+  [model event]
+  (m/set-entry-quiz model (:entry-quiz-id event) (:material event)))
+
+(defmethod handle-event ::entry-quiz-events/Updated
+  [model event]
+  (m/set-entry-quiz model (:entry-quiz-id event) (:material event)))
 
 (defmethod handle-event ::section-test/Finished
   [model {:keys [student-id section-id]}]
