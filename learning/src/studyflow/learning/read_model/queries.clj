@@ -26,6 +26,7 @@
                    (->> (for [input inputs]
                           (dissoc input :correct-answers))
                         (into []))))
+      (assoc :has-worked-out-answer (contains? question :worked-out-answer))
       (dissoc :worked-out-answer)))
 
 (defn question

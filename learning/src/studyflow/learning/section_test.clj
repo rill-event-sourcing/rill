@@ -120,10 +120,10 @@
 (defmethod handle-command ::commands/RevealAnswer!
   [{:keys [current-question-id section-id student-id question-finished? answer-revealed?] :as this} {:keys [question-id] :as command} course]
   {:pre [(= current-question-id question-id)
-         (not question-finished?)
          (not answer-revealed?)]}
-  (let [answer (:worked-out-answer (course/question-for-section course section-id question-id))]
-    [:ok [(events/answer-revealed section-id student-id question-id answer)]]))
+  (if-let [answer (:worked-out-answer (course/question-for-section course section-id question-id))]
+    [:ok [(events/answer-revealed section-id student-id question-id answer)]]
+    [:rejected]))
 
 (defmethod aggregate-ids ::commands/NextQuestion!
   [{:keys [course-id]}]
