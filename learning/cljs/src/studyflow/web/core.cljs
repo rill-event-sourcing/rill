@@ -15,6 +15,14 @@
 
 (enable-console-print!)
 
+(defn update-js [js-obj key f]
+  (let [key (if (keyword? key)
+              (name key)
+              key)
+        p (.-props js-obj)]
+    (aset p key (f (get p key)))
+    js-obj))
+
 (defn course-id-for-page []
   (.-value (gdom/getElement "course-id")))
 
@@ -280,13 +288,17 @@
                              (when-let [suffix (:suffix li)]
                                (str " " suffix)))]))))))
 
-(defn modal [cursor section-id content continue-button-text continue-button-onclick]
+(defn modal [cursor section-id content primary-button & [secondary-button]]
   (dom/div #js {:id "m-modal"
                 :className "show"}
            (dom/div #js {:className "modal_inner"}
                     content
-                    (dom/button #js {:onClick continue-button-onclick}
-                                continue-button-text))))
+                    (dom/div #js {:className "modal_footer"}
+                             (when secondary-button
+                               (update-js secondary-button
+                                          :className (fnil (partial str "secundary_action ") "")))
+                             (update-js primary-button
+                                        :className (partial str "button green primary "))))))
 
 (defn focus-input-box [owner]
   (when-let [input-field (om/get-node owner "FOCUSED_INPUT")]
@@ -386,10 +398,7 @@
                                                [:view :selected-path]
                                                (-> (get-in @cursor [:view :selected-path])
                                                    (merge (get-in @cursor [:view :course-material :forward-section-links
-                                                                           {:chapter-id chapter-id :section-id section-id}])))
-                                               {:chapter-id nil
-                                                :section-id nil
-                                                :tab-questions #{}})
+                                                                           {:chapter-id chapter-id :section-id section-id}]))))
                                    (om/update! cursor
                                                [:view :progress-modal]
                                                :dismissed)))
@@ -404,23 +413,30 @@
                      :show-finish-modal
                      (modal cursor
                             section-id
-                            (dom/div nil
-                                     (dom/h1 nil "Klaar met de sectie!")
-                                     (dom/button #js {:onClick (fn [e]
-                                                                 (om/update! cursor
-                                                                             [:view :progress-modal]
-                                                                             :dismissed))}
-                                                 "Dooroefenen in de paragraaf"))
-                            "Naar de volgende sectie"
-                            (fn [e]
-                              (submit)))
+                            (dom/h1 nil "Klaar met de sectie!")
+                            (dom/button #js {:onClick (fn [e]
+                                                        (submit))}
+                                        "Naar de volgende sectie")
+                            (dom/a #js {:href ""
+                                        :onClick (fn [e]
+                                                   (om/update! cursor
+                                                               [:view :progress-modal]
+                                                               :dismissed)
+                                                   (async/put! (om/get-shared owner :command-channel)
+                                                               ["section-test-commands/next-question"
+                                                                section-id
+                                                                student-id
+                                                                section-test-aggregate-version
+                                                                course-id])
+                                                   false)}
+                                   "Dooroefenen in de paragraaf"))
                      :show-streak-completed-modal
                      (modal cursor
                             section-id
-                            (dom/h1 nil "StreakCompleted")
-                            "Naar de volgende sectie"
-                            (fn [e]
-                              (submit)))
+                            (dom/h1 nil "Je hebt deze sectie nogmaals voltooid")
+                            (dom/button #js {:onClick (fn [e]
+                                                        (submit))}
+                                        "Naar de volgende sectie"))
                      nil))
                  (om/build streak-box (:streak section-test))
                  (tool-box (:tools question-data))
