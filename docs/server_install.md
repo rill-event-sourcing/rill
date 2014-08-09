@@ -58,12 +58,12 @@ dpkg-reconfigure --frontend noninteractive tzdata
 # echo '*.* @10.129.221.99:514' > /etc/rsyslog.d/10-remote.conf
 
 # echo 'setting up New Relic'
-# echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' >> /etc/apt/sources.list.d/newrelic.list
-# wget -O- https://download.newrelic.com/548C16BF.gpg | apt-key add -
-# apt-get update
-# apt-get -y install newrelic-sysmond
-# nrsysmond-config --set license_key=3544ff71137bf5ab26dad4b919087f4b9ab681e6
-# /etc/init.d/newrelic-sysmond start
+echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' >> /etc/apt/sources.list.d/newrelic.list
+wget -O- https://download.newrelic.com/548C16BF.gpg | apt-key add -
+apt-get update
+apt-get -y install newrelic-sysmond
+nrsysmond-config --set license_key=83950e0aff8dd5ee99834c47019e6ff754746013
+/etc/init.d/newrelic-sysmond start
 
 
 ##################################################################################################
