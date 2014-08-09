@@ -254,18 +254,20 @@
                    ;; WARNING using dom/ul & dom/li here breaks
                    (apply dom/span #js {:className "mc-list"}
                           (for [choice (map :value (:choices mc))]
-                            (dom/span #js {:className "mc-choice"}
-                                    (dom/input #js {:id choice
-                                                    :react-key (str question-id "-" question-index "-" input-name "-" choice)
-                                                    :type "radio"
-                                                    :checked (= choice (get current-answers input-name))
-                                                    :disabled disabled
-                                                    :onChange (fn [event]
-                                                                (om/update!
-                                                                 cursor
-                                                                 [:view :section section-id :test :questions [question-id question-index] :answer input-name]
-                                                                 choice))}
-                                               (dom/label #js {:htmlFor choice} choice)))))])))
+                            (let [id (str input-name "-" choice)]
+                              (dom/span #js {:className "mc-choice"}
+                                        (dom/input #js {:id id
+                                                        :react-key (str question-id "-" question-index "-" input-name "-" choice)
+                                                        :type "radio"
+                                                        :checked (= choice (get current-answers input-name))
+                                                        :disabled disabled
+                                                        :onChange (fn [event]
+                                                                    (om/update!
+                                                                     cursor
+                                                                     [:view :section section-id :test :questions [question-id question-index] :answer input-name]
+                                                                     choice))}
+                                                   (dom/label #js {:htmlFor id}
+                                                              choice))))))])))
         (into (for [[li ref] (map list
                                   (:line-input-fields question-data)
                                   (into ["FOCUSED_INPUT"]
