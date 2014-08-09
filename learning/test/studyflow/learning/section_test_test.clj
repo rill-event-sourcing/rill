@@ -214,10 +214,14 @@
                   "_INPUT_2_" "notcorrect"}
           answered-stream (conj first-question-stream
                                 (events/question-answered-correctly section-id student-id question-id inputs))]
-      (testing "cannot ask for answer for answered question"
-        (is (thrown? AssertionError
-                     (execute (commands/reveal-answer! section-id student-id 2 course-id question-id)
-                              answered-stream)))))
+      (testing "can ask for answer for answered question"
+        (let [[status [revealed-event :as events]]
+              (execute (commands/reveal-answer! section-id student-id 2 course-id question-id)
+                       answered-stream)]
+          (is (= :ok status))
+          (is (= (message/type revealed-event)
+                 ::events/AnswerRevealed))
+          (is (= (count events) 1)))))
     (testing "can ask for answer after answering incorrectly"
       (let [inputs {"_INPUT_1_" "wrong"
                     "_INPUT_2_" "wrong"}
