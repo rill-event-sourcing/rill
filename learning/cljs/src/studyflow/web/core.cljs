@@ -447,7 +447,7 @@
                  (when revealed-answer
                    (dom/div nil
                             "Het uitgewerkte antwoord is: "
-                            revealed-answer))
+                            (dom/div #js {:dangerouslySetInnerHTML #js {:__html revealed-answer}} nil)))
                  (dom/div #js {:id "m-question_bar"}
                           (if answer-correct
                             (if (and finished-last-action
