@@ -2,11 +2,31 @@
 set :deploy_to, "/home/studyflow/app"
 set :s3path, "s3://studyflow-server-images"
 
+#########################################################################################################
+# servers: gitlab, gitlab-ci, runner1, runner2, emacs, sfoldasses, sfolddb1
+# sizes:   2GB       2GB          1GB    1GB     1GB     2GB          4GB
+# costs:   20        20           10     10      10      20           40
+# 7 stuks = 130,-
+
+# staging: login, learning, school, publish, eventstore, balancer, static
+# sizes:   512MB    512MB     1GB    512MB       2GB      512MB     512MB
+# costs:   5        5        10      5          20        5          5
+# 7 stuks = 55,- (nu 7 stuks)
+
+# produc:  login 2x, learning 2x, school 2x, publish, redis, eventstore, balancer, static
+# sizes:   4GB       8GB          2GB        2GB       2GB     8GB         512MB      512MB
+# costs:   80        160          40         20        20      80           5          5
+# 11 stuks = 410,- (nu 3 stuks)
+
+#########################################################################################################
+#########################################################################################################
+
 
 desc 'Deploy application from S3'
 task :deploy => ["deploy:check", "deploy:update", "deploy:symlink", "deploy:restart"]
 
 
+#########################################################################################################
 namespace :deploy do
 
   desc "check for revisions and directories"
@@ -17,6 +37,7 @@ namespace :deploy do
       execute :mkdir, '-pv', releases_path
     end
   end
+
 
   desc "download code from S3 and unzip it"
   task :update do
@@ -42,6 +63,7 @@ namespace :deploy do
     end
   end
 
+
   desc "migrate the publishing database"
   task :migrate do
     on release_roles(:publish) do |host|
@@ -50,6 +72,7 @@ namespace :deploy do
       end
     end
   end
+
 
   desc "symlink the latest code"
   task :symlink do
@@ -67,14 +90,71 @@ namespace :deploy do
     end
   end
 
+
   desc "restart the servers"
   task :restart do
-    on release_roles(:all) do |host|
-      role = host.roles.first
-      if role == :publish
-        execute :touch, current_path.join("tmp", "restart.txt")
-      else
-        execute :sudo, :supervisorctl, :restart, "studyflow_#{ role }"
+    set :java_role, 'learning'
+    set :java_port, 3000
+    # invoke "deploy:restart_java"
+
+    set :java_role, 'login'
+    set :java_port, 4000
+    invoke "deploy:restart_java"
+
+    set :java_role, 'school'
+    set :java_port, 5000
+    # invoke "deploy:restart_java"
+
+    # invoke "deploy:restart_publish"
+  end
+
+
+  desc "restart a JAVA server"
+  task :restart_java do
+    on release_roles(fetch(:java_role)), in: :sequence, wait: 2 do |host|
+      info "restarting #{ fetch(:java_role) } server: #{ host }"
+
+      info "disabling on balancer"
+      on release_roles(:balancer) do
+        execute "sudo haproxyctl disable all #{ host }"
+      end
+      info "disabled balancer"
+
+      info "waiting 2 seconds for traffic to stop"
+      sleep 2
+
+      info "restart the application to new version"
+      execute :sudo, :supervisorctl, :restart, "studyflow_#{ fetch(:java_role) }"
+
+      info "wait for application to be ready"
+      api_status = nil
+      until api_status
+        api_status = capture("echo `netstat -tln | grep #{ fetch(:java_port) }`")
+        info "sleeping 3 seconds until app is up" # TODO improve check
+        sleep 3
+      end
+
+      info "enabling on balancer"
+      on release_roles(:balancer) do
+        execute "sudo haproxyctl enable all #{ host }"
+      end
+      info "enabled on balancer"
+    end
+  end
+
+
+  desc "restart the publish server"
+  task :restart_publish do
+    on release_roles(:publish) do |host|
+      info "restarting login server: #{ host }"
+      execute :touch, current_path.join("tmp", "restart.txt")
+
+      info "wait for application to be ready"
+      api_status = nil
+      until api_status
+        api_status = capture("echo `netstat -tln | grep 80`")
+        info "sleeping 3 seconds until app is up"
+        sleep 3
       end
     end
   end
@@ -88,5 +168,5 @@ def release_roles(*names)
 end
 
 
-after 'deploy:restart', 'appsignal:set_version'
-after 'deploy:restart', 'appsignal:deploy'
+# after 'deploy:restart', 'appsignal:set_version'
+# after 'deploy:restart', 'appsignal:deploy'

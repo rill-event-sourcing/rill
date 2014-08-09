@@ -65,9 +65,34 @@ dpkg-reconfigure --frontend noninteractive tzdata
 # nrsysmond-config --set license_key=3544ff71137bf5ab26dad4b919087f4b9ab681e6
 # /etc/init.d/newrelic-sysmond start
 
+
 ##################################################################################################
 echo 'you can now login with: ssh -p1022 studyflow@ip-adres'
 ##################################################################################################
+
+##################################################################################################
+# setup RVM on server:
+##################################################################################################
+echo 'installing rvm'
+curl -sSL https://get.rvm.io | bash -s stable
+echo '[[ -s "/home/studyflow/.rvm/scripts/rvm" ]] && source "/home/studyflow/.rvm/scripts/rvm"' >> ~/.bashrc
+source '/home/studyflow/.rvm/scripts/rvm' && rvm install 2.1.2
+
+echo 'installing bundler gem'
+echo 'gem: --no-ri --no-rdoc' > ~/.gemrc
+gem install bundler
+
+
+
+##################################################################################################
+# setup for Java server:
+##################################################################################################
+echo 'install apache2 packages'
+apt-get -y install supervisor openjdk-7-jre
+
+#################################################
+echo 'done setting up JAVA'
+#################################################
 
 
 ##################################################################################################
