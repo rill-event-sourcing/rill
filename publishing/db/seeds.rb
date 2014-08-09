@@ -28,7 +28,7 @@ counting_to_10 = Subsection.create(title: 'Counting to 10', text: '1+1+1+... = 1
 summing_up_groups = Subsection.create(title: 'Summing up the number of the groups', text: 'Keep adding!', section: grouping_by_10)
 adding_up_total_and_remainder = Subsection.create(title: 'Adding up everything with the remainder', text: 'Something did not fit in groups...', section: grouping_by_10)
 counting_to_100 = Subsection.create(title: 'Counting to 100', text: '1+1+1+... = 100', section: grouping_by_10)
-summing_up_in_big_groups = Subsection.create(title: 'Summing up in big groups _INPUT_1_', text: 'Keep adding!', section: grouping_by_10)
+summing_up_in_big_groups = Subsection.create(title: 'Summing up in big groups', text: 'Keep Adding! _INPUT_1_', section: grouping_by_10)
 adding_up_again = Subsection.create(title: 'Adding up everything again', text: 'Moar additions', section: grouping_by_10)
 grouping_by_10_line_input = LineInput.create(inputable: grouping_by_10, prefix: "666", suffix: "euros")
 grouping_by_10_line_input_answer = Answer.create(value: "123", line_input: grouping_by_10_line_input)
