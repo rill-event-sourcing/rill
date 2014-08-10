@@ -133,6 +133,7 @@ GEM
     minitest (5.3.4)
     multi_json (1.10.1)
     multi_xml (0.5.5)
+    newrelic_rpm (3.9.1.236)
     nokogiri (1.6.2.1)
       mini_portile (= 0.6.0)
     pg (0.17.1)
@@ -280,6 +281,7 @@ DEPENDENCIES
   jbuilder (~> 2.0)
   jquery-rails
   launchy
+  newrelic_rpm
   pg
   phantomjs
   poltergeist
