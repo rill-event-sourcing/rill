@@ -1,5 +1,6 @@
 (ns studyflow.learning.material-test
   (:require [studyflow.learning.material :as material]
+            [studyflow.learning.course-material :as course-material]
             [clojure.java.io :as io]
             [clojure.test :refer [is deftest testing]]
             [rill.uuid :refer [new-id]]
@@ -11,9 +12,9 @@
 
 (deftest test-question-text-to-html
   (let [json (read-test-json)
-        test-q-title (get-in (material/parse-course-material (read-test-json))
+        test-q-title (get-in (course-material/parse-course-material (read-test-json))
                              [:chapters 0 :sections 0 :title])
-        test-q (-> (get-in (material/parse-course-material (read-test-json))
+        test-q (-> (get-in (course-material/parse-course-material (read-test-json))
                            [:chapters 0 :sections 0 :questions])
                    first)]
     (is (= test-q-title

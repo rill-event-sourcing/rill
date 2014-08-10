@@ -83,6 +83,12 @@
     (assoc agg
       :finished true
       :finished-at (count (:questions agg)))
+
+    "studyflow.learning.student-entry-quiz.events/Created"
+    (let [aggr-id (:entry-quiz-id event)]
+      {:id aggr-id
+       :questions []
+       :status :created})
     (do
       (prn "Aggregate can't handle event: " event)
       agg)))

@@ -32,7 +32,7 @@
                 [:aggregates :failed]
                 true)))
 
-(defn command-section-test-aggregate-handler [cursor notification-channel section-id]
+(defn command-aggregate-handler [cursor notification-channel aggregate-id]
   (fn [res]
     (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
       (when-let [notification-events
@@ -43,13 +43,13 @@
         (doseq [event notification-events]
           (async/put! notification-channel event)))
       (om/transact! cursor
-                    [:aggregates section-id]
+                    [:aggregates aggregate-id]
                     (fn [agg]
                       (aggregates/apply-events agg aggregate-version events))))))
 
-(defn handle-replay-events [cursor section-id events aggregate-version]
+(defn handle-replay-events [cursor aggregate-id events aggregate-version]
   (om/transact! cursor
-                [:aggregates section-id]
+                [:aggregates aggregate-id]
                 (fn [agg]
                   (if (seq events)
                     (aggregates/apply-events agg aggregate-version events)
@@ -73,7 +73,7 @@
                                ;; 401 = no current events for section test
                                (PUT (str "/api/section-test-init/" course-id "/" section-id "/" student-id)
                                     {:format :json
-                                     :handler (command-section-test-aggregate-handler cursor notification-channel section-id)
+                                     :handler (command-aggregate-handler cursor notification-channel section-id)
                                      :error-handler (command-error-handler cursor)
                                      }))}))
       "section-test-commands/reveal-worked-out-answer"
@@ -81,7 +81,7 @@
         (PUT (str "/api/section-test-reveal-worked-out-answer/" section-id "/" student-id "/" course-id "/" question-id)
              {:params {:expected-version section-test-aggregate-version}
               :format :json
-              :handler (command-section-test-aggregate-handler cursor notification-channel section-id)
+              :handler (command-aggregate-handler cursor notification-channel section-id)
               :error-handler (command-error-handler cursor)}))
       "section-test-commands/check-answer"
       (let [[section-id student-id section-test-aggregate-version course-id question-id inputs] args]
@@ -89,14 +89,21 @@
              {:params {:expected-version section-test-aggregate-version
                        :inputs inputs}
               :format :json
-              :handler (command-section-test-aggregate-handler cursor notification-channel section-id)
+              :handler (command-aggregate-handler cursor notification-channel section-id)
               :error-handler (command-error-handler cursor)}))
       "section-test-commands/next-question"
       (let [[section-id student-id section-test-aggregate-version course-id] args]
         (PUT (str "/api/section-test-next-question/" section-id "/" student-id "/" course-id)
              {:params {:expected-version section-test-aggregate-version}
               :format :json
-              :handler (command-section-test-aggregate-handler cursor notification-channel section-id)
+              :handler (command-aggregate-handler cursor notification-channel section-id)
+              :error-handler (command-error-handler cursor)}))
+
+      "student-entry-quiz-commands/init"
+      (let [[entry-quiz-id student-id] args]
+        (PUT (str "/api/student-entry-quiz-init/" entry-quiz-id "/" student-id)
+             {:format :json
+              :handler (command-aggregate-handler cursor notification-channel entry-quiz-id)
               :error-handler (command-error-handler cursor)}))
       nil)))
 
@@ -159,8 +166,24 @@
                                                       [:view :section (:id section-data) :data]
                                                       section-data))))
                 :error-handler basic-error-handler})))
-      "data/section-test"
-      nil ;; command if not yet loaded
+      "data/entry-quiz"
+      (let [[entry-quiz-id student-id] args]
+        (GET (str "/api/entry-quiz-replay/" entry-quiz-id "/" student-id)
+             {:params {}
+              :handler (fn [res]
+                         (om/update! cursor
+                                     [:view :entry-quiz-replay-done]
+                                     true)
+                         (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
+                           (handle-replay-events cursor entry-quiz-id events aggregate-version)))
+              :error-handler (fn [e]
+                               ;; 401 means there are no replay events
+                               (if (= (:status e) 401)
+                                 (om/update! cursor
+                                             [:view :entry-quiz-replay-done]
+                                             true)
+                                 (basic-error-handler e)))}))
+
       nil)))
 
 ;; a bit silly to use an Om component for something that is not UI,

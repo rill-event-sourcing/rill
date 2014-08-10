@@ -41,15 +41,16 @@
 (defn logout-target-for-page []
   (.-value (gdom/getElement "logout-target")))
 
-(def app-state (atom {:static {:course-id (course-id-for-page)
-                               :student {:id (student-id-for-page)
-                                         :full-name (student-full-name-for-page)}
-                               :logout-target (logout-target-for-page)}
-                      :view {:selected-path {:chapter-id nil
-                                             :section-id nil
-                                             :dashboard true
-                                             :section-tab nil}}
-                      :aggregates {}}))
+(defn init-app-state []
+  (atom {:static {:course-id (course-id-for-page)
+                  :student {:id (student-id-for-page)
+                            :full-name (student-full-name-for-page)}
+                  :logout-target (logout-target-for-page)}
+         :view {:selected-path {:chapter-id nil
+                                :section-id nil
+                                :dashboard true
+                                :section-tab nil}}
+         :aggregates {}}))
 
 (defn split-text-and-inputs [text inputs]
   (reduce
@@ -742,11 +743,20 @@
             chapter-id (or (get-in cursor [:view :selected-path :chapter-id]) (:id (first (:chapters course))))]
 
         (if course
-          (dom/article #js {:id "m-section"}
+          (dom/div nil
+                   (let [{:keys [name status]
+                          entry-quiz-id :id
+                          :as entry-quiz} (get-in cursor [:view :course-material :entry-quiz])]
+                     (dom/ul nil
+                               (dom/li nil
+                                       (dom/a #js {:href (str "/entry-quiz/" entry-quiz-id)}
+                                              name)
+                                       (dom/span nil status))))
+                   (dom/article #js {:id "m-section"}
                        (dom/div nil
                                 (apply dom/ul nil
                                        (map (partial chapter-navigation cursor chapter-id course)
-                                            (:chapters course)))))
+                                            (:chapters course))))))
           (dom/h2 nil "Hoofdstukken laden..."))))))
 
 (defn dashboard-top-header
@@ -803,6 +813,38 @@
                     (dom/p #js {:className "page_subheading"}
                            (:title chapter)))))))
 
+(defn entry-quiz-dashboard [cursor]
+  (when-let [entry-quiz (get-in cursor [:view :course-material :entry-quiz])]
+    (let [{:keys [status description]
+           entry-quiz-id :id} entry-quiz
+           status (if (= :dismissed (get-in cursor [:view :entry-quiz]))
+                    :dismissed
+                    status)]
+      (condp = status
+        nil (modal (dom/div nil
+                            (dom/h1 nil "Instaptoets")
+                            (dom/div
+                             #js {:dangerouslySetInnerHTML #js {:__html description}}
+                             nil))
+                   (dom/button #js {:onClick (fn []
+                                               (set! (.-location js/window)
+                                                     (str "/entry-quiz/"
+                                                          entry-quiz-id)))}
+                               "Start instaptoets")
+                   (dom/a #js {:href ""
+                               :onClick (fn []
+                                          ;; nag screen is hidden
+                                          ;; until next refresh
+                                          (om/update! cursor
+                                                      [:view :entry-quiz]
+                                                      :dismissed)
+                                          false)}
+                          "Doe het later"))
+        :dismissed
+        nil ;; show link
+        ;; TODO inprogress do redirect
+        nil))))
+
 (defn widgets [cursor owner]
   (reify
     om/IRender
@@ -817,6 +859,7 @@
                     (dom/button #js {:onClick (fn [e]
                                                 (.reload js/location true))}
                                 "Herlaad de pagina")))
+                 (entry-quiz-dashboard cursor)
                  (if (get-in cursor [:view :selected-path :dashboard])
                    (om/build dashboard cursor)
                    (dom/div nil
@@ -829,7 +872,7 @@
    (-> widgets
        service/wrap-service
        url-history/wrap-history)
-   app-state
+   (init-app-state)
    {:target (gdom/getElement "app")
     :tx-listen (fn [tx-report cursor]
                  (service/listen tx-report cursor)

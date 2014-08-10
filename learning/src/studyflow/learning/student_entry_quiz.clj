@@ -16,10 +16,21 @@
   [entry-quiz-id])
 
 (defmethod handle-command ::commands/Init!
+  [entry-quiz {:keys [entry-quiz-id student-id] :as command} entry-quiz-material]
+  {:pre [(nil? entry-quiz)
+         entry-quiz-id
+         student-id
+         entry-quiz-material]}
+  [:ok [(events/created entry-quiz-id student-id)]])
+
+(defmethod aggregate-ids ::commands/Dismiss!
+  [{:keys [entry-quiz-id]}]
+  [entry-quiz-id])
+
+(defmethod handle-command ::commands/Dismiss!
   [entry-quiz command entry-quiz-material]
   {:pre []}
-  [:ok []
-   ])
+  [:ok []])
 
 (defmethod handle-event ::events/Created
   [_ event]

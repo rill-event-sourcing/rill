@@ -3,6 +3,7 @@
             [clout-link.route :as clout]
             [rill.uuid :refer [uuid]]
             [studyflow.learning.section-test.commands :as section-test-commands]
+            [studyflow.learning.student-entry-quiz.commands :as student-entry-quiz-commands]
             [rill.web :refer [wrap-command-handler]]
             [studyflow.web.authorization :as authorization]
             [studyflow.web.handler-tools :refer [combine-ring-handlers]]
@@ -10,6 +11,7 @@
 
 ;; Load command handlers
 (require 'studyflow.learning.section-test)
+(require 'studyflow.learning.student-entry-quiz)
 
 (def handler
   "This handler matches ring requests and returns a command (or nil) for the given request.
@@ -30,10 +32,10 @@ commands."
      (fn [{{:keys [section-id student-id course-id question-id]} :params body :body}]
        (let [{:keys [expected-version]} body]
          (section-test-commands/reveal-answer! (uuid section-id)
-                                              (uuid student-id)
-                                              expected-version
-                                              (uuid course-id)
-                                              (uuid question-id))))))
+                                               (uuid student-id)
+                                               expected-version
+                                               (uuid course-id)
+                                               (uuid question-id))))))
    (clout/handle
     routes/section-test-check-answer
     (authorization/wrap-student-authorization
@@ -53,7 +55,14 @@ commands."
        (section-test-commands/next-question! (uuid section-id)
                                              (uuid student-id)
                                              expected-version
-                                             (uuid course-id)))))))
+                                             (uuid course-id)))))
+
+   (clout/handle
+    routes/student-entry-quiz-init
+    (authorization/wrap-student-authorization
+     (fn [{{:keys [entry-quiz-id student-id]} :params}]
+       (student-entry-quiz-commands/init! (uuid entry-quiz-id)
+                                             (uuid student-id)))))))
 
 (defn make-request-handler
   [event-store]
