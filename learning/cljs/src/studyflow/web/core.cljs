@@ -178,7 +178,7 @@
                     (case input-state
                       :answering (dom/input
                                   #js {:type "submit"
-                                       :value "Check answer"
+                                       :value "Nakijken"
                                        :onClick (fn [event]
                                                   (om/update!
                                                    cursor
@@ -194,7 +194,7 @@
                                   (dom/div nil "✗"
                                            (dom/input
                                             #js {:type "submit"
-                                                 :value "Show answer"
+                                                 :value "Toon antwoord"
                                                  :onClick (fn [event]
                                                             (om/update!
                                                              cursor
