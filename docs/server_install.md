@@ -70,6 +70,24 @@ nrsysmond-config --set license_key=83950e0aff8dd5ee99834c47019e6ff754746013
 echo 'you can now login with: ssh -p1022 studyflow@ip-adres'
 ##################################################################################################
 
+
+
+##################################################################################################
+# setup NewRelic plugin agent on server:
+##################################################################################################
+
+sudo apt-get -y install python3-pip python-pip python3-dev python-dev
+sudo pip install newrelic-plugin-agent
+sudo cp /opt/newrelic-plugin-agent/newrelic-plugin-agent.cfg /etc/newrelic/newrelic-plugin-agent.cfg
+sudo vi /etc/newrelic/newrelic-plugin-agent.cfg
+sudo cp /opt/newrelic-plugin-agent/newrelic-plugin-agent.deb /etc/init.d/newrelic-plugin-agent
+sudo chmod +x /etc/init.d/newrelic-plugin-agent
+# sudo pip install newrelic-plugin-agent[postgresql]
+sudo newrelic-plugin-agent -c /etc/newrelic/newrelic-plugin-agent.cfg -f
+sudo /etc/init.d/newrelic-plugin-agent restart
+tail /var/log/newrelic/newrelic-plugin-agent.log -f
+
+
 ##################################################################################################
 # setup RVM on server:
 ##################################################################################################
