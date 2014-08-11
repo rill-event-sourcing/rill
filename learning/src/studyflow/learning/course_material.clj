@@ -35,9 +35,9 @@
   {:id Id
    :text RichText
    :tools #{Tool}
-   :worked-out-answer RichText
    :line-input-fields [LineInputField]
-   :multiple-choice-input-fields [MultipleChoiceInputField]})
+   :multiple-choice-input-fields [MultipleChoiceInputField]
+   (s/optional-key :worked-out-answer) RichText})
 
 (def SubSection
   {:id Id
@@ -90,7 +90,6 @@
          (if (every? (fn [q-node]
                        (and (contains? q-node :id)
                             (contains? q-node :text)
-                            (contains? q-node :worked-out-answer)
                             (contains? q-node :line-input-fields)
                             (contains? q-node :multiple-choice-input-fields)))
                      qs-node)

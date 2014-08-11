@@ -6,7 +6,7 @@
   position: fixed
   background: rgba(0,0,0,0.3)
   z-index: 900
-  display: none
+  display: block
   &.show
     display: block
 
@@ -16,3 +16,27 @@
     +border-radius(3px)
     background: white
     margin: 120px auto
+    position: relative
+
+    .secundary_action
+      line-height: 55px
+      display: inline-block
+      color: rgb(97, 160, 228)
+      text-decoration: none
+      &:hover
+        text-decoration: underline
+
+    h1
+      font-size: 25px
+      font-weight: 500
+      display: block
+      text-align: center
+      padding: 50px 25px
+
+    .modal_footer
+      bottom: 0
+      position: absolute
+      left: 0
+      right: 0
+      background: #fafafa
+      padding: 20px 50px

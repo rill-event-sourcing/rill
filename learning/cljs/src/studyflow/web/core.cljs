@@ -15,6 +15,14 @@
 
 (enable-console-print!)
 
+(defn update-js [js-obj key f]
+  (let [key (if (keyword? key)
+              (name key)
+              key)
+        p (.-props js-obj)]
+    (aset p key (f (get p key)))
+    js-obj))
+
 (defn course-id-for-page []
   (.-value (gdom/getElement "course-id")))
 
@@ -246,18 +254,20 @@
                    ;; WARNING using dom/ul & dom/li here breaks
                    (apply dom/span #js {:className "mc-list"}
                           (for [choice (map :value (:choices mc))]
-                            (dom/span #js {:className "mc-choice"}
-                                    (dom/input #js {:id choice
-                                                    :react-key (str question-id "-" question-index "-" input-name "-" choice)
-                                                    :type "radio"
-                                                    :checked (= choice (get current-answers input-name))
-                                                    :disabled disabled
-                                                    :onChange (fn [event]
-                                                                (om/update!
-                                                                 cursor
-                                                                 [:view :section section-id :test :questions [question-id question-index] :answer input-name]
-                                                                 choice))}
-                                               (dom/label #js {:htmlFor choice} choice)))))])))
+                            (let [id (str input-name "-" choice)]
+                              (dom/span #js {:className "mc-choice"}
+                                        (dom/input #js {:id id
+                                                        :react-key (str question-id "-" question-index "-" input-name "-" choice)
+                                                        :type "radio"
+                                                        :checked (= choice (get current-answers input-name))
+                                                        :disabled disabled
+                                                        :onChange (fn [event]
+                                                                    (om/update!
+                                                                     cursor
+                                                                     [:view :section section-id :test :questions [question-id question-index] :answer input-name]
+                                                                     choice))}
+                                                   (dom/label #js {:htmlFor id}
+                                                              choice))))))])))
         (into (for [[li ref] (map list
                                   (:line-input-fields question-data)
                                   (into ["FOCUSED_INPUT"]
@@ -280,13 +290,17 @@
                              (when-let [suffix (:suffix li)]
                                (str " " suffix)))]))))))
 
-(defn modal [cursor section-id content continue-button-text continue-button-onclick]
+(defn modal [cursor section-id content primary-button & [secondary-button]]
   (dom/div #js {:id "m-modal"
                 :className "show"}
            (dom/div #js {:className "modal_inner"}
                     content
-                    (dom/button #js {:onClick continue-button-onclick}
-                                continue-button-text))))
+                    (dom/div #js {:className "modal_footer"}
+                             (when secondary-button
+                               (update-js secondary-button
+                                          :className (fnil (partial str "secundary_action ") "")))
+                             (update-js primary-button
+                                        :className (partial str "button green primary "))))))
 
 (defn focus-input-box [owner]
   (when-let [input-field (om/get-node owner "FOCUSED_INPUT")]
@@ -305,6 +319,28 @@
            (tag-tree-to-om
             (om/value tag-tree)
             inputs)))
+
+(defn reveal-answer-button [cursor owner]
+  (reify
+    om/IRender
+    (render [_]
+      (let [{:keys [revealed-answer question-id question-data section-id student-id section-test-aggregate-version course-id]} cursor
+            can-reveal-answer (get question-data :has-worked-out-answer)]
+        (if can-reveal-answer
+          (dom/button #js {:className "button grey pull-right"
+                           :disabled
+                           (boolean revealed-answer)
+                           :onClick
+                           (fn [e]
+                             (async/put! (om/get-shared owner :command-channel)
+                                         ["section-test-commands/reveal-worked-out-answer"
+                                          section-id
+                                          student-id
+                                          section-test-aggregate-version
+                                          course-id
+                                          question-id]))}
+                      "Toon antwoord")
+          (dom/span nil nil))))))
 
 (def key-listener (atom nil)) ;; should go into either cursor or local state
 
@@ -386,10 +422,7 @@
                                                [:view :selected-path]
                                                (-> (get-in @cursor [:view :selected-path])
                                                    (merge (get-in @cursor [:view :course-material :forward-section-links
-                                                                           {:chapter-id chapter-id :section-id section-id}])))
-                                               {:chapter-id nil
-                                                :section-id nil
-                                                :tab-questions #{}})
+                                                                           {:chapter-id chapter-id :section-id section-id}]))))
                                    (om/update! cursor
                                                [:view :progress-modal]
                                                :dismissed)))
@@ -404,23 +437,30 @@
                      :show-finish-modal
                      (modal cursor
                             section-id
-                            (dom/div nil
-                                     (dom/h1 nil "Klaar met de sectie!")
-                                     (dom/button #js {:onClick (fn [e]
-                                                                 (om/update! cursor
-                                                                             [:view :progress-modal]
-                                                                             :dismissed))}
-                                                 "Dooroefenen in de paragraaf"))
-                            "Naar de volgende sectie"
-                            (fn [e]
-                              (submit)))
+                            (dom/h1 nil "Klaar met de sectie!")
+                            (dom/button #js {:onClick (fn [e]
+                                                        (submit))}
+                                        "Naar de volgende sectie")
+                            (dom/a #js {:href ""
+                                        :onClick (fn [e]
+                                                   (om/update! cursor
+                                                               [:view :progress-modal]
+                                                               :dismissed)
+                                                   (async/put! (om/get-shared owner :command-channel)
+                                                               ["section-test-commands/next-question"
+                                                                section-id
+                                                                student-id
+                                                                section-test-aggregate-version
+                                                                course-id])
+                                                   false)}
+                                   "Dooroefenen in de paragraaf"))
                      :show-streak-completed-modal
                      (modal cursor
                             section-id
-                            (dom/h1 nil "StreakCompleted")
-                            "Naar de volgende sectie"
-                            (fn [e]
-                              (submit)))
+                            (dom/h1 nil "Je hebt deze sectie nogmaals voltooid")
+                            (dom/button #js {:onClick (fn [e]
+                                                        (submit))}
+                                        "Naar de volgende sectie"))
                      nil))
                  (om/build streak-box (:streak section-test))
                  (tool-box (:tools question-data))
@@ -429,7 +469,7 @@
                  (when revealed-answer
                    (dom/div nil
                             "Het uitgewerkte antwoord is: "
-                            revealed-answer))
+                            (dom/div #js {:dangerouslySetInnerHTML #js {:__html revealed-answer}} nil)))
                  (dom/div #js {:id "m-question_bar"}
                           (if answer-correct
                             (if (and finished-last-action
@@ -447,21 +487,16 @@
                                                                   (fn []
                                                                     (submit))
                                                                   :enabled answering-allowed)
-                                               cursor)
-                                     (when-not answer-correct
-                                       (dom/button #js {:className "button grey pull-right"
-                                                        :disabled
-                                                        (boolean revealed-answer)
-                                                        :onClick
-                                                        (fn [e]
-                                                          (async/put! (om/get-shared owner :command-channel)
-                                                                      ["section-test-commands/reveal-worked-out-answer"
-                                                                       section-id
-                                                                       student-id
-                                                                       section-test-aggregate-version
-                                                                       course-id
-                                                                       question-id]))}
-                                                   "Toon antwoord"))))))))
+                                               cursor)))
+                          (om/build reveal-answer-button
+                                    {:revealed-answer revealed-answer
+                                     :question-id question-id
+                                     :question-data question-data
+
+                                     :section-id section-id
+                                     :student-id student-id
+                                     :section-test-aggregate-version section-test-aggregate-version
+                                     :course-id course-id})))))
     om/IDidUpdate
     (did-update [_ _ _]
       (focus-input-box owner))

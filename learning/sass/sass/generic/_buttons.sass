@@ -50,6 +50,9 @@
         content: "►"
       padding-right: 63px
 
+  &.primary
+    float: right
+    
   // The spinner
   &::after
     +scale(2.5)
@@ -89,7 +92,7 @@
       &:hover, &:focus
         background-color: #00b37c
     &::after
-      background: image-url('green-spinner.gif') center no-repeat #00b37c
+      //background: image-url('green-spinner.gif') center no-repeat #00b37c
 
   // Grey button (Alternate action)
   &.grey
@@ -110,7 +113,7 @@
         color: #777
         background-color: #f9f9f9
     &::after
-      background: image-url('grey-spinner.gif') center no-repeat #f9f9f9
+      //background: image-url('grey-spinner.gif') center no-repeat #f9f9f9
 
 
   // White button (Alternate action)
@@ -130,4 +133,4 @@
         color: #777
         background-color: #f9f9f9
     &::after
-      background: image-url('grey-spinner.gif') center no-repeat #f9f9f9
+      //background: image-url('grey-spinner.gif') center no-repeat #f9f9f9
