@@ -62,8 +62,8 @@
       (assoc :answer-revealed? true)
       (cond->
        (nil? current-question-status)
-       (assoc :current-question-status :answer-revealed))
-      (assoc :streak-length 0)))
+       (-> (assoc :current-question-status :answer-revealed)
+           (assoc :streak-length 0)))))
 
 (defmethod handle-event ::events/QuestionAnsweredCorrectly
   [{:keys [current-question-id current-question-status streak-length] :as this} {:keys [question-id]}]
