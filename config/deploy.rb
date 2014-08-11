@@ -149,7 +149,7 @@ namespace :deploy do
         sleep 5
         load_time += 5
         info "sleeping until app is up (#{ load_time } seconds)"
-        response = capture "curl -s --connect-timeout 1 'http://localhost/'; echo 'testing'"
+        response = capture "curl -s --connect-timeout 1 'http://localhost/health-check'; echo 'testing'"
         status_up =(response =~ /{"status":"up"}/)
       end
       if load_time > fetch(:max_load_time)
