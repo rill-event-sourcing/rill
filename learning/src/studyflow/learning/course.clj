@@ -36,10 +36,11 @@
   [input-fields input-values]
   (every? (fn [{:keys [name correct-answers]}]
             (when-let [value (get input-values name)]
-              (contains? correct-answers
-                         (if (nil? value)
-                           value
-                           (trim value)))))
+              (some
+               (fn [correct-answer]
+                 (= (trim correct-answer)
+                    (trim value)))
+               correct-answers)))
           input-fields))
 
 (defn multiple-choice-input-fields-answers-correct?

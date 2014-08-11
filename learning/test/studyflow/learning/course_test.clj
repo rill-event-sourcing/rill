@@ -39,3 +39,21 @@
   (testing "Publishing commands"
     (is (= (map message/type (second (handle-command nil (commands/publish! (:id fixture/course-edn) fixture/course-edn))))
            [::events/Published]))))
+
+(deftest test-answer-checking
+  (testing "Needs an answer for each input"
+    (is (not (course/line-input-fields-answers-correct? [{:name "_INPUT_1_"
+                                                          :correct-answers #{"1"}}
+                                                         {:name "_INPUT_2_"
+                                                          :correct-answers #{"2"}}]
+                                                        {"_INPUT_1_" "1"}))))
+  (testing "Don't consider leading or trailing whitespace for answer checking"
+    (is (course/line-input-fields-answers-correct? [{:name "_INPUT_1_"
+                                                     :correct-answers #{"111"}}
+                                                    {:name "_INPUT_2_"
+                                                     :correct-answers #{" 22 2 "}}
+                                                    {:name "_INPUT_3_"
+                                                     :correct-answers #{"333" "3333333"}}]
+                                                   {"_INPUT_1_" "  111   "
+                                                    "_INPUT_2_" "22 2"
+                                                    "_INPUT_3_" "333"}))))
