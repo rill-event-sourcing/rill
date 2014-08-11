@@ -13,6 +13,7 @@
               "title": "First subsection",
               "text": "some text in latin"
           }],
+          "line_input_fields": [],
           "questions": [
             {
               "id":  "1441b3e0-1a1e-4d2f-aa82-1622ec81433a",
@@ -110,6 +111,7 @@
               "text": "5"
             }
           ],
+          "line_input_fields": [],
           "questions": [
             {
               "id": "57472eb7-cbba-462d-b1e6-4c5cdd11990d",
@@ -719,6 +721,7 @@
           "subsections": [
 
           ],
+          "line_input_fields": [],
           "questions": [
             {
               "id": "d47128ab-a394-4c3e-a52e-e1ab5f9576d5",
@@ -1743,6 +1746,7 @@
           "subsections": [
 
           ],
+          "line_input_fields": [],
           "questions": [
             {
               "id": "dd5b0b44-38b9-4000-9d1e-ed00ae49add7",
@@ -2441,6 +2445,7 @@
           "subsections": [
 
           ],
+          "line_input_fields": [],
           "questions": [
             {
               "id": "f1086a5c-f38c-42f1-a23f-81b26b4f1c52",
@@ -3108,6 +3113,7 @@
           "subsections": [
 
           ],
+          "line_input_fields": [],
           "questions": [
             {
               "id": "8b130501-50f3-47a9-a065-42dd0142db11",
