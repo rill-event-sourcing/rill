@@ -1,6 +1,7 @@
 # Studyflow S3 deployment
 set :deploy_to, "/home/studyflow/app"
 set :s3path, "s3://studyflow-server-images"
+set :max_load_time, 120
 
 #########################################################################################################
 
@@ -73,7 +74,7 @@ namespace :deploy do
   end
 
 
-  desc "restart the servers"
+  desc "restarting the servers"
   task :restart do
     set :java_role, 'learning'
     set :java_port, 3000
@@ -91,7 +92,7 @@ namespace :deploy do
   end
 
 
-  desc "restart a JAVA server"
+  desc "restarting a JAVA server"
   task :restart_java do
     on release_roles(fetch(:java_role)), in: :sequence, wait: 2 do |host|
       info "restarting #{ fetch(:java_role) } server: #{ host }"
@@ -105,15 +106,25 @@ namespace :deploy do
       info "waiting 2 seconds for traffic to stop"
       sleep 2
 
-      info "restart the application to new version"
+      info "restarting the application to new version"
       execute :sudo, :supervisorctl, :restart, "studyflow_#{ fetch(:java_role) }"
 
-      info "wait for application to be ready"
-      api_status = nil
-      until api_status
-        api_status = capture("echo `netstat -tln | grep #{ fetch(:java_port) }`")
-        info "sleeping until app is up" # TODO improve check
+      info "waiting for application to be ready"
+      load_time = 0
+      status_up = false
+      until status_up || load_time > fetch(:max_load_time)
         sleep 5
+        load_time += 5
+        info "sleeping until app is up (#{ load_time } seconds)"
+        # response = capture "curl -s --connect-timeout 1 'http://localhost:#{ fetch(:java_port) }/health-check'; echo 'testing'"
+        # status_up =(response =~ /{"status":"up"}/)
+        response = capture "curl -s --connect-timeout 1 -I 'http://localhost:#{ fetch(:java_port) }/'; echo 'testing'"
+        status_up = (response =~ /HTTP\/1.1 200 OK/) || (response =~ /HTTP\/1.1 302 Found/)
+      end
+      if load_time > fetch(:max_load_time)
+        throw "#{ host } won't go up!"
+      else
+        info "#{ host } is up"
       end
 
       info "enabling on balancer"
@@ -125,18 +136,26 @@ namespace :deploy do
   end
 
 
-  desc "restart the publish server"
+  desc "restarting the publishing server"
   task :restart_publish do
     on release_roles(:publish) do |host|
       info "restarting login server: #{ host }"
       execute :touch, current_path.join("tmp", "restart.txt")
 
-      info "wait for application to be ready"
-      api_status = nil
-      until api_status
-        api_status = capture("echo `netstat -tln | grep 80`")
-        info "sleeping until app is up" # TODO improve check
+      info "waiting for application to be ready"
+      load_time = 0
+      status_up = false
+      until status_up || load_time > fetch(:max_load_time)
         sleep 5
+        load_time += 5
+        info "sleeping until app is up (#{ load_time } seconds)"
+        response = capture "curl -s --connect-timeout 1 'http://localhost/'; echo 'testing'"
+        status_up =(response =~ /{"status":"up"}/)
+      end
+      if load_time > fetch(:max_load_time)
+        throw "#{ host } won't go up!"
+      else
+        info "#{ host } is up"
       end
     end
   end
