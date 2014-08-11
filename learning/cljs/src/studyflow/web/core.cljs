@@ -121,7 +121,7 @@
                                           (when (= id chapter-id)
                                             chapter)) (:chapters course))]
                    (om/build navigation cursor)
-                   (dom/h2 nil "Navigatie laden")))))))
+                   (dom/h2 nil "Menu laden...")))))))
 
 (defn question-by-id [cursor section-id question-id]
   (if-let [question (get-in cursor [:view :section section-id :test question-id])]
@@ -181,7 +181,7 @@
                  (if section
                    (om/build section-explanation section)
                    (dom/article #js {:id "m-section"}
-                                "Tekst laden"))
+                                "Uitleg laden..."))
                  )))))
 
 (defn streak-box [streak owner]
@@ -439,10 +439,11 @@
                  (let [progress-modal (get-in cursor [:view :progress-modal])]
                    (condp = progress-modal
                      :show-finish-modal
-                     (modal (dom/h1 nil "Klaar met de sectie!")
+                     (modal (dom/h1 nil "Wohoo!")
+                            (dom/p nil "Je bent klaar met deze paragraaf.")
                             (dom/button #js {:onClick (fn [e]
                                                         (submit))}
-                                        "Naar de volgende sectie")
+                                        "Volgende paragraaf")
                             (dom/a #js {:href ""
                                         :onClick (fn [e]
                                                    (om/update! cursor
@@ -455,12 +456,13 @@
                                                                 section-test-aggregate-version
                                                                 course-id])
                                                    false)}
-                                   "Dooroefenen in de paragraaf"))
+                                   "In deze paragraaf blijven"))
                      :show-streak-completed-modal
-                     (modal (dom/h1 nil "Je hebt deze sectie nogmaals voltooid")
+                     (modal (dom/h1 nil "Yes!")
+                            (dom/p nil "Je hebt deze paragraaf nog een keer voltooid. Nu snap je hem wel :)")
                             (dom/button #js {:onClick (fn [e]
                                                         (submit))}
-                                        "Naar de volgende sectie"))
+                                        "Volgende paragraaf"))
                      nil))
                  (om/build streak-box (:streak section-test))
                  (tool-box (:tools question-data))
@@ -474,7 +476,7 @@
                           (if answer-correct
                             (if (and finished-last-action
                                      (= progress-modal :launchable))
-                              (om/build (click-once-button "Goed, voltooi paragraaf"
+                              (om/build (click-once-button "Goed! Voltooi paragraaf"
                                                            (fn []
                                                              (submit))) cursor)
                               (om/build (click-once-button
@@ -528,7 +530,7 @@
     (render [_]
       (dom/div nil
                (dom/header #js {:id "m-top_header"})
-               (dom/article #js {:id "m-section"} "Vragen voor deze paragraaf aan het laden")
+               (dom/article #js {:id "m-section"} "Vragen aan het laden...")
                (dom/div #js {:id "m-question_bar"})))))
 
 (defn section-test [cursor owner]
@@ -633,7 +635,7 @@
                    (apply dom/ul nil
                           (map (partial chapter-navigation cursor chapter-id course)
                                (:chapters course))))
-          (dom/h2 nil "Materiaal laden"))))))
+          (dom/h2 nil "Hoofdstukken laden..."))))))
 
 (defn dashboard-top-header
   [cursor owner]
