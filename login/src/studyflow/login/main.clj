@@ -43,9 +43,9 @@
    {:role "form" :class "form-signin" } [:post "/"]
    ;;(form/hidden-field "__anti-forgery-token" *anti-forgery-token*)
    [:h2.form-signin-heading msg]
-   (form/email-field {:class "form-control" :placeholder "Email address"} "email" email)
-   (form/password-field {:class "form-control" :placeholder "Password"} "password" password)
-   [:button.btn.btn-lg.btn-primary.btn-block {:type "submit"} "Log in"]))
+   (form/email-field {:class "form-control" :placeholder "E-mail"} "email" email)
+   (form/password-field {:class "form-control" :placeholder "Wachtwoord"} "password" password)
+   [:button.btn.btn-lg.btn-primary.btn-block {:type "submit"} "Inloggen"]))
 
 (defn please-wait
   [refresh-count]
