@@ -12,10 +12,10 @@ class SubsectionsController < ApplicationController
 
   def create
     @subsection = @section.subsections.build(
-      title: '',
-      text: '',
-      position: params[:position]
-    )
+                                             title: '',
+                                             text: '',
+                                             position: params[:position]
+                                             )
     if @subsection.save
       @section.subsections.where(["id <> ? AND position >= ?", @subsection.id, @subsection.position]).update_all("position=position+1")
       @index = @subsection.id
@@ -26,6 +26,9 @@ class SubsectionsController < ApplicationController
   end
 
   def save
+    set_line_inputs(@section, params[:line_inputs]) if params[:line_inputs]
+    set_multiple_choice_inputs(@section, params[:multiple_choice_inputs]) if params[:multiple_choice_inputs]
+
     respond_to do |format|
       subsections(params[:subsections]) if params[:subsections]
       if @section.save
@@ -41,7 +44,7 @@ class SubsectionsController < ApplicationController
     render json: { status: :ok }
   end
 
-private
+  private
 
   def set_param_objects
     @course = Course.current
@@ -54,9 +57,9 @@ private
     subsection_hash.each do |subsection_id, new_subsection|
       my_subsection = @section.subsections.find(subsection_id)
       my_subsection.update_attributes(
-        title: new_subsection['title'],
-        text: new_subsection['text'],
-        position: new_subsection['position'])
+                                      title: new_subsection['title'],
+                                      text: new_subsection['text'],
+                                      position: new_subsection['position'])
     end
     @section.updated_at= Time.now
   end

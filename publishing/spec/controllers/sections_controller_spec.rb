@@ -126,4 +126,33 @@ RSpec.describe SectionsController, :type => :controller do
     end
   end
 
+  describe "setting inputs" do
+    it "should correctly set line inputs" do
+      @section = create(:section)
+      @input = create(:line_input, inputable: @section)
+      @answer = create(:answer, line_input: @input, value: "ok")
+      new_value = "I changed this!"
+      line_inputs_hash = {
+        "#{@input.id}"=> {
+          prefix: "new_pre",
+          suffix: "after_post",
+          width: 10,
+          answers: {
+            "#{@answer.id}"=>{
+              value: new_value
+            }
+          }
+        }
+      }
+      controller.send(:set_line_inputs, @section, line_inputs_hash)
+      @input.reload
+      expect(@input.prefix).to eq "new_pre"
+      expect(@input.suffix).to eq "after_post"
+      expect(@input.width).to eq 10
+      @answer.reload
+      expect(@answer.value).to eq new_value
+    end
+
+  end
+
 end
