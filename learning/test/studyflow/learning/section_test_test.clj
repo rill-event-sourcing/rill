@@ -53,6 +53,15 @@
                                        (events/created section-id student-id course-id)
                                        (events/question-assigned section-id student-id question-id)])))))
 
+    (testing "with a correct answer with extra whitespace"
+      (let [inputs {"_INPUT_1_" "    6    "
+                    "_INPUT_2_" "correct"}]
+        (is (command-result= [:ok [(events/question-answered-correctly section-id student-id question-id inputs)]]
+                             (execute (commands/check-answer! section-id student-id 1 course-id question-id inputs)
+                                      [fixture/course-published-event
+                                       (events/created section-id student-id course-id)
+                                       (events/question-assigned section-id student-id question-id)])))))
+
     (testing "with incomplete answers"
       (let [inputs {"_INPUT_1_" "7"}]
         (is (command-result= [:ok [(events/question-answered-incorrectly section-id student-id question-id inputs)]]

@@ -1,6 +1,7 @@
 (ns studyflow.learning.course
   (:require [rill.aggregate :refer [handle-event handle-command]]
             [rill.uuid :refer [new-id]]
+            [clojure.string :refer [trim]]
             [studyflow.learning.course.events :as events]
             [studyflow.learning.course.commands :as commands]))
 
@@ -35,7 +36,10 @@
   [input-fields input-values]
   (every? (fn [{:keys [name correct-answers]}]
             (when-let [value (get input-values name)]
-              (contains? correct-answers value)))
+              (contains? correct-answers
+                         (if (nil? value)
+                           value
+                           (trim value)))))
           input-fields))
 
 (defn multiple-choice-input-fields-answers-correct?
