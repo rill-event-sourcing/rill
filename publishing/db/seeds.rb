@@ -62,7 +62,7 @@ going_negativish = Subsection.create(title: 'Going negativish', text: 'This look
 
 ## Add some questions and answers for subsections
 
-grouping_question_1 = Question.create(text: "Grouping question 1 text _INPUT_1_ and of course _INPUT_2_", active: true, worked_out_answer: "Something something here", quizzable: grouping_by_10)
+grouping_question_1 = Question.create(text: "Grouping question 1 text _INPUT_1_ and of course _INPUT_2_", active: true, worked_out_answer: "", quizzable: grouping_by_10)
 grouping_question_1_line_input = LineInput.create(question: grouping_question_1, prefix: "pre", suffix: "suf")
 grouping_question_1_line_input_answer = Answer.create(value: "Grouping Question 1 Line input answer value", line_input: grouping_question_1_line_input)
 grouping_question_1_multiple_choice_input = MultipleChoiceInput.create(question: grouping_question_1)
