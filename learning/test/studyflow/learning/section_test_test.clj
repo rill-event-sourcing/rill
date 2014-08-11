@@ -235,9 +235,8 @@
                ::events/AnswerRevealed))
         (is (= (count events) 1))))
     (testing "cannot ask for answer after it has been revealed already"
-        (let [revealed-stream (conj first-question-stream
-                                    (events/answer-revealed section-id student-id question-id answers))]
-          (is (thrown? AssertionError
-                       (execute (commands/reveal-answer! section-id student-id 2 course-id question-id)
-                                revealed-stream)))))))
-
+      (let [revealed-stream (conj first-question-stream
+                                  (events/answer-revealed section-id student-id question-id answers))]
+        (is (thrown? AssertionError
+                     (execute (commands/reveal-answer! section-id student-id 2 course-id question-id)
+                              revealed-stream)))))))
