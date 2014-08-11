@@ -122,7 +122,6 @@
   (testing "the first streaks marks a section as finished, afterward you can continue practising and completing streaks"
     (let [inputs {"_INPUT_1_" "6"
                   "_INPUT_2_" "correct"}]
-      ;; the correct answer
       (testing "first five in a row correctly mark section as finished"
         (let [upto-fifth-q-stream
               (-> [fixture/course-published-event
@@ -220,7 +219,7 @@
              ::events/AnswerRevealed))
       (is (= (count events) 1)))
     (let [inputs {"_INPUT_1_" "6"
-                  "_INPUT_2_" "notcorrect"}
+                  "_INPUT_2_" "correct"}
           answered-stream (conj first-question-stream
                                 (events/question-answered-correctly section-id student-id question-id inputs))]
       (testing "can ask for answer for answered question"
