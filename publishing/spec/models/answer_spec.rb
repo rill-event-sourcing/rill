@@ -32,4 +32,9 @@ RSpec.describe Answer, type: :model do
     expect{Answer.find_by_uuid(uuid[0,8])}.to raise_error(StudyflowPublishing::ShortUuidDoubleError)
   end
 
+  it "should strip whitespaces from the value" do
+    answer = create(:answer, value: "    123    ")
+    expect(answer.value).to eq "123"
+  end
+
 end
