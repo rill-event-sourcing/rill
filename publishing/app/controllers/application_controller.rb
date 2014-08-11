@@ -18,6 +18,9 @@ class ApplicationController < ActionController::Base
   end
 
   def set_redirect_cookie
+  end
+
+  def really_set_redirect_cookie
     if StudyflowPublishing::Application.config.cookie_domain == "localhost"
       cookies["studyflow_redir_to"] = { value: request.original_url }
     else
