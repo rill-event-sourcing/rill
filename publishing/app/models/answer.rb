@@ -2,7 +2,7 @@ class Answer < ActiveRecord::Base
 
   belongs_to :line_input
 
-  before_validation :strip_whitespace
+  before_validation :strip_whitespace!
 
   scope :for_short_uuid, ->(id) { where(["SUBSTRING(CAST(id AS VARCHAR), 1, 8) = ?", id]) }
   def self.find_by_uuid(id, with_404 = true)
@@ -12,7 +12,7 @@ class Answer < ActiveRecord::Base
     answers.first
   end
 
-  def strip_whitespace
+  def strip_whitespace!
     self.value.strip!
   end
 
