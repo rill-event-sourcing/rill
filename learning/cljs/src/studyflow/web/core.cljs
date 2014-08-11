@@ -290,7 +290,7 @@
                              (when-let [suffix (:suffix li)]
                                (str " " suffix)))]))))))
 
-(defn modal [cursor section-id content primary-button & [secondary-button]]
+(defn modal [content primary-button & [secondary-button]]
   (dom/div #js {:id "m-modal"
                 :className "show"}
            (dom/div #js {:className "modal_inner"}
@@ -303,9 +303,13 @@
                                         :className (partial str "button green primary "))))))
 
 (defn focus-input-box [owner]
-  (when-let [input-field (om/get-node owner "FOCUSED_INPUT")]
-    (when (= "" (.-value input-field))
-      (.focus input-field))))
+  ;; we always call this, even when there's no element called
+  ;; "FOCUSED_INPUT". om/get-node can't handle that case
+  (when-let [refs (.-refs owner)]
+    (when-let [input-ref (aget refs "FOCUSED_INPUT")]
+      (when-let [input-field (.getDOMNode input-ref)]
+        (when (= "" (.-value input-field))
+          (.focus input-field))))))
 
 (defn tool-box
   [tools]
@@ -435,9 +439,7 @@
                  (let [progress-modal (get-in cursor [:view :progress-modal])]
                    (condp = progress-modal
                      :show-finish-modal
-                     (modal cursor
-                            section-id
-                            (dom/h1 nil "Klaar met de sectie!")
+                     (modal (dom/h1 nil "Klaar met de sectie!")
                             (dom/button #js {:onClick (fn [e]
                                                         (submit))}
                                         "Naar de volgende sectie")
@@ -455,9 +457,7 @@
                                                    false)}
                                    "Dooroefenen in de paragraaf"))
                      :show-streak-completed-modal
-                     (modal cursor
-                            section-id
-                            (dom/h1 nil "Je hebt deze sectie nogmaals voltooid")
+                     (modal (dom/h1 nil "Je hebt deze sectie nogmaals voltooid")
                             (dom/button #js {:onClick (fn [e]
                                                         (submit))}
                                         "Naar de volgende sectie"))
@@ -671,13 +671,11 @@
     (render [_]
       (dom/div nil
                (when (get-in cursor [:aggregates :failed])
-                 (dom/div #js {:id "m-modal"
-                               :className "show"}
-                          (dom/div #js {:className "modal_inner"}
-                                   (dom/h1 nil "Je bent niet meer up-to-date met de server. Herlaad de pagina.")
-                                   (dom/button #js {:onClick (fn [e]
-                                                               (.reload js/location true))}
-                                               "Herlaad de pagina"))))
+                   (modal
+                    (dom/h1 nil "Je bent niet meer up-to-date met de server. Herlaad de pagina.")
+                    (dom/button #js {:onClick (fn [e]
+                                                (.reload js/location true))}
+                                "Herlaad de pagina")))
                (if (get-in cursor [:view :selected-path :dashboard])
                  (om/build dashboard cursor)
                  (dom/div nil
