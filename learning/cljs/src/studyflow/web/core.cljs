@@ -154,58 +154,70 @@
     (reify
       om/IRender
       (render [_]
-        (println [:render-field field section])
-        (dom/span nil
-                  (dom/input
-                   #js {:react-key (:name field)
-                        :ref (:name field)
-                        :value (get-in cursor [:view :section section-id :input field-name :given-answer])
-                        :disabled (get-in cursor [:view :section section-id :input field-name :input-disabled])
-                        :onFocus (fn [event]
-                                   (om/update!
-                                    cursor
-                                    [:view :section section-id :input field-name :input-state]
-                                    :answering))
-                        :onChange (fn [event]
-                                    (om/update!
-                                     cursor
-                                     [:view :section section-id :input field-name :given-answer]
-                                     (.. event -target -value))
-                                    )})
-
-                  (let [input-state (get-in cursor [:view :section section-id :input field-name :input-state])
-                        given-answer (get-in cursor [:view :section section-id :input field-name :given-answer])]
-                    (case input-state
-                      :answering (dom/input
-                                  #js {:type "submit"
-                                       :value "Nakijken"
-                                       :onClick (fn [event]
-                                                  (om/update!
-                                                   cursor
-                                                   [:view :section section-id :input field-name :input-state]
-                                                   :answered))})
-                      :revealed (dom/div nil (first correct-answers))
-                      :answered (if (contains? (set correct-answers) given-answer)
-                                  (do  (om/update!
-                                        cursor
-                                        [:view :section section-id :input field-name :input-disabled]
-                                        true)
-                                       (dom/div nil "✓"))
-                                  (dom/div nil "✗"
-                                           (dom/input
-                                            #js {:type "submit"
-                                                 :value "Toon antwoord"
-                                                 :onClick (fn [event]
-                                                            (om/update!
-                                                             cursor
-                                                             [:view :section section-id :input field-name :input-disabled]
-                                                             true)
-                                                            (om/update!
-                                                             cursor
-                                                             [:view :section section-id :input field-name :input-state]
-                                                             :revealed))})))
-                      nil)
-                    ))))))
+        (let [submit (fn []
+                       (when-let [f (om/get-state owner :submit)]
+                         (f)))
+              input-focused (= field-name (get-in cursor [:view :section section-id :input-focused]))
+              answered-correctly (get-in cursor [:view :section section-id :input field-name :answered-correctly])
+              answer-revealed (get-in cursor [:view :section section-id :input field-name :answer-revealed])]
+          (dom/span nil
+                    (dom/form #js {:className "inline-input-form"
+                                   :onSubmit (fn [e]
+                                               (submit))}
+                              (dom/input
+                               #js {:react-key (:name field)
+                                    :ref (:name field)
+                                    :value (get-in cursor [:view :section section-id :input field-name :given-answer])
+                                    :disabled (get-in cursor [:view :section section-id :input field-name :input-disabled])
+                                    :onFocus (fn [event]
+                                               (om/update!
+                                                cursor
+                                                [:view :section section-id :input-focused]
+                                                field-name))
+                                    :onChange (fn [event]
+                                                (om/update!
+                                                 cursor
+                                                 [:view :section section-id :input field-name :given-answer]
+                                                 (.. event -target -value)))})
+                              (when (and answer-revealed
+                                         (not answered-correctly))
+                                (dom/span nil (first correct-answers)))
+                              (when (and input-focused
+                                         (not answered-correctly))
+                                (om/set-state-nr! owner :submit
+                                                  (fn []
+                                                    (om/update!
+                                                     cursor
+                                                     [:view :section section-id :input field-name :answered-correctly]
+                                                     (contains?
+                                                      (set @correct-answers)
+                                                      (get-in @cursor [:view :section section-id :input field-name :given-answer]))
+                                                     :answered)))
+                                (dom/input
+                                 #js {:type "submit"
+                                      :value "Nakijken"
+                                      :onClick (fn [event]
+                                                 (submit))}))
+                              (if answered-correctly
+                                (do
+                                  (om/set-state-nr! owner :submit (fn []))
+                                  (om/update!
+                                   cursor
+                                   [:view :section section-id :input field-name :input-disabled]
+                                   true)
+                                  (dom/span nil "✓"))
+                                (when (false? answered-correctly)
+                                  (dom/span nil "✗")))
+                              (when (and (not answer-revealed)
+                                         (false? answered-correctly))
+                                (dom/span nil
+                                          (dom/button
+                                           #js {:onClick (fn [event]
+                                                           (om/update!
+                                                            cursor
+                                                            [:view :section section-id :input field-name :answer-revealed]
+                                                            true))}
+                                           "Toon antwoord"))))))))))
 
 (defn input-builders-subsection
   "mapping from input-name to create react dom element for input type"
@@ -229,13 +241,18 @@
                                    (dom/li nil title))))
                (map (fn [{:keys [title text id] :as subsection}]
                       (dom/section #js {:className "m-subsection"}
-
                                    (apply dom/div nil
                                           (for [text-or-input (split-text-and-inputs text
                                                                                      (keys inputs))]
-                                            (if-let [input (get inputs text-or-input)]
-                                              input
-                                              (dom/span #js {:dangerouslySetInnerHTML #js {:__html text-or-input}} nil))))
+                                            ;; this wrapper div is
+                                            ;; required, otherwise the
+                                            ;; dangerouslySetInnerHTML
+                                            ;; breaks when mixing html
+                                            ;; in text and inputs
+                                            (dom/div #js {:className "dangerous-html-wrap"}
+                                                     (if-let [input (get inputs text-or-input)]
+                                                       input
+                                                       (dom/span #js {:dangerouslySetInnerHTML #js {:__html text-or-input}} nil)))))
 
 
                                    ))
