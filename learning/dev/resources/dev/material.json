@@ -64,7 +64,7 @@
                   "name": "_INPUT_2_",
                   "choices": [
                     {
-                      "value": "oasdkay",
+                      "value": "123",
                       "correct": false
                     },
                     {
@@ -72,7 +72,7 @@
                       "correct": false
                     },
                     {
-                      "value": "notcorrect",
+                      "value": "correct",
                       "correct": true
                     }
                   ]

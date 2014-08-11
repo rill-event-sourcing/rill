@@ -46,7 +46,7 @@
   (testing "answering questions"
     (testing "with a correct answer"
       (let [inputs {"_INPUT_1_" "6"
-                    "_INPUT_2_" "notcorrect"}] ;; UGH! somebody put that in as the only correct answer... :-(
+                    "_INPUT_2_" "correct"}]
         (is (command-result= [:ok [(events/question-answered-correctly section-id student-id question-id inputs)]]
                              (execute (commands/check-answer! section-id student-id 1 course-id question-id inputs)
                                       [fixture/course-published-event
@@ -70,7 +70,7 @@
 
     (testing "with an incorrect answer"
       (let [inputs {"_INPUT_1_" "7"
-                    "_INPUT_2_" "notcorrect"}]
+                    "_INPUT_2_" "correct"}]
         (is (command-result= [:ok [(events/question-answered-incorrectly section-id student-id question-id inputs)]]
                              (execute (commands/check-answer! section-id student-id 1 course-id question-id inputs)
                                       [fixture/course-published-event
@@ -79,7 +79,7 @@
 
 
       (let [inputs {"_INPUT_1_" "8"
-                    "_INPUT_2_" "oasdkay"}]
+                    "_INPUT_2_" "123"}]
         (is (command-result= [:ok [(events/question-answered-incorrectly section-id student-id question-id inputs)]]
                              (execute (commands/check-answer! section-id student-id 1 course-id question-id inputs)
                                       [fixture/course-published-event
@@ -89,7 +89,7 @@
     (testing "next question"
       (testing "with a correct answer"
         (let [inputs {"_INPUT_1_" "6"
-                      "_INPUT_2_" "notcorrect"}]
+                      "_INPUT_2_" "correct"}]
           (let [[status [event]] (execute (commands/next-question! section-id student-id 2 course-id)
                                           [fixture/course-published-event
                                            (events/created section-id student-id course-id)
@@ -112,7 +112,7 @@
 (deftest test-continue-practice
   (testing "the first streaks marks a section as finished, afterward you can continue practising and completing streaks"
     (let [inputs {"_INPUT_1_" "6"
-                  "_INPUT_2_" "notcorrect"}] ;; notcorrect is actually
+                  "_INPUT_2_" "correct"}]
       ;; the correct answer
       (testing "first five in a row correctly mark section as finished"
         (let [upto-fifth-q-stream
