@@ -11,7 +11,7 @@
   (start [component]
     (info "Starting fixtures-loading-component")
     (let [handler (:handler ring-handler)
-          materials (slurp (io/resource "dev/20140809-staging-material.json"))
+          materials (slurp (io/resource "dev/20140811-dev-material.json"))
           course-id (let [[_ rest] (.split ^String materials ":")
                           [quoted-id] (.split ^String rest ",")
                           [_ id] (.split ^String quoted-id "\"")]
