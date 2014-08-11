@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140806114834) do
+ActiveRecord::Schema.define(version: 20140811122906) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -53,14 +53,15 @@ ActiveRecord::Schema.define(version: 20140806114834) do
   end
 
   create_table "inputs", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
-    t.uuid     "question_id"
+    t.uuid     "inputable_id"
     t.string   "type"
-    t.integer  "position",    limit: 2
-    t.string   "prefix",                default: ""
-    t.string   "suffix",                default: ""
-    t.integer  "width",                 default: 150
+    t.integer  "position",       limit: 2
+    t.string   "prefix",                   default: ""
+    t.string   "suffix",                   default: ""
+    t.integer  "width",                    default: 150
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "inputable_type"
   end
 
   create_table "questions", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
@@ -82,10 +83,11 @@ ActiveRecord::Schema.define(version: 20140806114834) do
     t.string   "title"
     t.text     "description"
     t.datetime "deleted_at"
-    t.boolean  "active",      default: false
+    t.boolean  "active",                default: false
     t.integer  "position"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "max_inputs",  limit: 2
   end
 
   create_table "subsections", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
