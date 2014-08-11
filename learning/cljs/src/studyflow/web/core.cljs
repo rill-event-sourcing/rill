@@ -303,9 +303,13 @@
                                         :className (partial str "button green primary "))))))
 
 (defn focus-input-box [owner]
-  (when-let [input-field (om/get-node owner "FOCUSED_INPUT")]
-    (when (= "" (.-value input-field))
-      (.focus input-field))))
+  ;; we always call this, even when there's no element called
+  ;; "FOCUSED_INPUT". om/get-node can't handle that case
+  (when-let [refs (.-refs owner)]
+    (when-let [input-ref (aget refs "FOCUSED_INPUT")]
+      (when-let [input-field (.getDOMNode input-ref)]
+        (when (= "" (.-value input-field))
+          (.focus input-field))))))
 
 (defn tool-box
   [tools]
