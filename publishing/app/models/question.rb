@@ -42,14 +42,15 @@ class Question < ActiveRecord::Base
   end
 
   def to_publishing_format
-    {
+    hash = {
       id: id,
       text: render_latex(text),
       tools: tools.keys,
-      worked_out_answer: render_latex(worked_out_answer),
       line_input_fields: line_inputs.map(&:to_publishing_format),
       multiple_choice_input_fields: multiple_choice_inputs.map(&:to_publishing_format)
     }
+    hash["worked_out_answer"] = render_latex(worked_out_answer) unless worked_out_answer.blank?
+    hash
   end
 
   def inputs_referenced_exactly_once?

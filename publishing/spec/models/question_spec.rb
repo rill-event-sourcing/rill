@@ -29,6 +29,14 @@ RSpec.describe Question, :type => :model do
     expect(@question.to_s).to eq @question.text
   end
 
+  it "should not export a worked out answer when it is empty" do
+    question = create(:question, worked_out_answer: "")
+    expect(question.to_publishing_format).not_to include "worked_out_answer"
+    question = create(:question, worked_out_answer: "non empty")
+    expect(question.to_publishing_format).to include "worked_out_answer"
+  end
+
+
   it "should throw an ActiveRecord::RecordNotFound when not found by an abbreviated uuid" do
     expect{Question.find_by_uuid('1a31a31a')}.to raise_error(ActiveRecord::RecordNotFound)
   end
