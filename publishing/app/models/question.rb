@@ -6,9 +6,9 @@ class Question < ActiveRecord::Base
 
   belongs_to :quizzable, polymorphic: true, touch: true
 
-  has_many :inputs, dependent: :destroy
-  has_many :line_inputs
-  has_many :multiple_choice_inputs
+  has_many :inputs, as: :inputable
+  has_many :line_inputs, as: :inputable
+  has_many :multiple_choice_inputs, as: :inputable
 
   default_scope { order(:name, :text) }
 
@@ -26,6 +26,10 @@ class Question < ActiveRecord::Base
 
   def to_s
     text.blank? ? "blank" : text
+  end
+
+  def parent
+    quizzable
   end
 
   def to_param
@@ -64,9 +68,9 @@ class Question < ActiveRecord::Base
 
   def errors_when_publishing
     errors = []
-    errors << "No Inputs on question '#{name}', in '#{quizzable}'" if inputs.count == 0
-    errors << "Error in input referencing in question '#{name}', in '#{quizzable}'" unless inputs_referenced_exactly_once?
-    errors << "Nonexisting inputs referenced in question '#{name}', in '#{quizzable}'" if nonexisting_inputs_referenced?
+    errors << "No Inputs on question '#{name}', in '#{parent}'" if inputs.count == 0
+    errors << "Error in input referencing in question '#{name}', in '#{parent}'" unless inputs_referenced_exactly_once?
+    errors << "Nonexisting inputs referenced in question '#{name}', in '#{parent}'" if nonexisting_inputs_referenced?
     errors << inputs.map(&:errors_when_publishing)
     errors.flatten
   end

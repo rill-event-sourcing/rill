@@ -103,7 +103,7 @@ RSpec.describe QuestionsController, :type => :controller do
   describe "setting inputs" do
     it "should correctly set line inputs" do
       @question = create(:question)
-      @input = create(:line_input, question: @question)
+      @input = create(:line_input, inputable: @question)
       @answer = create(:answer, line_input: @input, value: "ok")
       new_value = "I changed this!"
       line_inputs_hash = {
@@ -129,7 +129,7 @@ RSpec.describe QuestionsController, :type => :controller do
 
     it "should correctly set multiple choice inputs" do
       @question = create(:question)
-      @input = create(:multiple_choice_input, question: @question)
+      @input = create(:multiple_choice_input, inputable: @question)
       @choice = create(:choice, multiple_choice_input: @input, value: "ok")
       new_value = "I changed this!"
       multiple_choice_input_hash = {

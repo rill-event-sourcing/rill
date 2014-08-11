@@ -14,7 +14,11 @@
           %span.input-group-addon.copy-button{"data-clipboard-target" => "input-title-#{input.id}"}
             %span.glyphicon.glyphicon-share
       %div.col-md-4
-        %span.pull-right.btn.btn-default.glyphicon.glyphicon-minus.delete-input{data: {item: "input-#{ input.id }", url: input_path(input, question_id: @question.to_param) } }
+        - if @question
+          %span.pull-right.btn.btn-default.glyphicon.glyphicon-minus.delete-input{data: {item: "input-#{ input.id }", url: input_path(input, question_id: @question.to_param) } }
+        - else
+          %span.pull-right.btn.btn-default.glyphicon.glyphicon-minus.delete-input{data: {item: "input-#{ input.id }", url: input_path(input, section_id: @section.to_param) } }
+
   %div.panel-body
     - if input.line_input?
       = render partial: 'inputs/line_input', locals: {input: input}

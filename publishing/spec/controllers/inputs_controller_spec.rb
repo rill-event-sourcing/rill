@@ -3,9 +3,9 @@ require 'rails_helper'
 RSpec.describe InputsController, :type => :controller do
 
   def set_inputs
-    @input1 = create(:line_input, question: @question1)
-    @input2 = create(:line_input, question: @question1)
-    @input3 = create(:multiple_choice_input, question: @question1)
+    @input1 = create(:line_input, inputable: @question1)
+    @input2 = create(:line_input, inputable: @question1)
+    @input3 = create(:multiple_choice_input, inputable: @question1)
   end
 
   before do

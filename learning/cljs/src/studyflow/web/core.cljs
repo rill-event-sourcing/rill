@@ -146,11 +146,93 @@
                          :disabled (not (om/get-state owner :enabled))}
                     value)))))
 
+(defn section-input-field
+  [cursor owner {:keys [field section]}]
+  (let [field-name (:name field)
+        correct-answers (:correct-answers field)
+        section-id (:id section)]
+    (reify
+      om/IRender
+      (render [_]
+        (let [submit (fn []
+                       (when-let [f (om/get-state owner :submit)]
+                         (f)))
+              input-focused (= field-name (get-in cursor [:view :section section-id :input-focused]))
+              answered-correctly (get-in cursor [:view :section section-id :input field-name :answered-correctly])
+              answer-revealed (get-in cursor [:view :section section-id :input field-name :answer-revealed])]
+          (dom/span nil
+                    (dom/form #js {:className "inline-input-form"
+                                   :onSubmit (fn [e]
+                                               (submit))}
+                              (dom/input
+                               #js {:react-key (:name field)
+                                    :ref (:name field)
+                                    :value (get-in cursor [:view :section section-id :input field-name :given-answer])
+                                    :disabled (get-in cursor [:view :section section-id :input field-name :input-disabled])
+                                    :onFocus (fn [event]
+                                               (om/update!
+                                                cursor
+                                                [:view :section section-id :input-focused]
+                                                field-name))
+                                    :onChange (fn [event]
+                                                (om/update!
+                                                 cursor
+                                                 [:view :section section-id :input field-name :given-answer]
+                                                 (.. event -target -value)))})
+                              (when (and answer-revealed
+                                         (not answered-correctly))
+                                (dom/span nil (first correct-answers)))
+                              (when (and input-focused
+                                         (not answered-correctly))
+                                (om/set-state-nr! owner :submit
+                                                  (fn []
+                                                    (om/update!
+                                                     cursor
+                                                     [:view :section section-id :input field-name :answered-correctly]
+                                                     (contains?
+                                                      (set @correct-answers)
+                                                      (get-in @cursor [:view :section section-id :input field-name :given-answer]))
+                                                     :answered)))
+                                (dom/input
+                                 #js {:type "submit"
+                                      :value "Nakijken"
+                                      :onClick (fn [event]
+                                                 (submit))}))
+                              (if answered-correctly
+                                (do
+                                  (om/set-state-nr! owner :submit (fn []))
+                                  (om/update!
+                                   cursor
+                                   [:view :section section-id :input field-name :input-disabled]
+                                   true)
+                                  (dom/span nil "✓"))
+                                (when (false? answered-correctly)
+                                  (dom/span nil "✗")))
+                              (when (and (not answer-revealed)
+                                         (false? answered-correctly))
+                                (dom/span nil
+                                          (dom/button
+                                           #js {:onClick (fn [event]
+                                                           (om/update!
+                                                            cursor
+                                                            [:view :section section-id :input field-name :answer-revealed]
+                                                            true))}
+                                           "Toon antwoord"))))))))))
+
+(defn input-builders-subsection
+  "mapping from input-name to create react dom element for input type"
+  [cursor section]
+  (-> {}
+      (into (for [li (:line-input-fields section)]
+              [(:name li) (om/build section-input-field cursor {:opts {:field li :section section}})]))))
+
 (defn section-explanation [section owner]
   (reify
     om/IRender
     (render [_]
-      (let [subsections (get section :subsections)]
+      (let [subsections (get section :subsections)
+            inputs (input-builders-subsection section section)]
+        (println [:inputs! inputs])
         (apply dom/article #js {:id "m-section"}
                #_(dom/nav #js {:id "m-minimap"}
                           (apply dom/ul nil
@@ -159,7 +241,22 @@
                                    (dom/li nil title))))
                (map (fn [{:keys [title text id] :as subsection}]
                       (dom/section #js {:className "m-subsection"}
-                                   (dom/span #js {:dangerouslySetInnerHTML #js {:__html text}})))
+                                   (apply dom/div nil
+                                          (for [text-or-input (split-text-and-inputs text
+                                                                                     (keys inputs))]
+                                            ;; this wrapper div is
+                                            ;; required, otherwise the
+                                            ;; dangerouslySetInnerHTML
+                                            ;; breaks when mixing html
+                                            ;; in text and inputs
+                                            (dom/div #js {:className "dangerous-html-wrap"}
+                                                     (if-let [input (get inputs text-or-input)]
+                                                       input
+                                                       (dom/span #js {:dangerouslySetInnerHTML #js {:__html text-or-input}} nil)))))
+
+
+                                   ))
+
                     subsections))))))
 
 (defn section-explanation-panel [cursor owner]
@@ -604,6 +701,7 @@
                                                      "in-progress" "in_progress"} status ""))}
                           title)))))
 
+
 (defn chapter-navigation [cursor selected-chapter-id course chapter]
   (let [selected? (= selected-chapter-id (:id chapter))]
     (dom/li nil
@@ -653,6 +751,8 @@
                                             :value "DELETE"})
                             (dom/button #js {:type "submit"}
                                         "Uitloggen"))))))
+
+
 
 (defn dashboard [cursor owner]
   (reify

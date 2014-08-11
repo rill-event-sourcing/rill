@@ -2,7 +2,7 @@
 
 FactoryGirl.define do
   factory :multiple_choice_input do
-    question
+    inputable {|a| a.association(:question)}
     sequence(:position) { |n| n }
   end
 end

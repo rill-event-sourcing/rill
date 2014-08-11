@@ -33,7 +33,7 @@
             {
               "id": "33624b2a-4ee9-46b7-a237-056b43c2e45b",
               "title": "Summing up in big groups",
-              "text": "Keep adding!"
+              "text": "Keep Adding! _INPUT_1_"
             },
             {
               "id": "336a676a-9c69-4a1e-b1a6-5341dcbf45fe",
@@ -45,7 +45,9 @@
             {
               "id": "3e09e382-266c-4b16-9020-c5a071c2e2a4",
               "text": "And now, for something completely different _INPUT_2_ and _INPUT_1_",
-              "tools": ["pen_and_paper"],
+              "tools": [
+                  "pen_and_paper"
+              ],
               "worked_out_answer": "This is supposed to explain",
               "line_input_fields": [
                 {
@@ -83,6 +85,7 @@
               "id": "fe9d41b5-4aa8-4dff-8e65-44fae2459c3f",
               "text": "Grouping question 1 text _INPUT_1_ and of course _INPUT_2_",
               "tools": ["pen_and_paper"],
+              "worked_out_answer": "Something something here",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -112,6 +115,17 @@
                     }
                   ]
                 }
+              ]
+            }
+          ],
+          "line_input_fields": [
+            {
+              "name": "_INPUT_1_",
+              "prefix": "666",
+              "suffix": "euros",
+              "width": 150,
+              "correct_answers": [
+                "123"
               ]
             }
           ]
@@ -152,6 +166,9 @@
             }
           ],
           "questions": [
+
+          ],
+          "line_input_fields": [
 
           ]
         }

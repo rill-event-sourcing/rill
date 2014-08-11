@@ -7,6 +7,9 @@ class Section < ActiveRecord::Base
   has_many :subsections, -> { order(:position) }
   has_many :questions, as: :quizzable
 
+  has_many :inputs, as: :inputable
+  has_many :line_inputs, as: :inputable
+
   validates :chapter, presence: true
   validates :title, presence: true
 
@@ -26,10 +29,12 @@ class Section < ActiveRecord::Base
     "#{title}"
   end
 
-  def errors_when_publishing
-    errors = []
-    errors << questions.active.map(&:errors_when_publishing)
-    errors.flatten
+  def name
+    title
+  end
+
+  def parent
+    chapter
   end
 
   def to_publishing_format
@@ -37,7 +42,8 @@ class Section < ActiveRecord::Base
       id: id,
       title: title,
       subsections: subsections.map(&:to_publishing_format),
-      questions: questions.active.map(&:to_publishing_format)
+      questions: questions.active.map(&:to_publishing_format),
+      line_input_fields: line_inputs.map(&:to_publishing_format)
     }
   end
 
@@ -53,5 +59,30 @@ class Section < ActiveRecord::Base
   def to_param
     "#{id[0,8]}"
   end
+
+  def increase_max_position
+    max_inputs if increment!(:max_inputs)
+  end
+
+  def inputs_referenced_exactly_once?
+    full_text = subsections.map(&:text).join
+    inputs.find_all{|input| full_text.scan(input.name).length != 1}.empty?
+  end
+
+  def nonexisting_inputs_referenced?
+    input_names = inputs.map(&:name)
+    full_text = subsections.map(&:text).join
+    full_text.scan(/_INPUT_.*?_/).find_all{|match| !input_names.include? match}.any?
+  end
+
+  def errors_when_publishing
+    errors = []
+    errors << "Error in input referencing in section '#{name}', in '#{parent}'" unless inputs_referenced_exactly_once?
+    errors << "Nonexisting inputs referenced in section '#{name}', in '#{parent}'" if nonexisting_inputs_referenced?
+    errors << inputs.map(&:errors_when_publishing)
+    errors << questions.active.map(&:errors_when_publishing)
+    errors.flatten
+  end
+
 
 end
