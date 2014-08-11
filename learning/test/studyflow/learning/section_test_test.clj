@@ -46,7 +46,16 @@
   (testing "answering questions"
     (testing "with a correct answer"
       (let [inputs {"_INPUT_1_" "6"
-                    "_INPUT_2_" "notcorrect"}] ;; UGH! somebody put that in as the only correct answer... :-(
+                    "_INPUT_2_" "correct"}]
+        (is (command-result= [:ok [(events/question-answered-correctly section-id student-id question-id inputs)]]
+                             (execute (commands/check-answer! section-id student-id 1 course-id question-id inputs)
+                                      [fixture/course-published-event
+                                       (events/created section-id student-id course-id)
+                                       (events/question-assigned section-id student-id question-id)])))))
+
+    (testing "with a correct answer with extra whitespace"
+      (let [inputs {"_INPUT_1_" "    6    "
+                    "_INPUT_2_" "correct"}]
         (is (command-result= [:ok [(events/question-answered-correctly section-id student-id question-id inputs)]]
                              (execute (commands/check-answer! section-id student-id 1 course-id question-id inputs)
                                       [fixture/course-published-event
@@ -70,7 +79,7 @@
 
     (testing "with an incorrect answer"
       (let [inputs {"_INPUT_1_" "7"
-                    "_INPUT_2_" "notcorrect"}]
+                    "_INPUT_2_" "correct"}]
         (is (command-result= [:ok [(events/question-answered-incorrectly section-id student-id question-id inputs)]]
                              (execute (commands/check-answer! section-id student-id 1 course-id question-id inputs)
                                       [fixture/course-published-event
@@ -79,7 +88,7 @@
 
 
       (let [inputs {"_INPUT_1_" "8"
-                    "_INPUT_2_" "oasdkay"}]
+                    "_INPUT_2_" "123"}]
         (is (command-result= [:ok [(events/question-answered-incorrectly section-id student-id question-id inputs)]]
                              (execute (commands/check-answer! section-id student-id 1 course-id question-id inputs)
                                       [fixture/course-published-event
@@ -89,7 +98,7 @@
     (testing "next question"
       (testing "with a correct answer"
         (let [inputs {"_INPUT_1_" "6"
-                      "_INPUT_2_" "notcorrect"}]
+                      "_INPUT_2_" "correct"}]
           (let [[status [event]] (execute (commands/next-question! section-id student-id 2 course-id)
                                           [fixture/course-published-event
                                            (events/created section-id student-id course-id)
@@ -112,8 +121,7 @@
 (deftest test-continue-practice
   (testing "the first streaks marks a section as finished, afterward you can continue practising and completing streaks"
     (let [inputs {"_INPUT_1_" "6"
-                  "_INPUT_2_" "notcorrect"}] ;; notcorrect is actually
-      ;; the correct answer
+                  "_INPUT_2_" "correct"}]
       (testing "first five in a row correctly mark section as finished"
         (let [upto-fifth-q-stream
               (-> [fixture/course-published-event
@@ -211,7 +219,7 @@
              ::events/AnswerRevealed))
       (is (= (count events) 1)))
     (let [inputs {"_INPUT_1_" "6"
-                  "_INPUT_2_" "notcorrect"}
+                  "_INPUT_2_" "correct"}
           answered-stream (conj first-question-stream
                                 (events/question-answered-correctly section-id student-id question-id inputs))]
       (testing "can ask for answer for answered question"
@@ -235,9 +243,8 @@
                ::events/AnswerRevealed))
         (is (= (count events) 1))))
     (testing "cannot ask for answer after it has been revealed already"
-        (let [revealed-stream (conj first-question-stream
-                                    (events/answer-revealed section-id student-id question-id answers))]
-          (is (thrown? AssertionError
-                       (execute (commands/reveal-answer! section-id student-id 2 course-id question-id)
-                                revealed-stream)))))))
-
+      (let [revealed-stream (conj first-question-stream
+                                  (events/answer-revealed section-id student-id question-id answers))]
+        (is (thrown? AssertionError
+                     (execute (commands/reveal-answer! section-id student-id 2 course-id question-id)
+                              revealed-stream)))))))
