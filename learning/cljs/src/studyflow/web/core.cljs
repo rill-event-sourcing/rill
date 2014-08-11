@@ -439,8 +439,9 @@
                  (let [progress-modal (get-in cursor [:view :progress-modal])]
                    (condp = progress-modal
                      :show-finish-modal
-                     (modal (dom/h1 nil "Wohoo!")
-                            (dom/p nil "Je bent klaar met deze paragraaf.")
+                     (modal (dom/span nil
+                                      (dom/h1 nil "Wohoo!")
+                                      (dom/p nil "Je bent klaar met deze paragraaf."))
                             (dom/button #js {:onClick (fn [e]
                                                         (submit))}
                                         "Volgende paragraaf")
