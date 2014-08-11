@@ -41,15 +41,15 @@
 (defn render-login [email password msg]
   (form/form-to
    {:role "form" :class "form-signin" } [:post "/"]
-   (form/hidden-field "__anti-forgery-token" *anti-forgery-token*)
+   ;;(form/hidden-field "__anti-forgery-token" *anti-forgery-token*)
    [:h2.form-signin-heading msg]
-   (form/email-field {:class "form-control" :placeholder "Email address"} "email" email) ;; required autofocus
-   (form/password-field {:class "form-control" :placeholder "Password"} "password" password) ;; required
-   [:button.btn.btn-lg.btn-primary.btn-block {:type "submit"} "Sign in"]))
+   (form/email-field {:class "form-control" :placeholder "Email address"} "email" email)
+   (form/password-field {:class "form-control" :placeholder "Password"} "password" password)
+   [:button.btn.btn-lg.btn-primary.btn-block {:type "submit"} "Log in"]))
 
 (defn please-wait
   [refresh-count]
-  [:h1 "Please wait..." (str refresh-count)])
+  [:h1 "Even geduld..." (str refresh-count)])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Controller
@@ -63,7 +63,7 @@
 
 (defn please-wait-response
   [session refresh-count]
-  (-> (layout "Studyflow Beta" (please-wait refresh-count))
+  (-> (layout "Studyflow" (please-wait refresh-count))
       (assoc :session (assoc session :refresh-count  (inc refresh-count)))
       (refresh "/students/sign_in_wait" (* 2 refresh-count))))
 
@@ -72,12 +72,12 @@
   (GET "/" {:keys [user-role params]}
        (if user-role
          {:redirect-for-role user-role}
-         (layout "Studyflow Beta" (render-login (:email params) (:password params) "Please sign in"))))
+         (layout "Studyflow" (render-login (:email params) (:password params) "Log in"))))
 
   (POST "/" {authenticate :authenticate-by-email-and-password {:keys [email password]} :params}
         (if-let [user (authenticate email password)]
           (assoc (redirect-to "/") :login-user user)
-          (layout "Studyflow Beta" (render-login email password "Wrong email / password combination"))))
+          (layout "Studyflow" (render-login email password "Inloggen mislukt"))))
 
   (GET "/students/sign_in"
        {{:keys [edurouteSessieID signature EAN] :as params} :params
@@ -99,7 +99,7 @@
                  ;; redirects to sign_in_wait
                  (please-wait-response (assoc session :edu-route-info edu-route-info) 1)))
            ;; something went wrong while validating the eduroute session.
-           (-> (layout "Eduroute auth failed" "Eduroute auth failed")
+           (-> (layout "Eduroute authenticatie mislukt" "Eduroute authenticatie mislukt")
                (assoc :status 400)))
          (redirect-to "/")))
 
@@ -111,11 +111,11 @@
          (assoc (redirect-to "/") :login-user user)
          (if (< refresh-count 10)
            (please-wait-response session refresh-count)
-           (layout "Studyflow Beta" [:p "Helaas, het is erg druk."]))))
+           (layout "Studyflow" [:p "Helaas, het is op dit moment erg druk. Probeer het later nog eens."]))))
 
   (DELETE "/" {}
           (assoc (redirect-to "/") :logout-user true))
-  (not-found "Nothing here")
+  (not-found "De pagina kan niet gevonden worden")
   ;;(not-found {:status 404})
   )
 
