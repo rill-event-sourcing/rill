@@ -54,5 +54,7 @@ Rails.application.routes.draw do
     resources :choices
   end
 
+  match '/health-check', to: 'home#health_check', via: :get
+
   root to: 'home#index'
 end

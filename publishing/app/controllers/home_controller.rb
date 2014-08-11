@@ -3,6 +3,15 @@ class HomeController < ApplicationController
   before_action :set_redirect_cookie, only: [:index]
   before_action :set_breadcrumb
 
+  def health_check
+    # test being up and sane
+    if Course.first # getting a Course from the database is an indication
+      render json: { status: 'up' }
+    else
+      return head :service_unavailable
+    end
+  end
+
   def index
   end
 

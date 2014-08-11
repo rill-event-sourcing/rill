@@ -1,6 +1,7 @@
 # Studyflow S3 deployment
 set :deploy_to, "/home/studyflow/app"
 set :s3path, "s3://studyflow-server-images"
+set :max_load_time, 120
 
 #########################################################################################################
 
@@ -132,11 +133,19 @@ namespace :deploy do
       execute :touch, current_path.join("tmp", "restart.txt")
 
       info "wait for application to be ready"
-      api_status = nil
-      until api_status
-        api_status = capture("echo `netstat -tln | grep 80`")
-        info "sleeping until app is up" # TODO improve check
+      load_time = 0
+      status_up = false
+      until status_up || load_time > fetch(:max_load_time)
+        response = capture "curl -s --connect-timeout 1 'http://localhost/blubhealth-check'"
+        status_up =(response =~ /{"status":"up"}/)
+        info "sleeping until app is up (#{ load_time } seconden)"
         sleep 5
+        load_time += 5
+      end
+      if load_time > fetch(:max_load_time)
+        throw "#{ host } wont go up!"
+      else
+        info "#{ host } is up"
       end
     end
   end
