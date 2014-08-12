@@ -14,11 +14,16 @@
           data)
         pattern)))
 
+(defn caught-up
+  [r]
+  (assoc r :credentials {:caught-up true}))
+
 (deftest actions-test
   (testing "get /"
 
     (testing "not logged in"
-      (let [resp (actions (request :get "/"))]
+      (let [resp (actions (-> (request :get "/")
+                              caught-up))]
         (is (= 200 (:status resp)) "status should be OK")
         (let [form (query-html (:body resp) [:form.form-signin])]
           (is form)
@@ -28,15 +33,18 @@
           (is (query-html form [[(enlive/attr= :type "submit")]])))))
 
     (testing "logged in"
-      (let [resp (actions (assoc (request :get "/")
-                            :user-role "test"
-                            :cookies {}))]
+      (let [resp (actions (-> (request :get "/")
+                              (assoc :user-role "test"
+                                     :cookies {})
+                              caught-up))]
         (is (= "test" (:redirect-for-role resp))))))
 
   (testing "post /"
 
     (testing "without params"
-      (let [resp (actions (assoc ( request :post "/") :authenticate-by-email-and-password (fn [x y] nil )))]
+      (let [resp (actions (-> (assoc (request :post "/")
+                                :authenticate-by-email-and-password (fn [x y] nil ))
+                              caught-up))]
         (is (= 200 (:status resp)))
         (is (query-html (:body resp) [:h2.form-signin-heading]))
         (is (query-html (:body resp) [:form.form-signin]))))
@@ -45,7 +53,8 @@
       (let [resp (actions (-> (request :post "/")
                               (assoc :email "something@email.com"
                                      :password "password"
-                                     :authenticate-by-email-and-password (fn [x y] nil ))))]
+                                     :authenticate-by-email-and-password (fn [x y] nil ))
+                              caught-up))]
         (is (= 200 (:status resp)))
         (is (query-html (:body resp) [:h2.form-signin-heading]))
         (is (query-html (:body resp) [:form.form-signin]))))
@@ -54,13 +63,15 @@
       (let [resp (actions (-> (request :post "/")
                               (assoc :email "something@email.com"
                                      :password "password"
-                                     :authenticate-by-email-and-password (fn [x y] "something"))))]
+                                     :authenticate-by-email-and-password (fn [x y] "something"))
+                              caught-up))]
         (is (= 302 (:status resp)))
         (is (= "/" ((:headers resp) "Location")))
         (is (= "something" (:login-user resp))))))
 
   (testing "delete /"
-    (let [resp (actions (request :delete "/"))]
+    (let [resp (actions (-> (request :delete "/")
+                            caught-up))]
       (is (= 302 (:status resp)))
       (is (= "/" ((:headers resp) "Location")))
       (is (= true (:logout-user resp))))))

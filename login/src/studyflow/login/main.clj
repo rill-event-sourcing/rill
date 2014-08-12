@@ -4,6 +4,7 @@
             [compojure.core :refer [DELETE GET POST defroutes]]
             [compojure.route :refer [not-found]]
             [hiccup.form :as form]
+            [studyflow.login.credentials :refer [caught-up?]]
             [hiccup.page :refer [html5 include-css]]
             [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
             [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
@@ -69,6 +70,12 @@
 
 
 (defroutes actions
+  (fn [{:keys [credentials]}]
+    (when-not (caught-up? credentials)
+      {:status 503
+       :body "Server starting up."
+       :headers {"Content-Type" "text/plain"}}))
+
   (GET "/" {:keys [user-role params]}
        (if user-role
          {:redirect-for-role user-role}

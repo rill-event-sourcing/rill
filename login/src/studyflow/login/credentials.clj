@@ -3,6 +3,7 @@
             [clojure.tools.logging :as log]
             [crypto.password.bcrypt :as bcrypt]
             [rill.message :as message]
+            [rill.event-channel :as event-channel]
             [clojure.tools.logging :as log]))
 
 
@@ -64,6 +65,24 @@
   [db _]
   (log/info :skipped-event)
   db)
+
+;; catchup
+
+(defn caught-up
+  [db] 
+  (assoc db :caught-up true))
+
+(defn caught-up?
+  [db]
+  (boolean (:caught-up db)))
+
+(defmethod handle-event ::event-channel/CaughtUp
+  [db _]
+  (caught-up db))
+
+
+
+;; listener
 
 (defn listen! [channel db]
   (thread

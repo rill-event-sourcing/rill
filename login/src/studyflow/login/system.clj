@@ -50,6 +50,7 @@
                          :authenticate-by-edu-route-id (:authenticate-by-edu-route-id-fn credentials)
                          :event-store (:store event-store)
                          :default-redirect-paths default-redirect-paths
+                         :credentials @(:credentials-db credentials)
                          :session-max-age session-max-age
                          :cookie-domain cookie-domain
                          :session-store session-store)))))
