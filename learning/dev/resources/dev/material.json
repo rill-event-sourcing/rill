@@ -43,12 +43,49 @@
           ],
           "questions": [
             {
-              "id": "3e09e382-266c-4b16-9020-c5a071c2e2a4",
+              "id": "4302505c-5498-4229-b11f-2da3aa869793",
+              "text": "Grouping question 1 text _INPUT_1_ and of course _INPUT_2_",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "prefix": "pre",
+                  "suffix": "suf",
+                  "width": 150,
+                  "correct_answers": [
+                    "Grouping Question 1 Line input answer value"
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+                {
+                  "name": "_INPUT_2_",
+                  "choices": [
+                    {
+                      "value": "1",
+                      "correct": false
+                    },
+                    {
+                      "value": "2",
+                      "correct": false
+                    },
+                    {
+                      "value": "3",
+                      "correct": true
+                    }
+                  ]
+                }
+              ],
+              "worked_out_answer": "Something something here"
+            },
+            {
+              "id": "9bcbb97b-7935-420e-8ba7-fb4650de569f",
               "text": "And now, for something completely different _INPUT_2_ and _INPUT_1_",
               "tools": [
-                  "pen_and_paper"
+                "pen_and_paper"
               ],
-              "worked_out_answer": "This is supposed to explain",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -79,43 +116,8 @@
                     }
                   ]
                 }
-              ]
-            },
-            {
-              "id": "fe9d41b5-4aa8-4dff-8e65-44fae2459c3f",
-              "text": "Grouping question 1 text _INPUT_1_ and of course _INPUT_2_",
-              "tools": ["pen_and_paper"],
-              "worked_out_answer": "Something something here",
-              "line_input_fields": [
-                {
-                  "name": "_INPUT_1_",
-                  "prefix": "pre",
-                  "suffix": "suf",
-                  "width": 150,
-                  "correct_answers": [
-                    "Grouping Question 1 Line input answer value"
-                  ]
-                }
               ],
-              "multiple_choice_input_fields": [
-                {
-                  "name": "_INPUT_2_",
-                  "choices": [
-                    {
-                      "value": "1",
-                      "correct": false
-                    },
-                    {
-                      "value": "2",
-                      "correct": false
-                    },
-                    {
-                      "value": "3",
-                      "correct": true
-                    }
-                  ]
-                }
-              ]
+              "worked_out_answer": "This is supposed to explain"
             }
           ],
           "line_input_fields": [
@@ -193,5 +195,86 @@
 
       ]
     }
-  ]
+  ],
+  "entry_quiz": {
+    "instructions": "Do this and that",
+    "feedback": "Great, you're done with the entry quiz",
+    "questions": [
+      {
+        "id": "35ebaa9f-d259-41f4-853c-25750364c6c1",
+        "text": "2+2= _INPUT_1_ Which one is highest? _INPUT_2_",
+        "tools": [
+          "pen_and_paper"
+        ],
+        "line_input_fields": [
+          {
+            "name": "_INPUT_1_",
+            "prefix": "",
+            "suffix": "",
+            "width": 150,
+            "correct_answers": [
+              "4"
+            ]
+          }
+        ],
+        "multiple_choice_input_fields": [
+          {
+            "name": "_INPUT_2_",
+            "choices": [
+              {
+                "value": "1",
+                "correct": false
+              },
+              {
+                "value": "16",
+                "correct": false
+              },
+              {
+                "value": "42",
+                "correct": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "376bdd10-69c8-485d-9a16-75a2d6fa0b0c",
+        "text": "One banana plus two bananas? _INPUT_2_ What is the lowest natural number? _INPUT_1_",
+        "tools": [
+          "pen_and_paper"
+        ],
+        "line_input_fields": [
+          {
+            "name": "_INPUT_1_",
+            "prefix": "",
+            "suffix": "bananas",
+            "width": 150,
+            "correct_answers": [
+              "3",
+              "three"
+            ]
+          }
+        ],
+        "multiple_choice_input_fields": [
+          {
+            "name": "_INPUT_2_",
+            "choices": [
+              {
+                "value": "1",
+                "correct": false
+              },
+              {
+                "value": "0",
+                "correct": true
+              },
+              {
+                "value": "-1",
+                "correct": false
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
 }

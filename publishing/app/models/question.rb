@@ -57,7 +57,6 @@ class Question < ActiveRecord::Base
     }
   end
 
-
   def to_publishing_format_for_section
     hash = {
       id: id,
@@ -82,8 +81,6 @@ class Question < ActiveRecord::Base
 
   def worked_out_answer_with_default
     worked_out_answer.blank? ? made_worked_out_answer : render_latex(worked_out_answer)
-    hash["worked_out_answer"] = render_latex(worked_out_answer) unless worked_out_answer.blank?
-    hash
   end
 
   def inputs_referenced_exactly_once?
