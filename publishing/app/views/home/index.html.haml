@@ -19,7 +19,10 @@
     %div.row{style: "margin-top:10px;"}
       %div.col-md-8.col-md-offset-2
         %h3
-          = link_to 'Entry Quiz', '/entry_quiz'
+          - if @course.entry_quiz
+            = link_to 'Entry Quiz', '/entry_quiz'
+          - else
+            = link_to 'Entry Quiz', new_entry_quiz_path
     %div.row{style: "margin-top:10px;"}
       %div.col-md-8.col-md-offset-2
         %h3

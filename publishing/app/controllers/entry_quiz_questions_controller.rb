@@ -1,4 +1,4 @@
-class QuestionsController < ApplicationController
+class EntryQuizQuestionsController < ApplicationController
 
   before_action :set_param_objects
   before_action :set_redirect_cookie, only: [:index, :edit]
@@ -15,8 +15,8 @@ class QuestionsController < ApplicationController
   end
 
   def create
-    @question = @section.questions.create
-    redirect_to edit_chapter_section_question_path(@chapter, @section, @question)
+    @question = @entry_quizs.questions.create
+    redirect_to entry_quiz_question_path(@question)
   end
 
   def update
@@ -36,47 +36,46 @@ class QuestionsController < ApplicationController
 
   def destroy
     @question.trash if @question
-    redirect_to chapter_section_questions_path(@chapter,@section)
+    redirect_to entry_quiz_questions_path
   end
 
   def activate
     @question.activate
-    redirect_to chapter_section_questions_path(@chapter,@section)
+    redirect_to entry_quiz_questions_path
   end
 
 
   def toggle_activation
     @question.active? ? @question.deactivate : @question.activate
-    redirect_to edit_chapter_section_question_path(@chapter, @section, @question)
+    redirect_to edit_entry_quiz_question_path(@question)
   end
 
 
   def deactivate
     @question.deactivate
-    redirect_to chapter_section_questions_path(@chapter,@section)
+    redirect_to entry_quiz_questions_path
   end
 
   private
 
   def set_param_objects
     @course = Course.current
-    @chapter = @course.chapters.find_by_uuid(params[:chapter_id])
-    @section = @chapter.sections.find_by_uuid(params[:section_id])
-    @question = @section.questions.find_by_uuid(params[:id], false) if params[:id]
+    @entry_quiz = @course.entry_quiz
+    @question = @entry_quiz.questions.find_by_uuid(params[:id], false) if params[:id]
   end
-
-
 
   def set_breadcrumb
     @crumbs = [{name: @course.name, url: root_path}]
-    @crumbs << {name: @chapter.title, url: chapter_sections_path(@chapter)}
-    @crumbs << {name: @section.title, url: chapter_section_path(@chapter, @section)}
-    @crumbs << {name: "Questions", url: chapter_section_questions_path(@chapter,@section)}
-    @crumbs << {name: @question.to_param, url: chapter_section_question_path(@chapter,@section,@question)} if @question
+    @crumbs << {name: "Entry Quiz", url: entry_quiz_path(@entry_quiz)}
+    @crumbs << {name: "Questions", url: entry_quiz_questions_path}
+    @crumbs << {name: @question.to_param, url: entry_quiz_question_path(@question)} if @question
   end
 
   def question_params
     params.require(:question).permit!
   end
+
+
+
 
 end

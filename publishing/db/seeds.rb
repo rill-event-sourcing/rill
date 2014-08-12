@@ -4,7 +4,7 @@ counting = Course.create(name: 'Counting')
 english = Course.create(name: 'English')
 
 # One entry quiz
-entry_quiz_counting = EntryQuiz.create(instructions: "Do this and that", course: counting)
+entry_quiz_counting = EntryQuiz.create(instructions: "Do this and that", feedback: "Great, you're done with the entry quiz", course: counting)
 # With two questions
 eq_1 = Question.create(text: "2+2= _INPUT_1_ Which one is highest? _INPUT_2_", active: true, worked_out_answer: "4 and 42", quizzable: entry_quiz_counting)
 eq_1_1 = LineInput.create(inputable: eq_1, prefix: "", suffix: "")

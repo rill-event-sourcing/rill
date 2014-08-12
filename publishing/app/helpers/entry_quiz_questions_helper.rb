@@ -1,0 +1,2 @@
+module EntryQuizQuestionsHelper
+end

@@ -17,7 +17,7 @@ class EntryQuiz < ActiveRecord::Base
 
 
   def to_s
-    "Entry quiz for #{course}"
+    "Entry Quiz for #{course}"
   end
 
 end

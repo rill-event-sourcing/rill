@@ -1,7 +1,7 @@
 = form_for(@chapter, html: {class: "form-horizontal", role: "form"}) do |f|
   - if @chapter.errors.any?
     %div.error_explanation
-      %h2= #{ pluralize(@chapter.errors.count, "error") } prohibited this chapter from being saved:
+      %h2= "#{ pluralize(@chapter.errors.count, "error") } prohibited this chapter from being saved:"
       %ul
         - @chapter.errors.full_messages.each do |message|
           %li= message

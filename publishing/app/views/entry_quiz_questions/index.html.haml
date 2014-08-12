@@ -1,0 +1,31 @@
+%div.container
+  %div.row
+    %div.col-md-8.col-md-offset-2
+      %h2= "Questions for Entry Quiz"
+    %div.col-md-2
+      = button_to 'Add Question', entry_quiz_questions_path, method: :post, class: "btn btn-success"
+  %div.row
+    %div.col-md-8.col-md-offset-2
+      %table.table.table-bordered
+        %thead
+          %tr
+            %th.col-md-2 Name
+            %th.col-md-8 Title
+            %th.col-md-1 Active
+            %th.col-md-1 Remove
+
+        %tbody
+          - @entry_quiz.questions.each do |question|
+            %tr{class: question.active? ? "success" : "danger"}
+              %td= question.name
+              %td= link_to question.to_s.truncate(90, omission: '...'), edit_entry_quiz_question_path(question)
+              %td
+                - if question.active?
+                  = link_to deactivate_entry_quiz_question_path(question), method: :post do
+                    %span.glyphicon.glyphicon-ok
+                - else
+                  = link_to activate_entry_quiz_question_path(question), method: :post do
+                    %span.glyphicon.glyphicon-remove
+              %td
+                = link_to entry_quiz_question_path(question), method: :delete, data: { confirm: "Are you sure you want to delete this question?" } do
+                  %span.glyphicon.glyphicon-trash

@@ -1,0 +1,28 @@
+= form_for(@entry_quiz, url: entry_quiz_path, html: {class: "form-horizontal", role: "form"}) do |f|
+  - if @entry_quiz.errors.any?
+    %div.error_explanation
+      %h2= "#{ pluralize(@entry_quiz.errors.count, "error") } prohibited this entry_quiz from being saved:"
+      %ul
+        - @entry_quiz.errors.full_messages.each do |message|
+          %li= message
+
+  %div.form-group
+    = f.label :instructions, class: "col-sm-2 control-label"
+    %div.col-sm-10
+      = f.text_area :instructions, cols: 20, rows: 4, class: "form-control auto-resize rich-text", tabindex: 1
+
+  %div.form-group
+    = f.label :feedback, class: "col-sm-2 control-label"
+    %div.col-sm-10
+      = f.text_area :feedback, cols: 20, rows: 4, class: "form-control auto-resize rich-text", tabindex: 2
+
+  - if @entry_quiz.id
+    %div.form-group
+      %div.col-sm-offset-2.col-sm-10
+        = link_to 'cancel', @entry_quiz, class: "btn btn-default", tabindex: 4
+        = submit_tag('update', class: "btn btn-primary", tabindex: 3)
+  - else
+    %div.form-group
+      %div.col-sm-offset-2.col-sm-10
+        = link_to 'cancel', entry_quiz_path, class: "btn btn-default", tabindex: 4
+        = submit_tag('save', class: "btn btn-primary", tabindex: 3)

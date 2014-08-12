@@ -1,0 +1,10 @@
+%div.panel.panel-default
+  %div.panel-heading Question preview
+  %div.panel-body
+    = text_to_html(@question.inputs, @question.text)
+%div.panel.panel-default
+  %div.panel-heading Worked out answer preview
+  %div.panel-body
+    = question_worked_out_answer_to_html(@question)
+
+

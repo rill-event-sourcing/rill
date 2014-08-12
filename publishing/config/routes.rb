@@ -2,7 +2,20 @@ Rails.application.routes.draw do
 
   match 'select_course',  to: 'courses#select', via: :post
   match 'publish_course', to: 'home#publish', via: :post
-  match 'entry_quiz', to: 'entry_quiz#show', via: :get
+  #match 'entry_quiz', to: 'entry_quiz#show', via: :get
+
+  resource :entry_quiz do
+    resources :entry_quiz_questions, as: :questions do
+      member do
+        post 'activate'
+        post 'deactivate'
+        post 'toggle_activation'
+        post 'moveup'
+        post 'movedown'
+        get 'preview'
+      end
+    end
+  end
 
   resources :chapters do
     member do
@@ -37,16 +50,6 @@ Rails.application.routes.draw do
           get 'preview'
         end
       end
-    end
-  end
-
-  resources :course_questions, as: 'questions'  do
-    member do
-      post 'activate'
-      post 'deactivate'
-      post 'moveup'
-      post 'movedown'
-      get 'preview'
     end
   end
 
