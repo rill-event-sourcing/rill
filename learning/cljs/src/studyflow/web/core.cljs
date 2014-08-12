@@ -163,7 +163,8 @@
           (dom/span nil
                     (dom/form #js {:className "inline-input-form"
                                    :onSubmit (fn [e]
-                                               (submit))}
+                                               (submit)
+                                               false)}
                               (dom/input
                                #js {:react-key (:name field)
                                     :ref (:name field)
