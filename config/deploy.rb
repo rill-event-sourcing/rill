@@ -18,7 +18,7 @@ namespace :deploy do
   task :check do
     throw "no valid GIT SHA given!" unless ENV['revision'] =~ /^[0-9a-f]{40}$/
     set :current_revision, ENV['revision']
-    on release_roles(:all) do |host|
+    on release_roles(:login, :learning, :school, :publish) do |host|
       execute :mkdir, '-pv', releases_path
     end
   end
@@ -163,7 +163,7 @@ namespace :deploy do
 
   desc 'Clean up old releases'
   task :cleanup do
-    on release_roles :all do |host|
+    on release_roles(:login, :learning, :school, :publish) do |host|
       releases = capture(:ls, '-x', releases_path).split
       if releases.count >= fetch(:keep_releases)
         info t(:keeping_releases, host: host.to_s, keep_releases: fetch(:keep_releases), releases: releases.count)
