@@ -37,7 +37,6 @@ RSpec.describe Question, :type => :model do
     expect(published_format[:worked_out_answer]).to eq "Het juiste antwoord is: goed"
   end
 
-
   it "should throw an ActiveRecord::RecordNotFound when not found by an abbreviated uuid" do
     expect{Question.find_by_uuid('1a31a31a')}.to raise_error(ActiveRecord::RecordNotFound)
   end
@@ -87,6 +86,22 @@ RSpec.describe Question, :type => :model do
     expect(@question.errors_when_publishing).to include("Nonexisting inputs referenced in question '#{@question.name}', in '#{@question.quizzable}'")
     @question.text = "_INPUT_#{@input.position}_"
     expect(@question.errors_when_publishing).not_to include("Nonexisting inputs referenced in question '#{@question.name}', in '#{@question.quizzable}'")
+  end
+
+  it "should detect when multiple inputs are given but no worked_out_answer is given" do
+    @input1 = create(:line_input, inputable: @question)
+    create(:answer, line_input: @input1, value: 'good')
+    @question.text = "_INPUT_#{@input1.position}_"
+    expect(@question.errors_when_publishing).not_to include("No Worked-out-answer given for question '#{@question.name}', in '#{@question.quizzable}'")
+
+    @input2 = create(:line_input, inputable: @question)
+    create(:answer, line_input: @input2, value: 'better')
+    @question.text = "_INPUT_#{@input1.position}_ _INPUT_#{@input2.position}_"
+    @question.worked_out_answer = nil
+    expect(@question.errors_when_publishing).to include("No Worked-out-answer given for question '#{@question.name}', in '#{@question.quizzable}'")
+
+    @question.worked_out_answer = "Just do it!"
+    expect(@question.errors_when_publishing).not_to include("No Worked-out-answer given for question '#{@question.name}', in '#{@question.quizzable}'")
   end
 
 end

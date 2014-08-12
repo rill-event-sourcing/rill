@@ -85,6 +85,7 @@ class Question < ActiveRecord::Base
     errors << "No Inputs on question '#{name}', in '#{parent}'" if inputs.count == 0
     errors << "Error in input referencing in question '#{name}', in '#{parent}'" unless inputs_referenced_exactly_once?
     errors << "Nonexisting inputs referenced in question '#{name}', in '#{parent}'" if nonexisting_inputs_referenced?
+    errors << "No Worked-out-answer given for question '#{name}', in '#{parent}'" if inputs.count > 1 && worked_out_answer.blank?
     errors << inputs.map(&:errors_when_publishing)
     errors.flatten
   end
