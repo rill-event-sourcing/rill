@@ -29,13 +29,13 @@
               :dependencies
               [[org.clojure/tools.trace "0.7.5"]
                [org.clojure/tools.namespace "0.2.5"]
-               [org.clojure/clojurescript "0.0-2173"]
+               [org.clojure/clojurescript "0.0-2311"]
                [om "0.7.1"]
                [com.facebook/react "0.9.0.1"]
                [cljs-ajax "0.2.3"]
                [cljs-uuid "0.0.4"]]
               :plugins
-              [[lein-cljsbuild "1.0.2"]
+              [[lein-cljsbuild "1.0.4-SNAPSHOT"]
                [com.cemerick/clojurescript.test "0.3.0"]]}
              :uberjar {:aot [studyflow.main]
                        :main studyflow.main}}
@@ -52,5 +52,9 @@
                                          :optimizations :advanced
                                          :elide-asserts true
                                          :pretty-print false
+                                         ;;;; handy debug options:
+                                         ;; :pretty-print true
+                                         ;; :print-input-delimiter true
+                                         ;; :pseudo-names true
                                          :preamble ["react/react.min.js"]
                                          :externs ["react/externs/react.js"]}}}})
