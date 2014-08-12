@@ -2,6 +2,7 @@ Rails.application.routes.draw do
 
   match 'select_course',  to: 'courses#select', via: :post
   match 'publish_course', to: 'home#publish', via: :post
+  match 'entry_quiz', to: 'entry_quiz#show', via: :get
 
   resources :chapters do
     member do

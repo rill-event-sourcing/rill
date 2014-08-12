@@ -1,0 +1,8 @@
+%div.container
+  %div.row
+    %div.col-md-8.col-md-offset-2
+      %h2= @entry_quiz.to_s
+      %div.panel.panel-default{style: "margin-top:30px;"}
+        %div.panel-heading
+          %strong Entry quiz instructions:
+        %div.panel-body= @entry_quiz.instructions

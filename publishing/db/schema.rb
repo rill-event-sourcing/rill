@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140812075618) do
+ActiveRecord::Schema.define(version: 20140812090300) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -52,6 +52,14 @@ ActiveRecord::Schema.define(version: 20140812075618) do
     t.datetime "updated_at"
   end
 
+  create_table "entry_quizzes", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
+    t.uuid     "course_id"
+    t.text     "instructions"
+    t.boolean  "active",       default: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "inputs", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
     t.uuid     "inputable_id"
     t.string   "type"
@@ -76,6 +84,7 @@ ActiveRecord::Schema.define(version: 20140812075618) do
     t.datetime "updated_at"
     t.string   "name",              limit: 5
     t.string   "tools"
+    t.integer  "position",          limit: 2
   end
 
   create_table "sections", id: :uuid, default: "uuid_generate_v4()", force: true do |t|

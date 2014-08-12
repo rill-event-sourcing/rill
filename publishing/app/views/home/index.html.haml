@@ -7,19 +7,6 @@
           = @course.name
       %div.col-md-2
         = link_to 'Publish', publish_course_path, class: "btn btn-lg btn-success", method: :post
-    -# %div.row{style: "margin-top:10px;"}
-    -#   %div.col-md-8.col-md-offset-2
-    -#     %h3
-    -#       = link_to 'Entry test questions', questions_path
-    -#       %small= "(#{ @course.questions.length } questions)"
-    -#     %table.table.table-bordered
-    -#       %thead
-    -#         %tr
-    -#           %th Question
-    -#       %tbody
-    -#         - @course.questions.each do |question|
-    -#           %tr{class: question.active? ? "success" : "danger"}
-    -#             %td= link_to question.to_s.truncate(90, omission: '...'), edit_question_path(question)
 
     - errors = @course.errors_when_publishing
     - unless errors.empty?
@@ -29,6 +16,10 @@
             - errors.each do |error|
               %li= error
 
+    %div.row{style: "margin-top:10px;"}
+      %div.col-md-8.col-md-offset-2
+        %h3
+          = link_to 'Entry Quiz', '/entry_quiz'
     %div.row{style: "margin-top:10px;"}
       %div.col-md-8.col-md-offset-2
         %h3
