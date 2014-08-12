@@ -3,6 +3,7 @@
             [studyflow.learning.read-model :as m]
             [studyflow.learning.course.events :as events]
             [studyflow.learning.section-test.events :as section-test]
+            [rill.event-channel :as event-channel]
             [rill.message :as message]))
 
 (defmulti handle-event
@@ -46,4 +47,11 @@
   [model event]
   (log/debug "learning read-model does not handle event" (message/type event))
   model)
+
+;; ready for display
+
+(defmethod handle-event ::event-channel/CaughtUp
+  [model _]
+  (m/caught-up model))
+
 

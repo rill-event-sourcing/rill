@@ -72,3 +72,14 @@
 (defn get-course-id
   [model course-name]
   (get (:course-ids model) course-name))
+
+
+;; catchup
+
+(defn caught-up
+  [model]
+  (assoc model :caught-up true))
+
+(defn caught-up?
+  [model]
+  (boolean (:caught-up model)))
