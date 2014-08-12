@@ -8,7 +8,7 @@ then
     exit 1
 fi
 
-if ! [[ $1 = "staging" || $1 = "production"] ]]
+if ! [[ "$1" == "staging" || "$1" == "production" ]]
 then
     echo "Usage: $0 <environment> <full git sha> (with environment: staging OR production)"
     exit 1
