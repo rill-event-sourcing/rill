@@ -5,7 +5,7 @@
             [studyflow.school-administration.web.command :as command]
             [studyflow.school-administration.web.query :as query]
             [studyflow.school-administration.read-model :as m]
-            [ring.middleware.defaults :refer [secure-site-defaults wrap-defaults]]
+            [ring.middleware.defaults :refer [secure-site-defaults site-defaults wrap-defaults]]
             [ring.util.response :refer [redirect resource-response]]))
 
 (defn wrap-exception-catcher [app]
@@ -25,14 +25,14 @@
      :headers {"Content-Type" "text/plain"}}))
 
 
-(def studyflow-site-defaults
-  (-> secure-site-defaults
+(defn studyflow-site-config [config]
+  (-> config
       (assoc-in [:session :cookie-name] "studyflow_school_session")
       (assoc-in [:security :anti-forgery] false)
       (assoc-in [:static :resources] "school_administration/public")
       (assoc-in [:security :ssl-redirect] false)))
 
-(defn make-request-handler [event-store read-model]
+(defn make-request-handler [secure-site-defaults? event-store read-model]
   (-> (fn [{:keys [uri] :as req}]
         (if (= "/" uri)
           (redirect "/list-students")
@@ -42,4 +42,6 @@
             (command/commands-app event-store)
             (query/queries-app read-model)) req)))
       wrap-exception-catcher
-      (wrap-defaults studyflow-site-defaults)))
+      (wrap-defaults (studyflow-site-config (if secure-site-defaults?
+                                              secure-site-defaults
+                                              site-defaults)))))

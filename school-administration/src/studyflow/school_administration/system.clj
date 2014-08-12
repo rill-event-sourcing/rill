@@ -11,11 +11,11 @@
 
 (defn prod-system [config-options]
   (log/info "Running the production system")
-  (let [{:keys [port event-store-config]} config-options]
+  (let [{:keys [port event-store-config secure-site-defaults?]} config-options]
     (component/system-map
      :config-options config-options
      :ring-handler (component/using
-                    (ring-handler-component)
+                    (ring-handler-component secure-site-defaults?)
                     [:event-store :read-model])
      :jetty (component/using
              (jetty-component port)

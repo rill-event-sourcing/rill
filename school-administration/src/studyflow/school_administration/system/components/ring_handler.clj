@@ -3,14 +3,14 @@
             [studyflow.school-administration.web :as web]
             [clojure.tools.logging :refer [info debug spy]]))
 
-(defrecord RingHandlerComponent [event-store read-model]
+(defrecord RingHandlerComponent [secure-site-defaults? event-store read-model]
   Lifecycle
   (start [component]
     (info "Starting handler")
-    (assoc component :handler (web/make-request-handler (:store event-store) (:read-model read-model))))
+    (assoc component :handler (web/make-request-handler secure-site-defaults? (:store event-store) (:read-model read-model))))
   (stop [component]
     (info "Stopping handler")
     component))
 
-(defn ring-handler-component []
-  (map->RingHandlerComponent {}))
+(defn ring-handler-component [secure-site-defaults?]
+  (map->RingHandlerComponent {:secure-site-defaults? secure-site-defaults?}))
