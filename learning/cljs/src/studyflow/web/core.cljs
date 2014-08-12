@@ -142,7 +142,7 @@
                          :onClick
                          (fn [_]
                            (onclick)
-                           (om/set-state! owner :enabled false))
+                           (om/set-state-nr! owner :enabled false))
                          :disabled (not (om/get-state owner :enabled))}
                     value)))))
 
@@ -163,7 +163,8 @@
           (dom/span nil
                     (dom/form #js {:className "inline-input-form"
                                    :onSubmit (fn [e]
-                                               (submit))}
+                                               (submit)
+                                               false)}
                               (dom/input
                                #js {:react-key (:name field)
                                     :ref (:name field)
@@ -491,43 +492,44 @@
                                    (every? (fn [input-name]
                                              (seq (get current-answers input-name)))
                                            (keys inputs)))
-            _ (om/set-state! owner :submit
-                             (fn []
-                               (when answering-allowed
-                                 (async/put! (om/get-shared owner :command-channel)
-                                             ["section-test-commands/check-answer"
-                                              section-id
-                                              student-id
-                                              section-test-aggregate-version
-                                              course-id
-                                              question-id
-                                              current-answers]))
-                               (when answer-correct
-                                 (when (and finished-last-action
-                                            (= progress-modal :launchable))
-                                   (let [notification-channel (om/get-shared owner :notification-channel)]
-                                     (async/put! notification-channel {:type "studyflow.web.ui/FinishedModal"})))
-                                 (when (or (not finished-last-action)
-                                           (or (not progress-modal)
-                                               (= progress-modal :dismissed)))
-                                   (async/put! (om/get-shared owner :command-channel)
-                                               ["section-test-commands/next-question"
-                                                section-id
-                                                student-id
-                                                section-test-aggregate-version
-                                                course-id])))
-                               (when (or (= progress-modal :show-finish-modal)
-                                         (= progress-modal :show-streak-completed-modal))
-                                 (do
-                                   (om/update! cursor
-                                               [:view :selected-path]
-                                               (-> (get-in @cursor [:view :selected-path])
-                                                   (merge (get-in @cursor [:view :course-material :forward-section-links
-                                                                           {:chapter-id chapter-id :section-id section-id}]))))
-                                   (om/update! cursor
-                                               [:view :progress-modal]
-                                               :dismissed)))
-                               (om/set-state! owner :submit nil)))
+            _ (om/set-state-nr! owner :submit
+                                (fn []
+                                  (when answering-allowed
+                                    (async/put!
+                                     (om/get-shared owner :command-channel)
+                                     ["section-test-commands/check-answer"
+                                      section-id
+                                      student-id
+                                      section-test-aggregate-version
+                                      course-id
+                                      question-id
+                                      current-answers]))
+                                  (when answer-correct
+                                    (when (and finished-last-action
+                                               (= progress-modal :launchable))
+                                      (let [notification-channel (om/get-shared owner :notification-channel)]
+                                        (async/put! notification-channel {:type "studyflow.web.ui/FinishedModal"})))
+                                    (when (or (not finished-last-action)
+                                              (or (not progress-modal)
+                                                  (= progress-modal :dismissed)))
+                                      (async/put! (om/get-shared owner :command-channel)
+                                       ["section-test-commands/next-question"
+                                        section-id
+                                        student-id
+                                        section-test-aggregate-version
+                                        course-id])))
+                                  (when (or (= progress-modal :show-finish-modal)
+                                            (= progress-modal :show-streak-completed-modal))
+                                    (do
+                                      (om/update! cursor
+                                                  [:view :selected-path]
+                                                  (-> (get-in @cursor [:view :selected-path])
+                                                      (merge (get-in @cursor [:view :course-material :forward-section-links
+                                                                              {:chapter-id chapter-id :section-id section-id}]))))
+                                      (om/update! cursor
+                                                  [:view :progress-modal]
+                                                  :dismissed)))
+                                  (om/set-state-nr! owner :submit nil)))
             submit (fn []
                      (when-let [f (om/get-state owner :submit)]
                        (f)))
@@ -611,7 +613,7 @@
                                  goog.events.KeyHandler.EventType.KEY
                                  (fn [e]
                                    (when (= (.-keyCode e) 13) ;;enter
-                                     (when-let [f (om/get-render-state owner :submit)]
+                                     (when-let [f (om/get-state owner :submit)]
                                        (f)))))
              (reset! key-listener))))))
 
