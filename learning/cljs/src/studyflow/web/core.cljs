@@ -81,7 +81,7 @@
                     ["data/navigation" chapter-id student-id])))
     om/IRender
     (render [_]
-      (let [chapter-id (get-in cursor [:view :selected-path :chapter-id])
+      (let [{:keys [chapter-id section-tab]} (get-in cursor [:view :selected-path])
             course (get-in cursor [:view :course-material])
             chapter (some (fn [{:keys [id] :as chapter}]
                             (when (= id chapter-id)
@@ -92,8 +92,7 @@
                                section-id :id
                                :as section} (:sections chapter)]
                           (let [open-section (= section-id
-                                                (get-in cursor [:view :selected-path :section-id]))
-                                section-tab (get-in cursor [:view :selected-path :section-tab])]
+                                                (get-in cursor [:view :selected-path :section-id]))]
                             (apply dom/li #js {:className
                                                (str "section_list_item "
                                                     (when open-section
@@ -157,7 +156,7 @@
         {:enabled enabled})
       om/IRender
       (render [_]
-        (dom/button #js {:className "button green pull-right"
+        (dom/button #js {:className "btn green pull-right"
                          :onClick
                          (fn [_]
                            (onclick)
@@ -299,18 +298,21 @@
             (if (< (count streak) 5)
               (take 5 (concat streak (repeat 5 [nil :open])))
               streak)]
-        (apply dom/div #js {:className "streak-box"}
-               (map-indexed
-                (fn [idx [question-id result]]
-                  (dom/span #js {:className (if (<= (- (count streak) 5) idx)
-                                              "last-five"
-                                              "old")}
-                            (condp = result
-                              :correct "V"
-                              :incorrect "X"
-                              :revealed "?"
-                              :open "_")))
-                streak))))))
+        (apply dom/div #js {:id "m-path"}
+               (reverse
+                (map-indexed
+                 (fn [idx [question-id result]]
+                   (dom/span #js {:className (str
+                                              "goal "
+                                              (if (<= (- (count streak) 5) idx)
+                                                ""
+                                                "inactive ")
+                                              (condp = result
+                                                :correct "correct"
+                                                :incorrect "incorrect"
+                                                :revealed "hint" ;; warning this is currently for worked out answer
+                                                :open ""))}))
+                 streak)))))))
 
 (def html->om
   {"a" dom/a, "b" dom/b, "big" dom/big, "br" dom/br, "dd" dom/dd, "div" dom/div,
@@ -407,7 +409,7 @@
                                (update-js secondary-button
                                           :className (fnil (partial str "secundary_action ") "")))
                              (update-js primary-button
-                                        :className (partial str "button green primary "))))))
+                                        :className (partial str "btn green primary "))))))
 
 (defn focus-input-box [owner]
   ;; we always call this, even when there's no element called
@@ -438,7 +440,7 @@
       (let [{:keys [revealed-answer question-id question-data section-id student-id section-test-aggregate-version course-id]} cursor
             can-reveal-answer (get question-data :has-worked-out-answer)]
         (if can-reveal-answer
-          (dom/button #js {:className "button grey pull-right"
+          (dom/button #js {:className "btn grey pull-right"
                            :disabled
                            (boolean revealed-answer)
                            :onClick
@@ -543,45 +545,45 @@
                      (when-let [f (om/get-state owner :submit)]
                        (f)))
             revealed-answer (get question :worked-out-answer)]
-        (dom/div #js {:id "m-section"}
-                 (let [progress-modal (get-in cursor [:view :progress-modal])]
-                   (condp = progress-modal
-                     :show-finish-modal
-                     (modal (dom/span nil
-                                      (dom/h1 nil "Wohoo!")
-                                      (dom/p nil "Je bent klaar met deze paragraaf."))
-                            (dom/button #js {:onClick (fn [e]
-                                                        (submit))}
-                                        "Volgende paragraaf")
-                            (dom/a #js {:href ""
-                                        :onClick (fn [e]
-                                                   (om/update! cursor
-                                                               [:view :progress-modal]
-                                                               :dismissed)
-                                                   (async/put! (om/get-shared owner :command-channel)
-                                                               ["section-test-commands/next-question"
-                                                                section-id
-                                                                student-id
-                                                                section-test-aggregate-version
-                                                                course-id])
-                                                   false)}
-                                   "In deze paragraaf blijven"))
-                     :show-streak-completed-modal
-                     (modal (dom/span nil
-                                      (dom/h1 nil "Yes!")
-                                      (dom/p nil "Je hebt deze paragraaf nog een keer voltooid. Nu snap je hem wel :)"))
-                            (dom/button #js {:onClick (fn [e]
-                                                        (submit))}
-                                        "Volgende paragraaf"))
-                     nil))
-                 (om/build streak-box (:streak section-test))
-                 (tool-box (:tools question-data))
-                 (single-question-panel (:tag-tree question-data)
-                                        inputs)
-                 (when revealed-answer
-                   (dom/div nil
-                            "Het uitgewerkte antwoord is: "
-                            (dom/div #js {:dangerouslySetInnerHTML #js {:__html revealed-answer}} nil)))
+        (dom/div nil (let [progress-modal (get-in cursor [:view :progress-modal])]
+                       (condp = progress-modal
+                         :show-finish-modal
+                         (modal (dom/span nil
+                                          (dom/h1 nil "Wohoo!")
+                                          (dom/p nil "Je bent klaar met deze paragraaf."))
+                                (dom/button #js {:onClick (fn [e]
+                                                            (submit))}
+                                            "Volgende paragraaf")
+                                (dom/a #js {:href ""
+                                            :onClick (fn [e]
+                                                       (om/update! cursor
+                                                                   [:view :progress-modal]
+                                                                   :dismissed)
+                                                       (async/put! (om/get-shared owner :command-channel)
+                                                                   ["section-test-commands/next-question"
+                                                                    section-id
+                                                                    student-id
+                                                                    section-test-aggregate-version
+                                                                    course-id])
+                                                       false)}
+                                       "In deze paragraaf blijven"))
+                         :show-streak-completed-modal
+                         (modal (dom/span nil
+                                          (dom/h1 nil "Yes!")
+                                          (dom/p nil "Je hebt deze paragraaf nog een keer voltooid. Nu snap je hem wel :)"))
+                                (dom/button #js {:onClick (fn [e]
+                                                            (submit))}
+                                            "Volgende paragraaf"))
+                         nil))
+                 (dom/article #js {:id "m-section"
+                                   :className "question_page"}
+                              (tool-box (:tools question-data))
+                              (single-question-panel (:tag-tree question-data)
+                                                     inputs)
+                              (when revealed-answer
+                                (dom/div nil
+                                         "Het uitgewerkte antwoord is: "
+                                         (dom/div #js {:dangerouslySetInnerHTML #js {:__html revealed-answer}} nil))))
                  (dom/div #js {:id "m-question_bar"}
                           (if answer-correct
                             (if (and finished-last-action
@@ -638,39 +640,33 @@
                      student-id])))
     om/IRender
     (render [_]
-      (dom/div nil
-               (dom/header #js {:id "m-top_header"})
-               (dom/article #js {:id "m-section"} "Vragen aan het laden...")
-               (dom/div #js {:id "m-question_bar"})))))
+      (dom/article #js {:id "m-section"} "Vragen aan het laden..."))))
 
 (defn section-test [cursor owner]
   (reify
     om/IRender
     (render [_]
       (let [{:keys [chapter-id section-id]} (get-in cursor [:view :selected-path])
-            student-id (get-in cursor [:static :student :id])
-            section-test (get-in cursor [:aggregates section-id])
-            section-title (get-in cursor [:view :section section-id :data :title])]
-        (dom/div nil
-                 (dom/header #js {:id "m-top_header"}
-                             (dom/h1 #js {:className "page_heading"}
-                                     section-title)
-                             (dom/a #js {:className "button white small questions"
-                                         :href (-> (get-in cursor [:view :selected-path])
-                                                   (assoc :section-tab :explanation)
-                                                   history-link)}
-                                    "Uitleg"))
-                 (if section-test
-                   (let [questions (:questions section-test)
-                         question (peek questions)
-                         question-id (:question-id question)]
-                     (if-let [question-data (question-by-id cursor section-id question-id)]
-                       (om/build question-panel cursor)
-                       (dom/div nil
-                                (dom/header #js {:id "m-top_header"})
-                                (dom/article #js {:id "m-section"} "Vraag laden")
-                                (dom/div #js {:id "m-question_bar"}))))
-                   (om/build section-test-loading cursor)))))))
+            student-id (get-in cursor [:static :student :id])]
+        (if-let [section-test (get-in cursor [:aggregates section-id])]
+          (let [questions (:questions section-test)
+                question (peek questions)
+                question-id (:question-id question)]
+            (if-let [question-data (question-by-id cursor section-id question-id)]
+              (om/build question-panel cursor)
+              (dom/article #js {:id "m-section"} "Vraag laden")))
+          (om/build section-test-loading cursor))))))
+
+(defn path-panel [cursor owner]
+  (reify
+    om/IRender
+    (render [_]
+      (let [{:keys [section-id section-tab]} (get-in cursor [:view :selected-path])]
+        (if (= section-tab :questions)
+          (let [student-id (get-in cursor [:static :student :id])
+                section-test (get-in cursor [:aggregates section-id])]
+            (om/build streak-box (:streak section-test)))
+          (dom/div #js {:id "m-path"}))))))
 
 (defn section-panel [cursor owner]
   (let [load-data (fn []
@@ -690,7 +686,8 @@
                            (om/build section-explanation-panel cursor)
                            (dom/article #js {:id "m-section"}
                                         "Maak een keuze uit het menu"))
-                         (om/build section-test cursor))))))))
+                         (om/build section-test cursor))
+                       (om/build path-panel cursor)))))))
 
 (defn sections-navigation [cursor chapter]
   (apply dom/ul nil
@@ -782,7 +779,7 @@
   (reify
     om/IRender
     (render [_]
-      (let [{:keys [chapter-id section-id]} (get-in cursor [:view :selected-path])
+      (let [{:keys [chapter-id section-id section-tab]} (get-in cursor [:view :selected-path])
             course (get-in cursor [:view :course-material])
             chapter (some (fn [{:keys [id] :as chapter}]
                             (when (= id chapter-id)
@@ -804,20 +801,22 @@
   (reify
     om/IRender
     (render [_]
-      (dom/div nil
-               (when (get-in cursor [:aggregates :failed])
-                 (modal
-                  (dom/h1 nil "Je bent niet meer up-to-date met de server. Herlaad de pagina.")
-                  (dom/button #js {:onClick (fn [e]
-                                              (.reload js/location true))}
-                              "Herlaad de pagina")))
-               (if (get-in cursor [:view :selected-path :dashboard])
-                 (om/build dashboard cursor)
-                 (dom/div nil
-                          (om/build page-header cursor)
-                          (om/build navigation-panel cursor)
-                          (om/build section-panel cursor)
-                          (dom/div #js {:id "m-path"})))))))
+      (let [{:keys [section-tab]} (get-in cursor [:view :selected-path])]
+        (dom/div #js {:className (if (= section-tab :explanation)
+                                   ""
+                                   "questions_page")}
+                 (when (get-in cursor [:aggregates :failed])
+                   (modal
+                    (dom/h1 nil "Je bent niet meer up-to-date met de server. Herlaad de pagina.")
+                    (dom/button #js {:onClick (fn [e]
+                                                (.reload js/location true))}
+                                "Herlaad de pagina")))
+                 (if (get-in cursor [:view :selected-path :dashboard])
+                   (om/build dashboard cursor)
+                   (dom/div nil
+                            (om/build page-header cursor)
+                            (om/build navigation-panel cursor)
+                            (om/build section-panel cursor))))))))
 
 (defn ^:export course-page []
   (om/root

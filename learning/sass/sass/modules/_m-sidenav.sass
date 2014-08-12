@@ -13,14 +13,6 @@
     +box-sizing(border-box)
     position: relative
 
-    &.finished
-      &:after
-        background: #d4d9df
-
-    &.in_progress
-      &:after
-        background: #ccc
-
     &:after
       display: block
       position: absolute
@@ -51,6 +43,13 @@
         padding-top: 6px
         padding-bottom: 19px
 
+    &.finished
+      &:after
+        background: yellow //with icons should be: #d4d9df
+
+    &.in_progress
+      &:after
+        background: pink // with icons should be: #ccc
 
     .section_link
       display: block
