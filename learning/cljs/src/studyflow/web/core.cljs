@@ -556,8 +556,9 @@
                                                    false)}
                                    "In deze paragraaf blijven"))
                      :show-streak-completed-modal
-                     (modal (dom/h1 nil "Yes!")
-                            (dom/p nil "Je hebt deze paragraaf nog een keer voltooid. Nu snap je hem wel :)")
+                     (modal (dom/span nil
+                                      (dom/h1 nil "Yes!")
+                                      (dom/p nil "Je hebt deze paragraaf nog een keer voltooid. Nu snap je hem wel :)"))
                             (dom/button #js {:onClick (fn [e]
                                                         (submit))}
                                         "Volgende paragraaf"))
@@ -774,11 +775,11 @@
     (render [_]
       (dom/div nil
                (when (get-in cursor [:aggregates :failed])
-                   (modal
-                    (dom/h1 nil "Je bent niet meer up-to-date met de server. Herlaad de pagina.")
-                    (dom/button #js {:onClick (fn [e]
-                                                (.reload js/location true))}
-                                "Herlaad de pagina")))
+                 (modal
+                  (dom/h1 nil "Je bent niet meer up-to-date met de server. Herlaad de pagina.")
+                  (dom/button #js {:onClick (fn [e]
+                                              (.reload js/location true))}
+                              "Herlaad de pagina")))
                (if (get-in cursor [:view :selected-path :dashboard])
                  (om/build dashboard cursor)
                  (dom/div nil
