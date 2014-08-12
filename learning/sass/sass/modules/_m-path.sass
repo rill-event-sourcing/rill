@@ -1,0 +1,38 @@
+#m-path
+  width: 50px
+  right: 0
+  position: fixed
+  bottom: 0
+  top: 66px
+  background: #eef2f7
+  +box-shadow(inset 2px 0px 2px rgba(0,0,0,0.12))
+  padding-top: 13px
+
+  .goal
+    margin: 0 0 15px 14px
+    width: 21px
+    height: 21px
+    display: block
+    +border-radius(50%)
+    border: 2px solid #646d74
+    background: white
+    position: relative
+
+    &.inactive
+      background: #cfd2d7
+      border-color: #cacbd0
+
+
+    &:last-child
+      &:after
+        display: none
+
+    &:after
+      width: 3px
+      height: 15px
+      background-color: #d7dadf
+      content: ''
+      display: block
+      position: absolute
+      left: 9px
+      top: 23px
