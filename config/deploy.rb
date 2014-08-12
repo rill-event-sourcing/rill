@@ -2,11 +2,12 @@
 set :deploy_to, "/home/studyflow/app"
 set :s3path, "s3://studyflow-server-images"
 set :max_load_time, 120
+set :keep_releases, 10
 
 #########################################################################################################
 
 desc 'Deploy application from S3'
-task :deploy => ["deploy:check", "deploy:update", "deploy:symlink", "deploy:restart"]
+task :deploy => ["deploy:check", "deploy:update", "deploy:symlink", "deploy:restart", "deploy:cleanup"]
 
 #########################################################################################################
 
@@ -70,6 +71,15 @@ namespace :deploy do
           execute :ln, '-s', release_path.join(jar_file), current_path
         end
       end
+
+      within release_path do
+        execute :echo, "\"#{ fetch(:current_revision) }\" >> REVISION"
+      end
+
+      within deploy_path do
+        revision_log_message = "Branch #{ fetch(:branch) } (at #{ fetch(:current_revision) }) deployed as release #{ fetch(:release_timestamp) } by #{ local_user }"
+        execute %{echo "#{ revision_log_message }" >> #{ revision_log }}
+      end
     end
   end
 
@@ -118,7 +128,7 @@ namespace :deploy do
         info "sleeping until app is up (#{ load_time } seconds)"
         # response = capture "curl -s --connect-timeout 1 'http://localhost:#{ fetch(:java_port) }/health-check'; echo 'testing'"
         # status_up =(response =~ /{"status":"up"}/)
-        response = capture "curl -s --connect-timeout 1 -I 'http://localhost:#{ fetch(:java_port) }/'; echo 'testing'"
+        response = capture "curl -s --connect-timeout 1 -I 'http://localhost:#{ fetch(:java_port) }/'; echo 'waiting for #{ host }...'"
         status_up = (response =~ /HTTP\/1.1 200 OK/) || (response =~ /HTTP\/1.1 302 Found/)
       end
       if load_time > fetch(:max_load_time)
@@ -149,13 +159,33 @@ namespace :deploy do
         sleep 5
         load_time += 5
         info "sleeping until app is up (#{ load_time } seconds)"
-        response = capture "curl -s --connect-timeout 1 'http://localhost/health-check'; echo 'testing'"
+        response = capture "curl -s --connect-timeout 1 'http://localhost/health-check'; echo 'waiting for #{ host }...'"
         status_up =(response =~ /{"status":"up"}/)
       end
       if load_time > fetch(:max_load_time)
         throw "#{ host } won't go up!"
       else
         info "#{ host } is up"
+      end
+    end
+  end
+
+
+  desc 'Clean up old releases'
+  task :cleanup do
+    on release_roles :all do |host|
+      releases = capture(:ls, '-x', releases_path).split
+      if releases.count >= fetch(:keep_releases)
+        info t(:keeping_releases, host: host.to_s, keep_releases: fetch(:keep_releases), releases: releases.count)
+        directories = (releases - releases.last(fetch(:keep_releases)))
+        if directories.any?
+          directories_str = directories.map do |release|
+            releases_path.join(release)
+          end.join(" ")
+          execute :rm, '-rf', directories_str
+        else
+          info t(:no_old_releases, host: host.to_s, keep_releases: fetch(:keep_releases))
+        end
       end
     end
   end
