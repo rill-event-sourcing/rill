@@ -694,7 +694,8 @@
          (for [{:keys [title status]
                 section-id :id
                 :as section} (:sections chapter)]
-           (dom/li #js {:data-id section-id}
+           (dom/li #js {:data-id section-id
+                        :className "dashboard_section"}
                    (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
                                          (assoc :chapter-id (:id chapter)
                                                 :section-id section-id
@@ -711,9 +712,13 @@
 
 (defn chapter-navigation [cursor selected-chapter-id course chapter]
   (let [selected? (= selected-chapter-id (:id chapter))]
-    (dom/li nil
+    (dom/li #js {:className (if selected?
+                              "selected_chapter"
+                              "")}
             (dom/h1 #js {:data-id (:id course)
-                         :className "chapter_title"}
+                         :className (str "chapter_title "
+                                         (when selected?
+                                           "selected"))}
                     (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
                                           (assoc :chapter-id (:id chapter)
                                                  :section-id nil
@@ -737,10 +742,11 @@
             chapter-id (or (get-in cursor [:view :selected-path :chapter-id]) (:id (first (:chapters course))))]
 
         (if course
-          (dom/div nil
-                   (apply dom/ul nil
-                          (map (partial chapter-navigation cursor chapter-id course)
-                               (:chapters course))))
+          (dom/article #js {:id "m-section"}
+                       (dom/div nil
+                                (apply dom/ul nil
+                                       (map (partial chapter-navigation cursor chapter-id course)
+                                            (:chapters course)))))
           (dom/h2 nil "Hoofdstukken laden..."))))))
 
 (defn dashboard-top-header
