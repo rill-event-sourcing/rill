@@ -3,9 +3,10 @@
             [om.dom :as dom :include-macros true]
             [goog.events :as gevents]
             [clojure.string :as string])
-  (:import [goog.history Html5History EventType]))
+  (:import [goog.history EventType]
+           [goog History]))
 
-(def history (Html5History.))
+(def history (History.))
 
 (defn token->path [token]
   (let [[dashboard-token chapter-id section-id question-token] (string/split token #"/")]

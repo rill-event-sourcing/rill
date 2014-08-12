@@ -16,4 +16,4 @@
         r (request :get (route/uri-for routes/get-course-page (:id input)))
         res (handler r)]
     (is (= (:status res) 200))
-    (is (= (get-in res [:headers "Content-Type"]) "text/html"))))
+    (is (= (get-in res [:headers "Content-Type"]) "text/html; charset=utf-8"))))
