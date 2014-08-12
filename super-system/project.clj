@@ -12,7 +12,9 @@
                "../edu-route-api/test"
                "../lib/rill/test"
                "../lib/components/test"]
-  :profiles {:dev
+  :profiles {
+
+             :dev
              {:source-paths ["dev"]
               :resource-paths ["dev/resources"]
               :dependencies
@@ -33,4 +35,32 @@
                                    (reduce into []))]
                  (into '[[org.clojure/tools.trace "0.7.5"]
                          [org.clojure/tools.namespace "0.2.5"]]
-                       dev-deps))}})
+                       dev-deps))}
+
+             ;; VOODOO - this jar should only be used for testing/dev purposes
+             :uberjar {:aot [studyflow.super-system.main]
+                       :main studyflow.super-system.main
+                       :source-paths ["dev" "../learning/dev" "../login/dev" "../school-administration/dev"]
+                       :resource-paths ["dev/resources"  "../learning/dev/resources" "../login/dev/resources" "../school-administration/dev/resources"]
+                       :dependencies
+                       ~(let [find-dev-deps (fn [project-clj-file]
+                                              (let [conf (->>
+                                                          project-clj-file
+                                                          slurp
+                                                          read-string
+                                                          (drop 3)
+                                                          (partition 2)
+                                                          (map vec)
+                                                          (into {}))]
+                                                (get-in conf [:profiles :dev :dependencies])))
+                              dev-deps (->> (for [f (file-seq (java.io.File. "checkouts"))
+                                                  :let [n (.getPath f)]
+                                                  :when (.endsWith n "project.clj")]
+                                              (find-dev-deps n))
+                                            (reduce into []))]
+                          (into '[[org.clojure/tools.trace "0.7.5"]
+                                  [org.clojure/tools.namespace "0.2.5"]]
+                                dev-deps))
+                       }
+
+             })
