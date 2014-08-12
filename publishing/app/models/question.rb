@@ -46,15 +46,29 @@ class Question < ActiveRecord::Base
   end
 
   def to_publishing_format
-    hash = {
+    {
       id: id,
       text: render_latex(text),
       tools: tools.keys,
       line_input_fields: line_inputs.map(&:to_publishing_format),
-      multiple_choice_input_fields: multiple_choice_inputs.map(&:to_publishing_format)
+      multiple_choice_input_fields: multiple_choice_inputs.map(&:to_publishing_format),
+      worked_out_answer: worked_out_answer_with_default
     }
-    hash["worked_out_answer"] = render_latex(worked_out_answer) unless worked_out_answer.blank?
-    hash
+  end
+
+  def made_worked_out_answer
+    return nil if inputs.length > 1
+    input =  inputs.first
+    if input.is_a?(LineInput)
+      value = input.answers.first.value
+    elsif input.is_a?(MultipleChoiceInput)
+      value = render_latex(input.choices.first.value)
+    end
+    "Het juiste antwoord is: #{ value }"
+  end
+
+  def worked_out_answer_with_default
+     worked_out_answer.blank? ? made_worked_out_answer : render_latex(worked_out_answer)
   end
 
   def inputs_referenced_exactly_once?

@@ -29,11 +29,12 @@ RSpec.describe Question, :type => :model do
     expect(@question.to_s).to eq @question.text
   end
 
-  it "should not export a worked out answer when it is empty" do
+  it "should export a default worked_out_answer when the worked_out_answer is empty" do
     question = create(:question, worked_out_answer: "")
-    expect(question.to_publishing_format).not_to include "worked_out_answer"
-    question = create(:question, worked_out_answer: "non empty")
-    expect(question.to_publishing_format).to include "worked_out_answer"
+    input1 = create(:line_input, inputable: question)
+    answer1 = create(:answer, line_input: input1, value: 'goed')
+    published_format = question.to_publishing_format
+    expect(published_format[:worked_out_answer]).to eq "Het juiste antwoord is: goed"
   end
 
 
