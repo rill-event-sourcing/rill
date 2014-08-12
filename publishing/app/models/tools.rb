@@ -4,7 +4,7 @@ class Tools
   end
 
   def self.default
-    {"pen_and_paper" => true}
+    {"pen_and_paper" => 1}
   end
 
 end
