@@ -5,12 +5,14 @@ class Question < ActiveRecord::Base
   after_create :set_default_tools
 
   belongs_to :quizzable, polymorphic: true, touch: true
+  acts_as_list scope: [:quizzable_id, :quizzable_type]
 
   has_many :inputs, as: :inputable
   has_many :line_inputs, as: :inputable
   has_many :multiple_choice_inputs, as: :inputable
 
   default_scope { order(:position, :name, :text) }
+
 
   scope :active, -> { where(active: true) }
   scope :for_short_uuid, ->(id) { where(["SUBSTRING(CAST(id AS VARCHAR), 1, 8) = ?", id]) }

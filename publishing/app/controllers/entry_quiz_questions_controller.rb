@@ -15,7 +15,7 @@ class EntryQuizQuestionsController < ApplicationController
   end
 
   def create
-    @question = @entry_quizs.questions.create
+    @question = @entry_quiz.questions.create
     redirect_to entry_quiz_question_path(@question)
   end
 
@@ -54,6 +54,16 @@ class EntryQuizQuestionsController < ApplicationController
   def deactivate
     @question.deactivate
     redirect_to entry_quiz_questions_path
+  end
+
+  def moveup
+    @question.move_higher
+    redirect_to entry_quiz_questions_path, notice: 'Chapter was successfully moved up.'
+  end
+
+  def movedown
+    @question.move_lower
+    redirect_to entry_quiz_questions_path, notice: 'Chapter was successfully moved down.'
   end
 
   private

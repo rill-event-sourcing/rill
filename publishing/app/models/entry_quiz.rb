@@ -1,7 +1,7 @@
 class EntryQuiz < ActiveRecord::Base
 
   belongs_to :course
-  has_many :questions, -> { order("position ASC") }, as: :quizzable
+  has_many :questions, as: :quizzable
 
   scope :for_short_uuid, ->(id) { where(["SUBSTRING(CAST(id AS VARCHAR), 1, 8) = ?", id]) }
   def self.find_by_uuid(id, with_404 = true)
