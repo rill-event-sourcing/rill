@@ -42,7 +42,7 @@ class Question < ActiveRecord::Base
   end
 
   def set_default_tools
-    self.tools = Tools.default
+    self.update_attribute(:tools, Tools.default)
   end
 
   def to_publishing_format
