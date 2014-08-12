@@ -12,8 +12,8 @@ desc 'Deploy application from S3'
 task :deploy => ["deploy:check", "deploy:update",
                  "deploy:stack_a", "deploy:stop_balancer", "deploy:symlink",
                  "deploy:bundle_install", "deploy:migrate", "deploy:restart", "deploy:check_up", "deploy:start_balancer",
-                 "deploy:stack_b", "deploy:stop_balancer", "deploy:symlink",
-                 "deploy:bundle_install",                   "deploy:restart", "deploy:check_up", "deploy:start_balancer",
+                 "deploy:stack_b", "deploy:stop_balancer_b", "deploy:symlink_b",
+                 "deploy:bundle_install_b",                   "deploy:restart_b", "deploy:check_up_b", "deploy:start_balancer_b",
                  "deploy:cleanup", "deploy:finished"]
 
 #########################################################################################################
@@ -212,6 +212,25 @@ namespace :deploy do
         info "#{ host } is up"
       end
     end
+  end
+
+  task :stop_balancer_b do
+    Rake::Task["deploy:stop_balancer"].execute
+  end
+  task :symlink_b do
+    Rake::Task["deploy:symlink"].execute
+  end
+  task :bundle_install_b do
+    Rake::Task["deploy:bundle_install"].execute
+  end
+  task :restart_b do
+    Rake::Task["deploy:restart"].execute
+  end
+  task :check_up_b do
+    Rake::Task["deploy:check_up"].execute
+  end
+  task :start_balancer_b do
+    Rake::Task["deploy:start_balancer"].execute
   end
 
 end # /namespace
