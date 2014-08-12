@@ -47,8 +47,19 @@ class Question < ActiveRecord::Base
     self.update_attribute(:tools, Tools.default)
   end
 
-  def to_publishing_format
+  def to_publishing_format_for_entry_quiz
     {
+      id: id,
+      text: render_latex(text),
+      tools: tools.keys,
+      line_input_fields: line_inputs.map(&:to_publishing_format),
+      multiple_choice_input_fields: multiple_choice_inputs.map(&:to_publishing_format)
+    }
+  end
+
+
+  def to_publishing_format_for_section
+    hash = {
       id: id,
       text: render_latex(text),
       tools: tools.keys,
@@ -70,7 +81,9 @@ class Question < ActiveRecord::Base
   end
 
   def worked_out_answer_with_default
-     worked_out_answer.blank? ? made_worked_out_answer : render_latex(worked_out_answer)
+    worked_out_answer.blank? ? made_worked_out_answer : render_latex(worked_out_answer)
+    hash["worked_out_answer"] = render_latex(worked_out_answer) unless worked_out_answer.blank?
+    hash
   end
 
   def inputs_referenced_exactly_once?

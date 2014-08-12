@@ -19,4 +19,12 @@ class EntryQuiz < ActiveRecord::Base
     "Entry Quiz for #{course}"
   end
 
+  def to_publishing_format
+    {
+      instructions: instructions,
+      feedback: feedback,
+      questions: questions.active.map(&:to_publishing_format_for_entry_quiz)
+    }
+  end
+
 end
