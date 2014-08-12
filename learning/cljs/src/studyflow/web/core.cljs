@@ -13,7 +13,13 @@
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
-(enable-console-print!)
+(set! *print-fn*
+      (if (and js/console
+                 (.-log js/console)
+                 (.-apply (.-log js/console)))
+        (fn [& args]
+          (.apply (.-log js/console) js/console (into-array args)))
+        (fn [& args])))
 
 (defn update-js [js-obj key f]
   (let [key (if (keyword? key)
