@@ -3,6 +3,7 @@ set :deploy_to, "/home/studyflow/app"
 set :s3path, "s3://studyflow-server-images"
 set :max_load_time, 120
 set :keep_releases, 10
+set :log_level, :info
 
 #########################################################################################################
 
@@ -86,26 +87,17 @@ namespace :deploy do
 
   desc "restarting the servers"
   task :restart do
-    set :java_role, 'learning'
-    set :java_port, 3000
-    invoke "deploy:restart_java"
-
-    set :java_role, 'login'
-    set :java_port, 4000
-    invoke "deploy:restart_java"
-
-    set :java_role, 'school'
-    set :java_port, 5000
-    invoke "deploy:restart_java"
-
+    restart_java :login, 4000
+    restart_java :learning, 3000
+    restart_java :school, 5000
     invoke "deploy:restart_publish"
   end
 
 
-  desc "restarting a JAVA server"
-  task :restart_java do
-    on release_roles(fetch(:java_role)), in: :sequence, wait: 2 do |host|
-      info "restarting #{ fetch(:java_role) } server: #{ host }"
+  def restart_java(java_role, java_port)
+    p "++++++++++++++++++++++++++++++++++++++++++++++++ restarting java servers for #{ java_role } on port #{ java_port } ++++++++++++++++++++++++++++++++++++++++++++++++"
+    on release_roles(java_role), in: :sequence, wait: 2 do |host|
+      info "restarting #{ java_role } server: #{ host }"
 
       info "disabling on balancer"
       on release_roles(:balancer) do
@@ -117,7 +109,7 @@ namespace :deploy do
       sleep 2
 
       info "restarting the application to new version"
-      execute :sudo, :supervisorctl, :restart, "studyflow_#{ fetch(:java_role) }"
+      execute :sudo, :supervisorctl, :restart, "studyflow_#{ java_role }"
 
       info "waiting for application to be ready"
       load_time = 0
@@ -126,9 +118,7 @@ namespace :deploy do
         sleep 5
         load_time += 5
         info "sleeping until app is up (#{ load_time } seconds)"
-        # response = capture "curl -s --connect-timeout 1 'http://localhost:#{ fetch(:java_port) }/health-check'; echo 'testing'"
-        # status_up =(response =~ /{"status":"up"}/)
-        response = capture "curl -s --connect-timeout 1 -I 'http://localhost:#{ fetch(:java_port) }/'; echo 'waiting for #{ host }...'"
+        response = capture "curl -s --connect-timeout 1 -I 'http://localhost:#{ java_port }/'; echo 'waiting for #{ host }...'"
         status_up = (response =~ /HTTP\/1.1 200 OK/) || (response =~ /HTTP\/1.1 302 Found/)
       end
       if load_time > fetch(:max_load_time)
