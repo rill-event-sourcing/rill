@@ -44,7 +44,7 @@ RSpec.describe QuestionsController, :type => :controller do
     it "should redirect to the chapters path on successful save" do
       post :create, chapter_id: @chapter.to_param, section_id: @section.to_param
       @question = assigns(:question)
-      expect(response).to redirect_to edit_chapter_section_question_path(@chapter,@section,@question)
+      expect(response).to redirect_to edit_chapter_section_question_path(@chapter, @section, @question)
     end
   end
 

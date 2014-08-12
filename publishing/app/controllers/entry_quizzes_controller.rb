@@ -12,7 +12,7 @@ class EntryQuizzesController < ApplicationController
   def create
     @entry_quiz = @course.build_entry_quiz(entry_quiz_params)
     if @entry_quiz.save
-
+      redirect_to entry_quiz_path, notice: "Entry quiz was created successfully"
     else
       render :new
     end

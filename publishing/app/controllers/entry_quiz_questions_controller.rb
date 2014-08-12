@@ -16,7 +16,7 @@ class EntryQuizQuestionsController < ApplicationController
 
   def create
     @question = @entry_quiz.questions.create
-    redirect_to entry_quiz_question_path(@question)
+    redirect_to edit_entry_quiz_question_path(@question)
   end
 
   def update
