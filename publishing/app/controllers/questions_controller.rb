@@ -20,6 +20,8 @@ class QuestionsController < ApplicationController
   end
 
   def update
+    params[:question] ||= {}
+    params[:question][:tools] ||= {}
     set_line_inputs(@question, params[:line_inputs]) if params[:line_inputs]
     set_multiple_choice_inputs(@question, params[:multiple_choice_inputs]) if params[:multiple_choice_inputs]
 
