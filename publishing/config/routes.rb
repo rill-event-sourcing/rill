@@ -24,6 +24,7 @@ Rails.application.routes.draw do
       post 'moveup'
       post 'movedown'
       post 'toggle_activation'
+      post 'toggle_remedial'
     end
 
     resources :sections do

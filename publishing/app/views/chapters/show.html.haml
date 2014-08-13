@@ -7,6 +7,8 @@
           = link_to "Active", toggle_activation_chapter_path(@chapter), class: "label label-success", method: :post
         - else
           = link_to "Not active", toggle_activation_chapter_path(@chapter), class: "label label-danger", method: :post
+        - if @chapter.remedial?
+          %span.label.label-info Remedial
 
       %div.panel.panel-default{style: "margin-top:30px;"}
         %div.panel-heading
