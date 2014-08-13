@@ -25,5 +25,6 @@
 
 (defroute get-student-entry-quiz-page :get "/entry-quiz/:entry-quiz-id")
 (defroute student-entry-quiz-init :put "/api/student-entry-quiz-init/:entry-quiz-id/:student-id")
+(defroute student-entry-quiz-submit-answer :put "/api/student-entry-quiz-check-answer/:entry-quiz-id/:student-id/:question-id")
 
 (defroute student-entry-quiz-replay :get "/api/entry-quiz-replay/:entry-quiz-id/:student-id")

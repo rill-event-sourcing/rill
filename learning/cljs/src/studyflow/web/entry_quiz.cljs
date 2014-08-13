@@ -21,6 +21,51 @@
          :view {:questions {}}
          :aggregates {}}))
 
+(defn input-builders
+  "mapping from input-name to create react dom element for input type"
+  [cursor question current-answers]
+  (let [question-id (:id question)]
+    (-> {}
+        (into (for [mc (:multiple-choice-input-fields question)]
+                (let [input-name (:name mc)]
+                  [input-name
+                   ;; WARNING using dom/ul & dom/li here breaks
+                   (apply dom/span #js {:className "mc-list"}
+                          (for [choice (map :value (:choices mc))]
+                            (let [id (str input-name "-" choice)]
+                              (dom/span #js {:className "mc-choice"}
+                                        (dom/input #js {:id id
+                                                        :type "radio"
+                                                        :react-key (str question-id "-" input-name "-" choice)
+                                                        :checked (= choice (get current-answers input-name))
+                                                        :onChange (fn [event]
+                                                                    (om/update!
+                                                                     cursor
+                                                                     [:view :entry-quiz question-id :answer input-name]
+                                                                     choice))}
+                                                   (dom/label #js {:htmlFor id}
+                                                              choice))))))])))
+        (into (for [[li ref] (map list
+                                  (:line-input-fields question)
+                                  (into ["FOCUSED_INPUT"]
+                                        (rest (map :name (:line-input-fields question)))))]
+                (let [input-name (:name li)]
+                  [input-name
+                   (dom/span nil
+                             (when-let [prefix (:prefix li)]
+                               (str prefix " "))
+                             (dom/input
+                              #js {:value (get current-answers input-name "")
+                                   :react-key (str question-id "-" ref)
+                                   :ref ref
+                                   :onChange (fn [event]
+                                               (om/update!
+                                                cursor
+                                                [:view :entry-quiz question-id :answer input-name]
+                                                (.. event -target -value)))})
+                             (when-let [suffix (:suffix li)]
+                               (str " " suffix)))]))))))
+
 (defn start-panel [cursor owner]
   (reify
     om/IRender
@@ -45,15 +90,12 @@
     om/IDidMount
     (did-mount [_]
       (let [key-handler (goog.events.KeyHandler. js/document)]
-        (when-let [key (om/get-state owner :key-listener)]
-          (goog.events/unlistenByKey key))
-        (->> (goog.events/listen key-handler
-                                 goog.events.KeyHandler.EventType.KEY
-                                 (fn [e]
-                                   (when (= (.-keyCode e) 13) ;;enter
-                                     (when-let [f (om/get-render-state owner :submit)]
-                                       (f)))))
-             (om/set-state! owner :key-listener))))))
+        (goog.events/listenOnce key-handler
+                                goog.events.KeyHandler.EventType.KEY
+                                (fn [e]
+                                  (when (= (.-keyCode e) 13) ;;enter
+                                    (when-let [f (om/get-render-state owner :submit)]
+                                      (f)))))))))
 
 (defn entry-quiz-panel [cursor owner]
   (reify
@@ -79,14 +121,57 @@
                                           (om/build start-panel cursor)
 
                                           :in-progress
-                                          (dom/div nil "GOed bezig")
-                                          :done
-                                          (dom/div nil "Je hebt de instaptoets afgerond. Ga terug naar het dashboard")
-                                          :abandoned
-                                          (dom/div nil "Je hebt de instaptoets niet afgerond. Je kan er niet mee verder. Ga terug naar het dashboard")
-                                          (dom/div nil
-                                                   "TODO debug:"
-                                                   (pr-str entry-quiz)))))))))))
+                                          (let [entry-quiz-id (:id entry-quiz)
+                                                entry-quiz-aggregate-version (:aggregate-version entry-quiz)
+                                                student-id (get-in cursor [:static :student :id])
+                                                question (peek (:questions entry-quiz))
+                                                question-id (:id question)
+                                                question-text (:text question)
+
+                                                current-answers (om/value (get-in cursor [:view :entry-quiz question-id :answer] {}))
+                                                inputs (input-builders cursor question current-answers)
+                                                answering-allowed
+                                                (every? (fn [input-name]
+                                                          (seq (get current-answers input-name)))
+                                                        (keys inputs))
+                                                submit (fn []
+                                                         (when answering-allowed
+                                                           (async/put!
+                                                            (om/get-shared owner :command-channel)
+                                                            ["student-entry-quiz-commands/submit-answer"
+                                                             entry-quiz-id
+                                                             student-id
+                                                             entry-quiz-aggregate-version
+                                                             question-id
+                                                             current-answers])))]
+                                            (dom/form #js {:onSubmit (fn []
+                                                                       (submit)
+                                                                       false)}
+                                                      (apply dom/div nil
+                                                             (for [text-or-input (core/split-text-and-inputs question-text
+                                                                                                             (keys inputs))]
+                                                               ;; this wrapper div is
+                                                               ;; required, otherwise the
+                                                               ;; dangerouslySetInnerHTML
+                                                               ;; breaks when mixing html
+                                                               ;; in text and inputs
+                                                               (dom/div #js {:className "dangerous-html-wrap"}
+                                                                        (if-let [input (get inputs text-or-input)]
+                                                                          input
+                                                                          (dom/span #js {:dangerouslySetInnerHTML #js {:__html text-or-input}} nil)))))
+                                                      (om/build (core/click-once-button "Beantwoorden"
+                                                                                        (fn []
+                                                                                          ;; will call onSubmit of form
+                                                                                          nil)
+                                                                                        :enabled answering-allowed)
+                                                                cursor)))
+                                          :passed
+                                          (dom/div nil "PASSED Je hebt de instaptoets afgerond. Ga terug naar het dashboard")
+                                          :failed
+                                          (dom/div nil "FAILED Je hebt de instaptoets afgerond. Ga terug naar het dashboard"))))))))
+    om/IDidMount
+    (did-mount [_]
+      (core/focus-input-box owner))))
 
 (defn widgets [cursor owner]
   (reify

@@ -9,3 +9,11 @@
   :entry-quiz-id eqm/EntryQuizId
   :student-id m/Id
   student-entry-quiz-id)
+
+(defcommand SubmitAnswer!
+  :entry-quiz-id eqm/EntryQuizId
+  :student-id m/Id
+  :expected-version s/Int
+  :question-id m/Id
+  :inputs {m/FieldName s/Str}
+  student-entry-quiz-id)

@@ -62,7 +62,18 @@ commands."
     (authorization/wrap-student-authorization
      (fn [{{:keys [entry-quiz-id student-id]} :params}]
        (student-entry-quiz-commands/init! (uuid entry-quiz-id)
-                                             (uuid student-id)))))))
+                                          (uuid student-id)))))
+
+   (clout/handle
+    routes/student-entry-quiz-submit-answer
+    (authorization/wrap-student-authorization
+     (fn [{{:keys [entry-quiz-id student-id question-id]} :params body :body}]
+       (let [{:keys [expected-version inputs]} body]
+         (student-entry-quiz-commands/submit-answer! (uuid entry-quiz-id)
+                                                     (uuid student-id)
+                                                     expected-version
+                                                     (uuid question-id)
+                                                     inputs)))))))
 
 (defn make-request-handler
   [event-store]

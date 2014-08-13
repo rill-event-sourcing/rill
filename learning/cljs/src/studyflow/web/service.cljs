@@ -105,6 +105,15 @@
              {:format :json
               :handler (command-aggregate-handler cursor notification-channel entry-quiz-id)
               :error-handler (command-error-handler cursor)}))
+
+      "student-entry-quiz-commands/submit-answer"
+      (let [[entry-quiz-id student-id entry-quiz-aggregate-version question-id inputs] args]
+        (PUT (str "/api/student-entry-quiz-check-answer/" entry-quiz-id "/" student-id "/" question-id)
+             {:params {:expected-version entry-quiz-aggregate-version
+                       :inputs inputs}
+              :format :json
+              :handler (command-aggregate-handler cursor notification-channel entry-quiz-id)
+              :error-handler (command-error-handler cursor)}))
       nil)))
 
 (defn load-data [cursor command]
