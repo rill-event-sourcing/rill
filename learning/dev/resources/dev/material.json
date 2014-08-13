@@ -185,14 +185,12 @@
                     ],
                     "multiple_choice_input_fields": []
                 }
-            ]
-        }
-
-          ],
+            ],
           "line_input_fields": [
 
           ]
         }
+
       ]
     }
   ]
