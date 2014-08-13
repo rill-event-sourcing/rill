@@ -15,8 +15,8 @@
 
 (set! *print-fn*
       (if (and js/console
-                 (.-log js/console)
-                 (.-apply (.-log js/console)))
+               (.-log js/console)
+               (.-apply (.-log js/console)))
         (fn [& args]
           (.apply (.-log js/console) js/console (into-array args)))
         (fn [& args])))
@@ -424,7 +424,7 @@
   [tools]
   (apply dom/div #js {:id "toolbox"}
          (map (fn [tool]
-                (dom/div #js {:id tool} tool))
+                (dom/span #js {:id tool}))
               tools)))
 
 (defn single-question-panel [tag-tree inputs]
@@ -524,11 +524,11 @@
                                               (or (not progress-modal)
                                                   (= progress-modal :dismissed)))
                                       (async/put! (om/get-shared owner :command-channel)
-                                       ["section-test-commands/next-question"
-                                        section-id
-                                        student-id
-                                        section-test-aggregate-version
-                                        course-id])))
+                                                  ["section-test-commands/next-question"
+                                                   section-id
+                                                   student-id
+                                                   section-test-aggregate-version
+                                                   course-id])))
                                   (when (or (= progress-modal :show-finish-modal)
                                             (= progress-modal :show-streak-completed-modal))
                                     (do
@@ -577,12 +577,12 @@
                          nil))
                  (dom/article #js {:id "m-section"
                                    :className "question_page"}
-                              (tool-box (:tools question-data))
                               (single-question-panel (:tag-tree question-data)
                                                      inputs)
                               (when revealed-answer
                                 (dom/div #js {:dangerouslySetInnerHTML #js {:__html revealed-answer}} nil)))
                  (dom/div #js {:id "m-question_bar"}
+                          (tool-box (:tools question-data))
                           (if answer-correct
                             (if (and finished-last-action
                                      (= progress-modal :launchable))
