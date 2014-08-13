@@ -11,8 +11,9 @@
             [rill.aggregate :refer [handle-event handle-command load-aggregate update-aggregate]]
             [clojure.test :refer [deftest testing is]]))
 
-(def section-id #uuid  "baaffea6-3094-4494-8071-87c2854fd26f")
-(def question-id #uuid "3e09e382-266c-4b16-9020-c5a071c2e2a4")
+(def section-id #uuid   "baaffea6-3094-4494-8071-87c2854fd26f")
+(def question-id #uuid  "3e09e382-266c-4b16-9020-c5a071c2e2a4")
+(def question2-id #uuid "fe9d41b5-4aa8-4dff-8e65-44fae2459c3f")
 
 (def course fixture/course-aggregate)
 (def course-id (:id course))
@@ -61,6 +62,14 @@
                                       [fixture/course-published-event
                                        (events/created section-id student-id course-id)
                                        (events/question-assigned section-id student-id question-id)])))))
+
+    (testing "after answering expect to get other question"
+      (is (command-result= [:ok [(events/question-assigned section-id student-id question2-id)]]
+                           (execute (commands/next-question! section-id student-id 2 course-id)
+                                    [fixture/course-published-event
+                                     (events/created section-id student-id course-id)
+                                     (events/question-assigned section-id student-id question-id)
+                                     (events/question-answered-correctly section-id student-id question-id nil)]))))
 
     (testing "with incomplete answers"
       (let [inputs {"_INPUT_1_" "7"}]

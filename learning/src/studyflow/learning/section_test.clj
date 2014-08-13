@@ -13,11 +13,18 @@
      current-question-status
      streak-length
      finished?
-     question-finished?])
+     question-finished?
+     previous-question-ids])
+
+(def minimal-question-distance
+  5)
 
 (defn select-random-question
-  [course section-id]
-  (rand-nth (vec (course/questions-for-section course section-id))))
+  [course section-id previous-question-ids]
+  (let [question-previously-done? (set previous-question-ids)
+        available-questions (filter (fn [question] (not (question-previously-done? (:id question)))) (course/questions-for-section course section-id))]
+    (assert (seq available-questions))
+    (rand-nth (vec available-questions))))
 
 (defmethod aggregate-ids ::commands/Init!
   [{:keys [course-id]}]
@@ -27,19 +34,24 @@
   [section-test {:keys [section-id student-id course-id]} course]
   {:pre [(nil? section-test) student-id section-id course-id course (course/section course section-id)]}
   [:ok [(events/created section-id student-id course-id)
-        (events/question-assigned section-id student-id (:id (select-random-question course section-id)))]])
+        (events/question-assigned section-id student-id (:id (select-random-question course section-id nil)))]])
 
 (defmethod handle-event ::events/Created
   [_ {:keys [section-id student-id section-id]}]
-  (->SectionTest section-id student-id nil nil 0 false false))
+  (->SectionTest section-id student-id nil nil 0 false false nil))
+
+(defn set-previous-question-ids
+  [question-ids question-id]
+  (take minimal-question-distance (cons question-id question-ids)))
 
 (defmethod handle-event ::events/QuestionAssigned
-  [this {:keys [question-id]}]
+  [{:keys [previous-question-ids] :as this} {:keys [question-id]}]
   (assoc this
     :current-question-id question-id
     :current-question-status nil
     :question-finished? nil
-    :answer-revealed? nil))
+    :answer-revealed? nil
+    :previous-question-ids (set-previous-question-ids previous-question-ids question-id)))
 
 (defn track-streak-correct
   [{:keys [streak-length current-question-status] :as this}]
@@ -130,9 +142,9 @@
   [course-id])
 
 (defmethod handle-command ::commands/NextQuestion!
-  [{:keys [section-id student-id question-finished?]} command course]
+  [{:keys [section-id student-id question-finished? previous-question-ids]} command course]
   {:pre [question-finished?]}
-  [:ok [(events/question-assigned section-id student-id (:id (select-random-question course (:section-id command))))]])
+  [:ok [(events/question-assigned section-id student-id (:id (select-random-question course (:section-id command) previous-question-ids)))]])
 
 (defmethod handle-event ::events/Finished
   [section-test event]
