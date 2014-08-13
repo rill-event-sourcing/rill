@@ -20,6 +20,25 @@ task :deploy => ["deploy:check", "deploy:update",
 
                  "deploy:cleanup", "deploy:finished"]
 
+desc 'check version on server'
+task :version do
+  [:stack_a, :stack_b].each do |stack|
+    run_locally do
+      warn "| " + " #{ stack } ".center(72, "#")
+    end
+    on roles *fetch(:release_roles), filter: stack do |host|
+      target = release_path.join('REVISION')
+      if test "[ -f #{target} ]"
+        set(:previous_revision, capture(:cat, target, '2>/dev/null'))
+      end
+      info "| #{ host.hostname.ljust(30) }: #{ fetch(:previous_revision) }"
+    end
+  end
+  run_locally do
+    warn "| " + "".center(72, "#")
+  end
+end
+
 #########################################################################################################
 
 namespace :deploy do
