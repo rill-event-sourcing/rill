@@ -77,3 +77,6 @@ grouping_question_2_multiple_choice_input_choice1 = Choice.create(multiple_choic
 grouping_question_2_multiple_choice_input_choice2 = Choice.create(multiple_choice_input: grouping_question_2_multiple_choice_input, value: "nsadot really", correct: false)
 grouping_question_2_multiple_choice_input_choice3 = Choice.create(multiple_choice_input: grouping_question_2_multiple_choice_input, value: "correct", correct: true)
 
+pos0q1 = Question.create(text: "1 + 1 _INPUT_1_", worked_out_answer: "2", quizzable: position_of_0)
+pos0q1i = LineInput.create(inputable: pos0q1, prefix: "pre", suffix: "suf")
+pos0q1ia = Answer.create(value: "2", line_input: pos0q1i)

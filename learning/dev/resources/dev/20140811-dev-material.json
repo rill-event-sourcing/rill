@@ -3352,7 +3352,7 @@
                     },
                     {
                       "value": "89, 45, 34, 10, 9, 2 ",
-                      "correct": false
+                      "correct": true
                     }
                   ]
                 }
@@ -4065,7 +4065,24 @@
             }
           ],
           "line_input_fields": [],
-          "questions": [
+          "questions": [{
+              "id":  "d47e1a54-a611-4eac-9e1c-cbca3a586d10",
+              "text": "1 + 1 _INPUT_1_",
+              "tools": ["pen_and_paper"],
+              "worked_out_answer": "2",
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "prefix": "pre",
+                  "suffix": "suf",
+                  "width": 150,
+                  "correct_answers": [
+                    "2"
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": []
+            }
 
           ]
         },
@@ -4096,7 +4113,24 @@
           ],
           "line_input_fields": [],
           "questions": [
-
+              {
+                  "id":  "d951e050-eada-4219-8e33-2c85e5abc390",
+                  "text": "1 + 1 _INPUT_1_",
+                  "tools": ["pen_and_paper"],
+                  "worked_out_answer": "2",
+                  "line_input_fields": [
+                      {
+                          "name": "_INPUT_1_",
+                          "prefix": "pre",
+                          "suffix": "suf",
+                          "width": 150,
+                          "correct_answers": [
+                              "2"
+                          ]
+                      }
+                  ],
+                  "multiple_choice_input_fields": []
+              }
           ]
         },
         {
@@ -4116,7 +4150,24 @@
           ],
           "line_input_fields": [],
           "questions": [
-
+              {
+                  "id":  "d8062914-ad2b-4e61-be07-58b91019ce58",
+                  "text": "1 + 1 _INPUT_1_",
+                  "tools": ["pen_and_paper"],
+                  "worked_out_answer": "2",
+                  "line_input_fields": [
+                      {
+                          "name": "_INPUT_1_",
+                          "prefix": "pre",
+                          "suffix": "suf",
+                          "width": 150,
+                          "correct_answers": [
+                              "2"
+                          ]
+                      }
+                  ],
+                  "multiple_choice_input_fields": []
+              }
           ]
         },
         {
@@ -4136,7 +4187,24 @@
           ],
           "line_input_fields": [],
           "questions": [
-
+              {
+                  "id":  "a758dc79-7ce9-4624-9466-bcf1fdb3afa6",
+                  "text": "1 + 1 _INPUT_1_",
+                  "tools": ["pen_and_paper"],
+                  "worked_out_answer": "2",
+                  "line_input_fields": [
+                      {
+                          "name": "_INPUT_1_",
+                          "prefix": "pre",
+                          "suffix": "suf",
+                          "width": 150,
+                          "correct_answers": [
+                              "2"
+                          ]
+                      }
+                  ],
+                  "multiple_choice_input_fields": []
+              }
           ]
         }
       ]
@@ -4177,7 +4245,24 @@
           ],
           "line_input_fields": [],
           "questions": [
-
+              {
+                  "id":  "832389d4-91a6-4e3b-b1fe-ec552b664037",
+                  "text": "1 + 1 _INPUT_1_",
+                  "tools": ["pen_and_paper"],
+                  "worked_out_answer": "2",
+                  "line_input_fields": [
+                      {
+                          "name": "_INPUT_1_",
+                          "prefix": "pre",
+                          "suffix": "suf",
+                          "width": 150,
+                          "correct_answers": [
+                              "2"
+                          ]
+                      }
+                  ],
+                  "multiple_choice_input_fields": []
+              }
           ]
         },
         {
@@ -4207,7 +4292,24 @@
           ],
           "line_input_fields": [],
           "questions": [
-
+              {
+                  "id":  "5ab62932-aee4-4a5d-b522-6afd55915ce4",
+                  "text": "1 + 1 _INPUT_1_",
+                  "tools": ["pen_and_paper"],
+                  "worked_out_answer": "2",
+                  "line_input_fields": [
+                      {
+                          "name": "_INPUT_1_",
+                          "prefix": "pre",
+                          "suffix": "suf",
+                          "width": 150,
+                          "correct_answers": [
+                              "2"
+                          ]
+                      }
+                  ],
+                  "multiple_choice_input_fields": []
+              }
           ]
         },
         {
@@ -4232,7 +4334,24 @@
           ],
           "line_input_fields": [],
           "questions": [
-
+              {
+                  "id":  "e16f8f31-5628-4a4a-bb81-5b797faf9c02",
+                  "text": "1 + 1 _INPUT_1_",
+                  "tools": ["pen_and_paper"],
+                  "worked_out_answer": "2",
+                  "line_input_fields": [
+                      {
+                          "name": "_INPUT_1_",
+                          "prefix": "pre",
+                          "suffix": "suf",
+                          "width": 150,
+                          "correct_answers": [
+                              "2"
+                          ]
+                      }
+                  ],
+                  "multiple_choice_input_fields": []
+              }
           ]
         }
       ]
