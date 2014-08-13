@@ -28,7 +28,7 @@
   {:id m/Id
    :title m/PlainText
    :subsections [SubSection]
-   :line-input-fields #{LineInputField}
+   :line-input-fields #{m/LineInputField}
    :questions (s/both #{SectionQuestion}
                       (s/pred (fn [s] (seq s)) 'not-empty))})
 

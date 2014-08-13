@@ -25,6 +25,4 @@
   (coerce/coercer EntryQuizMaterial schema-tools/schema-coercion-matcher))
 
 (def parse-entry-quiz-material
-  (comp
-   m/transform-question-text-to-tree
-   (schema-tools/strict-coercer parse-entry-quiz-material*)))
+  (schema-tools/strict-coercer parse-entry-quiz-material*))
