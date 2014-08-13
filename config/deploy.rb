@@ -24,18 +24,18 @@ desc 'check version on server'
 task :version do
   [:stack_a, :stack_b].each do |stack|
     run_locally do
-      warn "| " + " #{ stack } ".center(72, "#")
+      warn " | " + " #{ stack } ".center(72, "#")
     end
     on roles *fetch(:release_roles), filter: stack do |host|
       target = release_path.join('REVISION')
       if test "[ -f #{target} ]"
         set(:previous_revision, capture(:cat, target, '2>/dev/null'))
       end
-      info "| #{ host.hostname.ljust(30) }: #{ fetch(:previous_revision) }"
+      info " | #{ host.hostname.ljust(30) }: #{ fetch(:previous_revision) }"
     end
   end
   run_locally do
-    warn "| " + "".center(72, "#")
+    warn " | " + "".center(72, "#")
   end
 end
 
@@ -73,7 +73,7 @@ namespace :deploy do
       end
     end
     run_locally do
-      warn "ccccccccccccccccccccccccccccccccccccccccccccccccccc NEW CODE DOWNLOADED cccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      warn " ccccccccccccccccccccccccccccccccccccccccccccccccccc NEW CODE DOWNLOADED cccccccccccccccccccccccccccccccccccccccccccccccccccc"
     end
   end
 
@@ -98,11 +98,11 @@ namespace :deploy do
     stack = fetch(:stack)
     on roles(:balancer) do
       (roles *fetch(:release_roles), filter: stack).each do |host|
-        warn "disabling #{ host.hostname } on balancer"
+        warn " disabling #{ host.hostname } on balancer"
         execute "sudo haproxyctl disable all #{ host.hostname }"
       end
-      warn "disabled balancer for #{ stack }"
-      warn "waiting 2 seconds for traffic to stop to #{ stack }"
+      warn " disabled balancer for #{ stack }"
+      warn " waiting 2 seconds for traffic to stop to #{ stack }"
       sleep 2
     end
   end
@@ -138,7 +138,7 @@ namespace :deploy do
   task :bundle_install do
     on roles :publish, filter: fetch(:stack) do |host|
       within release_path do
-        warn " running bundle install on #{ host.hostname }"
+        warn "  running bundle install on #{ host.hostname }"
         execute :bundle, :install, "--without='development test'"
       end
     end
@@ -149,7 +149,7 @@ namespace :deploy do
   task :migrate do
     on roles(:db) do |host|
       within release_path do
-        warn " running migrations on #{ host.hostname }"
+        warn "  running migrations on #{ host.hostname }"
         execute :bundle, "exec rake db:migrate RAILS_ENV=#{ fetch(:stage) }"
       end
     end
@@ -161,10 +161,10 @@ namespace :deploy do
     on roles *fetch(:release_roles), filter: fetch(:stack) do |host|
       role = host.roles.first
       if role == :publish
-        warn "restarting publishing server #{ host }"
+        warn " restarting publishing server #{ host }"
         execute :touch, current_path.join("tmp", "restart.txt")
       else
-        warn "restarting java server #{ host }"
+        warn " restarting java server #{ host }"
         execute :sudo, :supervisorctl, :restart, "studyflow_#{ role }"
       end
     end
@@ -184,13 +184,13 @@ namespace :deploy do
     stack = fetch(:stack)
     on roles(:balancer) do
       (roles *fetch(:release_roles), filter: stack).each do |host|
-        warn "disabling #{ host.hostname } on balancer"
+        warn " disabling #{ host.hostname } on balancer"
         execute "sudo haproxyctl enable all #{ host.hostname }"
-        warn "waiting 2 seconds for traffic to start to #{ stack }"
+        warn " waiting 2 seconds for traffic to start to #{ stack }"
         sleep 2
       end
-      warn "enabled balancer for #{ stack }"
-      warn "ccccccccccccccccccccccccccccccccccccccccccccccccccc NEW REVISION ON #{ stack } cccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      warn " enabled balancer for #{ stack }"
+      warn " ccccccccccccccccccccccccccccccccccccccccccccccccccc NEW REVISION ON #{ stack } cccccccccccccccccccccccccccccccccccccccccccccccccccc"
     end
   end
 
@@ -222,7 +222,7 @@ namespace :deploy do
 
   def check_up_server(role, port)
     on roles role, filter: fetch(:stack) do |host|
-      warn "waiting for #{ role } application to be ready"
+      warn " waiting for #{ role } application to be ready"
       load_time = 0
       status_up = false
       until status_up || load_time > fetch(:max_load_time)
@@ -233,14 +233,14 @@ namespace :deploy do
           response = capture "curl -s --connect-timeout 1 -I 'http://localhost:#{ port }/'; echo 'waiting for #{ host }...'"
           status_up = (response =~ /HTTP\/1.1 200 OK/) || (response =~ /HTTP\/1.1 302 Found/)
         end
-        warn "sleeping until app is up (#{ load_time } seconds)"
+        warn " sleeping until app is up (#{ load_time } seconds)"
         sleep 5
         load_time += 5
       end
       if load_time > fetch(:max_load_time)
         throw "#{ host } won't go up!"
       else
-        warn "#{ host } is up"
+        warn " #{ host } is up"
       end
     end
   end
