@@ -3,6 +3,7 @@
             [studyflow.learning.read-model :as m]
             [studyflow.learning.course.events :as course-events]
             [studyflow.learning.entry-quiz.events :as entry-quiz-events]
+            [studyflow.learning.student-entry-quiz.events :as student-entry-quiz-events]
             [studyflow.learning.section-test.events :as section-test]
             [rill.event-channel :as event-channel]
             [rill.message :as message]))
@@ -38,6 +39,18 @@
 (defmethod handle-event ::entry-quiz-events/Updated
   [model event]
   (m/set-entry-quiz model (:entry-quiz-id event) (:material event)))
+
+(defmethod handle-event ::student-entry-quiz-events/QuestionAssigned
+  [model {:keys [entry-quiz-id student-id] :as event}]
+  (m/set-student-entry-quiz-status model entry-quiz-id student-id :in-progress))
+
+(defmethod handle-event ::student-entry-quiz-events/QuizPassed
+  [model {:keys [entry-quiz-id student-id] :as event}]
+  (m/set-student-entry-quiz-status model entry-quiz-id student-id :passed))
+
+(defmethod handle-event ::student-entry-quiz-events/QuizFailed
+  [model {:keys [entry-quiz-id student-id] :as event}]
+  (m/set-student-entry-quiz-status model entry-quiz-id student-id :failed))
 
 (defmethod handle-event ::section-test/Finished
   [model {:keys [student-id section-id]}]

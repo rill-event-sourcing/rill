@@ -88,11 +88,13 @@
     (let [aggr-id (:entry-quiz-id event)]
       {:id aggr-id
        :questions []
+       :question-progress-count 0
        :status :created})
     "studyflow.learning.student-entry-quiz.events/QuestionAssigned"
     (let [aggr-id (:entry-quiz-id event)]
       (-> agg
           (update-in [:questions] conj (:question-data event))
+          (update-in [:question-progress-count] inc)
           (assoc :status :in-progress)))
 
     "studyflow.learning.student-entry-quiz.events/QuestionAnswered"
@@ -103,7 +105,7 @@
     "studyflow.learning.student-entry-quiz.events/QuizFailed"
     (-> agg
         (assoc :status :failed))
-    
+
     (do
       (prn "Aggregate can't handle event: " event)
       agg)))

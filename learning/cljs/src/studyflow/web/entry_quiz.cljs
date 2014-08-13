@@ -97,6 +97,14 @@
                                     (when-let [f (om/get-render-state owner :submit)]
                                       (f)))))))))
 
+(defn to-dashboard-bar []
+  (dom/div #js {:id "m-question_bar"}
+           (dom/button #js {:className "btn green pull-right"
+                            :onClick (fn []
+                                       (set! (.-location js/window)
+                                             "/"))}
+                       "Naar dashboard")))
+
 (defn entry-quiz-panel [cursor owner]
   (reify
     om/IWillMount
@@ -107,76 +115,82 @@
                    (get-in cursor [:static :student :id])]))
     om/IRender
     (render [_]
-      (dom/div #js {:id "m-entry-quiz"}
-               (dom/header #js {:id "m-top_header"}
-                           (dom/article #js {:id "m-section"}
-                                        (if-not (get-in cursor [:view :entry-quiz-replay-done])
-                                          (dom/div nil "Instaptoets laden"
-                                                   (dom/div #js {:id "m-question_bar"}))
-                                          (let [entry-quiz-id (get-in cursor [:static :entry-quiz-id])
-                                                entry-quiz (get-in cursor [:aggregates entry-quiz-id])
-                                                status (:status entry-quiz)]
-                                            (prn "entry-quiz" entry-quiz)
-                                            (cond
-                                             (nil? status) ;; entry-quiz not yet
-                                             ;; started
-                                             (om/build start-panel cursor)
+      (let [entry-quiz-id (get-in cursor [:static :entry-quiz-id])
+            entry-quiz (get-in cursor [:aggregates entry-quiz-id])]
+        (dom/div #js {:id "m-entry-quiz"
+                      :className "entry_exam_page"}
+                 (dom/header #js {:id "m-top_header"}
+                             (dom/a #js {:className "home"
+                                         :href "/"})
+                             (dom/h1 #js {:className "page_heading"}
+                                     "Instaptoets") ;; TODO title is not in aggregate
+                             (when-let [cnt (:question-progress-count entry-quiz)]
+                               (dom/p #js {:className "page_subheading"}
+                                      (str "Vraag #: " cnt))) ;; TODO total questions is not in aggregate
+                             (dom/article #js {:id "m-section"}
+                                          (if-not (get-in cursor [:view :entry-quiz-replay-done])
+                                            (dom/div nil "Instaptoets laden"
+                                                     (to-dashboard-bar))
+                                            (let [status (:status entry-quiz)]
+                                              (cond
+                                               (nil? status) ;; entry-quiz not yet
+                                               ;; started
+                                               (om/build start-panel cursor)
 
-                                             (= status :in-progress)
-                                             (let [entry-quiz-id (:id entry-quiz)
-                                                   entry-quiz-aggregate-version (:aggregate-version entry-quiz)
-                                                   student-id (get-in cursor [:static :student :id])
-                                                   question (peek (:questions entry-quiz))
-                                                   question-id (:id question)
-                                                   question-text (:text question)
+                                               (= status :in-progress)
+                                               (let [entry-quiz-id (:id entry-quiz)
+                                                     entry-quiz-aggregate-version (:aggregate-version entry-quiz)
+                                                     student-id (get-in cursor [:static :student :id])
+                                                     question (peek (:questions entry-quiz))
+                                                     question-id (:id question)
+                                                     question-text (:text question)
 
-                                                   current-answers (om/value (get-in cursor [:view :entry-quiz question-id :answer] {}))
-                                                   inputs (input-builders cursor question current-answers)
-                                                   answering-allowed
-                                                   (every? (fn [input-name]
-                                                             (seq (get current-answers input-name)))
-                                                           (keys inputs))
-                                                   submit (fn []
-                                                            (when answering-allowed
-                                                              (async/put!
-                                                               (om/get-shared owner :command-channel)
-                                                               ["student-entry-quiz-commands/submit-answer"
-                                                                entry-quiz-id
-                                                                student-id
-                                                                entry-quiz-aggregate-version
-                                                                question-id
-                                                                current-answers])))]
-                                               (dom/form #js {:onSubmit (fn []
-                                                                          (submit)
-                                                                          false)}
-                                                         (apply dom/div nil
-                                                                (for [text-or-input (core/split-text-and-inputs question-text
-                                                                                                                (keys inputs))]
-                                                                  ;; this wrapper div is
-                                                                  ;; required, otherwise the
-                                                                  ;; dangerouslySetInnerHTML
-                                                                  ;; breaks when mixing html
-                                                                  ;; in text and inputs
-                                                                  (dom/div #js {:className "dangerous-html-wrap"}
-                                                                           (if-let [input (get inputs text-or-input)]
-                                                                             input
-                                                                             (dom/span #js {:dangerouslySetInnerHTML #js {:__html text-or-input}} nil)))))
-                                                         (om/build (core/click-once-button "Beantwoorden"
-                                                                                           (fn []
-                                                                                             ;; will call onSubmit of form
-                                                                                             nil)
-                                                                                           :enabled answering-allowed)
-                                                                   cursor)))
-                                             (= status :passed)
-                                             (dom/div nil
-                                                      (dom/div nil "PASSED Je hebt de instaptoets afgerond. Ga terug naar het dashboard"))
-                                             (= status :failed)
-                                             (dom/div nil
-                                                      (dom/div nil "FAILED Je hebt de instaptoets afgerond. Ga terug naar het dashboard")
-                                                      (dom/div #js {:id "m-question_bar"}
-                                                               (dom/button #js {:className "btn green pull-right"
-                                                                                :onClick (fn [])}
-                                                                           "Naar dashboard"))))))))))
+                                                     current-answers (om/value (get-in cursor [:view :entry-quiz question-id :answer] {}))
+                                                     inputs (input-builders cursor question current-answers)
+                                                     answering-allowed
+                                                     (every? (fn [input-name]
+                                                               (seq (get current-answers input-name)))
+                                                             (keys inputs))
+                                                     submit (fn []
+                                                              (when answering-allowed
+                                                                (async/put!
+                                                                 (om/get-shared owner :command-channel)
+                                                                 ["student-entry-quiz-commands/submit-answer"
+                                                                  entry-quiz-id
+                                                                  student-id
+                                                                  entry-quiz-aggregate-version
+                                                                  question-id
+                                                                  current-answers])))]
+                                                 (dom/form #js {:onSubmit (fn []
+                                                                            (submit)
+                                                                            false)}
+                                                           (apply dom/div nil
+                                                                  (for [text-or-input (core/split-text-and-inputs question-text
+                                                                                                                  (keys inputs))]
+                                                                    ;; this wrapper div is
+                                                                    ;; required, otherwise the
+                                                                    ;; dangerouslySetInnerHTML
+                                                                    ;; breaks when mixing html
+                                                                    ;; in text and inputs
+                                                                    (dom/div #js {:className "dangerous-html-wrap"}
+                                                                             (if-let [input (get inputs text-or-input)]
+                                                                               input
+                                                                               (dom/span #js {:dangerouslySetInnerHTML #js {:__html text-or-input}} nil)))))
+                                                           (dom/div #js {:id "m-question_bar"}
+                                                                    (om/build (core/click-once-button "Beantwoorden"
+                                                                                                      (fn []
+                                                                                                        ;; will call onSubmit of form
+                                                                                                        nil)
+                                                                                                      :enabled answering-allowed)
+                                                                              cursor))))
+                                               (= status :passed)
+                                               (dom/div nil
+                                                        (dom/div nil "PASSED Je hebt de instaptoets afgerond. Ga terug naar het dashboard")
+                                                        (to-dashboard-bar))
+                                               (= status :failed)
+                                               (dom/div nil
+                                                        (dom/div nil "FAILED Je hebt de instaptoets afgerond. Ga terug naar het dashboard")
+                                                        (to-dashboard-bar))))))))))
     om/IDidMount
     (did-mount [_]
       (core/focus-input-box owner))))

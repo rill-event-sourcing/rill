@@ -40,6 +40,9 @@
 (defn get-student-entry-quiz-status [model entry-quiz-id student-id]
   (get-in model [:entry-quiz-statusses student-id]))
 
+(defn set-student-entry-quiz-status [model entry-quiz-id student-id status]
+  (assoc-in model [:entry-quiz-statusses student-id] status))
+
 (defn set-entry-quiz [model entry-quiz-id material]
   (let [for-course (:course-id material)]
     (-> model

@@ -743,20 +743,20 @@
             chapter-id (or (get-in cursor [:view :selected-path :chapter-id]) (:id (first (:chapters course))))]
 
         (if course
-          (dom/div nil
-                   (let [{:keys [name status]
-                          entry-quiz-id :id
-                          :as entry-quiz} (get-in cursor [:view :course-material :entry-quiz])]
-                     (dom/ul nil
-                               (dom/li nil
-                                       (dom/a #js {:href (str "/entry-quiz/" entry-quiz-id)}
-                                              name)
-                                       (dom/span nil status))))
-                   (dom/article #js {:id "m-section"}
+          (dom/article #js {:id "m-section"}
+                       (let [{:keys [name status]
+                              entry-quiz-id :id
+                              :as entry-quiz} (get-in cursor [:view :course-material :entry-quiz])
+                              status (keyword status)]
+                         (when (not (#{:passed :failed} status))
+                           (dom/ul nil
+                                   (dom/li nil
+                                           (dom/a #js {:href (str "/entry-quiz/" entry-quiz-id)}
+                                                  name)))))
                        (dom/div nil
                                 (apply dom/ul nil
                                        (map (partial chapter-navigation cursor chapter-id course)
-                                            (:chapters course))))))
+                                            (:chapters course)))))
           (dom/h2 nil "Hoofdstukken laden..."))))))
 
 (defn dashboard-top-header
@@ -813,13 +813,13 @@
                     (dom/p #js {:className "page_subheading"}
                            (:title chapter)))))))
 
-(defn entry-quiz-dashboard [cursor]
+(defn entry-quiz-modal [cursor]
   (when-let [entry-quiz (get-in cursor [:view :course-material :entry-quiz])]
     (let [{:keys [status description]
            entry-quiz-id :id} entry-quiz
            status (if (= :dismissed (get-in cursor [:view :entry-quiz]))
                     :dismissed
-                    status)]
+                    (keyword status))]
       (condp = status
         nil (modal (dom/div nil
                             (dom/h1 nil "Instaptoets")
@@ -841,8 +841,9 @@
                                           false)}
                           "Doe het later"))
         :dismissed
-        nil ;; show link
-        ;; TODO inprogress do redirect
+        nil ;; show link at the dashboard in a deeper nesting
+        :in-progress
+        nil ;; show link at the dashboard in a deeper nesting
         nil))))
 
 (defn widgets [cursor owner]
@@ -859,7 +860,7 @@
                     (dom/button #js {:onClick (fn [e]
                                                 (.reload js/location true))}
                                 "Herlaad de pagina")))
-                 (entry-quiz-dashboard cursor)
+                 (entry-quiz-modal cursor)
                  (if (get-in cursor [:view :selected-path :dashboard])
                    (om/build dashboard cursor)
                    (dom/div nil
