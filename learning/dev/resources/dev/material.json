@@ -165,7 +165,28 @@
               "text": "What now?"
             }
           ],
-          "questions": [
+          "questions": 
+            [
+                {
+                    "id":  "f0b3d0ec-322c-4a82-84df-66cf0f9fd106",
+                    "text": "1 + 1 _INPUT_1_",
+                    "tools": ["pen_and_paper"],
+                    "worked_out_answer": "2",
+                    "line_input_fields": [
+                        {
+                            "name": "_INPUT_1_",
+                            "prefix": "pre",
+                            "suffix": "suf",
+                            "width": 150,
+                            "correct_answers": [
+                                "2"
+                            ]
+                        }
+                    ],
+                    "multiple_choice_input_fields": []
+                }
+            ]
+        }
 
           ],
           "line_input_fields": [

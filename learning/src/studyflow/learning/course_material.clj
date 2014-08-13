@@ -49,7 +49,8 @@
    :title PlainText
    :subsections [SubSection]
    :line-input-fields #{LineInputField}
-   :questions #{SectionQuestion}})
+   :questions (s/both #{SectionQuestion}
+                      (s/pred (fn [s] (seq s)) 'not-empty))})
 
 (def Chapter
   {:id Id
