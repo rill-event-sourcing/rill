@@ -1,10 +1,13 @@
 @import compass
-@import compass/css3/user-interface
 
-// Subsection content
+#m-section
+  margin: 120px auto
+  max-width: 700px
+  padding: 0 50px
+  &.question_page
+    margin-bottom: 180px
 
-.m-subsection
-  margin: 0 50px
+  // Content
 
   h1
     margin: 0 0 30px 0
@@ -136,3 +139,10 @@
 
   .cf:after
     clear: both
+
+  // inline questions
+  .dangerous-html-wrap
+    display: inline
+
+  .inline-input-form
+    display: inline
