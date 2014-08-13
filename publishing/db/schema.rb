@@ -57,7 +57,8 @@ ActiveRecord::Schema.define(version: 20140813073724) do
     t.uuid     "course_id"
     t.text     "instructions"
     t.text     "feedback"
-    t.boolean  "active",       default: false
+    t.boolean  "active",                 default: false
+    t.integer  "threshold",    limit: 2, default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
   end

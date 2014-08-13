@@ -5,6 +5,7 @@ class CreateEntryQuizzes < ActiveRecord::Migration
       t.text :instructions
       t.text :feedback
       t.boolean :active, default: false
+      t.integer :threshold, limit: 2, default: 0
       t.timestamps
     end
   end

@@ -192,13 +192,14 @@
 
           ]
         }
-
-      ]
+      ],
+      "remedial": false
     }
   ],
   "entry_quiz": {
     "instructions": "Do this and that",
     "feedback": "Great, you're done with the entry quiz",
+    "threshold": 1,
     "questions": [
       {
         "id": "35ebaa9f-d259-41f4-853c-25750364c6c1",

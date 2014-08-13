@@ -13,6 +13,10 @@
         %div.panel-heading
           %strong Feedback:
         %div.panel-body= @entry_quiz.feedback
+        %div.panel-heading
+          %strong Correct answer required to pass:
+        %div.panel-body
+          = "#{@entry_quiz.threshold.to_s} out of a total of #{@entry_quiz.questions.length} questions"
 
     %div.col-md-8.col-md-offset-2
       = link_to 'Manage Questions', entry_quiz_questions_path, class: "btn btn-primary", style: "margin:20px auto; width:100%;"

@@ -8,6 +8,10 @@ RSpec.describe EntryQuiz, :type => :model do
     @eq = create(:entry_quiz)
   end
 
+  it "should return the correct string when asked for it" do
+    expect(@eq.to_s).to eq "Entry Quiz for #{@eq.course}"
+  end
+
   it "should return an abbreviated uuid" do
     id = @eq.id.to_s
     expect(@eq.to_param).to eq id[0,8]
@@ -25,5 +29,4 @@ RSpec.describe EntryQuiz, :type => :model do
     expect{EntryQuiz.find_by_uuid('1a31a31a', false)}.not_to raise_error
     expect(EntryQuiz.find_by_uuid('1a31a31a', false)).to eq nil
   end
-
 end

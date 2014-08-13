@@ -23,6 +23,7 @@ class EntryQuiz < ActiveRecord::Base
     {
       instructions: instructions,
       feedback: feedback,
+      threshold: threshold,
       questions: questions.active.map(&:to_publishing_format_for_entry_quiz)
     }
   end
