@@ -17,6 +17,7 @@
   :section-id m/Id
   :student-id m/Id
   :question-id m/Id
+  :question-total s/Int
   section-test-id)
 
 (defevent AnswerRevealed

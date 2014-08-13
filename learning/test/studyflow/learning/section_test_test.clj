@@ -14,6 +14,7 @@
 (def section-id #uuid   "baaffea6-3094-4494-8071-87c2854fd26f")
 (def question-id #uuid  "3e09e382-266c-4b16-9020-c5a071c2e2a4")
 (def question2-id #uuid "fe9d41b5-4aa8-4dff-8e65-44fae2459c3f")
+(def question-total 2)
 
 (def course fixture/course-aggregate)
 (def course-id (:id course))
@@ -52,7 +53,7 @@
                              (execute (commands/check-answer! section-id student-id 1 course-id question-id inputs)
                                       [fixture/course-published-event
                                        (events/created section-id student-id course-id)
-                                       (events/question-assigned section-id student-id question-id)])))))
+                                       (events/question-assigned section-id student-id question-id question-total)])))))
 
     (testing "with a correct answer with extra whitespace"
       (let [inputs {"_INPUT_1_" "    6    "
@@ -61,14 +62,14 @@
                              (execute (commands/check-answer! section-id student-id 1 course-id question-id inputs)
                                       [fixture/course-published-event
                                        (events/created section-id student-id course-id)
-                                       (events/question-assigned section-id student-id question-id)])))))
+                                       (events/question-assigned section-id student-id question-id question-total)])))))
 
     (testing "after answering expect to get other question"
-      (is (command-result= [:ok [(events/question-assigned section-id student-id question2-id)]]
+      (is (command-result= [:ok [(events/question-assigned section-id student-id question2-id question-total)]]
                            (execute (commands/next-question! section-id student-id 2 course-id)
                                     [fixture/course-published-event
                                      (events/created section-id student-id course-id)
-                                     (events/question-assigned section-id student-id question-id)
+                                     (events/question-assigned section-id student-id question-id question-total)
                                      (events/question-answered-correctly section-id student-id question-id nil)]))))
 
     (testing "with incomplete answers"
@@ -77,14 +78,14 @@
                              (execute (commands/check-answer! section-id student-id 1 course-id question-id inputs)
                                       [fixture/course-published-event
                                        (events/created section-id student-id course-id)
-                                       (events/question-assigned section-id student-id question-id)]))))
+                                       (events/question-assigned section-id student-id question-id question-total)]))))
 
       (let [inputs {"_INPUT_1_" "8"}]
         (is (command-result= [:ok [(events/question-answered-incorrectly section-id student-id question-id inputs)]]
                              (execute (commands/check-answer! section-id student-id 1 course-id question-id inputs)
                                       [fixture/course-published-event
                                        (events/created section-id student-id course-id)
-                                       (events/question-assigned section-id student-id question-id)])))))
+                                       (events/question-assigned section-id student-id question-id question-total)])))))
 
     (testing "with an incorrect answer"
       (let [inputs {"_INPUT_1_" "7"
@@ -93,7 +94,7 @@
                              (execute (commands/check-answer! section-id student-id 1 course-id question-id inputs)
                                       [fixture/course-published-event
                                        (events/created section-id student-id course-id)
-                                       (events/question-assigned section-id student-id question-id)]))))
+                                       (events/question-assigned section-id student-id question-id question-total)]))))
 
 
       (let [inputs {"_INPUT_1_" "8"
@@ -102,7 +103,7 @@
                              (execute (commands/check-answer! section-id student-id 1 course-id question-id inputs)
                                       [fixture/course-published-event
                                        (events/created section-id student-id course-id)
-                                       (events/question-assigned section-id student-id question-id)])))))
+                                       (events/question-assigned section-id student-id question-id question-total)])))))
 
     (testing "next question"
       (testing "with a correct answer"
@@ -111,7 +112,7 @@
           (let [[status [event]] (execute (commands/next-question! section-id student-id 2 course-id)
                                           [fixture/course-published-event
                                            (events/created section-id student-id course-id)
-                                           (events/question-assigned section-id student-id question-id)
+                                           (events/question-assigned section-id student-id question-id question-total)
                                            (events/question-answered-correctly section-id student-id question-id inputs)])]
             (is (= :ok status)
                 (= ::events/QuestionAssigned
@@ -123,7 +124,7 @@
                        (execute (commands/next-question! section-id student-id 2 course-id)
                                 [fixture/course-published-event
                                  (events/created section-id student-id course-id)
-                                 (events/question-assigned section-id student-id question-id)
+                                 (events/question-assigned section-id student-id question-id question-total)
                                  (events/question-answered-incorrectly section-id student-id question-id inputs)]))))))))
 
 
@@ -136,9 +137,9 @@
               (-> [fixture/course-published-event
                    (events/created section-id student-id course-id)]
                   (into (reduce into []
-                                (repeat 4 [(events/question-assigned section-id student-id question-id)
+                                (repeat 4 [(events/question-assigned section-id student-id question-id question-total)
                                            (events/question-answered-correctly section-id student-id question-id inputs)])))
-                  (conj (events/question-assigned section-id student-id question-id)))
+                  (conj (events/question-assigned section-id student-id question-id question-total)))
               [status [correctly-answered-event finished-event :as events]]
               (execute (commands/check-answer! section-id student-id 9 course-id question-id inputs)
                        upto-fifth-q-stream)]
@@ -157,7 +158,7 @@
                        ::events/QuestionAssigned))))
             (testing "the sixth correct answer after a finish won't generate a StreakCompleted"
               (let [continue-stream (conj finished-stream
-                                          (events/question-assigned section-id student-id question-id))
+                                          (events/question-assigned section-id student-id question-id question-total))
                     [status [answered-correctly-event :as events]]
                     (execute (commands/check-answer! section-id student-id 12 course-id question-id inputs)
                              continue-stream)]
@@ -169,7 +170,7 @@
               (let [continue-stream (into finished-stream
                                           (interpose
                                            (events/question-answered-correctly section-id student-id question-id inputs)
-                                           (repeat 5 (events/question-assigned section-id student-id question-id))))
+                                           (repeat 5 (events/question-assigned section-id student-id question-id question-total))))
                     [status [answered-correctly-event streak-event :as events]]
                     (execute (commands/check-answer! section-id student-id 20 course-id question-id inputs)
                              continue-stream)]
@@ -181,12 +182,12 @@
             (testing "after a StreakCompleted for another streak a StreakCompleted is generated"
               (let [continue-stream (-> finished-stream
                                         (into (interleave
-                                               (repeat 5 (events/question-assigned section-id student-id question-id))
+                                               (repeat 5 (events/question-assigned section-id student-id question-id question-total))
                                                (repeat 5 (events/question-answered-correctly section-id student-id question-id inputs))))
                                         (conj (events/streak-completed section-id student-id))
                                         (into (interpose
                                                (events/question-answered-correctly section-id student-id question-id inputs)
-                                               (repeat 5 (events/question-assigned section-id student-id question-id)))))
+                                               (repeat 5 (events/question-assigned section-id student-id question-id question-total)))))
                     [status [answered-correctly-event streak-event :as events]]
                     (execute (commands/check-answer! section-id student-id 31 course-id question-id inputs)
                              continue-stream)]
@@ -197,11 +198,11 @@
                        ::events/StreakCompleted))))
             (testing "after a wrong answer and then another streak a StreakCompleted is generated"
               (let [continue-stream (-> finished-stream
-                                        (into [(events/question-assigned section-id student-id question-id)
+                                        (into [(events/question-assigned section-id student-id question-id question-total)
                                                (events/question-answered-incorrectly section-id student-id question-id inputs)])
                                         (into (interpose
                                                (events/question-answered-correctly section-id student-id question-id inputs)
-                                               (repeat 5 (events/question-assigned section-id student-id question-id)))))
+                                               (repeat 5 (events/question-assigned section-id student-id question-id question-total)))))
                     [status [answered-correctly-event streak-event :as events]]
                     (execute (commands/check-answer! section-id student-id 22 course-id question-id inputs)
                              continue-stream)]
@@ -218,7 +219,7 @@
         first-question-stream
         [fixture/course-published-event
          (events/created section-id student-id course-id)
-         (events/question-assigned section-id student-id question-id)]
+         (events/question-assigned section-id student-id question-id question-total)]
         [status [revealed-event :as events]]
         (execute (commands/reveal-answer! section-id student-id 1 course-id question-id)
                  first-question-stream)]

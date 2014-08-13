@@ -16,9 +16,6 @@
      question-finished?
      previous-question-ids])
 
-(def minimal-question-distance
-  5)
-
 (defn select-random-question
   [course section-id previous-question-ids]
   (let [question-previously-done? (set previous-question-ids)
@@ -34,24 +31,28 @@
   [section-test {:keys [section-id student-id course-id]} course]
   {:pre [(nil? section-test) student-id section-id course-id course (course/section course section-id)]}
   [:ok [(events/created section-id student-id course-id)
-        (events/question-assigned section-id student-id (:id (select-random-question course section-id nil)))]])
+        (events/question-assigned
+         section-id
+         student-id
+         (:id (select-random-question course section-id nil))
+         (count (course/questions-for-section course section-id)))]])
 
 (defmethod handle-event ::events/Created
   [_ {:keys [section-id student-id section-id]}]
   (->SectionTest section-id student-id nil nil 0 false false nil))
 
 (defn set-previous-question-ids
-  [question-ids question-id]
-  (take minimal-question-distance (cons question-id question-ids)))
+  [question-ids question-id question-total]
+  (take (Math/floor (* question-total 0.9)) (cons question-id question-ids)))
 
 (defmethod handle-event ::events/QuestionAssigned
-  [{:keys [previous-question-ids] :as this} {:keys [question-id]}]
+  [{:keys [previous-question-ids] :as this} {:keys [question-id question-total]}]
   (assoc this
     :current-question-id question-id
     :current-question-status nil
     :question-finished? nil
     :answer-revealed? nil
-    :previous-question-ids (set-previous-question-ids previous-question-ids question-id)))
+    :previous-question-ids (set-previous-question-ids previous-question-ids question-id question-total)))
 
 (defn track-streak-correct
   [{:keys [streak-length current-question-status] :as this}]
@@ -144,7 +145,10 @@
 (defmethod handle-command ::commands/NextQuestion!
   [{:keys [section-id student-id question-finished? previous-question-ids]} command course]
   {:pre [question-finished?]}
-  [:ok [(events/question-assigned section-id student-id (:id (select-random-question course (:section-id command) previous-question-ids)))]])
+  [:ok [(events/question-assigned section-id
+                                  student-id
+                                  (:id (select-random-question course section-id previous-question-ids))
+                                  (count (course/questions-for-section course section-id)))]])
 
 (defmethod handle-event ::events/Finished
   [section-test event]
