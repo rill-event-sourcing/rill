@@ -12,7 +12,9 @@
             [clojure.test :refer [deftest testing is]]))
 
 (def section-id #uuid  "baaffea6-3094-4494-8071-87c2854fd26f")
-(def question-id #uuid "3e09e382-266c-4b16-9020-c5a071c2e2a4")
+(def question-id #uuid "4302505c-5498-4229-b11f-2da3aa869793")
+(def correct-inputs  {"_INPUT_1_" "Grouping Question 1 Line input answer value"
+                      "_INPUT_2_" "3"})
 
 (def course fixture/course-aggregate)
 (def course-id (:id course))
@@ -45,8 +47,7 @@
 
   (testing "answering questions"
     (testing "with a correct answer"
-      (let [inputs {"_INPUT_1_" "6"
-                    "_INPUT_2_" "correct"}]
+      (let [inputs correct-inputs]
         (is (command-result= [:ok [(events/question-answered-correctly section-id student-id question-id inputs)]]
                              (execute (commands/check-answer! section-id student-id 1 course-id question-id inputs)
                                       [fixture/course-published-event
@@ -54,8 +55,7 @@
                                        (events/question-assigned section-id student-id question-id)])))))
 
     (testing "with a correct answer with extra whitespace"
-      (let [inputs {"_INPUT_1_" "    6    "
-                    "_INPUT_2_" "correct"}]
+      (let [inputs (update-in correct-inputs ["_INPUT_1_"] (fn [v] (str "   " v "  ")))]
         (is (command-result= [:ok [(events/question-answered-correctly section-id student-id question-id inputs)]]
                              (execute (commands/check-answer! section-id student-id 1 course-id question-id inputs)
                                       [fixture/course-published-event
@@ -63,14 +63,14 @@
                                        (events/question-assigned section-id student-id question-id)])))))
 
     (testing "with incomplete answers"
-      (let [inputs {"_INPUT_1_" "7"}]
+      (let [inputs (dissoc correct-inputs "_INPUT_1_")]
         (is (command-result= [:ok [(events/question-answered-incorrectly section-id student-id question-id inputs)]]
                              (execute (commands/check-answer! section-id student-id 1 course-id question-id inputs)
                                       [fixture/course-published-event
                                        (events/created section-id student-id course-id)
                                        (events/question-assigned section-id student-id question-id)]))))
 
-      (let [inputs {"_INPUT_1_" "8"}]
+      (let [inputs {"_INPUT_2_" "not a correct answer"}]
         (is (command-result= [:ok [(events/question-answered-incorrectly section-id student-id question-id inputs)]]
                              (execute (commands/check-answer! section-id student-id 1 course-id question-id inputs)
                                       [fixture/course-published-event
@@ -78,8 +78,7 @@
                                        (events/question-assigned section-id student-id question-id)])))))
 
     (testing "with an incorrect answer"
-      (let [inputs {"_INPUT_1_" "7"
-                    "_INPUT_2_" "correct"}]
+      (let [inputs (assoc correct-inputs "_INPUT_2_" "not a correct answer")]
         (is (command-result= [:ok [(events/question-answered-incorrectly section-id student-id question-id inputs)]]
                              (execute (commands/check-answer! section-id student-id 1 course-id question-id inputs)
                                       [fixture/course-published-event
@@ -87,8 +86,8 @@
                                        (events/question-assigned section-id student-id question-id)]))))
 
 
-      (let [inputs {"_INPUT_1_" "8"
-                    "_INPUT_2_" "123"}]
+      (let [inputs {"_INPUT_1_" "not correct at all"
+                    "_INPUT_2_" "not even close"}]
         (is (command-result= [:ok [(events/question-answered-incorrectly section-id student-id question-id inputs)]]
                              (execute (commands/check-answer! section-id student-id 1 course-id question-id inputs)
                                       [fixture/course-published-event
@@ -97,8 +96,7 @@
 
     (testing "next question"
       (testing "with a correct answer"
-        (let [inputs {"_INPUT_1_" "6"
-                      "_INPUT_2_" "correct"}]
+        (let [inputs correct-inputs]
           (let [[status [event]] (execute (commands/next-question! section-id student-id 2 course-id)
                                           [fixture/course-published-event
                                            (events/created section-id student-id course-id)
@@ -109,7 +107,7 @@
                    (message/type event))))))
 
       (testing "with an incorrect answer"
-        (let [inputs {"_INPUT_1_" "7"}]
+        (let [inputs {"_INPUT_1_" "completely incorrect"}]
           (is (thrown? AssertionError
                        (execute (commands/next-question! section-id student-id 2 course-id)
                                 [fixture/course-published-event
@@ -120,8 +118,7 @@
 
 (deftest test-continue-practice
   (testing "the first streaks marks a section as finished, afterward you can continue practising and completing streaks"
-    (let [inputs {"_INPUT_1_" "6"
-                  "_INPUT_2_" "correct"}]
+    (let [inputs correct-inputs]
       (testing "first five in a row correctly mark section as finished"
         (let [upto-fifth-q-stream
               (-> [fixture/course-published-event

@@ -55,11 +55,26 @@
 (def Chapter
   {:id Id
    :title PlainText
+   :remedial s/Bool
    :sections [Section]})
+
+(def EntryQuizQuestion
+  {:id Id
+   :text RichText
+   :tools #{Tool}
+   :line-input-fields [LineInputField]
+   :multiple-choice-input-fields [MultipleChoiceInputField]})
+
+(def EntryQuiz
+  {:instructions RichText
+   :feedback RichText
+   :threshold s/Int
+   :questions [EntryQuizQuestion]})
 
 (def CourseMaterial
   {:id Id
    :name PlainText
+   :entry-quiz EntryQuiz
    :chapters [Chapter]})
 
 (def parse-course-material*

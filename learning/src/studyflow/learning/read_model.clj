@@ -11,6 +11,10 @@
   [model section-id student-id status]
   (assoc-in model [:section-statuses section-id student-id] status))
 
+(defn set-student-remedial-chapters-status
+  [model course-id student-id status]
+  (assoc-in model [:remedial-chapters-status course-id student-id] status))
+
 (defn set-course
   [model id material]
   (-> model 
@@ -32,17 +36,20 @@
       (assoc :status (get-in model [:section-statuses (:id section) student-id]))))
 
 (defn chapter-tree
-  [model chapter student-id]
+  [model chapter student-id remedial-chapters-status]
   {:id (:id chapter)
    :title (:title chapter)
+   :status (when (:remedial chapter)
+             remedial-chapters-status)
    :sections (mapv #(section-leaf model % student-id) (:sections chapter))})
 
 (defn course-tree
   [model course-id student-id]
-  (let [course (get-course model course-id)]
+  (let [course (get-course model course-id)
+        remedial-chapters-status (get-in model [:remedial-chapters-status course-id student-id])]
     {:name (:name course)
      :id (:id course)
-     :chapters (mapv #(chapter-tree model % student-id) (:chapters course))}))
+     :chapters (mapv #(chapter-tree model % student-id remedial-chapters-status) (:chapters course))}))
 
 (defn get-section
   [course section-id]
