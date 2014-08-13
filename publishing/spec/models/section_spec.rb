@@ -107,5 +107,21 @@ RSpec.describe Section, type: :model do
     expect(@section1.errors_when_publishing).not_to include("Nonexisting inputs referenced in section '#{@section1.name}', in '#{@section1.parent}'")
   end
 
+  it "should make sure we have active questions" do
+    expect(@section1.errors_when_publishing).to include("No questions in section '#{ @section1.name }', in '#{ @section1.parent }'")
+
+    @question1 = create(:question)
+    @section1.questions << @question1
+    expect(@section2.errors_when_publishing).not_to include("No questions in section '#{ @section1.name }', in '#{ @section1.parent }'")
+
+    @question2 = create(:question, active: false)
+    @section2.questions << @question2
+    expect(@section2.errors_when_publishing).to include("No questions in section '#{ @section2.name }', in '#{ @section2.parent }'")
+  end
+
+  it "should make sure we have subsections" do
+    expect(@section1.errors_when_publishing).not_to include("No subsections in section '#{ @section1.name }', in '#{ @section1.parent }'")
+    expect(@section2.errors_when_publishing).to include("No subsections in section '#{ @section2.name }', in '#{ @section2.parent }'")
+  end
 
 end

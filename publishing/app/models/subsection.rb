@@ -39,4 +39,11 @@ class Subsection < ActiveRecord::Base
   def to_param
     "#{id[0,8]}"
   end
+
+  def errors_when_publishing
+    errors = []
+    errors << "No content in subsection of section '#{section.name}', in '#{section.parent}'" if text.blank?
+    errors
+  end
+
 end

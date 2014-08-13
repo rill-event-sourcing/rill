@@ -79,8 +79,11 @@ class Section < ActiveRecord::Base
     errors = []
     errors << "Error in input referencing in section '#{name}', in '#{parent}'" unless inputs_referenced_exactly_once?
     errors << "Nonexisting inputs referenced in section '#{name}', in '#{parent}'" if nonexisting_inputs_referenced?
+    errors << "No questions in section '#{name}', in '#{parent}'" if questions.active.empty?
+    errors << "No subsections in section '#{name}', in '#{parent}'" if subsections.empty?
     errors << inputs.map(&:errors_when_publishing)
     errors << questions.active.map(&:errors_when_publishing)
+    errors << subsections.map(&:errors_when_publishing)
     errors.flatten
   end
 

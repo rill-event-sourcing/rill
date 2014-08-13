@@ -21,7 +21,7 @@ class Course < ActiveRecord::Base
   end
 
   def errors_when_publishing
-    errors = chapters.active.map(&:errors_when_publishing).flatten
+    chapters.active.map(&:errors_when_publishing).flatten
   end
 
 
