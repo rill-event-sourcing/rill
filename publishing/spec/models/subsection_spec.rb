@@ -46,4 +46,13 @@ RSpec.describe Subsection, type: :model do
     expect(@subsection1.as_full_json).to eq obj
   end
 
+
+  it "should make sure we have text" do
+    @section1 = create(:section)
+    @subsection1.section = @section1
+    expect(@subsection1.errors_when_publishing).not_to include("No content in subsection of section '#{ @section1.name }', in '#{ @section1.parent }'")
+    @subsection1.text = nil
+    expect(@subsection1.errors_when_publishing).to include("No content in subsection of section '#{ @section1.name }', in '#{ @section1.parent }'")
+  end
+
 end
