@@ -830,7 +830,7 @@
                                                (set! (.-location js/window)
                                                      (str "/entry-quiz/"
                                                           entry-quiz-id)))}
-                               "Start instaptoets")
+                               "Instaptoets starten")
                    (dom/a #js {:href ""
                                :onClick (fn []
                                           ;; nag screen is hidden
@@ -839,7 +839,7 @@
                                                       [:view :entry-quiz]
                                                       :dismissed)
                                           false)}
-                          "Doe het later"))
+                          "Later maken"))
         :dismissed
         nil ;; show link at the dashboard in a deeper nesting
         :in-progress

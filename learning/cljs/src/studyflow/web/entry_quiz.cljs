@@ -84,7 +84,7 @@
                  "Start hier"
                  (dom/div #js {:id "m-button_bar"}
                           (om/build (core/click-once-button
-                                     "Start instaptoets"
+                                     "Naar de eerste vraag"
                                      (fn []
                                        (submit))) cursor)))))
     om/IDidMount
@@ -103,7 +103,7 @@
                             :onClick (fn []
                                        (set! (.-location js/window)
                                              "/"))}
-                       "Naar dashboard")))
+                       "Naar je Dashboard")))
 
 (defn entry-quiz-panel [cursor owner]
   (reify
@@ -177,7 +177,7 @@
                                                                                input
                                                                                (dom/span #js {:dangerouslySetInnerHTML #js {:__html text-or-input}} nil)))))
                                                            (dom/div #js {:id "m-question_bar"}
-                                                                    (om/build (core/click-once-button "Beantwoorden"
+                                                                    (om/build (core/click-once-button "Klaar & naar de volgende vraag"
                                                                                                       (fn []
                                                                                                         ;; will call onSubmit of form
                                                                                                         nil)
