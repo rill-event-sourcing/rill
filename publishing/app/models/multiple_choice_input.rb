@@ -4,9 +4,12 @@ class MultipleChoiceInput < Input
 
   def errors_when_publishing
     errors = []
-    errors << "No choice for #{name} in #{inputable_type} '#{inputable.name}' in '#{inputable.parent}'" if choices.length < 1
-    errors << "No correct choice for #{name} in #{inputable_type} '#{inputable.name}' in '#{inputable.parent}'" if choices.find_all{|choice| choice.correct?}.empty?
-    errors << "Empty choice for #{name} in #{inputable_type} '#{inputable.name}' in '#{inputable.parent}'" if choices.find_all{|choice| choice.value.blank?}.any?
+    if choices.length < 1
+      errors << "No choice for #{name} in #{inputable_type} '#{inputable.name}' in '#{inputable.parent}'"
+    else
+      errors << "No correct choice for #{name} in #{inputable_type} '#{inputable.name}' in '#{inputable.parent}'" if choices.find_all{|choice| choice.correct?}.empty?
+      errors << "Empty choice for #{name} in #{inputable_type} '#{inputable.name}' in '#{inputable.parent}'" if choices.find_all{|choice| choice.value.blank?}.any?
+    end
     errors
   end
 
