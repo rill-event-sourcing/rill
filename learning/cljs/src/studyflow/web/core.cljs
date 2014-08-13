@@ -581,9 +581,7 @@
                               (single-question-panel (:tag-tree question-data)
                                                      inputs)
                               (when revealed-answer
-                                (dom/div nil
-                                         "Het uitgewerkte antwoord is: "
-                                         (dom/div #js {:dangerouslySetInnerHTML #js {:__html revealed-answer}} nil))))
+                                (dom/div #js {:dangerouslySetInnerHTML #js {:__html revealed-answer}} nil)))
                  (dom/div #js {:id "m-question_bar"}
                           (if answer-correct
                             (if (and finished-last-action
