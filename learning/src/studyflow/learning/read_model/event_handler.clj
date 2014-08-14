@@ -36,7 +36,7 @@
   [model {:keys [student-id section-id]}]
   (m/set-student-section-status model section-id student-id :finished))
 
-(defmethod handle-event ::entry-quiz/Succeeded
+(defmethod handle-event ::entry-quiz/Passed
   [model {:keys [student-id course-id]}]
   (m/set-student-remedial-chapters-status course-id student-id :finished))
 

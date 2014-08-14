@@ -36,7 +36,7 @@
   :student-id m/Id
   entry-quiz-id)
 
-(defevent Succeeded
+(defevent Passed
   :course-id m/Id
   :student-id m/Id
   entry-quiz-id)

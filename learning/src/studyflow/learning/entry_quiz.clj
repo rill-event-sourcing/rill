@@ -71,7 +71,7 @@
         {:keys [current-question-index correct-answers] :as entry-quiz} (handle-event entry-quiz answered-event)]
     (if (= current-question-index (count questions))
       (if (<= threshold correct-answers)
-        [:ok [answered-event (events/succeeded course-id student-id)]]
+        [:ok [answered-event (events/passed course-id student-id)]]
         [:ok [answered-event (events/failed course-id student-id)]])
       [:ok [answered-event]])))
 
@@ -87,9 +87,9 @@
   (-> entry-quiz
       (update-in [:current-question-index] inc)))
 
-(defmethod handle-event ::events/Succeeded
+(defmethod handle-event ::events/Passed
   [entry-quiz _]
-  (assoc entry-quiz :state :succeeded))
+  (assoc entry-quiz :state :passed))
 
 (defmethod handle-event ::events/Failed
   [entry-quiz _]
