@@ -100,19 +100,26 @@
               :error-handler (command-error-handler cursor)}))
 
       "student-entry-quiz-commands/init"
-      (let [[entry-quiz-id student-id] args]
-        (PUT (str "/api/student-entry-quiz-init/" entry-quiz-id "/" student-id)
+      (let [[course-id student-id] args]
+        (PUT (str "/api/entry-quiz-init/" course-id "/" student-id)
              {:format :json
-              :handler (command-aggregate-handler cursor notification-channel entry-quiz-id)
+              :handler (command-aggregate-handler cursor notification-channel course-id)
+              :error-handler (command-error-handler cursor)}))
+
+      "student-entry-quiz-commands/visit-first-question"
+      (let [[course-id student-id] args]
+        (PUT (str "/api/entry-quiz-visit-first-question/" course-id "/" student-id)
+             {:format :json
+              :handler (command-aggregate-handler cursor notification-channel course-id)
               :error-handler (command-error-handler cursor)}))
 
       "student-entry-quiz-commands/submit-answer"
-      (let [[entry-quiz-id student-id entry-quiz-aggregate-version question-id inputs] args]
-        (PUT (str "/api/student-entry-quiz-check-answer/" entry-quiz-id "/" student-id "/" question-id)
+      (let [[course-id student-id entry-quiz-aggregate-version question-id inputs] args]
+        (PUT (str "/api/entry-quiz-submit-answer/" course-id "/" student-id)
              {:params {:expected-version entry-quiz-aggregate-version
                        :inputs inputs}
               :format :json
-              :handler (command-aggregate-handler cursor notification-channel entry-quiz-id)
+              :handler (command-aggregate-handler cursor notification-channel course-id)
               :error-handler (command-error-handler cursor)}))
       nil)))
 
@@ -176,22 +183,30 @@
                                                       section-data))))
                 :error-handler basic-error-handler})))
       "data/entry-quiz"
-      (let [[entry-quiz-id student-id] args]
-        (GET (str "/api/entry-quiz-replay/" entry-quiz-id "/" student-id)
+      (let [[course-id student-id] args]
+        (GET (str "/api/entry-quiz-replay/" course-id "/" student-id)
              {:params {}
               :handler (fn [res]
                          (om/update! cursor
                                      [:view :entry-quiz-replay-done]
                                      true)
                          (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
-                           (handle-replay-events cursor entry-quiz-id events aggregate-version)))
+                           (handle-replay-events cursor course-id events aggregate-version)))
               :error-handler (fn [e]
                                ;; 401 means there are no replay events
                                (if (= (:status e) 401)
                                  (om/update! cursor
                                              [:view :entry-quiz-replay-done]
                                              true)
-                                 (basic-error-handler e)))}))
+                                 (basic-error-handler e)))})
+        (GET (str "/api/entry-quiz/"
+                  course-id)
+             {:params {}
+              :handler (fn [res]
+                         (let [data (json-edn/json->edn res)]
+                           (om/update! cursor
+                                       [:view :entry-quiz-material] data)))
+              :error-handler basic-error-handler}))
 
       nil)))
 

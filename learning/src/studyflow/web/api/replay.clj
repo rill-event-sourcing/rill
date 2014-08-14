@@ -1,6 +1,7 @@
 (ns studyflow.web.api.replay
   "Fetch old events"
   (:require [studyflow.learning.section-test.replay :refer [replay-section-test]]
+            [studyflow.learning.entry-quiz.replay :refer [replay-entry-quiz]]
             [clout-link.route :as clout]
             [studyflow.web.authorization :as authorization]
             [studyflow.web.handler-tools :refer [combine-ring-handlers]]
@@ -23,11 +24,10 @@
                   (fn [{{:keys [section-id student-id]} :params store :event-store :as request}]
                     (response (replay-section-test store section-id student-id)))))
 
-   ;; TODO: move to entry-quiz
-   #_(clout/handle routes/student-entry-quiz-replay
+   (clout/handle routes/entry-quiz-replay
                  (authorization/wrap-student-authorization
-                  (fn [{{:keys [entry-quiz-id student-id]} :params store :event-store :as request}]
-                    (response (replay-student-entry-quiz store entry-quiz-id student-id)))))))
+                  (fn [{{:keys [course-id student-id]} :params store :event-store :as request}]
+                    (response (replay-entry-quiz store course-id student-id)))))))
 
 (defn make-request-handler
   [event-store]

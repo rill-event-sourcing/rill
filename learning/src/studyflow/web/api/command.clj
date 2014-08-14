@@ -59,20 +59,27 @@
    (clout/handle
     routes/entry-quiz-init
     (authorization/wrap-student-authorization
-     (fn [{{:keys [entry-quiz-id student-id]} :params}]
-       (entry-quiz/start! (uuid entry-quiz-id)
+     (fn [{{:keys [course-id student-id]} :params}]
+       (entry-quiz/start! (uuid course-id)
                           (uuid student-id)
                           -1))))
 
    (clout/handle
+    routes/entry-quiz-visit-first-question
+    (authorization/wrap-student-authorization
+     (fn [{{:keys [course-id student-id]} :params}]
+       (entry-quiz/visit-first-question! (uuid course-id)
+                          (uuid student-id)
+                          0))))
+
+   (clout/handle
     routes/entry-quiz-submit-answer
     (authorization/wrap-student-authorization
-     (fn [{{:keys [entry-quiz-id student-id question-id]} :params body :body}]
+     (fn [{{:keys [course-id student-id]} :params body :body}]
        (let [{:keys [expected-version inputs]} body]
-         (entry-quiz/submit-answer! (uuid entry-quiz-id)
+         (entry-quiz/submit-answer! (uuid course-id)
                                     (uuid student-id)
                                     expected-version
-                                    (uuid question-id)
                                     inputs)))))))
 
 (defn make-request-handler

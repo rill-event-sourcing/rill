@@ -84,25 +84,31 @@
       :finished true
       :finished-at (count (:questions agg)))
 
-    "studyflow.learning.student-entry-quiz.events/Created"
-    (let [aggr-id (:entry-quiz-id event)]
+    "studyflow.learning.entry-quiz.events/Started"
+    (let [aggr-id (:course-id event)]
       {:id aggr-id
        :questions []
        :question-progress-count 0
-       :status :created})
-    "studyflow.learning.student-entry-quiz.events/QuestionAssigned"
-    (let [aggr-id (:entry-quiz-id event)]
-      (-> agg
-          (update-in [:questions] conj (:question-data event))
-          (update-in [:question-progress-count] inc)
-          (assoc :status :in-progress)))
+       :status :started})
 
-    "studyflow.learning.student-entry-quiz.events/QuestionAnswered"
-    agg
-    "studyflow.learning.student-entry-quiz.events/QuizPassed"
+    "studyflow.learning.entry-quiz.events/InstructionsRead"
+    (assoc agg
+      :status :in-progress)
+
+    "studyflow.learning.entry-quiz.events/QuestionAnsweredCorrectly"
+    (-> agg
+        (update-in [:question-progress-count] inc)
+        (assoc :status :in-progress))
+
+    "studyflow.learning.entry-quiz.events/QuestionAnsweredIncorrectly"
+    (-> agg
+        (update-in [:question-progress-count] inc)
+        (assoc :status :in-progress))
+    
+    "studyflow.learning.entry-quiz.events/Passed"
     (-> agg
         (assoc :status :passed))
-    "studyflow.learning.student-entry-quiz.events/QuizFailed"
+    "studyflow.learning.entry-quiz.events/Failed"
     (-> agg
         (assoc :status :failed))
 
@@ -116,4 +122,3 @@
        agg
        events)
       (assoc :aggregate-version aggregate-version)))
-
