@@ -296,23 +296,23 @@
     (render [_]
       (let [streak
             (if (< (count streak) 5)
-              (take 5 (concat streak (repeat 5 [nil :open])))
-              streak)]
+              (take 5 (concat (reverse streak) (repeat 5 [nil :inactive])))
+              (reverse streak))]
         (apply dom/div #js {:id "m-path"}
-               (reverse
-                (map-indexed
-                 (fn [idx [question-id result]]
-                   (dom/span #js {:className (str
-                                              "goal "
-                                              (if (<= (- (count streak) 5) idx)
-                                                ""
-                                                "inactive ")
-                                              (condp = result
-                                                :correct "correct"
-                                                :incorrect "incorrect"
-                                                :revealed "hint" ;; warning this is currently for worked out answer
-                                                :open ""))}))
-                 streak)))))))
+               (map-indexed
+                (fn [idx [question-id result]]
+                  (dom/span #js {:className (str
+                                             "goal "
+                                             (if (< idx 5)
+                                               ""
+                                               "inactive ")
+                                             (condp = result
+                                               :correct "correct"
+                                               :incorrect "incorrect"
+                                               :revealed "hint" ;; warning this is currently for worked out answer
+                                               :open ""
+                                               :inactive "inactive"))}))
+                streak))))))
 
 (def html->om
   {"a" dom/a, "b" dom/b, "big" dom/big, "br" dom/br, "dd" dom/dd, "div" dom/div,
