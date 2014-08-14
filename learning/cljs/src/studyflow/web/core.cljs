@@ -827,9 +827,9 @@
                              #js {:dangerouslySetInnerHTML #js {:__html description}}
                              nil))
                    (dom/button #js {:onClick (fn []
+                                               (om/update! cursor [:view :entry-quiz] :dismissed)
                                                (set! (.-location js/window)
-                                                     (str "/entry-quiz/"
-                                                          entry-quiz-id)))}
+                                                     (history-link {:main :entry-quiz})))}
                                "Instaptoets starten")
                    (dom/a #js {:href ""
                                :onClick (fn []

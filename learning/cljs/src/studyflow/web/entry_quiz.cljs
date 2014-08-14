@@ -10,17 +10,6 @@
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
-(defn entry-quiz-id-for-page []
-  (.-value (gdom/getElement "entry-quiz-id")))
-
-(defn init-app-state []
-  (atom {:static {:entry-quiz-id (entry-quiz-id-for-page)
-                  :student {:id (core/student-id-for-page)
-                            :full-name (core/student-full-name-for-page)}
-                  :logout-target (core/logout-target-for-page)}
-         :view {:questions {}}
-         :aggregates {}}))
-
 (defn input-builders
   "mapping from input-name to create react dom element for input type"
   [cursor question current-answers]
@@ -74,11 +63,11 @@
             student-id (get-in cursor [:static :student :id])
             entry-quiz (get-in cursor [:aggregates entry-quiz-id])
             submit (fn []
-                    (prn "handle submit")
-                    (async/put! (om/get-shared owner :command-channel)
-                                ["student-entry-quiz-commands/init"
-                                 entry-quiz-id
-                                 student-id]))]
+                     (prn "handle submit")
+                     (async/put! (om/get-shared owner :command-channel)
+                                 ["student-entry-quiz-commands/init"
+                                  entry-quiz-id
+                                  student-id]))]
         (om/set-state! owner :submit submit)
         (dom/div nil
                  "Start hier"
@@ -207,14 +196,3 @@
                                               (.reload js/location true))}
                               "Herlaad de pagina")))
                (om/build entry-quiz-panel cursor)))))
-
-(defn ^:export entry-quiz-page []
-  (om/root
-   (-> widgets
-       service/wrap-service)
-   (init-app-state)
-   {:target (gdom/getElement "app")
-    :tx-listen (fn [tx-report cursor]
-                 (service/listen tx-report cursor))
-    :shared {:command-channel (async/chan)
-             :data-channel (async/chan)}}))

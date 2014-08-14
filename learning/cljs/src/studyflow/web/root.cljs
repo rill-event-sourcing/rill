@@ -1,5 +1,6 @@
 (ns studyflow.web.root
   (:require [studyflow.web.core :as core]
+            [studyflow.web.entry-quiz :as entry-quiz]
             [om.dom :as dom]
             [om.core :as om]
             [goog.dom :as gdom]
@@ -21,13 +22,19 @@
                     (dom/button #js {:onClick (fn [e]
                                                 (.reload js/location true))}
                                 "Herlaad de pagina")))
-                 (core/entry-quiz-modal cursor)
-                 (if (= :dashboard (get-in cursor [:view :selected-path :main]))
-                   (om/build core/dashboard cursor)
+                 (when-not (= :entry-quiz
+                              (get-in cursor [:view :selected-path :main]))
+                   (core/entry-quiz-modal cursor))
+                 (case (get-in cursor [:view :selected-path :main])
+                   :entry-quiz
+                   (om/build entry-quiz/entry-quiz-panel cursor)
+                   :learning
                    (dom/div nil
                             (om/build core/page-header cursor)
                             (om/build core/navigation-panel cursor)
-                            (om/build core/section-panel cursor))))))))
+                            (om/build core/section-panel cursor))
+                   ;; default
+                   (om/build core/dashboard cursor)))))))
 
 (defn ^:export course-page []
   (om/root
