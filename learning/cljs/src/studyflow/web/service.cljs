@@ -114,7 +114,7 @@
               :error-handler (command-error-handler cursor)}))
 
       "student-entry-quiz-commands/submit-answer"
-      (let [[course-id student-id entry-quiz-aggregate-version question-id inputs] args]
+      (let [[course-id student-id entry-quiz-aggregate-version inputs] args]
         (PUT (str "/api/entry-quiz-submit-answer/" course-id "/" student-id)
              {:params {:expected-version entry-quiz-aggregate-version
                        :inputs inputs}

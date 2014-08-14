@@ -37,5 +37,11 @@
     (is (command-result= [:ok [(events/instructions-read course-id student-id)]]
                          (execute (entry-quiz/visit-first-question! course-id student-id 0)
                                   [fixture/course-published-event
-                                   (events/started course-id student-id)])))))
+                                   (events/started course-id student-id)]))))
 
+  (testing "answering"
+    (is (command-result= [:ok [(events/question-answered-incorrectly course-id student-id (-> course :entry-quiz :questions first :id) {})]]
+                         (execute (entry-quiz/submit-answer! course-id student-id 1 {})
+                                  [fixture/course-published-event
+                                   (events/started course-id student-id)
+                                   (events/instructions-read course-id student-id)])))))

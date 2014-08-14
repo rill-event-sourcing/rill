@@ -13,48 +13,47 @@
 
 (defn input-builders
   "mapping from input-name to create react dom element for input type"
-  [cursor question current-answers]
-  (let [question-id (:id question)]
-    (-> {}
-        (into (for [mc (:multiple-choice-input-fields question)]
-                (let [input-name (:name mc)]
-                  [input-name
-                   ;; WARNING using dom/ul & dom/li here breaks
-                   (apply dom/span #js {:className "mc-list"}
-                          (for [choice (map :value (:choices mc))]
-                            (let [id (str input-name "-" choice)]
-                              (dom/span #js {:className "mc-choice"}
-                                        (dom/input #js {:id id
-                                                        :type "radio"
-                                                        :react-key (str question-id "-" input-name "-" choice)
-                                                        :checked (= choice (get current-answers input-name))
-                                                        :onChange (fn [event]
-                                                                    (om/update!
-                                                                     cursor
-                                                                     [:view :entry-quiz question-id :answer input-name]
-                                                                     choice))}
-                                                   (dom/label #js {:htmlFor id}
-                                                              choice))))))])))
-        (into (for [[li ref] (map list
-                                  (:line-input-fields question)
-                                  (into ["FOCUSED_INPUT"]
-                                        (rest (map :name (:line-input-fields question)))))]
-                (let [input-name (:name li)]
-                  [input-name
-                   (dom/span nil
-                             (when-let [prefix (:prefix li)]
-                               (str prefix " "))
-                             (dom/input
-                              #js {:value (get current-answers input-name "")
-                                   :react-key (str question-id "-" ref)
-                                   :ref ref
-                                   :onChange (fn [event]
-                                               (om/update!
-                                                cursor
-                                                [:view :entry-quiz question-id :answer input-name]
-                                                (.. event -target -value)))})
-                             (when-let [suffix (:suffix li)]
-                               (str " " suffix)))]))))))
+  [cursor index question current-answers]
+  (-> {}
+      (into (for [mc (:multiple-choice-input-fields question)]
+              (let [input-name (:name mc)]
+                [input-name
+                 ;; WARNING using dom/ul & dom/li here breaks
+                 (apply dom/span #js {:className "mc-list"}
+                        (for [choice (map :value (:choices mc))]
+                          (let [id (str input-name "-" choice)]
+                            (dom/span #js {:className "mc-choice"}
+                                      (dom/input #js {:id id
+                                                      :type "radio"
+                                                      :react-key (str index "-" input-name "-" choice)
+                                                      :checked (= choice (get current-answers input-name))
+                                                      :onChange (fn [event]
+                                                                  (om/update!
+                                                                   cursor
+                                                                   [:view :entry-quiz index :answer input-name]
+                                                                   choice))}
+                                                 (dom/label #js {:htmlFor id}
+                                                            choice))))))])))
+      (into (for [[li ref] (map list
+                                (:line-input-fields question)
+                                (into ["FOCUSED_INPUT"]
+                                      (rest (map :name (:line-input-fields question)))))]
+              (let [input-name (:name li)]
+                [input-name
+                 (dom/span nil
+                           (when-let [prefix (:prefix li)]
+                             (str prefix " "))
+                           (dom/input
+                            #js {:value (get current-answers input-name "")
+                                 :react-key (str index "-" ref)
+                                 :ref ref
+                                 :onChange (fn [event]
+                                             (om/update!
+                                              cursor
+                                              [:view :entry-quiz index :answer input-name]
+                                              (.. event -target -value)))})
+                           (when-let [suffix (:suffix li)]
+                             (str " " suffix)))])))))
 
 (defn start-panel [cursor owner]
   (reify
@@ -93,8 +92,7 @@
     (render [_]
       (let [course-id (get-in cursor [:static :course-id])
             student-id (get-in cursor [:static :student :id])
-            entry-quiz (get-in cursor [:view :entry-quiz-materials])
-            _ (println "quiz:" entry-quiz)
+            entry-quiz (get-in cursor [:view :entry-quiz-material])
             submit (fn []
                      (async/put! (om/get-shared owner :command-channel)
                                  ["student-entry-quiz-commands/visit-first-question"
@@ -138,7 +136,8 @@
     om/IRender
     (render [_]
       (let [course-id (get-in cursor [:static :course-id])
-            entry-quiz (get-in cursor [:aggregates course-id])]
+            entry-quiz (get-in cursor [:aggregates course-id])
+            material (get-in cursor [:view :entry-quiz-material])]
         (dom/div #js {:id "m-entry-quiz"
                       :className "entry_exam_page"}
                  (dom/header #js {:id "m-top_header"}
@@ -146,9 +145,9 @@
                                          :href "/"})
                              (dom/h1 #js {:className "page_heading"}
                                      "Instaptoets") ;; TODO title is not in aggregate
-                             (when-let [cnt (:question-progress-count entry-quiz)]
+                             (when-let [index (:question-index entry-quiz)]
                                (dom/p #js {:className "page_subheading"}
-                                      (str "Vraag #: " cnt))) ;; TODO total questions is not in aggregate
+                                      (str "Vraag " (inc index) " van " (count (:questions material)))))
                              (dom/article #js {:id "m-section"}
                                           (if-not (get-in cursor [:view :entry-quiz-replay-done])
                                             (dom/div nil "Instaptoets laden"
@@ -164,12 +163,12 @@
                                               (let [course-id (:id entry-quiz)
                                                     entry-quiz-aggregate-version (:aggregate-version entry-quiz)
                                                     student-id (get-in cursor [:static :student :id])
-                                                    question (peek (:questions entry-quiz))
-                                                    question-id (:id question)
+                                                    index  (:question-index entry-quiz)
+                                                    question (get-in material [:questions index])
                                                     question-text (:text question)
 
-                                                    current-answers (om/value (get-in cursor [:view :entry-quiz question-id :answer] {}))
-                                                    inputs (input-builders cursor question current-answers)
+                                                    current-answers (om/value (get-in cursor [:view :entry-quiz index :answer] {}))
+                                                    inputs (input-builders cursor index question current-answers)
                                                     answering-allowed
                                                     (every? (fn [input-name]
                                                               (seq (get current-answers input-name)))
@@ -182,7 +181,6 @@
                                                                  course-id
                                                                  student-id
                                                                  entry-quiz-aggregate-version
-                                                                 question-id
                                                                  current-answers])))]
                                                 (dom/form #js {:onSubmit (fn []
                                                                            (submit)

@@ -64,11 +64,13 @@
   [{:keys [student-id course-id current-question-index] :as entry-quiz}
    {:keys [inputs]}
    {{:keys [threshold questions]} :entry-quiz :as course}]
-  (let [question (course/question-for-entry-quiz current-question-index)
+
+  (let [question (course/question-for-entry-quiz course current-question-index)
         answered-event (if (course/answer-correct? question inputs)
                          (events/question-answered-correctly course-id student-id (:id question) inputs)
                          (events/question-answered-incorrectly course-id student-id (:id question) inputs))
         {:keys [current-question-index correct-answers] :as entry-quiz} (handle-event entry-quiz answered-event)]
+    (println current-question-index)
     (if (= current-question-index (count questions))
       (if (<= threshold correct-answers)
         [:ok [answered-event (events/passed course-id student-id)]]
@@ -77,13 +79,13 @@
 
 
 (defmethod handle-event ::events/QuestionAnsweredCorrectly
-  [{:keys [current-question-index correct-answers] :as entry-quiz}]
+  [{:keys [current-question-index correct-answers] :as entry-quiz} _]
   (-> entry-quiz
       (update-in [:current-question-index] inc)
       (update-in [:correct-answers] inc)))
 
 (defmethod handle-event ::events/QuestionAnsweredIncorrectly
-  [{:keys [current-question-index correct-answers] :as entry-quiz}]
+  [{:keys [current-question-index correct-answers] :as entry-quiz} _]
   (-> entry-quiz
       (update-in [:current-question-index] inc)))
 

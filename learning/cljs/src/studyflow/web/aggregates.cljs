@@ -88,7 +88,7 @@
     (let [aggr-id (:course-id event)]
       {:id aggr-id
        :questions []
-       :question-progress-count 0
+       :question-index 0
        :status :started})
 
     "studyflow.learning.entry-quiz.events/InstructionsRead"
@@ -97,12 +97,12 @@
 
     "studyflow.learning.entry-quiz.events/QuestionAnsweredCorrectly"
     (-> agg
-        (update-in [:question-progress-count] inc)
+        (update-in [:question-index] inc)
         (assoc :status :in-progress))
 
     "studyflow.learning.entry-quiz.events/QuestionAnsweredIncorrectly"
     (-> agg
-        (update-in [:question-progress-count] inc)
+        (update-in [:question-index] inc)
         (assoc :status :in-progress))
     
     "studyflow.learning.entry-quiz.events/Passed"
