@@ -44,8 +44,6 @@
                                 :section-tab nil}}
          :aggregates {}}))
 
-
-
 (defn show-sidebar [cursor owner]
   (reify
     om/IRender
@@ -97,14 +95,14 @@
                                                :className "section_link"}
                                           title)
                                    (when open-section
-                                     [(dom/a #js {:className (str "section_tab "
+                                     [(dom/a #js {:className (str "section_tab explanation"
                                                                   (when (= section-tab :explanation)
                                                                     " selected"))
                                                   :href (-> (get-in cursor [:view :selected-path])
                                                             (assoc :section-tab :explanation)
                                                             history-link)}
                                              "Uitleg")
-                                      (dom/a #js {:className (str "section_tab "
+                                      (dom/a #js {:className (str "section_tab questions"
                                                                   (when (= section-tab :questions)
                                                                     " selected"))
                                                   :href (-> (get-in cursor [:view :selected-path])
@@ -146,7 +144,7 @@
         {:enabled enabled})
       om/IRender
       (render [_]
-        (dom/button #js {:className "btn green pull-right"
+        (dom/button #js {:className "btn blue small pull-right"
                          :onClick
                          (fn [_]
                            (onclick)
@@ -389,8 +387,6 @@
                              (when-let [suffix (:suffix li)]
                                (str " " suffix)))]))))))
 
-
-
 (defn focus-input-box [owner]
   ;; we always call this, even when there's no element called
   ;; "FOCUSED_INPUT". om/get-node can't handle that case
@@ -404,7 +400,7 @@
   [tools]
   (apply dom/div #js {:id "toolbox"}
          (map (fn [tool]
-                (dom/span #js {:id tool}))
+                (dom/span #js {:className (str "tool " tool)}))
               tools)))
 
 (defn single-question-panel [tag-tree inputs]
@@ -420,7 +416,7 @@
       (let [{:keys [revealed-answer question-id question-data section-id student-id section-test-aggregate-version course-id]} cursor
             can-reveal-answer (get question-data :has-worked-out-answer)]
         (if can-reveal-answer
-          (dom/button #js {:className "btn grey pull-right"
+          (dom/button #js {:className "btn small blue show_answer"
                            :disabled
                            (boolean revealed-answer)
                            :onClick
@@ -555,8 +551,7 @@
                                                             (submit))}
                                             "Volgende paragraaf"))
                          nil))
-                 (dom/article #js {:id "m-section"
-                                   :className "question_page"}
+                 (dom/article #js {:id "m-section"}
                               (single-question-panel (:tag-tree question-data)
                                                      inputs)
                               (when revealed-answer
@@ -569,6 +564,7 @@
                               (om/build (click-once-button "Goed! Voltooi paragraaf"
                                                            (fn []
                                                              (submit))) cursor)
+
                               (om/build (click-once-button
                                          "Goed! Volgende vraag"
                                          (fn []
@@ -783,12 +779,9 @@
                             (when (= id section-id)
                               section)) (:sections chapter))]
         (dom/header #js {:id "m-top_header"}
-                    (dom/a #js {:className "home"
+                    (dom/a #js {:id "home"
                                 :href  (-> (get-in cursor [:view :selected-path])
                                            (assoc :main :dashboard)
                                            history-link)})
-                    (dom/h1 #js {:className "page_heading"}
-                            (:title section))
-                    (dom/p #js {:className "page_subheading"}
-                           (:title chapter)))))))
-
+                    (dom/h1 #js {:id "page_heading"}
+                            (:title section)))))))

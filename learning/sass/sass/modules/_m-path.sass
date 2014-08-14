@@ -1,32 +1,55 @@
 #m-path
-  width: 50px
+  width: 47px
   right: 0
   position: fixed
   bottom: 0
   top: 66px
-  background: #eef2f7
-  +box-shadow(inset 2px 0px 2px rgba(0,0,0,0.12))
-  padding-top: 13px
+  background: #fcfbf7
+  border-left: 2px solid #e8e7e2
+  padding-top: 20px
+
+  &:after
+    background: white
+    height: 210px
+    border-bottom: 2px solid #e8e7e2
+    display: block
+    content: ''
+    width: 49px
+    position: absolute
+    left: -2px
+    top: 0
 
   .goal
-    margin: 0 0 15px 14px
-    width: 21px
-    height: 21px
+    margin: 0 0 20px 12px
+    width: 22px
+    height: 22px
     display: block
-    +border-radius(50%)
+    +border-radius(4px)
     border: 2px solid #646d74
     background: white
     position: relative
+    z-index: 800
+
+    &:nth-child(5)
+      margin-bottom: 30px
+      &:after
+        display: none
+
+    &:nth-child(6)
+      &:before
+        width: 3px
+        height: 15px
+        background-color: #d7dadf
+        content: ''
+        display: block
+        position: absolute
+        left: 9px
+        bottom: 10px
+
 
     &.correct
-      background: green // temp until icons
-      //border: 10px solid green
-
-    &.incorrect
-      background: red // temp until icons
-
-    &.hint
-      background: orange // temp until icons
+      background: #cbee89
+      border-color: #7bbb00
 
     &.inactive
       background: #cfd2d7
@@ -39,7 +62,7 @@
 
     &:after
       width: 3px
-      height: 15px
+      height: 20px
       background-color: #d7dadf
       content: ''
       display: block

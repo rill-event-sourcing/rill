@@ -4,40 +4,29 @@
   left: 0
   right: 0
   top: 0
-  height: 65px
+  height: 61px
   position: fixed
-  z-index: 100
-  background: #ffce61
-  border-bottom: #eeb12f 1px solid
+  z-index: 9999
+  background: #ffc24d
+  border-top: 4px solid #e69b0c
+  border-bottom: 1px solid #e69b0c
 
-  .questions_page &
-    background: #81B4EB //temp until standard provided
-    border-bottom: #2F92EE 1px solid
-
-  .home
-    display: block
+  #home
     position: absolute
-    +border-radius(50%)
-    width: 45px
-    height: 45px
+    width: 40px
+    height: 40px
     left: 16px
     top: 10px
     content: ''
     background: #cda44d
 
-  .page_heading
-    color: #37474f
+  #page_heading
+    color: #434d56
     font-weight: 500
     text-align: center
-    font-size: 23px
-    margin: 10px 50px 0 338px
-
-  .page_subheading
-    color: #817a59
-    font-weight: 500
-    text-align: center
-    font-size: 15px
-    margin: 6px 50px 0 338px
+    font-size: 21px
+    margin: 20px 50px 0 338px
+    +single-transition(margin, ease, 1s)
 
   .questions
     float: right
