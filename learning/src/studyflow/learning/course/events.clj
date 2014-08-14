@@ -4,13 +4,13 @@
             [schema.core :as s]))
 
 (defevent Published
-  :course-id m/CourseId
+  :course-id m/Id
   :material m/CourseMaterial)
 
 (defevent Updated
-  :course-id m/CourseId
+  :course-id m/Id
   :material m/CourseMaterial)
 
 (defevent Deleted
-  :course-id m/CourseId)
+  :course-id m/Id)
 

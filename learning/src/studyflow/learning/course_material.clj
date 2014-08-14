@@ -3,38 +3,97 @@
   (:require [clojure.tools.logging :as log]
             [schema.core :as s]
             [schema.coerce :as coerce]
-            [studyflow.learning.material :as m]
+            [clojure.string :as string]
+            [clojure.walk :as walk]
+            [net.cgrand.enlive-html :as html]
             [studyflow.schema-tools :as schema-tools]))
 
-(def CourseId m/Id)
+(def RichText s/Str)
+(def PlainText s/Str)
+(def Id s/Uuid)
+(def FieldName s/Str)
+
+(def Choice
+  {:value s/Str
+   :correct s/Bool})
+
+(def MultipleChoiceInputField
+  {:name FieldName
+   :choices [Choice]})
+
+(def LineInputField
+  {:name FieldName
+   :prefix s/Str
+   :suffix s/Str
+   :width s/Int
+   :correct-answers  #{s/Str}})
 
 (def Tool
   (s/enum "pen_and_paper" "calculator"))
 
+(defn question-text-to-tree [question]
+  (let [input-names (-> #{}
+                        (into (map :name (:line-input-fields question)))
+                        (into (map :name (:multiple-choice-input-fields question))))
+        ;; turn _INPUT_1_ into a html tag
+        question-text (:text question)
+        question-text (reduce
+                       (fn [qt input-name]
+                         (string/replace qt input-name
+                                         (str "<input name=\"" input-name "\"/>")))
+                       question-text
+                       input-names)
+        ;; html-snippet doesn't add html/body, need our own root
+        tags {:tag :div
+              :attrs nil
+              :content (html/html-snippet question-text)}]
+    tags))
+
+(defn transform-question-text-to-tree [material]
+  (walk/prewalk
+   (fn [node]
+     (if (map? node)
+       (if-let [qs-node (get node :questions)]
+         ;; super defensive in case :questions appear anywhere else
+         (if (every? (fn [q-node]
+                       (and (contains? q-node :id)
+                            (contains? q-node :text)
+                            (contains? q-node :line-input-fields)
+                            (contains? q-node :multiple-choice-input-fields)))
+                     qs-node)
+           (update-in node [:questions]
+                      (fn [qs]
+                        (mapv #(assoc % :tag-tree
+                                      (question-text-to-tree %)) qs)))
+           node)
+         node)
+       node))
+   material))
+
 (def SectionQuestion
-  {:id m/Id
-   :text m/RichText
+  {:id Id
+   :text RichText
    :tools #{Tool}
-   :line-input-fields [m/LineInputField]
-   :multiple-choice-input-fields [m/MultipleChoiceInputField]
-   (s/optional-key :worked-out-answer) m/RichText})
+   :line-input-fields [LineInputField]
+   :multiple-choice-input-fields [MultipleChoiceInputField]
+   (s/optional-key :worked-out-answer) RichText})
 
 (def SubSection
-  {:id m/Id
-   :title m/PlainText
-   :text m/RichText})
+  {:id Id
+   :title PlainText
+   :text RichText})
 
 (def Section
-  {:id m/Id
-   :title m/PlainText
+  {:id Id
+   :title PlainText
    :subsections [SubSection]
-   :line-input-fields #{m/LineInputField}
+   :line-input-fields #{LineInputField}
    :questions (s/both #{SectionQuestion}
                       (s/pred (fn [s] (seq s)) 'not-empty))})
 
 (def Chapter
-  {:id m/Id
-   :title m/PlainText
+  {:id Id
+   :title PlainText
    :remedial s/Bool
    :sections [Section]})
 
@@ -52,8 +111,8 @@
    :questions [EntryQuizQuestion]})
 
 (def CourseMaterial
-  {:id CourseId
-   :name m/PlainText
+  {:id Id
+   :name PlainText
    :entry-quiz EntryQuiz
    :chapters [Chapter]})
 
@@ -62,8 +121,5 @@
 
 (def parse-course-material
   (comp
-   m/transform-question-text-to-tree
+   transform-question-text-to-tree
    (schema-tools/strict-coercer parse-course-material*)))
-
-
-

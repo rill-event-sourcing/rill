@@ -117,13 +117,13 @@
       nil)))
 
 (defn load-data [cursor command]
-  (prn :data-command command)
+
   (let [[command-type & args] command]
     (condp = command-type
       "data/dashboard"
-      (let [[student-id] args]
+      (let [[course-id student-id] args]
         (GET (str "/api/course-material/"
-                  (get-in @cursor [:static :course-id])
+                  course-id
                   "/"
                   student-id)
              {:params {}

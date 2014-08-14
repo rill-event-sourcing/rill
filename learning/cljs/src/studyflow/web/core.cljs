@@ -782,7 +782,7 @@
     om/IWillMount
     (will-mount [_]
       (async/put! (om/get-shared owner :data-channel)
-                  ["data/dashboard" (get-in cursor [:static :student :id])]))
+                  ["data/dashboard" (get-in cursor [:static :course-id]) (get-in cursor  [:static :student :id])]))
     om/IRender
     (render [_]
       (dom/div #js {:id "m-dashboard"}

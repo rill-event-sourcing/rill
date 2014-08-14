@@ -3,13 +3,13 @@
             [studyflow.learning.course-material :as material]))
 
 (defcommand Publish!
-  :course-id material/CourseId
+  :course-id material/Id
   :material material/CourseMaterial)
 
 (defcommand Update!
-  :course-id material/CourseId
+  :course-id material/Id
   :material material/CourseMaterial)
 
 (defcommand Delete!
-  :course-id material/CourseId)
+  :course-id material/Id)
 

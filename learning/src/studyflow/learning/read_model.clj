@@ -51,10 +51,11 @@
 
 (defn course-tree
   [model course-id student-id]
-  (let [course (get-course model course-id)]
+  (let [course (get-course model course-id)
+        remedial-chapters-status (get-in model [:remedial-chapters-status course-id student-id])]
     {:name (:name course)
      :id (:id course)
-     :chapters (mapv #(chapter-tree model % student-id) (:chapters course))
+     :chapters (mapv #(chapter-tree model % student-id remedial-chapters-status) (:chapters course))
      :entry-quiz (:entry-quiz course)}))
 
 (defn get-section
