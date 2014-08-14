@@ -570,12 +570,11 @@
                                          (fn []
                                            (submit)
                                            (prn "next question command"))) cursor))
-                            (dom/div nil
-                                     (om/build (click-once-button "Nakijken"
-                                                                  (fn []
-                                                                    (submit))
-                                                                  :enabled answering-allowed)
-                                               cursor)))
+                            (om/build (click-once-button "Nakijken"
+                                                         (fn []
+                                                           (submit))
+                                                         :enabled answering-allowed)
+                                      cursor))
                           (om/build reveal-answer-button
                                     {:revealed-answer revealed-answer
                                      :question-id question-id
