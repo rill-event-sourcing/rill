@@ -62,6 +62,7 @@
                             (when (= id chapter-id)
                               chapter)) (:chapters course))]
         (dom/div nil
+                 (dom/h1 #js {:id "sidenav_chapter_title"} (:title chapter))
                  (apply dom/ul nil
                         (for [{:keys [title]
                                section-id :id
@@ -98,7 +99,9 @@
                                                   :href (-> (get-in cursor [:view :selected-path])
                                                             (assoc :section-tab :questions)
                                                             history-link)}
-                                             "Vragen")]))))))))))
+                                             "Vragen")])))))
+                 (dom/div #js {:id "meta_content"}
+                          (dom/button #js {:id "nav_toggle"})))))))
 
 (defn navigation-panel [cursor owner]
   (reify
@@ -110,6 +113,7 @@
                  (if-let [chapter (some (fn [{:keys [id] :as chapter}]
                                           (when (= id chapter-id)
                                             chapter)) (:chapters course))]
+
                    (om/build navigation cursor)
                    (dom/ul nil
                            (dom/li #js {:className "section_list_item"}
