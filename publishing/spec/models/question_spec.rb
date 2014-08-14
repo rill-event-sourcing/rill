@@ -33,8 +33,16 @@ RSpec.describe Question, :type => :model do
     question = create(:question, worked_out_answer: "")
     input1 = create(:line_input, inputable: question)
     answer1 = create(:answer, line_input: input1, value: 'goed')
-    published_format = question.to_publishing_format
+    published_format = question.to_publishing_format_for_section
     expect(published_format[:worked_out_answer]).to eq "Het juiste antwoord is: goed"
+  end
+
+  it "should not export a worked out answer when exporting for entry quiz" do
+    question = create(:question, worked_out_answer: "")
+    input1 = create(:line_input, inputable: question)
+    answer1 = create(:answer, line_input: input1, value: 'goed')
+    published_format = question.to_publishing_format_for_entry_quiz
+    expect(published_format.keys).not_to include "worked_out_answer"
   end
 
   it "should throw an ActiveRecord::RecordNotFound when not found by an abbreviated uuid" do
@@ -68,9 +76,9 @@ RSpec.describe Question, :type => :model do
   end
 
   it "should detect when inputs are referenced exactly once" do
-   expect(@question.errors_when_publishing).to include("No Inputs on question '#{@question.name}', in '#{@question.quizzable}'")
-   create(:line_input, inputable: @question)
-   expect(@question.errors_when_publishing).not_to include("No Inputs on question '#{@question.name}', in '#{@question.quizzable}'")
+    expect(@question.errors_when_publishing).to include("No Inputs on question '#{@question.name}', in '#{@question.quizzable}'")
+    create(:line_input, inputable: @question)
+    expect(@question.errors_when_publishing).not_to include("No Inputs on question '#{@question.name}', in '#{@question.quizzable}'")
   end
 
   it "should make sure all inputs are referenced" do

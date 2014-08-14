@@ -11,9 +11,10 @@
           %thead
             %tr
               %th.col-md-3  Chapter title
-              %th.col-md-6  Chapter description
+              %th.col-md-5  Chapter description
               %th.col-md-1  Order
               %th.col-md-1  Active
+              %th.col-md-1  Remedial
               %th.col-md-1  Actions
 
           %tbody
@@ -33,6 +34,9 @@
                   - else
                     = link_to activate_chapter_path(chapter), method: :post do
                       %span.glyphicon.glyphicon-remove
+                %td
+                  = link_to toggle_remedial_chapter_path(chapter), method: :post do
+                    %span.glyphicon{class: chapter.remedial? ? "glyphicon-ok" : "glyphicon-remove"}
                 %td
                   = link_to edit_chapter_path(chapter) do
                     %span.glyphicon.glyphicon-pencil

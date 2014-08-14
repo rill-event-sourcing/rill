@@ -2,8 +2,8 @@
   (:require [clojure.tools.logging :as log]
             [studyflow.learning.read-model :as m]
             [studyflow.learning.course.events :as course-events]
-            [studyflow.learning.entry-quiz.events :as entry-quiz-events]
-            [studyflow.learning.student-entry-quiz.events :as student-entry-quiz-events]
+            [studyflow.learning.course.events :as events]
+            [studyflow.learning.entry-quiz.events :as entry-quiz]
             [studyflow.learning.section-test.events :as section-test]
             [rill.event-channel :as event-channel]
             [rill.message :as message]))
@@ -32,29 +32,13 @@
   [model event]
   (m/remove-course model (:course-id event)))
 
-(defmethod handle-event ::entry-quiz-events/Published
-  [model event]
-  (m/set-entry-quiz model (:entry-quiz-id event) (:material event)))
-
-(defmethod handle-event ::entry-quiz-events/Updated
-  [model event]
-  (m/set-entry-quiz model (:entry-quiz-id event) (:material event)))
-
-(defmethod handle-event ::student-entry-quiz-events/QuestionAssigned
-  [model {:keys [entry-quiz-id student-id] :as event}]
-  (m/set-student-entry-quiz-status model entry-quiz-id student-id :in-progress))
-
-(defmethod handle-event ::student-entry-quiz-events/QuizPassed
-  [model {:keys [entry-quiz-id student-id] :as event}]
-  (m/set-student-entry-quiz-status model entry-quiz-id student-id :passed))
-
-(defmethod handle-event ::student-entry-quiz-events/QuizFailed
-  [model {:keys [entry-quiz-id student-id] :as event}]
-  (m/set-student-entry-quiz-status model entry-quiz-id student-id :failed))
-
 (defmethod handle-event ::section-test/Finished
   [model {:keys [student-id section-id]}]
   (m/set-student-section-status model section-id student-id :finished))
+
+(defmethod handle-event ::entry-quiz/Succeeded
+  [model {:keys [student-id course-id]}]
+  (m/set-student-remedial-chapters-status course-id student-id :finished))
 
 (defmethod handle-event ::section-test/QuestionAssigned
   [model {:keys [student-id section-id]}]

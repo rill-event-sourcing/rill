@@ -44,6 +44,12 @@ class ChaptersController < ApplicationController
     redirect_to chapters_path
   end
 
+  def toggle_remedial
+    @chapter.toggle :remedial
+    @chapter.save
+    redirect_to chapters_path
+  end
+
   def deactivate
     @chapter.deactivate
     redirect_to chapters_path

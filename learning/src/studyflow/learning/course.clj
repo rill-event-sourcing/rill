@@ -32,6 +32,10 @@
   (find-by-id (questions-for-section course section-id)
               question-id))
 
+(defn question-for-entry-quiz
+  [course question-index]
+  (get-in course [:entry-quiz :questions question-index]))
+
 (defn line-input-fields-answers-correct?
   [input-fields input-values]
   (every? (fn [{:keys [name correct-answers]}]

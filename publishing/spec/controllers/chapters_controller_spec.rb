@@ -31,7 +31,7 @@ RSpec.describe ChaptersController, :type => :controller do
       get :new
     end
 
-    it 'should render the show template' do
+    it 'should render the new template' do
       expect(response).to render_template('new')
     end
 
@@ -60,7 +60,7 @@ RSpec.describe ChaptersController, :type => :controller do
 
   end
 
-###
+  ###
 
   describe "PUT update" do
 

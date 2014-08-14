@@ -44,4 +44,11 @@ RSpec.describe Course, type: :model do
     expect(@course.active).to eq false
   end
 
+  it "should make sure that an entry quiz is present" do
+    @course = build(:course)
+    expect(@course.errors_when_publishing).to include "No entry quiz for the course"
+    @eq = build(:entry_quiz, course: @course)
+    expect(@course.errors_when_publishing).not_to include "No entry quiz for the course"
+  end
+
 end
