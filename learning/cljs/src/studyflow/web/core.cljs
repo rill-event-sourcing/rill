@@ -846,38 +846,6 @@
         nil ;; show link at the dashboard in a deeper nesting
         nil))))
 
-(defn widgets [cursor owner]
-  (reify
-    om/IRender
-    (render [_]
-      (let [{:keys [section-tab]} (get-in cursor [:view :selected-path])]
-        (dom/div #js {:className (if (= section-tab :explanation)
-                                   ""
-                                   "questions_page")}
-                 (when (get-in cursor [:aggregates :failed])
-                   (modal
-                    (dom/h1 nil "Je bent niet meer up-to-date met de server. Herlaad de pagina.")
-                    (dom/button #js {:onClick (fn [e]
-                                                (.reload js/location true))}
-                                "Herlaad de pagina")))
-                 (entry-quiz-modal cursor)
-                 (if (= :dashboard (get-in cursor [:view :selected-path :main]))
-                   (om/build dashboard cursor)
-                   (dom/div nil
-                            (om/build page-header cursor)
-                            (om/build navigation-panel cursor)
-                            (om/build section-panel cursor))))))))
 
-(defn ^:export course-page []
-  (om/root
-   (-> widgets
-       service/wrap-service
-       url-history/wrap-history)
-   (init-app-state)
-   {:target (gdom/getElement "app")
-    :tx-listen (fn [tx-report cursor]
-                 (service/listen tx-report cursor)
-                 (url-history/listen tx-report cursor))
-    :shared {:command-channel (async/chan)
-             :data-channel (async/chan)
-             :notification-channel (async/chan)}}))
+
+
