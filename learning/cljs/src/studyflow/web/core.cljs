@@ -48,7 +48,7 @@
                   :logout-target (logout-target-for-page)}
          :view {:selected-path {:chapter-id nil
                                 :section-id nil
-                                :dashboard true
+                                :main :dashboard
                                 :section-tab nil}}
          :aggregates {}}))
 
@@ -700,7 +700,7 @@
                    (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
                                          (assoc :chapter-id (:id chapter)
                                                 :section-id section-id
-                                                :dashboard false)
+                                                :main :learning)
                                          history-link)
                                :className (str "section_link "
                                                (when (= section-id
@@ -723,7 +723,7 @@
                     (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
                                           (assoc :chapter-id (:id chapter)
                                                  :section-id nil
-                                                 :dashboard true)
+                                                 :main :dashboard)
                                           history-link)}
                            (:title chapter)))
             (when selected?
@@ -806,7 +806,7 @@
         (dom/header #js {:id "m-top_header"}
                     (dom/a #js {:className "home"
                                 :href  (-> (get-in cursor [:view :selected-path])
-                                           (assoc :dashboard true)
+                                           (assoc :main :dashboard)
                                            history-link)})
                     (dom/h1 #js {:className "page_heading"}
                             (:title section))
@@ -861,7 +861,7 @@
                                                 (.reload js/location true))}
                                 "Herlaad de pagina")))
                  (entry-quiz-modal cursor)
-                 (if (get-in cursor [:view :selected-path :dashboard])
+                 (if (= :dashboard (get-in cursor [:view :selected-path :main]))
                    (om/build dashboard cursor)
                    (dom/div nil
                             (om/build page-header cursor)

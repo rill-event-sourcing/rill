@@ -9,8 +9,8 @@
 (def history (History.))
 
 (defn token->path [token]
-  (let [[dashboard-token chapter-id section-id question-token] (string/split token #"/")]
-    {:dashboard (not= dashboard-token "learning")
+  (let [[main-token chapter-id section-id question-token] (string/split token #"/")]
+    {:main (keyword main-token)
      :chapter-id (when (seq chapter-id)
                    chapter-id)
      :section-id (when (seq section-id)
@@ -20,8 +20,10 @@
                     :explanation)}))
 
 (defn path->token [path]
-  (let [{:keys [dashboard chapter-id section-id section-tab]} path]
-    (string/join "/" [(if dashboard "dashboard" "learning")
+  (let [{:keys [main chapter-id section-id section-tab]} path]
+    (string/join "/" [(if main
+                        (name main)
+                        "dashboard")
                       chapter-id section-id
                       (if (= section-tab :questions)
                         "questions"
