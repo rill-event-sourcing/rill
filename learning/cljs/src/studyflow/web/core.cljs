@@ -46,6 +46,17 @@
 
 
 
+(defn show-sidebar [cursor owner]
+  (reify
+    om/IRender
+    (render [_]
+      (dom/button #js {:id "nav_toggle"
+                       :onClick (fn [event]
+                                  (om/update!
+                                   cursor
+                                   [:view :side-navigation :shown]
+                                   (not (get-in @cursor [:view :side-navigation :shown]))))}))))
+
 (defn navigation [cursor owner]
   (reify
     om/IWillMount
@@ -101,7 +112,7 @@
                                                             history-link)}
                                              "Vragen")])))))
                  (dom/div #js {:id "meta_content"}
-                          (dom/button #js {:id "nav_toggle"})))))))
+                          (om/build show-sidebar cursor)))))))
 
 (defn navigation-panel [cursor owner]
   (reify
@@ -780,9 +791,4 @@
                             (:title section))
                     (dom/p #js {:className "page_subheading"}
                            (:title chapter)))))))
-
-
-
-
-
 
