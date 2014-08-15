@@ -18,6 +18,20 @@
   :student-id s/Uuid
   :credentials EmailPasswordCredentials)
 
+(defn edu-route-claim-id
+  [{:keys [edu-route-id]}]
+  (str "edu-route-id-ownership-" edu-route-id))
+
+(defevent EduRouteIdClaimed
+  :edu-route-id s/Str
+  :owner-id s/Uuid
+  edu-route-claim-id)
+
+(defevent EduRouteIdReleased
+  :edu-route-id s/Str
+  :owner-id s/Uuid
+  edu-route-claim-id)
+
 (defevent EduRouteCredentialsAdded
   :student-id s/Uuid
   :edu-route-id s/Str)
