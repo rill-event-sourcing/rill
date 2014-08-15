@@ -131,12 +131,32 @@
       "sections": [
         {"id": "98b3997f-63db-4f1d-b89e-5378e5f19514",
          "title": "TESTABLE QUESTIONS",
-         "line_input_fields": [],
+         "line_input_fields": [
+            {
+              "name": "_INPUT_1_",
+              "prefix": "antwoord is 123",
+              "suffix": "euros",
+              "width": 150,
+              "correct_answers": [
+                "123"
+              ]
+            },
+              {
+              "name": "_INPUT_2_",
+              "prefix": "antwoord is 444",
+              "suffix": "euros",
+              "width": 150,
+              "correct_answers": [
+                "444"
+              ]
+            }],
          "subsections": [
            {
              "id": "deb7e42c-30d6-4ee5-9cd7-7a36e3e9d20a",
              "title": "Volgorde van optellen",
-             "text": "<img src=\"https://docs.google.com/drawings/d/1cP-5PnZA-jvGTDL9D9C6eZt-wxuTLNbKPJRpfU6kxxc/pub?w=735&h=260\">\r\n\r\n<p class=\"small\">Als je aantallen bij elkaar neemt noem je dat <b>optellen</b>. <br>\r\nHet teken <b>+</b> noem je <b>plus</b> of het plusteken.<br>\r\nMet ‘<b>de som</b>’ wordt de uitkomst na het optellen bedoeld.</p>\r\n\r\n<h1>Volgorde van optellen</h1>\r\n\r\n<p>Wanneer je twee getallen optelt maakt de volgorde niet uit:<br>\r\n<span class='inline_math'>5 + 7  =  7 + 5  =  12</span></p>\r\n\r\n<img src=\"https://docs.google.com/drawings/d/1xYdvVdENGvcrt2fTT8jJT5z1uCdF2awrxmVxP0IDqnc/pub?w=611&h=112\">\r\n\r\n"
+             "text": "<p>some text before <b>with <u>HTML</u></b>Met inline inputs _INPUT_1_ en <i> text _INPUT_2_ text</i></p>
+
+                     <img src=\"https://docs.google.com/drawings/d/1cP-5PnZA-jvGTDL9D9C6eZt-wxuTLNbKPJRpfU6kxxc/pub?w=735&h=260\">\r\n\r\n<p class=\"small\">Als je aantallen bij elkaar neemt noem je dat <b>optellen</b>. <br>\r\nHet teken <b>+</b> noem je <b>plus</b> of het plusteken.<br>\r\nMet ‘<b>de som</b>’ wordt de uitkomst na het optellen bedoeld.</p>\r\n\r\n<h1>Volgorde van optellen</h1>\r\n\r\n<p>Wanneer je twee getallen optelt maakt de volgorde niet uit:<br>\r\n<span class='inline_math'>5 + 7  =  7 + 5  =  12</span></p>\r\n\r\n<img src=\"https://docs.google.com/drawings/d/1xYdvVdENGvcrt2fTT8jJT5z1uCdF2awrxmVxP0IDqnc/pub?w=611&h=112\">\r\n\r\n"
            },
            {
              "id": "04f9c123-9173-4b18-933a-a4ed33c6f794",

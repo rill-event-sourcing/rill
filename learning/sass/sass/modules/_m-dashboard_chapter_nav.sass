@@ -1,17 +1,220 @@
-#dashboard_chapter_nav
-  width: 700px
-  margin: 100px auto
+// Dashboard chapter nav with all the :before & :after classes & rules.
+// Here, there be dragons.
 
-li.selected_chapter
-  background: rgb(216, 215, 215)
+#m-dashboard_chapter_nav
+  margin: 120px -2px 120px 80px
+  background: white
 
-li.dashboard_section
-  a.section_link
+  // Chapter nav title
+  .chapter_nav_title
+    color: #4c575f
+    font-weight: 600
+    font-size: 22px
+
+  // Chapter list
+  .chapter_list
+    padding-left: 15px
+
+  // Chapter
+  .chapter_list_item
+    position: relative
+    padding-left: 35px
+    border-top: 2px solid transparent
+
+    // Chapter line
+    &:before
+      display: block
+      position: absolute
+      width: 3px
+      height: 52px
+      left: -1px
+      top: 54px
+      content: ''
+      background: #acb3bf
+      z-index: 999
+
+    // Opened chapter
     &.open
-      border-left: 5px solid white // temp for dev
+      background: #f4f9fc
+      border-top: 2px solid #e6ebf1
+      border-bottom: 2px solid #e6ebf1
+      padding-bottom: 20px
+      .section_list
+        display: block
+      .chapter_title
+        color: #515b62
+        font-weight: 600
+        font-size: 22px
+        &:before
+          width: 40px
+          height: 40px
+          background: #515b62
+          border: 3px solid #2f3741
+          top: 16px
+          left: -57px
+          z-index: 999
+        &:after
+          display: none
 
     &.finished
-      border-left: 5px solid yellow // temp for dev
+      .chapter_title
+        &:before
 
+
+    &:last-child
+      &:before
+        display: block
+
+
+  .chapter_title
+    text-transform: uppercase
+    position: relative
+    line-height: 80px
+    font-weight: 500
+    color: #acb6c1
+
+    &:hover
+      &:after
+        display: block
+
+    // Chapter Status indicator
+    &:before
+      display: block
+      position: absolute
+      +border-radius(50%)
+      width: 27px
+      height: 27px
+      left: -50px
+      top: 24px
+      content: ''
+      border: 2px solid #cacdd6
+      background: #e3e6ea
+      z-index: 900
+
+    // Chapter toggle [+]
+    &:after
+      display: none
+      position: absolute
+      +border-radius(4px)
+      width: 25px
+      height: 25px
+      right: 50px
+      top: 25px
+      content: ''
+      border: 2px solid #cacdd6
+      background: #e3e6ea
+
+  .section_list
+    display: none
+
+
+
+  // Section
+  .section_list_item
+    position: relative
+
+    &:hover
+      .chapter_nav_btn
+        display: block
+
+    &:last-child
+      &:before
+        height: 105px
+
+
+    // Stumbling Block Activation
+    &.stumbling_block
+      &:before
+        background: #2f3741
+      .section_link
+        &:after
+          display: block
+
+    // Finished section
+    &.finished
+      &:before, &:after
+        background: #2f3741
+      .section_link
+        &:before
+          background: #515b62
+          border: 3px solid #2f3741
+
+    // Recommended section
+    &.recommended
+      &:before
+        background: #2f3741
+      .section_link
+        color: #4a4f58
+      .btn
+        display: inline-block
+
+
+    // Selected section
     &.in_progress
-      border-left: 2px solid pink // temp for dev
+      &:before, &:after
+        background: #2f3741
+
+
+
+    // Section line (vertical)
+    &:before
+      display: block
+      position: absolute
+      width: 3px
+      height: 40px
+      left: -36px
+      top: -17px
+      content: ''
+      background: #acb3bf
+      z-index: 999
+
+    // Section line (horizontal)
+    &:after
+      display: block
+      position: absolute
+      width: 55px
+      height: 3px
+      left: -36px
+      top: 20px
+      content: ''
+      background: #d4d8e3
+
+
+  // Section link
+  .section_link
+    line-height: 40px
+    padding-left: 50px
+    color: #99a0a8
+    display: block
+    font-weight: 500
+    &:hover
+      color: #4a4f58
+
+
+    // Section Status
+    &:before
+      display: block
+      position: absolute
+      +border-radius(50%)
+      width: 26px
+      height: 26px
+      left: 0px
+      top: 6px
+      content: ''
+      border: 2px solid #cacdd6
+      background: white
+      z-index: 900
+
+    // Stumbling Block
+    &:after
+      display: none
+      position: absolute
+      +border-radius(50%)
+      width: 13px
+      height: 13px
+      left: -43px
+      top: 14px
+      content: ''
+      border: 2px solid #f63d49
+      background: #fa6275
+      z-index: 1000

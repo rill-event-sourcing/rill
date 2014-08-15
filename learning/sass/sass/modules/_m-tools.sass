@@ -1,0 +1,21 @@
+@import compass
+
+#toolbox
+  float: left
+
+.tool
+  width: 50px
+  height: 50px
+  display: inline-block
+  margin-top: -3px
+  position: relative
+
+  &.pen_and_paper
+    background: url(/images/icon-paper-inactive.png) -1px 3px
+    &:hover
+      background: url(/images/icon-paper.png) -1px 3px
+
+  &.calculator
+    background: url(/images/icon-calculator-inactive.png) center
+    &:hover
+      background: url(/images/icon-calculator.png) center
