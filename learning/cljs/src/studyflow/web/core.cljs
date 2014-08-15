@@ -7,8 +7,8 @@
             [om.dom :as dom :include-macros true]
             [studyflow.web.aggregates :as aggregates]
             [studyflow.web.service :as service]
-            [studyflow.web.history :as url-history]
-            [clojure.string :as string]
+            [studyflow.web.history :refer [history-link]]
+            [studyflow.web.helpers :refer [modal raw-html split-text-and-inputs]]
             [clojure.walk :as walk]
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go]]))
@@ -20,14 +20,6 @@
         (fn [& args]
           (.apply (.-log js/console) js/console (into-array args)))
         (fn [& args])))
-
-(defn update-js [js-obj key f]
-  (let [key (if (keyword? key)
-              (name key)
-              key)
-        p (.-props js-obj)]
-    (aset p key (f (get p key)))
-    js-obj))
 
 (defn course-id-for-page []
   (.-value (gdom/getElement "course-id")))
@@ -52,25 +44,7 @@
                                 :section-tab nil}}
          :aggregates {}}))
 
-(defn split-text-and-inputs [text inputs]
-  (reduce
-   (fn [pieces input]
-     (loop [[p & ps] pieces
-            out []]
-       (if-not p
-         out
-         (if (gstring/contains p input)
-           (let [[before & after] (string/split p (re-pattern input))]
-             (-> out
-                 (into [before input])
-                 (into after)
-                 (into ps)))
-           (recur ps (conj out p))))))
-   [text]
-   inputs))
 
-(defn history-link [selected-path]
-  (str "#" (url-history/path->token selected-path)))
 
 (defn navigation [cursor owner]
   (reify
@@ -272,7 +246,7 @@
                                             (dom/div #js {:className "dangerous-html-wrap"}
                                                      (if-let [input (get inputs text-or-input)]
                                                        input
-                                                       (dom/span #js {:dangerouslySetInnerHTML #js {:__html text-or-input}} nil)))))
+                                                       (raw-html text-or-input)))))
 
 
                                    ))
@@ -400,17 +374,7 @@
                              (when-let [suffix (:suffix li)]
                                (str " " suffix)))]))))))
 
-(defn modal [content primary-button & [secondary-button]]
-  (dom/div #js {:id "m-modal"
-                :className "show"}
-           (dom/div #js {:className "modal_inner"}
-                    content
-                    (dom/div #js {:className "modal_footer"}
-                             (when secondary-button
-                               (update-js secondary-button
-                                          :className (fnil (partial str "secundary_action ") "")))
-                             (update-js primary-button
-                                        :className (partial str "btn green primary "))))))
+
 
 (defn focus-input-box [owner]
   ;; we always call this, even when there's no element called
@@ -813,38 +777,7 @@
                     (dom/p #js {:className "page_subheading"}
                            (:title chapter)))))))
 
-(defn entry-quiz-modal [cursor]
-  (when-let [entry-quiz (get-in cursor [:view :course-material :entry-quiz])]
-    (let [{:keys [status description]
-           entry-quiz-id :id} entry-quiz
-           status (if (= :dismissed (get-in cursor [:view :entry-quiz]))
-                    :dismissed
-                    (keyword status))]
-      (condp = status
-        nil (modal (dom/div nil
-                            (dom/h1 nil "Instaptoets")
-                            (dom/div
-                             #js {:dangerouslySetInnerHTML #js {:__html description}}
-                             nil))
-                   (dom/button #js {:onClick (fn []
-                                               (om/update! cursor [:view :entry-quiz] :dismissed)
-                                               (set! (.-location js/window)
-                                                     (history-link {:main :entry-quiz})))}
-                               "Instaptoets starten")
-                   (dom/a #js {:href ""
-                               :onClick (fn []
-                                          ;; nag screen is hidden
-                                          ;; until next refresh
-                                          (om/update! cursor
-                                                      [:view :entry-quiz]
-                                                      :dismissed)
-                                          false)}
-                          "Later maken"))
-        :dismissed
-        nil ;; show link at the dashboard in a deeper nesting
-        :in-progress
-        nil ;; show link at the dashboard in a deeper nesting
-        nil))))
+
 
 
 

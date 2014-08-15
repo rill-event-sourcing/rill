@@ -6,7 +6,8 @@
             [om.dom :as dom :include-macros true]
             [studyflow.web.aggregates :as aggregates]
             [studyflow.web.core :as core]
-            [studyflow.web.om-helpers :refer [raw-html]]
+            [studyflow.web.helpers :refer [raw-html modal split-text-and-inputs]]
+            [studyflow.web.history :refer [history-link]]
             [studyflow.web.service :as service]
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go]]))
@@ -186,7 +187,7 @@
                                                                            (submit)
                                                                            false)}
                                                           (apply dom/div nil
-                                                                 (for [text-or-input (core/split-text-and-inputs question-text
+                                                                 (for [text-or-input (split-text-and-inputs question-text
                                                                                                                  (keys inputs))]
                                                                    ;; this wrapper div is
                                                                    ;; required, otherwise the
@@ -215,3 +216,35 @@
     om/IDidMount
     (did-mount [_]
       (core/focus-input-box owner))))
+
+
+(defn entry-quiz-modal [cursor]
+  (when-let [entry-quiz (get-in cursor [:view :course-material :entry-quiz])]
+    (let [{:keys [status description]
+           entry-quiz-id :id} entry-quiz
+           status (if (= :dismissed (get-in cursor [:view :entry-quiz]))
+                    :dismissed
+                    (keyword status))]
+      (condp = status
+        nil (modal (dom/div nil
+                            (dom/h1 nil "Instaptoets")
+                            (raw-html description))
+                   (dom/button #js {:onClick (fn []
+                                               (om/update! cursor [:view :entry-quiz] :dismissed)
+                                               (set! (.-location js/window)
+                                                     (history-link {:main :entry-quiz})))}
+                               "Instaptoets starten")
+                   (dom/a #js {:href ""
+                               :onClick (fn []
+                                          ;; nag screen is hidden
+                                          ;; until next refresh
+                                          (om/update! cursor
+                                                      [:view :entry-quiz]
+                                                      :dismissed)
+                                          false)}
+                          "Later maken"))
+        :dismissed
+        nil ;; show link at the dashboard in a deeper nesting
+        :in-progress
+        nil ;; show link at the dashboard in a deeper nesting
+        nil))))

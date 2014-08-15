@@ -5,6 +5,7 @@
             [om.core :as om]
             [goog.dom :as gdom]
             [studyflow.web.history :as url-history]
+            [studyflow.web.helpers :refer [modal]]
             [studyflow.web.service :as service]
             [cljs.core.async :as async]))
 
@@ -17,14 +18,14 @@
                                    ""
                                    "questions_page")}
                  (when (get-in cursor [:aggregates :failed])
-                   (core/modal
+                   (modal
                     (dom/h1 nil "Je bent niet meer up-to-date met de server. Herlaad de pagina.")
                     (dom/button #js {:onClick (fn [e]
                                                 (.reload js/location true))}
                                 "Herlaad de pagina")))
                  (when-not (= :entry-quiz
                               (get-in cursor [:view :selected-path :main]))
-                   (core/entry-quiz-modal cursor))
+                   (entry-quiz/entry-quiz-modal cursor))
                  (case (get-in cursor [:view :selected-path :main])
                    :entry-quiz
                    (om/build entry-quiz/entry-quiz-panel cursor)

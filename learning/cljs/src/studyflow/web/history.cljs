@@ -54,3 +54,6 @@
     (when (= path [:view :selected-path])
       (when-let [token (path->token (get-in new-state [:view :selected-path]))]
         (.setToken history token)))))
+
+(defn history-link [selected-path]
+  (str "#" (path->token selected-path)))
