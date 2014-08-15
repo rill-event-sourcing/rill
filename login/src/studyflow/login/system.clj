@@ -10,6 +10,7 @@
             [studyflow.components.event-channel :refer [event-channel-component]]
             [studyflow.components.memory-event-store :refer [memory-event-store-component]]
             [studyflow.components.atom-event-store :refer [atom-event-store-component]]
+            [studyflow.components.uncaught-exception-handler :refer [uncaught-exception-handler-component]]
             [studyflow.login.edu-route-mock-service :refer [edu-route-mock-service]]
             [studyflow.login.edu-route-production-service :refer [edu-route-production-service]]
             [rill.event-store.psql :refer [psql-event-store]])
@@ -78,5 +79,5 @@
    :session-store (redis-session-store session-store-config)
    :credentials (component/using (credentials-component) [:event-channel])
    :event-channel (component/using (event-channel-component) [:event-store])
-   :event-store (component/using (psql-event-store event-store-config) [])))
-
+   :event-store (component/using (psql-event-store event-store-config) [])
+   :uncaught-exception-handler (component/using (uncaught-exception-handler-component) [])))

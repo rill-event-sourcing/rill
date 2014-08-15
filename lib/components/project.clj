@@ -6,4 +6,6 @@
                  [org.clojure/tools.logging "0.3.0"]
                  [rill "0.1.0-SNAPSHOT"]
                  [ring/ring-jetty-adapter "1.3.0"]
-                 [com.taoensso/carmine "2.6.2"]])
+                 [com.taoensso/carmine "2.6.2"]
+                 [com.mindscapehq/raygun4java "1.5.0" :extension "pom"]
+                 [com.mindscapehq/core "1.5.0"]])
