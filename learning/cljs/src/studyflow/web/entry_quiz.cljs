@@ -1,7 +1,5 @@
 (ns studyflow.web.entry-quiz
   (:require [goog.dom :as gdom]
-            [goog.events :as gevents]
-            [goog.events.KeyHandler]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [studyflow.web.aggregates :as aggregates]
@@ -76,16 +74,7 @@
                           (om/build (core/click-once-button
                                      "Naar de eerste vraag"
                                      (fn []
-                                       (submit))) cursor)))))
-    om/IDidMount
-    (did-mount [_]
-      (let [key-handler (goog.events.KeyHandler. js/document)]
-        (goog.events/listenOnce key-handler
-                                goog.events.KeyHandler.EventType.KEY
-                                (fn [e]
-                                  (when (= (.-keyCode e) 13) ;;enter
-                                    (when-let [f (om/get-render-state owner :submit)]
-                                      (f)))))))))
+                                       (submit))) cursor)))))))
 
 (defn instructions-panel [cursor owner]
   (reify
@@ -106,16 +95,7 @@
                           (om/build (core/click-once-button
                                      "Naar de eerste vraag"
                                      (fn []
-                                       (submit))) cursor)))))
-    om/IDidMount
-    (did-mount [_]
-      (let [key-handler (goog.events.KeyHandler. js/document)]
-        (goog.events/listenOnce key-handler
-                                goog.events.KeyHandler.EventType.KEY
-                                (fn [e]
-                                  (when (= (.-keyCode e) 13) ;;enter
-                                    (when-let [f (om/get-render-state owner :submit)]
-                                      (f)))))))))
+                                       (submit))) cursor)))))))
 
 
 (defn to-dashboard-bar []
