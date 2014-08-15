@@ -67,7 +67,6 @@
                                  ["entry-quiz-commands/init"
                                   course-id
                                   student-id]))]
-        (om/set-state! owner :submit submit)
         (dom/div nil
                  (raw-html (:instructions entry-quiz))
                  (dom/div #js {:id "m-question_bar"}
