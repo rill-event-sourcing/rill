@@ -202,7 +202,7 @@
   (when-let [entry-quiz (get-in cursor [:view :course-material :entry-quiz])]
     (let [{:keys [status description]
            entry-quiz-id :id} entry-quiz
-           status (if (= :dismissed (get-in cursor [:view :entry-quiz]))
+           status (if (= :dismissed (get-in cursor [:view :entry-quiz-modal]))
                     :dismissed
                     (keyword status))]
       (condp = status
@@ -210,7 +210,7 @@
                             (dom/h1 nil "Instaptoets")
                             (raw-html description))
                    (dom/button #js {:onClick (fn []
-                                               (om/update! cursor [:view :entry-quiz] :dismissed)
+                                               (om/update! cursor [:view :entry-quiz-modal] :dismissed)
                                                (set! (.-location js/window)
                                                      (history-link {:main :entry-quiz})))}
                                "Instaptoets starten")
@@ -219,7 +219,7 @@
                                           ;; nag screen is hidden
                                           ;; until next refresh
                                           (om/update! cursor
-                                                      [:view :entry-quiz]
+                                                      [:view :entry-quiz-modal]
                                                       :dismissed)
                                           false)}
                           "Later maken"))
