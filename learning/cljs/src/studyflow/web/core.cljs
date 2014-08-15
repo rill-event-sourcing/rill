@@ -663,43 +663,40 @@
                        (om/build path-panel cursor)))))))
 
 (defn sections-navigation [cursor chapter]
-  (apply dom/ul nil
+  (apply dom/ol #js {:id "section_list"}
          (for [{:keys [title status]
                 section-id :id
                 :as section} (:sections chapter)]
-           (dom/li #js {:data-id section-id
-                        :className "dashboard_section"}
-                   (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
-                                         (assoc :chapter-id (:id chapter)
-                                                :section-id section-id
-                                                :main :learning)
-                                         history-link)
-                               :className (str "section_link "
-                                               (when (= section-id
-                                                        (get-in cursor [:view :selected-path :section-id]))
-                                                 "selected ")
-                                               (get {"finished" "finished"
-                                                     "in-progress" "in_progress"} status ""))}
-                          title)))))
-
+           (let [section-status (get {"finished" "finished"
+                                      "in-progress" "in_progress"} status "")
+                 section-link (-> (get-in cursor [:view :selected-path])
+                                  (assoc :chapter-id (:id chapter)
+                                         :section-id section-id
+                                         :main :learning)
+                                  history-link)]
+             (dom/li #js {:data-id section-id
+                          :className (str "section_list_item " section-status) }
+                     (dom/a #js {:href section-link
+                                 :className (str "section_link " section-status)}
+                            title)
+                     (dom/a #js {:className "btn blue small chapter_nav_btn"
+                                 :href section-link} "Start"))))))
 
 (defn chapter-navigation [cursor selected-chapter-id course chapter]
   (let [selected? (= selected-chapter-id (:id chapter))]
-    (dom/li #js {:className (if selected?
-                              "selected_chapter"
-                              "")}
-            (dom/h1 #js {:data-id (:id course)
-                         :className (str "chapter_title "
-                                         (when selected?
-                                           "selected ")
-                                         (when (= (:status chapter) "finished")
-                                           "finished"))}
-                    (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
-                                          (assoc :chapter-id (:id chapter)
-                                                 :section-id nil
-                                                 :main :dashboard)
-                                          history-link)}
-                           (:title chapter)))
+    (dom/li #js {:className (str "chapter_list_item" (if selected?
+                                                       " open"
+                                                       ""))}
+            (dom/a #js {:data-id (:id course)
+                        :className (str "chapter_title"
+                                        (when (= (:status chapter) "finished")
+                                           "finished"))
+                        :href (-> (get-in cursor [:view :selected-path])
+                                  (assoc :chapter-id (:id chapter)
+                                         :section-id nil
+                                         :main :dashboard)
+                                  history-link)}
+                   (:title chapter))
             (when selected?
               (sections-navigation cursor chapter)))))
 
@@ -717,20 +714,19 @@
             chapter-id (or (get-in cursor [:view :selected-path :chapter-id]) (:id (first (:chapters course))))]
 
         (if course
-          (dom/article #js {:id "m-section"}
-                       (let [{:keys [name status]
-                              entry-quiz-id :id
-                              :as entry-quiz} (get-in cursor [:view :course-material :entry-quiz])
-                              status (keyword status)]
-                         (when (not (#{:passed :failed} status))
-                           (dom/ul nil
-                                   (dom/li nil
-                                           (dom/a #js {:href (history-link {:main :entry-quiz})}
-                                                  "Instaptoets")))))
-                       (dom/div nil
-                                (apply dom/ul nil
-                                       (map (partial chapter-navigation cursor chapter-id course)
-                                            (:chapters course)))))
+          (dom/nav #js {:id "m-dashboard_chapter_nav"}
+                   (dom/h1 #js {:className "chapter_nav_title"} "Mijn leerroute")
+                   (apply dom/ol #js {:className "chapter_list"}
+                          (let [{:keys [name status]
+                                 entry-quiz-id :id
+                                 :as entry-quiz} (get-in cursor [:view :course-material :entry-quiz])
+                                 status (keyword status)]
+                            (when (not (#{:passed :failed} status))
+                              (dom/li #js {:className "chapter_list_item"}
+                                      (dom/a #js {:href (history-link {:main :entry-quiz})}
+                                             "Instaptoets"))))
+                          (map (partial chapter-navigation cursor chapter-id course)
+                               (:chapters course))))
           (dom/h2 nil "Hoofdstukken laden..."))))))
 
 (defn dashboard-top-header
@@ -739,7 +735,9 @@
     om/IRender
     (render [_]
       (dom/header #js {:id "m-top_header"}
-                  (get-in cursor [:static :student :full-name])
+                  (dom/h1 #js {:id "logo"} (:name (get-in cursor [:view :course-material])))
+                  (dom/a #js {:id "help" :href "#"})
+                  (dom/a #js {:id "settings" :href "#"})
                   (dom/form #js {:method "POST"
                                  :action (get-in cursor [:static :logout-target])
                                  :id "logout-form"}
@@ -750,6 +748,15 @@
                                         "Uitloggen"))))))
 
 
+(defn dashboard-sidenav
+  [cursor owner]
+  (reify
+    om/IRender
+    (render [_]
+      (dom/aside #js {:id "m-sidenav"}
+                 (dom/div #js {:id "student_info"} (get-in cursor [:static :student :full-name]))
+                 (dom/div #js {:id "recommended_action"})
+                 (dom/div #js {:id "support_info"})))))
 
 (defn dashboard [cursor owner]
   (reify
@@ -759,9 +766,9 @@
                   ["data/dashboard" (get-in cursor [:static :course-id]) (get-in cursor  [:static :student :id])]))
     om/IRender
     (render [_]
-      (dom/div #js {:id "m-dashboard"}
-               "Dashboard"
+      (dom/div #js {:id "dashboard_page"}
                (om/build dashboard-top-header cursor)
+               (om/build dashboard-sidenav cursor)
                (dom/section #js {:id "main"}
                             (om/build dashboard-navigation cursor))))))
 
