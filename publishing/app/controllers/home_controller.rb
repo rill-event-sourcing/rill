@@ -43,7 +43,8 @@ class HomeController < ApplicationController
         redirect_to root_path, notice: "Course '#{ course }' was succesfully published!"
       else
         flash[:alert] = "Course '#{ course }' was NOT published!"
-        flash[:notice] = failed_publish_msg if failed_publish_msg
+        failed_publish_msg ||= "Response code was: #{ publish_response.code }"
+        flash[:notice] = failed_publish_msg
         redirect_to root_path
       end
     end
