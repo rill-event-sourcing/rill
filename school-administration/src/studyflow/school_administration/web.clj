@@ -8,15 +8,6 @@
             [ring.middleware.defaults :refer [secure-site-defaults site-defaults wrap-defaults]]
             [ring.util.response :refer [redirect resource-response]]))
 
-(defn wrap-exception-catcher [app]
-  (fn [req]
-    (try (app req)
-         (catch Throwable e
-           (log/error e)
-           (-> (resource-response "public/500.html")
-               (assoc :status 500)
-               (assoc-in [:headers "Content-Type"] "text/html"))))))
-
 (defn catchup-handler
   [read-model]
   (when-not (m/caught-up? read-model)
@@ -41,7 +32,6 @@
               (catchup-handler @read-model))
             (command/commands-app event-store)
             (query/queries-app read-model)) req)))
-      wrap-exception-catcher
       (wrap-defaults (studyflow-site-config (if secure-site-defaults?
                                               secure-site-defaults
                                               site-defaults)))))

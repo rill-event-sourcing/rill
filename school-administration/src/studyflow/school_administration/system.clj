@@ -1,6 +1,7 @@
 (ns studyflow.school-administration.system
   (:require [com.stuartsierra.component :as component]
             [studyflow.components.event-channel :refer [event-channel-component]]
+            [studyflow.components.uncaught-exception-handler :refer [uncaught-exception-handler-component]]
             [studyflow.components.atom-event-store :refer [atom-event-store-component]]
             [rill.event-store.psql :refer [psql-event-store]]
             [studyflow.components.jetty :refer [jetty-component]]
@@ -35,5 +36,7 @@
      :eduroute-listener (component/using
                          (eduroute-listener-component)
                          {:event-channel :eduroute-event-channel
-                          :event-store :event-store}))))
-
+                          :event-store :event-store})
+     :uncaught-exception-handler (component/using
+                                  (uncaught-exception-handler-component)
+                                  []))))

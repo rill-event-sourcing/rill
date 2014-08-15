@@ -4,6 +4,7 @@
             [studyflow.components.event-channel :refer [event-channel-component]]
             [studyflow.components.jetty :refer [jetty-component]]
             [studyflow.components.redis-session-store :refer [redis-session-store]]
+            [studyflow.components.uncaught-exception-handler :refer [uncaught-exception-handler-component]]
             [studyflow.system.components.publishing-api :refer [publishing-api-component]]
             [studyflow.system.components.read-model :refer [read-model-component]]
             [studyflow.system.components.ring-handler :refer [ring-handler-component]]
@@ -36,4 +37,7 @@
                    [])
      :read-model (component/using
                   (read-model-component)
-                  [:event-store :event-channel]))))
+                  [:event-store :event-channel])
+     :uncaught-exception-handler (component/using
+                                  (uncaught-exception-handler-component)
+                                  []))))
