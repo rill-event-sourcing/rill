@@ -114,11 +114,13 @@
        {{{:keys [edu-route-id]} :edu-route-info
          refresh-count :refresh-count :as session} :session
          authenticate-by-edu-route-id :authenticate-by-edu-route-id}
-       (if-let [user (authenticate-by-edu-route-id edu-route-id)]
-         (assoc (redirect-to "/") :login-user user)
-         (if (< refresh-count 10)
-           (please-wait-response session refresh-count)
-           (layout "Studyflow" [:p "Helaas, het is op dit moment erg druk. Probeer het later nog eens."]))))
+       (if (and edu-route-id refresh-count)
+         (if-let [user (authenticate-by-edu-route-id edu-route-id)]
+           (assoc (redirect-to "/") :login-user user)
+           (if (< refresh-count 10)
+             (please-wait-response session refresh-count)
+             (layout "Studyflow" [:p "Helaas, het is op dit moment erg druk. Probeer het later nog eens."])))
+         (layout "Studyflow" [:p "Je sessie is verdwenen. Inloggen werkt alleen als je cookies aan hebt. Probeer het eens met een andere browser."])))
 
   (DELETE "/" {}
           (assoc (redirect-to "/") :logout-user true))
