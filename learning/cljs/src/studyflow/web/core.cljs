@@ -172,7 +172,8 @@
                                                (submit)
                                                false)}
                               (dom/input
-                               #js {:react-key (:name field)
+                               #js {:className "inline-input"
+                                    :react-key (:name field)
                                     :ref (:name field)
                                     :value (get-in cursor [:view :section section-id :input field-name :given-answer])
                                     :disabled (get-in cursor [:view :section section-id :input field-name :input-disabled])
@@ -219,7 +220,8 @@
                                          (false? answered-correctly))
                                 (dom/span nil
                                           (dom/button
-                                           #js {:onClick (fn [event]
+                                           #js {:className "btn inline_answer"
+                                                :onClick (fn [event]
                                                            (om/update!
                                                             cursor
                                                             [:view :section section-id :input field-name :answer-revealed]
@@ -689,7 +691,7 @@
                                                        " open"
                                                        ""))}
             (dom/a #js {:data-id (:id course)
-                        :className (str "chapter_title"
+                        :className (str "chapter_title "
                                         (when (= (:status chapter) "finished")
                                            "finished"))
                         :href (-> (get-in cursor [:view :selected-path])
@@ -725,7 +727,8 @@
                                           status (keyword status)]
                                      (when (not (#{:passed :failed} status))
                                        (dom/li #js {:className "chapter_list_item"}
-                                               (dom/a #js {:href (history-link {:main :entry-quiz})}
+                                               (dom/a #js {:className "chapter_title"
+                                                           :href (history-link {:main :entry-quiz})}
                                                       "Instaptoets"))))
                                    (map (partial chapter-navigation cursor chapter-id course)
                                         (:chapters course))))
