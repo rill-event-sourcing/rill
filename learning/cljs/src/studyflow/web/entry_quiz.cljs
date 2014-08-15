@@ -54,13 +54,13 @@
                            (when-let [suffix (:suffix li)]
                              (str " " suffix)))])))))
 
-(defn start-panel [cursor owner]
+(defn instructions-panel [cursor owner]
   (reify
     om/IRender
     (render [_]
       (let [course-id (get-in cursor [:static :course-id])
             student-id (get-in cursor [:static :student :id])
-            entry-quiz (get-in cursor [:aggregates course-id])
+            entry-quiz (get-in cursor [:view :course-material :entry-quiz])
             submit (fn []
                      (prn "handle submit")
                      (async/put! (om/get-shared owner :command-channel)
@@ -69,29 +69,8 @@
                                   student-id]))]
         (om/set-state! owner :submit submit)
         (dom/div nil
-                 "Start hier"
-                 (dom/div #js {:id "m-button_bar"}
-                          (om/build (core/click-once-button
-                                     "Naar de eerste vraag"
-                                     (fn []
-                                       (submit))) cursor)))))))
-
-(defn instructions-panel [cursor owner]
-  (reify
-    om/IRender
-    (render [_]
-      (let [course-id (get-in cursor [:static :course-id])
-            student-id (get-in cursor [:static :student :id])
-            entry-quiz (get-in cursor [:view :entry-quiz-material])
-            submit (fn []
-                     (async/put! (om/get-shared owner :command-channel)
-                                 ["student-entry-quiz-commands/visit-first-question"
-                                  course-id
-                                  student-id]))]
-        (om/set-state! owner :submit submit)
-        (dom/div nil
                  (raw-html (:instructions entry-quiz))
-                 (dom/div #js {:id "m-button_bar"}
+                 (dom/div #js {:id "m-question_bar"}
                           (om/build (core/click-once-button
                                      "Naar de eerste vraag"
                                      (fn []
@@ -118,7 +97,7 @@
     (render [_]
       (let [course-id (get-in cursor [:static :course-id])
             entry-quiz (get-in cursor [:aggregates course-id])
-            material (get-in cursor [:view :entry-quiz-material])]
+            material (get-in cursor [:view :course-material :entry-quiz])]
         (dom/div #js {:id "m-entry-quiz"
                       :className "entry_exam_page"}
                  (dom/header #js {:id "m-top_header"}
@@ -135,9 +114,6 @@
                                                      (to-dashboard-bar))
                                             (case (:status entry-quiz)
                                               nil ; entry-quiz not yet started
-                                              (om/build start-panel cursor)
-
-                                              :started
                                               (om/build instructions-panel cursor)
 
                                               :in-progress
@@ -192,7 +168,8 @@
                                               :failed
                                               (dom/div nil
                                                        (dom/div nil "FAILED Je hebt de instaptoets afgerond. Ga terug naar het dashboard")
-                                                       (to-dashboard-bar)))))))))
+                                                       (to-dashboard-bar))
+                                              nil)))))))
     om/IDidMount
     (did-mount [_]
       (core/focus-input-box owner))))

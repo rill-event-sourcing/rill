@@ -65,14 +65,6 @@
                           -1))))
 
    (clout/handle
-    routes/entry-quiz-visit-first-question
-    (authorization/wrap-student-authorization
-     (fn [{{:keys [course-id student-id]} :params}]
-       (entry-quiz/visit-first-question! (uuid course-id)
-                          (uuid student-id)
-                          0))))
-
-   (clout/handle
     routes/entry-quiz-submit-answer
     (authorization/wrap-student-authorization
      (fn [{{:keys [course-id student-id]} :params body :body}]

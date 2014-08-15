@@ -26,24 +26,13 @@
 (defmethod handle-command ::Start!
   [entry-quiz {:keys [student-id course-id]}]
   (if-not entry-quiz
-    [:ok [(events/started course-id student-id)]]
+    [:ok [(events/started course-id student-id)
+          (events/instructions-read course-id student-id)]]
     [:rejected {:student-id :already-started}]))
 
 (defmethod handle-event ::events/Started
   [_ {:keys [student-id course-id]}]
   (->EntryQuiz course-id student-id :started 0 0))
-
-(defcommand VisitFirstQuestion!
-  :course-id m/Id
-  :student-id m/Id
-  :expected-version s/Int
-  entry-quiz-id)
-
-(defmethod handle-command ::VisitFirstQuestion!
-  [{:keys [state course-id student-id] :as entry-quiz} _]
-  (if (= state :started)
-    [:ok [(events/instructions-read course-id student-id)]]
-    [:rejected {:invalid-state state}]))
 
 (defmethod handle-event ::events/InstructionsRead
   [entry-quiz _]

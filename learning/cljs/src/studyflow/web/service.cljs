@@ -184,6 +184,9 @@
                 :error-handler basic-error-handler})))
       "data/entry-quiz"
       (let [[course-id student-id] args]
+        (when-not (get-in @cursor [:view :course-material])
+          (load-data cursor
+                     ["data/dashboard" course-id student-id]))
         (GET (str "/api/entry-quiz-replay/" course-id "/" student-id)
              {:params {}
               :handler (fn [res]
