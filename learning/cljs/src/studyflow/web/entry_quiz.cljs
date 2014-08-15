@@ -123,7 +123,7 @@
            (dom/button #js {:className "btn green pull-right"
                             :onClick (fn []
                                        (set! (.-location js/window)
-                                             "/"))}
+                                             (history-link {:main :dashboard})))}
                        "Naar je Dashboard")))
 
 (defn entry-quiz-panel [cursor owner]
