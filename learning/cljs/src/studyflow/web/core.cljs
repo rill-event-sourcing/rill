@@ -715,8 +715,8 @@
                          (when (not (#{:passed :failed} status))
                            (dom/ul nil
                                    (dom/li nil
-                                           (dom/a #js {:href (str "/entry-quiz/" entry-quiz-id)}
-                                                  name)))))
+                                           (dom/a #js {:href (history-link {:main :entry-quiz})}
+                                                  "Instaptoets")))))
                        (dom/div nil
                                 (apply dom/ul nil
                                        (map (partial chapter-navigation cursor chapter-id course)
