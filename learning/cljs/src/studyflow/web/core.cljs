@@ -683,7 +683,9 @@
             (dom/h1 #js {:data-id (:id course)
                          :className (str "chapter_title "
                                          (when selected?
-                                           "selected"))}
+                                           "selected ")
+                                         (when (= (:status chapter) "finished")
+                                           "finished"))}
                     (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
                                           (assoc :chapter-id (:id chapter)
                                                  :section-id nil
