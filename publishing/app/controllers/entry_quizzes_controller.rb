@@ -6,7 +6,6 @@ class EntryQuizzesController < ApplicationController
   end
 
   def new
-    @entry_quiz = @course.build_entry_quiz
   end
 
   def create
@@ -33,7 +32,7 @@ class EntryQuizzesController < ApplicationController
 
   def set_param_objects
     @course = Course.current
-    @entry_quiz = @course.entry_quiz
+    @entry_quiz = @course.entry_quiz || @course.build_entry_quiz
   end
 
   def set_breadcrumb
@@ -42,7 +41,7 @@ class EntryQuizzesController < ApplicationController
   end
 
   def entry_quiz_params
-    params.require(:entry_quiz).permit(:instructions, :feedback)
+    params.require(:entry_quiz).permit(:instructions, :feedback, :threshold)
   end
 
 end

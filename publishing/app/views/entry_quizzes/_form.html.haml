@@ -19,7 +19,8 @@
   %div.form-group
     = f.label "Minimum amount of questions required to pass (min: 0, max: #{@entry_quiz.questions.length})", class: "col-sm-2 control-label"
     %div.col-sm-10
-      = number_field_tag :entry_quiz, :threshold, value: @entry_quiz.threshold, min: 1, max: @entry_quiz.questions.length, class: "form-control"
+      = number_field_tag "entry_quiz[threshold]", @entry_quiz.threshold, min: 1, class: "form-control"
+      -# max: @entry_quiz.questions.length
 
   - if @entry_quiz.id
     %div.form-group
