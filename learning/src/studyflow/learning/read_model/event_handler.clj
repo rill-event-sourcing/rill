@@ -36,9 +36,19 @@
   [model {:keys [student-id section-id]}]
   (m/set-student-section-status model section-id student-id :finished))
 
+(defmethod handle-event ::entry-quiz/Started
+  [model {:keys [student-id course-id]}]
+  (m/set-student-entry-quiz-status model course-id student-id :started))
+
 (defmethod handle-event ::entry-quiz/Passed
   [model {:keys [student-id course-id]}]
-  (m/set-student-remedial-chapters-status course-id student-id :finished))
+  (-> model
+      (m/set-student-remedial-chapters-status course-id student-id :finished)
+      (m/set-student-entry-quiz-status course-id student-id :passed)))
+
+(defmethod handle-event ::entry-quiz/Failed
+  [model {:keys [student-id course-id]}]
+  (m/set-student-entry-quiz-status model course-id student-id :failed))
 
 (defmethod handle-event ::section-test/QuestionAssigned
   [model {:keys [student-id section-id]}]

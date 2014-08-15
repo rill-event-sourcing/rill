@@ -49,6 +49,12 @@
 (defn set-student-entry-quiz-status [model entry-quiz-id student-id status]
   (assoc-in model [:entry-quiz-statusses student-id] status))
 
+(defn entry-quiz [model course-id student-id]
+  (let [entry-quiz (:entry-quiz (get-course model course-id))
+        student-status (get-student-entry-quiz-status model (:id entry-quiz) student-id)]
+    (assoc entry-quiz
+      :status student-status)))
+
 (defn course-tree
   [model course-id student-id]
   (let [course (get-course model course-id)
@@ -56,7 +62,7 @@
     {:name (:name course)
      :id (:id course)
      :chapters (mapv #(chapter-tree model % student-id remedial-chapters-status) (:chapters course))
-     :entry-quiz (:entry-quiz course)}))
+     :entry-quiz (entry-quiz model (:id course) student-id)}))
 
 (defn get-section
   [course section-id]
