@@ -13,10 +13,11 @@
   (reify
     om/IRender
     (render [_]
-      (let [{:keys [section-tab]} (get-in cursor [:view :selected-path])]
-        (dom/div #js {:className (if (= section-tab :explanation)
-                                   ""
-                                   "questions_page")}
+      (let [{:keys [main section-tab]} (get-in cursor [:view :selected-path])]
+        (dom/div #js {:className (if (and (= main :learning)
+                                          (= section-tab :questions))
+                                   "questions_page"
+                                   "")}
                  (when (get-in cursor [:aggregates :failed])
                    (modal
                     (dom/h1 nil "Je bent niet meer up-to-date met de server. Herlaad de pagina.")
