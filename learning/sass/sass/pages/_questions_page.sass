@@ -4,16 +4,18 @@
   #m-top_header
     background: #9be2ff
     border-top: 4px solid #348fb4
-    border-bottom: 1px solid #8ed6f3
+    border-bottom: 2px solid #8ed6f3
     #home
-      background: #5d8899
+      background: url()
   #m-sidenav
     background: #eff5fc
-    border-color: #dee2e6
+    border-color: #d2d8de
     #sidenav_chapter_title
-      background: #e3eaf3
+      background: #e4eaf1
     .section_link
       color: #888f95
+      &:after
+        background: #e4eaf1
     .section_list_item
       &.open
         background: #d3dfe9
@@ -31,9 +33,19 @@
         color: #434d56
     #meta_content
       background: #d3dfe9
-      border-top: 1px solid #c0cfdb
+      border-color: #c0cfdb
   #m-section
     margin-bottom: 180px
   #m-path
     background: #eff5fc
     border-color: #dee2e6
+    &:after
+      background: white
+      height: 210px
+      border-bottom: 2px solid #e8e7e2
+      display: block
+      content: ''
+      width: 49px
+      position: absolute
+      left: -2px
+      top: 0

@@ -3,7 +3,7 @@
 #m-sidenav
   +single-transition(transform, ease, 1s)
   position: fixed
-  width: 337px
+  width: 336px
   top: 66px
   bottom: 0
   left: 0
@@ -15,8 +15,9 @@
     font-weight: 600
     font-size: 16px
     line-height: 26px
-    padding: 8px 20px
+    padding: 9px 10px 7px 15px
     text-transform: uppercase
+    letter-spacing: -0.2px
 
   .section_list_item
     +box-sizing(border-box)
@@ -38,7 +39,7 @@
       height: 26px
       left: 17px
       top: 50%
-      margin-top: -16px
+      margin-top: -15px
       content: ''
       border: 2px solid #d6d2bc
 
@@ -47,7 +48,7 @@
       border-bottom: 2px solid #e4e2df
       border-top: 2px solid #e4e2df
       margin: -1px -2px 0 0
-      padding: 20px 0 5px 0
+      padding: 30px 0 25px 0
       &:after
         top: 26px
         margin-top: 0
@@ -56,45 +57,69 @@
       .section_link
         border: 0
         font-weight: 500
-        color: #434d56
+        color: #434d56 !important
         font-size: 18px
-        padding-top: 6px
-        padding-bottom: 19px
+        padding-top: 0
+        padding-bottom: 0
+        +text-shadow(none)
+        margin-bottom: 12px
+        &:after
+          display: none
 
     .section_link
       display: block
-      padding: 13px 25px 13px 75px
-      border-bottom: 1px solid #eeefee
-      line-height: 26px
-      font-size: 15px
-      font-weight: 500
+      padding: 16px 25px 15px 70px
+      line-height: 23px
+      font-size: 14px
+      font-weight: 400
       color: #9a978d
-      +text-shadow(0 1px rgba(255,255,255,0.4))
+      +text-shadow(0 1px rgba(255,255,255,0.6))
+      letter-spacing: -0.2px
+      &:after
+        height: 2px
+        width: 263px
+        background: #e4eaf1
+        display: block
+        content: ''
+        bottom: -1px
+        right: 0
+        position: absolute
 
     .section_tab
       display: block
-      margin: 0 0 10px 74px
-      font-size: 17px
+      margin: 0 0 2px 76px
+      font-size: 16px
       font-weight: 500
-      line-height: 55px
-      padding-left: 58px
-      border: 1px solid transparent
+      line-height: 62px
+      padding-left: 60px
+      border: 2px solid transparent
       color: #888d91
       text-shadow: 0 1px rgba(255,255,255,0.4)
+      letter-spacing: -0.2px
       &.selected
         background: white
-        +border-left-radius(1px)
+        +border-left-radius(3px)
         color: #434d56
         border: 2px solid #dddcd9
         border-right: 0
 
+      &.explanation
+        background: url(/images/icon-explanation-inactive.png) no-repeat 7px 5px
+        &.selected
+          background: url(/images/icon-explanation.png) no-repeat 7px 5px white
+      &.questions
+        background: url(icon-questions-inactive.png) no-repeat 9px 10px
+        &.selected
+          background: url(/images/icon-questions.png) no-repeat 9px 10px white
+
 #meta_content
   position: fixed
   bottom: 0
-  width: 337px
+  width: 336px
   background: #efeeea
-  border-top: 1px solid #e4e2df
-  height: 60px
+  border-top: 2px solid #e4e2df
+  border-right: 2px solid #e4e2df
+  height: 63px
 
 #nav_toggle
   background: black
@@ -108,7 +133,6 @@
     +translateX(-338px)
   #main
     margin: 0 50px
-    //+translateX(-288px)
   #m-question_bar
     left: 0
   #m-top_header
