@@ -1,7 +1,7 @@
 (ns studyflow.school-administration.student
   (:require [clojure.tools.logging :as log]
             [clojure.string :as str]
-            [studyflow.school-administration.student.events :as events]
+            [studyflow.school-administration.student.events :as events :refer [edu-route-claim-id]]
             [rill.aggregate :refer [handle-event handle-command aggregate-ids]]
             [rill.message :refer [defcommand primary-aggregate-id]]
             [schema.core :as s]))
@@ -89,6 +89,37 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; create via edu route
+
+(defcommand ClaimEduRouteId!
+  :edu-route-id s/Str
+  :owner-id s/Uuid
+  edu-route-claim-id)
+
+(defmethod handle-command ::ClaimEduRouteId!
+  [{:keys [current-owner-id]} {:keys [owner-id edu-route-id]}]
+  (if (or (nil? current-owner-id)
+          (= owner-id current-owner-id))
+    [:ok [(events/edu-route-id-claimed edu-route-id owner-id)]]
+    [:rejected {:edu-route-id [(:already-claimed errors)]}]))
+
+(defcommand ReleaseEduRouteId!
+  :edu-route-id s/Str
+  :owner-id s/Uuid
+  edu-route-claim-id)
+
+(defmethod handle-command ::ReleaseEduRouteId!
+  [{:keys [current-owner-id]} {:keys [owner-id edu-route-id]}]
+  (if (= current-owner-id owner-id)
+    [:ok [(events/edu-route-id-released owner-id edu-route-id)]]
+    [:rejected {:edu-route-id [(:ownership-disputed errors)]}]))
+
+(defmethod handle-event ::events/EduRouteIdClaimed
+  [_ {:keys [owner-id edu-route-id]}]
+  {:current-owner-id owner-id})
+
+(defmethod handle-event ::events/EduRouteIdReleased
+  [claim {:keys [owner-id edu-route-id]}]
+  (dissoc claim :current-owner-id))
 
 (defcommand CreateFromEduRouteCredentials!
   :student-id s/Uuid

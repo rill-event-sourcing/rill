@@ -7,11 +7,30 @@
             [rill.uuid :refer [new-id uuid]]
             [studyflow.school-administration.student :as student]))
 
+(defn with-claim [event-store claim main revert-claim]
+  (let [[claim-status :as claim-result] (try-command event-store claim)]
+    (if (= :ok claim-status)
+      (let [[main-status :as main-result] (try-command event-store main)]
+        (when-not (= :ok main-status)
+          (try-command event-store revert-claim))
+        main-result)
+      claim-result)))
+
+(defn handle-edu-route-event
+  [event-store {:keys [edu-route-id full-name]}]
+  (let [student-id (new-id)]
+    (with-claim event-store
+      (student/claim-edu-route-id! edu-route-id student-id)
+      (student/create-from-edu-route-credentials! student-id edu-route-id full-name)
+      (student/release-edu-route-id! edu-route-id student-id))))
+
 (defn eduroute-listener [event-store event-channel]
   (go (loop []
         (when-let [event (<! event-channel)]
-          (when (= (message/type event) :studyflow.login.edu-route-student.events/Registered)
-            (try-command event-store (student/create-from-edu-route-credentials! (new-id) (:edu-route-id event) (:full-name event))))
+          (try (when (= (message/type event) :studyflow.login.edu-route-student.events/Registered)
+                 (handle-edu-route-event event-store event))
+               (catch Throwable e
+                 (log/error e "Error in eduroute-listener")))
           (recur)))))
 
 (defrecord EdurouteListenerComponent [event-store event-channel]
