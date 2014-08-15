@@ -56,7 +56,7 @@ class QuestionsController < ApplicationController
     redirect_to chapter_section_questions_path(@chapter,@section)
   end
 
-private
+  private
 
   def set_param_objects
     @course = Course.current
@@ -64,6 +64,8 @@ private
     @section = @chapter.sections.find_by_uuid(params[:section_id])
     @question = @section.questions.find_by_uuid(params[:id], false) if params[:id]
   end
+
+
 
   def set_breadcrumb
     @crumbs = [{name: @course.name, url: root_path}]

@@ -7,8 +7,8 @@
             [om.dom :as dom :include-macros true]
             [studyflow.web.aggregates :as aggregates]
             [studyflow.web.service :as service]
-            [studyflow.web.history :as url-history]
-            [clojure.string :as string]
+            [studyflow.web.history :refer [history-link]]
+            [studyflow.web.helpers :refer [modal raw-html split-text-and-inputs]]
             [clojure.walk :as walk]
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go]]))
@@ -20,14 +20,6 @@
         (fn [& args]
           (.apply (.-log js/console) js/console (into-array args)))
         (fn [& args])))
-
-(defn update-js [js-obj key f]
-  (let [key (if (keyword? key)
-              (name key)
-              key)
-        p (.-props js-obj)]
-    (aset p key (f (get p key)))
-    js-obj))
 
 (defn course-id-for-page []
   (.-value (gdom/getElement "course-id")))
@@ -41,35 +33,18 @@
 (defn logout-target-for-page []
   (.-value (gdom/getElement "logout-target")))
 
-(def app-state (atom {:static {:course-id (course-id-for-page)
-                               :student {:id (student-id-for-page)
-                                         :full-name (student-full-name-for-page)}
-                               :logout-target (logout-target-for-page)}
-                      :view {:selected-path {:chapter-id nil
-                                             :section-id nil
-                                             :dashboard true
-                                             :section-tab nil}}
-                      :aggregates {}}))
+(defn init-app-state []
+  (atom {:static {:course-id (course-id-for-page)
+                  :student {:id (student-id-for-page)
+                            :full-name (student-full-name-for-page)}
+                  :logout-target (logout-target-for-page)}
+         :view {:selected-path {:chapter-id nil
+                                :section-id nil
+                                :main :dashboard
+                                :section-tab nil}}
+         :aggregates {}}))
 
-(defn split-text-and-inputs [text inputs]
-  (reduce
-   (fn [pieces input]
-     (loop [[p & ps] pieces
-            out []]
-       (if-not p
-         out
-         (if (gstring/contains p input)
-           (let [[before & after] (string/split p (re-pattern input))]
-             (-> out
-                 (into [before input])
-                 (into after)
-                 (into ps)))
-           (recur ps (conj out p))))))
-   [text]
-   inputs))
 
-(defn history-link [selected-path]
-  (str "#" (url-history/path->token selected-path)))
 
 (defn navigation [cursor owner]
   (reify
@@ -271,7 +246,7 @@
                                             (dom/div #js {:className "dangerous-html-wrap"}
                                                      (if-let [input (get inputs text-or-input)]
                                                        input
-                                                       (dom/span #js {:dangerouslySetInnerHTML #js {:__html text-or-input}} nil)))))
+                                                       (raw-html text-or-input)))))
 
 
                                    ))
@@ -399,17 +374,7 @@
                              (when-let [suffix (:suffix li)]
                                (str " " suffix)))]))))))
 
-(defn modal [content primary-button & [secondary-button]]
-  (dom/div #js {:id "m-modal"
-                :className "show"}
-           (dom/div #js {:className "modal_inner"}
-                    content
-                    (dom/div #js {:className "modal_footer"}
-                             (when secondary-button
-                               (update-js secondary-button
-                                          :className (fnil (partial str "secundary_action ") "")))
-                             (update-js primary-button
-                                        :className (partial str "btn green primary "))))))
+
 
 (defn focus-input-box [owner]
   ;; we always call this, even when there's no element called
@@ -697,7 +662,7 @@
                    (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
                                          (assoc :chapter-id (:id chapter)
                                                 :section-id section-id
-                                                :dashboard false)
+                                                :main :learning)
                                          history-link)
                                :className (str "section_link "
                                                (when (= section-id
@@ -716,11 +681,13 @@
             (dom/h1 #js {:data-id (:id course)
                          :className (str "chapter_title "
                                          (when selected?
-                                           "selected"))}
+                                           "selected ")
+                                         (when (= (:status chapter) "finished")
+                                           "finished"))}
                     (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
                                           (assoc :chapter-id (:id chapter)
                                                  :section-id nil
-                                                 :dashboard true)
+                                                 :main :dashboard)
                                           history-link)}
                            (:title chapter)))
             (when selected?
@@ -741,6 +708,15 @@
 
         (if course
           (dom/article #js {:id "m-section"}
+                       (let [{:keys [name status]
+                              entry-quiz-id :id
+                              :as entry-quiz} (get-in cursor [:view :course-material :entry-quiz])
+                              status (keyword status)]
+                         (when (not (#{:passed :failed} status))
+                           (dom/ul nil
+                                   (dom/li nil
+                                           (dom/a #js {:href (history-link {:main :entry-quiz})}
+                                                  "Instaptoets")))))
                        (dom/div nil
                                 (apply dom/ul nil
                                        (map (partial chapter-navigation cursor chapter-id course)
@@ -770,7 +746,7 @@
     om/IWillMount
     (will-mount [_]
       (async/put! (om/get-shared owner :data-channel)
-                  ["data/dashboard" (get-in cursor [:static :student :id])]))
+                  ["data/dashboard" (get-in cursor [:static :course-id]) (get-in cursor  [:static :student :id])]))
     om/IRender
     (render [_]
       (dom/div #js {:id "m-dashboard"}
@@ -794,44 +770,15 @@
         (dom/header #js {:id "m-top_header"}
                     (dom/a #js {:className "home"
                                 :href  (-> (get-in cursor [:view :selected-path])
-                                           (assoc :dashboard true)
+                                           (assoc :main :dashboard)
                                            history-link)})
                     (dom/h1 #js {:className "page_heading"}
                             (:title section))
                     (dom/p #js {:className "page_subheading"}
                            (:title chapter)))))))
 
-(defn widgets [cursor owner]
-  (reify
-    om/IRender
-    (render [_]
-      (let [{:keys [section-tab]} (get-in cursor [:view :selected-path])]
-        (dom/div #js {:className (if (= section-tab :explanation)
-                                   ""
-                                   "questions_page")}
-                 (when (get-in cursor [:aggregates :failed])
-                   (modal
-                    (dom/h1 nil "Je bent niet meer up-to-date met de server. Herlaad de pagina.")
-                    (dom/button #js {:onClick (fn [e]
-                                                (.reload js/location true))}
-                                "Herlaad de pagina")))
-                 (if (get-in cursor [:view :selected-path :dashboard])
-                   (om/build dashboard cursor)
-                   (dom/div nil
-                            (om/build page-header cursor)
-                            (om/build navigation-panel cursor)
-                            (om/build section-panel cursor))))))))
 
-(defn ^:export course-page []
-  (om/root
-   (-> widgets
-       service/wrap-service
-       url-history/wrap-history)
-   app-state
-   {:target (gdom/getElement "app")
-    :tx-listen (fn [tx-report cursor]
-                 (service/listen tx-report cursor)
-                 (url-history/listen tx-report cursor))
-    :shared {:command-channel (async/chan)
-             :data-channel (async/chan)
-             :notification-channel (async/chan)}}))
+
+
+
+

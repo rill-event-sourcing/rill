@@ -83,6 +83,43 @@
     (assoc agg
       :finished true
       :finished-at (count (:questions agg)))
+
+    "studyflow.learning.entry-quiz.events/NagScreenDismissed"
+    (let [aggr-id (:course-id event)]
+      {:id aggr-id
+       :questions []
+       :status :dismissed})
+
+    "studyflow.learning.entry-quiz.events/Started"
+    (let [aggr-id (:course-id event)]
+      {:id aggr-id
+       :questions []
+       :status :started})
+
+    "studyflow.learning.entry-quiz.events/InstructionsRead"
+    (assoc agg
+      :status :in-progress
+      :question-index 0)
+
+    "studyflow.learning.entry-quiz.events/QuestionAnsweredCorrectly"
+    (-> agg
+        (update-in [:question-index] inc)
+        (assoc :status :in-progress))
+
+    "studyflow.learning.entry-quiz.events/QuestionAnsweredIncorrectly"
+    (-> agg
+        (update-in [:question-index] inc)
+        (assoc :status :in-progress))
+
+    "studyflow.learning.entry-quiz.events/Passed"
+    (-> agg
+        (assoc :status :passed)
+        (dissoc :question-index))
+    "studyflow.learning.entry-quiz.events/Failed"
+    (-> agg
+        (assoc :status :failed)
+        (dissoc :question-index))
+
     (do
       (prn "Aggregate can't handle event: " event)
       agg)))
@@ -93,4 +130,3 @@
        agg
        events)
       (assoc :aggregate-version aggregate-version)))
-

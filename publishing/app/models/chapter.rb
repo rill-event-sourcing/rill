@@ -26,10 +26,11 @@ class Chapter < ActiveRecord::Base
   end
 
   def to_publishing_format
-    {
+    hash = {
       id: id,
       title: title,
       sections: sections.active.map(&:to_publishing_format),
+      remedial: remedial?
     }
   end
 

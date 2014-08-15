@@ -11,9 +11,13 @@
   [model section-id student-id status]
   (assoc-in model [:section-statuses section-id student-id] status))
 
+(defn set-student-remedial-chapters-status
+  [model course-id student-id status]
+  (assoc-in model [:remedial-chapters-status course-id student-id] status))
+
 (defn set-course
   [model id material]
-  (-> model 
+  (-> model
       (assoc-in [:courses id] (index-course material))
       (assoc-in [:course-ids (:name material)] id)))
 
@@ -32,17 +36,33 @@
       (assoc :status (get-in model [:section-statuses (:id section) student-id]))))
 
 (defn chapter-tree
-  [model chapter student-id]
+  [model chapter student-id remedial-chapters-status]
   {:id (:id chapter)
    :title (:title chapter)
+   :status (when (:remedial chapter)
+             remedial-chapters-status)
    :sections (mapv #(section-leaf model % student-id) (:sections chapter))})
+
+(defn get-student-entry-quiz-status [model entry-quiz-id student-id]
+  (get-in model [:entry-quiz-statusses student-id]))
+
+(defn set-student-entry-quiz-status [model entry-quiz-id student-id status]
+  (assoc-in model [:entry-quiz-statusses student-id] status))
+
+(defn entry-quiz [model course-id student-id]
+  (let [entry-quiz (:entry-quiz (get-course model course-id))
+        student-status (get-student-entry-quiz-status model (:id entry-quiz) student-id)]
+    (assoc entry-quiz
+      :status student-status)))
 
 (defn course-tree
   [model course-id student-id]
-  (let [course (get-course model course-id)]
+  (let [course (get-course model course-id)
+        remedial-chapters-status (get-in model [:remedial-chapters-status course-id student-id])]
     {:name (:name course)
      :id (:id course)
-     :chapters (mapv #(chapter-tree model % student-id) (:chapters course))}))
+     :chapters (mapv #(chapter-tree model % student-id remedial-chapters-status) (:chapters course))
+     :entry-quiz (entry-quiz model (:id course) student-id)}))
 
 (defn get-section
   [course section-id]

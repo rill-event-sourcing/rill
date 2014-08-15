@@ -1,7 +1,9 @@
 (ns studyflow.learning.read-model.event-handler
   (:require [clojure.tools.logging :as log]
             [studyflow.learning.read-model :as m]
+            [studyflow.learning.course.events :as course-events]
             [studyflow.learning.course.events :as events]
+            [studyflow.learning.entry-quiz.events :as entry-quiz]
             [studyflow.learning.section-test.events :as section-test]
             [rill.event-channel :as event-channel]
             [rill.message :as message]))
@@ -18,21 +20,39 @@
   [initial-events]
   (update-model nil initial-events))
 
-(defmethod handle-event ::events/Published
+(defmethod handle-event ::course-events/Published
   [model event]
   (m/set-course model (:course-id event) (:material event)))
 
-(defmethod handle-event ::events/Updated
+(defmethod handle-event ::course-events/Updated
   [model event]
   (m/set-course model (:course-id event) (:material event)))
 
-(defmethod handle-event ::events/Deleted
+(defmethod handle-event ::course-events/Deleted
   [model event]
   (m/remove-course model (:course-id event)))
 
 (defmethod handle-event ::section-test/Finished
   [model {:keys [student-id section-id]}]
   (m/set-student-section-status model section-id student-id :finished))
+
+(defmethod handle-event ::entry-quiz/NagScreenDismissed
+  [model {:keys [student-id course-id]}]
+  (m/set-student-entry-quiz-status model course-id student-id :nag-screen-dismissed))
+
+(defmethod handle-event ::entry-quiz/Started
+  [model {:keys [student-id course-id]}]
+  (m/set-student-entry-quiz-status model course-id student-id :started))
+
+(defmethod handle-event ::entry-quiz/Passed
+  [model {:keys [student-id course-id]}]
+  (-> model
+      (m/set-student-remedial-chapters-status course-id student-id :finished)
+      (m/set-student-entry-quiz-status course-id student-id :passed)))
+
+(defmethod handle-event ::entry-quiz/Failed
+  [model {:keys [student-id course-id]}]
+  (m/set-student-entry-quiz-status model course-id student-id :failed))
 
 (defmethod handle-event ::section-test/QuestionAssigned
   [model {:keys [student-id section-id]}]

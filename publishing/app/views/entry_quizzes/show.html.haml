@@ -1,0 +1,37 @@
+%div.container
+  %div.row
+    %div.col-md-8.col-md-offset-2
+      %div.col-md-8
+        %h2= @entry_quiz.to_s
+      %div.col-md-4
+        %a.btn.btn-primary{href: edit_entry_quiz_path} Edit
+    %div.col-md-8.col-md-offset-2
+      %div.panel.panel-default{style: "margin-top:30px;"}
+        %div.panel-heading
+          %strong Instructions:
+        %div.panel-body= @entry_quiz.instructions
+        %div.panel-heading
+          %strong Feedback:
+        %div.panel-body= @entry_quiz.feedback
+        %div.panel-heading
+          %strong Correct answer required to pass:
+        %div.panel-body
+          = "#{@entry_quiz.threshold.to_s} out of a total of #{@entry_quiz.questions.length} questions"
+
+    %div.col-md-8.col-md-offset-2
+      = link_to 'Manage Questions', entry_quiz_questions_path, class: "btn btn-primary", style: "margin:20px auto; width:100%;"
+      %table.table.table-striped.table-bordered
+        %thead
+          %tr
+            %th
+              Name
+            %th
+              Questions
+              %span.badge= @entry_quiz.questions.length
+              %span.pull-right
+                ="#{@entry_quiz.questions.active.length} / #{@entry_quiz.questions.length} published"
+        %tbody
+          - @entry_quiz.questions.each do |question|
+            %tr{class: question.active? ? "success" : "danger", id: "section-row"}
+              %td= question.name
+              %td= question.to_s.truncate(40, omission: '...')

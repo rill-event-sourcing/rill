@@ -6,7 +6,7 @@
             [studyflow.learning.course.commands :as commands]))
 
 (defrecord Course
-    [id chapters])
+    [id chapters entry-quiz])
 
 (defn- find-by-id
   [coll id]
@@ -28,9 +28,15 @@
 (defn question-for-section
   [course section-id question-id]
   {:pre [course section-id question-id]
-   :post [%]}
+   "post" [%]}
   (find-by-id (questions-for-section course section-id)
               question-id))
+
+(defn question-for-entry-quiz
+  [course question-index]
+  {:pre [course (:entry-quiz course)]
+   :post [%]}
+  (get-in course [:entry-quiz :questions question-index]))
 
 (defn line-input-fields-answers-correct?
   [input-fields input-values]
@@ -61,11 +67,11 @@
 
 (defmethod handle-event ::events/Published
   [_ event]
-  (->Course (:course-id event) (:chapters (:material event))))
+  (->Course (:course-id event) (:chapters (:material event)) (:entry-quiz (:material event))))
 
 (defmethod handle-event ::events/Updated
   [course event]
-  (assoc course :chapters (:chapters (:material event))))
+  (assoc course :chapters (:chapters (:material event)) (:entry-quiz (:material event))))
 
 (defmethod handle-event ::events/Deleted
   [_ event]

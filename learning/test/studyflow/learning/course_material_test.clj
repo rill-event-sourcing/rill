@@ -23,9 +23,9 @@
 
 (deftest test-question-text-to-html
   (let [json (read-test-json)
-        test-q-title (get-in (material/parse-course-material (read-test-json))
+        test-q-title (get-in (material/parse-course-material json)
                              [:chapters 0 :sections 0 :title])
-        test-q (-> (get-in (material/parse-course-material (read-test-json))
+        test-q (-> (get-in (material/parse-course-material json)
                            [:chapters 0 :sections 0 :questions])
                    first)]
     (is (= test-q-title

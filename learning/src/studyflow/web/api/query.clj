@@ -27,4 +27,3 @@
                    (if-let [question (queries/question model (uuid course-id) (uuid section-id) (uuid question-id))]
                      {:status 200 :body question}
                      {:status 400})))))
-

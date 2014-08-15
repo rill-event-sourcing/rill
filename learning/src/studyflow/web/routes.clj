@@ -3,6 +3,8 @@
 
 (defroute update-course-material :put "/api/internal/course/:course-id")
 
+(defroute update-entry-quiz-material :put "/api/internal/entry-quiz/:entry-quiz-id")
+
 (defroute query-course-material :get "/api/course-material/:course-id/:student-id")
 
 (defroute query-section :get "/api/course-material/:course-id/chapter/:chapter-id/section/:section-id")
@@ -21,3 +23,9 @@
 
 (defroute section-test-replay :get "/api/section-test-replay/:section-id/:student-id")
 
+(defroute entry-quiz-dismiss-nag-screen :put "/api/entry-quiz-dismiss-nag-screen/:course-id/:student-id")
+(defroute entry-quiz-init :put "/api/entry-quiz-init/:course-id/:student-id")
+(defroute entry-quiz-visit-first-question :put "/api/entry-quiz-visit-first-question/:course-id/:student-id")
+
+(defroute entry-quiz-submit-answer :put "/api/entry-quiz-submit-answer/:course-id/:student-id")
+(defroute entry-quiz-replay :get "/api/entry-quiz-replay/:course-id/:student-id")

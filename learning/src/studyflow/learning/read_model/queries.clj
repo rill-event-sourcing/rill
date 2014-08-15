@@ -36,4 +36,3 @@
       (model/get-section section-id)
       (model/get-question question-id)
       remove-answers))
-
