@@ -1,5 +1,6 @@
 (ns studyflow.web.helpers
   (:require [om.dom :as dom]
+            [goog.string :as gstring]
             [clojure.string :as string]))
 
 (defn raw-html
