@@ -23,7 +23,6 @@
 
 (defroute section-test-replay :get "/api/section-test-replay/:section-id/:student-id")
 
-(defroute query-entry-quiz :get "/api/entry-quiz/:course-id")
 (defroute entry-quiz-init :put "/api/entry-quiz-init/:course-id/:student-id")
 (defroute entry-quiz-visit-first-question :put "/api/entry-quiz-visit-first-question/:course-id/:student-id")
 

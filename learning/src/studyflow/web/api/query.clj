@@ -21,11 +21,6 @@
                    (if-let [section (queries/section model (uuid course-id) (uuid section-id))]
                      {:status 200 :body section}
                      {:status 400})))
-   (clout/handle routes/query-entry-quiz
-                 (fn [{model :read-model {:keys [course-id]} :params}]
-                   (if-let [quiz (queries/entry-quiz model (uuid course-id))]
-                     {:status 200 :body quiz}
-                     {:status 400})))
    (clout/handle routes/query-question
                  (fn [{model :read-model {:keys [course-id section-id question-id]} :params}]
                    (debug "Query handler for " course-id ", " section-id " and " question-id "with model: " model)

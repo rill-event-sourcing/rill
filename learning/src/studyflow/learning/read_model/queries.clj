@@ -36,11 +36,3 @@
       (model/get-section section-id)
       (model/get-question question-id)
       remove-answers))
-
-
-(defn entry-quiz
-  [m course-id]
-  (-> m
-      (model/get-course course-id)
-      :entry-quiz
-      (update-in [:questions] (partial map remove-answers))))

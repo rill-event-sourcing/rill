@@ -198,15 +198,7 @@
                                  (om/update! cursor
                                              [:view :entry-quiz-replay-done]
                                              true)
-                                 (basic-error-handler e)))})
-        (GET (str "/api/entry-quiz/"
-                  course-id)
-             {:params {}
-              :handler (fn [res]
-                         (let [data (json-edn/json->edn res)]
-                           (om/update! cursor
-                                       [:view :entry-quiz-material] data)))
-              :error-handler basic-error-handler}))
+                                 (basic-error-handler e)))}))
 
       nil)))
 
