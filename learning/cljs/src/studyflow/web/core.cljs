@@ -400,7 +400,8 @@
   [tools]
   (apply dom/div #js {:id "toolbox"}
          (map (fn [tool]
-                (dom/span #js {:className (str "tool " tool)}))
+                (dom/div #js {:className (str "tool " tool)}
+                         (dom/div #js {:className "tooltip"})))
               tools)))
 
 (defn single-question-panel [tag-tree inputs]
