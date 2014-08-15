@@ -167,11 +167,11 @@
                                                                              cursor))))
                                               :passed
                                               (dom/div nil
-                                                       (dom/div nil "PASSED Je hebt de instaptoets afgerond. Ga terug naar het dashboard")
+                                                       (dom/div nil (:feedback material))
                                                        (to-dashboard-bar))
                                               :failed
                                               (dom/div nil
-                                                       (dom/div nil "FAILED Je hebt de instaptoets afgerond. Ga terug naar het dashboard")
+                                                       (dom/div nil (:feedback material))
                                                        (to-dashboard-bar))
                                               nil)))))))
     om/IDidMount
