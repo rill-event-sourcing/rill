@@ -1,6 +1,6 @@
 default: test
 
-.PHONY: test deploy install clean
+.PHONY: test build deploy install clean learning publishing school-administration login rill components
 
 clean:
 	cd lib/rill && lein clean
@@ -16,19 +16,26 @@ install:
 	cd login && lein install
 	cd school-administration && lein install
 
-test:
+rill:
 	cd lib/rill && make test && make install
-	cd lib/components && make test && make install
-	cd learning && make test
-	cd login && make test
-	cd publishing && make test
-	cd school-administration && make test
 
-build:
-	cd learning && make build
-	cd login && make build
-	cd publishing && make build
-	cd school-administration && make build
+components: rill
+	cd lib/components && make test && make install
+
+learning: rill components
+	cd learning && make test && make build
+
+login: rill components
+	cd login && make test && make build
+
+publishing:
+	cd publishing && make test && make build
+
+school-administration: rill components
+	cd school-administration && make test && make build
+
+build: login publishing learning school-administration
+
 
 upload: build
 	cd learning && make upload
