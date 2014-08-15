@@ -40,7 +40,6 @@ RSpec.describe EntryQuizzesController, :type => :controller do
 
     it "should create a new record for entry_quiz" do
       expect(assigns(:entry_quiz)).not_to eq nil
-      expect(assigns(:entry_quiz).new_record?).to eq true
     end
   end
 
