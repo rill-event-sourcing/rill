@@ -37,7 +37,6 @@ class Chapter < ActiveRecord::Base
   def errors_when_publishing
     errors = []
     errors << sections.active.map(&:errors_when_publishing)
-    p "hello #{errors}"
     errors.flatten
   end
 

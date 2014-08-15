@@ -2,15 +2,6 @@ require 'appsignal'
 require 'appsignal/marker'
 
 namespace :appsignal do
-  desc "Set git version"
-  task :set_version do
-    on roles(:app) do
-      within repo_path do
-        set(:current_revision, capture(:git, "log -1 --format=%H"))
-      end
-    end
-  end
-
   desc "Send appsignal a deploy signal"
   task :deploy do
     env  = fetch(:stage)
@@ -31,5 +22,3 @@ namespace :appsignal do
   end
 end
 
-# after 'deploy:restart', 'appsignal:set_version'
-# after 'deploy:restart', 'appsignal:deploy'

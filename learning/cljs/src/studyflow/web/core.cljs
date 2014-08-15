@@ -15,8 +15,8 @@
 
 (set! *print-fn*
       (if (and js/console
-                 (.-log js/console)
-                 (.-apply (.-log js/console)))
+               (.-log js/console)
+               (.-apply (.-log js/console)))
         (fn [& args]
           (.apply (.-log js/console) js/console (into-array args)))
         (fn [& args])))
@@ -271,23 +271,23 @@
     (render [_]
       (let [streak
             (if (< (count streak) 5)
-              (take 5 (concat streak (repeat 5 [nil :open])))
-              streak)]
+              (take 5 (concat (reverse streak) (repeat 5 [nil :inactive])))
+              (reverse streak))]
         (apply dom/div #js {:id "m-path"}
-               (reverse
-                (map-indexed
-                 (fn [idx [question-id result]]
-                   (dom/span #js {:className (str
-                                              "goal "
-                                              (if (<= (- (count streak) 5) idx)
-                                                ""
-                                                "inactive ")
-                                              (condp = result
-                                                :correct "correct"
-                                                :incorrect "incorrect"
-                                                :revealed "hint" ;; warning this is currently for worked out answer
-                                                :open ""))}))
-                 streak)))))))
+               (map-indexed
+                (fn [idx [question-id result]]
+                  (dom/span #js {:className (str
+                                             "goal "
+                                             (if (< idx 5)
+                                               ""
+                                               "inactive ")
+                                             (condp = result
+                                               :correct "correct"
+                                               :incorrect "incorrect"
+                                               :revealed "hint" ;; warning this is currently for worked out answer
+                                               :open ""
+                                               :inactive "inactive"))}))
+                streak))))))
 
 (def html->om
   {"a" dom/a, "b" dom/b, "big" dom/big, "br" dom/br, "dd" dom/dd, "div" dom/div,
@@ -389,7 +389,7 @@
   [tools]
   (apply dom/div #js {:id "toolbox"}
          (map (fn [tool]
-                (dom/div #js {:id tool} tool))
+                (dom/span #js {:id tool}))
               tools)))
 
 (defn single-question-panel [tag-tree inputs]
@@ -489,11 +489,11 @@
                                               (or (not progress-modal)
                                                   (= progress-modal :dismissed)))
                                       (async/put! (om/get-shared owner :command-channel)
-                                       ["section-test-commands/next-question"
-                                        section-id
-                                        student-id
-                                        section-test-aggregate-version
-                                        course-id])))
+                                                  ["section-test-commands/next-question"
+                                                   section-id
+                                                   student-id
+                                                   section-test-aggregate-version
+                                                   course-id])))
                                   (when (or (= progress-modal :show-finish-modal)
                                             (= progress-modal :show-streak-completed-modal))
                                     (do
@@ -542,14 +542,12 @@
                          nil))
                  (dom/article #js {:id "m-section"
                                    :className "question_page"}
-                              (tool-box (:tools question-data))
                               (single-question-panel (:tag-tree question-data)
                                                      inputs)
                               (when revealed-answer
-                                (dom/div nil
-                                         "Het uitgewerkte antwoord is: "
-                                         (dom/div #js {:dangerouslySetInnerHTML #js {:__html revealed-answer}} nil))))
+                                (dom/div #js {:dangerouslySetInnerHTML #js {:__html revealed-answer}} nil)))
                  (dom/div #js {:id "m-question_bar"}
+                          (tool-box (:tools question-data))
                           (if answer-correct
                             (if (and finished-last-action
                                      (= progress-modal :launchable))
