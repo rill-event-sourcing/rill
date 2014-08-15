@@ -143,7 +143,7 @@
                       :className "entry_exam_page"}
                  (dom/header #js {:id "m-top_header"}
                              (dom/a #js {:className "home"
-                                         :href "/"})
+                                         :href (history-link {:main :dashboard})})
                              (dom/h1 #js {:className "page_heading"}
                                      "Instaptoets") ;; TODO title is not in aggregate
                              (when-let [index (:question-index entry-quiz)]
