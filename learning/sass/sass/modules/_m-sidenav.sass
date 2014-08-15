@@ -25,7 +25,7 @@
 
     &.finished
       &:after
-        background: #e7e5d7
+        background: #ffe8c1
 
     &.in_progress
       &:after
@@ -127,10 +127,14 @@
   width: 30px
   height: 30px
   margin: 15px 20px 0 0
+  display: none
 
 .hide_nav
   #m-sidenav
     +translateX(-338px)
+    #nav_toggle
+      position: fixed
+
   #main
     margin: 0 50px
   #m-question_bar
