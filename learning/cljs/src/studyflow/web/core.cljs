@@ -714,19 +714,21 @@
             chapter-id (or (get-in cursor [:view :selected-path :chapter-id]) (:id (first (:chapters course))))]
 
         (if course
-          (dom/nav #js {:id "m-dashboard_chapter_nav"}
-                   (dom/h1 #js {:className "chapter_nav_title"} "Mijn leerroute")
-                   (apply dom/ol #js {:className "chapter_list"}
-                          (let [{:keys [name status]
-                                 entry-quiz-id :id
-                                 :as entry-quiz} (get-in cursor [:view :course-material :entry-quiz])
-                                 status (keyword status)]
-                            (when (not (#{:passed :failed} status))
-                              (dom/li #js {:className "chapter_list_item"}
-                                      (dom/a #js {:href (history-link {:main :entry-quiz})}
-                                             "Instaptoets"))))
-                          (map (partial chapter-navigation cursor chapter-id course)
-                               (:chapters course))))
+          (dom/div nil
+                   (dom/nav #js {:id "m-dashboard_chapter_nav"}
+                            (dom/h1 #js {:className "chapter_nav_title"} "Mijn leerroute")
+                            (apply dom/ol #js {:className "chapter_list"}
+                                   (let [{:keys [name status]
+                                          entry-quiz-id :id
+                                          :as entry-quiz} (get-in cursor [:view :course-material :entry-quiz])
+                                          status (keyword status)]
+                                     (when (not (#{:passed :failed} status))
+                                       (dom/li #js {:className "chapter_list_item"}
+                                               (dom/a #js {:href (history-link {:main :entry-quiz})}
+                                                      "Instaptoets"))))
+                                   (map (partial chapter-navigation cursor chapter-id course)
+                                        (:chapters course))))
+                   (dom/div #js {:id "m-path"}))
           (dom/h2 nil "Hoofdstukken laden..."))))))
 
 (defn dashboard-top-header
