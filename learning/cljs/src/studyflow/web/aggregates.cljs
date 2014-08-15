@@ -84,6 +84,12 @@
       :finished true
       :finished-at (count (:questions agg)))
 
+    "studyflow.learning.entry-quiz.events/NagScreenDismissed"
+    (let [aggr-id (:course-id event)]
+      {:id aggr-id
+       :questions []
+       :status :dismissed})
+
     "studyflow.learning.entry-quiz.events/Started"
     (let [aggr-id (:course-id event)]
       {:id aggr-id

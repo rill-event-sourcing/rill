@@ -8,7 +8,8 @@
   [store course-id student-id]
   (let [aggregate-id (entry-quiz-id {:student-id student-id :course-id course-id})
         [head :as events] (retrieve-events store aggregate-id)]
-    (when (= ::events/Started (message/type head))
+    (when (#{::events/Started
+             ::events/NagScreenDismissed} (message/type head))
       {:events events
        :aggregate-version (message/number (last events))
        :aggregate-id aggregate-id})))

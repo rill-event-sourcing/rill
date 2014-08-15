@@ -26,7 +26,7 @@
                                 "Herlaad de pagina")))
                  (when-not (= :entry-quiz
                               (get-in cursor [:view :selected-path :main]))
-                   (entry-quiz/entry-quiz-modal cursor))
+                   (entry-quiz/entry-quiz-modal cursor owner))
                  (case (get-in cursor [:view :selected-path :main])
                    :entry-quiz
                    (om/build entry-quiz/entry-quiz-panel cursor)

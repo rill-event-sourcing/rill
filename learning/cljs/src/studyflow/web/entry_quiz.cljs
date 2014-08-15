@@ -64,7 +64,7 @@
             submit (fn []
                      (prn "handle submit")
                      (async/put! (om/get-shared owner :command-channel)
-                                 ["student-entry-quiz-commands/init"
+                                 ["entry-quiz-commands/init"
                                   course-id
                                   student-id]))]
         (om/set-state! owner :submit submit)
@@ -115,6 +115,8 @@
                                             (case (:status entry-quiz)
                                               nil ; entry-quiz not yet started
                                               (om/build instructions-panel cursor)
+                                              :dismissed
+                                              (om/build instructions-panel cursor)
 
                                               :in-progress
                                               (let [course-id (:id entry-quiz)
@@ -134,7 +136,7 @@
                                                              (when answering-allowed
                                                                (async/put!
                                                                 (om/get-shared owner :command-channel)
-                                                                ["student-entry-quiz-commands/submit-answer"
+                                                                ["entry-quiz-commands/submit-answer"
                                                                  course-id
                                                                  student-id
                                                                  entry-quiz-aggregate-version
@@ -144,7 +146,7 @@
                                                                            false)}
                                                           (apply dom/div nil
                                                                  (for [text-or-input (split-text-and-inputs question-text
-                                                                                                                 (keys inputs))]
+                                                                                                            (keys inputs))]
                                                                    ;; this wrapper div is
                                                                    ;; required, otherwise the
                                                                    ;; dangerouslySetInnerHTML
@@ -175,29 +177,33 @@
       (core/focus-input-box owner))))
 
 
-(defn entry-quiz-modal [cursor]
+(defn entry-quiz-modal [cursor owner]
   (when-let [entry-quiz (get-in cursor [:view :course-material :entry-quiz])]
-    (let [{:keys [status description]
+    (let [{:keys [status nag-screen-text]
            entry-quiz-id :id} entry-quiz
            status (if (= :dismissed (get-in cursor [:view :entry-quiz-modal]))
                     :dismissed
-                    (keyword status))]
+                    (keyword status))
+           course-id (get-in cursor [:static :course-id])
+           student-id (get-in cursor [:static :student :id])
+           dismiss-modal (fn []
+                           (om/update! cursor [:view :entry-quiz-modal] :dismissed)
+                           (async/put! (om/get-shared owner :command-channel)
+                                       ["entry-quiz-commands/dismiss-nag-screen"
+                                        course-id
+                                        student-id]))]
       (condp = status
         nil (modal (dom/div nil
                             (dom/h1 nil "Instaptoets")
-                            (raw-html description))
+                            (raw-html nag-screen-text))
                    (dom/button #js {:onClick (fn []
-                                               (om/update! cursor [:view :entry-quiz-modal] :dismissed)
+                                               (dismiss-modal)
                                                (set! (.-location js/window)
                                                      (history-link {:main :entry-quiz})))}
                                "Instaptoets starten")
                    (dom/a #js {:href ""
                                :onClick (fn []
-                                          ;; nag screen is hidden
-                                          ;; until next refresh
-                                          (om/update! cursor
-                                                      [:view :entry-quiz-modal]
-                                                      :dismissed)
+                                          (dismiss-modal)
                                           false)}
                           "Later maken"))
         :dismissed

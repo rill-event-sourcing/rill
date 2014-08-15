@@ -7,6 +7,11 @@
   [{:keys [course-id student-id]}]
   (str "entry-quiz:" course-id ":" student-id))
 
+(defevent NagScreenDismissed
+  :course-id m/Id
+  :student-id m/Id
+  entry-quiz-id)
+
 (defevent Started
   :course-id m/Id
   :student-id m/Id

@@ -99,21 +99,21 @@
               :handler (command-aggregate-handler cursor notification-channel section-id)
               :error-handler (command-error-handler cursor)}))
 
-      "student-entry-quiz-commands/init"
+      "entry-quiz-commands/dismiss-nag-screen"
+      (let [[course-id student-id] args]
+        (PUT (str "/api/entry-quiz-dismiss-nag-screen/" course-id "/" student-id)
+             {:format :json
+              :handler (command-aggregate-handler cursor notification-channel course-id)
+              :error-handler (command-error-handler cursor)}))
+
+      "entry-quiz-commands/init"
       (let [[course-id student-id] args]
         (PUT (str "/api/entry-quiz-init/" course-id "/" student-id)
              {:format :json
               :handler (command-aggregate-handler cursor notification-channel course-id)
               :error-handler (command-error-handler cursor)}))
 
-      "student-entry-quiz-commands/visit-first-question"
-      (let [[course-id student-id] args]
-        (PUT (str "/api/entry-quiz-visit-first-question/" course-id "/" student-id)
-             {:format :json
-              :handler (command-aggregate-handler cursor notification-channel course-id)
-              :error-handler (command-error-handler cursor)}))
-
-      "student-entry-quiz-commands/submit-answer"
+      "entry-quiz-commands/submit-answer"
       (let [[course-id student-id entry-quiz-aggregate-version inputs] args]
         (PUT (str "/api/entry-quiz-submit-answer/" course-id "/" student-id)
              {:params {:expected-version entry-quiz-aggregate-version

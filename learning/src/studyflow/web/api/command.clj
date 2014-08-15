@@ -57,12 +57,18 @@
                                     (uuid course-id)))))
 
    (clout/handle
+    routes/entry-quiz-dismiss-nag-screen
+    (authorization/wrap-student-authorization
+     (fn [{{:keys [course-id student-id]} :params}]
+       (entry-quiz/dismiss-nag-screen! (uuid course-id)
+                                       (uuid student-id)))))
+
+   (clout/handle
     routes/entry-quiz-init
     (authorization/wrap-student-authorization
      (fn [{{:keys [course-id student-id]} :params}]
        (entry-quiz/start! (uuid course-id)
-                          (uuid student-id)
-                          -1))))
+                          (uuid student-id)))))
 
    (clout/handle
     routes/entry-quiz-submit-answer

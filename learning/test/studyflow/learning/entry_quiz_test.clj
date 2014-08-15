@@ -30,8 +30,9 @@
 
 (deftest test-commands
   (testing "start quiz"
-    (is (command-result= [:ok [(events/started course-id student-id)]]
-                         (execute (entry-quiz/start! course-id student-id -1)
+    (is (command-result= [:ok [(events/started course-id student-id)
+                               (events/instructions-read course-id student-id)]]
+                         (execute (entry-quiz/start! course-id student-id)
                                   [fixture/course-published-event]))))
 
   (testing "answering"

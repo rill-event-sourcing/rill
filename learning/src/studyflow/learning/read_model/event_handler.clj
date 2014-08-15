@@ -36,6 +36,10 @@
   [model {:keys [student-id section-id]}]
   (m/set-student-section-status model section-id student-id :finished))
 
+(defmethod handle-event ::entry-quiz/NagScreenDismissed
+  [model {:keys [student-id course-id]}]
+  (m/set-student-entry-quiz-status model course-id student-id :nag-screen-dismissed))
+
 (defmethod handle-event ::entry-quiz/Started
   [model {:keys [student-id course-id]}]
   (m/set-student-entry-quiz-status model course-id student-id :started))

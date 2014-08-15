@@ -17,22 +17,39 @@
      current-question-index
      correct-answers])
 
+(defcommand DismissNagScreen!
+  :course-id m/Id
+  :student-id m/Id
+  entry-quiz-id)
+
 (defcommand Start!
   :course-id m/Id
   :student-id m/Id
-  :expected-version s/Int
   entry-quiz-id)
+
+(defmethod handle-command ::DismissNagScreen!
+  [entry-quiz {:keys [student-id course-id]}]
+  (if-not entry-quiz
+    [:ok [(events/nag-screen-dismissed course-id student-id)]]
+    [:rejected {:student-id :already-dismissed-nag-screen}]))
+
+(defmethod handle-event ::events/NagScreenDismissed
+  [_ {:keys [student-id course-id]}]
+  (->EntryQuiz course-id student-id :nag-screen-dismissed 0 0))
 
 (defmethod handle-command ::Start!
   [entry-quiz {:keys [student-id course-id]}]
-  (if-not entry-quiz
+  (if (or (not entry-quiz)
+          (= :nag-screen-dismissed (:state entry-quiz)))
     [:ok [(events/started course-id student-id)
           (events/instructions-read course-id student-id)]]
     [:rejected {:student-id :already-started}]))
 
 (defmethod handle-event ::events/Started
-  [_ {:keys [student-id course-id]}]
-  (->EntryQuiz course-id student-id :started 0 0))
+  [entry-quiz {:keys [student-id course-id]}]
+  (if entry-quiz
+    (assoc entry-quiz :state :started)
+    (->EntryQuiz course-id student-id :started 0 0)))
 
 (defmethod handle-event ::events/InstructionsRead
   [entry-quiz _]
