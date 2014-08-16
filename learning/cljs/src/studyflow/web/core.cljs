@@ -403,7 +403,7 @@
   (apply dom/div #js {:id "toolbox"}
          (map (fn [tool]
                 (dom/div #js {:className (str "tool " tool)}
-                         (dom/div #js {:className "tooltip"})))
+                         (dom/div #js {:className "m-tooltip"})))
               tools)))
 
 (defn single-question-panel [tag-tree inputs]
