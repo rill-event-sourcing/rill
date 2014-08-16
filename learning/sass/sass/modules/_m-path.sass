@@ -6,7 +6,7 @@
   top: 66px
   background: #fcfbf7
   border-left: 2px solid #e8e7e2
-  padding-top: 29px
+  padding-top: 30px
 
   .goal
     margin: 0 0 20px 7px
@@ -19,31 +19,40 @@
     position: relative
     z-index: 800
 
-    &:nth-child(5)
-      margin-bottom: 30px
-      &:after
-        display: none
-
-    &:nth-child(6)
-      &:before
-        width: 3px
-        height: 15px
-        background-color: #d7dadf
-        content: ''
-        display: block
-        position: absolute
-        left: 9px
-        bottom: 10px
-
-
     &.correct
-      background: #ccec90
+      background: url(/images/icon-question-correct.png) no-repeat center 5px #ccec90
       border-color: #8ac12b
+    &.incorrect
+
+    &.hint
 
     &.inactive
       background: #cfd2d7
       border-color: #cacbd0
 
+    &:nth-child(5)
+      margin-bottom: 35px
+      &:after
+        top: 50px
+        height: 12px
+
+    &:nth-child(1n+6)
+      width: 23px
+      height: 23px
+      margin-left: 8px
+      background-color: #e5ebf3 !important
+      border-color: #d8dfe8 !important
+      margin-bottom: 12px
+      &:after
+        top: 25px
+        height: 12px
+        left: 10px
+      &.correct
+        background: url(/images/icon-question-correct-inactive.png) no-repeat center #e5ebf3
+      &.incorrect
+        background: url(/images/icon-question-incorrect-inactive.png) no-repeat center #e5ebf3
+      &.hint
+        background: url(/images/icon-question-hint-inactive.png) no-repeat center #e5ebf3
 
     &:last-child
       &:after
