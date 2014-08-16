@@ -400,11 +400,13 @@
 
 (defn tool-box
   [tools]
+  (let [tool-names {"pen_and_paper" "Pen & Papier"
+                    "rekenmachine" "Rekenmachine"}]
   (apply dom/div #js {:id "toolbox"}
          (map (fn [tool]
                 (dom/div #js {:className (str "tool " tool)}
-                         (dom/div #js {:className "m-tooltip"})))
-              tools)))
+                         (dom/div #js {:className "m-tooltip"} (get tool-names tool) )))
+              tools))))
 
 (defn single-question-panel [tag-tree inputs]
   (dom/div nil

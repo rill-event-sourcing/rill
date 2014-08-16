@@ -28,12 +28,22 @@
   &:active
     +box-shadow(inset 0 2px 3px rgba(0,0,0,0.1), 0 1px rgba(255,255,255,1))
 
-  // Different types
+  // Small button
+  &.small
+    font-size: 15px
+    line-height: 35px
+
+  // Chapter nav button
   &.chapter_nav_btn
     float: right
     bottom: 30px
     right: 25px
     display: none
+
+  // Show answer button
+  &.show_answer
+    background-color: #e6f8fe
+
 
   // The spinner
   &::after
@@ -53,10 +63,6 @@
       +scale(1)
       opacity: 1
 
-  // Small button
-  &.small
-    font-size: 15px
-    line-height: 35px
 
   // Green button
   &.blue
@@ -75,22 +81,3 @@
         background-color: #00b37c
     &::after
       //background: image-url('green-spinner.gif') center no-repeat #00b37c
-
-  // Yellow button
-  &.white
-    color: #777
-    +text-shadow(0 1px 0 #fff)
-    background-color: #f9f9f9
-    +box-shadow(inset 0 1px 2px rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.2), inset 0 -1px 2px rgba(0, 0, 0, 0.1))
-    &:hover, &:focus
-      color: #666
-      background-color: #fdfdfd
-    &:active
-      background-color: #f9f9f9
-      +box-shadow(inset 0 2px 3px rgba(0,0,0,0.1))
-    &[disabled]
-      &:hover, &:focus
-        color: #777
-        background-color: #f9f9f9
-    &::after
-      //background: image-url('grey-spinner.gif') center no-repeat #f9f9f9
