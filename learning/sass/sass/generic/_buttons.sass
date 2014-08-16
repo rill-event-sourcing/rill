@@ -4,34 +4,42 @@
 
 // Buttons
 .btn
+  font-family: 'Gotham SSm A', 'Gotham SSm B'
+  -webkit-font-smoothing: antialiased
   outline: none
   text-decoration: none
   overflow: hidden
   white-space: nowrap
   +user-select(none)
-  box-sizing: border-box
+  +box-sizing(border-box)
   line-height: 50px
   position: relative
   display: inline-block
-  letter-spacing: 1px
   text-align: center
   cursor: pointer
   font-weight: 600
   font-size: 17px
-  padding: 0 40px
+  padding: 2px 33px 0 33px
   +border-radius(5px)
   +single-transition(all, 0.2s)
   &[disabled]
     opacity: 0.5
-    cursor: not-allowed
-    +box-shadow(none !important)
+    cursor: default
   &:active
     +box-shadow(inset 0 2px 3px rgba(0,0,0,0.1), 0 1px rgba(255,255,255,1))
 
   // Small button
   &.small
     font-size: 15px
-    line-height: 35px
+    line-height: 38px
+
+  &.icon
+    &.small
+      padding-left: 54px
+    &.hint
+      background: url(/images/icon-hint-mini-active.png) no-repeat 8px -6px #e6f8fe
+      &[disabled]
+        background: url(/images/icon-hint-mini-inactive.png) no-repeat 8px -6px #e6f8fe
 
   // Chapter nav button
   &.chapter_nav_btn
@@ -40,10 +48,34 @@
     right: 25px
     display: none
 
-  // Show answer button
-  &.show_answer
-    background-color: #e6f8fe
 
+
+
+  // Blue button
+  &.blue
+    color: white
+    background-color: #59caf8
+    border: 1px solid #259ed0
+    border-bottom: 3px solid #259ed0
+    +text-shadow(0px 1px 2px rgba(0, 0, 0, 0.4))
+    &:hover, &:focus
+      background-color: #00bc82
+    &:active
+      background-color: #00b37c
+      border-bottom-color: #00a779
+    &[disabled]
+      &:hover, &:focus
+        background-color: #00b37c
+    &::after
+      //background: image-url('green-spinner.gif') center no-repeat #00b37c
+
+  // Light blue button
+  &.light_blue
+    background-color: #e6f8fe
+    border: 1px solid #97bdcc
+    border-bottom: 3px solid #97bdcc
+    color: #88afbe
+    +text-shadow(0px 1px 1px rgba(255, 255, 255, 0.4))
 
   // The spinner
   &::after
@@ -62,22 +94,3 @@
     &::after
       +scale(1)
       opacity: 1
-
-
-  // Green button
-  &.blue
-    color: white
-    background-color: #59caf8
-    border: 1px solid #259ed0
-    border-bottom: 3px solid #259ed0
-    +text-shadow(0px 1px 2px rgba(0, 0, 0, 0.4))
-    &:hover, &:focus
-      background-color: #00bc82
-    &:active
-      background-color: #00b37c
-      border-bottom-color: #00a779
-    &[disabled]
-      &:hover, &:focus
-        background-color: #00b37c
-    &::after
-      //background: image-url('green-spinner.gif') center no-repeat #00b37c

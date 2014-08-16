@@ -421,7 +421,7 @@
       (let [{:keys [revealed-answer question-id question-data section-id student-id section-test-aggregate-version course-id]} cursor
             can-reveal-answer (get question-data :has-worked-out-answer)]
         (if can-reveal-answer
-          (dom/button #js {:className "btn small blue show_answer"
+          (dom/button #js {:className "btn light_blue small icon hint"
                            :disabled
                            (boolean revealed-answer)
                            :onClick
