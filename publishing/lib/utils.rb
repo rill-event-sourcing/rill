@@ -33,10 +33,10 @@ def render_latex(text)
     end
     if response
       rendered_formula = response.parsed_response
-      rendered_formula = content_tag(:div, "\"#{match}\" is not valid LaTeX", class: "alert alert-danger") if rendered_formula == "MathJax error"
+      rendered_formula = %(<div class="alert alert-danger">'#{match}' is not valid LaTeX</div>) if rendered_formula == "MathJax error"
       new_text.gsub!("<math>#{match}</math>", rendered_formula)
     else
-      new_text = content_tag(:div, "Error with LaTeX rendering: #{error}", class: "alert alert-danger")
+      new_text = %(<div class="alert alert-danger">Error with LaTeX rendering: #{error}</div>)
       break
     end
   end
