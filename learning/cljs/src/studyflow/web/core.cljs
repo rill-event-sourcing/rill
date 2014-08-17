@@ -401,7 +401,7 @@
 (defn tool-box
   [tools]
   (let [tool-names {"pen_and_paper" "Pen & Papier"
-                    "rekenmachine" "Rekenmachine"}]
+                    "calculator" "Rekenmachine"}]
   (apply dom/div #js {:id "toolbox"}
          (map (fn [tool]
                 (dom/div #js {:className (str "tool " tool)}
