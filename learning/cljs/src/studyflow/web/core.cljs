@@ -721,7 +721,7 @@
         (if course
           (dom/div nil
                    (dom/nav #js {:id "m-dashboard_chapter_nav"}
-                            (dom/h1 #js {:className "chapter_nav_title"} "Mijn leerroute")
+                            (dom/h1 #js {:className "chapter_nav_title"} "Mijn Leerroute")
                             (apply dom/ol #js {:className "chapter_list"}
                                    (let [{:keys [name status]
                                           entry-quiz-id :id

@@ -2,14 +2,15 @@
 // Here, there be dragons.
 
 #m-dashboard_chapter_nav
-  margin: 120px -2px 120px 80px
+  margin: 100px -3px 120px 71px
   background: white
 
   // Chapter nav title
   .chapter_nav_title
     color: #4c575f
     font-weight: 600
-    font-size: 22px
+    font-size: 19px
+    margin-bottom: 10px
 
   // Chapter list
   .chapter_list
@@ -44,13 +45,13 @@
       .chapter_title
         color: #515b62
         font-weight: 600
-        font-size: 22px
+        font-size: 19px
         &:before
           width: 40px
           height: 40px
-          background: #515b62
+          background: url(/images/icon-chapter-inprogress.png) no-repeat 10px 17px #515b62
           border: 3px solid #2f3741
-          top: 16px
+          top: 0px
           left: -57px
           z-index: 999
         &:after
@@ -72,20 +73,21 @@
     line-height: 80px
     font-weight: 500
     color: #acb6c1
+    font-size: 14px
+    display: block
 
     &:hover
-      &:after
-        //display: block
-
+      color: #515b62
+      
     // Chapter Status indicator
     &:before
       display: block
       position: absolute
       +border-radius(50%)
-      width: 27px
-      height: 27px
-      left: -50px
-      top: 24px
+      width: 24px
+      height: 24px
+      left: -48px
+      top: -5px
       content: ''
       border: 2px solid #cacdd6
       background: #e3e6ea
@@ -132,8 +134,8 @@
         background: #2f3741
       .section_link
         &:before
-          background: #515b62
-          border: 3px solid #2f3741
+          background: url(/images/icon-section-finished.png) no-repeat 4px 5px #515b62
+          border: 2px solid #2f3741
 
     // Recommended section
     &.recommended
@@ -178,11 +180,12 @@
 
   // Section link
   .section_link
-    line-height: 40px
-    padding-left: 50px
+    line-height: 57px
+    padding-left: 45px
     color: #99a0a8
     display: block
     font-weight: 500
+    font-size: 14px
     &:hover
       color: #4a4f58
 
@@ -192,8 +195,8 @@
       display: block
       position: absolute
       +border-radius(50%)
-      width: 26px
-      height: 26px
+      width: 24px
+      height: 24px
       left: 0px
       top: 6px
       content: ''
