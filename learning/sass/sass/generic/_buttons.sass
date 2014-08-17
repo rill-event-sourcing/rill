@@ -21,12 +21,16 @@
   font-size: 17px
   padding: 2px 33px 0 33px
   +border-radius(5px)
-  +single-transition(all, 0.2s)
+  +single-transition(all, 0.05s)
   &[disabled]
     opacity: 0.5
     cursor: default
+    &:active
+      +box-shadow(none)
+      +translateY(0)
   &:active
-    +box-shadow(inset 0 2px 3px rgba(0,0,0,0.1), 0 1px rgba(255,255,255,1))
+    +box-shadow(inset 0 2px 1px rgba(0, 0, 0, 0.1), 0 1px white)
+    +translateY(2px)
 
   // Small button
   &.small
@@ -48,9 +52,6 @@
     right: 25px
     display: none
 
-
-
-
   // Blue button
   &.blue
     color: white
@@ -59,13 +60,15 @@
     border-bottom: 3px solid #259ed0
     +text-shadow(0px 1px 2px rgba(0, 0, 0, 0.4))
     &:hover, &:focus
-      background-color: #00bc82
+      background-color: #7BD4F8
     &:active
-      background-color: #00b37c
-      border-bottom-color: #00a779
+      background-color: #59caf8
+      border-bottom: 1px solid #259ed0
     &[disabled]
       &:hover, &:focus
-        background-color: #00b37c
+        background-color: #59caf8
+      &:active
+        border-bottom: 3px solid #259ed0
     &::after
       //background: image-url('green-spinner.gif') center no-repeat #00b37c
 
@@ -76,6 +79,13 @@
     border-bottom: 3px solid #97bdcc
     color: #88afbe
     +text-shadow(0px 1px 1px rgba(255, 255, 255, 0.4))
+    &:hover, &:focus
+      background-color: #F5FBFD
+    &:active
+      background-color: #e6f8fe
+      border-bottom: 1px solid #97bdcc
+      &[disabled]
+        border-bottom: 3px solid #97bdcc
 
   // The spinner
   &::after
