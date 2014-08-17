@@ -18,6 +18,7 @@
     padding: 9px 10px 7px 15px
     text-transform: uppercase
     letter-spacing: -0.2px
+    background: #f5f3f0
 
   .section_list_item
     +box-sizing(border-box)
@@ -25,7 +26,8 @@
 
     &.finished
       &:after
-        background: #ffe8c1
+        background: url(/images/icon-section-finished-yellow.png) no-repeat 5px 6px #fceac7
+        border-color: #ebd8af
 
     &.in_progress
       &:after
@@ -41,7 +43,8 @@
       top: 50%
       margin-top: -15px
       content: ''
-      border: 2px solid #d6d2bc
+      background: #f8f7f2
+      border: 2px solid #e6e4e1
 
     &.open
       background: #efeeea
@@ -78,7 +81,7 @@
       &:after
         height: 2px
         width: 263px
-        background: #e4eaf1
+        background: #e4e2df
         display: block
         content: ''
         bottom: -1px
@@ -108,7 +111,7 @@
         &.selected
           background: url(/images/icon-explanation.png) no-repeat 7px 5px white
       &.questions
-        background: url(/images/icon-questions-inactive.png) no-repeat 9px 10px
+        background: url(/images/icon-questions-inactive.png) no-repeat 12px 13px
         &.selected
           background: url(/images/icon-questions.png) no-repeat 9px 10px white
 
