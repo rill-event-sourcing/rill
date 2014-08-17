@@ -4,19 +4,22 @@
 
 input, textarea
   color: rgb(63, 63, 58)
-  height: 55px
-  padding: 0 20px
+  height: 40px
+  padding: 0 15px
   outline: none
-  +border-radius(4px)
-  border: solid 1px #ccc
+  +border-radius(2px)
+  border: solid 2px #ccc
   background-color: #fff
-  font-size: 1.1em
-  +box-shadow(0 1px 3px rgba(0, 0, 0, 0.12)  inset, 0 1px 0 rgba(255,255,255,1) )
-  +transition(0.2s border linear, 0.2s box-shadow linear)
+  font-size: 17px
+  font-family: 'Sentinel SSm A', 'Sentinel SSm B', Georgia, serif
+  color: #29323a
+  +transition(0.1s border linear, 0.1s box-shadow linear)
   +box-sizing(border-box)
   &:focus
-    +box-shadow(inset 0 1px 3px rgba(0, 0, 0, 0.1),0 0 8px rgba(114, 178, 248, 0.6))
-    border: 1px solid #72b2f8
+    +box-shadow(0 0 4px rgba(144, 200, 223, 0.6))
+    border: 2px solid #90c8df
+  &:hover
+    border: 2px solid #90c8df
 
 input:-webkit-autofill
   background: white
@@ -24,7 +27,7 @@ input:-webkit-autofill
 // Animations for placeholder text in the inputs
 
 input::-webkit-input-placeholder
-  color: #999
+  color: #B5BDC4
   +transition(0.2s color linear)
 
 input:hover::-webkit-input-placeholder
@@ -34,7 +37,7 @@ input:focus::-webkit-input-placeholder
   color: transparent
 
 input:-moz-placeholder
-  color: #999
+  color: #B5BDC4
   +transition(0.2s border linear, 0.2s box-shadow linear, 0.2s color linear)
   // Keep these in, they are redundant; but defining them explicitly here is the only way the effects will work in FF
 
@@ -45,7 +48,7 @@ input:focus:-moz-placeholder
   color: transparent
 
 input:-ms-input-placeholder
-  color: #999
+  color: #B5BDC4
   +transition(0.2s color linear)
 
 input:hover:-ms-input-placeholder
