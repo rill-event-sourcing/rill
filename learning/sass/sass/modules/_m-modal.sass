@@ -7,6 +7,7 @@
   background: rgba(238,242,248,0.9)
   z-index: 900
   display: none
+  overflow-y: auto
   &.show
     display: block
 
@@ -15,7 +16,7 @@
     +border-radius(3px)
     border: 1px solid #c8c9cd
     background: white
-    margin: 120px auto
+    margin: 60px auto
     position: relative
 
     h1
@@ -33,6 +34,26 @@
       font-size: 15px
       font-weight: 500
       line-height: 28px
+      margin-bottom: 20px
+    ul, ol
+      margin: 0 0 20px 10px
+      li
+        padding-left: 10px
+
+    ol
+      list-style: outside decimal
+
+    ul
+      list-style: outside disc
+
+    b
+      font-weight: bold
+    i
+      font-style: italic
+
+    img
+      display: block
+      margin: 0 auto 20px auto
 
     .modal_footer
-      padding: 25px 25px
+      padding: 40px 25px 25px 25px
