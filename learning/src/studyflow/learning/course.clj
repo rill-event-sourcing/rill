@@ -71,7 +71,9 @@
 
 (defmethod handle-event ::events/Updated
   [course event]
-  (assoc course :chapters (:chapters (:material event)) (:entry-quiz (:material event))))
+  (assoc course
+    :chapters (:chapters (:material event))
+    :entry-quiz (:entry-quiz (:material event))))
 
 (defmethod handle-event ::events/Deleted
   [_ event]
