@@ -33,7 +33,11 @@ def render_latex(text)
     end
     if response
       rendered_formula = response.parsed_response
-      rendered_formula = %(<div class="alert alert-danger">'#{match}' is not valid LaTeX</div>) if rendered_formula == "MathJax error"
+      if rendered_formula == "MathJax error"
+        rendered_formula = %(<div class="alert alert-danger">'#{match}' is not valid LaTeX</div>)
+      else
+        rendered_formula = %(<span class="latex">#{rendered_formula}</span>)
+      end
       new_text.gsub!("<math>#{match}</math>", rendered_formula)
     else
       new_text = %(<div class="alert alert-danger">Error with LaTeX rendering: #{error}</div>)

@@ -39,19 +39,31 @@ describe "render_latex" do
     parsed_response = lambda { parsed_formula_inline }
     mocked_response = HTTParty::Response.new({},response_object,parsed_response)
     expect(HTTParty).to receive(:post).with(@url, body: formula_inline).and_return(mocked_response)
-    expect(render_latex(text_inline)).to eq("This is a text and #{parsed_formula_inline}")
+    expect(render_latex(text_inline)).to eq(%(This is a text and <span class="latex">#{parsed_formula_inline}</span>))
+  end
+
+  it "should show a big notice when LaTeX cannot be rendered" do
+    wrong_formula = "{"
+    text_with_wrong_formula = "This text has a wrong formula here: <math>#{wrong_formula}</math>"
+    parsing_error = "MathJax error"
+    response_object = Net::HTTPOK.new('1.1', 200, 'OK')
+    allow(response_object).to receive(:body)
+    parsed_response = lambda { parsing_error }
+    mocked_response = HTTParty::Response.new({}, response_object, parsed_response)
+    expect(HTTParty).to receive(:post).with(@url, body: wrong_formula).and_return(mocked_response)
+    expect(render_latex(text_with_wrong_formula)).to eq(%(This text has a wrong formula here: <div class="alert alert-danger">'#{wrong_formula}' is not valid LaTeX</div>))
   end
 
   it "should show a big notice when a formula is not correct" do
     wrong_formula = "{"
     text_with_wrong_formula = "This text has a wrong formula here: <math>#{wrong_formula}</math>"
-    parsing_error = %( <div class="alert alert-danger">"}" is not valid LaTeX</div> )
+    parsing_error = %(<div class="alert alert-danger">'{' is not valid LaTeX</div>)
     response_object = Net::HTTPOK.new('1.1', 200, 'OK')
     allow(response_object).to receive(:body)
     parsed_response = lambda { parsing_error }
-    mocked_response = HTTParty::Response.new({},response_object,parsed_response)
+    mocked_response = HTTParty::Response.new({}, response_object, parsed_response)
     expect(HTTParty).to receive(:post).with(@url, body: wrong_formula).and_return(mocked_response)
-    expect(render_latex(text_with_wrong_formula)).to eq("This text has a wrong formula here: #{parsing_error}")
+    expect(render_latex(text_with_wrong_formula)).to eq(%(This text has a wrong formula here: <span class="latex"><div class="alert alert-danger">'#{wrong_formula}' is not valid LaTeX</div></span>))
   end
 
 end
