@@ -9,7 +9,13 @@
 
 (defn set-student-section-status
   [model section-id student-id status]
-  (assoc-in model [:section-statuses section-id student-id] status))
+  ;; a finished section will always be marked as such, even when
+  ;; continuing after
+  (update-in model [:section-statuses section-id student-id]
+             (fn [old-status]
+               (if (= old-status :finished)
+                 old-status
+                 status))))
 
 (defn set-student-remedial-chapters-status
   [model course-id student-id status]
