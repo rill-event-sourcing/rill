@@ -144,7 +144,7 @@
         {:enabled enabled})
       om/IRender
       (render [_]
-        (dom/button #js {:className "btn blue small pull-right"
+        (dom/button #js {:className "btn blue pull-right"
                          :onClick
                          (fn [_]
                            (onclick)
@@ -421,7 +421,7 @@
       (let [{:keys [revealed-answer question-id question-data section-id student-id section-test-aggregate-version course-id]} cursor
             can-reveal-answer (get question-data :has-worked-out-answer)]
         (if can-reveal-answer
-          (dom/button #js {:className "btn light_blue small icon hint"
+          (dom/button #js {:className "btn light_blue icon hint"
                            :disabled
                            (boolean revealed-answer)
                            :onClick
@@ -684,7 +684,7 @@
                      (dom/a #js {:href section-link
                                  :className (str "section_link " section-status)}
                             title)
-                     (dom/a #js {:className "btn blue small chapter_nav_btn"
+                     (dom/a #js {:className "btn blue chapter_nav_btn"
                                  :href section-link} "Start"))))))
 
 (defn chapter-navigation [cursor selected-chapter-id course chapter]

@@ -78,7 +78,7 @@
 
 (defn to-dashboard-bar []
   (dom/div #js {:id "m-question_bar"}
-           (dom/button #js {:className "btn green pull-right"
+           (dom/button #js {:className "btn blue small pull-right"
                             :onClick (fn []
                                        (set! (.-location js/window)
                                              (history-link {:main :dashboard})))}

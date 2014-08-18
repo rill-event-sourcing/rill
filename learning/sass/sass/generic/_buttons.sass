@@ -12,13 +12,13 @@
   white-space: nowrap
   +user-select(none)
   +box-sizing(border-box)
-  line-height: 50px
+  line-height: 38px
   position: relative
   display: inline-block
   text-align: center
   cursor: pointer
   font-weight: 600
-  font-size: 17px
+  font-size: 15px
   padding: 2px 33px 0 33px
   +border-radius(5px)
   +single-transition(all, 0.05s)
@@ -32,25 +32,19 @@
     +box-shadow(inset 0 2px 1px rgba(0, 0, 0, 0.1), 0 1px white)
     +translateY(2px)
 
-  // Small button
-  &.small
-    font-size: 15px
-    line-height: 38px
+  &.big
+    line-height: 50px
+    font-size: 18px
+    +border-radius(6px)
+    letter-spacing: -0.2px
+    font-weight: 500
 
   &.icon
-    &.small
-      padding-left: 54px
+    padding-left: 54px
     &.hint
       background: url(/images/icon-hint-mini-active.png) no-repeat 8px -6px #e6f8fe
       &[disabled]
         background: url(/images/icon-hint-mini-inactive.png) no-repeat 8px -6px #e6f8fe
-
-  // Chapter nav button
-  &.chapter_nav_btn
-    float: right
-    bottom: 30px
-    right: 25px
-    display: none
 
   // Blue button
   &.blue
@@ -71,6 +65,46 @@
         border-bottom: 3px solid #259ed0
     &::after
       //background: image-url('green-spinner.gif') center no-repeat #00b37c
+
+  // Yellow button
+  &.yellow
+    color: #98691e
+    background-color: #ffcd69
+    border: 0
+    border-bottom: 2px solid #df9c32
+    &:hover, &:focus
+      background-color: #fbd68d
+    &:active
+      background-color: #ffcd69
+      border-bottom: 1px solid #df9c32
+    &[disabled]
+      &:hover, &:focus
+        background-color: #ffcd69
+      &:active
+        border-bottom: 1px solid #df9c32
+    &::after
+      //background: image-url('green-spinner.gif') center no-repeat #00b37c
+
+
+  // Gray button
+  &.gray
+    color: #9da2a4
+    background-color: #e6e9ed
+    border: 0
+    border-bottom: 2px solid #b6c6cd
+    &:hover, &:focus
+      background-color: #d5d9df
+    &:active
+      background-color: #e6e9ed
+      border-bottom: 1px solid #b6c6cd
+    &[disabled]
+      &:hover, &:focus
+        background-color: #e6e9ed
+      &:active
+        border-bottom: 1px solid #b6c6cd
+    &::after
+      //background: image-url('green-spinner.gif') center no-repeat #00b37c
+
 
   // Light blue button
   &.light_blue
@@ -104,3 +138,10 @@
     &::after
       +scale(1)
       opacity: 1
+
+  // Chapter nav button
+  &.chapter_nav_btn
+    float: right
+    bottom: 30px
+    right: 25px
+    display: none
