@@ -27,11 +27,11 @@
       display: block
       position: absolute
       width: 3px
-      height: 52px
+      height: 55px
       left: -1px
       top: 54px
       content: ''
-      background: #acb3bf
+      background: #d3d9e3
       z-index: 700
 
     // Opened chapter
@@ -40,6 +40,8 @@
       border-top: 2px solid #e6ebf1
       border-bottom: 2px solid #e6ebf1
       padding-bottom: 20px
+      &:before
+        height: 425px
       .section_list
         display: block
       .chapter_title
@@ -51,20 +53,21 @@
           height: 40px
           background: url(/images/icon-chapter-inprogress.png) no-repeat 10px 17px #515b62
           border: 3px solid #2f3741
-          top: 0px
+          top: 16px
           left: -57px
-          z-index: 700
+          z-index: 780
         &:after
           display: none
 
     &.finished
       .chapter_title
         &:before
+          background: url(/images/icon-chapter-finished.png) no-repeat center #e5e8ec
 
 
     &:last-child
       &:before
-        display: block
+        display: none
 
 
   .chapter_title
@@ -87,11 +90,11 @@
       width: 24px
       height: 24px
       left: -48px
-      top: -5px
+      top: 26px
       content: ''
-      border: 2px solid #cacdd6
-      background: #e3e6ea
-      z-index: 700
+      border: 2px solid #d5dde8
+      background: #f2f5fa
+      z-index: 780
 
     // Chapter toggle [+]
     &:after
@@ -108,8 +111,6 @@
 
   .section_list
     display: none
-
-
 
   // Section
   .section_list_item
@@ -151,19 +152,21 @@
     &.in_progress
       &:before, &:after
         background: #2f3741
-
-
+      .section_link
+        &:before
+          border: 2px solid #2f3741
+          background: #515b62
 
     // Section line (vertical)
     &:before
       display: block
       position: absolute
       width: 3px
-      height: 40px
+      height: 60px
       left: -36px
-      top: -17px
+      top: -27px
       content: ''
-      background: #acb3bf
+      background: #d3d9e3
       z-index: 700
 
     // Section line (horizontal)
@@ -173,9 +176,9 @@
       width: 55px
       height: 3px
       left: -36px
-      top: 20px
+      top: 27px
       content: ''
-      background: #d4d8e3
+      background: #d3d9e3
 
 
   // Section link
@@ -198,7 +201,7 @@
       width: 24px
       height: 24px
       left: 0px
-      top: 6px
+      top: 14px
       content: ''
       border: 2px solid #cacdd6
       background: white
