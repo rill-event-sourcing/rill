@@ -160,7 +160,7 @@
                                                         (to-dashboard-bar))
                                                :failed
                                                (dom/div nil
-                                                        (dom/div nil (:feedback material))
+                                                        (dom/div nil (raw-html (:feedback material)))
                                                         (to-dashboard-bar))
                                                nil)))))))
     om/IDidMount
