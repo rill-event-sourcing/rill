@@ -32,7 +32,7 @@
                                                                    [:view :entry-quiz index :answer input-name]
                                                                    choice))}
                                                  (dom/label #js {:htmlFor id}
-                                                            choice))))))])))
+                                                            (raw-html choice)))))))])))
       (into (for [[li ref] (map list
                                 (:line-input-fields question)
                                 (into ["FOCUSED_INPUT"]
