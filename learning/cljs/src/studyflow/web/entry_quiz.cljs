@@ -32,7 +32,7 @@
                                                                    [:view :entry-quiz index :answer input-name]
                                                                    choice))}
                                                  (dom/label #js {:htmlFor id}
-                                                            choice))))))])))
+                                                            (raw-html choice)))))))])))
       (into (for [[li ref] (map list
                                 (:line-input-fields question)
                                 (into ["FOCUSED_INPUT"]
@@ -156,7 +156,7 @@
                                                                               cursor))))
                                                :passed
                                                (dom/div nil
-                                                        (dom/div nil (:feedback material))
+                                                        (dom/div nil (raw-html (:feedback material)))
                                                         (to-dashboard-bar))
                                                :failed
                                                (dom/div nil
