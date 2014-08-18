@@ -1,0 +1,742 @@
+{
+  "id": "3106b2db-7243-4dbe-9c97-441d79827f65",
+  "name": "Rekenen",
+  "chapters": [
+    {
+      "id": "5c01c8f0-c421-4fd5-b80a-2cf45850729f",
+      "title": "8.  Breuken basis",
+      "sections": [
+        {
+          "id": "8b383e43-078b-4350-bafe-64b21cd6e3f0",
+          "title": "Wat is een breuk?\t",
+          "subsections": [
+            {
+              "id": "bc46323c-d3ce-48a9-9bfe-18e51b18c0b6",
+              "title": "Een breuk",
+              "text": "<h1>Een breuk</h1>\r\n\r\n<p>Als je 8 euro deelt met een vriend(in) dan krijg je elk 4 euro.</p>\r\n\r\n<p>Daar hoort de som 8 ÷ 2 = 4 bij. </p>\r\n \r\n<p>Wanneer je 1 appel in twee gelijke stukken snijdt, hoe beschrijf je dan elk stuk?</p>\r\n\r\n<p>Je weet waarschijnlijk wel dat we dat <i>de helft</i> of <i>een halve</i> noemen. <br>\r\nDat schrijf je als <svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"width: 1.714ex; height: 3.143ex; vertical-align: -1ex; margin-top: 1px; margin-right: 0px; margin-bottom: 1px; margin-left: 0px; position: static; \" viewBox=\"0 -926.6603394348408 717.0889244992065 1353.3206788696816\" xmlns=\"http://www.w3.org/2000/svg\"><defs id=\"MathJax_SVG_glyphs\"><path id=\"MJMAIN-31\" stroke-width=\"10\" d=\"M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z\"></path><path id=\"MJMAIN-32\" stroke-width=\"10\" d=\"M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z\"></path></defs><g stroke=\"black\" fill=\"black\" stroke-width=\"0\" transform=\"matrix(1 0 0 -1 0 0)\"><g transform=\"translate(120,0)\"><rect stroke=\"none\" width=\"477\" height=\"60\" x=\"0\" y=\"220\"></rect><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-31\" x=\"84\" y=\"611\" xlink:href=\"#MJMAIN-31\"></use><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-32\" x=\"84\" y=\"-571\" xlink:href=\"#MJMAIN-32\"></use></g></g></svg>.</p>\r\n\r\n<p>We noemen dat een <b>breuk</b>.</p>\r\n\r\n<p>Als je één geheel (een hele of eenheid) in stukken deelt dan gebruik je een breuk om aan te duiden hoe groot een bepaald deel van dat geheel is.</p>\r\n\r\n<img src=\"https://docs.google.com/drawings/d/15GE4Z6K36BS7VTEb0b6KHkxG-KYmmVAjDHpMKNTyVVA/pub?w=838&h=282\">"
+            },
+            {
+              "id": "3d4eb0ef-ea2f-4a94-854d-0ad29dd49b4c",
+              "title": "Teller, noemer, breukstreep",
+              "text": "<h1>Teller, noemer, breukstreep</h1>\r\n\r\n<p>De breuk bestaat uit een streep met daarboven en daaronder een getal. De streep tussen de getallen noemen we de <b>breukstreep</b>.</p>\r\n\r\n<p>Het getal onder de breukstreep noem je de <b>noemer</b>. Dit getal geeft aan in hoeveel <i>gelijke stukken</i> het hele is verdeeld. </p>\r\n<ul>\r\n<li>De cirkel is in 8 gelijke stukken verdeeld. De noemer is dus 8: onder de breukstreep zie je 8 staan.</li> \r\n<li>De strook is in 9 gelijke delen verdeeld. De noemer is hier dus 9: onder de breukstreep zie je 9 staan.</li>\r\n</ul>\r\n\r\n<p>Verdeel je een cirkel in 16 stukken in plaats van 8, dan worden de stukjes kleiner. De noemer geeft dus ook aan hoe groot de stukjes zijn. Hoe groter de noemer, hoe kleiner elk stukje of deel.</p>\r\n\r\n<p>Het getal boven de breukstreep heet de <b>teller</b>. De teller geeft aan hoeveel stukken je hebt.</p>\r\n\r\n<p>Je spreekt de breuken als volgt uit:<br>\r\n<table class=\"mod-table invisible\">\r\n<tr>\r\n<td><svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"width: 1.714ex; height: 3.143ex; vertical-align: -1.143ex; margin-top: 1px; margin-right: 0px; margin-bottom: 1px; margin-left: 0px; position: static; \" viewBox=\"0 -941.5095818397583 717.0889244992065 1383.7262704607033\" xmlns=\"http://www.w3.org/2000/svg\"><defs id=\"MathJax_SVG_glyphs\"><path id=\"MJMAIN-33\" stroke-width=\"10\" d=\"M127 463Q100 463 85 480T69 524Q69 579 117 622T233 665Q268 665 277 664Q351 652 390 611T430 522Q430 470 396 421T302 350L299 348Q299 347 308 345T337 336T375 315Q457 262 457 175Q457 96 395 37T238 -22Q158 -22 100 21T42 130Q42 158 60 175T105 193Q133 193 151 175T169 130Q169 119 166 110T159 94T148 82T136 74T126 70T118 67L114 66Q165 21 238 21Q293 21 321 74Q338 107 338 175V195Q338 290 274 322Q259 328 213 329L171 330L168 332Q166 335 166 348Q166 366 174 366Q202 366 232 371Q266 376 294 413T322 525V533Q322 590 287 612Q265 626 240 626Q208 626 181 615T143 592T132 580H135Q138 579 143 578T153 573T165 566T175 555T183 540T186 520Q186 498 172 481T127 463Z\"></path><path id=\"MJMAIN-38\" stroke-width=\"10\" d=\"M70 417T70 494T124 618T248 666Q319 666 374 624T429 515Q429 485 418 459T392 417T361 389T335 371T324 363L338 354Q352 344 366 334T382 323Q457 264 457 174Q457 95 399 37T249 -22Q159 -22 101 29T43 155Q43 263 172 335L154 348Q133 361 127 368Q70 417 70 494ZM286 386L292 390Q298 394 301 396T311 403T323 413T334 425T345 438T355 454T364 471T369 491T371 513Q371 556 342 586T275 624Q268 625 242 625Q201 625 165 599T128 534Q128 511 141 492T167 463T217 431Q224 426 228 424L286 386ZM250 21Q308 21 350 55T392 137Q392 154 387 169T375 194T353 216T330 234T301 253T274 270Q260 279 244 289T218 306L210 311Q204 311 181 294T133 239T107 157Q107 98 150 60T250 21Z\"></path></defs><g stroke=\"black\" fill=\"black\" stroke-width=\"0\" transform=\"matrix(1 0 0 -1 0 0)\"><g transform=\"translate(120,0)\"><rect stroke=\"none\" width=\"477\" height=\"60\" x=\"0\" y=\"220\"></rect><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-33\" x=\"84\" y=\"633\" xlink:href=\"#MJMAIN-33\"></use><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-38\" x=\"84\" y=\"-571\" xlink:href=\"#MJMAIN-38\"></use></g></g></svg></td>  \r\n<td>drie achtste</td>  \r\n<td></td>  \r\n<td></td>  \r\n<td><svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"width: 1.714ex; height: 3.286ex; vertical-align: -1.143ex; margin-top: 1px; margin-right: 0px; margin-bottom: 1px; margin-left: 0px; position: static; \" viewBox=\"0 -942.216688620945 717.0889244992065 1384.43337724189\" xmlns=\"http://www.w3.org/2000/svg\"><defs id=\"MathJax_SVG_glyphs\"><path id=\"MJMAIN-35\" stroke-width=\"10\" d=\"M164 157Q164 133 148 117T109 101H102Q148 22 224 22Q294 22 326 82Q345 115 345 210Q345 313 318 349Q292 382 260 382H254Q176 382 136 314Q132 307 129 306T114 304Q97 304 95 310Q93 314 93 485V614Q93 664 98 664Q100 666 102 666Q103 666 123 658T178 642T253 634Q324 634 389 662Q397 666 402 666Q410 666 410 648V635Q328 538 205 538Q174 538 149 544L139 546V374Q158 388 169 396T205 412T256 420Q337 420 393 355T449 201Q449 109 385 44T229 -22Q148 -22 99 32T50 154Q50 178 61 192T84 210T107 214Q132 214 148 197T164 157Z\"></path><path id=\"MJMAIN-39\" stroke-width=\"10\" d=\"M352 287Q304 211 232 211Q154 211 104 270T44 396Q42 412 42 436V444Q42 537 111 606Q171 666 243 666Q245 666 249 666T257 665H261Q273 665 286 663T323 651T370 619T413 560Q456 472 456 334Q456 194 396 97Q361 41 312 10T208 -22Q147 -22 108 7T68 93T121 149Q143 149 158 135T173 96Q173 78 164 65T148 49T135 44L131 43Q131 41 138 37T164 27T206 22H212Q272 22 313 86Q352 142 352 280V287ZM244 248Q292 248 321 297T351 430Q351 508 343 542Q341 552 337 562T323 588T293 615T246 625Q208 625 181 598Q160 576 154 546T147 441Q147 358 152 329T172 282Q197 248 244 248Z\"></path></defs><g stroke=\"black\" fill=\"black\" stroke-width=\"0\" transform=\"matrix(1 0 0 -1 0 0)\"><g transform=\"translate(120,0)\"><rect stroke=\"none\" width=\"477\" height=\"60\" x=\"0\" y=\"220\"></rect><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-35\" x=\"84\" y=\"633\" xlink:href=\"#MJMAIN-35\"></use><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-39\" x=\"84\" y=\"-571\" xlink:href=\"#MJMAIN-39\"></use></g></g></svg></td>  \r\n<td>vijf negende</td>   \r\n</tr>\r\n</table></p>"
+            },
+            {
+              "id": "e17a66b7-0b5e-4215-b391-64cdb6ea4db8",
+              "title": "Deel - geheel",
+              "text": "<div class=\"reflection\"><p>Kun je voor jezelf bedenken waarom er voor de namen noemer en teller is gekozen?</p>\r\n<div class=\"reflection_answer\"><p>De noemer benoemt de verdeling van de hele of eenheid. De teller geeft het aantal delen van het totaal aan.</p></div></div>\r\n\r\n<img src=\"https://docs.google.com/drawings/d/1OWjJe6twdp6fB9DmnQ4VFPb5i7QM1T8Eox88Cly2_wE/pub?w=895&amp;h=366\">\r\n\r\n\r\n"
+            },
+            {
+              "id": "7301d542-3be2-4bea-b093-43af6a671271",
+              "title": "Deel van een groep",
+              "text": "<p>Breuken beschrijven welk deel van een geheel, zoals een cirkel of een strook je hebt. Je kunt een breuk ook gebruiken om een deel van een groep aan te duiden. </p>\r\n\r\n<img src=\"https://s3.amazonaws.com/studyflow/rekenen/Afbeeldingen-hoofdstukken/Breuken-basis/smarties.jpg\" class=\"small\">\r\n\r\n<p>In bovenstaand plaatje zie je 5 M&M's, 2 geel en 3 rood. Er zijn hier 5 delen, de noemer is dus 5. Van die 5 zijn er 2 geel. We zeggen dat <svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"width: 1.714ex; height: 3.143ex; vertical-align: -1.143ex; margin-top: 1px; margin-right: 0px; margin-bottom: 1px; margin-left: 0px; position: static; \" viewBox=\"0 -926.6603394348408 717.0889244992065 1368.8770280557858\" xmlns=\"http://www.w3.org/2000/svg\"><defs id=\"MathJax_SVG_glyphs\"><path id=\"MJMAIN-32\" stroke-width=\"10\" d=\"M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z\"></path><path id=\"MJMAIN-35\" stroke-width=\"10\" d=\"M164 157Q164 133 148 117T109 101H102Q148 22 224 22Q294 22 326 82Q345 115 345 210Q345 313 318 349Q292 382 260 382H254Q176 382 136 314Q132 307 129 306T114 304Q97 304 95 310Q93 314 93 485V614Q93 664 98 664Q100 666 102 666Q103 666 123 658T178 642T253 634Q324 634 389 662Q397 666 402 666Q410 666 410 648V635Q328 538 205 538Q174 538 149 544L139 546V374Q158 388 169 396T205 412T256 420Q337 420 393 355T449 201Q449 109 385 44T229 -22Q148 -22 99 32T50 154Q50 178 61 192T84 210T107 214Q132 214 148 197T164 157Z\"></path></defs><g stroke=\"black\" fill=\"black\" stroke-width=\"0\" transform=\"matrix(1 0 0 -1 0 0)\"><g transform=\"translate(120,0)\"><rect stroke=\"none\" width=\"477\" height=\"60\" x=\"0\" y=\"220\"></rect><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-32\" x=\"84\" y=\"611\" xlink:href=\"#MJMAIN-32\"></use><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-35\" x=\"84\" y=\"-571\" xlink:href=\"#MJMAIN-35\"></use></g></g></svg> (spreekt uit: twee vijfde) van deze m&m's geel zijn. </p>\r\n"
+            },
+            {
+              "id": "dd77fb13-8068-4a8f-a44f-89e569708ac0",
+              "title": "Alternatieve namen en schrijfwijzen",
+              "text": "<h1>Alternatieve namen en schrijfwijzen</h1>\r\n\r\n<p><b>Weetje</b><br>\r\nIs de noemer 2 of 4 dan worden er wel eens andere namen gebruikt:<br></p>\r\n\r\n<p><table class=\"mod-table invisible\">\r\n<tr>\r\n<td><svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"width: 1.714ex; height: 3.143ex; vertical-align: -1ex; margin-top: 1px; margin-right: 0px; margin-bottom: 1px; margin-left: 0px; position: static; \" viewBox=\"0 -926.6603394348408 717.0889244992065 1353.3206788696816\" xmlns=\"http://www.w3.org/2000/svg\"><defs id=\"MathJax_SVG_glyphs\"><path id=\"MJMAIN-31\" stroke-width=\"10\" d=\"M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z\"></path><path id=\"MJMAIN-32\" stroke-width=\"10\" d=\"M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z\"></path></defs><g stroke=\"black\" fill=\"black\" stroke-width=\"0\" transform=\"matrix(1 0 0 -1 0 0)\"><g transform=\"translate(120,0)\"><rect stroke=\"none\" width=\"477\" height=\"60\" x=\"0\" y=\"220\"></rect><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-31\" x=\"84\" y=\"611\" xlink:href=\"#MJMAIN-31\"></use><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-32\" x=\"84\" y=\"-571\" xlink:href=\"#MJMAIN-32\"></use></g></g></svg></td>  \r\n<td>één tweede</td>  \r\n<td>'een half' of 'de helft'</td>   \r\n</tr>\r\n<tr>\r\n<td><svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"width: 1.714ex; height: 3.143ex; vertical-align: -1.143ex; margin-top: 1px; margin-right: 0px; margin-bottom: 1px; margin-left: 0px; position: static; \" viewBox=\"0 -926.6603394348408 717.0889244992065 1361.0988534627336\" xmlns=\"http://www.w3.org/2000/svg\"><defs id=\"MathJax_SVG_glyphs\"><path id=\"MJMAIN-31\" stroke-width=\"10\" d=\"M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z\"></path><path id=\"MJMAIN-34\" stroke-width=\"10\" d=\"M462 0Q444 3 333 3Q217 3 199 0H190V46H221Q241 46 248 46T265 48T279 53T286 61Q287 63 287 115V165H28V211L179 442Q332 674 334 675Q336 677 355 677H373L379 671V211H471V165H379V114Q379 73 379 66T385 54Q393 47 442 46H471V0H462ZM293 211V545L74 212L183 211H293Z\"></path></defs><g stroke=\"black\" fill=\"black\" stroke-width=\"0\" transform=\"matrix(1 0 0 -1 0 0)\"><g transform=\"translate(120,0)\"><rect stroke=\"none\" width=\"477\" height=\"60\" x=\"0\" y=\"220\"></rect><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-31\" x=\"84\" y=\"611\" xlink:href=\"#MJMAIN-31\"></use><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-34\" x=\"84\" y=\"-582\" xlink:href=\"#MJMAIN-34\"></use></g></g></svg></td>  \r\n<td>één vierde</td>  \r\n<td>of 'een kwart'</td>   \r\n</tr>\r\n<tr>\r\n<td><svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"width: 1.714ex; height: 3.143ex; vertical-align: -1.143ex; margin-top: 1px; margin-right: 0px; margin-bottom: 1px; margin-left: 0px; position: static; \" viewBox=\"0 -941.5095818397583 717.0889244992065 1375.9480958676513\" xmlns=\"http://www.w3.org/2000/svg\"><defs id=\"MathJax_SVG_glyphs\"><path id=\"MJMAIN-33\" stroke-width=\"10\" d=\"M127 463Q100 463 85 480T69 524Q69 579 117 622T233 665Q268 665 277 664Q351 652 390 611T430 522Q430 470 396 421T302 350L299 348Q299 347 308 345T337 336T375 315Q457 262 457 175Q457 96 395 37T238 -22Q158 -22 100 21T42 130Q42 158 60 175T105 193Q133 193 151 175T169 130Q169 119 166 110T159 94T148 82T136 74T126 70T118 67L114 66Q165 21 238 21Q293 21 321 74Q338 107 338 175V195Q338 290 274 322Q259 328 213 329L171 330L168 332Q166 335 166 348Q166 366 174 366Q202 366 232 371Q266 376 294 413T322 525V533Q322 590 287 612Q265 626 240 626Q208 626 181 615T143 592T132 580H135Q138 579 143 578T153 573T165 566T175 555T183 540T186 520Q186 498 172 481T127 463Z\"></path><path id=\"MJMAIN-34\" stroke-width=\"10\" d=\"M462 0Q444 3 333 3Q217 3 199 0H190V46H221Q241 46 248 46T265 48T279 53T286 61Q287 63 287 115V165H28V211L179 442Q332 674 334 675Q336 677 355 677H373L379 671V211H471V165H379V114Q379 73 379 66T385 54Q393 47 442 46H471V0H462ZM293 211V545L74 212L183 211H293Z\"></path></defs><g stroke=\"black\" fill=\"black\" stroke-width=\"0\" transform=\"matrix(1 0 0 -1 0 0)\"><g transform=\"translate(120,0)\"><rect stroke=\"none\" width=\"477\" height=\"60\" x=\"0\" y=\"220\"></rect><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-33\" x=\"84\" y=\"633\" xlink:href=\"#MJMAIN-33\"></use><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-34\" x=\"84\" y=\"-582\" xlink:href=\"#MJMAIN-34\"></use></g></g></svg></td>  \r\n<td>drie vierde</td>  \r\n<td>of 'drie kwart'</td>   \r\n</tr>\r\n</table></p>\r\n\r\n<p>Soms wordt een breuk geschreven met een schuine streep in plaats van een rechte streep. De teller en noemer staan dan schuin onder óf naast elkaar in plaats van boven elkaar. </p>\r\n\r\n<p>1/2 in plaats van <svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"width: 1.714ex; height: 3.143ex; vertical-align: -1ex; margin-top: 1px; margin-right: 0px; margin-bottom: 1px; margin-left: 0px; position: static; \" viewBox=\"0 -926.6603394348408 717.0889244992065 1353.3206788696816\" xmlns=\"http://www.w3.org/2000/svg\"><defs id=\"MathJax_SVG_glyphs\"><path id=\"MJMAIN-31\" stroke-width=\"10\" d=\"M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z\"></path><path id=\"MJMAIN-32\" stroke-width=\"10\" d=\"M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z\"></path></defs><g stroke=\"black\" fill=\"black\" stroke-width=\"0\" transform=\"matrix(1 0 0 -1 0 0)\"><g transform=\"translate(120,0)\"><rect stroke=\"none\" width=\"477\" height=\"60\" x=\"0\" y=\"220\"></rect><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-31\" x=\"84\" y=\"611\" xlink:href=\"#MJMAIN-31\"></use><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-32\" x=\"84\" y=\"-571\" xlink:href=\"#MJMAIN-32\"></use></g></g></svg> of 7/8 in plaats van <svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"width: 1.714ex; height: 3.286ex; vertical-align: -1.143ex; margin-top: 1px; margin-right: 0px; margin-bottom: 1px; margin-left: 0px; position: static; \" viewBox=\"0 -949.2877564328104 717.0889244992065 1391.5044450537553\" xmlns=\"http://www.w3.org/2000/svg\"><defs id=\"MathJax_SVG_glyphs\"><path id=\"MJMAIN-37\" stroke-width=\"10\" d=\"M55 458Q56 460 72 567L88 674Q88 676 108 676H128V672Q128 662 143 655T195 646T364 644H485V605L417 512Q408 500 387 472T360 435T339 403T319 367T305 330T292 284T284 230T278 162T275 80Q275 66 275 52T274 28V19Q270 2 255 -10T221 -22Q210 -22 200 -19T179 0T168 40Q168 198 265 368Q285 400 349 489L395 552H302Q128 552 119 546Q113 543 108 522T98 479L95 458V455H55V458Z\"></path><path id=\"MJMAIN-38\" stroke-width=\"10\" d=\"M70 417T70 494T124 618T248 666Q319 666 374 624T429 515Q429 485 418 459T392 417T361 389T335 371T324 363L338 354Q352 344 366 334T382 323Q457 264 457 174Q457 95 399 37T249 -22Q159 -22 101 29T43 155Q43 263 172 335L154 348Q133 361 127 368Q70 417 70 494ZM286 386L292 390Q298 394 301 396T311 403T323 413T334 425T345 438T355 454T364 471T369 491T371 513Q371 556 342 586T275 624Q268 625 242 625Q201 625 165 599T128 534Q128 511 141 492T167 463T217 431Q224 426 228 424L286 386ZM250 21Q308 21 350 55T392 137Q392 154 387 169T375 194T353 216T330 234T301 253T274 270Q260 279 244 289T218 306L210 311Q204 311 181 294T133 239T107 157Q107 98 150 60T250 21Z\"></path></defs><g stroke=\"black\" fill=\"black\" stroke-width=\"0\" transform=\"matrix(1 0 0 -1 0 0)\"><g transform=\"translate(120,0)\"><rect stroke=\"none\" width=\"477\" height=\"60\" x=\"0\" y=\"220\"></rect><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-37\" x=\"84\" y=\"633\" xlink:href=\"#MJMAIN-37\"></use><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-38\" x=\"84\" y=\"-571\" xlink:href=\"#MJMAIN-38\"></use></g></g></svg>.<br>\r\nDit betekent hetzelfde.</p>\r\n\r\n<p>In je schrift kun je ze het beste boven elkaar zetten. Dan heb je minder kans op fouten. Bij het invoeren van breuken op de computer en tijdens de rekentoets dien je de breuk met een schuine streep in te typen, zoals 1/2.</p>\r\n"
+            }
+          ],
+          "questions": [
+            {
+              "id": "326d1a13-8312-45d0-b0c3-7c85763f058f",
+              "text": "<p class=”question_title”>Welk getal is de noemer? <svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"width: 1.714ex; height: 3.143ex; vertical-align: -1.143ex; margin-top: 1px; margin-right: 0px; margin-bottom: 1px; margin-left: 0px; position: static; \" viewBox=\"0 -926.6603394348408 717.0889244992065 1368.8770280557858\" xmlns=\"http://www.w3.org/2000/svg\"><defs id=\"MathJax_SVG_glyphs\"><path id=\"MJMAIN-32\" stroke-width=\"10\" d=\"M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z\"></path><path id=\"MJMAIN-35\" stroke-width=\"10\" d=\"M164 157Q164 133 148 117T109 101H102Q148 22 224 22Q294 22 326 82Q345 115 345 210Q345 313 318 349Q292 382 260 382H254Q176 382 136 314Q132 307 129 306T114 304Q97 304 95 310Q93 314 93 485V614Q93 664 98 664Q100 666 102 666Q103 666 123 658T178 642T253 634Q324 634 389 662Q397 666 402 666Q410 666 410 648V635Q328 538 205 538Q174 538 149 544L139 546V374Q158 388 169 396T205 412T256 420Q337 420 393 355T449 201Q449 109 385 44T229 -22Q148 -22 99 32T50 154Q50 178 61 192T84 210T107 214Q132 214 148 197T164 157Z\"></path></defs><g stroke=\"black\" fill=\"black\" stroke-width=\"0\" transform=\"matrix(1 0 0 -1 0 0)\"><g transform=\"translate(120,0)\"><rect stroke=\"none\" width=\"477\" height=\"60\" x=\"0\" y=\"220\"></rect><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-32\" x=\"84\" y=\"611\" xlink:href=\"#MJMAIN-32\"></use><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-35\" x=\"84\" y=\"-571\" xlink:href=\"#MJMAIN-35\"></use></g></g></svg></p>\r\n\r\n_INPUT_1_",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "prefix": "",
+                  "suffix": "",
+                  "width": 150,
+                  "correct_answers": [
+                    "5"
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+
+              ],
+              "worked_out_answer": "Het juiste antwoord is: 5"
+            },
+            {
+              "id": "38d80916-5349-4a01-b5f4-4220d07a0bbc",
+              "text": "<p class=”question_title”>Welk getal is de noemer? <svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"width: 1.714ex; height: 3.143ex; vertical-align: -1.143ex; margin-top: 1px; margin-right: 0px; margin-bottom: 1px; margin-left: 0px; position: static; \" viewBox=\"0 -934.4385140278929 717.0889244992065 1376.6552026488378\" xmlns=\"http://www.w3.org/2000/svg\"><defs id=\"MathJax_SVG_glyphs\"><path id=\"MJMAIN-34\" stroke-width=\"10\" d=\"M462 0Q444 3 333 3Q217 3 199 0H190V46H221Q241 46 248 46T265 48T279 53T286 61Q287 63 287 115V165H28V211L179 442Q332 674 334 675Q336 677 355 677H373L379 671V211H471V165H379V114Q379 73 379 66T385 54Q393 47 442 46H471V0H462ZM293 211V545L74 212L183 211H293Z\"></path><path id=\"MJMAIN-36\" stroke-width=\"10\" d=\"M42 313Q42 476 123 571T303 666Q372 666 402 630T432 550Q432 525 418 510T379 495Q356 495 341 509T326 548Q326 592 373 601Q351 623 311 626Q240 626 194 566Q147 500 147 364L148 360Q153 366 156 373Q197 433 263 433H267Q313 433 348 414Q372 400 396 374T435 317Q456 268 456 210V192Q456 169 451 149Q440 90 387 34T253 -22Q225 -22 199 -14T143 16T92 75T56 172T42 313ZM257 397Q227 397 205 380T171 335T154 278T148 216Q148 133 160 97T198 39Q222 21 251 21Q302 21 329 59Q342 77 347 104T352 209Q352 289 347 316T329 361Q302 397 257 397Z\"></path></defs><g stroke=\"black\" fill=\"black\" stroke-width=\"0\" transform=\"matrix(1 0 0 -1 0 0)\"><g transform=\"translate(120,0)\"><rect stroke=\"none\" width=\"477\" height=\"60\" x=\"0\" y=\"220\"></rect><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-34\" x=\"84\" y=\"611\" xlink:href=\"#MJMAIN-34\"></use><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-36\" x=\"84\" y=\"-571\" xlink:href=\"#MJMAIN-36\"></use></g></g></svg></p>\r\n\r\n_INPUT_1_",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "prefix": "",
+                  "suffix": "",
+                  "width": 150,
+                  "correct_answers": [
+                    "6"
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+
+              ],
+              "worked_out_answer": "Het juiste antwoord is: 6"
+            },
+            {
+              "id": "e3d85118-a79a-45d0-a287-2bab75154edd",
+              "text": "<p class=”question_title”>Welk getal is de teller? <svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"width: 1.714ex; height: 3.286ex; vertical-align: -1.143ex; margin-top: 1px; margin-right: 0px; margin-bottom: 1px; margin-left: 0px; position: static; \" viewBox=\"0 -949.2877564328104 717.0889244992065 1391.5044450537553\" xmlns=\"http://www.w3.org/2000/svg\"><defs id=\"MathJax_SVG_glyphs\"><path id=\"MJMAIN-37\" stroke-width=\"10\" d=\"M55 458Q56 460 72 567L88 674Q88 676 108 676H128V672Q128 662 143 655T195 646T364 644H485V605L417 512Q408 500 387 472T360 435T339 403T319 367T305 330T292 284T284 230T278 162T275 80Q275 66 275 52T274 28V19Q270 2 255 -10T221 -22Q210 -22 200 -19T179 0T168 40Q168 198 265 368Q285 400 349 489L395 552H302Q128 552 119 546Q113 543 108 522T98 479L95 458V455H55V458Z\"></path><path id=\"MJMAIN-38\" stroke-width=\"10\" d=\"M70 417T70 494T124 618T248 666Q319 666 374 624T429 515Q429 485 418 459T392 417T361 389T335 371T324 363L338 354Q352 344 366 334T382 323Q457 264 457 174Q457 95 399 37T249 -22Q159 -22 101 29T43 155Q43 263 172 335L154 348Q133 361 127 368Q70 417 70 494ZM286 386L292 390Q298 394 301 396T311 403T323 413T334 425T345 438T355 454T364 471T369 491T371 513Q371 556 342 586T275 624Q268 625 242 625Q201 625 165 599T128 534Q128 511 141 492T167 463T217 431Q224 426 228 424L286 386ZM250 21Q308 21 350 55T392 137Q392 154 387 169T375 194T353 216T330 234T301 253T274 270Q260 279 244 289T218 306L210 311Q204 311 181 294T133 239T107 157Q107 98 150 60T250 21Z\"></path></defs><g stroke=\"black\" fill=\"black\" stroke-width=\"0\" transform=\"matrix(1 0 0 -1 0 0)\"><g transform=\"translate(120,0)\"><rect stroke=\"none\" width=\"477\" height=\"60\" x=\"0\" y=\"220\"></rect><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-37\" x=\"84\" y=\"633\" xlink:href=\"#MJMAIN-37\"></use><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-38\" x=\"84\" y=\"-571\" xlink:href=\"#MJMAIN-38\"></use></g></g></svg></p>\r\n\r\n_INPUT_1_",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "prefix": "",
+                  "suffix": "",
+                  "width": 150,
+                  "correct_answers": [
+                    "7"
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+
+              ],
+              "worked_out_answer": "Het juiste antwoord is: 7"
+            },
+            {
+              "id": "53af275f-711c-4d23-82d7-5dfdccacee31",
+              "text": "<p class=”question_title”>Welk getal is de teller? <svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"width: 1.714ex; height: 3.143ex; vertical-align: -1.143ex; margin-top: 1px; margin-right: 0px; margin-bottom: 1px; margin-left: 0px; position: static; \" viewBox=\"0 -941.5095818397583 717.0889244992065 1383.7262704607033\" xmlns=\"http://www.w3.org/2000/svg\"><defs id=\"MathJax_SVG_glyphs\"><path id=\"MJMAIN-33\" stroke-width=\"10\" d=\"M127 463Q100 463 85 480T69 524Q69 579 117 622T233 665Q268 665 277 664Q351 652 390 611T430 522Q430 470 396 421T302 350L299 348Q299 347 308 345T337 336T375 315Q457 262 457 175Q457 96 395 37T238 -22Q158 -22 100 21T42 130Q42 158 60 175T105 193Q133 193 151 175T169 130Q169 119 166 110T159 94T148 82T136 74T126 70T118 67L114 66Q165 21 238 21Q293 21 321 74Q338 107 338 175V195Q338 290 274 322Q259 328 213 329L171 330L168 332Q166 335 166 348Q166 366 174 366Q202 366 232 371Q266 376 294 413T322 525V533Q322 590 287 612Q265 626 240 626Q208 626 181 615T143 592T132 580H135Q138 579 143 578T153 573T165 566T175 555T183 540T186 520Q186 498 172 481T127 463Z\"></path><path id=\"MJMAIN-39\" stroke-width=\"10\" d=\"M352 287Q304 211 232 211Q154 211 104 270T44 396Q42 412 42 436V444Q42 537 111 606Q171 666 243 666Q245 666 249 666T257 665H261Q273 665 286 663T323 651T370 619T413 560Q456 472 456 334Q456 194 396 97Q361 41 312 10T208 -22Q147 -22 108 7T68 93T121 149Q143 149 158 135T173 96Q173 78 164 65T148 49T135 44L131 43Q131 41 138 37T164 27T206 22H212Q272 22 313 86Q352 142 352 280V287ZM244 248Q292 248 321 297T351 430Q351 508 343 542Q341 552 337 562T323 588T293 615T246 625Q208 625 181 598Q160 576 154 546T147 441Q147 358 152 329T172 282Q197 248 244 248Z\"></path></defs><g stroke=\"black\" fill=\"black\" stroke-width=\"0\" transform=\"matrix(1 0 0 -1 0 0)\"><g transform=\"translate(120,0)\"><rect stroke=\"none\" width=\"477\" height=\"60\" x=\"0\" y=\"220\"></rect><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-33\" x=\"84\" y=\"633\" xlink:href=\"#MJMAIN-33\"></use><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-39\" x=\"84\" y=\"-571\" xlink:href=\"#MJMAIN-39\"></use></g></g></svg></p>\r\n\r\n_INPUT_1_",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "prefix": "",
+                  "suffix": "",
+                  "width": 150,
+                  "correct_answers": [
+                    "3"
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+
+              ],
+              "worked_out_answer": "Het juiste antwoord is: 3"
+            },
+            {
+              "id": "4983f8a8-89c8-486a-994e-298e9240a173",
+              "text": "<p class=”question_title”>Hoe heet het getal onder de breukstreep in een breuk?</p>\r\n\r\n_INPUT_1_",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "prefix": "",
+                  "suffix": "",
+                  "width": 150,
+                  "correct_answers": [
+                    "de noemer",
+                    "noemer"
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+
+              ],
+              "worked_out_answer": "Het juiste antwoord is: noemer"
+            },
+            {
+              "id": "015f4fd2-02b6-43fa-b744-547ec0e82c2d",
+              "text": "<p class=”question_title”>Hoe heet het getal boven de breukstreep in een breuk?</p>\r\n\r\n_INPUT_1_",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "prefix": "",
+                  "suffix": "",
+                  "width": 150,
+                  "correct_answers": [
+                    "de teller",
+                    "teller"
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+
+              ],
+              "worked_out_answer": "Het juiste antwoord is: de teller"
+            },
+            {
+              "id": "c57bd72d-0e19-4bad-8abc-346bedfbf84f",
+              "text": "<p class=”question_title”>Schrijf de breuk <svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"width: 1.714ex; height: 3.143ex; vertical-align: -1.143ex; margin-top: 1px; margin-right: 0px; margin-bottom: 1px; margin-left: 0px; position: static; \" viewBox=\"0 -941.5095818397583 717.0889244992065 1375.9480958676513\" xmlns=\"http://www.w3.org/2000/svg\"><defs id=\"MathJax_SVG_glyphs\"><path id=\"MJMAIN-33\" stroke-width=\"10\" d=\"M127 463Q100 463 85 480T69 524Q69 579 117 622T233 665Q268 665 277 664Q351 652 390 611T430 522Q430 470 396 421T302 350L299 348Q299 347 308 345T337 336T375 315Q457 262 457 175Q457 96 395 37T238 -22Q158 -22 100 21T42 130Q42 158 60 175T105 193Q133 193 151 175T169 130Q169 119 166 110T159 94T148 82T136 74T126 70T118 67L114 66Q165 21 238 21Q293 21 321 74Q338 107 338 175V195Q338 290 274 322Q259 328 213 329L171 330L168 332Q166 335 166 348Q166 366 174 366Q202 366 232 371Q266 376 294 413T322 525V533Q322 590 287 612Q265 626 240 626Q208 626 181 615T143 592T132 580H135Q138 579 143 578T153 573T165 566T175 555T183 540T186 520Q186 498 172 481T127 463Z\"></path><path id=\"MJMAIN-34\" stroke-width=\"10\" d=\"M462 0Q444 3 333 3Q217 3 199 0H190V46H221Q241 46 248 46T265 48T279 53T286 61Q287 63 287 115V165H28V211L179 442Q332 674 334 675Q336 677 355 677H373L379 671V211H471V165H379V114Q379 73 379 66T385 54Q393 47 442 46H471V0H462ZM293 211V545L74 212L183 211H293Z\"></path></defs><g stroke=\"black\" fill=\"black\" stroke-width=\"0\" transform=\"matrix(1 0 0 -1 0 0)\"><g transform=\"translate(120,0)\"><rect stroke=\"none\" width=\"477\" height=\"60\" x=\"0\" y=\"220\"></rect><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-33\" x=\"84\" y=\"633\" xlink:href=\"#MJMAIN-33\"></use><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-34\" x=\"84\" y=\"-582\" xlink:href=\"#MJMAIN-34\"></use></g></g></svg> in woorden.</p>\r\n\r\n_INPUT_1_",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "prefix": "",
+                  "suffix": "",
+                  "width": 150,
+                  "correct_answers": [
+                    "drie vierde",
+                    "drievierde",
+                    "drie vierden",
+                    "drievierden",
+                    "drie kwart",
+                    "driekwart"
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+
+              ],
+              "worked_out_answer": "Het juiste antwoord is: drie vierden"
+            },
+            {
+              "id": "f4b52d15-d376-4396-9d31-8ee882226312",
+              "text": "<p class=”question_title”>Schrijf de breuk <svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"width: 1.714ex; height: 3.143ex; vertical-align: -1.143ex; margin-top: 1px; margin-right: 0px; margin-bottom: 1px; margin-left: 0px; position: static; \" viewBox=\"0 -926.6603394348408 717.0889244992065 1361.0988534627336\" xmlns=\"http://www.w3.org/2000/svg\"><defs id=\"MathJax_SVG_glyphs\"><path id=\"MJMAIN-31\" stroke-width=\"10\" d=\"M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z\"></path><path id=\"MJMAIN-34\" stroke-width=\"10\" d=\"M462 0Q444 3 333 3Q217 3 199 0H190V46H221Q241 46 248 46T265 48T279 53T286 61Q287 63 287 115V165H28V211L179 442Q332 674 334 675Q336 677 355 677H373L379 671V211H471V165H379V114Q379 73 379 66T385 54Q393 47 442 46H471V0H462ZM293 211V545L74 212L183 211H293Z\"></path></defs><g stroke=\"black\" fill=\"black\" stroke-width=\"0\" transform=\"matrix(1 0 0 -1 0 0)\"><g transform=\"translate(120,0)\"><rect stroke=\"none\" width=\"477\" height=\"60\" x=\"0\" y=\"220\"></rect><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-31\" x=\"84\" y=\"611\" xlink:href=\"#MJMAIN-31\"></use><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-34\" x=\"84\" y=\"-582\" xlink:href=\"#MJMAIN-34\"></use></g></g></svg> in woorden.</p>\r\n\r\n_INPUT_1_",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "prefix": "",
+                  "suffix": "",
+                  "width": 150,
+                  "correct_answers": [
+                    "een vierde",
+                    "kwart",
+                    "één vierde",
+                    "éénvierde",
+                    "één kwart",
+                    "een kwart",
+                    "eenvierde",
+                    "Één vierde"
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+
+              ],
+              "worked_out_answer": "Het juiste antwoord is: kwart"
+            },
+            {
+              "id": "c76840d9-f3ce-4cb6-a037-5211f6698303",
+              "text": "<p class=”question_title”>Schrijf de breuk <svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"width: 1.714ex; height: 3.143ex; vertical-align: -1ex; margin-top: 1px; margin-right: 0px; margin-bottom: 1px; margin-left: 0px; position: static; \" viewBox=\"0 -926.6603394348408 717.0889244992065 1353.3206788696816\" xmlns=\"http://www.w3.org/2000/svg\"><defs id=\"MathJax_SVG_glyphs\"><path id=\"MJMAIN-31\" stroke-width=\"10\" d=\"M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z\"></path><path id=\"MJMAIN-32\" stroke-width=\"10\" d=\"M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z\"></path></defs><g stroke=\"black\" fill=\"black\" stroke-width=\"0\" transform=\"matrix(1 0 0 -1 0 0)\"><g transform=\"translate(120,0)\"><rect stroke=\"none\" width=\"477\" height=\"60\" x=\"0\" y=\"220\"></rect><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-31\" x=\"84\" y=\"611\" xlink:href=\"#MJMAIN-31\"></use><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-32\" x=\"84\" y=\"-571\" xlink:href=\"#MJMAIN-32\"></use></g></g></svg> in woorden.</p>\r\n\r\n_INPUT_1_\r\n",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "prefix": "",
+                  "suffix": "",
+                  "width": 150,
+                  "correct_answers": [
+                    "een tweede",
+                    "één tweede",
+                    "ééntweede",
+                    "eentweede",
+                    "een half",
+                    "de helft",
+                    "een halve",
+                    "helft",
+                    "half",
+                    "halve",
+                    "Één tweede"
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+
+              ],
+              "worked_out_answer": "Het juiste antwoord is: halve"
+            },
+            {
+              "id": "6863c9b4-9567-4c56-8e3f-6fec48eb0b22",
+              "text": "<p class=”question_title”>Schrijf de breuk <svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"width: 1.714ex; height: 3.143ex; vertical-align: -1.143ex; margin-top: 1px; margin-right: 0px; margin-bottom: 1px; margin-left: 0px; position: static; \" viewBox=\"0 -926.6603394348408 717.0889244992065 1368.8770280557858\" xmlns=\"http://www.w3.org/2000/svg\"><defs id=\"MathJax_SVG_glyphs\"><path id=\"MJMAIN-32\" stroke-width=\"10\" d=\"M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z\"></path><path id=\"MJMAIN-39\" stroke-width=\"10\" d=\"M352 287Q304 211 232 211Q154 211 104 270T44 396Q42 412 42 436V444Q42 537 111 606Q171 666 243 666Q245 666 249 666T257 665H261Q273 665 286 663T323 651T370 619T413 560Q456 472 456 334Q456 194 396 97Q361 41 312 10T208 -22Q147 -22 108 7T68 93T121 149Q143 149 158 135T173 96Q173 78 164 65T148 49T135 44L131 43Q131 41 138 37T164 27T206 22H212Q272 22 313 86Q352 142 352 280V287ZM244 248Q292 248 321 297T351 430Q351 508 343 542Q341 552 337 562T323 588T293 615T246 625Q208 625 181 598Q160 576 154 546T147 441Q147 358 152 329T172 282Q197 248 244 248Z\"></path></defs><g stroke=\"black\" fill=\"black\" stroke-width=\"0\" transform=\"matrix(1 0 0 -1 0 0)\"><g transform=\"translate(120,0)\"><rect stroke=\"none\" width=\"477\" height=\"60\" x=\"0\" y=\"220\"></rect><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-32\" x=\"84\" y=\"611\" xlink:href=\"#MJMAIN-32\"></use><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-39\" x=\"84\" y=\"-571\" xlink:href=\"#MJMAIN-39\"></use></g></g></svg> in woorden.</p>\r\n\r\n_INPUT_1_",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "prefix": "",
+                  "suffix": "",
+                  "width": 150,
+                  "correct_answers": [
+                    "twee negende",
+                    "tweenegende",
+                    "twee negenden",
+                    "tweenegenden"
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+
+              ],
+              "worked_out_answer": "Het juiste antwoord is: twee negenden"
+            },
+            {
+              "id": "e07d102f-0c09-454a-a6ff-628fc863869f",
+              "text": "<p class=”question_title”>Schrijf de breuk <svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"width: 1.714ex; height: 3.143ex; vertical-align: -1.143ex; margin-top: 1px; margin-right: 0px; margin-bottom: 1px; margin-left: 0px; position: static; \" viewBox=\"0 -926.6603394348408 717.0889244992065 1368.8770280557858\" xmlns=\"http://www.w3.org/2000/svg\"><defs id=\"MathJax_SVG_glyphs\"><path id=\"MJMAIN-31\" stroke-width=\"10\" d=\"M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z\"></path><path id=\"MJMAIN-38\" stroke-width=\"10\" d=\"M70 417T70 494T124 618T248 666Q319 666 374 624T429 515Q429 485 418 459T392 417T361 389T335 371T324 363L338 354Q352 344 366 334T382 323Q457 264 457 174Q457 95 399 37T249 -22Q159 -22 101 29T43 155Q43 263 172 335L154 348Q133 361 127 368Q70 417 70 494ZM286 386L292 390Q298 394 301 396T311 403T323 413T334 425T345 438T355 454T364 471T369 491T371 513Q371 556 342 586T275 624Q268 625 242 625Q201 625 165 599T128 534Q128 511 141 492T167 463T217 431Q224 426 228 424L286 386ZM250 21Q308 21 350 55T392 137Q392 154 387 169T375 194T353 216T330 234T301 253T274 270Q260 279 244 289T218 306L210 311Q204 311 181 294T133 239T107 157Q107 98 150 60T250 21Z\"></path></defs><g stroke=\"black\" fill=\"black\" stroke-width=\"0\" transform=\"matrix(1 0 0 -1 0 0)\"><g transform=\"translate(120,0)\"><rect stroke=\"none\" width=\"477\" height=\"60\" x=\"0\" y=\"220\"></rect><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-31\" x=\"84\" y=\"611\" xlink:href=\"#MJMAIN-31\"></use><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-38\" x=\"84\" y=\"-571\" xlink:href=\"#MJMAIN-38\"></use></g></g></svg> in woorden.</p>\r\n\r\n_INPUT_1_",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "prefix": "",
+                  "suffix": "",
+                  "width": 150,
+                  "correct_answers": [
+                    "een achtste",
+                    "eenachtste",
+                    "één achtste",
+                    "éénachtste",
+                    "Één achtste",
+                    "een achste",
+                    "eenachste",
+                    "één achste",
+                    "éénachste",
+                    "Één achste"
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+
+              ],
+              "worked_out_answer": "Het juiste antwoord is: een achtste"
+            },
+            {
+              "id": "e9be851e-de78-4612-af79-8d9c7fdbcca0",
+              "text": "<p class=”question_title”>Schrijf de breuk <svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"width: 1.714ex; height: 3.286ex; vertical-align: -1.143ex; margin-top: 1px; margin-right: 0px; margin-bottom: 1px; margin-left: 0px; position: static; \" viewBox=\"0 -941.5095818397583 717.0889244992065 1390.7973382725686\" xmlns=\"http://www.w3.org/2000/svg\"><defs id=\"MathJax_SVG_glyphs\"><path id=\"MJMAIN-33\" stroke-width=\"10\" d=\"M127 463Q100 463 85 480T69 524Q69 579 117 622T233 665Q268 665 277 664Q351 652 390 611T430 522Q430 470 396 421T302 350L299 348Q299 347 308 345T337 336T375 315Q457 262 457 175Q457 96 395 37T238 -22Q158 -22 100 21T42 130Q42 158 60 175T105 193Q133 193 151 175T169 130Q169 119 166 110T159 94T148 82T136 74T126 70T118 67L114 66Q165 21 238 21Q293 21 321 74Q338 107 338 175V195Q338 290 274 322Q259 328 213 329L171 330L168 332Q166 335 166 348Q166 366 174 366Q202 366 232 371Q266 376 294 413T322 525V533Q322 590 287 612Q265 626 240 626Q208 626 181 615T143 592T132 580H135Q138 579 143 578T153 573T165 566T175 555T183 540T186 520Q186 498 172 481T127 463Z\"></path><path id=\"MJMAIN-37\" stroke-width=\"10\" d=\"M55 458Q56 460 72 567L88 674Q88 676 108 676H128V672Q128 662 143 655T195 646T364 644H485V605L417 512Q408 500 387 472T360 435T339 403T319 367T305 330T292 284T284 230T278 162T275 80Q275 66 275 52T274 28V19Q270 2 255 -10T221 -22Q210 -22 200 -19T179 0T168 40Q168 198 265 368Q285 400 349 489L395 552H302Q128 552 119 546Q113 543 108 522T98 479L95 458V455H55V458Z\"></path></defs><g stroke=\"black\" fill=\"black\" stroke-width=\"0\" transform=\"matrix(1 0 0 -1 0 0)\"><g transform=\"translate(120,0)\"><rect stroke=\"none\" width=\"477\" height=\"60\" x=\"0\" y=\"220\"></rect><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-33\" x=\"84\" y=\"633\" xlink:href=\"#MJMAIN-33\"></use><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-37\" x=\"84\" y=\"-581\" xlink:href=\"#MJMAIN-37\"></use></g></g></svg> in woorden.</p>\r\n\r\n_INPUT_1_",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "prefix": "",
+                  "suffix": "",
+                  "width": 150,
+                  "correct_answers": [
+                    "drie zevende",
+                    "driezevende",
+                    "drie zevenden",
+                    "driezevenden"
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+
+              ],
+              "worked_out_answer": "Het juiste antwoord is: drie zevenden"
+            },
+            {
+              "id": "ea2e07e3-0d75-48ed-919e-166702a9d2cf",
+              "text": "<p class=”question_title”>Schrijf de breuk <svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"width: 1.714ex; height: 3.143ex; vertical-align: -1.143ex; margin-top: 1px; margin-right: 0px; margin-bottom: 1px; margin-left: 0px; position: static; \" viewBox=\"0 -934.4385140278929 717.0889244992065 1376.6552026488378\" xmlns=\"http://www.w3.org/2000/svg\"><defs id=\"MathJax_SVG_glyphs\"><path id=\"MJMAIN-34\" stroke-width=\"10\" d=\"M462 0Q444 3 333 3Q217 3 199 0H190V46H221Q241 46 248 46T265 48T279 53T286 61Q287 63 287 115V165H28V211L179 442Q332 674 334 675Q336 677 355 677H373L379 671V211H471V165H379V114Q379 73 379 66T385 54Q393 47 442 46H471V0H462ZM293 211V545L74 212L183 211H293Z\"></path><path id=\"MJMAIN-36\" stroke-width=\"10\" d=\"M42 313Q42 476 123 571T303 666Q372 666 402 630T432 550Q432 525 418 510T379 495Q356 495 341 509T326 548Q326 592 373 601Q351 623 311 626Q240 626 194 566Q147 500 147 364L148 360Q153 366 156 373Q197 433 263 433H267Q313 433 348 414Q372 400 396 374T435 317Q456 268 456 210V192Q456 169 451 149Q440 90 387 34T253 -22Q225 -22 199 -14T143 16T92 75T56 172T42 313ZM257 397Q227 397 205 380T171 335T154 278T148 216Q148 133 160 97T198 39Q222 21 251 21Q302 21 329 59Q342 77 347 104T352 209Q352 289 347 316T329 361Q302 397 257 397Z\"></path></defs><g stroke=\"black\" fill=\"black\" stroke-width=\"0\" transform=\"matrix(1 0 0 -1 0 0)\"><g transform=\"translate(120,0)\"><rect stroke=\"none\" width=\"477\" height=\"60\" x=\"0\" y=\"220\"></rect><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-34\" x=\"84\" y=\"611\" xlink:href=\"#MJMAIN-34\"></use><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-36\" x=\"84\" y=\"-571\" xlink:href=\"#MJMAIN-36\"></use></g></g></svg> in woorden.</p>\r\n\r\n_INPUT_1_",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "prefix": "",
+                  "suffix": "",
+                  "width": 150,
+                  "correct_answers": [
+                    "vierzesde",
+                    "vier zesden",
+                    "vierzesden",
+                    "vier zesde"
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+
+              ],
+              "worked_out_answer": "Het juiste antwoord is: vierzesde"
+            },
+            {
+              "id": "6e2de426-6e67-4e3b-bec6-d08fda9c406e",
+              "text": "<p class=”question_title”>Schrijf de breuk <svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"width: 1.714ex; height: 3.143ex; vertical-align: -1.143ex; margin-top: 1px; margin-right: 0px; margin-bottom: 1px; margin-left: 0px; position: static; \" viewBox=\"0 -941.5095818397583 717.0889244992065 1383.7262704607033\" xmlns=\"http://www.w3.org/2000/svg\"><defs id=\"MathJax_SVG_glyphs\"><path id=\"MJMAIN-33\" stroke-width=\"10\" d=\"M127 463Q100 463 85 480T69 524Q69 579 117 622T233 665Q268 665 277 664Q351 652 390 611T430 522Q430 470 396 421T302 350L299 348Q299 347 308 345T337 336T375 315Q457 262 457 175Q457 96 395 37T238 -22Q158 -22 100 21T42 130Q42 158 60 175T105 193Q133 193 151 175T169 130Q169 119 166 110T159 94T148 82T136 74T126 70T118 67L114 66Q165 21 238 21Q293 21 321 74Q338 107 338 175V195Q338 290 274 322Q259 328 213 329L171 330L168 332Q166 335 166 348Q166 366 174 366Q202 366 232 371Q266 376 294 413T322 525V533Q322 590 287 612Q265 626 240 626Q208 626 181 615T143 592T132 580H135Q138 579 143 578T153 573T165 566T175 555T183 540T186 520Q186 498 172 481T127 463Z\"></path><path id=\"MJMAIN-35\" stroke-width=\"10\" d=\"M164 157Q164 133 148 117T109 101H102Q148 22 224 22Q294 22 326 82Q345 115 345 210Q345 313 318 349Q292 382 260 382H254Q176 382 136 314Q132 307 129 306T114 304Q97 304 95 310Q93 314 93 485V614Q93 664 98 664Q100 666 102 666Q103 666 123 658T178 642T253 634Q324 634 389 662Q397 666 402 666Q410 666 410 648V635Q328 538 205 538Q174 538 149 544L139 546V374Q158 388 169 396T205 412T256 420Q337 420 393 355T449 201Q449 109 385 44T229 -22Q148 -22 99 32T50 154Q50 178 61 192T84 210T107 214Q132 214 148 197T164 157Z\"></path></defs><g stroke=\"black\" fill=\"black\" stroke-width=\"0\" transform=\"matrix(1 0 0 -1 0 0)\"><g transform=\"translate(120,0)\"><rect stroke=\"none\" width=\"477\" height=\"60\" x=\"0\" y=\"220\"></rect><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-33\" x=\"84\" y=\"633\" xlink:href=\"#MJMAIN-33\"></use><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-35\" x=\"84\" y=\"-571\" xlink:href=\"#MJMAIN-35\"></use></g></g></svg> in woorden.</p>\r\n\r\n_INPUT_1_",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "prefix": "",
+                  "suffix": "",
+                  "width": 150,
+                  "correct_answers": [
+                    "drie vijfde",
+                    "drievijfde",
+                    "drie vijfden",
+                    "drievijfden"
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+
+              ],
+              "worked_out_answer": "Het juiste antwoord is: drievijfden"
+            },
+            {
+              "id": "709ba38c-1451-4d6c-a72f-2953a0cbcb44",
+              "text": "<p class=”question_title”>Schrijf de breuk <svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"width: 1.714ex; height: 3.143ex; vertical-align: -1.143ex; margin-top: 1px; margin-right: 0px; margin-bottom: 1px; margin-left: 0px; position: static; \" viewBox=\"0 -926.6603394348408 717.0889244992065 1368.1699212745991\" xmlns=\"http://www.w3.org/2000/svg\"><defs id=\"MathJax_SVG_glyphs\"><path id=\"MJMAIN-32\" stroke-width=\"10\" d=\"M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z\"></path><path id=\"MJMAIN-33\" stroke-width=\"10\" d=\"M127 463Q100 463 85 480T69 524Q69 579 117 622T233 665Q268 665 277 664Q351 652 390 611T430 522Q430 470 396 421T302 350L299 348Q299 347 308 345T337 336T375 315Q457 262 457 175Q457 96 395 37T238 -22Q158 -22 100 21T42 130Q42 158 60 175T105 193Q133 193 151 175T169 130Q169 119 166 110T159 94T148 82T136 74T126 70T118 67L114 66Q165 21 238 21Q293 21 321 74Q338 107 338 175V195Q338 290 274 322Q259 328 213 329L171 330L168 332Q166 335 166 348Q166 366 174 366Q202 366 232 371Q266 376 294 413T322 525V533Q322 590 287 612Q265 626 240 626Q208 626 181 615T143 592T132 580H135Q138 579 143 578T153 573T165 566T175 555T183 540T186 520Q186 498 172 481T127 463Z\"></path></defs><g stroke=\"black\" fill=\"black\" stroke-width=\"0\" transform=\"matrix(1 0 0 -1 0 0)\"><g transform=\"translate(120,0)\"><rect stroke=\"none\" width=\"477\" height=\"60\" x=\"0\" y=\"220\"></rect><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-32\" x=\"84\" y=\"611\" xlink:href=\"#MJMAIN-32\"></use><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-33\" x=\"84\" y=\"-570\" xlink:href=\"#MJMAIN-33\"></use></g></g></svg> in woorden.</p>\r\n\r\n_INPUT_1_",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "prefix": "",
+                  "suffix": "",
+                  "width": 150,
+                  "correct_answers": [
+                    "twee derde",
+                    "tweederde",
+                    "twee derden",
+                    "tweederden"
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+
+              ],
+              "worked_out_answer": "Het juiste antwoord is: twee derden"
+            }
+          ],
+          "line_input_fields": [
+
+          ]
+        }
+      ],
+      "remedial": false
+    }
+  ],
+  "entry_quiz": {
+    "instructions": "<h1>Welkom</h1>\r\n\r\n<p>Je gaat nu het instaponderzoek maken. Hiermee bepalen we met welk hoofdstuk je gaat beginnen. Je krijgt hiervoor dus geen cijfer.</p>\r\n\r\n<p>Het onderzoek bestaat uit 12 vragen. Bij het maken van de vragen mag je pen en papier gebruiken, maar <ul>geen</ul> rekenmachine.<p>\r\n\r\n<h2>Veel succes!</h2>",
+    "feedback": "<p>Het onderzoek is afgelopen.</p>\r\n\r\n<p>Je gaat nu beginnen met jouw eerste hoofdtuk</p>",
+    "threshold": 11,
+    "questions": [
+      {
+        "id": "47c296d6-0d9a-4897-abfc-5d9a35d59fd4",
+        "text": "<p class=\"question_title\">Zet de getallen op volgorde van groot naar klein:</p>\r\n<img src=\"https://docs.google.com/drawings/d/1elMKnJKgVVDCvuwFIBOTCJd_NoOj3tMwI0H82kVqHV8/pub?w=756&h=100\">\r\n\r\n_INPUT_2_",
+        "tools": [
+          "pen_and_paper"
+        ],
+        "line_input_fields": [
+
+        ],
+        "multiple_choice_input_fields": [
+          {
+            "name": "_INPUT_2_",
+            "choices": [
+              {
+                "value": "84 231  -             \t8499  \t-             \t880     \t-             \t8501  \t-             \t805",
+                "correct": false
+              },
+              {
+                "value": "880     \t-             \t8501  \t-             \t8499  \t-             \t84 231  -             \t805 ",
+                "correct": false
+              },
+              {
+                "value": "8501  \t-             \t8499  \t-             \t84 231  -             \t880     \t-             \t805",
+                "correct": false
+              },
+              {
+                "value": "84 231  -             \t8501  \t-             \t8499  \t-             \t880     \t-             \t805\r\n",
+                "correct": true
+              },
+              {
+                "value": "8501  \t-             \t8499  \t-             \t880     \t-             \t805     \t-             \t84 231",
+                "correct": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "f44b6cfe-8cd1-48eb-a70f-077da6031f66",
+        "text": "<img src=\"https://docs.google.com/drawings/d/1XMUh9pd00ztZr4139UEGJeRp379qoYw6EG0x5qYUI2k/pub?w=526&h=105\">\r\n\r\n<p class=\"question_title\">Welk getal hoort op de plek van de pijl te staan?</p>\r\n_INPUT_1_",
+        "tools": [
+          "pen_and_paper"
+        ],
+        "line_input_fields": [
+          {
+            "name": "_INPUT_1_",
+            "prefix": "",
+            "suffix": "",
+            "width": 150,
+            "correct_answers": [
+              "1750",
+              "1 750"
+            ]
+          }
+        ],
+        "multiple_choice_input_fields": [
+
+        ]
+      },
+      {
+        "id": "5d5ebdda-a749-4a4e-8c88-11c8762a1cd0",
+        "text": "<p class=\"question_title\">3405 + 125 =</p>\r\n_INPUT_1_",
+        "tools": [
+          "pen_and_paper"
+        ],
+        "line_input_fields": [
+          {
+            "name": "_INPUT_1_",
+            "prefix": "",
+            "suffix": "",
+            "width": 150,
+            "correct_answers": [
+              "3530",
+              "3 530"
+            ]
+          }
+        ],
+        "multiple_choice_input_fields": [
+
+        ]
+      },
+      {
+        "id": "7d1515cd-0a83-41c9-9d7e-e7371a493228",
+        "text": "<p class=\"question_title\">5600 ÷ 80 =</p>\r\n_INPUT_1_",
+        "tools": [
+          "pen_and_paper"
+        ],
+        "line_input_fields": [
+          {
+            "name": "_INPUT_1_",
+            "prefix": "",
+            "suffix": "",
+            "width": 150,
+            "correct_answers": [
+              "70"
+            ]
+          }
+        ],
+        "multiple_choice_input_fields": [
+
+        ]
+      },
+      {
+        "id": "5a8df043-367a-4ce0-84fb-3d84c11ebb48",
+        "text": "<ul>\r\n<li>Als je twee getallen optelt mag je ze altijd omwisselen. <br> Bijvoorbeeld 3 + 4 = 4 + 3</li>\r\n<li>Als je twee getallen van elkaar aftrekt mag je ze altijd omwisselen.</li>\r\n<li>Als je twee getallen met elkaar vermenigvuldigt mag je ze altijd omwisselen.</li>\r\n<li>Als je drie getallen met elkaar vermenigvuldigt mag je zelf weten in welke volgorde je dat doet.</li>\r\n</ul>\r\n\r\n<p class=\"question_title\">Hoeveel van deze uitspraken kloppen?</p>\r\n_INPUT_1_",
+        "tools": [
+          "pen_and_paper"
+        ],
+        "line_input_fields": [
+          {
+            "name": "_INPUT_1_",
+            "prefix": "",
+            "suffix": "uitspraken",
+            "width": 150,
+            "correct_answers": [
+              "3"
+            ]
+          }
+        ],
+        "multiple_choice_input_fields": [
+
+        ]
+      },
+      {
+        "id": "da4a64bc-944c-4d63-aeb2-de380a196c1d",
+        "text": "<p class=\"question_title\">Hoe kun je deze som handig uitrekenen?</p>\r\n<p>899 × 201 =</p>\r\n_INPUT_1_",
+        "tools": [
+          "pen_and_paper"
+        ],
+        "line_input_fields": [
+
+        ],
+        "multiple_choice_input_fields": [
+          {
+            "name": "_INPUT_1_",
+            "choices": [
+              {
+                "value": "900 × 200 + 1",
+                "correct": false
+              },
+              {
+                "value": "900 × 200 – 1",
+                "correct": false
+              },
+              {
+                "value": "900 × 201 – 201",
+                "correct": true
+              },
+              {
+                "value": "900 × 200 – 201 + 1",
+                "correct": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "c7b628a5-8d41-470c-8f68-290cf4390515",
+        "text": "<p class=\"question_title\">Reken uit met rest:</p>\r\n</p>528 ÷ 5 = </p>\r\n_INPUT_1_ rest _INPUT_2_",
+        "tools": [
+          "pen_and_paper"
+        ],
+        "line_input_fields": [
+          {
+            "name": "_INPUT_1_",
+            "prefix": "",
+            "suffix": "",
+            "width": 150,
+            "correct_answers": [
+              "105"
+            ]
+          },
+          {
+            "name": "_INPUT_2_",
+            "prefix": "",
+            "suffix": "",
+            "width": 150,
+            "correct_answers": [
+              "3"
+            ]
+          }
+        ],
+        "multiple_choice_input_fields": [
+
+        ]
+      },
+      {
+        "id": "7c853144-4421-4dd9-b7f9-b732060d597e",
+        "text": "<p class=\"question_title\"><svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"width: 10.857ex; height: 8.143ex; vertical-align: -1.714ex; margin-top: 1px; margin-right: 0px; margin-bottom: 1px; margin-left: 0px; position: static; \" viewBox=\"0 -2810.027408969441 4662.028629780856 3512.2365322245955\" xmlns=\"http://www.w3.org/2000/svg\"><defs id=\"MathJax_SVG_glyphs\"><path id=\"MJMAIN-35\" stroke-width=\"10\" d=\"M164 157Q164 133 148 117T109 101H102Q148 22 224 22Q294 22 326 82Q345 115 345 210Q345 313 318 349Q292 382 260 382H254Q176 382 136 314Q132 307 129 306T114 304Q97 304 95 310Q93 314 93 485V614Q93 664 98 664Q100 666 102 666Q103 666 123 658T178 642T253 634Q324 634 389 662Q397 666 402 666Q410 666 410 648V635Q328 538 205 538Q174 538 149 544L139 546V374Q158 388 169 396T205 412T256 420Q337 420 393 355T449 201Q449 109 385 44T229 -22Q148 -22 99 32T50 154Q50 178 61 192T84 210T107 214Q132 214 148 197T164 157Z\"></path><path id=\"MJMAIN-36\" stroke-width=\"10\" d=\"M42 313Q42 476 123 571T303 666Q372 666 402 630T432 550Q432 525 418 510T379 495Q356 495 341 509T326 548Q326 592 373 601Q351 623 311 626Q240 626 194 566Q147 500 147 364L148 360Q153 366 156 373Q197 433 263 433H267Q313 433 348 414Q372 400 396 374T435 317Q456 268 456 210V192Q456 169 451 149Q440 90 387 34T253 -22Q225 -22 199 -14T143 16T92 75T56 172T42 313ZM257 397Q227 397 205 380T171 335T154 278T148 216Q148 133 160 97T198 39Q222 21 251 21Q302 21 329 59Q342 77 347 104T352 209Q352 289 347 316T329 361Q302 397 257 397Z\"></path><path id=\"MJMAIN-20\" stroke-width=\"10\"></path><path id=\"MJMAIN-31\" stroke-width=\"10\" d=\"M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z\"></path><path id=\"MJMAIN-32\" stroke-width=\"10\" d=\"M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z\"></path><path id=\"MJMAIN-33\" stroke-width=\"10\" d=\"M127 463Q100 463 85 480T69 524Q69 579 117 622T233 665Q268 665 277 664Q351 652 390 611T430 522Q430 470 396 421T302 350L299 348Q299 347 308 345T337 336T375 315Q457 262 457 175Q457 96 395 37T238 -22Q158 -22 100 21T42 130Q42 158 60 175T105 193Q133 193 151 175T169 130Q169 119 166 110T159 94T148 82T136 74T126 70T118 67L114 66Q165 21 238 21Q293 21 321 74Q338 107 338 175V195Q338 290 274 322Q259 328 213 329L171 330L168 332Q166 335 166 348Q166 366 174 366Q202 366 232 371Q266 376 294 413T322 525V533Q322 590 287 612Q265 626 240 626Q208 626 181 615T143 592T132 580H135Q138 579 143 578T153 573T165 566T175 555T183 540T186 520Q186 498 172 481T127 463Z\"></path><path id=\"MJMAIN-35\" stroke-width=\"10\" d=\"M164 157Q164 133 148 117T109 101H102Q148 22 224 22Q294 22 326 82Q345 115 345 210Q345 313 318 349Q292 382 260 382H254Q176 382 136 314Q132 307 129 306T114 304Q97 304 95 310Q93 314 93 485V614Q93 664 98 664Q100 666 102 666Q103 666 123 658T178 642T253 634Q324 634 389 662Q397 666 402 666Q410 666 410 648V635Q328 538 205 538Q174 538 149 544L139 546V374Q158 388 169 396T205 412T256 420Q337 420 393 355T449 201Q449 109 385 44T229 -22Q148 -22 99 32T50 154Q50 178 61 192T84 210T107 214Q132 214 148 197T164 157Z\"></path><path id=\"MJMAIN-20\" stroke-width=\"10\"></path><path id=\"MJMAIN-32\" stroke-width=\"10\" d=\"M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z\"></path><path id=\"MJMAIN-33\" stroke-width=\"10\" d=\"M127 463Q100 463 85 480T69 524Q69 579 117 622T233 665Q268 665 277 664Q351 652 390 611T430 522Q430 470 396 421T302 350L299 348Q299 347 308 345T337 336T375 315Q457 262 457 175Q457 96 395 37T238 -22Q158 -22 100 21T42 130Q42 158 60 175T105 193Q133 193 151 175T169 130Q169 119 166 110T159 94T148 82T136 74T126 70T118 67L114 66Q165 21 238 21Q293 21 321 74Q338 107 338 175V195Q338 290 274 322Q259 328 213 329L171 330L168 332Q166 335 166 348Q166 366 174 366Q202 366 232 371Q266 376 294 413T322 525V533Q322 590 287 612Q265 626 240 626Q208 626 181 615T143 592T132 580H135Q138 579 143 578T153 573T165 566T175 555T183 540T186 520Q186 498 172 481T127 463Z\"></path><path id=\"MJMAIN-34\" stroke-width=\"10\" d=\"M462 0Q444 3 333 3Q217 3 199 0H190V46H221Q241 46 248 46T265 48T279 53T286 61Q287 63 287 115V165H28V211L179 442Q332 674 334 675Q336 677 355 677H373L379 671V211H471V165H379V114Q379 73 379 66T385 54Q393 47 442 46H471V0H462ZM293 211V545L74 212L183 211H293Z\"></path><path id=\"MJMAIN-20\" stroke-width=\"10\"></path><path id=\"MJMAIN-2212\" stroke-width=\"10\" d=\"M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z\"></path></defs><g stroke=\"black\" fill=\"black\" stroke-width=\"0\" transform=\"matrix(1 0 0 -1 0 0)\"><g transform=\"translate(120,0)\"><rect stroke=\"none\" width=\"4148\" height=\"60\" x=\"0\" y=\"220\"></rect><g transform=\"translate(227,1393)\"><g transform=\"translate(-13,0)\"><g transform=\"translate(0,600)\"><use href=\"#MJMAIN-35\" xlink:href=\"#MJMAIN-35\"></use><use href=\"#MJMAIN-36\" x=\"505\" y=\"0\" xlink:href=\"#MJMAIN-36\"></use><use href=\"#MJMAIN-20\" x=\"1010\" y=\"0\" xlink:href=\"#MJMAIN-20\"></use><g transform=\"translate(1265,0)\"><use href=\"#MJMAIN-31\" xlink:href=\"#MJMAIN-31\"></use><use href=\"#MJMAIN-32\" x=\"505\" y=\"0\" xlink:href=\"#MJMAIN-32\"></use><use href=\"#MJMAIN-33\" x=\"1010\" y=\"0\" xlink:href=\"#MJMAIN-33\"></use></g></g><g transform=\"translate(505,-700)\"><use href=\"#MJMAIN-35\" xlink:href=\"#MJMAIN-35\"></use><use href=\"#MJMAIN-20\" x=\"505\" y=\"0\" xlink:href=\"#MJMAIN-20\"></use><g transform=\"translate(760,0)\"><use href=\"#MJMAIN-32\" xlink:href=\"#MJMAIN-32\"></use><use href=\"#MJMAIN-33\" x=\"505\" y=\"0\" xlink:href=\"#MJMAIN-33\"></use><use href=\"#MJMAIN-34\" x=\"1010\" y=\"0\" xlink:href=\"#MJMAIN-34\"></use></g></g></g><g transform=\"translate(2767,0)\"><g transform=\"translate(0,-700)\"><use href=\"#MJMAIN-20\" xlink:href=\"#MJMAIN-20\"></use><use href=\"#MJMAIN-2212\" x=\"477\" y=\"0\" xlink:href=\"#MJMAIN-2212\"></use></g></g></g></g></g></svg></p>\r\n_INPUT_1_",
+        "tools": [
+          "pen_and_paper"
+        ],
+        "line_input_fields": [
+          {
+            "name": "_INPUT_1_",
+            "prefix": "",
+            "suffix": "",
+            "width": 150,
+            "correct_answers": [
+              "50899",
+              "50 899"
+            ]
+          }
+        ],
+        "multiple_choice_input_fields": [
+
+        ]
+      },
+      {
+        "id": "952baf1b-1121-4253-a230-fe36ca0cd874",
+        "text": "<img src=\"https://s3-eu-west-1.amazonaws.com/rekenen/toetsen/rt-instaptoets/klokkijken-1.jpg\">\r\n\r\n<p class=\"question_title\">Op welke klok is het even laat als op de klok hierboven?</p>\r\n_INPUT_1_",
+        "tools": [
+          "pen_and_paper"
+        ],
+        "line_input_fields": [
+
+        ],
+        "multiple_choice_input_fields": [
+          {
+            "name": "_INPUT_1_",
+            "choices": [
+              {
+                "value": "2 : 34",
+                "correct": false
+              },
+              {
+                "value": "3 : 54",
+                "correct": false
+              },
+              {
+                "value": "12 : 24",
+                "correct": false
+              },
+              {
+                "value": "14 : 34",
+                "correct": true
+              },
+              {
+                "value": "15 : 54",
+                "correct": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "bad48c7a-d9a6-42c6-b267-d6f483e46260",
+        "text": "<img src=\"https://s3-eu-west-1.amazonaws.com/rekenen/toetsen/rt-instaptoets/klokkijken-2.png\">\r\n\r\n<p class=\"question_title\">Hoeveel tijd zit er tussen de start van \"Leren geeft je vleugels\" en de start van \"Soms\"?</p>\r\n_INPUT_1_",
+        "tools": [
+          "pen_and_paper"
+        ],
+        "line_input_fields": [
+          {
+            "name": "_INPUT_1_",
+            "prefix": "",
+            "suffix": "",
+            "width": 150,
+            "correct_answers": [
+              "32"
+            ]
+          }
+        ],
+        "multiple_choice_input_fields": [
+
+        ]
+      },
+      {
+        "id": "cd539542-5e92-49ff-ae8e-87d4ec44b0e6",
+        "text": "<table class=\"mod-table invisible\">\r\n<tr>\r\n<td>Kaas</td>   \r\n<td>€3,99</td>   \r\n</tr>\r\n<tr>\r\n<td>Crackers</td>   \r\n<td>€1,25</td>   \r\n</tr>\r\n<tr>\r\n<td>jam</td>   \r\n<td>€1,95</td>   \r\n</tr>\r\n<tr>\r\n<td>Ontbijtkoek</td>   \r\n<td>€1,19</td>   \r\n</tr>\r\n<tr>\r\n<td>Muesli</td>   \r\n<td>€2,99</td>   \r\n</tr>\r\n</table>\r\n\r\n<p class=\"question_title\">Hoeveel kosten deze boodschappen in totaal?</p>\r\n_INPUT_1_",
+        "tools": [
+          "pen_and_paper"
+        ],
+        "line_input_fields": [
+          {
+            "name": "_INPUT_1_",
+            "prefix": "€",
+            "suffix": "",
+            "width": 150,
+            "correct_answers": [
+              "11,37"
+            ]
+          }
+        ],
+        "multiple_choice_input_fields": [
+
+        ]
+      },
+      {
+        "id": "71ee2659-3f16-4131-8ad1-1f57a85e487a",
+        "text": "<img src=\"https://s3-eu-west-1.amazonaws.com/rekenen/toetsen/rt-instaptoets/geld-2.jpg\">\r\n\r\n<p>Je betaalt met een briefje van 20 euro en een euro munt.</p>\r\n<p class=\"question_title\">Hoeveel wisselgeld krijg je terug?</p>",
+        "tools": [
+          "pen_and_paper"
+        ],
+        "line_input_fields": [
+          {
+            "name": "_INPUT_1_",
+            "prefix": "€",
+            "suffix": "",
+            "width": 150,
+            "correct_answers": [
+              "5,15"
+            ]
+          }
+        ],
+        "multiple_choice_input_fields": [
+
+        ]
+      }
+    ]
+  }
+}

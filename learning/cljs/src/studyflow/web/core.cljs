@@ -8,7 +8,7 @@
             [studyflow.web.aggregates :as aggregates]
             [studyflow.web.service :as service]
             [studyflow.web.history :refer [history-link]]
-            [studyflow.web.helpers :refer [modal raw-html split-text-and-inputs]]
+            [studyflow.web.helpers :refer [modal raw-html split-text-and-inputs render-question]]
             [clojure.walk :as walk]
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go]]))
@@ -304,40 +304,6 @@
                                                :inactive "inactive"))}))
                 streak))))))
 
-(def html->om
-  {"a" dom/a, "b" dom/b, "big" dom/big, "br" dom/br, "dd" dom/dd, "div" dom/div,
-   "dl" dom/dl, "dt" dom/dt, "em" dom/em, "fieldset" dom/fieldset,
-   "h1" dom/h1, "h2" dom/h2, "h3" dom/h3, "h4" dom/h4, "h5" dom/h5, "h6" dom/h6,
-   "hr" dom/hr, "i" dom/i, "li" dom/li, "ol" dom/ol, "p" dom/p, "pre" dom/pre,
-   "q" dom/q,"s" dom/s,"small" dom/small, "span" dom/span, "strong" dom/strong,
-   "sub" dom/sub, "sup" dom/sup, "table" dom/table, "tbody" dom/tbody, "td" dom/td,
-   "tfoot" dom/tfoor, "th" dom/th, "thead" dom/thead, "tr" dom/tr, "u" dom/u,
-   "ul" dom/ul})
-
-(defn tag-tree-to-om [tag-tree inputs]
-  (let [descent (fn descent [tag-tree]
-                  (cond
-                   (and (map? tag-tree)
-                        (contains? tag-tree :tag)
-                        (contains? tag-tree :attrs)
-                        (contains? tag-tree :content))
-                   (let [{:keys [tag attrs content] :as node} tag-tree]
-                     (if-let [build-fn (get html->om tag)]
-                       (apply build-fn
-                              #js {:className (:class attrs)}
-                              (map descent content))
-                       (cond
-                        (= tag "img")
-                        (dom/img #js {:src (:src attrs)})
-                        (= tag "input")
-                        (get inputs (:name attrs))
-                        :else
-                        (apply dom/span #js {:className "default-html-to-om"}
-                               (map descent content)))))
-                   (string? tag-tree)
-                   tag-tree))]
-    (descent tag-tree)))
-
 (defn input-builders
   "mapping from input-name to create react dom element for input type"
   [cursor section-id question-id question-index question-data current-answers submitted-answers answer-correct]
@@ -407,12 +373,6 @@
                 (dom/div #js {:className (str "tool " tool)}
                          (dom/div #js {:className "m-tooltip"} (get tool-names tool) )))
               tools))))
-
-(defn single-question-panel [tag-tree inputs]
-  (dom/div nil
-           (tag-tree-to-om
-            (om/value tag-tree)
-            inputs)))
 
 (defn reveal-answer-button [cursor owner]
   (reify
@@ -557,8 +517,7 @@
                                             "Volgende paragraaf"))
                          nil))
                  (dom/article #js {:id "m-section"}
-                              (single-question-panel (:tag-tree question-data)
-                                                     inputs)
+                              (render-question (:text question-data) inputs)
                               (when revealed-answer
                                 (dom/div #js {:dangerouslySetInnerHTML #js {:__html revealed-answer}} nil)))
                  (dom/div #js {:id "m-question_bar"}

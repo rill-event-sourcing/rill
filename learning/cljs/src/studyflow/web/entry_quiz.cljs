@@ -4,7 +4,7 @@
             [om.dom :as dom :include-macros true]
             [studyflow.web.aggregates :as aggregates]
             [studyflow.web.core :as core]
-            [studyflow.web.helpers :refer [raw-html modal split-text-and-inputs]]
+            [studyflow.web.helpers :refer [raw-html modal split-text-and-inputs render-question]]
             [studyflow.web.history :refer [history-link]]
             [studyflow.web.service :as service]
             [cljs.core.async :as async])
@@ -144,18 +144,7 @@
                                                  (dom/form #js {:onSubmit (fn []
                                                                             (submit)
                                                                             false)}
-                                                           (apply dom/div nil
-                                                                  (for [text-or-input (split-text-and-inputs question-text
-                                                                                                             (keys inputs))]
-                                                                    ;; this wrapper div is
-                                                                    ;; required, otherwise the
-                                                                    ;; dangerouslySetInnerHTML
-                                                                    ;; breaks when mixing html
-                                                                    ;; in text and inputs
-                                                                    (dom/div #js {:className "dangerous-html-wrap"}
-                                                                             (if-let [input (get inputs text-or-input)]
-                                                                               input
-                                                                               (raw-html text-or-input)))))
+                                                           (render-question question-text inputs)
                                                            (dom/div #js {:id "m-question_bar"}
                                                                     (om/build (core/click-once-button (str "Klaar"
                                                                                                            (when (< (inc index) (count (:questions material)))

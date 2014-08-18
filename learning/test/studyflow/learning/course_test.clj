@@ -8,6 +8,7 @@
             [rill.event-store.memory :refer [memory-store]]
             [rill.uuid :refer [new-id]]
             [rill.aggregate :refer [load-aggregate handle-command]]
+            [rill.temp-store :refer [execute command-result=]]
             [clojure.test :refer [deftest testing is]]))
 
 (def course fixture/course-aggregate)
@@ -34,6 +35,22 @@
         [status events] (try-command store (commands/publish! (:id fixture/course-edn) fixture/course-edn))]
     (is (= :ok status))
     (is (= [::events/Published] (map message/type events)))))
+
+(deftest test-update-command
+  (let [[status [updated-event :as events]] (execute (commands/publish! (:id fixture/course-edn) fixture/course-edn)
+                                                     [fixture/course-published-event])]
+    (is (= status :ok))
+    (is (= (message/type updated-event)
+           ::events/Updated))
+    (is (= (count events) 1)))
+  (testing "update event can be handled by aggregate"
+    (let [[status [updated-event :as events]] (execute (commands/publish! (:id fixture/course-edn) fixture/course-edn)
+                                                       [fixture/course-published-event
+                                                        (events/updated (:id fixture/course-edn) fixture/course-edn)])]
+      (is (= status :ok))
+      (is (= (message/type updated-event)
+             ::events/Updated))
+      (is (= (count events) 1)))))
 
 (deftest test-command-handler
   (testing "Publishing commands"
