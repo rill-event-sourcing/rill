@@ -8,7 +8,7 @@
             [studyflow.web.aggregates :as aggregates]
             [studyflow.web.service :as service]
             [studyflow.web.history :refer [history-link]]
-            [studyflow.web.helpers :refer [modal raw-html split-text-and-inputs]]
+            [studyflow.web.helpers :refer [modal raw-html split-text-and-inputs render-question]]
             [clojure.walk :as walk]
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go]]))
@@ -517,8 +517,7 @@
                                             "Volgende paragraaf"))
                          nil))
                  (dom/article #js {:id "m-section"}
-                              (single-question-panel (:tag-tree question-data)
-                                                     inputs)
+                              (render-question (:text question-data) inputs)
                               (when revealed-answer
                                 (dom/div #js {:dangerouslySetInnerHTML #js {:__html revealed-answer}} nil)))
                  (dom/div #js {:id "m-question_bar"}

@@ -43,3 +43,18 @@
            (recur ps (conj out p))))))
    [text]
    inputs))
+
+
+(defn render-question [question-text inputs]
+  (apply dom/div nil
+         (for [text-or-input (split-text-and-inputs question-text
+                                                    (keys inputs))]
+           ;; this wrapper div is
+           ;; required, otherwise the
+           ;; dangerouslySetInnerHTML
+           ;; breaks when mixing html
+           ;; in text and inputs
+           (dom/div #js {:className "dangerous-html-wrap"}
+                    (if-let [input (get inputs text-or-input)]
+                      input
+                      (raw-html text-or-input))))))
