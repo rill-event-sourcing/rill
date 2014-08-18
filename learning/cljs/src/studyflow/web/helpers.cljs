@@ -23,9 +23,9 @@
                     (dom/div #js {:className "modal_footer"}
                              (when secondary-button
                                (update-js secondary-button
-                                          :className (fnil (partial str "secundary_action ") "")))
+                                          :className (fnil (partial str "btn big gray") "")))
                              (update-js primary-button
-                                        :className (partial str "btn green primary "))))))
+                                        :className (partial str "btn big yellow pull-right"))))))
 
 (defn split-text-and-inputs [text inputs]
   (reduce

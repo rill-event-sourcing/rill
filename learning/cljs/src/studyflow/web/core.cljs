@@ -144,7 +144,7 @@
         {:enabled enabled})
       om/IRender
       (render [_]
-        (dom/button #js {:className "btn blue small pull-right"
+        (dom/button #js {:className "btn blue pull-right"
                          :onClick
                          (fn [_]
                            (onclick)
@@ -381,7 +381,7 @@
       (let [{:keys [revealed-answer question-id question-data section-id student-id section-test-aggregate-version course-id]} cursor
             can-reveal-answer (get question-data :has-worked-out-answer)]
         (if can-reveal-answer
-          (dom/button #js {:className "btn light_blue small icon hint"
+          (dom/button #js {:className "btn light_blue icon hint"
                            :disabled
                            (boolean revealed-answer)
                            :onClick
@@ -490,8 +490,7 @@
                        (condp = progress-modal
                          :show-finish-modal
                          (modal (dom/span nil
-                                          (dom/h1 nil "Wohoo!")
-                                          (dom/p nil "Je bent klaar met deze paragraaf."))
+                                          (raw-html "<h1>Yes! Je hebt 5 vragen achter elkaar goed!</h1><img src=\"https://s3-eu-west-1.amazonaws.com/studyflow-assets/images/206.gif\"><p>Deze paragraaf is nu klaar. Ga verder naar de volgende paragraaf (of blijf nog even oefenen).</p>"))
                                 (dom/button #js {:onClick (fn [e]
                                                             (submit))}
                                             "Volgende paragraaf")
@@ -507,11 +506,10 @@
                                                                     section-test-aggregate-version
                                                                     course-id])
                                                        false)}
-                                       "In deze paragraaf blijven"))
+                                       "Blijven oefenen"))
                          :show-streak-completed-modal
                          (modal (dom/span nil
-                                          (dom/h1 nil "Yes!")
-                                          (dom/p nil "Je hebt deze paragraaf nog een keer voltooid. Nu snap je hem wel :)"))
+                                          (raw-html "<h1>Hoppa! Weer goed!</h1><img src=\"https://s3-eu-west-1.amazonaws.com/studyflow-assets/images/184.gif\"><p>Je hebt deze paragraaf nog een keer voltooid.<br>We denken dat je hem nu wel snapt :).</p>"))
                                 (dom/button #js {:onClick (fn [e]
                                                             (submit))}
                                             "Volgende paragraaf"))
@@ -643,7 +641,7 @@
                      (dom/a #js {:href section-link
                                  :className (str "section_link " section-status)}
                             title)
-                     (dom/a #js {:className "btn blue small chapter_nav_btn"
+                     (dom/a #js {:className "btn blue chapter_nav_btn"
                                  :href section-link} "Start"))))))
 
 (defn chapter-navigation [cursor selected-chapter-id course chapter]

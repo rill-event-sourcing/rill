@@ -78,7 +78,7 @@
 
 (defn to-dashboard-bar []
   (dom/div #js {:id "m-question_bar"}
-           (dom/button #js {:className "btn green pull-right"
+           (dom/button #js {:className "btn blue small pull-right"
                             :onClick (fn []
                                        (set! (.-location js/window)
                                              (history-link {:main :dashboard})))}
@@ -103,7 +103,7 @@
                              (dom/a #js {:id "home"
                                          :href (history-link {:main :dashboard})})
                              (dom/h1 #js {:id "page_heading"}
-                                     "Instaptoets") ;; TODO title is not in aggregate
+                                     "Welkom op Studyflow!") ;; TODO title is not in aggregate
                              (when-let [index (:question-index entry-quiz)]
                                (dom/p #js {:id "page_subheading"}
                                       (str "Vraag " (inc index) " van " (count (:questions material))))))
@@ -148,7 +148,7 @@
                                                            (dom/div #js {:id "m-question_bar"}
                                                                     (om/build (core/click-once-button (str "Klaar"
                                                                                                            (when (< (inc index) (count (:questions material)))
-                                                                                                             " & naar de volgende vraag"))
+                                                                                                             " & volgende vraag"))
                                                                                                       (fn []
                                                                                                         ;; will call onSubmit of form
                                                                                                         nil)
@@ -178,7 +178,7 @@
            course-id (get-in cursor [:static :course-id])
            student-id (get-in cursor [:static :student :id])
            ;; TODO should come from entry-quiz material
-           nag-screen-text "<p>Maak een vliegende start en bepaal waar je begint met de instaptoets:</p><br/><br/><ul><li>- Duurt <b>ongeveer 30 minuten</b></li><li>- Kun je <b>altijd stoppen</b>, en later weer maken</li><li>- Kun je maar <b>1</b> keer maken</li></ul><br/><br/><p>Succes!</p>"
+           nag-screen-text "<img src=\"http://meowgifs.com/wp-content/uploads/2012/11/cat-fly-parachute.gif\"><p>Maak een vliegende start! Bepaal waar je begint met de instaptoets:</p><ul><li>Duurt <b>ongeveer 30 minuten</b></li><li>Kun je <b>altijd stoppen</b>, en later weer maken</li><li>Kun je maar <b>1</b> keer maken</li></ul><p><b>Succes namens heel team Studyflow!<b></p>"
            dismiss-modal (fn []
                            (om/update! cursor [:view :entry-quiz-modal] :dismissed)
                            (async/put! (om/get-shared owner :command-channel)
@@ -187,7 +187,7 @@
                                         student-id]))]
       (condp = status
         nil (modal (dom/div nil
-                            (dom/h1 nil "Instaptoets")
+                            (dom/h1 nil "Welkom op Studyflow!")
                             (raw-html nag-screen-text))
                    (dom/button #js {:onClick (fn []
                                                (dismiss-modal)

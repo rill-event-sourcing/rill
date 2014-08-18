@@ -4,42 +4,58 @@
   left: 0
   right: 0
   position: fixed
-  background: rgba(0,0,0,0.3)
+  background: rgba(238,242,248,0.9)
   z-index: 900
   display: none
+  overflow-y: auto
   &.show
     display: block
 
   .modal_inner
-    width: 600px
-    height: 400px
+    width: 610px
     +border-radius(3px)
+    border: 1px solid #c8c9cd
     background: white
-    margin: 120px auto
+    margin: 60px auto
     position: relative
 
-    p, ul
-      padding-left: 20px
-
-    .secundary_action
-      line-height: 55px
-      display: inline-block
-      color: rgb(97, 160, 228)
-      text-decoration: none
-      &:hover
-        text-decoration: underline
-
     h1
-      font-size: 25px
-      font-weight: 500
+      font-size: 19px
+      text-transform: uppercase
+      font-weight: 700
       display: block
       text-align: center
-      padding: 50px 25px
+      margin: 40px 25px 25px 25px
+      color: #4f5862
+
+    p, ul
+      padding: 0 50px
+      color: #a1a9b3
+      font-size: 15px
+      font-weight: 500
+      line-height: 28px
+      margin-bottom: 20px
+    ul, ol
+      margin: 0 0 20px 10px
+      li
+        padding-left: 10px
+
+    ol
+      list-style: outside decimal
+
+    ul
+      list-style: outside disc
+
+    b
+      font-weight: bold
+    i
+      font-style: italic
+
+    img
+      display: block
+      margin: 0 auto 30px auto
 
     .modal_footer
-      bottom: 0
-      position: absolute
-      left: 0
-      right: 0
-      background: #fafafa
-      padding: 20px 50px
+      padding: 40px 25px 25px 25px
+      height: 123px
+      +box-sizing(border-box)
