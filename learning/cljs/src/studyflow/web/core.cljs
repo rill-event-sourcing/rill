@@ -1,5 +1,6 @@
 (ns studyflow.web.core
   (:require [goog.dom :as gdom]
+            [goog.dom.classes :as gclasses]
             [goog.string :as gstring]
             [goog.events :as gevents]
             [goog.events.KeyHandler]
@@ -135,7 +136,7 @@
     (do (om/update! cursor [:view :section section-id :test question-id] nil)
         nil)))
 
-(defn click-once-button [value onclick & {:keys [enabled]
+(defn click-once-button [value onclick & {:keys [enabled id]
                                           :or {enabled true}}]
   (fn [cursor owner]
     (reify
@@ -144,12 +145,15 @@
         {:enabled enabled})
       om/IRender
       (render [_]
-        (dom/button #js {:className "btn blue pull-right"
-                         :onClick
-                         (fn [_]
-                           (onclick)
-                           (om/set-state-nr! owner :enabled false))
-                         :disabled (not (om/get-state owner :enabled))}
+        (dom/button (let [js-obj #js {:className "btn blue pull-right"
+                                      :onClick
+                                      (fn [_]
+                                        (onclick)
+                                        (om/set-state-nr! owner :enabled false))
+                                      :disabled (not (om/get-state owner :enabled))}]
+                      (when id
+                        (aset js-obj "id" id))
+                      js-obj)
                     value)))))
 
 (defn section-input-field
@@ -418,6 +422,9 @@
                   (om/update! cursor
                               [:view :progress-modal]
                               :show-streak-completed-modal)
+                  "studyflow.learning.section-test.events/QuestionAnsweredIncorrectly"
+                  (when-let [button (gdom/getElement "check-answer-button")]
+                    (goog.dom.classes/add button "shake"))
                   nil)
                 (recur))))))
     om/IRender
@@ -535,7 +542,8 @@
                             (om/build (click-once-button "Nakijken"
                                                          (fn []
                                                            (submit))
-                                                         :enabled answering-allowed)
+                                                         :enabled answering-allowed
+                                                         :id "check-answer-button")
                                       cursor))
                           (om/build reveal-answer-button
                                     {:revealed-answer revealed-answer
