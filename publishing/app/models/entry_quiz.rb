@@ -19,6 +19,13 @@ class EntryQuiz < ActiveRecord::Base
     "Entry Quiz for #{course}"
   end
 
+  def errors_when_publishing
+    errors = []
+    errors << "No questions in the entry quiz" if questions.active.empty?
+    errors << questions.active.map(&:errors_when_publishing)
+    errors.flatten
+  end
+
   def to_publishing_format
     {
       instructions: instructions,

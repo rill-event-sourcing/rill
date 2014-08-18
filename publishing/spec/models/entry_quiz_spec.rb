@@ -29,4 +29,18 @@ RSpec.describe EntryQuiz, :type => :model do
     expect{EntryQuiz.find_by_uuid('1a31a31a', false)}.not_to raise_error
     expect(EntryQuiz.find_by_uuid('1a31a31a', false)).to eq nil
   end
+
+  it "should make sure it has active questions" do
+    expect(@eq.errors_when_publishing).to include("No questions in the entry quiz")
+
+    @question1 = create(:question)
+    @eq.questions << @question1
+    expect(@eq.errors_when_publishing).not_to include("No questions in the entry quiz")
+
+    eq2 = create(:entry_quiz)
+    @question2 = create(:question, active: false)
+    eq2.questions << @question2
+    expect(eq2.errors_when_publishing).to include("No questions in the entry quiz")
+  end
+
 end
