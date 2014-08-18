@@ -5,6 +5,30 @@ task :deploy => ["deploy:hot"]
 
 #########################################################################################################
 
+desc 'Version of the deployed application'
+task :version do
+  [:stack_a, :stack_b].each do |stack|
+    warn " #{ stack } ".center(72, "#")
+    on roles *fetch(:release_roles), filter: stack do |host|
+      role = host.roles.first
+      if role == :publish
+        target = release_path.join('REVISION')
+      else
+        symlink_dir = capture :readlink, "-f", release_path
+        release_dir = capture :dirname, symlink_dir
+        target = Pathname(release_dir).join('REVISION')
+      end
+      if test "[ -f #{target} ]"
+        set(:previous_revision, capture(:cat, target, '2>/dev/null'))
+      else
+        set(:previous_revision, "UNKNOWN file #{target}")
+      end
+      warn " #{ host } #{ fetch(:previous_revision) } ".center(80, "#")
+    end
+  end
+end
+
+#########################################################################################################
 
 namespace :deploy do
 
