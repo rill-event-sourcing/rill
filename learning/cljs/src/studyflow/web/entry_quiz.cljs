@@ -159,7 +159,7 @@
                                                            (dom/div #js {:id "m-question_bar"}
                                                                     (om/build (core/click-once-button (str "Klaar"
                                                                                                            (when (< (inc index) (count (:questions material)))
-                                                                                                             " & naar de volgende vraag"))
+                                                                                                             " & volgende vraag"))
                                                                                                       (fn []
                                                                                                         ;; will call onSubmit of form
                                                                                                         nil)
