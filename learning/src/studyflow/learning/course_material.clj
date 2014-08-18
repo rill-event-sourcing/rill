@@ -31,7 +31,7 @@
 (def SectionQuestion
   {:id Id
    :text RichText
-   :tools #{Tool}
+   :tools [Tool]
    :line-input-fields [LineInputField]
    :multiple-choice-input-fields [MultipleChoiceInputField]
    (s/optional-key :worked-out-answer) RichText})
@@ -58,7 +58,7 @@
 (def EntryQuizQuestion
   {:id Id
    :text RichText
-   :tools #{Tool}
+   :tools [Tool]
    :line-input-fields [LineInputField]
    :multiple-choice-input-fields [MultipleChoiceInputField]})
 
