@@ -38,7 +38,8 @@
       (when-let [notification-events
                  (seq (filter
                        (comp #{"studyflow.learning.section-test.events/Finished"
-                               "studyflow.learning.section-test.events/StreakCompleted"} :type)
+                               "studyflow.learning.section-test.events/StreakCompleted"
+                               "studyflow.learning.section-test.events/QuestionAnsweredIncorrectly"} :type)
                        events))]
         (doseq [event notification-events]
           (async/put! notification-channel event)))
