@@ -16,8 +16,8 @@
 
 (defonce system nil)
 
-(defn init []
-  (alter-var-root #'system (constantly (super-system/make-system {}))))
+(defn init [config]
+  (alter-var-root #'system (constantly (super-system/make-system config))))
 
 (defn start []
   (bootstrap-emacs)
@@ -32,11 +32,14 @@
                     (when s
                       (component/stop s)))))
 
-(defn go []
-  (bootstrap-emacs)
-  (init)
-  (start)
-  :started)
+(defn go
+  ([config]
+     (bootstrap-emacs)
+     (init config)
+     (start)
+     :started)
+  ([]
+     (go {})))
 
 (defn reset []
   (stop)
