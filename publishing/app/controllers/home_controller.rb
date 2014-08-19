@@ -12,6 +12,10 @@ class HomeController < ApplicationController
     end
   end
 
+  def check
+    @errors = Course.current.errors_when_publishing
+  end
+
   def index
   end
 
@@ -23,8 +27,7 @@ class HomeController < ApplicationController
     publishing_url = "#{StudyflowPublishing::Application.config.learning_server}/api/internal/course/#{ course.id }"
 
     if course.errors_when_publishing.any?
-      flash[:alert] = "Please fix the errors before publishing"
-      redirect_to root_path
+      redirect_to check_course_path
     else
       begin
         publish_response =  HTTParty.put(publishing_url,

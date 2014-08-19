@@ -1,0 +1,23 @@
+%div.container
+  %div.row
+    %div.col-md-8.col-md-offset-2
+      - if @errors.empty?
+        %div.row
+          %div.alert.alert-success
+            %p Great, no Errors!
+            %p You can proceed with publishing
+        %div.row
+          %div.col-md-2.col-md-offset-5
+            = link_to 'Publish', publish_course_path, class: "btn btn-lg btn-success", method: :post
+      - else
+        %div.row
+          %div.alert.alert-danger
+            %p Oh snap! There are some errors with the course material
+            %p Please fix the following errors before proceeding:
+            %br
+            %ul
+              - @errors.each do |error|
+                %li= error
+        %div.row
+          %div.col-md-2.col-md-offset-5
+            = link_to 'Check again', check_course_path, class: "btn btn-lg btn-info"
