@@ -2,6 +2,7 @@
   (:require [com.stuartsierra.component :refer [system-map] :as component]
             [studyflow.components.simple-session-store :refer [simple-session-store]]
             [studyflow.components.memory-event-store :as memory-event-store]
+            [studyflow.components.psql-event-store :refer [psql-event-store-component]]
             [studyflow.super-system.components.dev-event-fixtures :as dev-event-fixtures]
             [clojure.tools.logging :as log]
             [studyflow.school-administration.system :as school-administration]
@@ -22,8 +23,11 @@
                  (zipmap (keys deps)
                          (map prefix-keyword (vals deps)))))))))
 
-(defn make-system [_]
-  (let [learning (-> (learning-dev-system/dev-system learning-dev-system/dev-config)
+
+(defn make-system [config]
+  (let [learning (-> (learning-dev-system/dev-system (if (:psql config)
+                                                       (assoc learning-dev-system/dev-config :no-fixtures true)
+                                                       learning-dev-system/dev-config))
                      (dissoc :event-store :session-store)
                      (namespace-system :learning [:event-store :session-store]))
         login (-> (login-dev-system/make-system {:jetty-port 4000
@@ -36,7 +40,9 @@
         school-administration (-> (school-administration/prod-system {:port 5000})
                                   (dissoc :event-store)
                                   (namespace-system :school-administration [:event-store]))
-        shared-system {:event-store (memory-event-store/memory-event-store-component)
+        shared-system {:event-store (if-let [url (:psql config)]
+                                      (psql-event-store-component url)
+                                      (memory-event-store/memory-event-store-component))
                        :session-store (simple-session-store)
                        :dev-event-fixtures
                        (component/using

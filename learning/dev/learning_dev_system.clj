@@ -20,7 +20,8 @@
           :session-store (simple-session-store)
           :event-store (component/using
                         (memory-event-store-component)
-                        [])
-          :fixtures-loading (component/using
-                             (fixtures-loading-component)
-                             {:ring-handler :publishing-api-handler})}))
+                        [])}
+         (when-not (:no-fixtures dev-options)
+           {:fixtures-loading (component/using
+                               (fixtures-loading-component)
+                               {:ring-handler :publishing-api-handler})})))
