@@ -191,6 +191,36 @@ namespace :deploy do
   end
 
 
+  desc "starting the servers"
+  task :start do
+    on roles *fetch(:release_roles), filter: fetch(:stack) do |host|
+      role = host.roles.first
+      if role == :publish
+        warn " starting publishing server #{ host } ".center(72, "#")
+        execute :sudo, :apache2ctl, :start
+      else
+        warn " starting java server #{ host } ".center(72, "#")
+        execute :sudo, :supervisorctl, :start, "studyflow_#{ role }"
+      end
+    end
+  end
+
+
+  desc "stopping the servers"
+  task :stop do
+    on roles *fetch(:release_roles), filter: fetch(:stack) do |host|
+      role = host.roles.first
+      if role == :publish
+        warn " stopping publishing server #{ host } ".center(72, "#")
+        execute :sudo, :apache2ctl, :stop
+      else
+        warn " stopping java server #{ host } ".center(72, "#")
+        execute :sudo, :supervisorctl, :stop, "studyflow_#{ role }"
+      end
+    end
+  end
+
+
   desc "restarting the servers"
   task :restart do
     on roles *fetch(:release_roles), filter: fetch(:stack) do |host|
