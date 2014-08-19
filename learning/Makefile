@@ -1,12 +1,15 @@
 default: test
 
-.PHONY: test default deploy css
+.PHONY: test default deploy css js
 
 test:
 	lein test && echo "OK"
 
 css:
-	cd sass && bundle install && compass compile
+	cd sass && bundle install && bundle exec compass compile
+
+js:
+	lein cljsbuild once
 
 build: css
 	lein cljsbuild clean && lein trampoline cljsbuild once prod && lein uberjar
