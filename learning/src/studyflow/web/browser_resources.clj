@@ -19,18 +19,26 @@
 (defn wrap-utf-8
   [handler]
   (fn [request]
-    (-> request
-        handler
-        (charset "utf-8"))))
+    (let [response (handler request)]
+      (if response
+        (-> response
+            (charset "utf-8"))))))
 
-(defn make-request-handler
-  []
+(def course-page-handler
   (-> (combine-ring-handlers
        (clout/handle routes/get-course-page
                      (fn [{:keys [read-model] {:keys [course-name]} :params :as req}]
                        {:status 200
                         :headers {"Content-Type" "text/html"}
                         :body (apply str (course-frame (get-course-id read-model course-name) (:student req) (get-in req [:redirect-urls :login])))})))
+      wrap-content-type
+      wrap-utf-8))
+
+(defn nil-handler [_]
+  nil)
+
+(def resource-handler
+  (-> nil-handler
       (wrap-resource "learning/public")
       wrap-content-type
       wrap-utf-8))
