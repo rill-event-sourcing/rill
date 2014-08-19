@@ -1,6 +1,6 @@
 default: test
 
-.PHONY: test build deploy install clean learning publishing school-administration login rill components
+.PHONY: test build deploy install clean learning publishing school-administration login rill components css js
 
 clean:
 	cd lib/rill && lein clean
@@ -43,3 +43,8 @@ upload: build
 	cd publishing && make upload
 	cd school-administration && make upload
 
+css:
+	make -C learning css
+
+js:
+	make -C learning js
