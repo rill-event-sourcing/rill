@@ -4,7 +4,6 @@
             [studyflow.web.authentication :as authentication]
             [studyflow.web.browser-resources :as browser-resources]
             [studyflow.web.handler-tools :refer [combine-ring-handlers]]
-            [studyflow.web.logging :refer [wrap-logging]]
             [studyflow.web.status :as status]
             [studyflow.web.start :as start]
             [studyflow.learning.read-model :as m]))
@@ -42,5 +41,4 @@
            (wrap-read-model read-model)
            (wrap-redirect-urls redirect-urls))
        status/status-handler
-       fallback-handler)
-      wrap-logging))
+       fallback-handler)))
