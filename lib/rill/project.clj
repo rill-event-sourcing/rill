@@ -12,5 +12,6 @@
                  [identifiers "1.1.0"]
                  [org.clojure/java.jdbc "0.3.4"]
                  [postgresql "9.1-901.jdbc4"]
-                 [com.taoensso/nippy "2.6.3"]]
+                 [com.taoensso/nippy "2.6.3"]
+                 [com.mchange/c3p0 "0.9.2.1"]]
   :aot [rill.cli])

@@ -3,11 +3,11 @@
             [studyflow.components.event-channel :refer [event-channel-component]]
             [studyflow.components.uncaught-exception-handler :refer [uncaught-exception-handler-component]]
             [studyflow.components.atom-event-store :refer [atom-event-store-component]]
-            [rill.event-store.psql :refer [psql-event-store]]
             [studyflow.components.jetty :refer [jetty-component]]
             [studyflow.school-administration.eduroute-listener :refer [eduroute-listener-component]]
             [studyflow.school-administration.system.components.read-model :refer [read-model-component]]
             [studyflow.school-administration.system.components.ring-handler :refer [ring-handler-component]]
+            [studyflow.components.psql-event-store :refer [psql-event-store-component]]
             [clojure.tools.logging :as log]))
 
 (defn prod-system [config-options]
@@ -25,7 +25,7 @@
                      (event-channel-component)
                      [:event-store])
      :event-store (component/using
-                   (psql-event-store event-store-config)
+                   (psql-event-store-component event-store-config)
                    [])
      :read-model (component/using
                   (read-model-component)
