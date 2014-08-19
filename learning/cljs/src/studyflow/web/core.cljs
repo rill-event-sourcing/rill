@@ -372,11 +372,11 @@
   [tools]
   (let [tool-names {"pen_and_paper" "Pen & Papier"
                     "calculator" "Rekenmachine"}]
-  (apply dom/div #js {:id "toolbox"}
-         (map (fn [tool]
-                (dom/div #js {:className (str "tool " tool)}
-                         (dom/div #js {:className "m-tooltip"} (get tool-names tool) )))
-              tools))))
+    (apply dom/div #js {:id "toolbox"}
+           (map (fn [tool]
+                  (dom/div #js {:className (str "tool " tool)}
+                           (dom/div #js {:className "m-tooltip"} (get tool-names tool) )))
+                tools))))
 
 (defn reveal-answer-button [cursor owner]
   (reify
@@ -654,13 +654,11 @@
 
 (defn chapter-navigation [cursor selected-chapter-id course chapter]
   (let [selected? (= selected-chapter-id (:id chapter))]
-    (dom/li #js {:className (str "chapter_list_item" (if selected?
-                                                       " open"
-                                                       ""))}
+    (dom/li #js {:className (str "chapter_list_item"
+                                 (when (= (:status chapter) "finished") " finished")
+                                 (when selected? " open"))}
             (dom/a #js {:data-id (:id course)
-                        :className (str "chapter_title "
-                                        (when (= (:status chapter) "finished")
-                                           "finished"))
+                        :className "chapter_title"
                         :href (-> (get-in cursor [:view :selected-path])
                                   (assoc :chapter-id (:id chapter)
                                          :section-id nil
