@@ -29,12 +29,25 @@ RSpec.describe Question, :type => :model do
     expect(@question.to_s).to eq @question.text
   end
 
-  it "should export a default worked_out_answer when the worked_out_answer is empty" do
-    question = create(:question, worked_out_answer: "")
-    input1 = create(:line_input, inputable: question)
-    answer1 = create(:answer, line_input: input1, value: 'goed')
-    published_format = question.to_publishing_format_for_section
-    expect(published_format[:worked_out_answer]).to eq "Het juiste antwoord is: goed"
+  describe "should create a worked_out_answer when none is provided" do
+
+    it "with a single line input" do
+      question = create(:question, worked_out_answer: "")
+      input1 = create(:line_input, inputable: question)
+      answer1 = create(:answer, line_input: input1, value: 'correct')
+      published_format = question.to_publishing_format_for_section
+      expect(published_format[:worked_out_answer]).to eq "Het juiste antwoord is: correct"
+    end
+
+    it "with a single multiple choice input" do
+      question = create(:question, worked_out_answer: "")
+      input1 = create(:multiple_choice_input, inputable: question)
+      choice1 = create(:choice, value: "correct", multiple_choice_input: input1, correct: true)
+      choice1 = create(:choice, value: "not correct", multiple_choice_input: input1, correct: false)
+      published_format = question.to_publishing_format_for_section
+      expect(published_format[:worked_out_answer]).to eq "Het juiste antwoord is: correct"
+    end
+
   end
 
   it "should not export a worked out answer when exporting for entry quiz" do

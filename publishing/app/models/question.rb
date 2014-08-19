@@ -74,7 +74,7 @@ class Question < ActiveRecord::Base
     if input.is_a?(LineInput)
       value = input.answers.first.value
     elsif input.is_a?(MultipleChoiceInput)
-      value = render_latex(input.choices.first.value)
+      value = render_latex(input.choices.where(correct: true).first.value)
     end
     "Het juiste antwoord is: #{ value }"
   end
