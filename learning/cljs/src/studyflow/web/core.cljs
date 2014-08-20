@@ -91,7 +91,8 @@
                                                      ""))}
                                    (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
                                                          (assoc :chapter-id chapter-id
-                                                                :section-id section-id)
+                                                                :section-id section-id
+                                                                :section-tab :explanation)
                                                          history-link)
                                                :className "section_link"}
                                           title)
@@ -642,6 +643,7 @@
                  section-link (-> (get-in cursor [:view :selected-path])
                                   (assoc :chapter-id (:id chapter)
                                          :section-id section-id
+                                         :section-tab :explanation
                                          :main :learning)
                                   history-link)]
              (dom/li #js {:data-id section-id
