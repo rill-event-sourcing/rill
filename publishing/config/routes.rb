@@ -2,6 +2,7 @@ Rails.application.routes.draw do
 
   match 'select_course',  to: 'courses#select', via: :post
   match 'publish_course', to: 'home#publish', via: :post
+  match 'check_course', to: 'home#check', via: :get
   #match 'entry_quiz', to: 'entry_quiz#show', via: :get
 
   resource :entry_quiz do

@@ -7,14 +7,7 @@
           = @course.name
       %div.col-md-2
         = link_to 'Publish', publish_course_path, class: "btn btn-lg btn-success", method: :post
-
-    - errors = @course.errors_when_publishing
-    - unless errors.empty?
-      %div.row
-        %div.alert.alert-danger.col-md-8.col-md-offset-2
-          %ul
-            - errors.each do |error|
-              %li= error
+        = link_to 'Check', check_course_path, class: "btn btn-lg btn-info", style: "margin-top:20px;"
 
     %div.row{style: "margin-top:10px;"}
       %div.col-md-8.col-md-offset-2
