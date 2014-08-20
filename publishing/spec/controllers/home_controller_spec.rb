@@ -6,6 +6,9 @@ RSpec.describe HomeController, :type => :controller do
     @course = create(:course)
     session[:course_id] = @course.id
     @eq = create(:entry_quiz, course: @course)
+    @question = create(:question, worked_out_answer: "", text: "_INPUT_1_", quizzable: @eq)
+    @input1 = create(:line_input, inputable: @question)
+    @answer1 = create(:answer, line_input: @input1, value: 'correct')
     controller.send :set_my_course
 
     @url = "#{StudyflowPublishing::Application.config.learning_server}/api/internal/course/#{ @course.id }"
