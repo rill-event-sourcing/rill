@@ -76,7 +76,7 @@ class EntryQuizQuestionsController < ApplicationController
 
   def set_breadcrumb
     @crumbs = [{name: @course.name, url: root_path}]
-    @crumbs << {name: "Entry Quiz", url: entry_quiz_path(@entry_quiz)}
+    @crumbs << {name: "Entry Quiz", url: entry_quiz_path}
     @crumbs << {name: "Questions", url: entry_quiz_questions_path}
     @crumbs << {name: @question.to_param, url: entry_quiz_question_path(@question)} if @question
   end
