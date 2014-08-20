@@ -2,6 +2,7 @@
   (:require [clojure.tools.logging :as log]
             [rill.aggregate :as aggregate]
             [rill.event-store :as store]
+            [rill.repository :refer [retrieve-aggregate-and-version retrieve-aggregate]]
             [rill.event-stream :as stream]
             [rill.message :as message]))
 
@@ -29,20 +30,13 @@
                                         ; events apply to newly created aggregate
       (store/append-events store stream-id-from-event stream/empty-stream-version events))))
 
-(defn load-aggregate-and-version
-  [events]
-  (reduce (fn [[aggregate version] event]
-            [(aggregate/handle-event aggregate event) (message/number event)])
-          [nil stream/empty-stream-version]
-          events))
-
 (defn prepare-aggregates
   "fetch the primary event stream id and version and aggregates for `command`"
   [event-store command]
   (let [id (message/primary-aggregate-id command)
         additional-ids (aggregate/aggregate-ids command)
-        [aggregate current-version] (load-aggregate-and-version (store/retrieve-events event-store id))
-        additional-aggregates (map #(aggregate/load-aggregate (store/retrieve-events event-store %)) additional-ids)]
+        [aggregate current-version] (retrieve-aggregate-and-version event-store id)
+        additional-aggregates (map #(retrieve-aggregate event-store %) additional-ids)]
     (into [id current-version aggregate] additional-aggregates)))
 
 (defn try-command

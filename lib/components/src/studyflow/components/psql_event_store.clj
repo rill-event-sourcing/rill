@@ -2,6 +2,7 @@
   (:require [com.stuartsierra.component :refer [Lifecycle]]
             [rill.event-store.psql :refer [psql-event-store]]
             [rill.event-store.psql.pool :as pool]
+            [rill.repository :refer [wrap-caching-repository]]
             [clojure.tools.logging :refer [info debug spy]]))
 
 (defrecord PsqlEventStoreComponent [spec store connection]
@@ -11,7 +12,7 @@
     (let [connection (pool/open spec)]
       (-> component
           (assoc :connection connection)
-          (assoc :store (psql-event-store connection)))))
+          (assoc :store (wrap-caching-repository (psql-event-store connection))))))
   (stop [component]
     (info "Stopping in-psql event-store")
     (pool/close connection)

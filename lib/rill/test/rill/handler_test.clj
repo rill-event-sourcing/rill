@@ -6,7 +6,7 @@
             [rill.uuid :refer [new-id]]
             [rill.event-store :refer [retrieve-events]]
             [rill.event-stream :refer [empty-stream empty-stream-version]]
-            [rill.event-store.memory :refer [memory-store]]
+            [rill.temp-store :refer [given]]
             [schema.core :as s]))
 
 (defcommand HandlerCommand
@@ -34,11 +34,11 @@
            my-aggregate-id)))
 
   (testing "preparation of command"
-    (is (handler/prepare-aggregates (memory-store) (handler-command :my-id))
+    (is (handler/prepare-aggregates (given []) (handler-command :my-id))
         [:my-id empty-stream-version nil]))
 
   (testing "the events from a command handler get stored in the relevant aggregate stream"
-    (let [store (memory-store)]
+    (let [store (given [])]
       (is (= empty-stream
              (retrieve-events store my-aggregate-id)))
       (is (= :ok
