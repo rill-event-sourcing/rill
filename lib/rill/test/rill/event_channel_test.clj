@@ -1,7 +1,7 @@
 (ns rill.event-channel-test
   (:require [rill.event-channel :refer [event-channel]]
             [clojure.test :refer [is deftest testing]]
-            [rill.event-store.memory :refer [memory-store]]
+            [rill.temp-store :refer [given]]
             [rill.event-store :as store]
             [rill.event-stream :refer [empty-stream-version]]
             [rill.message :as message]
@@ -20,7 +20,7 @@
                              message/number idx)) [:a :b :c :d :e :f]))
 
 (deftest event-channel-test
-  (let [store (memory-store)]
+  (let [store (given [])]
     (let [channel (event-channel store stream-id empty-stream-version 0)]
       (is (store/append-events store stream-id empty-stream-version events))
       (is (= (<!! (go

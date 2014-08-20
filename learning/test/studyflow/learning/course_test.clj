@@ -5,10 +5,9 @@
             [studyflow.learning.course.fixture :as fixture]
             [rill.handler :refer [try-command]]
             [rill.message :as message]
-            [rill.event-store.memory :refer [memory-store]]
             [rill.uuid :refer [new-id]]
             [rill.aggregate :refer [load-aggregate handle-command]]
-            [rill.temp-store :refer [execute command-result=]]
+            [rill.temp-store :refer [execute command-result= given]]
             [clojure.test :refer [deftest testing is]]))
 
 (def course fixture/course-aggregate)
@@ -31,7 +30,7 @@
          new-course-id)))
 
 (deftest test-try-command
-  (let [store (memory-store)
+  (let [store (given [])
         [status events] (try-command store (commands/publish! (:id fixture/course-edn) fixture/course-edn))]
     (is (= :ok status))
     (is (= [::events/Published] (map message/type events)))))

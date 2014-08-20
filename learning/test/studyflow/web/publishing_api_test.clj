@@ -3,7 +3,7 @@
   (:require [cheshire.core :as json]
             [clojure.java.io :as io]
             [clout-link.route :refer [uri-for]]
-            [rill.event-store.memory :refer [memory-store]]
+            [rill.temp-store :refer [given]]
             [ring.mock.request :refer [body content-type request]]
             [studyflow.learning.course-material :as material]
             [studyflow.learning.course-material-test :as fixture]
@@ -14,7 +14,7 @@
 (def parsed-input (material/parse-course-material input))
 
 (deftest test-publishing-api-request-handler
-  (let [handler (publishing-api/make-request-handler (memory-store))
+  (let [handler (publishing-api/make-request-handler (given []))
         req (-> (request :put (uri-for routes/update-course-material (:id input)))
                 (body (slurp (io/resource "dev/material.json")))
                 (content-type "application/json"))
