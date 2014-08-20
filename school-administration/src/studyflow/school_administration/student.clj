@@ -245,5 +245,6 @@
   [first-name infix last-name]
   (if (and infix
            (not= "" infix))
-    (str first-name " " last-name)
-    (str first-name " " infix " " last-name)))
+    (str first-name " " infix " " last-name)
+    (str first-name " " last-name)))
+
