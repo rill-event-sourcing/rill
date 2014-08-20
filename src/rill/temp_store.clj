@@ -1,6 +1,7 @@
 (ns rill.temp-store
   (:require [rill.event-store :refer [retrieve-events append-events]]
             [rill.aggregate :refer [load-aggregate]]
+            [rill.repository :refer [wrap-basic-repository wrap-caching-repository]]
             [rill.handler :refer [try-command]]
             [rill.message :as message]
             [rill.event-store.memory :refer [memory-store]]))
@@ -11,16 +12,16 @@
 , `fetch` (which loads an aggregate given an id)
   `execute!` executes a command."
   [[store fetch execute! :as bindings] & body]
-  `(let [store# (memory-store)
+  `(let [store# (wrap-basic-repository (memory-store))
          ~store store#
          ~fetch #(load-aggregate (retrieve-events store# %))
          ~execute! #(first (try-command store# %))]
      ~@body))
 
 (defn given
-  "return an event store with the given events inserted"
+  "return an event store/repository with the given events inserted"
   [given-events]
-  (let [store (memory-store)]
+  (let [store (wrap-caching-repository (memory-store))]
     (doseq [events (partition-by message/primary-aggregate-id given-events)]
       (append-events store
                      (message/primary-aggregate-id (first events))
@@ -45,7 +46,6 @@
   "test messages for equality ignoring rill.message/id or rill.message/number"
   [& events]
   (apply = (map comparable-message events)))
-
 
 (defn messages=
   [expected-events actual-events]
