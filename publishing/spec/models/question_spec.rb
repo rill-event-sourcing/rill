@@ -109,6 +109,13 @@ RSpec.describe Question, :type => :model do
     expect(@question.errors_when_publishing).not_to include("Nonexisting inputs referenced in question '#{@question.name}', in '#{@question.quizzable}'")
   end
 
+  it "should not care whether a question of an entry quiz has an error or not" do
+    @input1 = create(:line_input, inputable: @question)
+    create(:answer, line_input: @input1, value: 'good')
+    @question.text = "_INPUT_#{@input1.position}_"
+    expect(@question.errors_when_publishing_for_entry_quiz).not_to include("No Worked-out-answer given for question '#{@question.name}', in '#{@question.quizzable}'")
+  end
+
   it "should detect when multiple inputs are given but no worked_out_answer is given" do
     @input1 = create(:line_input, inputable: @question)
     create(:answer, line_input: @input1, value: 'good')

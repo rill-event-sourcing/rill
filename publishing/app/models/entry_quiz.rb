@@ -22,7 +22,7 @@ class EntryQuiz < ActiveRecord::Base
   def errors_when_publishing
     errors = []
     errors << "No questions in the entry quiz" if questions.active.empty?
-    errors << questions.active.map(&:errors_when_publishing)
+    errors << questions.active.map(&:errors_when_publishing_for_entry_quiz)
     errors.flatten
   end
 
