@@ -23,8 +23,8 @@ class Course < ActiveRecord::Base
 
   def errors_when_publishing
     errors = chapters.active.map(&:errors_when_publishing).flatten
-    errors << "No entry quiz for the course" unless entry_quiz
-    errors
+    errors << (entry_quiz ? entry_quiz.errors_when_publishing : "No entry quiz for the course")
+    errors.flatten
   end
 
 
