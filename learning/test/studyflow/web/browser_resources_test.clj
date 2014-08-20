@@ -12,7 +12,7 @@
 
 (deftest html-resources-test
   ;; TODO use a test system based on components
-  (let [handler (browser-resources/make-request-handler)
+  (let [handler browser-resources/course-page-handler
         r (request :get (route/uri-for routes/get-course-page (:id input)))
         res (handler r)]
     (is (= (:status res) 200))

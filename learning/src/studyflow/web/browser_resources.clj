@@ -4,7 +4,7 @@
             [net.cgrand.enlive-html :as html]
             [studyflow.learning.read-model :refer [get-course-id]]
             [ring.middleware.resource :refer [wrap-resource]]
-            [ring.util.response :refer [charset]]
+            [ring.util.response :refer [response content-type charset]]
             [ring.middleware.content-type :refer [wrap-content-type]]
             [studyflow.web.handler-tools :refer [combine-ring-handlers]]
             [studyflow.web.routes :as routes]))
@@ -16,21 +16,23 @@
   [:input#student-id] (html/set-attr :value (str (:student-id student)))
   [:input#logout-target] (html/set-attr :value login-url))
 
+(def course-page-handler
+  (clout/handle routes/get-course-page
+                (fn [{:keys [read-model student redirect-urls] {:keys [course-name]} :params :as req}]
+                  (let [course-id (get-course-id read-model course-name)
+                        body (apply str (course-frame course-id student (:login redirect-urls)))]
+                    (-> (response body)
+                        (content-type "text/html")
+                        (charset "utf-8"))))))
+
 (defn wrap-utf-8
   [handler]
   (fn [request]
-    (-> request
-        handler
-        (charset "utf-8"))))
+    (when-let [response (handler request)]
+      (-> response (charset "utf-8")))))
 
-(defn make-request-handler
-  []
-  (-> (combine-ring-handlers
-       (clout/handle routes/get-course-page
-                     (fn [{:keys [read-model] {:keys [course-name]} :params :as req}]
-                       {:status 200
-                        :headers {"Content-Type" "text/html"}
-                        :body (apply str (course-frame (get-course-id read-model course-name) (:student req) (get-in req [:redirect-urls :login])))})))
+(def resource-handler
+  (-> (constantly nil)
       (wrap-resource "learning/public")
       wrap-content-type
       wrap-utf-8))

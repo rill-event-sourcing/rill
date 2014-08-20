@@ -32,11 +32,12 @@
 (defn make-request-handler
   [event-store read-model session-store redirect-urls]
   (-> (combine-ring-handlers
+       browser-resources/resource-handler
        (-> (combine-ring-handlers
             catchup-handler
             start/handler
             (api/make-request-handler event-store)
-            (wrap-redirect-urls (browser-resources/make-request-handler) redirect-urls))
+            (wrap-redirect-urls browser-resources/course-page-handler redirect-urls))
            (authentication/wrap-authentication session-store)
            (wrap-read-model read-model)
            (wrap-redirect-urls redirect-urls))
