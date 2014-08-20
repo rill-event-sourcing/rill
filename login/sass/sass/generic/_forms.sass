@@ -1,0 +1,58 @@
+@import compass
+
+// Text inputs & textarea fields
+
+input, textarea
+  color: rgb(63, 63, 58)
+  height: 40px
+  padding: 0 15px
+  outline: none
+  +border-radius(2px)
+  border: solid 2px #ccc
+  background-color: #fff
+  font-size: 17px
+  font-family: 'Sentinel SSm A', 'Sentinel SSm B', Georgia, serif
+  color: #29323a
+  +transition(0.1s border linear, 0.1s box-shadow linear)
+  +box-sizing(border-box)
+  &:focus
+    +box-shadow(0 0 4px rgba(144, 200, 223, 0.6))
+    border: 2px solid #90c8df
+  &:hover
+    border: 2px solid #90c8df
+
+input:-webkit-autofill
+  background: white
+
+// Animations for placeholder text in the inputs
+
+input::-webkit-input-placeholder
+  color: #B5BDC4
+  +transition(0.2s color linear)
+
+input:hover::-webkit-input-placeholder
+  color: #ccc
+
+input:focus::-webkit-input-placeholder
+  color: transparent
+
+input:-moz-placeholder
+  color: #B5BDC4
+  +transition(0.2s border linear, 0.2s box-shadow linear, 0.2s color linear)
+  // Keep these in, they are redundant; but defining them explicitly here is the only way the effects will work in FF
+
+input:hover:-moz-placeholder
+  color: #ccc
+
+input:focus:-moz-placeholder
+  color: transparent
+
+input:-ms-input-placeholder
+  color: #B5BDC4
+  +transition(0.2s color linear)
+
+input:hover:-ms-input-placeholder
+  color: #ccc
+
+input:focus:-ms-input-placeholder
+  color: transparent

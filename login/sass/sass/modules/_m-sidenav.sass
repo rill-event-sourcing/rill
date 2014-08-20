@@ -1,0 +1,169 @@
+@import compass
+
+#m-sidenav
+  +single-transition(transform, ease, 1s)
+  position: fixed
+  width: 336px
+  top: 66px
+  bottom: 0
+  left: 0
+  background-color: #fcfbf7
+  border-right: 2px solid #e8e7e2
+  z-index: 400
+
+  #student_info
+    height: 65px
+    border-bottom: 2px solid #d0d8e2
+    color: #728aa8
+    font-size: 24px
+    text-align: center
+    padding-top: 50px
+    font-weight: 500
+
+  #recommended_action
+    background: white
+    border-bottom: 2px solid #d0d8e2
+    height: 100px
+    margin-right: -2px
+
+
+  #sidenav_chapter_title
+    color: #434d56
+    font-weight: 600
+    font-size: 16px
+    line-height: 26px
+    padding: 9px 10px 7px 15px
+    text-transform: uppercase
+    letter-spacing: -0.2px
+    background: #f5f3f0
+
+  .section_list_item
+    +box-sizing(border-box)
+    position: relative
+
+    &.finished
+      &:after
+        background: url(/images/icon-section-finished-yellow.png) no-repeat 5px 6px #fceac7
+        border-color: #ebd8af
+
+    &.in_progress
+      &:after
+        //background: black
+
+    &:after
+      display: block
+      position: absolute
+      +border-radius(50%)
+      width: 26px
+      height: 26px
+      left: 17px
+      top: 50%
+      margin-top: -15px
+      content: ''
+      background: #f8f7f2
+      border: 2px solid #e6e4e1
+
+    &.open
+      background: #efeeea
+      border-bottom: 2px solid #e4e2df
+      border-top: 2px solid #e4e2df
+      margin: -1px -2px 0 0
+      padding: 30px 0 25px 0
+      &:after
+        top: 26px
+        margin-top: 0
+        border-color: #f3b339
+        background: #ffcd69
+      .section_link
+        border: 0
+        font-weight: 500
+        color: #434d56 !important
+        font-size: 18px
+        padding-top: 0
+        padding-bottom: 0
+        +text-shadow(none)
+        margin-bottom: 12px
+        &:after
+          display: none
+
+    .section_link
+      display: block
+      padding: 16px 25px 15px 70px
+      line-height: 23px
+      font-size: 14px
+      font-weight: 400
+      color: #9a978d
+      +text-shadow(0 1px rgba(255,255,255,0.6))
+      letter-spacing: -0.2px
+      &:hover
+        color: #515b62
+      &:after
+        height: 2px
+        width: 263px
+        background: #e4e2df
+        display: block
+        content: ''
+        bottom: -1px
+        right: 0
+        position: absolute
+
+    .section_tab
+      display: block
+      margin: 0 0 2px 76px
+      font-size: 16px
+      font-weight: 500
+      line-height: 62px
+      padding-left: 60px
+      border: 2px solid transparent
+      color: #888d91
+      text-shadow: 0 1px rgba(255,255,255,0.4)
+      letter-spacing: -0.2px
+      &:hover
+        color: #515b62
+      &.selected
+        background: white
+        +border-left-radius(3px)
+        color: #434d56
+        border: 2px solid #dddcd9
+        border-right: 0
+
+      &.explanation
+        background: url(/images/icon-explanation-inactive.png) no-repeat 7px 5px
+        &.selected
+          background: url(/images/icon-explanation.png) no-repeat 7px 5px white
+      &.questions
+        background: url(/images/icon-questions-inactive.png) no-repeat 12px 13px
+        &.selected
+          background: url(/images/icon-questions.png) no-repeat 9px 10px white
+
+#meta_content
+  position: fixed
+  bottom: 0
+  width: 336px
+  background: #efeeea
+  border-top: 2px solid #e4e2df
+  border-right: 2px solid #e4e2df
+  height: 64px
+  display: none
+
+#nav_toggle
+  background: black
+  float: right
+  width: 30px
+  height: 30px
+  margin: 15px 20px 0 0
+  display: none
+
+.hide_nav
+  #m-sidenav
+    +translateX(-338px)
+    #nav_toggle
+      position: fixed
+
+  #main
+    margin: 0 50px
+  #m-question_bar
+    left: 0
+  #m-top_header
+    #page_heading
+      margin: 20px 50px 0 50px

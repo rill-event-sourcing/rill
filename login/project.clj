@@ -19,7 +19,7 @@
                  [org.slf4j/slf4j-log4j12 "1.7.5"]
                  [studyflow/components "0.1.0-SNAPSHOT"]
                  [digest "1.4.4"]]
-
+  :resource-paths ["resources"]
   :profiles {:dev {:source-paths ["dev"]
                    :resource-paths ["dev/resources"]
                    :dependencies [[org.clojure/tools.trace "0.7.5"]

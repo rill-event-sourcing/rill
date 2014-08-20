@@ -1,0 +1,61 @@
+#m-modal
+  top: 0
+  bottom: 0
+  left: 0
+  right: 0
+  position: fixed
+  background: rgba(238,242,248,0.9)
+  z-index: 900
+  display: none
+  overflow-y: auto
+  &.show
+    display: block
+
+  .modal_inner
+    width: 610px
+    +border-radius(3px)
+    border: 1px solid #c8c9cd
+    background: white
+    margin: 60px auto
+    position: relative
+
+    h1
+      font-size: 19px
+      text-transform: uppercase
+      font-weight: 700
+      display: block
+      text-align: center
+      margin: 40px 25px 25px 25px
+      color: #4f5862
+
+    p, ul
+      padding: 0 50px
+      color: #a1a9b3
+      font-size: 15px
+      font-weight: 500
+      line-height: 28px
+      margin-bottom: 20px
+    ul, ol
+      margin: 0 0 20px 10px
+      li
+        padding-left: 10px
+
+    ol
+      list-style: outside decimal
+
+    ul
+      list-style: outside disc
+
+    b
+      font-weight: bold
+    i
+      font-style: italic
+
+    img
+      display: block
+      margin: 0 auto 30px auto
+
+    .modal_footer
+      padding: 40px 25px 25px 25px
+      height: 123px
+      +box-sizing(border-box)

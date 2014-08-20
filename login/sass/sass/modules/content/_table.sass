@@ -1,0 +1,53 @@
+@import compass
+
+.m-table
+  border: 1px solid #ddd
+  +border-radius(4px)
+  +box-shadow(0 1px 1px rgba(0, 0, 0, 0.08))
+  width: 100%
+  margin: 0 auto 30px auto
+  color: #3f3f3a
+  font-size: 14px
+  &.align_center
+    td
+      text-align: center
+
+  &.invisible
+    border: 0
+    +box-shadow(none)
+    width: auto
+    font-size: 17px
+    line-height: 16px
+    margin: 0 0 30px 0
+    td
+      border: 0
+      &:first-child
+        padding-left: 0
+    th
+      border: 0
+  td
+    border-left: 1px solid #ddd
+    border-top: 1px solid #ddd
+    padding: 10px
+  th
+    border-left: 1px solid #ddd
+    border-top: 1px solid #ddd
+    padding: 10px
+    background-color: #fafafa
+    +box-shadow(0 1px 0 rgba(255, 255, 255, 0.3) inset)
+    border-top: none
+  td:first-child
+    border-left: none
+  th
+    &:first-child
+      border-left: none
+      +border-radius(4px 0 0 0)
+    &:last-child
+      +border-radius(0 4px 0 0)
+    &:only-child
+      +border-radius(4px 4px 0 0)
+  tr:last-child td
+    &:first-child
+      +border-radius(0 0 0 4px)
+    &:last-child
+      +border-radius(0 0 4px 0)

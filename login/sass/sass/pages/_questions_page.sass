@@ -1,0 +1,54 @@
+// Set a variable color here that cascades downward ?
+
+.questions_page
+  #m-top_header
+    background: rgba(155, 226, 255, 0.95)
+    border-top: 4px solid #348fb4
+    border-bottom: 2px solid #8ed6f3
+    #home
+      background: url(/images/icon-home-blue.png) no-repeat 4px 7px
+  #m-sidenav
+    background: #eff5fc
+    border-color: #d2d8de
+    #sidenav_chapter_title
+      background: #e4eaf1
+    .section_link
+      color: #888f95
+      &:after
+        background: #e4eaf1
+    .section_list_item
+      &.open
+        background: #d3dfe9
+        border-color: #c0cfdb
+        &:after
+          background: #59caf8 !important
+          border-color: #40a3cb
+      &:after
+        border-color: #ccd2d8
+        background: #eff3f8
+      &.finished
+        &:after
+          background: url(/images/icon-section-finished-blue.png) no-repeat 5px 6px #d3d9df
+    .section_tab
+      color: #8b969f
+      &.selected
+        border-color: #a4b8ca
+        color: #434d56
+    #meta_content
+      background: #d3dfe9
+      border-color: #c0cfdb
+  #m-section
+    margin-bottom: 180px
+  #m-path
+    background: #eff5fc
+    border-color: #d4dae1
+    &:after
+      background: white
+      height: 277px
+      border-bottom: 2px solid #d4dae1
+      display: block
+      content: ''
+      width: 49px
+      position: absolute
+      left: -2px
+      top: 0
