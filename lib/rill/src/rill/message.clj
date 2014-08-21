@@ -3,11 +3,13 @@
   (:require [schema.macros :as sm]
             [schema.core :as s]
             [rill.uuid :refer [new-id]]
+            [rill.timestamp :refer [now]]
             [nl.zeekat.identifiers :refer [lisp-name]]))
 
 (def id ::id)
 (def type ::type)
 (def number ::number)
+(def timestamp ::timestamp)
 
 (defn data
   [m]
@@ -31,7 +33,8 @@
   [message-type data]
   (assoc data
     type message-type
-    id (new-id)))
+    id (new-id)
+    timestamp (now)))
 
 (defmacro defmessage
   [name & params]
@@ -48,17 +51,12 @@
                             ::type type-keyword}
                            (map vec (partition 2 params))))
 
-         (defn ~(symbol (str "map->" name-str))
-           ~(str "Inserts a " name-str " rill.message/type tag into the given map.")
-           [params#]
-           (assoc params# ::type ~type-keyword))
-
          ~(let [args (params->args params)
                 ks (mapv keyword args)]
             `(defn ~(symbol (lisp-name name-str))
                ~(str "Create a new " name-str " message from the positional arguments. Automatically generates a new message id.")
                ~(vec args)
-               ~(make-message type-keyword (zipmap ks args))))
+               (make-message ~type-keyword ~(zipmap ks args))))
 
          (defmethod primary-aggregate-id
            ~type-keyword
