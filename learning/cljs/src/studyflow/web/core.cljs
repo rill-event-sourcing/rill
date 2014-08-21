@@ -652,7 +652,7 @@
                       section))]
     (some finished? (:sections chapter))))
 
-(defn recommended-with-link [cursor]
+(defn recommended-item [cursor]
   (let [course (get-in cursor [:view :course-material])
         entry-quiz (:entry-quiz course)]
     (if (not (contains? #{"passed" "failed"} (:status entry-quiz)))
@@ -670,10 +670,9 @@
                           :main :learning)
                    history-link)} ))))
 
-
 (defn sections-navigation [cursor chapter]
   (apply dom/ol #js {:id "section_list"}
-         (let [recommended-id (:id (recommended-with-link cursor))]
+         (let [recommended-id (:id (recommended-item cursor))]
            (for [{:keys [title status]
                   section-id :id
                   :as section} (:sections chapter)]
@@ -769,7 +768,7 @@
       (dom/aside #js {:id "m-sidenav"}
                  (dom/div #js {:id "student_info"} (get-in cursor [:static :student :full-name]))
                  (dom/div #js {:id "recommended_action"}
-                          (let [{:keys [title link]} (recommended-with-link cursor)]
+                          (let [{:keys [title link]} (recommended-item cursor)]
                             (dom/div nil
                                      (dom/span nil "Ga verder met:")
                                      (dom/p nil title)
