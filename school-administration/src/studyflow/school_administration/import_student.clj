@@ -4,44 +4,46 @@
             [rill.handler :refer [try-command]]
             [rill.uuid :refer [new-id]]
             [studyflow.school-administration.student :as student]
+            [studyflow.command-tools :refer [with-claim combine-commands]]
+            [rill.message :refer [defcommand]]
+            [rill.aggregate :refer [handle-command handle-event update-aggregate]]
+            [schema.core :as s]
+            [clojure.tools.logging :as log]
             [clojure.java.io :as io]
             [clojure.string :as string]))
 
-(defn import-student-commands
-  [department-id student-id {:keys [full-name email password class-name]}]
-  {:pre [full-name email password class-name]}
-  [(student/create! student-id full-name)
-   (student/change-department! student-id 0 department-id)
-   (student/change-class! student-id 1 class-name)
-   (student/change-credentials! student-id 2 email (bcrypt/encrypt password))])
+(defcommand ImportStudent!
+  :student-id s/Uuid
+  :full-name s/Uuid
+  :department-id s/Uuid
+  :class-name s/Str
+  :email s/Str
+  :encrypted-password s/Str)
+
+(defmethod handle-command ::ImportStudent!
+  [student {:keys [student-id full-name department-id class-name email encrypted-password]}]
+  (combine-commands student
+                    (student/create! student-id full-name)
+                    (student/change-department! student-id 0 department-id)
+                    (student/change-class! student-id 1 class-name)
+                    (student/change-credentials! student-id 2 email encrypted-password)))
 
 (defn ok?
   [[status & _]]
   (= :ok status))
 
-(defn try-all
-  "try all commands in order until done or one of them is not ok
-
-  Returns the result of the last executed command"
-  [event-store [command & commands]]
-  (let [result (try-command event-store command)]
-    (if (ok? result)
-      (if (seq? commands)
-        (recur event-store commands)
-        result)
-      result)))
-
 (defn import-student
-  [event-store department-id student-id {:keys [email] :as student}]
+  [event-store department-id student-id {:keys [full-name class-name email password] :as student}]
+  {:pre [student-id department-id class-name email password]}
   (if (and email
            (not= "" email))
-    (if (ok? (try-command event-store (student/claim-email-address! student-id email)))
-      (let [result (try-all event-store (import-student-commands department-id student-id student))]
-        (if (ok? result)
-          result
-          (do (try-command event-store (student/release-email-address! student-id email))
-              result)))
-      [:skipped])
+    (let [encrypted-password (bcrypt/encrypt password)
+          result (with-claim event-store
+                   (student/claim-email-address! student-id email)
+                   (import-student! student-id full-name department-id class-name email encrypted-password)
+                   (student/release-email-address! student-id email))]
+      (log/info result)
+      result)
     [:invalid-email]))
 
 (defn skipped?
@@ -58,17 +60,16 @@
 
 (defn import-students
   [event-store department-id students]
+  {:pre [department-id students event-store]}
   (let [results (doall (map #(import-student event-store department-id (new-id) %)
                             students))
         total (count students)
         imported (count (filter ok? results))
-        skipped  (count (filter skipped? results))
-        errors (- total imported skipped)]
+        errors (filter (complement ok?) results)]
     {:results results
      :total-students total
      :total-imported imported
-     :total-skipped skipped
-     :total-errors errors}))
+     :errors errors}))
 
 
 (defn import-csv-data
@@ -78,6 +79,7 @@
 
 (defn import-tabbed-string
   [event-store department-id tabbed]
+  {:pre [event-store department-id tabbed]}
   (import-csv-data event-store department-id (map #(-> %
                                                        string/trim-newline
                                                        (string/split #"\t"))

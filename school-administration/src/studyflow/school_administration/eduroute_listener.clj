@@ -5,16 +5,8 @@
             [rill.handler :refer [try-command]]
             [rill.message :as message]
             [rill.uuid :refer [new-id uuid]]
+            [studyflow.command-tools :refer [with-claim]]
             [studyflow.school-administration.student :as student]))
-
-(defn with-claim [event-store claim main revert-claim]
-  (let [[claim-status :as claim-result] (try-command event-store claim)]
-    (if (= :ok claim-status)
-      (let [[main-status :as main-result] (try-command event-store main)]
-        (when-not (= :ok main-status)
-          (try-command event-store revert-claim))
-        main-result)
-      claim-result)))
 
 (defn handle-edu-route-event
   [event-store {:keys [edu-route-id full-name]}]

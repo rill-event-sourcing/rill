@@ -55,5 +55,5 @@
           (-> (redirect-to-edit school-id department-id)
               (merge-flash (if (= (:total-imported result) (:total-students result))
                              {:message (format "Successfully imported all %d students." (:total-students result))}
-                             {:warning (format "Error(s) importing students: %d total students in import, %d successfully imported, %d skipped because they already existed and %d students with errors."
-                                               (:total-students result) (:total-imported result) (:total-skipped result) (:total-errors result))}))))))
+                             {:warning (format "Error(s) importing students: %d total students in import, %d successfully imported. %s"
+                                               (:total-students result) (:total-imported result) (pr-str (:errors result)))}))))))

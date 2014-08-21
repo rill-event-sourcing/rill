@@ -147,7 +147,7 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; claimig an email adress
+;; claiming an email adress
 
 (defcommand ClaimEmailAddress!
   :owner-id s/Uuid
