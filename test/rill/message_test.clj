@@ -16,5 +16,13 @@
     (is (= (message/type (foo-message 456))
            ::FooMessage))
     (is (= (:my-id (foo-message 456))
-           456))))
+           456))
+    (is (message/id (foo-message 1)))
+    (is (not= (message/id (foo-message 1))
+              (message/id (foo-message 1))))
+    (is (message/timestamp (foo-message 2)))
+    (let [t1 (message/timestamp (foo-message 1))]
+      (Thread/sleep 22)
+      (let [t2 (message/timestamp (foo-message 1))]
+        (is (not= t1 t2))))))
 
