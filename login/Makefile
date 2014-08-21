@@ -6,6 +6,7 @@ test:
 	STUDYFLOW_ENV=test lein test && echo "OK"
 
 build:
+	make -C .. css
 	lein uberjar
 
 upload:
@@ -13,6 +14,3 @@ upload:
 	DATE=`date +'%Y%m%d-%H%M%S'` && \
 	S3_FILE="s3://studyflow-server-images/$$SHA/$$DATE-studyflow_login.jar" && \
 	s3cmd --multipart-chunk-size-mb=5 put target/*-SNAPSHOT-standalone.jar $$S3_FILE
-
-css:
-	cd sass && bundle install && bundle exec compass compile
