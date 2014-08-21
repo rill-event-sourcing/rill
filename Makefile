@@ -36,6 +36,13 @@ school-administration: rill components
 
 build: login publishing learning school-administration
 
+test:	install
+	cd lib/rill && make test
+	cd lib/components && make test
+	cd learning && make test
+	cd login && make test
+	cd school-administration && make test
+	cd publishing && make test
 
 upload: build
 	cd learning && make upload
