@@ -4,21 +4,39 @@
   right: 0
   bottom: 0
   left: 0
-  //background: url(/images/pattern-login.png) repeat center #eff3f8
   background: url(pattern-login.png) repeat center #eff3f8
 
   #login_screen
     width: 410px
-    height: 360px
     background: white
     top: 50%
     margin-top: -170px
+    padding-bottom: 20px
     left: 50%
     margin-left: -205px
-    position: absolute
+    position: fixed
     border: 1px solid #cacfd7
     +border-radius(5px)
+    +box-shadow(0 0 8px rgba(90, 102, 120, 0.08))
+
+    -webkit-animation-name: bounceIn
+    -webkit-animation-fill-mode: both
+    -webkit-animation-duration: 0.5s
+    -webkit-animation-iteration-count: 1
+    -webkit-animation-timing-function: linear
+    animation-name: bounceIn
+    animation-fill-mode: both
+    animation-duration: 0.5s
+    animation-iteration-count: 1
+    animation-timing-function: linear
 
     #logo_small
-      margin: 30px auto
+      margin: 40px auto
       display: block
+
+    .login_heading
+      position: absolute
+      top: 204px
+      color: rgb(238, 74, 51)
+      right: 40px
+      pointer-events: none
