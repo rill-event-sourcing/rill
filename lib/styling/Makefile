@@ -16,3 +16,9 @@ learning: install
 
 login: install
 	bundle exec compass compile --css-dir ${LOGIN_CSS_DIR}
+
+watch-learning: install
+	bundle exec compass watch --css-dir ${LEARNING_CSS_DIR}
+
+watch-login: install
+	bundle exec compass watch --css-dir ${LOGIN_CSS_DIR}
