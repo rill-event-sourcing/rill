@@ -39,7 +39,7 @@
   (form/form-to
    {:role "form" :id "login_screen" } [:post "/"]
    ;;(form/hidden-field "__anti-forgery-token" *anti-forgery-token*)
-   [:h2 msg]
+   [:h2.login_heading msg]
    [:img {:src "logo-small.png" :id "logo_small"}]
    (form/email-field {:class "login_form" :placeholder "E-mailadres"} "email" email)
    (form/password-field {:class "login_form" :placeholder "Wachtwoord"} "password" password)

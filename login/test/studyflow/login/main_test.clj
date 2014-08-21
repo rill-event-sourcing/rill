@@ -25,7 +25,7 @@
       (let [resp (actions (-> (request :get "/")
                               caught-up))]
         (is (= 200 (:status resp)) "status should be OK")
-        (let [form (query-html (:body resp) [:form.form-signin])]
+        (let [form (query-html (:body resp) [:form#login_screen])]
           (is form)
           (is (query-html form [[(enlive/attr= :method "POST" :action "/")]]))
           (is (query-html form [[:input (enlive/attr= :name "password")]]))
@@ -46,8 +46,8 @@
                                 :authenticate-by-email-and-password (fn [x y] nil ))
                               caught-up))]
         (is (= 200 (:status resp)))
-        (is (query-html (:body resp) [:h2.form-signin-heading]))
-        (is (query-html (:body resp) [:form.form-signin]))))
+        (is (query-html (:body resp) [:h2.login_heading]))
+        (is (query-html (:body resp) [:form#login_screen]))))
 
     (testing "not authenticated"
       (let [resp (actions (-> (request :post "/")
@@ -56,10 +56,10 @@
                                      :authenticate-by-email-and-password (fn [x y] nil ))
                               caught-up))]
         (is (= 200 (:status resp)))
-        (is (query-html (:body resp) [:h2.form-signin-heading]))
-        (is (query-html (:body resp) [:form.form-signin]))))
+        (is (query-html (:body resp) [:h2.login_heading]))
+        (is (query-html (:body resp) [:form#login_screen]))))
 
-    (testing "authenticate-by-email-and-passwordd"
+    (testing "authenticate-by-email-and-password"
       (let [resp (actions (-> (request :post "/")
                               (assoc :email "something@email.com"
                                      :password "password"
