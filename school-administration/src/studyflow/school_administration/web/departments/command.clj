@@ -1,5 +1,6 @@
 (ns studyflow.school-administration.web.departments.command
-  (:require [compojure.core :refer [POST defroutes]]
+  (:require [clojure.string :as str]
+            [compojure.core :refer [POST defroutes]]
             [rill.handler :refer [try-command]]
             [rill.uuid :refer [new-id uuid]]
             [ring.util.response :refer [redirect]]
@@ -57,7 +58,16 @@
         (let [department-id (uuid department-id)
               result (import-tabbed-string event-store department-id student-data)]
           (-> (redirect-to-edit school-id department-id)
-              (merge-flash (if (= (:total-imported result) (:total-students result))
-                             {:message (format "Successfully imported all %d students." (:total-students result))}
-                             {:warning (format "Error(s) importing students: %d total students in import, %d successfully imported. %s"
-                                               (:total-students result) (:total-imported result) (pr-str (:errors result)))}))))))
+              (merge-flash (cond
+                            (nil? result)
+                            {:warning "Nothing imported.."}
+
+                            (= (:total-imported result) (:total-students result))
+                            {:message (format "Successfully imported all %d student(s)."
+                                              (:total-students result))}
+
+                            result
+                            {:warning (format "Error(s) importing student(s): %d total student(s) in import, %d successfully imported.\n\n%s"
+                                              (:total-students result)
+                                              (:total-imported result)
+                                              (str/join "\n" (map pr-str (:errors result))))}))))))

@@ -27,7 +27,7 @@
                    (student/release-email-address! student-id email))]
       (log/info result)
       result)
-    [:invalid-email]))
+    [:rejected {:email :invalid}]))
 
 (defn skipped?
   [[status & _]]
@@ -48,12 +48,17 @@
 
 (defn import-students
   [event-store department-id students]
-  {:pre [department-id students event-store]}
-  (let [results (doall (map #(import-student event-store department-id (new-id) %)
-                            students))
+  (let [results (->> students
+                     (map #(import-student event-store department-id (new-id) %))
+                     doall)
         total (count students)
         imported (count (filter ok? results))
-        errors (filter (complement ok?) results)]
+        errors (filter identity
+                       (map (fn [result student]
+                              (when-not (ok? result)
+                                (concat [(:email student)] (next result))))
+                            results
+                            students))]
     {:results results
      :total-students total
      :total-imported imported

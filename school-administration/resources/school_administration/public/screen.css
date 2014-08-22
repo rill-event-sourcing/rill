@@ -100,6 +100,7 @@ tr:nth-child(odd) td {
   color: #f00;
   font-size: larger;
   font-weight: bold;
+  white-space: pre;
 }
 .message {
   margin: 2em auto;
