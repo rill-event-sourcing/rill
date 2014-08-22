@@ -57,6 +57,14 @@
                                    [:view :side-navigation :shown]
                                    (not (get-in @cursor [:view :side-navigation :shown]))))}))))
 
+(defn section-explanation-link [cursor chapter section]
+  (-> (get-in cursor [:view :selected-path])
+      (assoc :chapter-id (:id chapter)
+             :section-id (:id section)
+             :section-tab :explanation
+             :main :learning)
+      history-link))
+
 (defn navigation [cursor owner]
   (reify
     om/IWillMount
@@ -90,11 +98,7 @@
                                                      (aggregates/section-test-progress
                                                       (get-in cursor [:aggregates section-id]))
                                                      ""))}
-                                   (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
-                                                         (assoc :chapter-id chapter-id
-                                                                :section-id section-id
-                                                                :section-tab :explanation)
-                                                         history-link)
+                                   (dom/a #js {:href (section-explanation-link cursor chapter section)
                                                :className "section_link"}
                                           title)
                                    (when open-section
@@ -661,12 +665,7 @@
             section (first-non-completed-section chapter)]
         {:title (:title section)
          :id (:id section)
-         :link (-> (get-in cursor [:view :selected-path])
-                   (assoc :chapter-id (:id chapter)
-                          :section-id (:id section)
-                          :section-tab :explanation
-                          :main :learning)
-                   history-link)} ))))
+         :link (section-explanation-link cursor chapter section)} ))))
 
 (defn sections-navigation [cursor chapter]
   (apply dom/ol #js {:id "section_list"}
@@ -676,12 +675,7 @@
                   :as section} (:sections chapter)]
              (let [section-status (get {"finished" "finished"
                                         "in-progress" "in_progress"} status "")
-                   section-link (-> (get-in cursor [:view :selected-path])
-                                    (assoc :chapter-id (:id chapter)
-                                           :section-id section-id
-                                           :section-tab :explanation
-                                           :main :learning)
-                                    history-link)]
+                   section-link (section-explanation-link cursor chapter section)]
                (dom/li #js {:data-id section-id
                             :className (str "section_list_item " section-status
                                             (when (= recommended-id section-id) " recommended")) }
