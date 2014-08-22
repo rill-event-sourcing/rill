@@ -179,6 +179,16 @@
                                                      " correct")
                                                    (when answer-revealed
                                                      " incorrect"))
+                                   :onBlur (fn [event]
+                                              (om/update!
+                                               cursor
+                                               [:view :section section-id :input-focused]
+                                               nil))
+                                   :onFocus (fn [event]
+                                              (om/update!
+                                               cursor
+                                               [:view :section section-id :input-focused]
+                                               field-name))
                                    :onSubmit (fn [e]
                                                (submit)
                                                false)}
@@ -188,16 +198,12 @@
                                     :ref (:name field)
                                     :value (get-in cursor [:view :section section-id :input field-name :given-answer])
                                     :disabled (get-in cursor [:view :section section-id :input field-name :input-disabled])
-                                    :onFocus (fn [event]
+
+                                    :onChange (fn [event]
                                                 (om/update!
                                                  cursor
                                                  [:view :section section-id :input field-name :answer-submitted?]
                                                  false)
-                                               (om/update!
-                                                cursor
-                                                [:view :section section-id :input-focused]
-                                                field-name))
-                                    :onChange (fn [event]
                                                 (om/update!
                                                  cursor
                                                  [:view :section section-id :input field-name :given-answer]
@@ -205,6 +211,7 @@
                               (when input-focused
                                 (dom/div #js {:className "inline_input_tooltip"}
                                          (when (and answer-revealed
+                                                    (not answer-submitted?)
                                                     (not answered-correctly))
                                            (dom/p #js {:className "answer"}
                                                   (first correct-answers)))
@@ -229,7 +236,8 @@
                                                              cursor
                                                              [:view :section section-id :input field-name :answer-submitted?]
                                                              true)
-                                                            (submit))}))
+                                                            (submit)
+                                                            (.focus (.getDOMNode (aget (.-refs owner) field-name))))}))
                                          (if answered-correctly
                                            (do
                                              (om/set-state-nr! owner :submit (fn []))
