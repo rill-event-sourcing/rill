@@ -59,17 +59,14 @@
      :total-imported imported
      :errors errors}))
 
-
-(defn import-csv-data
+(defn import-rows
   [event-store department-id rows]
-  (if-let [data-rows (next rows)]
+  (if-let [data-rows (next rows)] ; skip the header
     (import-students event-store department-id (map row->student data-rows))))
 
 (defn import-tabbed-string
   [event-store department-id tabbed]
   {:pre [event-store department-id tabbed]}
-  (import-csv-data event-store department-id (map #(-> %
-                                                       string/trim-newline
-                                                       (string/split #"\t"))
-                                                  (filter (complement string/blank?)
-                                                          (string/split tabbed #"\n")))))
+  (let [lines (filter (complement string/blank?) (string/split tabbed #"\n"))
+        rows (map #(-> % string/trim-newline (string/split #"\t")) lines)]
+    (import-rows event-store department-id rows)))

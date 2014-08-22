@@ -17,8 +17,9 @@
   (redirect "/new-school"))
 
 (defroutes commands
-  (POST "/create-school" {:keys [event-store]
-                           {:keys [name brin] :as params} :params}
+  (POST "/create-school"
+        {:keys [event-store]
+         {:keys [name brin] :as params} :params}
         (let [school-id (new-id)]
           (-> event-store
               (with-claim
@@ -29,8 +30,9 @@
                                 (redirect-to-new)
                                 params))))
 
-  (POST "/change-school-name" {:keys [event-store]
-                               {:keys [school-id expected-version name] :as params} :params}
+  (POST "/change-school-name"
+        {:keys [event-store]
+         {:keys [school-id expected-version name] :as params} :params}
         (-> event-store
             (try-command (school/change-name! (uuid school-id) (Long/parseLong expected-version) name))
             (result->response (redirect-to-index)

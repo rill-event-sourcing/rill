@@ -17,8 +17,9 @@
   (redirect (str "/new-department/" school-id)))
 
 (defroutes commands
-  (POST "/create-department/:school-id" {:keys [event-store]
-                                         {:keys [school-id name] :as params} :params}
+  (POST "/create-department/:school-id"
+        {:keys [event-store]
+         {:keys [school-id name] :as params} :params}
         (let [department-id (new-id)
               school-id (uuid school-id)]
           (-> event-store
@@ -27,8 +28,9 @@
                                 (redirect-to-new school-id)
                                 params))))
 
-  (POST "/change-department-name/:school-id" {:keys [event-store]
-                                              {:keys [school-id department-id expected-version name] :as params} :params}
+  (POST "/change-department-name/:school-id"
+        {:keys [event-store]
+         {:keys [school-id department-id expected-version name] :as params} :params}
         (let [department-id (uuid department-id)
               version (Long/parseLong expected-version)]
           (-> event-store
@@ -37,8 +39,9 @@
                                 (redirect-to-edit school-id department-id)
                                 params))))
 
-  (POST "/change-department-sales-data/:school-id" {:keys [event-store]
-                                                    {:keys [school-id department-id expected-version licenses-sold status] :as params} :params}
+  (POST "/change-department-sales-data/:school-id"
+        {:keys [event-store]
+         {:keys [school-id department-id expected-version licenses-sold status] :as params} :params}
         (let [department-id (uuid department-id)
               version (Long/parseLong expected-version)
               licenses-sold (Long/parseLong licenses-sold)]
@@ -47,6 +50,7 @@
               (result->response (redirect-to-index school-id)
                                 (redirect-to-edit school-id department-id)
                                 params))))
+
   (POST "/import-students/:school-id"
         {:keys [event-store]
          {:keys [department-id student-data school-id]} :params}
