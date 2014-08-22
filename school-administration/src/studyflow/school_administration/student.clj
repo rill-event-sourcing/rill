@@ -249,13 +249,18 @@
   :email s/Str
   :encrypted-password s/Str)
 
+(defn validate-with [pred msg rec ks & [errors]]
+  (reduce (fn [m k] (update-in m [k] conj msg))
+          (or errors {})
+          (filter (complement #(pred (get rec %))) ks)))
+
 (defmethod handle-command ::ImportStudent!
-  [student {:keys [student-id full-name department-id class-name email encrypted-password] :as attrs}]
+  [student {:keys [student-id full-name department-id class-name email encrypted-password] :as import}]
   {:pre [(nil? student)]}
-  (let [errors (reduce (fn [m k] (assoc m k [(:can-not-be-blank error-messages)]))
-                       {}
-                       (filter #(str/blank? (str (get attrs %)))
-                               [:full-name :department-id :class-name :email :encrypted-password]))]
+  (let [errors (validate-with (complement #(str/blank? (str %)))
+                              (:can-not-be-blank error-messages)
+                              import
+                              [:full-name :department-id :class-name :email :encrypted-password])]
     (if (seq errors)
       [:rejected errors]
       [:ok [(events/imported student-id

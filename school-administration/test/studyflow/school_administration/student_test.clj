@@ -41,3 +41,11 @@
                                      (department/created department-id school-id "DEPT")
                                      (events/created student-id "Pietje Puk")
                                      (events/department-changed student-id department-id)]))))))
+
+(deftest test-validate-with
+  (testing "without errors"
+    (is (= {} (student/validate-with (constantly true) "error" {} [:a]))))
+  (testing "with errors"
+    (is (= {:a ["error"]} (student/validate-with (constantly false) "error" {} [:a]))))
+  (testing "with pre existing errors"
+    (is (= {:a ["first" "second"]} (student/validate-with (constantly false) "second" {} [:a] {:a ["first"]})))))
