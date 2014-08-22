@@ -83,7 +83,9 @@
        (form/hidden-field "expected-version version")
        [:div.field
         (form/label "student-data" "Student data; copy and paste from Excel") [:br]
-        (form/text-area {:class "tab-delimited-data" :wrap "off"} "student-data")]
+        (form/text-area {:class "tab-delimited-data"
+                         :placeholder "first-name\tinfix\tlast-name\temail\tpassword\tclass-name"
+                         :wrap "off"} "student-data")]
        [:div.actions
         [:button.primary {:type "submit"} "Import new students"]
         (cancel-button school-id)]]))))

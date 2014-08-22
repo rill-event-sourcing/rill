@@ -59,9 +59,12 @@
   (m/set-student-section-status model section-id student-id :in-progress))
 
 (defmethod handle-event :studyflow.school-administration.student.events/Created
-  [model event]
-  (log/debug "Adding student to read-model: " event)
-  (m/set-student model (:student-id event) {:full-name (:full-name event)}))
+  [model {:keys [student-id full-name]}]
+  (m/set-student model student-id {:full-name full-name}))
+
+(defmethod handle-event :studyflow.school-administration.student.events/Imported
+  [model {:keys [student-id full-name]}]
+  (m/set-student model student-id {:full-name full-name}))
 
 (defmethod handle-event :default
   [model event]
@@ -73,5 +76,3 @@
 (defmethod handle-event ::event-channel/CaughtUp
   [model _]
   (m/caught-up model))
-
-

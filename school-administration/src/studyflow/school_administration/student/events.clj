@@ -61,3 +61,9 @@
   :department-id s/Uuid
   :class-name s/Str)
 
+(defevent Imported
+  :student-id s/Uuid
+  :full-name s/Str
+  :department-id s/Uuid
+  :class-name s/Str
+  :credentials EmailPasswordCredentials)

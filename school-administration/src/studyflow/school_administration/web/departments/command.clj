@@ -1,5 +1,6 @@
 (ns studyflow.school-administration.web.departments.command
-  (:require [compojure.core :refer [POST defroutes]]
+  (:require [clojure.string :as str]
+            [compojure.core :refer [POST defroutes]]
             [rill.handler :refer [try-command]]
             [rill.uuid :refer [new-id uuid]]
             [ring.util.response :refer [redirect]]
@@ -17,8 +18,9 @@
   (redirect (str "/new-department/" school-id)))
 
 (defroutes commands
-  (POST "/create-department/:school-id" {:keys [event-store]
-                                         {:keys [school-id name] :as params} :params}
+  (POST "/create-department/:school-id"
+        {:keys [event-store]
+         {:keys [school-id name] :as params} :params}
         (let [department-id (new-id)
               school-id (uuid school-id)]
           (-> event-store
@@ -27,8 +29,9 @@
                                 (redirect-to-new school-id)
                                 params))))
 
-  (POST "/change-department-name/:school-id" {:keys [event-store]
-                                              {:keys [school-id department-id expected-version name] :as params} :params}
+  (POST "/change-department-name/:school-id"
+        {:keys [event-store]
+         {:keys [school-id department-id expected-version name] :as params} :params}
         (let [department-id (uuid department-id)
               version (Long/parseLong expected-version)]
           (-> event-store
@@ -37,8 +40,9 @@
                                 (redirect-to-edit school-id department-id)
                                 params))))
 
-  (POST "/change-department-sales-data/:school-id" {:keys [event-store]
-                                                    {:keys [school-id department-id expected-version licenses-sold status] :as params} :params}
+  (POST "/change-department-sales-data/:school-id"
+        {:keys [event-store]
+         {:keys [school-id department-id expected-version licenses-sold status] :as params} :params}
         (let [department-id (uuid department-id)
               version (Long/parseLong expected-version)
               licenses-sold (Long/parseLong licenses-sold)]
@@ -47,13 +51,23 @@
               (result->response (redirect-to-index school-id)
                                 (redirect-to-edit school-id department-id)
                                 params))))
+
   (POST "/import-students/:school-id"
         {:keys [event-store]
          {:keys [department-id student-data school-id]} :params}
         (let [department-id (uuid department-id)
               result (import-tabbed-string event-store department-id student-data)]
           (-> (redirect-to-edit school-id department-id)
-              (merge-flash (if (= (:total-imported result) (:total-students result))
-                             {:message (format "Successfully imported all %d students." (:total-students result))}
-                             {:warning (format "Error(s) importing students: %d total students in import, %d successfully imported, %d skipped because they already existed and %d students with errors."
-                                               (:total-students result) (:total-imported result) (:total-skipped result) (:total-errors result))}))))))
+              (merge-flash (cond
+                            (nil? result)
+                            {:warning "Nothing imported.."}
+
+                            (= (:total-imported result) (:total-students result))
+                            {:message (format "Successfully imported all %d student(s)."
+                                              (:total-students result))}
+
+                            result
+                            {:warning (format "Error(s) importing student(s): %d total student(s) in import, %d successfully imported.\n\n%s"
+                                              (:total-students result)
+                                              (:total-imported result)
+                                              (str/join "\n" (map pr-str (:errors result))))}))))))

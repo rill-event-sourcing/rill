@@ -60,6 +60,15 @@
       (m/set-student-class-name student-id class-name)
       (m/set-aggregate-version student-id number)))
 
+(defmethod handle-event ::student-events/Imported
+  [model {:keys [student-id full-name department-id class-name credentials ::message/number]}]
+  (-> model
+      (m/set-student-full-name student-id full-name)
+      (m/set-student-department student-id department-id)
+      (m/set-student-class-name student-id class-name)
+      (m/set-student-email student-id (:email credentials))
+      (m/set-aggregate-version student-id number)))
+
 (defmethod handle-event ::school-events/Created
   [model {:keys [school-id name brin ::message/number]}]
   (-> model
@@ -99,5 +108,3 @@
 (defmethod handle-event ::event-channel/CaughtUp
   [model _]
   (m/caught-up model))
-
-

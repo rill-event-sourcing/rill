@@ -6,7 +6,8 @@
                                                  add-email-and-password-credentials
                                                  authenticate-by-edu-route-id
                                                  authenticate-by-email-and-password
-                                                 handle-event]]
+                                                 handle-event
+                                                 change-email]]
             [studyflow.school-administration.student.events :as student-events]))
 
 (deftest authenticate-test
@@ -37,19 +38,32 @@
                            (student-events/credentials-added "id"
                                                              {:email "email"
                                                               :encrypted-password encrypted-password})))))
-    (let [token-encrypted-password (bcrypt/encrypt "token")
-          newpassword-encrypted-password (bcrypt/encrypt "newpassword")
-          db (-> {}
-                 (handle-event (student-events/credentials-added "id"
-                                                                 {:email "email"
-                                                                  :encrypted-password token-encrypted-password}))
-                 (handle-event (student-events/credentials-changed "id"
+    (testing "credentials-changed"
+      (let [token-encrypted-password (bcrypt/encrypt "token")
+            newpassword-encrypted-password (bcrypt/encrypt "newpassword")
+            db (-> {}
+                   (handle-event (student-events/credentials-added "id"
                                                                    {:email "email"
-                                                                    :encrypted-password newpassword-encrypted-password})))]
-      (is (= "id" (:user-id (authenticate-by-email-and-password db "email" "newpassword")))
-          "can log in with changed password")
-      (is (not (authenticate-by-email-and-password db "email" "token"))
-          "cannot log in with old password")))
+                                                                    :encrypted-password token-encrypted-password}))
+                   (handle-event (student-events/credentials-changed "id"
+                                                                     {:email "email"
+                                                                      :encrypted-password newpassword-encrypted-password})))]
+        (is (= "id" (:user-id (authenticate-by-email-and-password db "email" "newpassword")))
+            "can log in with changed password")
+        (is (not (authenticate-by-email-and-password db "email" "token"))
+            "cannot log in with old password")))
+
+    (testing "email changed"
+      (let [id "id"
+            password "password"
+            old-email "old@example.com"
+            new-email "new@example.com"
+            db (-> {}
+                   (handle-event (student-events/credentials-added id {:email old-email :encrypted-password (bcrypt/encrypt password)}))
+                   (handle-event (student-events/email-changed id {:email new-email})))]
+        (is (= id (:user-id (authenticate-by-email-and-password db new-email password))))
+        (is (not (authenticate-by-email-and-password db old-email password))))))
+
   (testing "edu-route-events"
     (let [db (-> nil
                  (handle-event (student-events/edu-route-credentials-added "my-id" "12345")))]

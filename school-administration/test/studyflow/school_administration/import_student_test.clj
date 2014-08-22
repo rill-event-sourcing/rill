@@ -1,5 +1,5 @@
 (ns studyflow.school-administration.import-student-test
-  (:require [studyflow.school-administration.import-student :refer [import-csv-data import-tabbed-string]]
+  (:require [studyflow.school-administration.import-student :refer [import-rows import-tabbed-string]]
             [studyflow.school-administration.student.events :as student-events]
             [studyflow.school-administration.department.events :as department]
             [rill.message :as message]
@@ -27,18 +27,19 @@
 
 (deftest test-importing
   (let [store (given [(department/created department-id school-id "DEPT")])
-        report (import-csv-data store department-id import-data)]
+        report (import-rows store department-id import-data)]
     (is (= 2 (:total-students report)))
     (is (= 2 (:total-imported report)))
     (is (every? (fn [[status events]]
                   (and (= :ok status)
-                       (= ::student-events/CredentialsAdded (message/type (last events)))))
+                       (= ::student-events/Imported (message/type (last events)))))
                 (:results report)))
 
     (testing "running import twice"
-      (let [report (import-csv-data store department-id import-data)]
+      (let [report (import-rows store department-id import-data)]
+        (prn report)
         (is (= 0 (:total-imported report)))
-        (is (= 2 (:total-skipped report)))))))
+        (is (= 2 (count (:errors report))))))))
 
 
 (def tabbed-string
@@ -55,7 +56,7 @@
     "Lieke		Thijs	lieke.thijs@reggesteyn.nu	studyflow	3 Havo	l.meijerink@reggesteyn.nl"
     "Myrthe		Weijermars	myrthe.weijermars@reggesteyn.nu	studyflow	3 Havo	l.meijerink@reggesteyn.nl"
     "Thu		Pham	thu.pham@reggesteyn.nu	studyflow	3 Havo	l.meijerink@reggesteyn.nl"
-    "  	"
+    "   "
     "Joost		Diepenmaat			12345	3 Havo"
     "Luus		Marsman	luus.marsman@reggesteyn.nu	studyflow	3 Havo	l.meijerink@reggesteyn.nl"
     "Emma		Lammertink	emma.lammertink@reggesteyn.nu	studyflow	3 Havo	l.meijerink@reggesteyn.nl"
