@@ -670,7 +670,7 @@
 
 (defn sections-navigation [cursor chapter]
   (apply dom/ol #js {:id "section_list"}
-         (let [recommended-id (:id (recommended-item cursor))]
+         (let [recommended-id (:id (recommended-action cursor))]
            (for [{:keys [title status]
                   section-id :id
                   :as section} (:sections chapter)]
@@ -766,7 +766,7 @@
       (dom/aside #js {:id "m-sidenav"}
                  (dom/div #js {:id "student_info"} (get-in cursor [:static :student :full-name]))
                  (dom/div #js {:id "recommended_action"}
-                          (let [{:keys [title link]} (recommended-item cursor)]
+                          (let [{:keys [title link]} (recommended-action cursor)]
                             (dom/div nil
                                      (dom/span nil "Ga verder met:")
                                      (dom/p nil title)
