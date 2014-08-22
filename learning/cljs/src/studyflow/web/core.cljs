@@ -640,19 +640,17 @@
                          (om/build section-test cursor))
                        (om/build path-panel cursor)))))))
 
+(defn finished? [element]
+  (if-not (= (:status element) "finished")
+    element))
+
 (defn first-non-completed-chapter [course]
-  (let [finished? (fn [chapter]
-                    (if-not (= (:status chapter) "finished")
-                      chapter))]
-    (some finished? (:chapters course))))
+  (some finished? (:chapters course)))
 
 (defn first-non-completed-section [chapter]
-  (let [finished? (fn [section]
-                    (if-not (= (:status section) "finished")
-                      section))]
-    (some finished? (:sections chapter))))
+  (some finished? (:sections chapter)))
 
-(defn recommended-item [cursor]
+(defn recommended-action [cursor]
   (let [course (get-in cursor [:view :course-material])
         entry-quiz (:entry-quiz course)]
     (if (not (contains? #{"passed" "failed"} (:status entry-quiz)))
