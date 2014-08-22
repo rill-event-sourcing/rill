@@ -178,7 +178,7 @@
            course-id (get-in cursor [:static :course-id])
            student-id (get-in cursor [:static :student :id])
            ;; TODO should come from entry-quiz material
-           nag-screen-text "<img src=\"https://s3-eu-west-1.amazonaws.com/studyflow-assets/images/cat-fly.gif\"><p>Maak een vliegende start! Bepaal waar je begint met de instaptoets:</p><ul><li>Duurt <b>ongeveer 30 minuten</b></li><li>Kun je <b>altijd stoppen</b>, en later weer maken</li><li>Kun je maar <b>1</b> keer maken</li></ul><p><b>Succes namens heel team Studyflow!<b></p>"
+           nag-screen-text "<img src=\"https://s3-eu-west-1.amazonaws.com/studyflow-assets/images/cat-fly.gif\"><p>Maak een vliegende start! Bepaal waar je begint met de instaptoets:</p><ul><li>Duurt <b>ongeveer 30 minuten</b></li><li>Kun je <b>altijd stoppen</b>, en later weer maken</li><li>Kun je maar <b>1</b> keer maken</li></ul><p><b>Succes namens heel team Studyflow!</b></p>"
            dismiss-modal (fn []
                            (om/update! cursor [:view :entry-quiz-modal] :dismissed)
                            (async/put! (om/get-shared owner :command-channel)
