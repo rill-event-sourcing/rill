@@ -3,6 +3,7 @@
             [rill.handler :refer [try-command]]
             [rill.uuid :refer [new-id uuid]]
             [ring.util.response :refer [redirect]]
+            [studyflow.command-tools :refer [with-claim]]
             [studyflow.school-administration.school :as school]
             [studyflow.school-administration.web.command-util :refer :all]))
 

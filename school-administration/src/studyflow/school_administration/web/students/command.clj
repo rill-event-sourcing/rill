@@ -5,9 +5,9 @@
             [rill.handler :refer [try-command]]
             [rill.uuid :refer [new-id uuid]]
             [ring.util.response :refer [redirect]]
+            [studyflow.command-tools :refer [with-claim]]
             [studyflow.school-administration.student :as student]
-            [studyflow.school-administration.web.command-util :refer :all]
-            [clojure.tools.logging :as log]))
+            [studyflow.school-administration.web.command-util :refer :all]))
 
 (defn redirect-to-index []
   (redirect "/list-students"))
