@@ -151,9 +151,7 @@
         {:enabled enabled})
       om/IRender
       (render [_]
-        (dom/button #js {:className (str "btn blue pull-right"
-                                         (when className
-                                           (str " " className)))
+        (dom/button #js {:className (str "btn blue pull-right" (when className (str " " className)))
                          :onClick
                          (fn [_]
                            (onclick)
@@ -368,10 +366,14 @@
   ;; we always call this, even when there's no element called
   ;; "FOCUSED_INPUT". om/get-node can't handle that case
   (when-let [refs (.-refs owner)]
-    (when-let [input-ref (aget refs "FOCUSED_INPUT")]
-      (when-let [input-field (.getDOMNode input-ref)]
-        (when (= "" (.-value input-field))
-          (.focus input-field))))))
+    ;; need to set the focus on a non disabled field for firefox key handling
+    (if-let [button-ref (aget refs "FOCUSED_BUTTON")]
+      (when-let [button (.getDOMNode button-ref)]
+        (.focus button))
+      (when-let [input-ref (aget refs "FOCUSED_INPUT")]
+        (when-let [input-field (.getDOMNode input-ref)]
+          (when (= "" (.-value input-field))
+            (.focus input-field)))))))
 
 (defn tool-box
   [tools]
@@ -545,12 +547,15 @@
                               (om/build (click-once-button "Goed! Voltooi paragraaf"
                                                            (fn []
                                                              (submit))) cursor)
-
-                              (om/build (click-once-button
-                                         "Goed! Volgende vraag"
-                                         (fn []
-                                           (submit)
-                                           (prn "next question command"))) cursor))
+                              ;; this doesn't have the disabled handling
+                              ;; as all the click-once-buttons because
+                              ;; we need the ref for set-focus
+                              (dom/button #js {:className "btn blue pull-right"
+                                               :ref "FOCUSED_BUTTON"
+                                               :onClick
+                                               (fn []
+                                                 (submit))}
+                                          "Goed! Volgende vraag"))
                             (om/build (click-once-button "Nakijken"
                                                          (fn []
                                                            (submit))
