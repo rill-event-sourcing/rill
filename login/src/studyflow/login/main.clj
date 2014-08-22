@@ -26,7 +26,7 @@
               [:head
                [:title (str/join " - " [app-title title])]
                [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
-               (include-css "common.css")
+               (include-css "css/login.css")
                (include-css "//cloud.typography.com/6865512/722124/css/fonts.css")
                "<!-- [if lt IE 9>]"
                [:script {:src "//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.js"}]
