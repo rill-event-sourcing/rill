@@ -1,12 +1,14 @@
 default: test
 
-.PHONY: test default deploy upload
+.PHONY: test default deploy upload css
 
 test:
 	STUDYFLOW_ENV=test lein test && echo "OK"
 
-build:
-	make -C .. css
+css:
+	cd sass && bundle install && bundle exec compass compile
+
+build: css
 	lein uberjar
 
 upload:

@@ -8,8 +8,10 @@ test:
 js:
 	lein cljsbuild once
 
-build:
-	make -C .. css
+css:
+	cd sass && bundle install && bundle exec compass compile
+
+build: css
 	lein cljsbuild clean && lein trampoline cljsbuild once prod && lein uberjar
 
 upload:

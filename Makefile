@@ -5,7 +5,6 @@ default: test
 clean:
 	cd lib/rill && lein clean
 	cd lib/components && lein clean
-	make -C lib/styling clean
 	cd learning && lein clean
 	cd login && lein clean
 	cd school-administration && lein clean
@@ -45,7 +44,8 @@ upload: build
 	cd school-administration && make upload
 
 css:
-	make -C lib/styling learning login
+	make -C learning css
+	make -C login css
 
 js:
 	make -C learning js
