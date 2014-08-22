@@ -43,9 +43,11 @@
   (let [[old-email cred]
         (first (filter (fn [[_ {:keys [user-id]}]] (= student-id user-id))
                        (:by-email db)))]
-    (-> db
-        (update-in [:by-email] dissoc old-email)
-        (assoc-in [:by-email email] cred))))
+    (if cred
+      (-> db
+          (update-in [:by-email] dissoc old-email)
+          (assoc-in [:by-email email] cred))
+      db)))
 
 (defn add-edu-route-credentials
   [db student-id edu-route-id]
