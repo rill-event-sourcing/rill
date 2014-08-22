@@ -38,6 +38,15 @@
                  :encrypted-password encrypted-password }}
                (filter (fn [[_ user]] (not= student-id (:user-id user))) db))))
 
+(defn change-email
+  [db student-id {:keys [email]}]
+  (let [[old-email cred]
+        (first (filter (fn [[_ {:keys [user-id]}]] (= student-id user-id))
+                       (:by-email db)))]
+    (-> db
+        (update-in [:by-email] dissoc old-email)
+        (assoc-in [:by-email email] cred))))
+
 (defn add-edu-route-credentials
   [db student-id edu-route-id]
   (assoc-in db [:by-edu-route-id edu-route-id]
@@ -57,6 +66,10 @@
   [db {:keys [student-id credentials]}]
   (change-email-and-password-credentials db student-id credentials))
 
+(defmethod handle-event :studyflow.school-administration.student.events/EmailChanged
+  [db {:keys [student-id email]}]
+  (change-email db student-id email))
+
 (defmethod handle-event :studyflow.school-administration.student.events/EduRouteCredentialsAdded
   [db {:keys [edu-route-id student-id] :as event}]
   (add-edu-route-credentials db student-id edu-route-id))
@@ -69,7 +82,7 @@
 ;; catchup
 
 (defn caught-up
-  [db] 
+  [db]
   (assoc db :caught-up true))
 
 (defn caught-up?
