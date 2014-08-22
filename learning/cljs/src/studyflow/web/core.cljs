@@ -4,6 +4,7 @@
             [goog.string :as gstring]
             [goog.events :as gevents]
             [goog.events.KeyHandler]
+            [goog.Timer :as gtimer]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [studyflow.web.aggregates :as aggregates]
@@ -137,7 +138,7 @@
     (do (om/update! cursor [:view :section section-id :test question-id] nil)
         nil)))
 
-(defn click-once-button [value onclick & {:keys [enabled id]
+(defn click-once-button [value onclick & {:keys [enabled className]
                                           :or {enabled true}}]
   (fn [cursor owner]
     (reify
@@ -146,15 +147,14 @@
         {:enabled enabled})
       om/IRender
       (render [_]
-        (dom/button (let [js-obj #js {:className "btn blue pull-right"
-                                      :onClick
-                                      (fn [_]
-                                        (onclick)
-                                        (om/set-state-nr! owner :enabled false))
-                                      :disabled (not (om/get-state owner :enabled))}]
-                      (when id
-                        (aset js-obj "id" id))
-                      js-obj)
+        (dom/button #js {:className (str "btn blue pull-right"
+                                         (when className
+                                           (str " " className)))
+                         :onClick
+                         (fn [_]
+                           (onclick)
+                           (om/set-state-nr! owner :enabled false))
+                         :disabled (not (om/get-state owner :enabled))}
                     value)))))
 
 (defn section-input-field
@@ -424,8 +424,15 @@
                               [:view :progress-modal]
                               :show-streak-completed-modal)
                   "studyflow.learning.section-test.events/QuestionAnsweredIncorrectly"
-                  (when-let [button (gdom/getElement "check-answer-button")]
-                    (goog.dom.classes/add button "shake"))
+                  (do (om/update! cursor
+                                  [:view :shake-class]
+                                  "shake")
+                      (gtimer/callOnce
+                       (fn []
+                         (om/update! cursor
+                                     [:view :shake-class]
+                                     nil))
+                       300))
                   nil)
                 (recur))))))
     om/IRender
@@ -544,7 +551,7 @@
                                                          (fn []
                                                            (submit))
                                                          :enabled answering-allowed
-                                                         :id "check-answer-button")
+                                                         :className (get-in cursor [:view :shake-class]))
                                       cursor))
                           (om/build reveal-answer-button
                                     {:revealed-answer revealed-answer
