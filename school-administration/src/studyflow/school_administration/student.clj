@@ -6,9 +6,9 @@
             [rill.message :refer [defcommand primary-aggregate-id]]
             [schema.core :as s]))
 
-(def errors {:can-not-be-blank "can't be blank"
-             :already-claimed "already claimed"
-             :ownership-disputed "ownership disputed"})
+(def error-messages {:can-not-be-blank "can't be blank"
+                     :already-claimed "already claimed"
+                     :ownership-disputed "ownership disputed"})
 
 (defrecord Student [id full-name])
 
@@ -22,8 +22,8 @@
 (defmethod handle-command ::Create!
   [student {:keys [student-id full-name]}]
   {:pre [(nil? student)]}
-  (if (= "" (str/trim full-name))
-    [:rejected {:full-name [(:can-not-be-blank errors)]}]
+  (if (str/blank? full-name)
+    [:rejected {:full-name [(:can-not-be-blank error-messages)]}]
     [:ok [(events/created student-id full-name)]]))
 
 (defmethod handle-event ::events/Created
@@ -42,8 +42,8 @@
 (defmethod handle-command ::ChangeName!
   [student {:keys [student-id full-name]}]
   {:pre [student]}
-  (if (= "" (str/trim full-name))
-    [:rejected {:full-name [(:can-not-be-blank errors)]}]
+  (if (str/blank? full-name)
+    [:rejected {:full-name [(:can-not-be-blank error-messages)]}]
     [:ok [(events/name-changed student-id full-name)]]))
 
 (defmethod handle-event ::events/NameChanged
@@ -64,8 +64,8 @@
   [{:keys [has-email-credentials?] :as student} {:keys [student-id email encrypted-password]}]
   {:pre [student]}
   (cond
-   (= "" (str/trim email))
-   [:rejected {:email [(:can-not-be-blank errors)]}]
+   (str/blank? email)
+   [:rejected {:email [(:can-not-be-blank error-messages)]}]
 
    encrypted-password
    [:ok [(if has-email-credentials?
@@ -100,7 +100,7 @@
   (if (or (nil? current-owner-id)
           (= owner-id current-owner-id))
     [:ok [(events/edu-route-id-claimed edu-route-id owner-id)]]
-    [:rejected {:edu-route-id [(:already-claimed errors)]}]))
+    [:rejected {:edu-route-id [(:already-claimed error-messages)]}]))
 
 (defcommand ReleaseEduRouteId!
   :edu-route-id s/Str
@@ -111,7 +111,7 @@
   [{:keys [current-owner-id]} {:keys [owner-id edu-route-id]}]
   (if (= current-owner-id owner-id)
     [:ok [(events/edu-route-id-released owner-id edu-route-id)]]
-    [:rejected {:edu-route-id [(:ownership-disputed errors)]}]))
+    [:rejected {:edu-route-id [(:ownership-disputed error-messages)]}]))
 
 (defmethod handle-event ::events/EduRouteIdClaimed
   [_ {:keys [owner-id edu-route-id]}]
@@ -166,7 +166,7 @@
   (if (or (nil? current-owner-id)
           (= owner-id current-owner-id))
     [:ok [(events/email-address-claimed owner-id email)]]
-    [:rejected {:email [(:already-claimed errors)]}]))
+    [:rejected {:email [(:already-claimed error-messages)]}]))
 
 (defmethod handle-event ::events/EmailAddressClaimed
   [claim {:keys [owner-id]}]
@@ -192,7 +192,7 @@
   [{:keys [current-owner-id]} {:keys [owner-id email]}]
   (if (= current-owner-id owner-id)
     [:ok [(events/email-address-released owner-id email)]]
-    [:rejected {:email [(:ownership-disputed errors)]}]))
+    [:rejected {:email [(:ownership-disputed error-messages)]}]))
 
 (defmethod handle-event ::events/EmailAddressReleased
   [claim event]
@@ -241,10 +241,25 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Importing students
 
-(defn full-name
-  [first-name infix last-name]
-  (if (and infix
-           (not= "" infix))
-    (str first-name " " infix " " last-name)
-    (str first-name " " last-name)))
+(defcommand ImportStudent!
+  :student-id s/Uuid
+  :full-name s/Uuid
+  :department-id s/Uuid
+  :class-name s/Str
+  :email s/Str
+  :encrypted-password s/Str)
 
+(defmethod handle-command ::ImportStudent!
+  [student {:keys [student-id full-name department-id class-name email encrypted-password] :as attrs}]
+  {:pre [(nil? student)]}
+  (let [errors (reduce (fn [m k] (assoc m k [(:can-not-be-blank error-messages)]))
+                       {}
+                       (filter #(str/blank? (str (get attrs %)))
+                               [:full-name :department-id :class-name :email :encrypted-password]))]
+    (if (seq errors)
+      [:rejected errors]
+      [:ok [(events/created student-id full-name)
+            (events/department-changed student-id department-id)
+            (events/class-assigned student-id department-id class-name)
+            (events/credentials-added student-id {:email email
+                                                  :encrypted-password encrypted-password})]])))

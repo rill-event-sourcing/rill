@@ -1,10 +1,11 @@
 (ns studyflow.school-administration.import-student
   (:require [clojure.java.io :as io]
+            [clojure.string :as str]
             [crypto.password.bcrypt :as bcrypt]
             [rill.handler :refer [try-command]]
             [rill.uuid :refer [new-id]]
             [studyflow.school-administration.student :as student]
-            [studyflow.command-tools :refer [with-claim combine-commands]]
+            [studyflow.command-tools :refer [with-claim]]
             [rill.message :refer [defcommand]]
             [rill.aggregate :refer [handle-command handle-event update-aggregate]]
             [schema.core :as s]
@@ -12,35 +13,17 @@
             [clojure.java.io :as io]
             [clojure.string :as string]))
 
-(defcommand ImportStudent!
-  :student-id s/Uuid
-  :full-name s/Uuid
-  :department-id s/Uuid
-  :class-name s/Str
-  :email s/Str
-  :encrypted-password s/Str)
-
-(defmethod handle-command ::ImportStudent!
-  [student {:keys [student-id full-name department-id class-name email encrypted-password]}]
-  (combine-commands student
-                    (student/create! student-id full-name)
-                    (student/change-department! student-id 0 department-id)
-                    (student/change-class! student-id 1 class-name)
-                    (student/change-credentials! student-id 2 email encrypted-password)))
-
 (defn ok?
   [[status & _]]
   (= :ok status))
 
 (defn import-student
   [event-store department-id student-id {:keys [full-name class-name email password] :as student}]
-  {:pre [student-id department-id class-name email password]}
-  (if (and email
-           (not= "" email))
-    (let [encrypted-password (bcrypt/encrypt password)
+  (if (not (str/blank? email))
+    (let [encrypted-password (when-not (str/blank? password) (bcrypt/encrypt password))
           result (with-claim event-store
                    (student/claim-email-address! student-id email)
-                   (import-student! student-id full-name department-id class-name email encrypted-password)
+                   (student/import-student! student-id full-name department-id class-name email encrypted-password)
                    (student/release-email-address! student-id email))]
       (log/info result)
       result)
@@ -50,10 +33,15 @@
   [[status & _]]
   (= :skipped status))
 
+(defn full-name
+  [first-name infix last-name]
+  (if (not= "" (str/blank? (str infix)))
+    (str first-name " " infix " " last-name)
+    (str first-name " " last-name)))
 
 (defn row->student
   [[first-name infix last-name email password class-name]]
-  {:full-name (student/full-name first-name infix last-name)
+  {:full-name (full-name first-name infix last-name)
    :email email
    :password password
    :class-name class-name})
