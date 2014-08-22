@@ -258,8 +258,9 @@
                                [:full-name :department-id :class-name :email :encrypted-password]))]
     (if (seq errors)
       [:rejected errors]
-      [:ok [(events/created student-id full-name)
-            (events/department-changed student-id department-id)
-            (events/class-assigned student-id department-id class-name)
-            (events/credentials-added student-id {:email email
-                                                  :encrypted-password encrypted-password})]])))
+      [:ok [(events/imported student-id
+                             full-name
+                             department-id
+                             class-name
+                             {:email email
+                              :encrypted-password encrypted-password})]])))

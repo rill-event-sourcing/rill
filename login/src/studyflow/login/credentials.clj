@@ -62,6 +62,10 @@
   [db {:keys [student-id credentials]}]
   (add-email-and-password-credentials db student-id credentials))
 
+(defmethod handle-event :studyflow.school-administration.student.events/Imported
+  [db {:keys [student-id credentials]}]
+  (add-email-and-password-credentials db student-id credentials))
+
 (defmethod handle-event :studyflow.school-administration.student.events/CredentialsChanged
   [db {:keys [student-id credentials]}]
   (change-email-and-password-credentials db student-id credentials))
