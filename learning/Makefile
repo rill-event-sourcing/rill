@@ -5,11 +5,11 @@ default: test
 test:
 	lein test && echo "OK"
 
-css:
-	cd sass && bundle install && bundle exec compass compile
-
 js:
 	lein cljsbuild once
+
+css:
+	cd sass && bundle install && bundle exec compass compile
 
 build: css
 	lein cljsbuild clean && lein trampoline cljsbuild once prod && lein uberjar

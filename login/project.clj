@@ -19,9 +19,9 @@
                  [org.slf4j/slf4j-log4j12 "1.7.5"]
                  [studyflow/components "0.1.0-SNAPSHOT"]
                  [digest "1.4.4"]]
-
+  :resource-paths ["resources" "generated"]
   :profiles {:dev {:source-paths ["dev"]
-                   :resource-paths ["dev/resources"]
+                   :resource-paths ["dev/resources" "resources" "generated"]
                    :dependencies [[org.clojure/tools.trace "0.7.5"]
                                   [org.clojure/tools.namespace "0.2.5"]
                                   [enlive "1.1.5"]

@@ -1,3 +1,5 @@
+// Check answer button shake
+
 @-webkit-keyframes shake
   0%
     -webkit-transform: translateX(10px)
@@ -22,14 +24,29 @@
   100%
     transform: translateX(0px)
 
-@-ms-keyframes shake
+
+// Login screen bouncein
+
+@-webkit-keyframes bounceIn
   0%
-    -ms-transform: translateX(10px)
-  25%
-    -ms-transform: translateX(10px)
+    opacity: 0
+    -webkit-transform: scale(0.3)
   50%
-    -ms-transform: translateX(-10px)
-  75%
-    -ms-transform: translateX(10px)
+    opacity: 1
+    -webkit-transform: scale(1.05)
+  70%
+    -webkit-transform: scale(0.9)
   100%
-    -ms-transform: translateX(0px)
+    -webkit-transform: scale(1)
+
+@keyframes bounceIn
+  0%
+    opacity: 0
+    transform: scale(0.3)
+  50%
+    opacity: 1
+    transform: scale(1.05)
+  70%
+    transform: scale(0.9)
+  100%
+    transform: scale(1)

@@ -9,3 +9,5 @@ pom.xml.asc
 .lein-*
 !.lein-env
 lein
+*.css
+.sass-cache

@@ -52,6 +52,7 @@ upload: build
 
 css:
 	make -C learning css
+	make -C login css
 
 js:
 	make -C learning js

@@ -21,8 +21,27 @@ input, textarea
   &:hover
     border: 2px solid #90c8df
 
+  &.login_form
+    font-family: 'Gotham SSm A', 'Gotham SSm B'
+    width: 91%
+    margin: 0 auto 20px auto
+    height: 50px
+    +border-radius(6px)
+    display: block
+    border-color: #d7dce4
+    color: #29323a
+    border: 1px solid #d7dce4
+    font-size: 15px
+    &::-webkit-input-placeholder
+      color: #c5cad3
+    &:hover::-webkit-input-placeholder
+      color: rgba(197, 202, 211, 0.5)
+    &:hover
+      border-color: #90c8df
+
 input:-webkit-autofill
   background: white
+  -webkit-box-shadow: 0 0 0px 500px white inset
 
 // Animations for placeholder text in the inputs
 
