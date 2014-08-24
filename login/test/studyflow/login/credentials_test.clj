@@ -4,6 +4,7 @@
             [rill.message :as message]
             [studyflow.login.credentials :refer [add-edu-route-credentials
                                                  add-email-and-password-credentials
+                                                 change-email-and-password-credentials
                                                  authenticate-by-edu-route-id
                                                  authenticate-by-email-and-password
                                                  handle-event
@@ -13,11 +14,23 @@
 (deftest authenticate-test
   (testing "authentication with email and password"
     (is (nil? (authenticate-by-email-and-password {} "fred@example.com" "wilma")))
-    (let [db (add-email-and-password-credentials nil "my-id"
-                                                 {:email "fred@example.com"
-                                                  :encrypted-password (bcrypt/encrypt "wilma")})]
+    (let [db (-> nil
+                 (add-email-and-password-credentials "my-id"
+                                                     {:email "fred@example.com"
+                                                      :encrypted-password (bcrypt/encrypt "wilma")})
+                 (add-email-and-password-credentials "my-id2"
+                                                     {:email "barney@example.com"
+                                                      :encrypted-password (bcrypt/encrypt "barney!")}))]
+
       (is (= "my-id" (:user-id (authenticate-by-email-and-password db "fred@example.com" "wilma"))))
-      (is (nil? (authenticate-by-email-and-password db "other@example.com" "foobar")))))
+      (is (nil? (authenticate-by-email-and-password db "other@example.com" "foobar")))
+
+      (testing "Change credentials"
+        (let [db (change-email-and-password-credentials db "my-id2" {:email "barney@gmail.com" :encrypted-password (bcrypt/encrypt "foo")})]
+          (is (nil? (authenticate-by-email-and-password db "barney@example.com" "barney!")))
+          (is (= "my-id" (:user-id (authenticate-by-email-and-password db "fred@example.com" "wilma"))))
+          (is (= "my-id2" (:user-id (authenticate-by-email-and-password db "barney@gmail.com" "foo"))))))))
+
   (testing "authentication with eduroute token"
     (is (nil? (authenticate-by-edu-route-id {} "12345")))
     (let [db (add-edu-route-credentials nil "my-id" "12345")]
@@ -30,6 +43,7 @@
            (handle-event {}
                          {message/type :some-other-event}))))
   (testing "student events"
+
     (let [encrypted-password (bcrypt/encrypt "token")]
       (is (= {:by-email {"email" {:user-id "id"
                                   :user-role "student"
