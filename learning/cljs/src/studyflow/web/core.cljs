@@ -763,8 +763,9 @@
                           (let [{:keys [title link]} (recommended-action cursor)]
                             (dom/div nil
                                      (dom/span nil "Ga verder met:")
-                                     (dom/p nil title)
-                                     (dom/a #js {:className "btn big yellow" :href link} "Start"))))
+                                     (dom/p #js {:id "recommended_title"} title)
+                                     (dom/a #js {:id "recommended_button"
+                                                 :className "btn big yellow" :href link} "Start"))))
                  (dom/div #js {:id "support_info"})))))
 
 (defn dashboard [cursor owner]
