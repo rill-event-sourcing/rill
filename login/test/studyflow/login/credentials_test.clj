@@ -42,10 +42,11 @@
     (is (= {}
            (handle-event {}
                          {message/type :some-other-event}))))
-  (testing "student events"
 
+  (testing "student events"
     (let [encrypted-password (bcrypt/encrypt "token")]
-      (is (= {:by-email {"email" {:user-id "id"
+      (is (= {:email-by-id {"id" "email"}
+              :by-email {"email" {:user-id "id"
                                   :user-role "student"
                                   :encrypted-password encrypted-password}}}
              (handle-event {}
