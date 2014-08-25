@@ -82,7 +82,25 @@
                    (handle-event (student-events/email-changed "1" {:email "pebble@flintstone.com"})))]
         (is (= "1" (:user-id (authenticate-by-email-and-password db "pebble@flintstone.com" "wilma"))))
         (is (= "2" (:user-id (authenticate-by-email-and-password db "barney@rubble.com" "betty"))))
-        (is (not (authenticate-by-email-and-password db "fred@flintstone.com" "wilma"))))))
+        (is (not (authenticate-by-email-and-password db "fred@flintstone.com" "wilma")))))
+
+    (testing "student imported"
+      (let [db (-> {}
+                   (handle-event (student-events/imported "1"
+                                                          "Fred Flintstone"
+                                                          "StoneQuarry"
+                                                          "Bedrock"
+                                                          {:email "fred@flintstone.com"
+                                                           :encrypted-password (bcrypt/encrypt "wilma")}))
+                   (handle-event (student-events/imported "2"
+                                                          "Barney Rubble"
+                                                          "StoneQuarry"
+                                                          "Bedrock"
+                                                          {:email "barney@rubble.com"
+                                                           :encrypted-password (bcrypt/encrypt "betty")})))]
+
+        (is (= "1" (:user-id (authenticate-by-email-and-password db "fred@flintstone.com" "wilma"))))
+        (is (= "2" (:user-id (authenticate-by-email-and-password db "barney@rubble.com" "betty")))))))
 
   (testing "edu-route-events"
     (let [db (-> nil
