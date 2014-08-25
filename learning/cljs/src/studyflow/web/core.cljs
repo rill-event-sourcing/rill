@@ -166,7 +166,9 @@
     (reify
       om/IRender
       (render [_]
-        (let [submit (fn []
+        (let [focus-input-field (fn []
+                                  (.focus (.getDOMNode (aget (.-refs owner) field-name))))
+              submit (fn []
                        (when-let [f (om/get-state owner :submit)]
                          (f)))
               input-focused (= field-name (get-in cursor [:view :section section-id :input-focused]))
@@ -180,10 +182,10 @@
                                                    (when answer-revealed
                                                      " incorrect"))
                                    :onBlur (fn [event]
-                                              (om/update!
-                                               cursor
-                                               [:view :section section-id :input-focused]
-                                               nil))
+                                             (om/update!
+                                              cursor
+                                              [:view :section section-id :input-focused]
+                                              nil))
                                    :onFocus (fn [event]
                                               (om/update!
                                                cursor
@@ -198,7 +200,6 @@
                                     :ref (:name field)
                                     :value (get-in cursor [:view :section section-id :input field-name :given-answer])
                                     :disabled (get-in cursor [:view :section section-id :input field-name :input-disabled])
-
                                     :onChange (fn [event]
                                                 (om/update!
                                                  cursor
@@ -211,7 +212,7 @@
                               (when input-focused
                                 (dom/div #js {:className "inline_input_tooltip"}
                                          (when (and answer-revealed
-                                                    (not answer-submitted?)
+                                                    answer-submitted?
                                                     (not answered-correctly))
                                            (dom/p #js {:className "answer"}
                                                   (first correct-answers)))
@@ -237,14 +238,10 @@
                                                              [:view :section section-id :input field-name :answer-submitted?]
                                                              true)
                                                             (submit)
-                                                            (.focus (.getDOMNode (aget (.-refs owner) field-name))))}))
+                                                            (focus-input-field))}))
                                          (if answered-correctly
                                            (do
                                              (om/set-state-nr! owner :submit (fn []))
-                                             (om/update!
-                                              cursor
-                                              [:view :section section-id :input field-name :input-disabled]
-                                              true)
                                              (dom/p #js {:className "correct"} "Goed!"))
                                            (when (and (not answer-revealed)
                                                       answer-submitted?
@@ -262,6 +259,7 @@
                                                              cursor
                                                              [:view :section section-id :input field-name :answer-submitted?]
                                                              true)
+                                                            (focus-input-field)
                                                             (om/update!
                                                              cursor
                                                              [:view :section section-id :input field-name :answer-revealed]
