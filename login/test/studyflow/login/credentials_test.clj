@@ -13,23 +13,23 @@
 
 (deftest authenticate-test
   (testing "authentication with email and password"
-    (is (nil? (authenticate-by-email-and-password {} "fred@example.com" "wilma")))
+    (is (nil? (authenticate-by-email-and-password {} "fred@flintstone.com" "wilma")))
     (let [db (-> nil
-                 (add-email-and-password-credentials "my-id"
-                                                     {:email "fred@example.com"
+                 (add-email-and-password-credentials "1"
+                                                     {:email "fred@flintstone.com"
                                                       :encrypted-password (bcrypt/encrypt "wilma")})
-                 (add-email-and-password-credentials "my-id2"
-                                                     {:email "barney@example.com"
-                                                      :encrypted-password (bcrypt/encrypt "barney!")}))]
+                 (add-email-and-password-credentials "2"
+                                                     {:email "barney@rubble.com"
+                                                      :encrypted-password (bcrypt/encrypt "betty")}))]
 
-      (is (= "my-id" (:user-id (authenticate-by-email-and-password db "fred@example.com" "wilma"))))
+      (is (= "1" (:user-id (authenticate-by-email-and-password db "fred@flintstone.com" "wilma"))))
       (is (nil? (authenticate-by-email-and-password db "other@example.com" "foobar")))
 
       (testing "Change credentials"
-        (let [db (change-email-and-password-credentials db "my-id2" {:email "barney@gmail.com" :encrypted-password (bcrypt/encrypt "foo")})]
-          (is (nil? (authenticate-by-email-and-password db "barney@example.com" "barney!")))
-          (is (= "my-id" (:user-id (authenticate-by-email-and-password db "fred@example.com" "wilma"))))
-          (is (= "my-id2" (:user-id (authenticate-by-email-and-password db "barney@gmail.com" "foo"))))))))
+        (let [db (change-email-and-password-credentials db "2" {:email "barney@rubble.com" :encrypted-password (bcrypt/encrypt "bamm-bamm")})]
+          (is (nil? (authenticate-by-email-and-password db "barney@rubble.com" "betty")))
+          (is (= "1" (:user-id (authenticate-by-email-and-password db "fred@flintstone.com" "wilma"))))
+          (is (= "2" (:user-id (authenticate-by-email-and-password db "barney@rubble.com" "bamm-bamm"))))))))
 
   (testing "authentication with eduroute token"
     (is (nil? (authenticate-by-edu-route-id {} "12345")))
@@ -54,30 +54,35 @@
                                                              {:email "email"
                                                               :encrypted-password encrypted-password})))))
     (testing "credentials-changed"
-      (let [token-encrypted-password (bcrypt/encrypt "token")
-            newpassword-encrypted-password (bcrypt/encrypt "newpassword")
-            db (-> {}
-                   (handle-event (student-events/credentials-added "id"
-                                                                   {:email "email"
-                                                                    :encrypted-password token-encrypted-password}))
-                   (handle-event (student-events/credentials-changed "id"
-                                                                     {:email "email"
-                                                                      :encrypted-password newpassword-encrypted-password})))]
-        (is (= "id" (:user-id (authenticate-by-email-and-password db "email" "newpassword")))
+      (let [db (-> {}
+                   (handle-event (student-events/credentials-added "1"
+                                                                   {:email "fred@flintstone.com"
+                                                                    :encrypted-password (bcrypt/encrypt "wilma")}))
+                   (handle-event (student-events/credentials-added "2"
+                                                                   {:email "barney@rubble.com"
+                                                                    :encrypted-password (bcrypt/encrypt "betty")}))
+                   (handle-event (student-events/credentials-changed "1"
+                                                                     {:email "fred2@flintstone.com"
+                                                                      :encrypted-password (bcrypt/encrypt "dino")})))]
+        (is (= "1" (:user-id (authenticate-by-email-and-password db "fred2@flintstone.com" "dino")))
             "can log in with changed password")
-        (is (not (authenticate-by-email-and-password db "email" "token"))
+        (is (= "2" (:user-id (authenticate-by-email-and-password db "barney@rubble.com" "betty")))
+            "does not impact credentials of other users")
+        (is (not (authenticate-by-email-and-password db "fred@flintstone.com" "wilma"))
             "cannot log in with old password")))
 
     (testing "email changed"
-      (let [id "id"
-            password "password"
-            old-email "old@example.com"
-            new-email "new@example.com"
-            db (-> {}
-                   (handle-event (student-events/credentials-added id {:email old-email :encrypted-password (bcrypt/encrypt password)}))
-                   (handle-event (student-events/email-changed id {:email new-email})))]
-        (is (= id (:user-id (authenticate-by-email-and-password db new-email password))))
-        (is (not (authenticate-by-email-and-password db old-email password))))))
+      (let [db (-> {}
+                   (handle-event (student-events/credentials-added "1"
+                                                                   {:email "fred@flintstone.com"
+                                                                    :encrypted-password (bcrypt/encrypt "wilma")}))
+                   (handle-event (student-events/credentials-added "2"
+                                                                   {:email "barney@rubble.com"
+                                                                    :encrypted-password (bcrypt/encrypt "betty")}))
+                   (handle-event (student-events/email-changed "1" {:email "pebble@flintstone.com"})))]
+        (is (= "1" (:user-id (authenticate-by-email-and-password db "pebble@flintstone.com" "wilma"))))
+        (is (= "2" (:user-id (authenticate-by-email-and-password db "barney@rubble.com" "betty"))))
+        (is (not (authenticate-by-email-and-password db "fred@flintstone.com" "wilma"))))))
 
   (testing "edu-route-events"
     (let [db (-> nil
