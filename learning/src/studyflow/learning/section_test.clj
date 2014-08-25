@@ -12,6 +12,7 @@
      current-question-id
      current-question-status
      streak-length
+     stumbling-streak
      finished?
      question-finished?
      previous-question-ids])
@@ -39,7 +40,7 @@
 
 (defmethod handle-event ::events/Created
   [_ {:keys [section-id student-id section-id]}]
-  (->SectionTest section-id student-id nil nil 0 false false nil))
+  (->SectionTest section-id student-id nil nil 0 0 false false nil))
 
 (defn set-previous-question-ids
   [question-ids question-id question-total]
@@ -55,27 +56,34 @@
     :previous-question-ids (set-previous-question-ids previous-question-ids question-id question-total)))
 
 (defn track-streak-correct
-  [{:keys [streak-length current-question-status] :as this}]
+  [{:keys [streak-length stumbling-streak current-question-status] :as this}]
   (if (nil? current-question-status)
     (assoc this
       :current-question-status :answered-correctly
+      :stumbling-streak 0
       :streak-length (inc streak-length))
     this))
 
 (defn track-streak-incorrect
-  [this]
-  (assoc this
-    :current-question-status :answered-incorrectly
-    :streak-length 0))
+  [{:keys [stumbling-streak current-question-status] :as this}]
+  (if (nil? current-question-status)
+    (assoc this
+      :current-question-status :answered-incorrectly
+      :stumbling-streak (inc stumbling-streak)
+      :streak-length 0)
+    (assoc this
+      :current-question-status :answered-incorrectly
+      :streak-length 0)))
 
 (defmethod handle-event ::events/AnswerRevealed
-  [{:keys [current-question-id current-question-status streak-length] :as this} {:keys [question-id]}]
+  [{:keys [current-question-id current-question-status stumbling-streak streak-length] :as this} {:keys [question-id]}]
   {:pre [(= current-question-id question-id)]}
   (-> this
       (assoc :answer-revealed? true)
       (cond->
        (nil? current-question-status)
        (-> (assoc :current-question-status :answer-revealed)
+           (assoc :stumbling-streak (inc stumbling-streak))
            (assoc :streak-length 0)))))
 
 (defmethod handle-event ::events/QuestionAnsweredCorrectly
@@ -97,6 +105,12 @@
   [course-id])
 
 (def streak-length-to-finish-test 5)
+(def streak-to-stumbling-block 3)
+
+(defn not-correct-answer-will-trigger-stumbling-block?
+  [{:keys [stumbling-streak current-question-status]}]
+  (and (nil? current-question-status)
+       (= stumbling-streak (dec streak-to-stumbling-block))))
 
 (defn correct-answer-will-finish-test?
   "Given that the next answer will be correct, check if it should trigger a Finished event"
@@ -124,7 +138,10 @@
         [:ok [(events/question-answered-correctly section-id student-id question-id inputs)
               (events/streak-completed section-id student-id)]]
         [:ok [(events/question-answered-correctly section-id student-id question-id inputs)]]))
-    [:ok [(events/question-answered-incorrectly section-id student-id question-id inputs)]]))
+    (if (not-correct-answer-will-trigger-stumbling-block? this)
+      [:ok [(events/question-answered-incorrectly section-id student-id question-id inputs)
+            (events/stumbled section-id student-id)]]
+      [:ok [(events/question-answered-incorrectly section-id student-id question-id inputs)]])))
 
 (defmethod aggregate-ids ::commands/RevealAnswer!
   [{:keys [course-id]}]
@@ -160,3 +177,8 @@
   [section-test event]
   (assoc section-test
     :streak-length 0))
+
+(defmethod handle-event ::events/Stumbled
+  [section-test event]
+  (assoc section-test
+    :stumbling-streak 0))

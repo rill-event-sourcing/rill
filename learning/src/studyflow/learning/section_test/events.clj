@@ -50,3 +50,8 @@
   :section-id m/Id
   :student-id m/Id
   section-test-id)
+
+(defevent Stumbled
+  :section-id m/Id
+  :student-id m/Id
+  section-test-id)
