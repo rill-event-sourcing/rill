@@ -5,6 +5,7 @@
             [rill.handler :refer [try-command]]
             [rill.uuid :refer [new-id]]
             [studyflow.school-administration.student :as student]
+            [studyflow.credentials.email-ownership :as email-ownership]
             [studyflow.command-tools :refer [with-claim]]
             [rill.message :refer [defcommand]]
             [rill.aggregate :refer [handle-command handle-event update-aggregate]]
@@ -22,9 +23,9 @@
   (if (not (str/blank? email))
     (let [encrypted-password (when-not (str/blank? password) (bcrypt/encrypt password))
           result (with-claim event-store
-                   (student/claim-email-address! student-id email)
+                   (email-ownership/claim! student-id email)
                    (student/import-student! student-id full-name department-id class-name email encrypted-password)
-                   (student/release-email-address! student-id email))]
+                   (email-ownership/release! student-id email))]
       (log/info result)
       result)
     [:rejected {:email :invalid}]))
