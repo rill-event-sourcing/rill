@@ -1,54 +1,49 @@
 (ns studyflow.teaching.read-model.event-handler
-  (:require [rill.message :as message]
-            [rill.event-channel :as event-channel]
+  (:require [rill.event-channel :as event-channel]
+            [rill.message :as message]
             [studyflow.teaching.read-model :as m]))
 
-(defmulti handle-event
-  (fn [model event] (message/type event)))
-
-(defmethod handle-event :default
-  [model _]
-  model)
-
-(defn load-model
-  [events]
-  (reduce handle-event nil events))
+(defmulti handle-event (fn [model event] (message/type event)))
+(defmethod handle-event :default [model _] model)
 
 (defmethod handle-event :studyflow.school-administration.student.events/Created
-  [model {:keys [student-id full-name ::message/number]}]
-  model)
+  [model {:keys [student-id full-name]}]
+  (assoc-in model [:students student-id] {:full-name full-name}))
 
 (defmethod handle-event :studyflow.school-administration.student.events/NameChanged
-  [model {:keys [student-id full-name ::message/number]}]
-  model)
+  [model {:keys [student-id full-name]}]
+  (update-in model [:students student-id] assoc :full-name full-name))
 
 (defmethod handle-event :studyflow.school-administration.student.events/DepartmentChanged
-  [model {:keys [student-id department-id ::message/number]}]
-  model)
+  [model {:keys [student-id department-id]}]
+  (update-in model [:students student-id] assoc :department-id department-id))
 
 (defmethod handle-event :studyflow.school-administration.student.events/ClassAssigned
-  [model {:keys [student-id class-name ::message/number]}]
-  model)
+  [model {:keys [student-id class-name] :as event}]
+  (update-in model [:students student-id] assoc :class-name class-name))
 
 (defmethod handle-event :studyflow.school-administration.student.events/Imported
-  [model {:keys [student-id full-name department-id class-name ::message/number]}]
-  model)
+  [model {:keys [student-id full-name department-id class-name]}]
+  (assoc-in model [:students student-id] {:full-name full-name
+                                          :department-id department-id
+                                          :class-name class-name}))
 
 (defmethod handle-event :studyflow.school-administration.school.events/Created
-  [model {:keys [school-id name ::message/number]}]
-  model)
+  [model {:keys [school-id name]}]
+  (assoc-in model [:schools school-id] {:name name}))
 
 (defmethod handle-event :studyflow.school-administration.school.events/NameChanged
-  [model {:keys [school-id name ::message/number]}]
-  model)
+  [model {:keys [school-id name]}]
+  (update-in model [:schools school-id] assoc :name name))
 
 (defmethod handle-event :studyflow.school-administration.department.events/Created
-  [model {:keys [department-id school-id name ::message/number]}]
-  model)
+  [model {:keys [department-id school-id name]}]
+  (assoc-in model [:departments department-id] {:school-id school-id
+                                                :name name}))
 
 (defmethod handle-event :studyflow.school-administration.department.events/NameChanged
-  [model {:keys [department-id name ::message/number]}]
-  model)
+  [model {:keys [department-id name]}]
+  (update-in model [:departments department-id] assoc :name name))
 
 ;; ready for display
 

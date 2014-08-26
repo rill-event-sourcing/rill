@@ -32,6 +32,9 @@ h1 {
   top: 0;
   margin: .4em .70em;
 }
+header {
+  min-height: 50px;
+}
 header nav ul {
   list-style: none;
   margin: 0;
