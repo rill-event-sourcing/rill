@@ -8,8 +8,8 @@
 
 (defevent Created
   :teacher-id s/Uuid
-  :full-name s/Str
-  :department-id s/Uuid)
+  :department-id s/Uuid
+  :full-name s/Str)
 
 (defevent CredentialsAdded
   :teacher-id s/Uuid
@@ -38,3 +38,13 @@
 (defevent DepartmentChanged
   :teacher-id s/Uuid
   :department-id s/Uuid)
+
+(defevent ClassAssigned
+  :teacher-id s/Uuid
+  :department-id s/Uuid
+  :class-name s/Str)
+
+(defevent ClassUnassigned
+  :teacher-id s/Uuid
+  :department-id s/Uuid
+  :class-name s/Str)
