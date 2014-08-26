@@ -80,10 +80,7 @@
   [db {:keys [edu-route-id student-id] :as event}]
   (add-edu-route-credentials db student-id edu-route-id))
 
-(defmethod handle-event :default
-  [db _]
-  (log/info :skipped-event)
-  db)
+(defmethod handle-event :default [db _] db)
 
 ;; catchup
 

@@ -11,7 +11,6 @@
   (thread
     (loop []
       (when-let [event (<!! event-channel)]
-        (if (not (instance? UnprocessableMessage event))
-          (swap! model-atom handle-event event)
-          (log/debug [:skipped-event]))
+        (when (not (instance? UnprocessableMessage event))
+          (swap! model-atom handle-event event))
         (recur)))))
