@@ -24,29 +24,32 @@
 
 (defn add-email-and-password-credentials
   [db student-id {:keys [email encrypted-password]}]
-  (assoc-in db [:by-email email]
-            {:user-id student-id
-             :user-role "student"
-             :encrypted-password encrypted-password}))
+  (-> db
+      (assoc-in [:by-email email]
+                {:user-id student-id
+                 :user-role "student"
+                 :encrypted-password encrypted-password})
+      (assoc-in [:email-by-id student-id] email)))
 
 (defn change-email-and-password-credentials
   [db student-id {:keys [email encrypted-password]}]
-  (assoc db :by-email
-         (into {email
-                {:user-id student-id
-                 :user-role "student"
-                 :encrypted-password encrypted-password }}
-               (filter (fn [[_ user]] (not= student-id (:user-id user))) db))))
+  (let [old-email (get-in db [:email-by-id student-id])]
+    (-> db
+        (update-in [:by-email] dissoc old-email)
+        (assoc-in [:by-email email] {:user-id student-id
+                                     :user-role "student"
+                                     :encrypted-password encrypted-password})
+        (assoc-in [:email-by-id student-id] email))))
 
 (defn change-email
   [db student-id {:keys [email]}]
-  (let [[old-email cred]
-        (first (filter (fn [[_ {:keys [user-id]}]] (= student-id user-id))
-                       (:by-email db)))]
+  (let [old-email (get-in db [:email-by-id student-id])
+        cred (get-in db [:by-email old-email])]
     (if cred
       (-> db
           (update-in [:by-email] dissoc old-email)
-          (assoc-in [:by-email email] cred))
+          (assoc-in [:by-email email] cred)
+          (assoc-in [:email-by-id student-id] email))
       db)))
 
 (defn add-edu-route-credentials
