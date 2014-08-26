@@ -15,6 +15,7 @@
      stumbling-streak
      finished?
      question-finished?
+     stuck?
      previous-question-ids])
 
 (defn select-random-question
@@ -40,7 +41,7 @@
 
 (defmethod handle-event ::events/Created
   [_ {:keys [section-id student-id section-id]}]
-  (->SectionTest section-id student-id nil nil 0 0 false false nil))
+  (->SectionTest section-id student-id nil nil 0 0 false false false nil))
 
 (defn set-previous-question-ids
   [question-ids question-id question-total]
@@ -108,9 +109,15 @@
 (def streak-to-stumbling-block 3)
 
 (defn not-correct-answer-will-trigger-stumbling-block?
-  [{:keys [stumbling-streak current-question-status]}]
-  (and (nil? current-question-status)
+  [{:keys [stumbling-streak stuck? current-question-status]}]
+  (and (not stuck?)
+       (nil? current-question-status)
        (= stumbling-streak (dec streak-to-stumbling-block))))
+
+(defn correct-answer-will-unstuck?
+  [{:keys [stuck? current-question-status]}]
+  (and stuck?
+       (nil? current-question-status)))
 
 (defn correct-answer-will-finish-test?
   "Given that the next answer will be correct, check if it should trigger a Finished event"
@@ -137,10 +144,13 @@
       (if (correct-answer-will-complete-streak? this)
         [:ok [(events/question-answered-correctly section-id student-id question-id inputs)
               (events/streak-completed section-id student-id)]]
-        [:ok [(events/question-answered-correctly section-id student-id question-id inputs)]]))
+        (if (correct-answer-will-unstuck? this)
+          [:ok [(events/question-answered-correctly section-id student-id question-id inputs)
+                (events/unstuck section-id student-id)]]
+          [:ok [(events/question-answered-correctly section-id student-id question-id inputs)]])))
     (if (not-correct-answer-will-trigger-stumbling-block? this)
       [:ok [(events/question-answered-incorrectly section-id student-id question-id inputs)
-            (events/stumbled section-id student-id)]]
+            (events/stuck section-id student-id)]]
       [:ok [(events/question-answered-incorrectly section-id student-id question-id inputs)]])))
 
 (defmethod aggregate-ids ::commands/RevealAnswer!
@@ -178,7 +188,13 @@
   (assoc section-test
     :streak-length 0))
 
-(defmethod handle-event ::events/Stumbled
+(defmethod handle-event ::events/Stuck
   [section-test event]
   (assoc section-test
+    :stuck? true
     :stumbling-streak 0))
+
+(defmethod handle-event ::events/Unstuck
+  [section-test event]
+  (assoc section-test
+    :stuck? false))

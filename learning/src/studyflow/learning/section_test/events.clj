@@ -51,7 +51,12 @@
   :student-id m/Id
   section-test-id)
 
-(defevent Stumbled
+(defevent Stuck
+  :section-id m/Id
+  :student-id m/Id
+  section-test-id)
+
+(defevent Unstuck
   :section-id m/Id
   :student-id m/Id
   section-test-id)
