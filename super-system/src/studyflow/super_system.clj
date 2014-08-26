@@ -6,6 +6,7 @@
             [studyflow.super-system.components.dev-event-fixtures :as dev-event-fixtures]
             [clojure.tools.logging :as log]
             [studyflow.school-administration.system :as school-administration]
+            [studyflow.teaching.system :as teaching]
             [learning-dev-system]
             [login-dev-system]))
 
@@ -30,6 +31,7 @@
                                                        learning-dev-system/dev-config))
                      (dissoc :event-store :session-store)
                      (namespace-system :learning [:event-store :session-store]))
+
         login (-> (login-dev-system/make-system {:jetty-port 4000
                                                  :default-redirect-paths {"editor" "http://localhost:2000"
                                                                           "student" "http://localhost:3000"}
@@ -37,9 +39,15 @@
                                                  :cookie-domain nil})
                   (dissoc :event-store :session-store)
                   (namespace-system :login [:event-store :session-store]))
+
         school-administration (-> (school-administration/prod-system {:port 5000})
                                   (dissoc :event-store)
                                   (namespace-system :school-administration [:event-store]))
+
+        teaching (-> (teaching/prod-system {:port 4001})
+                     (dissoc :event-store)
+                     (namespace-system :teaching [:event-store]))
+
         shared-system {:event-store (if-let [url (:psql config)]
                                       (psql-event-store-component url)
                                       (memory-event-store/memory-event-store-component))
@@ -52,6 +60,7 @@
         (into learning)
         (into login)
         (into school-administration)
+        (into teaching)
         (->>
          (mapcat identity)
          (apply system-map)))))

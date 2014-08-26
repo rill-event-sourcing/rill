@@ -15,6 +15,7 @@ install:
 	cd learning && lein install
 	cd login && lein install
 	cd school-administration && lein install
+	cd teaching && lein install
 
 rill:
 	cd lib/rill && make test && make install
