@@ -32,10 +32,6 @@
   [model event]
   (m/remove-course model (:course-id event)))
 
-(defmethod handle-event ::section-test/Finished
-  [model {:keys [student-id section-id]}]
-  (m/set-student-section-status model section-id student-id :finished))
-
 (defmethod handle-event ::entry-quiz/NagScreenDismissed
   [model {:keys [student-id course-id]}]
   (m/set-student-entry-quiz-status model course-id student-id :nag-screen-dismissed))
@@ -56,15 +52,19 @@
 
 (defmethod handle-event ::section-test/QuestionAssigned
   [model {:keys [student-id section-id]}]
-  (m/set-student-section-status model section-id student-id :in-progress))
+  (m/update-student-section-status model section-id student-id nil :in-progress))
 
 (defmethod handle-event ::section-test/Stuck
   [model {:keys [student-id section-id]}]
-  (m/set-student-section-status model section-id student-id :stuck))
+  (m/update-student-section-status model section-id student-id :in-progress :stuck))
 
 (defmethod handle-event ::section-test/Unstuck
   [model {:keys [student-id section-id]}]
-  (m/set-student-section-status model section-id student-id :in-progress-after-stuck))
+  (m/update-student-section-status model section-id student-id :stuck :in-progress))
+
+(defmethod handle-event ::section-test/Finished
+  [model {:keys [student-id section-id]}]
+  (m/update-student-section-status model section-id student-id :in-progress :finished))
 
 (defmethod handle-event :studyflow.school-administration.student.events/Created
   [model {:keys [student-id full-name]}]
