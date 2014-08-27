@@ -447,14 +447,22 @@
                   (om/update! cursor
                               [:view :progress-modal]
                               :launchable)
+
                   "studyflow.web.ui/FinishedModal"
                   (om/update! cursor
                               [:view :progress-modal]
                               :show-finish-modal)
+
+                  "studyflow.learning.section-test.events/Stuck"
+                  (om/update! cursor
+                              [:view :progress-modal]
+                              :stuck-modal)
+
                   "studyflow.learning.section-test.events/StreakCompleted"
                   (om/update! cursor
                               [:view :progress-modal]
                               :show-streak-completed-modal)
+
                   "studyflow.learning.section-test.events/QuestionAnsweredIncorrectly"
                   (do (om/update! cursor
                                   [:view :shake-class]
@@ -484,6 +492,9 @@
                              (:correct question))
             finished-last-action (aggregates/finished-last-action section-test)
             progress-modal (get-in cursor [:view :progress-modal])
+            explanation-link (-> (get-in cursor [:view :selected-path])
+                                 (assoc :section-tab :explanation)
+                                 history-link)
             course-id (get-in cursor [:static :course-id])
             section-test-aggregate-version (:aggregate-version section-test)
             inputs (input-builders cursor section-id question-id question-index question-data current-answers (:inputs question) answer-correct)
@@ -554,6 +565,18 @@
                                                                     course-id])
                                                        false)}
                                        "Blijven oefenen"))
+                         :stuck-modal
+                         (modal (dom/span nil
+                                          (raw-html "<h1>Ouch! You slipped!</h1><img src=\"http://www.reactiongifs.com/wp-content/uploads/2012/06/xofi3.gif\">"))
+                                (dom/button #js {:onClick
+                                                 (fn [e]
+                                                   (om/update! cursor
+                                                               [:view :progress-modal]
+                                                               :dismissed)
+                                                   (js/window.location.assign explanation-link))}
+                                            "Uitleg")
+                                nil)
+
                          :show-streak-completed-modal
                          (modal (dom/span nil
                                           (raw-html "<h1>Hoppa! Weer goed!</h1><img src=\"https://s3-eu-west-1.amazonaws.com/studyflow-assets/images/184.gif\"><p>Je hebt deze paragraaf nog een keer voltooid.<br>We denken dat je hem nu wel snapt :).</p>"))
