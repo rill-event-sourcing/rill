@@ -13,7 +13,7 @@
   ;; continuing after
   (update-in model [:section-statuses section-id student-id]
              (fn [old-status]
-               (if (= old-status :finished)
+               (if (or  (= old-status :finished) (and (= old-status :stuck) (= status :in-progress)))
                  old-status
                  status))))
 

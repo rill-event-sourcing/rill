@@ -58,6 +58,14 @@
   [model {:keys [student-id section-id]}]
   (m/set-student-section-status model section-id student-id :in-progress))
 
+(defmethod handle-event ::section-test/Stuck
+  [model {:keys [student-id section-id]}]
+  (m/set-student-section-status model section-id student-id :stuck))
+
+(defmethod handle-event ::section-test/Unstuck
+  [model {:keys [student-id section-id]}]
+  (m/set-student-section-status model section-id student-id :in-progress-after-stuck))
+
 (defmethod handle-event :studyflow.school-administration.student.events/Created
   [model {:keys [student-id full-name]}]
   (m/set-student model student-id {:full-name full-name}))
