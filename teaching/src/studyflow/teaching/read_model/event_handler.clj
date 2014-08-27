@@ -6,6 +6,8 @@
 (defmulti handle-event (fn [model event] (message/type event)))
 (defmethod handle-event :default [model _] model)
 
+;; student administration
+
 (defmethod handle-event :studyflow.school-administration.student.events/Created
   [model {:keys [student-id full-name]}]
   (assoc-in model [:students student-id] {:full-name full-name}))
@@ -44,6 +46,22 @@
 (defmethod handle-event :studyflow.school-administration.department.events/NameChanged
   [model {:keys [department-id name]}]
   (update-in model [:departments department-id] assoc :name name))
+
+;; section tests
+
+(defmethod handle-event :studyflow.learning.section-test.events/Finished
+  [model {:keys [section-id student-id]}]
+  (update-in model [:students student-id :finished-sections] (fnil conj #{}) section-id))
+
+;; course material
+
+(defmethod handle-event :studyflow.learning.course.events/Published
+  [model {:keys [course-id material]}]
+  (assoc-in model [:courses course-id] material))
+
+(defmethod handle-event :studyflow.learning.course.events/Updated
+  [model {:keys [course-id material]}]
+  (assoc-in model [:courses course-id] material))
 
 ;; ready for display
 

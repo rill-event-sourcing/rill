@@ -1,5 +1,6 @@
 (ns studyflow.teaching.read-model
-  (:require [clojure.string :as str]))
+  (:require [clojure.set :refer [intersection]]
+            [clojure.string :as str]))
 
 (def empty-model {})
 
@@ -20,11 +21,27 @@
                  (filter :class-name
                          (vals (:students model)))))))
 
+(defn all-section-ids [model]
+  (->>
+   (vals (:courses model))
+   (mapcat :chapters)
+   (mapcat :sections)
+   (map :id)
+   set))
+
+(defn decorate-student-completed [model student]
+  (let [all (all-section-ids model)
+        finished (intersection all (:finished-sections student))]
+    (assoc student
+      :completed {:finished (count finished)
+                  :total (count all)})))
+
 (defn students-for-class [model class]
-  (filter (fn [student]
-            (and (= (:department-id student) (:department-id class))
-                 (= (:class-name student) (:name class))))
-          (vals (:students model))))
+  (map (partial decorate-student-completed model)
+       (filter (fn [student]
+                 (and (= (:department-id student) (:department-id class))
+                      (= (:class-name student) (:name class))))
+               (vals (:students model)))))
 
 ;; catchup
 

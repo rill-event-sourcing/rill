@@ -16,20 +16,28 @@
    [:form {:method "GET"}
     (form/drop-down {:onchange "this.form.submit()"}
                     "classid"
-                    (into [[]]
+                    (into [["-- Kies klas --" ""]]
                           (sort-by first
                                    (map #(vector (:full-name %) (:id %))
                                         classes)))
                     (:id class))]
 
-   [:table.students
-    [:thead
-     [:th "Name"]]
-    [:tbody
-     (map (fn [student]
-            [:tr
-             [:td (h (:full-name student))]])
-          students)]]))
+   (when students
+     [:table.students
+      [:thead
+       [:th.full-name]
+       [:th.total "Totaal"]]
+      [:tbody
+       (map (fn [student]
+              [:tr
+               [:td.full-name
+                (h (:full-name student))]
+               [:td.total
+                (let [{:keys [total finished]} (:completed student)
+                      title (str finished "/" total)
+                      perc (format "%d%%" (Math/round (float (/ (* finished 100) total))))]
+                  [:span {:title title} perc])]])
+            students)]])))
 
 (defroutes app
   (GET "/reports/"
@@ -41,5 +49,5 @@
         {:keys [classid]} :params}
        (let [classes (read-model/classes read-model)
              class (first (filter #(= classid (:id %)) classes))
-             students (read-model/students-for-class read-model class)]
+             students (when class (read-model/students-for-class read-model class))]
          (render-completion classes class students flash))))
