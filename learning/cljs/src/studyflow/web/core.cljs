@@ -16,12 +16,11 @@
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (set! *print-fn*
-      (if (and js/console
-               (.-log js/console)
-               (.-apply (.-log js/console)))
-        (fn [& args]
-          (.apply (.-log js/console) js/console (into-array args)))
-        (fn [& args])))
+      (let [c (some-> js/window .-console)]
+        (if (some-> c .-log .-apply)
+          (fn [& args]
+            (.apply (.-log c) c (into-array args)))
+          (fn [& args]))))
 
 (defn course-id-for-page []
   (.-value (gdom/getElement "course-id")))
