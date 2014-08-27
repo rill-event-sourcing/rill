@@ -7,6 +7,17 @@
             [studyflow.teaching.web.html-util :refer [layout]]
             [ring.util.response :refer [redirect]]))
 
+(defn- completion-title [{:keys [finished total]}]
+  (str finished "/" total))
+
+(defn- completion-percentage [{:keys [finished total]}]
+  (str (Math/round (float (/ (* finished 100) total))) "%"))
+
+(defn- completion [completion]
+  (when completion
+    [:span {:title (completion-title completion)}
+     (completion-percentage completion)]))
+
 (defn render-completion [classes class students options]
   (layout
    (merge {:title (if class
@@ -33,11 +44,12 @@
                [:td.full-name
                 (h (:full-name student))]
                [:td.total
-                (let [{:keys [total finished]} (:completed student)
-                      title (str finished "/" total)
-                      perc (format "%d%%" (Math/round (float (/ (* finished 100) total))))]
-                  [:span {:title title} perc])]])
-            students)]])))
+                (completion (:total-completion student))]])
+            students)]
+      [:tfoot
+       [:th.average "Klassengemiddelde"]
+       [:td.average-total
+        (completion (:total-completion class))]]])))
 
 (defroutes app
   (GET "/reports/"
