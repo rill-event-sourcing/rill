@@ -139,9 +139,12 @@
   {:pre [teacher]}
   (if department-id
     (let [assigned (map (partial events/class-assigned teacher-id department-id) (set/difference (set class-names) (set original-classes)))
-          unassigned (map (partial events/class-unassigned teacher-id department-id) (set/difference (set original-classes)  (set class-names) ))]
-      [:ok (concat assigned unassigned)])
-    [:rejected {:class-name ["You must set a department before assigning a class"]}]))
+          unassigned (map (partial events/class-unassigned teacher-id department-id) (set/difference (set original-classes)  (set class-names)))
+          events (concat assigned unassigned)]
+      (if (seq events)
+        [:ok events]
+        [:rejected {:class-names ["No change"]}]))
+    [:rejected {:class-names  ["You must set a department before assigning a class"]}]))
 
 (defmethod handle-event ::events/ClassAssigned
   [{:keys [class-names] :as teacher} {:keys [class-name]}]
@@ -149,6 +152,6 @@
 
 (defmethod handle-event ::events/ClassUnassigned
   [{:keys [class-names] :as teacher} {:keys [class-name]}]
-  (assoc teacher :class-names (dissoc (set class-names) class-name)))
+  (assoc teacher :class-names (disj (set class-names) class-name)))
 
 

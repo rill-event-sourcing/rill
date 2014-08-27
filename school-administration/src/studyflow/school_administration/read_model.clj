@@ -1,4 +1,5 @@
-(ns studyflow.school-administration.read-model)
+(ns studyflow.school-administration.read-model
+  (:require [clojure.string :as string]))
 
 (def empty-model {})
 
@@ -80,7 +81,6 @@
   (assoc-in model [:departments id :sales-data] {:licenses-sold licenses-sold
                                                  :status status}))
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; students
 
@@ -123,6 +123,56 @@
   [model id name]
   (assoc-in model [:students id :class-name] name))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; teachers
+
+(defn- decorate-teacher [model teacher]
+  (let [department (get-in model [:departments (:department-id teacher)])
+        school (get-in model [:schools (:school-id department)])]
+    (assoc teacher
+      :school school
+      :department department
+      :version (aggregate-version model (:id teacher)))))
+
+(defn list-teachers [model]
+  (map (partial decorate-teacher model)
+       (sort-by :full-name (vals (:teachers model)))))
+
+(defn get-teacher [model id]
+  (decorate-teacher model (get-in model [:teachers id])))
+
+(defn set-teacher
+  [model id teacher]
+  (assoc-in model [:teachers id] teacher))
+
+(defn set-teacher-full-name
+  [model id name]
+  (assoc-in model [:teachers id :full-name] name))
+
+(defn set-teacher-email
+  [model id email]
+  (assoc-in model [:teachers id :email] email))
+
+(defn set-teacher-department
+  [model id department-id]
+  (update-in model [:teachers id]
+             (fn [teacher]
+               (-> teacher
+                   (assoc :department-id department-id)
+                   (dissoc :class-name)))))
+
+(defn assign-teacher-to-class
+  [model id class-name]
+  (update-in model [:teachers id :class-names] (fnil conj #{}) class-name))
+
+(defn unassign-class-from-class
+  [model id class-name]
+  (update-in model [:teachers id :class-names] disj class-name))
+
+(defn class-names-for-department
+  [model department]
+  (set (filter (complement string/blank?) (map :class-name (filter #(= (:id department) (:department-id %))
+                                                                   (vals (:students model)))))))
 
 ;; catchup
 
