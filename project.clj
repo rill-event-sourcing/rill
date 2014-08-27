@@ -24,6 +24,8 @@
                  [clout-link/clout-link "0.0.6"]
                  [ring-mock/ring-mock "0.1.5"]
                  [ring/ring-devel "1.2.1"]
+                 [com.mindscapehq/raygun4java "1.5.0" :extension "pom"]
+                 [com.mindscapehq/core "1.5.0"]
                  [identifiers/identifiers "1.0.0"]
                  [org.bovinegenius/exploding-fish "0.3.4"]]
   :source-paths ["lib/migrations/src"
