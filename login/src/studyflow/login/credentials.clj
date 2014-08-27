@@ -85,7 +85,6 @@
 
 (defmethod handle-event :default
   [db _]
-  (log/info :skipped-event)
   db)
 
 ;; catchup
