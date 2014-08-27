@@ -71,7 +71,8 @@
    :jetty (component/using (jetty-component (or jetty-port 4000)) [:ring-handler])
    :ring-handler (component/using (ring-handler-component (or session-max-age (* 8 60 60))
                                                           (merge {"editor" "http://localhost:2000"
-                                                                  "student" "http://localhost:3000"}
+                                                                  "student" "http://localhost:3000"
+                                                                  "teacher" "http://example.com"}
                                                                  default-redirect-paths)
                                                           cookie-domain)
                                   [:credentials :session-store :event-store :edu-route-service])

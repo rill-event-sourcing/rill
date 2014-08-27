@@ -174,8 +174,11 @@
   (fn [{:keys [default-redirect-paths cookies] :as req}]
     (let [resp (app req)]
       (if-let [user-role (:redirect-for-role resp)]
-        (redirect-to (or (:value (cookies "studyflow_redir_to"))
-                         (default-redirect-paths user-role)))
+        (do
+          (log/info ["redirecting" user-role (default-redirect-paths user-role) (:value (cookies "studyflow_redir_to"))])
+          (redirect-to (or (and (= "student" user-role)
+                                (:value (cookies "studyflow_learning_redir_to")))
+                           (default-redirect-paths user-role))))
         resp))))
 
 (def studyflow-site-defaults
