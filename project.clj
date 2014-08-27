@@ -14,8 +14,6 @@
                  [org.slf4j/slf4j-log4j12 "1.7.5"]
                  [rill/rill "0.1.0-SNAPSHOT"]
                  [ring/ring-defaults "0.1.0"]
-                 [studyflow/migrations "0.1.0-SNAPSHOT"]
-                 [studyflow/components "0.1.0-SNAPSHOT"]
                  [digest/digest "1.4.4"]
                  [clj-http/clj-http "0.9.1"]
                  [cheshire/cheshire "5.3.1"]
