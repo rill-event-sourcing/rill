@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140813073724) do
+ActiveRecord::Schema.define(version: 20140827124228) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -95,11 +95,12 @@ ActiveRecord::Schema.define(version: 20140813073724) do
     t.string   "title"
     t.text     "description"
     t.datetime "deleted_at"
-    t.boolean  "active",                default: false
+    t.boolean  "active",                       default: false
     t.integer  "position"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "max_inputs",  limit: 2
+    t.integer  "max_inputs",         limit: 2
+    t.string   "meijerink_criteria"
   end
 
   create_table "subsections", id: :uuid, default: "uuid_generate_v4()", force: true do |t|

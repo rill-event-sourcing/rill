@@ -17,6 +17,8 @@ class Section < ActiveRecord::Base
 
   scope :active, -> { where(active: true) }
 
+  serialize :meijerink_criteria, Hash
+
   scope :for_short_uuid, ->(id) { where(["SUBSTRING(CAST(id AS VARCHAR), 1, 8) = ?", id]) }
   def self.find_by_uuid(id, with_404 = true)
     sections = for_short_uuid(id)
@@ -41,6 +43,7 @@ class Section < ActiveRecord::Base
     {
       id: id,
       title: title,
+      meijerink_criteria: meijerink_criteria.select{|k,v| v == "1"}.keys,
       subsections: subsections.map(&:to_publishing_format),
       questions: questions.active.map(&:to_publishing_format_for_section),
       line_input_fields: line_inputs.map(&:to_publishing_format)

@@ -1,9 +1,10 @@
 %table.table.table-bordered
   %thead
     %tr
-      %th.col-md-3{colspan: 2}  Section title
-      %th.col-md-6  Section description
+      %th.col-md-4{colspan: 2}  Section title
+      %th.col-md-2  Section description
       %th.col-md-1  Order
+      %th.col-md-2  Meijerink criteria
       %th.col-md-1  Active
       %th.col-md-1  Actions
 
@@ -18,6 +19,7 @@
             %span.glyphicon.glyphicon-arrow-down
           = link_to moveup_chapter_section_path(@chapter,section), method: :post do
             %span.glyphicon.glyphicon-arrow-up
+        %td{style: "text-align: center"}= section.meijerink_criteria.select{|k,v| v == "1"}.keys.join(", ")
         %td
           - if section.active?
             = link_to deactivate_chapter_section_path(@chapter,section), method: :post do
