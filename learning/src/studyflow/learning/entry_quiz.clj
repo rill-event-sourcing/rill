@@ -76,7 +76,6 @@
                          (events/question-answered-correctly course-id student-id (:id question) inputs)
                          (events/question-answered-incorrectly course-id student-id (:id question) inputs))
         {:keys [current-question-index correct-answers] :as entry-quiz} (handle-event entry-quiz answered-event)]
-    (println current-question-index)
     (if (= current-question-index (count questions))
       (if (<= threshold correct-answers)
         [:ok [answered-event (events/passed course-id student-id)]]
