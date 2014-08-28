@@ -26,7 +26,7 @@
                    (email-ownership/claim! student-id email)
                    (student/import-student! student-id full-name department-id class-name email encrypted-password)
                    (email-ownership/release! student-id email))]
-      (log/info result)
+      (log/debug result)
       result)
     [:rejected {:email :invalid}]))
 

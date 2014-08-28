@@ -17,7 +17,7 @@
 
 (defn authenticate-by-edu-route-id [db edu-route-id]
   (let [user (get-in db [:by-edu-route-id edu-route-id])]
-    (log/info [:authenticated-as user])
+    (log/debug [:authenticated-as user])
     user))
 
 ;;;; Accessors for credentials db

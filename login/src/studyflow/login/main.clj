@@ -87,7 +87,7 @@
   (GET "/students/sign_in"
        {{:keys [edurouteSessieID signature EAN] :as params} :params
         :keys [session event-store edu-route-service authenticate-by-edu-route-id]}
-       (log/info "eduroute login with params: " params)
+       (log/debug "eduroute login with params: " params)
        ;; check if eduroute session has a valid format
        (if (check-edu-route-signature edu-route-service edurouteSessieID signature)
          ;; check if eduroute session is valid
@@ -175,7 +175,7 @@
     (let [resp (app req)]
       (if-let [user-role (:redirect-for-role resp)]
         (do
-          (log/info ["redirecting" user-role (default-redirect-paths user-role) (:value (cookies "studyflow_redir_to"))])
+          (log/debug ["redirecting" user-role (default-redirect-paths user-role) (:value (cookies "studyflow_learning_redir_to"))])
           (redirect-to (or (and (= "student" user-role)
                                 (:value (cookies "studyflow_learning_redir_to")))
                            (default-redirect-paths user-role))))
