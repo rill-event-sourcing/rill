@@ -702,17 +702,21 @@
   (if-not (= (:status element) "finished")
     element))
 
-(defn first-nonfinished-section [chapter]
-  (some not-finished? (:sections chapter)))
+(defn not-stuck? [section]
+  (if-not (= (:status section) "stuck")
+    section))
 
-(defn nonfinished-chapter-with-nonfinished-sections [chapter]
+(defn first-recommendable-section [chapter]
+  (some (comp not-stuck? not-finished?) (:sections chapter)))
+
+(defn nonfinished-chapter-with-recommendable-sections [chapter]
   (if (and
        (not (= (:status chapter) "finished"))
-       (first-nonfinished-section chapter))
+       (first-recommendable-section chapter))
     chapter))
 
 (defn first-recommendable-chapter [course]
-  (some nonfinished-chapter-with-nonfinished-sections (:chapters course)))
+  (some nonfinished-chapter-with-recommendable-sections (:chapters course)))
 
 (defn recommended-action [cursor]
   (let [course (get-in cursor [:view :course-material])
@@ -722,7 +726,7 @@
        :link (history-link {:main :entry-quiz})
        :id (:id entry-quiz)}
       (let [chapter (first-recommendable-chapter course)
-            section (first-nonfinished-section chapter)]
+            section (first-recommendable-section chapter)]
         {:title (:title section)
          :id (:id section)
          :link (section-explanation-link cursor chapter section)} ))))
