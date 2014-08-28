@@ -457,7 +457,7 @@
                   "studyflow.learning.section-test.events/Stuck"
                   (om/update! cursor
                               [:view :progress-modal]
-                              :stuck-modal)
+                              :show-stuck-modal)
 
                   "studyflow.learning.section-test.events/StreakCompleted"
                   (om/update! cursor
@@ -566,7 +566,7 @@
                                                                     course-id])
                                                        false)}
                                        "Blijven oefenen"))
-                         :stuck-modal
+                         :show-stuck-modal
                          (modal (dom/span nil
                                           (raw-html "<h1>Ouch! You slipped!</h1><img src=\"http://www.reactiongifs.com/wp-content/uploads/2012/06/xofi3.gif\">"))
                                 (dom/button #js {:onClick
