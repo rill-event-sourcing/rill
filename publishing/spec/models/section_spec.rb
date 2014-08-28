@@ -15,9 +15,20 @@ RSpec.describe Section, type: :model do
     @subsection3 = create(:subsection, title: "C", text: "C content", section: @section1)
   end
 
-
   it "should list sections in the right order" do
     expect(Section.all.map(&:to_s)).to eq ['A', 'B', 'C']
+  end
+
+  it "should provide an array with the meijerink criteria" do
+    section = build(:section)
+    section.meijerink_criteria = {"1F" => "0", "2F" => "0", "3F" => "0"}
+    expect(section.selected_meijerink_criteria).to eq []
+    section2 = build(:section)
+    section2.meijerink_criteria = {"1F" => "0", "2F" => "1", "3F" => "0"}
+    expect(section2.selected_meijerink_criteria).to eq ["2F"]
+    section3 = build(:section)
+    section3.meijerink_criteria = {"1F" => "1", "2F" => "0", "3F" => "1"}
+    expect(section3.selected_meijerink_criteria).to eq ["1F", "3F"]
   end
 
   it "should not list trashed sections" do
