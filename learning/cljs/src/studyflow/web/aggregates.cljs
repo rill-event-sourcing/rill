@@ -7,8 +7,7 @@
       (conj (pop streak) [question-id result])
       streak ;; already recorded a streak entry
       )
-    (conj streak [question-id result])
-    ))
+    (conj streak [question-id result])))
 
 (defn section-test-progress [section-test-agg]
   (cond
@@ -30,8 +29,7 @@
     (let [aggr-id (:section-id event)]
       {:id aggr-id
        :questions []
-       :streak []
-       :stumbling-streak []})
+       :streak []})
     "studyflow.learning.section-test.events/QuestionAssigned"
     (let [question-id (:question-id event)]
       (-> agg
@@ -44,8 +42,6 @@
           answer (:answer event)]
       (-> agg
           (update-in [:streak]
-                     conj-streak question-id :revealed)
-          (update-in [:stumbling-streak]
                      conj-streak question-id :revealed)
           (update-in [:questions]
                      (fn [qs]
@@ -60,8 +56,6 @@
       (-> agg
           (update-in [:streak]
                      conj-streak question-id :correct)
-          (update-in [:stumbling-streak]
-                     conj-streak question-id :correct)
           (update-in [:questions]
                      (fn [qs]
                        (vec (for [q qs]
@@ -75,8 +69,6 @@
           inputs (:inputs event)]
       (-> agg
           (update-in [:streak]
-                     conj-streak question-id :incorrect)
-          (update-in [:stumbling-streak]
                      conj-streak question-id :incorrect)
           (update-in [:questions]
                      (fn [qs]

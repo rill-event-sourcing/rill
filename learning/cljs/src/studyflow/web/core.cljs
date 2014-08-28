@@ -740,7 +740,6 @@
                   :as section} (:sections chapter)]
              (let [section-status (get {"finished" "finished"
                                         "stuck" "stumbling_block"
-                                        "in-progress-after-stuck" "in_progress"
                                         "in-progress" "in_progress"} status "")
                    section-link (section-explanation-link cursor chapter section)]
                (dom/li #js {:data-id section-id
