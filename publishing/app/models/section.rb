@@ -39,11 +39,15 @@ class Section < ActiveRecord::Base
     chapter
   end
 
+  def selected_meijerink_criteria
+    meijerink_criteria.select{|k,v| v == "1"}.keys
+  end
+
   def to_publishing_format
     {
       id: id,
       title: title,
-      meijerink_criteria: meijerink_criteria.select{|k,v| v == "1"}.keys,
+      meijerink_criteria: selected_meijerink_criteria,
       subsections: subsections.map(&:to_publishing_format),
       questions: questions.active.map(&:to_publishing_format_for_section),
       line_input_fields: line_inputs.map(&:to_publishing_format)
@@ -80,6 +84,7 @@ class Section < ActiveRecord::Base
 
   def errors_when_publishing
     errors = []
+    errors << "No Meijerink criteria selected in section '#{name}'" if selected_meijerink_criteria.empty?
     errors << "Error in input referencing in section '#{name}', in '#{parent}'" unless inputs_referenced_exactly_once?
     errors << "Nonexisting inputs referenced in section '#{name}', in '#{parent}'" if nonexisting_inputs_referenced?
     errors << "No questions in section '#{name}', in '#{parent}'" if questions.active.empty?
@@ -89,6 +94,5 @@ class Section < ActiveRecord::Base
     errors << subsections.map(&:errors_when_publishing)
     errors.flatten
   end
-
 
 end

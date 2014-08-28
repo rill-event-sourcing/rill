@@ -87,6 +87,14 @@ RSpec.describe Section, type: :model do
     expect(@section1.max_inputs).to eq (max_inputs+1)
   end
 
+  it "should make sure at least one meijerink criteria is selected" do
+    section = build(:section, meijerink_criteria: {"1F" => "0", "2F" => "0", "3F" => "0"})
+    section2 = build(:section, meijerink_criteria: {"1F" => "0", "2F" => "0", "3F" => "1"})
+
+    expect(section.errors_when_publishing).to include "No Meijerink criteria selected in section '#{section.name}'"
+    expect(section2.errors_when_publishing).not_to include "No Meijerink criteria selected in section '#{section2.name}'"
+  end
+
   it "should make sure all inputs are referenced" do
     @input = create(:line_input, inputable: @section1)
     expect(@section1.errors_when_publishing).to include("Error in input referencing in section '#{@section1.name}', in '#{@section1.parent}'")
