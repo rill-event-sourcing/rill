@@ -138,20 +138,22 @@
   {:pre [(= current-question-id question-id)
          (not question-finished?)]}
   (if (course/answer-correct? (course/question-for-section course section-id question-id) inputs)
-    (if (correct-answer-will-finish-test? this)
-      [:ok [(events/question-answered-correctly section-id student-id question-id inputs)
-            (events/finished section-id student-id)]]
-      (if (correct-answer-will-complete-streak? this)
-        [:ok [(events/question-answered-correctly section-id student-id question-id inputs)
-              (events/streak-completed section-id student-id)]]
-        (if (correct-answer-will-unstuck? this)
-          [:ok [(events/question-answered-correctly section-id student-id question-id inputs)
-                (events/unstuck section-id student-id)]]
-          [:ok [(events/question-answered-correctly section-id student-id question-id inputs)]])))
-    (if (not-correct-answer-will-trigger-stumbling-block? this)
-      [:ok [(events/question-answered-incorrectly section-id student-id question-id inputs)
-            (events/stuck section-id student-id)]]
-      [:ok [(events/question-answered-incorrectly section-id student-id question-id inputs)]])))
+    (let [correct-answer-event (events/question-answered-correctly section-id student-id question-id inputs)]
+      (if (correct-answer-will-finish-test? this)
+        [:ok [correct-answer-event
+              (events/finished section-id student-id)]]
+        (if (correct-answer-will-complete-streak? this)
+          [:ok [correct-answer-event
+                (events/streak-completed section-id student-id)]]
+          (if (correct-answer-will-unstuck? this)
+            [:ok [correct-answer-event
+                  (events/unstuck section-id student-id)]]
+            [:ok [correct-answer-event]]))))
+    (let [incorrect-answer-event (events/question-answered-incorrectly section-id student-id question-id inputs)]
+      (if (not-correct-answer-will-trigger-stumbling-block? this)
+        [:ok [incorrect-answer-event
+              (events/stuck section-id student-id)]]
+        [:ok [incorrect-answer-event]]))))
 
 (defmethod aggregate-ids ::commands/RevealAnswer!
   [{:keys [course-id]}]
