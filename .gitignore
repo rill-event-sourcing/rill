@@ -8,3 +8,4 @@ learning/resources/public/js/out/*
 learning/resources/public/js/studyflow-dev.js
 learning/resources/public/js/studyflow.js
 .sass-cache
+target/
