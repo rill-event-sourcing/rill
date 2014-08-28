@@ -93,6 +93,7 @@
                                                       "open ")
                                                     (get
                                                      {:finished "finished"
+                                                      :stuck "stumbling_block"
                                                       :in-progress "in_progress"}
                                                      (aggregates/section-test-progress
                                                       (get-in cursor [:aggregates section-id]))
