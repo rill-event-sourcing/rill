@@ -17,7 +17,9 @@ RSpec.describe MultipleChoiceInput, type: :model do
     expect(@mc.to_param).to eq id[0,8]
   end
 
-  it "should make sure there are choices to select" do
+  describe "enforcing constraints for publishing" do
+
+  it "should make sure there is at least one choice" do
     expect(@mc.errors_when_publishing).to include("No choice for #{@mc.name} in #{@mc.inputable_type} '#{@mc.inputable.name}' in '#{@mc.inputable.parent}'")
     expect(@mc_with_choice.errors_when_publishing).not_to include("No choice for #{@mc_with_choice.name} in #{@mc_with_choice.inputable_type} #{@mc_with_choice.inputable.name} in '#{@mc_with_choice.inputable.parent}'")
   end
@@ -30,6 +32,8 @@ RSpec.describe MultipleChoiceInput, type: :model do
   it "should make sure every choice is non empty" do
     expect(@mc_with_choice.errors_when_publishing).not_to include("Empty choice for #{@mc_with_choice.name} in #{@mc_with_choice.inputable_type} '#{@mc_with_choice.inputable.name}' in '#{@mc_with_choice.inputable.parent}'")
     expect(@mc_with_empty_choice.errors_when_publishing).to include("Empty choice for #{@mc_with_empty_choice.name} in #{@mc_with_empty_choice.inputable_type} '#{@mc_with_empty_choice.inputable.name}' in '#{@mc_with_empty_choice.inputable.parent}'")
+  end
+
   end
 
 end

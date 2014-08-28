@@ -43,12 +43,12 @@ RSpec.describe Course, type: :model do
     @course.deactivate
     expect(@course.active).to eq false
   end
-
-  it "should make sure that an entry quiz is present" do
-    @course = build(:course)
-    expect(@course.errors_when_publishing).to include "No entry quiz for the course"
-    @eq = build(:entry_quiz, course: @course)
-    expect(@course.errors_when_publishing).not_to include "No entry quiz for the course"
+  describe "enforcing constraints for publishing" do
+    it "should make sure that there is an entry quiz" do
+      @course = build(:course)
+      expect(@course.errors_when_publishing).to include "No entry quiz for the course"
+      @eq = build(:entry_quiz, course: @course)
+      expect(@course.errors_when_publishing).not_to include "No entry quiz for the course"
+    end
   end
-
 end
