@@ -196,6 +196,7 @@
                                                false)}
                               (dom/input
                                #js {:className "inline_input"
+                                    :placeholder "................."
                                     :react-key (:name field)
                                     :ref (:name field)
                                     :value (get-in cursor [:view :section section-id :input field-name :given-answer])
