@@ -1,6 +1,14 @@
 .m-inline_input
   position: relative
   display: inline
+  &.correct
+    .inline_input
+      background-color: #e2f5c2
+      +border-radius(0)
+      border: 0
+  &.incorrect
+    .inline_input
+      background-color: #ffb1b1
   .inline_input
     display: inline
     +border-radius(6px)
