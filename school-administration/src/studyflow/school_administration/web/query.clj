@@ -4,7 +4,8 @@
             [studyflow.school-administration.read-model :as read-model]
             [studyflow.school-administration.web.departments.query :as departments]
             [studyflow.school-administration.web.schools.query :as schools]
-            [studyflow.school-administration.web.students.query :as students]))
+            [studyflow.school-administration.web.students.query :as students]
+            [studyflow.school-administration.web.teachers.query :as teachers]))
 
 (defn model-up-to-date?
   [model id version]
@@ -24,5 +25,5 @@
         (app (assoc request :read-model read-model))))))
 
 (defn queries-app [read-model]
-  (-> (fn [req] (some #(% req) [students/queries schools/queries departments/queries]))
+  (-> (fn [req] (some #(% req) [students/queries schools/queries departments/queries teachers/queries]))
       (wrap-read-model read-model)))

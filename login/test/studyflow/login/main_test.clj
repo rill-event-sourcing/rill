@@ -110,8 +110,8 @@
 
 (deftest wrap-redirect-for-role-test
   (let [handler (wrap-redirect-for-role identity)
-        user-role "tester"
-        default-redirect-paths {"tester" "this-is-a-url"}]
+        user-role "student"
+        default-redirect-paths {"student" "this-is-a-url"}]
     (testing "without any redirect-for-role into request"
       (is (= {} (handler {}))))
     (testing "with redirect-for-role and no cookie"
@@ -119,7 +119,7 @@
         (is (= (default-redirect-paths user-role) ((:headers resp) "Location")))))
     (testing "with redirect-for-role and cookie"
       (let [path "this-path"
-            resp (handler {:redirect-for-role user-role, :default-redirect-paths default-redirect-paths, :cookies {"studyflow_redir_to" {:value path}}})]
+            resp (handler {:redirect-for-role user-role, :default-redirect-paths default-redirect-paths, :cookies {"studyflow_learning_redir_to" {:value path}}})]
         (is (= path ((:headers resp) "Location")))))))
 
 (deftest get-session-id-from-cookies-test

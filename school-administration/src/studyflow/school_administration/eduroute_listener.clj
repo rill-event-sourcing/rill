@@ -1,7 +1,9 @@
 (ns studyflow.school-administration.eduroute-listener
   (:require [clojure.core.async :refer [go close! <! <!!]]
             [clojure.tools.logging :as log]
+            [studyflow.components.event-channel :refer [channel]]
             [com.stuartsierra.component :as component]
+            [studyflow.credentials.edu-route-id-ownership :as edu-route-id-ownership]
             [rill.handler :refer [try-command]]
             [rill.message :as message]
             [rill.uuid :refer [new-id uuid]]
@@ -12,9 +14,9 @@
   [event-store {:keys [edu-route-id full-name]}]
   (let [student-id (new-id)]
     (with-claim event-store
-      (student/claim-edu-route-id! edu-route-id student-id)
+      (edu-route-id-ownership/claim! edu-route-id student-id)
       (student/create-from-edu-route-credentials! student-id edu-route-id full-name)
-      (student/release-edu-route-id! edu-route-id student-id))))
+      (edu-route-id-ownership/release! edu-route-id student-id))))
 
 (defn eduroute-listener [event-store event-channel]
   (go (loop []
@@ -25,17 +27,17 @@
                  (log/error e "Error in eduroute-listener")))
           (recur)))))
 
-(defrecord EdurouteListenerComponent [event-store event-channel]
+(defrecord EdurouteListenerComponent [event-store event-channel num]
   component/Lifecycle
   (start [component]
     (log/info "Starting eduroute listener")
-    (assoc component :listener (eduroute-listener (:store event-store) (:channel event-channel))))
+    (assoc component :listener (eduroute-listener (:store event-store) (channel event-channel num))))
   (stop [component]
     (log/info "Stopping eduroute listener")
     (when (:listener component)
-      (close! (:channel event-channel))
+      (close! (channel event-channel num))
       (<!! (:listener component)))
     (dissoc component :listener)))
 
-(defn eduroute-listener-component []
-  (map->EdurouteListenerComponent {}))
+(defn eduroute-listener-component [channel-number]
+  (map->EdurouteListenerComponent {:num channel-number}))

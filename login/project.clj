@@ -17,6 +17,7 @@
                  [rill "0.1.0-SNAPSHOT"]
                  [ring/ring-defaults "0.1.0"]
                  [org.slf4j/slf4j-log4j12 "1.7.5"]
+                 [studyflow/migrations "0.1.0-SNAPSHOT"]
                  [studyflow/components "0.1.0-SNAPSHOT"]
                  [digest "1.4.4"]]
   :resource-paths ["resources" "generated"]

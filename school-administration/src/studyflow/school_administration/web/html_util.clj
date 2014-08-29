@@ -21,6 +21,7 @@
        (map (fn [[url label]]
               [:li [:a (if (= url *current-nav-uri*) {} {:href url}) label]])
             {"/list-students" "Students"
+             "/list-teachers" "Teachers"
              "/list-schools" "Schools"})]]
      [:h1 (h title)]]
     [:div.body

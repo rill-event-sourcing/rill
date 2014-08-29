@@ -34,7 +34,8 @@
 
         login (-> (login-dev-system/make-system {:jetty-port 4000
                                                  :default-redirect-paths {"editor" "http://localhost:2000"
-                                                                          "student" "http://localhost:3000"}
+                                                                          "student" "http://localhost:3000"
+                                                                          "teacher" "http://localhost:4001"}
                                                  :session-max-age (* 8 60 60)
                                                  :cookie-domain nil})
                   (dissoc :event-store :session-store)
@@ -44,9 +45,11 @@
                                   (dissoc :event-store)
                                   (namespace-system :school-administration [:event-store]))
 
-        teaching (-> (teaching/prod-system {:port 4001})
-                     (dissoc :event-store)
-                     (namespace-system :teaching [:event-store]))
+        teaching (-> (teaching/prod-system {:port 4001
+                                            :redirect-urls {:login "http://localhost:4000"
+                                                            :teaching "http://localhost:4001"}})
+                     (dissoc :event-store :session-store)
+                     (namespace-system :teaching [:event-store :session-store]))
 
         shared-system {:event-store (if-let [url (:psql config)]
                                       (psql-event-store-component url)

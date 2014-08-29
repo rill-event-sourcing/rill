@@ -16,10 +16,10 @@
   [app read-model-atom]
   (fn [req] (app (assoc req :read-model @read-model-atom))))
 
-(def app
-  (fn [{:keys [uri] :as req}]
-    (if (= "/" uri)
-      (redirect "/reports/")
-      ((compojure/routes
-        catchup-handler
-        query/app) req))))
+(defn app
+  [{:keys [uri] :as req}]
+  (if (= "/" uri)
+    (redirect "/reports/")
+    ((compojure/routes
+      catchup-handler
+      query/app) req)))

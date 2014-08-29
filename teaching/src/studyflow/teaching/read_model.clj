@@ -81,6 +81,10 @@
                 :school-name (:name school)}))
        (map (partial decorate-class-completion model))))
 
+(defn get-teacher
+  [model id]
+  (get-in model [:teachers id]))
+
 ;; catchup
 
 (defn caught-up

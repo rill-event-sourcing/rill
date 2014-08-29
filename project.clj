@@ -32,14 +32,16 @@
                  "lib/components/src"
                  "super-system/src"
                  "school-administration/src"
+                 "teaching/src"
                  "learning/src"
                  "login/src"]
-  :resource-paths ["learning/resources" "login/resources" "school-administration/resources"
-                   "learning/generated" "login/generated" "school-administration/generated"
-                   "learning/dev/resources" "login/dev/resources" "school-administration/dev/resources"]
+  :resource-paths ["learning/resources" "login/resources" "school-administration/resources" "teaching/resources"
+                   "learning/generated" "login/generated" "school-administration/generated" "teaching/generated"
+                   "learning/dev/resources" "login/dev/resources" "school-administration/dev/resources" "teaching/dev/resources"]
   :test-paths ["lib/components/test"
                "school-administration/test"
                "learning/test"
+               "teaching/test"
                "login/test"]
-  :profiles {:dev {:source-paths ["super-system/dev" "learning/dev" "login/dev" "school-administration/dev"]
+  :profiles {:dev {:source-paths ["super-system/dev" "learning/dev" "login/dev" "school-administration/dev" "teaching/dev"]
                    :resource-paths ["super-system/dev/resources"]}})
