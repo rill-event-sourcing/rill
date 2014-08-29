@@ -105,7 +105,7 @@
                              (dom/h1 #js {:id "page_heading"}
                                      "Welkom op Studyflow!") ;; TODO title is not in aggregate
                              (when-let [index (:question-index entry-quiz)]
-                               (dom/p #js {:id "page_subheading"}
+                               (dom/p #js {:id "quiz_counter"}
                                       (str "Vraag " (inc index) " van " (count (:questions material))))))
                  (dom/section #js {:id "main"}
                               (dom/article #js {:id "m-section"}
