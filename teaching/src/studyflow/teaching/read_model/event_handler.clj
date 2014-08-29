@@ -10,19 +10,19 @@
 
 (defmethod handle-event :studyflow.school-administration.student.events/Created
   [model {:keys [student-id full-name]}]
-  (assoc-in model [:students student-id] {:full-name full-name}))
+  (assoc-in model [:students student-id :full-name] full-name))
 
 (defmethod handle-event :studyflow.school-administration.student.events/NameChanged
   [model {:keys [student-id full-name]}]
-  (update-in model [:students student-id] assoc :full-name full-name))
+  (assoc-in model [:students student-id :full-name] full-name))
 
 (defmethod handle-event :studyflow.school-administration.student.events/DepartmentChanged
   [model {:keys [student-id department-id]}]
-  (update-in model [:students student-id] assoc :department-id department-id))
+  (assoc-in model [:students student-id :department-id] department-id))
 
 (defmethod handle-event :studyflow.school-administration.student.events/ClassAssigned
   [model {:keys [student-id class-name] :as event}]
-  (update-in model [:students student-id] assoc :class-name class-name))
+  (assoc-in model [:students student-id :class-name] class-name))
 
 (defmethod handle-event :studyflow.school-administration.student.events/Imported
   [model {:keys [student-id full-name department-id class-name]}]
@@ -36,7 +36,7 @@
 
 (defmethod handle-event :studyflow.school-administration.school.events/NameChanged
   [model {:keys [school-id name]}]
-  (update-in model [:schools school-id] assoc :name name))
+  (assoc-in model [:schools school-id :name] name))
 
 (defmethod handle-event :studyflow.school-administration.department.events/Created
   [model {:keys [department-id school-id name]}]
@@ -45,13 +45,17 @@
 
 (defmethod handle-event :studyflow.school-administration.department.events/NameChanged
   [model {:keys [department-id name]}]
-  (update-in model [:departments department-id] assoc :name name))
+  (assoc-in model [:departments department-id :name] name))
 
-;; section tests
+;; finishing sections
 
 (defmethod handle-event :studyflow.learning.section-test.events/Finished
   [model {:keys [section-id student-id]}]
   (update-in model [:students student-id :finished-sections] (fnil conj #{}) section-id))
+
+(defmethod handle-event :studyflow.learning.entry-quiz.events/Passed
+  [model {:keys [student-id course-id]}]
+  (update-in model [:students student-id :course-entry-quiz-passed] (fnil conj #{}) course-id))
 
 ;; course material
 
