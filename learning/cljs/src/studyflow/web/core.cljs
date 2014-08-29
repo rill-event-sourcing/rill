@@ -173,13 +173,13 @@
                          (f)))
               input-focused (= field-name (get-in cursor [:view :section section-id :input-focused]))
               answer-submitted? (get-in cursor [:view :section section-id :input field-name :answer-submitted?])
-              answered-correctly (get-in cursor [:view :section section-id :input field-name :answered-correctly])
+              answered-correctly? (get-in cursor [:view :section section-id :input field-name :answered-correctly?])
               answer-revealed (get-in cursor [:view :section section-id :input field-name :answer-revealed])]
           (dom/span nil
                     (dom/form #js {:className (str "m-inline_input"
-                                                   (when (and answer-submitted? answered-correctly)
+                                                   (when (and answer-submitted? answered-correctly?)
                                                      " correct")
-                                                   (when (and answer-submitted? (false? answered-correctly))
+                                                   (when (and answer-submitted? (false? answered-correctly?))
                                                      " incorrect"))
                                    :onBlur (fn [event]
                                              (om/update!
@@ -218,17 +218,17 @@
                                 (dom/div #js {:className "inline_input_tooltip"}
                                          (when (and answer-revealed
                                                     answer-submitted?
-                                                    (not answered-correctly))
+                                                    (not answered-correctly?))
                                            (dom/span #js {:className "answer"}
-                                                  (first correct-answers)))
+                                                     (first correct-answers)))
                                          (when (and input-focused
                                                     (not answer-submitted?)
-                                                    (not answered-correctly))
+                                                    (not answered-correctly?))
                                            (om/set-state-nr! owner :submit
                                                              (fn []
                                                                (om/update!
                                                                 cursor
-                                                                [:view :section section-id :input field-name :answered-correctly]
+                                                                [:view :section section-id :input field-name :answered-correctly?]
                                                                 (contains?
                                                                  (set @correct-answers)
                                                                  (get-in @cursor [:view :section section-id :input field-name :given-answer]))
@@ -244,17 +244,17 @@
                                                              true)
                                                             (submit)
                                                             (focus-input-field))}))
-                                         (if answered-correctly
+                                         (if answered-correctly?
                                            (do
                                              (om/set-state-nr! owner :submit (fn []))
                                              (dom/span #js {:className "correct"} "Goed!"))
                                            (when (and (not answer-revealed)
                                                       answer-submitted?
-                                                      (false? answered-correctly))
+                                                      (false? answered-correctly?))
                                              (dom/span #js {:className "incorrect"} "Fout! :(")))
                                          (when (and (not answer-revealed)
                                                     answer-submitted?
-                                                    (false? answered-correctly))
+                                                    (false? answered-correctly?))
                                            (dom/input
                                             #js {:className "inline_input_button"
                                                  :type "submit"
