@@ -215,7 +215,7 @@
                                          (when (and answer-revealed
                                                     answer-submitted?
                                                     (not answered-correctly))
-                                           (dom/p #js {:className "answer"}
+                                           (dom/span #js {:className "answer"}
                                                   (first correct-answers)))
                                          (when (and input-focused
                                                     (not answer-submitted?)
@@ -243,11 +243,11 @@
                                          (if answered-correctly
                                            (do
                                              (om/set-state-nr! owner :submit (fn []))
-                                             (dom/p #js {:className "correct"} "Goed!"))
+                                             (dom/span #js {:className "correct"} "Goed!"))
                                            (when (and (not answer-revealed)
                                                       answer-submitted?
                                                       (false? answered-correctly))
-                                             (dom/p #js {:className "incorrect"} "Fout! :(")))
+                                             (dom/span #js {:className "incorrect"} "Fout! :(")))
                                          (when (and (not answer-revealed)
                                                     answer-submitted?
                                                     (false? answered-correctly))
