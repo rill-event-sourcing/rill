@@ -179,7 +179,7 @@
                     (dom/form #js {:className (str "m-inline_input"
                                                    (when answered-correctly
                                                      " correct")
-                                                   (when answer-revealed
+                                                   (when (false? answered-correctly)
                                                      " incorrect"))
                                    :onBlur (fn [event]
                                              (om/update!
