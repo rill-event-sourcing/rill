@@ -4,20 +4,34 @@
 
 (def empty-model {})
 
-(defn- all-section-ids [model]
+(defn meijerink-criteria [model]
   (->>
    (vals (:courses model))
    (mapcat :chapters)
    (mapcat :sections)
-   (map :id)
+   (mapcat :meijerink-criteria)
    set))
 
+(defn- all-sections [model]
+  (->>
+   (vals (:courses model))
+   (mapcat :chapters)
+   (mapcat :sections)))
+
 (defn- decorate-student-completion [model student]
-  (let [all (all-section-ids model)
-        finished (intersection all (:finished-sections student))]
+  (let [sections (all-sections model)
+        finished (:finished-sections student)
+        mk-p (fn [v] #((set (:meijerink-criteria %)) v))
+        mapping (reduce (fn [m v] (assoc m v (mk-p v)))
+                        {:total identity}
+                        (meijerink-criteria model))]
     (assoc student
-      :total-completion {:finished (count finished)
-                         :total (count all)})))
+      :completion (reduce (fn [m [v p]]
+                            (let [ids (->> sections (filter p) (map :id) set)]
+                              (assoc m v {:finished (count (intersection ids finished))
+                                          :total (count ids)})))
+                          {}
+                          mapping))))
 
 (defn students-for-class [model class]
   (map (partial decorate-student-completion model)
@@ -27,11 +41,13 @@
                (vals (:students model)))))
 
 (defn- decorate-class-completion [model class]
-  (let [total-completions (map :total-completion (students-for-class model class))
-        sumf (fn [key] (reduce + (map key total-completions)))]
+  (let [completions-f (fn [scope] (->> (students-for-class model class) (map :completion) (map #(get % scope))))
+        sumf (fn [scope key] (reduce + (map key (completions-f scope))))]
     (assoc class
-      :total-completion {:finished (sumf :finished)
-                         :total (sumf :total)})))
+      :completion (into {} (map #(vector %
+                                         {:finished (sumf % :finished)
+                                          :total (sumf % :total)})
+                                (into [:total] (meijerink-criteria model)))))))
 
 (defn classes [model]
   (->> (vals (:students model))
