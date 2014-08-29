@@ -34,7 +34,8 @@
 
         login (-> (login-dev-system/make-system {:jetty-port 4000
                                                  :default-redirect-paths {"editor" "http://localhost:2000"
-                                                                          "student" "http://localhost:3000"}
+                                                                          "student" "http://localhost:3000"
+                                                                          "teacher" "http://localhost:4001"}
                                                  :session-max-age (* 8 60 60)
                                                  :cookie-domain nil})
                   (dissoc :event-store :session-store)

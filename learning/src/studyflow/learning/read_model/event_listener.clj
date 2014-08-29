@@ -15,5 +15,4 @@
 
     (while-let [e (<!! event-channel)]
                (when (not (instance? UnprocessableMessage e))
-                 ;(log/debug e)
                  (swap! model-atom handle-event e)))))

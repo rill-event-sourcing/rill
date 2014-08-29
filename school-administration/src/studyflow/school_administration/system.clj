@@ -22,21 +22,17 @@
              (jetty-component port)
              [:ring-handler])
      :event-channel (component/using
-                     (event-channel-component)
+                     (event-channel-component 2)
                      [:event-store])
      :event-store (component/using
                    (psql-event-store-component event-store-config)
                    [])
      :read-model (component/using
-                  (read-model-component)
+                  (read-model-component 0)
                   [:event-store :event-channel])
-     :eduroute-event-channel (component/using
-                              (event-channel-component)
-                              [:event-store])
      :eduroute-listener (component/using
-                         (eduroute-listener-component)
-                         {:event-channel :eduroute-event-channel
-                          :event-store :event-store})
+                         (eduroute-listener-component 1)
+                         [:event-channel :event-store])
      :uncaught-exception-handler (component/using
                                   (uncaught-exception-handler-component)
                                   []))))

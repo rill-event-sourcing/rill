@@ -24,7 +24,6 @@
                                                      {:email "barney@rubble.com"
                                                       :encrypted-password (bcrypt/encrypt "betty")}
                                                      "student"))]
-
       (is (= "1" (:user-id (authenticate-by-email-and-password db "fred@flintstone.com" "wilma"))))
       (is (nil? (authenticate-by-email-and-password db "other@example.com" "foobar")))
 
