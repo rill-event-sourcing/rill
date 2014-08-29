@@ -82,7 +82,7 @@ class SectionsController < ApplicationController
   end
 
   def section_params
-    params.require(:section).permit!#(:title, :description, :meijerink_criteria)
+    params.require(:section).permit!
   end
 
 end
