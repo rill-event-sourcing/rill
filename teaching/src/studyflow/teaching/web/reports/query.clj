@@ -65,9 +65,9 @@
        (redirect "/reports/completion"))
 
   (GET "/reports/completion"
-       {:keys [read-model flash]
+       {:keys [read-model flash teacher]
         {:keys [classid] :as params} :params}
-       (let [classes (read-model/classes read-model)
+       (let [classes (read-model/classes read-model teacher)
              meijerink-criteria (read-model/meijerink-criteria read-model)
              class (first (filter #(= classid (:id %)) classes))
              students (when class (read-model/students-for-class read-model class))]

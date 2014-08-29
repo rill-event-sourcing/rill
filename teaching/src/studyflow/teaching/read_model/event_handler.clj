@@ -71,19 +71,21 @@
 
 (defmethod handle-event :studyflow.school-administration.teacher.events/Created
   [model {:keys [teacher-id full-name department-id]}]
-  (assoc-in model [:teachers teacher-id] {:department-id department-id :full-name full-name :class-names #{}}))
+  (assoc-in model [:teachers teacher-id] {:department-id department-id :full-name full-name}))
 
 (defmethod handle-event :studyflow.school-administration.teacher.events/DepartmentChanged
   [model {:keys [teacher-id department-id]}]
   (assoc-in model [:teachers teacher-id :department-id] department-id))
 
 (defmethod handle-event :studyflow.school-administration.teacher.events/ClassAssigned
-  [model {:keys [teacher-id class-name]}]
-  (update-in model [:teachers teacher-id :class-names] conj class-name))
+  [model {:keys [teacher-id department-id class-name] :as event}]
+  (update-in model [:teachers teacher-id :classes] (fnil conj #{}) {:department-id department-id
+                                                                    :class-name class-name}))
 
 (defmethod handle-event :studyflow.school-administration.teacher.events/ClassUnassigned
-  [model {:keys [teacher-id class-name]}]
-  (update-in model [:teachers teacher-id :class-names] disj class-name))
+  [model {:keys [teacher-id department-id class-name]}]
+  (update-in model [:teachers teacher-id :classes] disj {:department-id department-id
+                                                         :class-name class-name}))
 
 ;; ready for display
 

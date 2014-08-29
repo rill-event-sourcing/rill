@@ -7,6 +7,7 @@
             [studyflow.learning.entry-quiz.events :as entry-quiz]
             [studyflow.school-administration.department.events :as department]
             [studyflow.school-administration.student.events :as student]
+            [studyflow.school-administration.teacher.events :as teacher]
             [studyflow.teaching.read-model.event-handler :refer [handle-event]]))
 
 (defn load-model [model & events] (reduce handle-event model events))
@@ -26,8 +27,13 @@
   (load-model model-with-fred-and-department
               (student/class-assigned "fred" "boulder" "1A")))
 
+(def model-with-fred-and-teacher
+    (load-model model-with-fred-and-department-and-class
+                (teacher/created "teacher" "boulder" "Mr. Slate")
+                (teacher/class-assigned "teacher" "boulder" "1A")))
+
 (def model-with-fred-and-barney-in-same-class
-  (load-model model-with-fred-and-department-and-class
+  (load-model model-with-fred-and-teacher
               (student/created "barney" "Barney Rubble")
               (student/department-changed "barney" "boulder")
               (student/class-assigned "barney" "boulder" "1A")))
@@ -44,35 +50,42 @@
               (student/department-changed "fred" "vegas")))
 
 (deftest students-and-classes
-  (let [students-by-class (fn [model]
-                            (->> (classes model)
+  (let [teacher (first (vals (:teachers model-with-fred-and-teacher)))
+        students-by-class (fn [model teacher]
+                            (->> (classes model teacher)
                                  (map #(vector (:id %) (->> (students-for-class model %) (map :full-name) set)))
                                  (into {})))]
     (testing "no students"
-      (is (empty? (classes model))))
+      (is (empty? (classes model teacher))))
     (testing "one student without departments"
-      (is (empty? (classes model-with-fred))))
+      (is (empty? (classes model-with-fred teacher))))
     (testing "one student with departments without classes"
-      (is (empty? (classes model-with-fred-and-department))))
+      (is (empty? (classes model-with-fred-and-department teacher))))
     (testing "one students with departments with classes"
-      (is (= 1 (count (classes model-with-fred-and-department-and-class))))
+      (is (= 1 (count (classes model-with-fred-and-teacher teacher))))
       (is (= {"bedrock|boulder|1A" #{"Fred Flintstone"}}
-             (students-by-class model-with-fred-and-department-and-class))))
+             (students-by-class model-with-fred-and-department-and-class teacher))))
     (testing "two students in the same class"
-      (is (= 1 (count (classes model-with-fred-and-barney-in-same-class))))
+      (is (= 1 (count (classes model-with-fred-and-barney-in-same-class teacher))))
       (is (= {"bedrock|boulder|1A" #{"Fred Flintstone" "Barney Rubble"}}
-             (students-by-class model-with-fred-and-barney-in-same-class))))
+             (students-by-class model-with-fred-and-barney-in-same-class teacher))))
     (testing "three students; two in one, the other in another class"
-      (is (= 2 (count (classes model-with-fred-barney-and-wilma-in-other-class))))
-      (is (= {"bedrock|boulder|1A" #{"Fred Flintstone" "Barney Rubble"}
-              "bedrock|boulder|1B" #{"Wilma Flintstone"}}
-             (students-by-class model-with-fred-barney-and-wilma-in-other-class))))
-    (testing "three students; two different departments"
-      (is (= 3 (count (classes model-fred-moved-to-vegas))))
-      (is (= {"bedrock|boulder|1A" #{"Barney Rubble"}
-              "bedrock|boulder|1B" #{"Wilma Flintstone"}
-              "bedrock|vegas|1A" #{"Fred Flintstone"}}
-             (students-by-class model-fred-moved-to-vegas))))))
+      (is (= 1 (count (classes model-with-fred-barney-and-wilma-in-other-class teacher))))
+      (is (= {"bedrock|boulder|1A" #{"Fred Flintstone" "Barney Rubble"}}
+             (students-by-class model-with-fred-barney-and-wilma-in-other-class teacher))))
+    (let [model (load-model model-with-fred-barney-and-wilma-in-other-class
+                            (teacher/class-assigned "teacher" "boulder" "1B"))
+          teacher (first (vals (:teachers model)))]
+      (testing "three students; two in one, the other in another class all same teacher"
+        (is (= 2 (count (classes model teacher))))
+        (is (= {"bedrock|boulder|1A" #{"Fred Flintstone" "Barney Rubble"}
+                "bedrock|boulder|1B" #{"Wilma Flintstone"}}
+               (students-by-class model teacher))))
+      (testing "three students; two different departments"
+        (is (= 2 (count (classes model-fred-moved-to-vegas teacher))))
+        (is (= {"bedrock|boulder|1A" #{"Barney Rubble"}
+                "bedrock|boulder|1B" #{"Wilma Flintstone"}}
+               (students-by-class model-fred-moved-to-vegas teacher)))))))
 
 (def course {:chapters [{:remedial true
                          :sections [{:id "section-1"
@@ -92,12 +105,12 @@
   (testing "class completion"
     (let [model model-with-fred-and-barney-in-same-class]
       (is (= {:total {:finished 0, :total 0}}
-             (:completion (first (classes model-with-fred-and-barney-in-same-class)))))))
+             (:completion (first (classes model-with-fred-and-barney-in-same-class teacher)))))))
   (testing "one finished section without course material"
     (let [model (load-model model-with-fred-and-department-and-class
                             (section-test/finished "section-1" "fred"))]
       (is (= {:total {:finished 0, :total 0}}
-             (:completion (first (classes model)))))))
+             (:completion (first (classes model teacher)))))))
   (testing "one finished section with three section course material for two students"
     (let [model (load-model model-with-fred-barney-and-course
                             (section-test/finished "section-1" "fred"))]
@@ -105,7 +118,7 @@
               "B" {:finished 1, :total 4}
               "C" {:finished 0, :total 2}
               :total {:finished 1, :total 6}}
-             (:completion (first (classes model)))))))
+             (:completion (first (classes model teacher)))))))
   (testing "remedial-sections-for-courses"
     (is (= #{"section-1" "section-2"}
            (remedial-sections-for-courses model-with-fred-barney-and-course #{"course"}))))
@@ -116,4 +129,4 @@
               "B" {:finished 2, :total 4}
               "C" {:finished 0, :total 2}
               :total {:finished 2, :total 6}}
-             (:completion (first (classes model))))))))
+             (:completion (first (classes model teacher))))))))

@@ -62,11 +62,12 @@
                           {}
                           (into [:total] (meijerink-criteria model))))))
 
-(defn classes [model]
+(defn classes [model teacher]
   (->> (vals (:students model))
        (filter :class-name)
        (map #(select-keys % [:department-id :class-name]))
        set
+       (intersection (:classes teacher))
        (map #(let [name (:class-name %)
                    department-id (:department-id %)
                    department (get-in model [:departments department-id])

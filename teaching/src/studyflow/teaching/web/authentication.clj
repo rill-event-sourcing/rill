@@ -1,3 +1,4 @@
+;; TODO DRY it up!  copy-pasted from learning environment
 (ns studyflow.teaching.web.authentication
   (:require [clojure.tools.logging :as log]
             [ring.middleware.cookies :as cookies]
