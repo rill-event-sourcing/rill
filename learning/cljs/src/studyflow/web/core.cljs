@@ -177,7 +177,7 @@
               answer-revealed (get-in cursor [:view :section section-id :input field-name :answer-revealed])]
           (dom/span nil
                     (dom/form #js {:className (str "m-inline_input"
-                                                   (when answered-correctly
+                                                   (when (and answer-submitted? answered-correctly)
                                                      " correct")
                                                    (when (and answer-submitted? (false? answered-correctly))
                                                      " incorrect"))
