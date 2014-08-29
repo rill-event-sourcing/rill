@@ -131,6 +131,7 @@
       "sections": [
         {"id": "98b3997f-63db-4f1d-b89e-5378e5f19514",
          "title": "TESTABLE QUESTIONS",
+         "meijerink_criteria": ["1F"],
          "line_input_fields": [
             {
               "name": "_INPUT_1_",
@@ -295,6 +296,7 @@
           "id": "f9f70918-0e8c-4cee-9fa5-0bdeadc1cf02",
           "title": "Groeperen per 10",
           "line_input_fields": [],
+          "meijerink_criteria": ["1F", "2F"],
           "subsections": [
             {
               "id": "d790b8d4-1381-4723-8218-96716fcd7104",
@@ -949,8 +951,8 @@
           "id": "a85453a5-39ca-484c-b564-adb704f65b0f",
           "title": "Positie en de 0",
           "line_input_fields": [],
+          "meijerink_criteria": ["1F", "2F"],
           "subsections": [
-
           ],
           "questions": [
             {
@@ -1974,6 +1976,7 @@
           "id": "12bb6778-89ca-4a4e-a119-1c08946f28b0",
           "title": "Over de 10 heen gaan",
           "line_input_fields": [],
+          "meijerink_criteria": ["1F", "2F"],
           "subsections": [
 
           ],
@@ -2672,6 +2675,7 @@
         {
           "id": "504e5222-1149-4b8f-9537-feb571f818e4",
           "title": "Splitsen van getallen en grote getallen uitspreken \t",
+          "meijerink_criteria": ["1F", "2F"],
           "line_input_fields": [],
           "subsections": [
 
@@ -3340,6 +3344,7 @@
         {
           "id": "1687e489-497c-4f3e-8ff2-96d2f7e88f26",
           "title": "Ordenen en de getallenlijn",
+          "meijerink_criteria": ["1F", "2F"],
           "line_input_fields": [],
           "subsections": [
 
@@ -4172,6 +4177,7 @@
           "id": "73b05a99-29ec-4870-9a53-641492eacee2",
           "title": "Rekenen met nullen",
           "line_input_fields": [],
+          "meijerink_criteria": ["1F", "2F", "3F"],
           "subsections": [
             {
               "id": "f5deeafe-e17e-42fc-8161-241be0b268fe",
@@ -4241,6 +4247,7 @@
           "id": "d875261b-8296-4832-b7d8-5c41304e728f",
           "title": "Volgorde aanpassen",
           "line_input_fields": [],
+          "meijerink_criteria": ["2F", "3F"],
           "subsections": [
             {
               "id": "01f7b412-642c-410c-a228-6736fdc30a44",
@@ -4315,6 +4322,7 @@
           "id": "603dfa69-ee05-4430-8ff4-34dfb254e319",
           "title": "Compenseren",
           "line_input_fields": [],
+          "meijerink_criteria": ["2F", "3F"],
           "subsections": [
             {
               "id": "de13bf23-96eb-4074-9605-bdb8ef7c7976",
@@ -4379,6 +4387,7 @@
           "id": "e9a8bc83-f1f0-43b1-ae09-bdd6b9ce3645",
           "title": "Splitsen en verdelen",
           "line_input_fields": [],
+          "meijerink_criteria": ["3F"],
           "subsections": [
             {
               "id": "db555de5-dd9a-42b7-b450-a1d47b0d58da",
@@ -4450,6 +4459,7 @@
           "id": "112ce2cc-7099-4fe1-b147-14ec32f668bc",
           "title": "De verhoudingstabel & equivalentie",
           "line_input_fields": [],
+          "meijerink_criteria": ["3F"],
           "subsections": [
             {
               "id": "034020d6-618e-4583-a5d8-446dc224541c",
@@ -4529,6 +4539,7 @@
           "id": "1d9bdbf4-e4e1-4f39-8a71-99984c327938",
           "title": "Samenhang tussen breuken, procenten en kommagetallen",
           "line_input_fields": [],
+          "meijerink_criteria": [],
           "subsections": [
             {
               "id": "896b9c01-0e4c-4e17-871c-a69847b37617",
@@ -4603,6 +4614,7 @@
           "id": "6665617d-ed39-4cb7-b268-2dc87397860e",
           "title": "Samengestelde eenheden",
           "line_input_fields": [],
+          "meijerink_criteria": [],
           "subsections": [
             {
               "id": "806833db-cd1d-452e-aa4a-9223783ba8ba",
