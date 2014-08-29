@@ -208,6 +208,10 @@
                                                  false)
                                                 (om/update!
                                                  cursor
+                                                 [:view :section section-id :input field-name :answered-correctly?]
+                                                 false)
+                                                (om/update!
+                                                 cursor
                                                  [:view :section section-id :input field-name :given-answer]
                                                  (.. event -target -value)))})
                               (when input-focused
