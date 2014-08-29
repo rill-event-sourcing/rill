@@ -425,7 +425,7 @@
     }
   ],
   "entry_quiz": {
-    "instructions": "<h1>Welkom</h1>\r\n\r\n<p>Je gaat nu het instaponderzoek maken. Hiermee bepalen we met welk hoofdstuk je gaat beginnen. Je krijgt hiervoor dus geen cijfer.</p>\r\n\r\n<p>Het onderzoek bestaat uit 12 vragen. Bij het maken van de vragen mag je pen en papier gebruiken, maar <ul>geen</ul> rekenmachine.<p>\r\n\r\n<h2>Veel succes!</h2>",
+    "instructions": "<h1>Welkom</h1><p>Je gaat nu het instaponderzoek maken. Hiermee bepalen we met welk hoofdstuk je gaat beginnen. Je krijgt hiervoor dus geen cijfer.</p><br><p>Het onderzoek bestaat uit 12 vragen. Bij het maken van de vragen mag je pen en papier gebruiken, maar <b>geen rekenmachine</b>.>/p><h2>Veel succes!</h2>",
     "feedback": "<p>Het onderzoek is afgelopen.</p>\r\n\r\n<p>Je gaat nu beginnen met jouw eerste hoofdtuk</p>",
     "threshold": 11,
     "questions": [
