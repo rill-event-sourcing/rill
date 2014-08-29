@@ -1,5 +1,5 @@
 (ns studyflow.school-administration.import-student-test
-  (:require [studyflow.school-administration.import-student :refer [import-rows import-tabbed-string]]
+  (:require [studyflow.school-administration.import-student :refer [import-rows import-tabbed-string full-name]]
             [studyflow.school-administration.student.events :as student-events]
             [studyflow.school-administration.department.events :as department]
             [rill.message :as message]
@@ -67,3 +67,11 @@
         report (import-tabbed-string store department-id tabbed-string)]
     (is (= 14 (:total-students report)))
     (is (= 13 (:total-imported report)))))
+
+(deftest test-full-name
+  (is (= (full-name "Fred" nil "Flintstone")
+         "Fred Flintstone"))
+  (is (= (full-name "Fred" "" "Flintstone")
+         "Fred Flintstone"))
+  (is (= (full-name "Fred" "van der" "Flintstone")
+         "Fred van der Flintstone")))
