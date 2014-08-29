@@ -38,21 +38,24 @@ RSpec.describe Subsection, type: :model do
 
   it "should return a full json object" do
     obj = {
-        id: @subsection1.id,
-        position: @subsection1.position,
-        title: @subsection1.title,
-        text: @subsection1.text
-      }
+      id: @subsection1.id,
+      position: @subsection1.position,
+      title: @subsection1.title,
+      text: @subsection1.text
+    }
     expect(@subsection1.as_full_json).to eq obj
   end
 
+  describe "enforcing constraints for publishing" do
 
-  it "should make sure we have text" do
-    @section1 = create(:section)
-    @subsection1.section = @section1
-    expect(@subsection1.errors_when_publishing).not_to include("No content in subsection of section '#{ @section1.name }', in '#{ @section1.parent }'")
-    @subsection1.text = nil
-    expect(@subsection1.errors_when_publishing).to include("No content in subsection of section '#{ @section1.name }', in '#{ @section1.parent }'")
+    it "should make sure text is nonempty" do
+      @section1 = create(:section)
+      @subsection1.section = @section1
+      expect(@subsection1.errors_when_publishing).not_to include("No content in subsection of section '#{ @section1.name }', in '#{ @section1.parent }'")
+      @subsection1.text = nil
+      expect(@subsection1.errors_when_publishing).to include("No content in subsection of section '#{ @section1.name }', in '#{ @section1.parent }'")
+    end
+
   end
 
 end

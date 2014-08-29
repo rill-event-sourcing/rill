@@ -15,9 +15,20 @@ RSpec.describe Section, type: :model do
     @subsection3 = create(:subsection, title: "C", text: "C content", section: @section1)
   end
 
-
   it "should list sections in the right order" do
     expect(Section.all.map(&:to_s)).to eq ['A', 'B', 'C']
+  end
+
+  it "should provide an array with the meijerink criteria" do
+    section = build(:section)
+    section.meijerink_criteria = {"1F" => "0", "2F" => "0", "3F" => "0"}
+    expect(section.selected_meijerink_criteria).to eq []
+    section2 = build(:section)
+    section2.meijerink_criteria = {"1F" => "0", "2F" => "1", "3F" => "0"}
+    expect(section2.selected_meijerink_criteria).to eq ["2F"]
+    section3 = build(:section)
+    section3.meijerink_criteria = {"1F" => "1", "2F" => "0", "3F" => "1"}
+    expect(section3.selected_meijerink_criteria).to eq ["1F", "3F"]
   end
 
   it "should not list trashed sections" do
@@ -87,41 +98,52 @@ RSpec.describe Section, type: :model do
     expect(@section1.max_inputs).to eq (max_inputs+1)
   end
 
-  it "should make sure all inputs are referenced" do
-    @input = create(:line_input, inputable: @section1)
-    expect(@section1.errors_when_publishing).to include("Error in input referencing in section '#{@section1.name}', in '#{@section1.parent}'")
-    @section1.subsections.first.text = "#{@input.name}"
-    expect(@section1.errors_when_publishing).not_to include("Error in input referencing in section '#{@section1.name}', in '#{@section1.parent}'")
-  end
+  describe "enforcing constraints for publishing" do
 
-  it "should make sure nonexisisting inputs are not referenced" do
-    @input = create(:line_input, inputable: @section1)
-    @subsection3 = create(:subsection, title: "A", text: "_INPUT_#{@input.position+1}_", section: @section1)
+    it "should make sure at least one meijerink criteria is selected" do
+      section = build(:section, meijerink_criteria: {"1F" => "0", "2F" => "0", "3F" => "0"})
+      section2 = build(:section, meijerink_criteria: {"1F" => "0", "2F" => "0", "3F" => "1"})
 
-    expect(@section1.errors_when_publishing).to include("Nonexisting inputs referenced in section '#{@section1.name}', in '#{@section1.parent}'")
+      expect(section.errors_when_publishing).to include "No Meijerink criteria selected in section '#{section.name}'"
+      expect(section2.errors_when_publishing).not_to include "No Meijerink criteria selected in section '#{section2.name}'"
+    end
 
-    @subsection3.destroy!
-    @section1.reload
+    it "should make sure all inputs are referenced" do
+      @input = create(:line_input, inputable: @section1)
+      expect(@section1.errors_when_publishing).to include("Error in input referencing in section '#{@section1.name}', in '#{@section1.parent}'")
+      @section1.subsections.first.text = "#{@input.name}"
+      expect(@section1.errors_when_publishing).not_to include("Error in input referencing in section '#{@section1.name}', in '#{@section1.parent}'")
+    end
 
-    @subsection3 = create(:subsection, title: "A", text: "_INPUT_#{@input.position}_", section: @section1)
-    expect(@section1.errors_when_publishing).not_to include("Nonexisting inputs referenced in section '#{@section1.name}', in '#{@section1.parent}'")
-  end
+    it "should make sure nonexisisting inputs are not referenced" do
+      @input = create(:line_input, inputable: @section1)
+      @subsection3 = create(:subsection, title: "A", text: "_INPUT_#{@input.position+1}_", section: @section1)
 
-  it "should make sure we have active questions" do
-    expect(@section1.errors_when_publishing).to include("No questions in section '#{ @section1.name }', in '#{ @section1.parent }'")
+      expect(@section1.errors_when_publishing).to include("Nonexisting inputs referenced in section '#{@section1.name}', in '#{@section1.parent}'")
 
-    @question1 = create(:question)
-    @section1.questions << @question1
-    expect(@section2.errors_when_publishing).not_to include("No questions in section '#{ @section1.name }', in '#{ @section1.parent }'")
+      @subsection3.destroy!
+      @section1.reload
 
-    @question2 = create(:question, active: false)
-    @section2.questions << @question2
-    expect(@section2.errors_when_publishing).to include("No questions in section '#{ @section2.name }', in '#{ @section2.parent }'")
-  end
+      @subsection3 = create(:subsection, title: "A", text: "_INPUT_#{@input.position}_", section: @section1)
+      expect(@section1.errors_when_publishing).not_to include("Nonexisting inputs referenced in section '#{@section1.name}', in '#{@section1.parent}'")
+    end
 
-  it "should make sure we have subsections" do
-    expect(@section1.errors_when_publishing).not_to include("No subsections in section '#{ @section1.name }', in '#{ @section1.parent }'")
-    expect(@section2.errors_when_publishing).to include("No subsections in section '#{ @section2.name }', in '#{ @section2.parent }'")
+    it "should make sure there is at least one active question" do
+      expect(@section1.errors_when_publishing).to include("No questions in section '#{ @section1.name }', in '#{ @section1.parent }'")
+
+      @question1 = create(:question)
+      @section1.questions << @question1
+      expect(@section2.errors_when_publishing).not_to include("No questions in section '#{ @section1.name }', in '#{ @section1.parent }'")
+
+      @question2 = create(:question, active: false)
+      @section2.questions << @question2
+      expect(@section2.errors_when_publishing).to include("No questions in section '#{ @section2.name }', in '#{ @section2.parent }'")
+    end
+
+    it "should make sure there is at least one subsection" do
+      expect(@section1.errors_when_publishing).not_to include("No subsections in section '#{ @section1.name }', in '#{ @section1.parent }'")
+      expect(@section2.errors_when_publishing).to include("No subsections in section '#{ @section2.name }', in '#{ @section2.parent }'")
+    end
   end
 
 end

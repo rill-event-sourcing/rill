@@ -16,12 +16,11 @@
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (set! *print-fn*
-      (if (and js/console
-               (.-log js/console)
-               (.-apply (.-log js/console)))
-        (fn [& args]
-          (.apply (.-log js/console) js/console (into-array args)))
-        (fn [& args])))
+      (let [c (some-> js/window .-console)]
+        (if (some-> c .-log .-apply)
+          (fn [& args]
+            (.apply (.-log c) c (into-array args)))
+          (fn [& args]))))
 
 (defn course-id-for-page []
   (.-value (gdom/getElement "course-id")))
@@ -57,6 +56,14 @@
                                    [:view :side-navigation :shown]
                                    (not (get-in @cursor [:view :side-navigation :shown]))))}))))
 
+(defn section-explanation-link [cursor chapter section]
+  (-> (get-in cursor [:view :selected-path])
+      (assoc :chapter-id (:id chapter)
+             :section-id (:id section)
+             :section-tab :explanation
+             :main :learning)
+      history-link))
+
 (defn navigation [cursor owner]
   (reify
     om/IWillMount
@@ -90,11 +97,7 @@
                                                      (aggregates/section-test-progress
                                                       (get-in cursor [:aggregates section-id]))
                                                      ""))}
-                                   (dom/a #js {:href (-> (get-in cursor [:view :selected-path])
-                                                         (assoc :chapter-id chapter-id
-                                                                :section-id section-id
-                                                                :section-tab :explanation)
-                                                         history-link)
+                                   (dom/a #js {:href (section-explanation-link cursor chapter section)
                                                :className "section_link"}
                                           title)
                                    (when open-section
@@ -147,9 +150,7 @@
         {:enabled enabled})
       om/IRender
       (render [_]
-        (dom/button #js {:className (str "btn blue pull-right"
-                                         (when className
-                                           (str " " className)))
+        (dom/button #js {:className (str "btn blue pull-right" (when className (str " " className)))
                          :onClick
                          (fn [_]
                            (onclick)
@@ -364,10 +365,14 @@
   ;; we always call this, even when there's no element called
   ;; "FOCUSED_INPUT". om/get-node can't handle that case
   (when-let [refs (.-refs owner)]
-    (when-let [input-ref (aget refs "FOCUSED_INPUT")]
-      (when-let [input-field (.getDOMNode input-ref)]
-        (when (= "" (.-value input-field))
-          (.focus input-field))))))
+    ;; need to set the focus on a non disabled field for firefox key handling
+    (if-let [button-ref (aget refs "FOCUSED_BUTTON")]
+      (when-let [button (.getDOMNode button-ref)]
+        (.focus button))
+      (when-let [input-ref (aget refs "FOCUSED_INPUT")]
+        (when-let [input-field (.getDOMNode input-ref)]
+          (when (= "" (.-value input-field))
+            (.focus input-field)))))))
 
 (defn tool-box
   [tools]
@@ -541,12 +546,15 @@
                               (om/build (click-once-button "Goed! Voltooi paragraaf"
                                                            (fn []
                                                              (submit))) cursor)
-
-                              (om/build (click-once-button
-                                         "Goed! Volgende vraag"
-                                         (fn []
-                                           (submit)
-                                           (prn "next question command"))) cursor))
+                              ;; this doesn't have the disabled handling
+                              ;; as all the click-once-buttons because
+                              ;; we need the ref for set-focus
+                              (dom/button #js {:className "btn blue pull-right"
+                                               :ref "FOCUSED_BUTTON"
+                                               :onClick
+                                               (fn []
+                                                 (submit))}
+                                          "Goed! Volgende vraag"))
                             (om/build (click-once-button "Nakijken"
                                                          (fn []
                                                            (submit))
@@ -640,26 +648,47 @@
                          (om/build section-test cursor))
                        (om/build path-panel cursor)))))))
 
+(defn finished? [element]
+  (if-not (= (:status element) "finished")
+    element))
+
+(defn first-non-completed-chapter [course]
+  (some finished? (:chapters course)))
+
+(defn first-non-completed-section [chapter]
+  (some finished? (:sections chapter)))
+
+(defn recommended-action [cursor]
+  (let [course (get-in cursor [:view :course-material])
+        entry-quiz (:entry-quiz course)]
+    (if (not (contains? #{"passed" "failed"} (:status entry-quiz)))
+      {:title "Instaptoets"
+       :link (history-link {:main :entry-quiz})
+       :id (:id entry-quiz)}
+      (let [chapter (first-non-completed-chapter course)
+            section (first-non-completed-section chapter)]
+        {:title (:title section)
+         :id (:id section)
+         :link (section-explanation-link cursor chapter section)} ))))
+
 (defn sections-navigation [cursor chapter]
   (apply dom/ol #js {:id "section_list"}
-         (for [{:keys [title status]
-                section-id :id
-                :as section} (:sections chapter)]
-           (let [section-status (get {"finished" "finished"
-                                      "in-progress" "in_progress"} status "")
-                 section-link (-> (get-in cursor [:view :selected-path])
-                                  (assoc :chapter-id (:id chapter)
-                                         :section-id section-id
-                                         :section-tab :explanation
-                                         :main :learning)
-                                  history-link)]
-             (dom/li #js {:data-id section-id
-                          :className (str "section_list_item " section-status) }
-                     (dom/a #js {:href section-link
-                                 :className (str "section_link " section-status)}
-                            title)
-                     (dom/a #js {:className "btn blue chapter_nav_btn"
-                                 :href section-link} "Start"))))))
+         (let [recommended-id (:id (recommended-action cursor))]
+           (for [{:keys [title status]
+                  section-id :id
+                  :as section} (:sections chapter)]
+             (let [section-status (get {"finished" "finished"
+                                        "in-progress" "in_progress"} status "")
+                   section-link (section-explanation-link cursor chapter section)]
+               (dom/li #js {:data-id section-id
+                            :className (str "section_list_item " section-status
+                                            (when (= recommended-id section-id) " recommended")) }
+                       (dom/a #js {:href section-link
+                                   :className (str "section_link "
+                                                   section-status)}
+                              title)
+                       (dom/a #js {:className "btn blue chapter_nav_btn"
+                                   :href section-link} "Start")))))))
 
 (defn chapter-navigation [cursor selected-chapter-id course chapter]
   (let [selected? (= selected-chapter-id (:id chapter))]
@@ -727,7 +756,6 @@
                             (dom/button #js {:type "submit"}
                                         "Uitloggen"))))))
 
-
 (defn dashboard-sidenav
   [cursor owner]
   (reify
@@ -735,7 +763,13 @@
     (render [_]
       (dom/aside #js {:id "m-sidenav"}
                  (dom/div #js {:id "student_info"} (get-in cursor [:static :student :full-name]))
-                 (dom/div #js {:id "recommended_action"})
+                 (dom/div #js {:id "recommended_action"}
+                          (let [{:keys [title link]} (recommended-action cursor)]
+                            (dom/div nil
+                                     (dom/span nil "Ga verder met:")
+                                     (dom/p #js {:id "recommended_title"} title)
+                                     (dom/a #js {:id "recommended_button"
+                                                 :className "btn big yellow" :href link} "Start"))))
                  (dom/div #js {:id "support_info"})))))
 
 (defn dashboard [cursor owner]

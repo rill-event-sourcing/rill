@@ -88,48 +88,52 @@ RSpec.describe Question, :type => :model do
     expect(@question.max_inputs).to eq (max_inputs+1)
   end
 
-  it "should detect when inputs are referenced exactly once" do
-    expect(@question.errors_when_publishing).to include("No Inputs on question '#{@question.name}', in '#{@question.quizzable}'")
-    create(:line_input, inputable: @question)
-    expect(@question.errors_when_publishing).not_to include("No Inputs on question '#{@question.name}', in '#{@question.quizzable}'")
-  end
+  describe "enforcing constraints for publishing" do
 
-  it "should make sure all inputs are referenced" do
-    @input = create(:line_input, inputable: @question)
-    expect(@question.errors_when_publishing).to include("Error in input referencing in question '#{@question.name}', in '#{@question.quizzable}'")
-    @question.text = "#{@input.name}"
-    expect(@question.errors_when_publishing).not_to include("Error in input referencing in question '#{@question.name}', in '#{@question.quizzable}'")
-  end
+    it "should make sure there is at least one input" do
+      expect(@question.errors_when_publishing).to include("No Inputs on question '#{@question.name}', in '#{@question.quizzable}'")
+      create(:line_input, inputable: @question)
+      expect(@question.errors_when_publishing).not_to include("No Inputs on question '#{@question.name}', in '#{@question.quizzable}'")
+    end
 
-  it "should make sure nonexisisting inputs are not referenced" do
-    @input = create(:line_input, inputable: @question)
-    @question.text = "_INPUT_#{@input.position+1}_"
-    expect(@question.errors_when_publishing).to include("Nonexisting inputs referenced in question '#{@question.name}', in '#{@question.quizzable}'")
-    @question.text = "_INPUT_#{@input.position}_"
-    expect(@question.errors_when_publishing).not_to include("Nonexisting inputs referenced in question '#{@question.name}', in '#{@question.quizzable}'")
-  end
+    it "should make sure all inputs are referenced" do
+      @input = create(:line_input, inputable: @question)
+      expect(@question.errors_when_publishing).to include("Error in input referencing in question '#{@question.name}', in '#{@question.quizzable}'")
+      @question.text = "#{@input.name}"
+      expect(@question.errors_when_publishing).not_to include("Error in input referencing in question '#{@question.name}', in '#{@question.quizzable}'")
+    end
 
-  it "should not care whether a question of an entry quiz has an error or not" do
-    @input1 = create(:line_input, inputable: @question)
-    create(:answer, line_input: @input1, value: 'good')
-    @question.text = "_INPUT_#{@input1.position}_"
-    expect(@question.errors_when_publishing_for_entry_quiz).not_to include("No Worked-out-answer given for question '#{@question.name}', in '#{@question.quizzable}'")
-  end
+    it "should make sure nonexisisting inputs are not referenced" do
+      @input = create(:line_input, inputable: @question)
+      @question.text = "_INPUT_#{@input.position+1}_"
+      expect(@question.errors_when_publishing).to include("Nonexisting inputs referenced in question '#{@question.name}', in '#{@question.quizzable}'")
+      @question.text = "_INPUT_#{@input.position}_"
+      expect(@question.errors_when_publishing).not_to include("Nonexisting inputs referenced in question '#{@question.name}', in '#{@question.quizzable}'")
+    end
 
-  it "should detect when multiple inputs are given but no worked_out_answer is given" do
-    @input1 = create(:line_input, inputable: @question)
-    create(:answer, line_input: @input1, value: 'good')
-    @question.text = "_INPUT_#{@input1.position}_"
-    expect(@question.errors_when_publishing).not_to include("No Worked-out-answer given for question '#{@question.name}', in '#{@question.quizzable}'")
+    it "should make sure worked out answers are not enforced for an entry quiz" do
+      @input1 = create(:line_input, inputable: @question)
+      create(:answer, line_input: @input1, value: 'good')
+      @question.text = "_INPUT_#{@input1.position}_"
+      expect(@question.errors_when_publishing_for_entry_quiz).not_to include("No Worked-out-answer given for question '#{@question.name}', in '#{@question.quizzable}'")
+    end
 
-    @input2 = create(:line_input, inputable: @question)
-    create(:answer, line_input: @input2, value: 'better')
-    @question.text = "_INPUT_#{@input1.position}_ _INPUT_#{@input2.position}_"
-    @question.worked_out_answer = nil
-    expect(@question.errors_when_publishing).to include("No Worked-out-answer given for question '#{@question.name}', in '#{@question.quizzable}'")
+    it "should make sure that whenever there are multiple inputs, there is a worked out answer" do
+      @input1 = create(:line_input, inputable: @question)
+      create(:answer, line_input: @input1, value: 'good')
+      @question.text = "_INPUT_#{@input1.position}_"
+      expect(@question.errors_when_publishing).not_to include("No Worked-out-answer given for question '#{@question.name}', in '#{@question.quizzable}'")
 
-    @question.worked_out_answer = "Just do it!"
-    expect(@question.errors_when_publishing).not_to include("No Worked-out-answer given for question '#{@question.name}', in '#{@question.quizzable}'")
+      @input2 = create(:line_input, inputable: @question)
+      create(:answer, line_input: @input2, value: 'better')
+      @question.text = "_INPUT_#{@input1.position}_ _INPUT_#{@input2.position}_"
+      @question.worked_out_answer = nil
+      expect(@question.errors_when_publishing).to include("No Worked-out-answer given for question '#{@question.name}', in '#{@question.quizzable}'")
+
+      @question.worked_out_answer = "Just do it!"
+      expect(@question.errors_when_publishing).not_to include("No Worked-out-answer given for question '#{@question.name}', in '#{@question.quizzable}'")
+    end
+
   end
 
 end

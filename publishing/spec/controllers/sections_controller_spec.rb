@@ -56,7 +56,7 @@ RSpec.describe SectionsController, :type => :controller do
   describe "PUT update" do
     it "should update the section" do
       put :update, chapter_id: @chapter.to_param, id: @section1.to_param, section: {title: "new section2"}
-      expect(response).to redirect_to chapter_section_path(@chapter, assigns(:section))
+      expect(response).to redirect_to chapter_sections_path(@chapter)
     end
     it "should not update the invalid section" do
       put :update, chapter_id: @chapter.to_param, id: @section1.to_param, section: {title: ""}
