@@ -17,7 +17,7 @@ class Section < ActiveRecord::Base
 
   scope :active, -> { where(active: true) }
 
-  serialize :meijerink_criteria, Hash
+  serialize :meijerink_criteria, Array
 
   scope :for_short_uuid, ->(id) { where(["SUBSTRING(CAST(id AS VARCHAR), 1, 8) = ?", id]) }
   def self.find_by_uuid(id, with_404 = true)
@@ -25,6 +25,14 @@ class Section < ActiveRecord::Base
     raise ActiveRecord::RecordNotFound if sections.empty? && with_404
     raise StudyflowPublishing::ShortUuidDoubleError.new("Multiple sections found for uuid: #{id}") if sections.length > 1
     sections.first
+  end
+
+  def meijerink_criteria_hash=(input)
+    self.meijerink_criteria = input.select{|k,v| v == "1"}.keys
+  end
+
+  def meijerink_criteria_hash
+    self.merijerink_criteria.map{|k| {k => "1"}}.reduce(&:merge)
   end
 
   def to_s
@@ -39,15 +47,12 @@ class Section < ActiveRecord::Base
     chapter
   end
 
-  def selected_meijerink_criteria
-    meijerink_criteria.select{|k,v| v == "1"}.keys
-  end
 
   def to_publishing_format
     {
       id: id,
       title: title,
-      meijerink_criteria: selected_meijerink_criteria,
+      meijerink_criteria: meijerink_criteria,
       subsections: subsections.map(&:to_publishing_format),
       questions: questions.active.map(&:to_publishing_format_for_section),
       line_input_fields: line_inputs.map(&:to_publishing_format)
@@ -84,7 +89,7 @@ class Section < ActiveRecord::Base
 
   def errors_when_publishing
     errors = []
-    errors << "No Meijerink criteria selected in section '#{name}'" if selected_meijerink_criteria.empty?
+    errors << "No Meijerink criteria selected in section '#{name}'" if meijerink_criteria.empty?
     errors << "Error in input referencing in section '#{name}', in '#{parent}'" unless inputs_referenced_exactly_once?
     errors << "Nonexisting inputs referenced in section '#{name}', in '#{parent}'" if nonexisting_inputs_referenced?
     errors << "No questions in section '#{name}', in '#{parent}'" if questions.active.empty?

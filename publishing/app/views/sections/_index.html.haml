@@ -19,7 +19,7 @@
             %span.glyphicon.glyphicon-arrow-down
           = link_to moveup_chapter_section_path(@chapter,section), method: :post do
             %span.glyphicon.glyphicon-arrow-up
-        %td{style: "text-align: center"}= section.meijerink_criteria.select{|k,v| v == "1"}.keys.join(", ")
+        %td{style: "text-align: center"}= section.meijerink_criteria.join(", ")
         %td
           - if section.active?
             = link_to deactivate_chapter_section_path(@chapter,section), method: :post do
