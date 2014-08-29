@@ -3,6 +3,7 @@
             [com.stuartsierra.component :as component]
             [studyflow.components.event-channel :refer [event-channel-component]]
             [studyflow.components.jetty :refer [jetty-component]]
+            [studyflow.components.redis-session-store :refer [redis-session-store]]
             [studyflow.components.psql-event-store :refer [psql-event-store-component]]
             [studyflow.components.uncaught-exception-handler :refer [uncaught-exception-handler-component]]
             [studyflow.teaching.system.components.read-model :refer [read-model-component]]
@@ -10,12 +11,12 @@
 
 (defn prod-system [config-options]
   (log/info "Running the teaching production system")
-  (let [{:keys [port event-store-config secure-site-defaults?]} config-options]
+  (let [{:keys [port event-store-config secure-site-defaults? redirect-urls session-store-url]} config-options]
     (component/system-map
      :config-options config-options
      :ring-handler (component/using
-                    (ring-handler-component secure-site-defaults?)
-                    [:event-store :read-model])
+                    (ring-handler-component secure-site-defaults? redirect-urls)
+                    [:event-store :read-model :session-store])
      :jetty (component/using
              (jetty-component port)
              [:ring-handler])
@@ -28,6 +29,7 @@
      :read-model (component/using
                   (read-model-component 0)
                   [:event-store :event-channel])
+     :session-store (redis-session-store {:uri session-store-url})
      :uncaught-exception-handler (component/using
                                   (uncaught-exception-handler-component)
                                   []))))

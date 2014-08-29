@@ -63,6 +63,24 @@
   [model {:keys [course-id material]}]
   (assoc-in model [:courses course-id] material))
 
+;; teachers
+
+(defmethod handle-event :studyflow.school-administration.teacher.events/Created
+  [model {:keys [teacher-id full-name department-id]}]
+  (assoc-in model [:teachers teacher-id] {:department-id department-id :full-name full-name :class-names #{}}))
+
+(defmethod handle-event :studyflow.school-administration.teacher.events/DepartmentChanged
+  [model {:keys [teacher-id department-id]}]
+  (assoc-in model [:teachers teacher-id :department-id] department-id))
+
+(defmethod handle-event :studyflow.school-administration.teacher.events/ClassAssigned
+  [model {:keys [teacher-id class-name]}]
+  (update-in model [:teachers teacher-id :class-names] conj class-name))
+
+(defmethod handle-event :studyflow.school-administration.teacher.events/ClassUnassigned
+  [model {:keys [teacher-id class-name]}]
+  (update-in model [:teachers teacher-id :class-names] disj class-name))
+
 ;; ready for display
 
 (defmethod handle-event ::event-channel/CaughtUp
