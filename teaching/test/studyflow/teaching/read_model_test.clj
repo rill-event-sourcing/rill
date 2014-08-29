@@ -10,9 +10,10 @@
 
 (defn load-model [model & events] (reduce handle-event model events))
 
-(deftest test-read-model
-  (let [model {}
-        students-by-class (fn [model]
+(def model {})
+
+(deftest students-and-classes
+  (let [students-by-class (fn [model]
                             (->> (classes model)
                                  (map #(vector (:id %) (->> (students-for-class model %) (map :full-name) set)))
                                  (into {})))]
@@ -58,15 +59,52 @@
                   (is (= {"bedrock|boulder|1A" #{"Barney Rubble"}
                           "bedrock|boulder|1B" #{"Wilma Flintstone"}
                           "bedrock|vegas|1A" #{"Fred Flintstone"}}
-                         (students-by-class model))))))
-            (testing "class completion"
-              (is (= {:finished 0, :total 0} (:total-completion (first (classes model))))))
-            (let [model (load-model model  (section-test/finished "section-1" "fred"))]
-              (testing "one finished section without course material"
-                (is (= {:finished 0, :total 0} (:total-completion (first (classes model))))))
-              (let [model (load-model model (course/published "course-1"
-                                                              {:chapters [{:sections [{:id "section-1"}
-                                                                                      {:id "section-2"}]}
-                                                                          {:sections [{:id "section-3"}]}]}))]
-                (testing "one finished section by one student in three section course material"
-                  (is (= {:finished 1, :total 6} (:total-completion (first (classes model))))))))))))))
+                         (students-by-class model))))))))))))
+
+(deftest completion
+  (let [model (load-model model
+                          (department/created "boulder" "bedrock" "Boulder road")
+                          (student/created "fred" "Fred Flintstone")
+                          (student/created "barney" "Barney Rubble")
+                          (student/class-assigned "fred" "boulder" "1A")
+                          (student/class-assigned "barney" "boulder" "1A"))]
+    (testing "class completion"
+      (is (= {:total {:finished 0, :total 0}} (:completion (first (classes model))))))
+    (let [model (load-model model  (section-test/finished "section-1" "fred"))]
+      (testing "one finished section without course material"
+        (is (= {:total {:finished 0, :total 0}} (:completion (first (classes model))))))
+      (let [model (load-model model
+                              (course/published "course-1"
+                                                {:chapters [{:sections [{:id "section-1"}
+                                                                        {:id "section-2"}]}
+                                                            {:sections [{:id "section-3"}]}]}))]
+        (testing "one finished section in three section course material for two students"
+          (is (= {:finished 1, :total 6} (get-in (first (classes model)) [:completion :total]))))))))
+
+(deftest meijerink
+  (let [model (load-model model
+                          (course/published "course-1"
+                                            {:chapters [{:sections [{:id "section-1"}
+                                                                    {:id "section-2"}]}
+                                                        {:sections [{:id "section-3"}]}]}))]
+    (is (= #{} (meijerink-criteria model))))
+  (let [model (load-model model
+                          (course/published "course-1"
+                                            {:chapters [{:sections [{:id "section-1"
+                                                                     :meijerink-criteria ["A" "B"]}
+                                                                    {:id "section-2"
+                                                                     :meijerink-criteria ["B"]}]}
+                                                        {:sections [{:id "section-3"
+                                                                     :meijerink-criteria ["C"]}]}]}))]
+    (is (= #{"A" "B" "C"} (meijerink-criteria model)))))
+
+(deftest entry-quiz
+  (let [model (load-model model
+                          (course/published "course-1"
+                                            {:chapters [{:sections [{:id "section-1"
+                                                                     :meijerink-criteria ["A" "B"]}
+                                                                    {:id "section-2"
+                                                                     :meijerink-criteria ["B"]}]}
+                                                        {:sections [{:id "section-3"
+                                                                     :meijerink-criteria ["C"]}]}]}))]
+    (is (= #{"A" "B" "C"} (meijerink-criteria model)))))
