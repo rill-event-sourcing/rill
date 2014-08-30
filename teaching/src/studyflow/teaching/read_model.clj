@@ -43,11 +43,11 @@
                           mapping))))
 
 (defn students-for-class [model class]
-  (map (partial decorate-student-completion model)
+  (->> (vals (:students model))
        (filter (fn [student]
                  (and (= (:department-id student) (:department-id class))
-                      (= (:class-name student) (:name class))))
-               (vals (:students model)))))
+                      (= (:class-name student) (:name class)))))
+       (map (partial decorate-student-completion model))))
 
 (defn- decorate-class-completion [model class]
   (let [completions-f (fn [scope] (->> (students-for-class model class)
