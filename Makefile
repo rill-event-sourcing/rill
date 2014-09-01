@@ -1,6 +1,6 @@
 default: test
 
-.PHONY: test build deploy install clean learning publishing school-administration login rill components migrations css js
+.PHONY: test build deploy install clean learning login publishing school-administration teaching rill components migrations css js
 
 clean:
 	cd lib/rill && lein clean
@@ -9,6 +9,7 @@ clean:
 	cd learning && lein clean
 	cd login && lein clean
 	cd school-administration && lein clean
+	cd teaching && lein clean
 
 install:
 	cd lib/rill && lein install
@@ -18,6 +19,7 @@ install:
 	cd login && lein install
 	cd school-administration && lein install
 	cd teaching && lein install
+
 
 rill:
 	cd lib/rill && make test && make install
@@ -40,7 +42,11 @@ publishing:
 school-administration: rill components migrations
 	cd school-administration && make test && make build
 
-build: login publishing learning school-administration
+teaching: rill components migrations
+	cd teaching && make test && make build
+
+
+build: learning login publishing school-administration teaching
 
 test:	install
 	cd lib/rill && make test
@@ -48,14 +54,16 @@ test:	install
 	cd lib/migrations && make test
 	cd learning && make test
 	cd login && make test
-	cd school-administration && make test
 	cd publishing && make test
+	cd school-administration && make test
+	cd teaching && make test
 
 upload: build
 	cd learning && make upload
 	cd login && make upload
 	cd publishing && make upload
 	cd school-administration && make upload
+	cd teaching && make upload
 
 css:
 	make -C learning css
