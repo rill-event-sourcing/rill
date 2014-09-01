@@ -7,6 +7,7 @@
                  [org.clojure/tools.logging "0.3.0"]
                  [rill "0.1.0-SNAPSHOT"]
                  [ring/ring-defaults "0.1.0"]
+                 [studyflow/migrations "0.1.0-SNAPSHOT"]
                  [studyflow/components "0.1.0-SNAPSHOT"]]
 
   :profiles {:dev
