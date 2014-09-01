@@ -29,13 +29,10 @@
     (try+ (swap! state (fn [old-state]
                          (let [current-stream (get old-state stream-id stream/empty-stream)
                                all-stream (get old-state all-events-stream-id stream/empty-stream)
-                               current-version (dec (count current-stream))
-                               events (map #(assoc %1 message/number (+ (if (= -2 from-version)
-                                                                          current-version
-                                                                          from-version) %2))
+                               events (map #(assoc %1 message/number (+ (or from-version stream/empty-stream-version) %2))
                                            events
                                            (iterate inc 1))]
-                           (if (or (= -2 from-version)
+                           (if (or (nil? from-version)
                                    (= (dec (count current-stream)) from-version))
                              (-> old-state
                                  (assoc stream-id (into current-stream events))
