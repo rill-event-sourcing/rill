@@ -27,34 +27,40 @@
                              (update-js primary-button
                                         :className (partial str "btn big yellow pull-right"))))))
 
-(defn split-text-and-inputs [text inputs]
-  (reduce
-   (fn [pieces input]
-     (loop [[p & ps] pieces
-            out []]
-       (if-not p
-         out
-         (if (gstring/contains p input)
-           (let [[before & after] (string/split p (re-pattern input))]
-             (-> out
-                 (into [before input])
-                 (into after)
-                 (into ps)))
-           (recur ps (conj out p))))))
-   [text]
-   inputs))
+(def html->om
+  {"a" dom/a, "b" dom/b, "big" dom/big, "br" dom/br, "dd" dom/dd, "div" dom/div,
+   "dl" dom/dl, "dt" dom/dt, "em" dom/em, "fieldset" dom/fieldset,
+   "h1" dom/h1, "h2" dom/h2, "h3" dom/h3, "h4" dom/h4, "h5" dom/h5, "h6" dom/h6,
+   "hr" dom/hr, "i" dom/i, "li" dom/li, "ol" dom/ol, "p" dom/p, "pre" dom/pre,
+   "q" dom/q,"s" dom/s,"small" dom/small, "span" dom/span, "strong" dom/strong,
+   "sub" dom/sub, "sup" dom/sup, "table" dom/table, "tbody" dom/tbody, "td" dom/td,
+   "tfoot" dom/tfoor, "th" dom/th, "thead" dom/thead, "tr" dom/tr, "u" dom/u,
+   "ul" dom/ul})
 
-
-(defn render-question [question-text inputs]
-  (apply dom/div nil
-         (for [text-or-input (split-text-and-inputs question-text
-                                                    (keys inputs))]
-           ;; this wrapper div is
-           ;; required, otherwise the
-           ;; dangerouslySetInnerHTML
-           ;; breaks when mixing html
-           ;; in text and inputs
-           (dom/div #js {:className "dangerous-html-wrap"}
-                    (if-let [input (get inputs text-or-input)]
-                      input
-                      (raw-html text-or-input))))))
+(defn tag-tree-to-om [tag-tree inputs]
+  (let [descent (fn descent [tag-tree]
+                  (cond
+                   (and (map? tag-tree)
+                        (contains? tag-tree :tag)
+                        (contains? tag-tree :attrs)
+                        (contains? tag-tree :content))
+                   (let [{:keys [tag attrs content] :as node} tag-tree]
+                     (if-let [build-fn (get html->om tag)]
+                       (apply build-fn
+                              (if-let [className (:class attrs)]
+                                #js {:className className}
+                                nil)
+                              (map descent content))
+                       (cond
+                        (= tag "img")
+                        (dom/img #js {:src (:src attrs)})
+                        (= tag "input")
+                        (get inputs (:name attrs))
+                        (= tag "svg")
+                        (raw-html content)
+                        :else
+                        (apply dom/span #js {:className "default-html-to-om"}
+                               (map descent content)))))
+                   (string? tag-tree)
+                   tag-tree))]
+    (descent tag-tree)))
