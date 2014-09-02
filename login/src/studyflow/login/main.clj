@@ -133,14 +133,15 @@
 (defn get-session-id-from-cookies [cookies]
   (:value (get cookies "studyflow_session")))
 
-(defn make-session-cookie [cookie-domain session-id max-age]
+(defn make-session-cookie [cookie-domain session-id]
   (if cookie-domain
-    {:studyflow_session {:value session-id :max-age max-age :domain cookie-domain :path "/"}}
-    {:studyflow_session {:value session-id :max-age max-age :path "/"}}))
+    {:studyflow_session {:value session-id :domain cookie-domain :path "/"}}
+    {:studyflow_session {:value session-id :path "/"}}))
 
 (defn clear-session-cookie [cookie-domain]
-  (make-session-cookie cookie-domain "" -1))
-
+  (if cookie-domain
+    {:studyflow_session {:value "" :max-age -1 :domain cookie-domain :path "/"}}
+    {:studyflow_session {:value "" :max-age -1 :path "/"}}))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wiring
@@ -153,8 +154,7 @@
                                                   (create-session session-store
                                                                   (:user-id user)
                                                                   (:user-role user)
-                                                                  session-max-age)
-                                                  session-max-age))
+                                                                  session-max-age)))
         resp))))
 
 (defn wrap-logout-user [app]
@@ -175,8 +175,7 @@
   (fn [{:keys [default-redirect-paths cookies] :as req}]
     (let [resp (app req)]
       (if-let [user-role (:redirect-for-role resp)]
-        (redirect-to (or (:value (cookies "studyflow_redir_to"))
-                         (default-redirect-paths user-role)))
+        (redirect-to (default-redirect-paths user-role))
         resp))))
 
 (def studyflow-site-defaults

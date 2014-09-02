@@ -15,7 +15,8 @@
   (merge (sys/prod-system dev-options)
          {:ring-handler (component/using
                          (dev-ring-handler-component {:login "http://localhost:4000"
-                                                      :learning "http://localhost:3000"})
+                                                      :learning "http://localhost:3000"}
+                                                     nil)
                          [:event-store :read-model :session-store])
           :session-store (simple-session-store)
           :event-store (component/using
