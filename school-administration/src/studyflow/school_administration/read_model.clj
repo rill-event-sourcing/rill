@@ -165,7 +165,7 @@
   [model id class-name]
   (update-in model [:teachers id :class-names] (fnil conj #{}) class-name))
 
-(defn unassign-class-from-class
+(defn unassign-teacher-from-class
   [model id class-name]
   (update-in model [:teachers id :class-names] disj class-name))
 

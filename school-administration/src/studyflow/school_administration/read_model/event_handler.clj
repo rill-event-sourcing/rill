@@ -121,7 +121,7 @@
 (defmethod handle-event ::teacher/ClassUnassigned
   [model {:keys [teacher-id class-name ::message/number]}]
   (-> model
-      (m/unassign-class-from-class teacher-id class-name)
+      (m/unassign-teacher-from-class teacher-id class-name)
       (m/set-aggregate-version teacher-id number)))
 
 (defmethod handle-event ::teacher/NameChanged
