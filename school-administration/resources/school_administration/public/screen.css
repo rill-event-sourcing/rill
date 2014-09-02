@@ -19,7 +19,7 @@ body {
 }
 
 html, input, select, button {
-  font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+  font-family: "Helvetica Neue", Arial, "Dejavu Sans", "Bitstream Vera Sans", Ubuntu, Helvetica, sans-serif;
   font-size: 11pt;
 }
 
