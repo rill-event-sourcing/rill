@@ -1,21 +1,9 @@
-;; TODO DRY it up!  copy-pasted from learning environment
 (ns studyflow.teaching.web.authentication
   (:require [clojure.tools.logging :as log]
             [ring.middleware.cookies :as cookies]
             [studyflow.teaching.read-model :as read-model]
+            [studyflow.web.authentication :refer [wrap-check-cookie redirect-login]]
             [studyflow.components.session-store :as session-store]))
-
-(defn redirect-login [req]
-  (let [login-url (get-in req [:redirect-urls :login])
-        teaching-url (get-in req [:redirect-urls :teaching])]
-    {:status 302
-     :headers {"Location" login-url}
-     :cookies {"studyflow_teaching_redir_to" {:value (str teaching-url (get req :uri))
-                                              :path "/"}
-               "studyflow_session" {:value ""
-                                    :path "/"
-                                    :max-age -1}}
-     "body" nil}))
 
 (defn wrap-teacher [handler]
   (fn [{:keys [read-model] :as req}]
@@ -42,12 +30,6 @@
         ;; session expired
         (redirect-login req))
       req)))
-
-(defn wrap-check-cookie [handler]
-  (fn [req]
-    (if-let [session-id (get-in req [:cookies "studyflow_session" :value])]
-      (handler (assoc req :session-id session-id))
-      (redirect-login req))))
 
 (defn wrap-authentication [handler session-store]
   (-> handler
