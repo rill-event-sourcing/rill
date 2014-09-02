@@ -6,7 +6,7 @@
             [studyflow.learning.entry-quiz :as entry-quiz]
             [rill.web :refer [wrap-command-handler]]
             [studyflow.learning.web.authorization :as authorization]
-            [studyflow.learning.web.handler-tools :refer [combine-ring-handlers]]
+            [studyflow.web.handler-tools :refer [combine-ring-handlers]]
             [studyflow.learning.web.routes :as routes]))
 
 ;; Load command handlers

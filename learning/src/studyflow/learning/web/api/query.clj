@@ -3,7 +3,7 @@
             [clout-link.route :as clout]
             [rill.uuid :refer [uuid]]
             [studyflow.learning.read-model.queries :as queries]
-            [studyflow.learning.web.handler-tools :refer [combine-ring-handlers]]
+            [studyflow.web.handler-tools :refer [combine-ring-handlers]]
             [studyflow.learning.web.routes :as routes]))
 
 (def handler

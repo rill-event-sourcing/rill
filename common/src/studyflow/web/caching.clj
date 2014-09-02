@@ -1,4 +1,4 @@
-(ns studyflow.learning.web.caching)
+(ns studyflow.web.caching)
 
 (defn no-caching
   [response]

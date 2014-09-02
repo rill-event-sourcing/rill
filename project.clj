@@ -29,6 +29,7 @@
                  [org.bovinegenius/exploding-fish "0.3.4"]]
   :source-paths ["lib/migrations/src"
                  "lib/components/src"
+                 "common/src"
                  "super-system/src"
                  "school-administration/src"
                  "teaching/src"
@@ -41,6 +42,7 @@
                "school-administration/test"
                "learning/test"
                "teaching/test"
+               "common/test"
                "login/test"]
   :profiles {:dev {:source-paths ["super-system/dev" "learning/dev" "login/dev" "school-administration/dev" "teaching/dev"]
                    :resource-paths ["super-system/dev/resources"]}})

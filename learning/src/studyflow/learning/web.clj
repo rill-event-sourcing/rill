@@ -3,8 +3,8 @@
             [studyflow.learning.web.api :as api]
             [studyflow.learning.web.authentication :as authentication]
             [studyflow.learning.web.browser-resources :as browser-resources]
-            [studyflow.learning.web.caching :refer [wrap-no-cache-dwim]]
-            [studyflow.learning.web.handler-tools :refer [combine-ring-handlers]]
+            [studyflow.web.caching :refer [wrap-no-cache-dwim]]
+            [studyflow.web.handler-tools :refer [combine-ring-handlers]]
             [studyflow.learning.web.status :as status]
             [studyflow.learning.web.start :as start]
             [studyflow.learning.read-model :as m]))

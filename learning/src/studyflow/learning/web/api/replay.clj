@@ -4,7 +4,7 @@
             [studyflow.learning.entry-quiz.replay :refer [replay-entry-quiz]]
             [clout-link.route :as clout]
             [studyflow.learning.web.authorization :as authorization]
-            [studyflow.learning.web.handler-tools :refer [combine-ring-handlers]]
+            [studyflow.web.handler-tools :refer [combine-ring-handlers]]
             [studyflow.learning.web.routes :as routes]
             [rill.uuid :refer [uuid]]))
 

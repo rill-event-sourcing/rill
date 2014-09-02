@@ -2,10 +2,9 @@
   (:require [studyflow.learning.web.api.command :as command-api]
             [studyflow.learning.web.api.query :as query-api]
             [studyflow.learning.web.api.replay :as replay-api]
-            [studyflow.learning.web.handler-tools :refer [combine-ring-handlers]]
-            [studyflow.learning.web.caching :refer [wrap-no-caching]]
-            [studyflow.learning.web.json-middleware :refer [wrap-json-io]]))
-
+            [studyflow.web.handler-tools :refer [combine-ring-handlers]]
+            [studyflow.web.caching :refer [wrap-no-caching]]
+            [studyflow.web.json-middleware :refer [wrap-json-io]]))
 
 (defn make-request-handler
   [event-store]

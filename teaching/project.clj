@@ -9,7 +9,7 @@
                  [ring/ring-defaults "0.1.0"]
                  [studyflow/migrations "0.1.0-SNAPSHOT"]
                  [studyflow/components "0.1.0-SNAPSHOT"]]
-
+  :source-paths ["src" "../common/src"]
   :profiles {:dev
              {:source-paths ["dev"]
               :resource-paths ["dev/resources"]

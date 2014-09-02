@@ -6,8 +6,8 @@
             [ring.middleware.resource :refer [wrap-resource]]
             [ring.util.response :refer [response content-type charset]]
             [ring.middleware.content-type :refer [wrap-content-type]]
-            [studyflow.learning.web.handler-tools :refer [combine-ring-handlers]]
-            [studyflow.learning.web.caching :refer [wrap-no-caching]]
+            [studyflow.web.handler-tools :refer [combine-ring-handlers]]
+            [studyflow.web.caching :refer [wrap-no-caching]]
             [studyflow.learning.web.routes :as routes]))
 
 (html/deftemplate course-frame "learning/templates/courses.html"

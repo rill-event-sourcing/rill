@@ -1,26 +1,9 @@
 (ns studyflow.learning.web.authentication
   (:require [clojure.tools.logging :as log]
             [ring.middleware.cookies :as cookies]
+            [studyflow.web.authentication :refer [redirect-login wrap-check-cookie]]
             [studyflow.learning.read-model :as read-model]
             [studyflow.components.session-store :as session-store]))
-
-(defn redirect-login
-  [{:keys [uri cookie-domain] {:keys [learning login]} :redirect-urls}]
-  {:status 302
-   :headers {"Location" login}
-   :cookies (if cookie-domain
-              {:studyflow_redir_to {:value (str learning uri)
-                                    :domain cookie-domain
-                                    :path "/"}
-               :studyflow_session {:value ""
-                                   :domain cookie-domain
-                                   :path "/"
-                                   :max-age -1}}
-              {:studyflow_redir_to {:value (str learning uri)
-                                    :path "/"}
-               :studyflow_session {:value ""
-                                   :path "/"
-                                   :max-age -1}})})
 
 (defn wrap-student [handler]
   (fn [{:keys [read-model] :as req}]
@@ -47,12 +30,6 @@
         ;; session expired
         (redirect-login req))
       req)))
-
-(defn wrap-check-cookie [handler]
-  (fn [req]
-    (if-let [session-id (get-in req [:cookies "studyflow_session" :value])]
-      (handler (assoc req :session-id session-id))
-      (redirect-login req))))
 
 (defn wrap-authentication [handler session-store]
   (-> handler

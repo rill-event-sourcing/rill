@@ -1,4 +1,4 @@
-(ns studyflow.learning.web.handler-tools)
+(ns studyflow.web.handler-tools)
 
 (defn combine-ring-handlers
   [& handlers]
