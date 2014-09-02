@@ -2,10 +2,17 @@
   (:require [rill.event-store :as store]
             [rill.event-store.memory :as memory]
             [rill.event-stream :as stream]
-            [rill.message :as message]
-            [clojure.test :refer [is deftest testing]]))
+            [rill.message :as message :refer [defevent]]
+            [clojure.test :refer [is deftest testing]]
+            [schema.core :as s]))
 
-(def events (map (fn [v] {:v v}) (range 7)))
+(defevent TestEvent :v s/Int)
+
+(def events (map test-event (range 7)))
+
+(defn ignore-numbers
+  [events]
+  (map #(dissoc % message/number) events))
 
 (deftest in-memory-event-store
   (let [store (memory/memory-store)]
@@ -38,4 +45,12 @@
     (let [e (nth (store/retrieve-events store "my-stream") 3)]
       (is (= (->> (store/retrieve-events-since store "my-stream" e 0)
                   (map #(dissoc % message/number)))
-             (drop 4 events))))))
+             (drop 4 events))))
+
+    (testing "any-version"
+      (let [old-events (store/retrieve-events store "my-stream")
+            new-events (map test-event (range 1000 1005))]
+        (is (store/append-events store "my-stream" stream/any-stream-version new-events))
+        (is (= (ignore-numbers (store/retrieve-events store "my-stream"))
+               (ignore-numbers (concat old-events new-events))))))))
+
