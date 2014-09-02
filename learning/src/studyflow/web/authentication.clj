@@ -4,17 +4,23 @@
             [studyflow.learning.read-model :as read-model]
             [studyflow.components.session-store :as session-store]))
 
-(defn redirect-login [req]
-  (let [login-url (get-in req [:redirect-urls :login])
-        learning-url (get-in req [:redirect-urls :learning])]
-    {:status 302
-     :headers {"Location" login-url}
-     :cookies {"studyflow_learning_redir_to" {:value (str learning-url (get req :uri))
-                                              :path "/"}
-               "studyflow_session" {:value ""
-                                    :path "/"
-                                    :max-age -1}}
-     "body" nil}))
+(defn redirect-login
+  [{:keys [uri cookie-domain] {:keys [learning login]} :redirect-urls}]
+  {:status 302
+   :headers {"Location" login}
+   :cookies (if cookie-domain
+              {:studyflow_redir_to {:value (str learning uri)
+                                    :domain cookie-domain
+                                    :path "/"}
+               :studyflow_session {:value ""
+                                   :domain cookie-domain
+                                   :path "/"
+                                   :max-age -1}}
+              {:studyflow_redir_to {:value (str learning uri)
+                                    :path "/"}
+               :studyflow_session {:value ""
+                                   :path "/"
+                                   :max-age -1}})})
 
 (defn wrap-student [handler]
   (fn [{:keys [read-model] :as req}]
@@ -52,5 +58,5 @@
   (-> handler
       wrap-student
       (wrap-student-id session-store)
-      wrap-check-cookie
+      (wrap-check-cookie)
       cookies/wrap-cookies))

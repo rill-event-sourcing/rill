@@ -5,7 +5,7 @@
             [compojure.route :refer [not-found]]
             [hiccup.form :as form]
             [studyflow.login.credentials :refer [caught-up?]]
-            [hiccup.page :refer [html5 include-css]]
+            [hiccup.page :refer [html5 include-css include-js]]
             [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
             [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
             [studyflow.components.session-store :refer [create-session delete-session! get-user-id get-role]]
@@ -28,6 +28,7 @@
                [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
                (include-css "css/login.css")
                (include-css "//cloud.typography.com/6865512/722124/css/fonts.css")
+               (include-js "js/usersnap.js")
                "<!-- [if lt IE 9>]"
                [:script {:src "//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.js"}]
                [:script {:src "//cdnjs.cloudflare.com/ajax/libs/respond.js/1.3.0/respond.js"}]
@@ -132,14 +133,15 @@
 (defn get-session-id-from-cookies [cookies]
   (:value (get cookies "studyflow_session")))
 
-(defn make-session-cookie [cookie-domain session-id max-age]
+(defn make-session-cookie [cookie-domain session-id]
   (if cookie-domain
-    {:studyflow_session {:value session-id :max-age max-age :domain cookie-domain :path "/"}}
-    {:studyflow_session {:value session-id :max-age max-age :path "/"}}))
+    {:studyflow_session {:value session-id :domain cookie-domain :path "/"}}
+    {:studyflow_session {:value session-id :path "/"}}))
 
 (defn clear-session-cookie [cookie-domain]
-  (make-session-cookie cookie-domain "" -1))
-
+  (if cookie-domain
+    {:studyflow_session {:value "" :max-age -1 :domain cookie-domain :path "/"}}
+    {:studyflow_session {:value "" :max-age -1 :path "/"}}))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wiring
@@ -152,8 +154,7 @@
                                                   (create-session session-store
                                                                   (:user-id user)
                                                                   (:user-role user)
-                                                                  session-max-age)
-                                                  session-max-age))
+                                                                  session-max-age)))
         resp))))
 
 (defn wrap-logout-user [app]
@@ -174,11 +175,7 @@
   (fn [{:keys [default-redirect-paths cookies] :as req}]
     (let [resp (app req)]
       (if-let [user-role (:redirect-for-role resp)]
-        (do
-          (log/debug ["redirecting" user-role (default-redirect-paths user-role) (:value (cookies "studyflow_learning_redir_to"))])
-          (redirect-to (or (and (= "student" user-role)
-                                (:value (cookies "studyflow_learning_redir_to")))
-                           (default-redirect-paths user-role))))
+        (redirect-to (default-redirect-paths user-role))
         resp))))
 
 (def studyflow-site-defaults

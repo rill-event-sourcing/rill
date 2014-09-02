@@ -116,10 +116,11 @@
       (is (= {} (handler {}))))
     (testing "with redirect-for-role and no cookie"
       (let [resp (handler {:redirect-for-role user-role, :cookies {}, :default-redirect-paths default-redirect-paths})]
-        (is (= (default-redirect-paths user-role) ((:headers resp) "Location")))))
+        (is (= (default-redirect-paths user-role) ((:headers resp) "Location")  "this-is-a-url"))))
+    ;; cookie functionality removed
     (testing "with redirect-for-role and cookie"
-      (let [path "this-path"
-            resp (handler {:redirect-for-role user-role, :default-redirect-paths default-redirect-paths, :cookies {"studyflow_learning_redir_to" {:value path}}})]
+      (let [path "this-is-a-url"
+            resp (handler {:redirect-for-role user-role, :default-redirect-paths default-redirect-paths, :cookies {"studyflow_redir_to" {:value path}}})]
         (is (= path ((:headers resp) "Location")))))))
 
 (deftest get-session-id-from-cookies-test
@@ -130,10 +131,10 @@
   (let [cookie-domain "domain"
         session-id "test-session-id"
         max-age 123]
-    (let [cookie (:studyflow_session (make-session-cookie cookie-domain session-id max-age))]
+    (let [cookie (:studyflow_session (make-session-cookie cookie-domain session-id))]
       (is (= cookie-domain (:domain cookie)))
       (is (= session-id (:value cookie)))
-      (is (= max-age (:max-age cookie))))))
+      (is (nil? (:max-age cookie))))))
 
 (deftest clear-session-cookie-test
   (let [cookie-domain "domain"

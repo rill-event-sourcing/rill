@@ -7,6 +7,7 @@
             [ring.util.response :refer [response content-type charset]]
             [ring.middleware.content-type :refer [wrap-content-type]]
             [studyflow.web.handler-tools :refer [combine-ring-handlers]]
+            [studyflow.web.caching :refer [wrap-no-caching]]
             [studyflow.web.routes :as routes]))
 
 (html/deftemplate course-frame "learning/templates/courses.html"
@@ -34,5 +35,6 @@
 (def resource-handler
   (-> (constantly nil)
       (wrap-resource "learning/public")
+      wrap-no-caching
       wrap-content-type
       wrap-utf-8))

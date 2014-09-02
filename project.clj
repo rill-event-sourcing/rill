@@ -1,6 +1,5 @@
 (defproject studyflow/studyflow "0.1.0-SNAPSHOT"
-  :dependencies [[cider/cider-nrepl "0.8.0-SNAPSHOT"]
-                 [compojure/compojure "1.1.8"]
+  :dependencies [[compojure/compojure "1.1.8"]
                  [com.stuartsierra/component "0.2.1"]
                  [com.taoensso/carmine "2.6.2"]
                  [crypto-password/crypto-password "0.1.3"]

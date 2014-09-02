@@ -36,7 +36,7 @@
 
 (defn full-name
   [first-name infix last-name]
-  (if (not= "" (str/blank? (str infix)))
+  (if-not (str/blank? (str infix))
     (str first-name " " infix " " last-name)
     (str first-name " " last-name)))
 

@@ -3,15 +3,9 @@
             [studyflow.web.api.query :as query-api]
             [studyflow.web.api.replay :as replay-api]
             [studyflow.web.handler-tools :refer [combine-ring-handlers]]
+            [studyflow.web.caching :refer [wrap-no-caching]]
             [studyflow.web.json-middleware :refer [wrap-json-io]]))
 
-(defn wrap-no-caching
-  [f]
-  (fn [request]
-    (when-let [response (f request)]
-      (update-in response [:headers] assoc
-                 "Cache-Control" "no-cache, must-revalidate"
-                 "Pragma" "no-cache"))))
 
 (defn make-request-handler
   [event-store]
