@@ -2,7 +2,7 @@
   "An in-memory event store for testing purposes"
   (:require [clojure.tools.logging :as log]
             [rill.event-store :as store]
-            [rill.event-stream :as stream :refer [all-events-stream-id]]
+            [rill.event-stream :refer [all-events-stream-id empty-stream-version any-stream-version empty-stream]]
             [rill.message :as message]
             [slingshot.slingshot :refer [try+ throw+]]))
 
@@ -17,7 +17,7 @@
                    c
                    cursor)]
       (loop [wait wait-for-seconds]
-        (let [substream (subvec (get @state stream-id stream/empty-stream) (inc cursor))]
+        (let [substream (subvec (get @state stream-id empty-stream) (inc cursor))]
           (if (empty? substream)
             (if (< 0 wait-for-seconds)
               (do (Thread/sleep 200)
@@ -27,13 +27,17 @@
 
   (append-events [this stream-id from-version events]
     (try+ (swap! state (fn [old-state]
-                         (let [current-stream (get old-state stream-id stream/empty-stream)
-                               all-stream (get old-state all-events-stream-id stream/empty-stream)
-                               events (map #(assoc %1 message/number (+ (or from-version stream/empty-stream-version) %2))
-                                           events
-                                           (iterate inc 1))]
-                           (if (or (nil? from-version)
-                                   (= (dec (count current-stream)) from-version))
+                         (let [current-stream (get old-state stream-id empty-stream)
+                               all-stream (get old-state all-events-stream-id empty-stream)
+                               current-version (if (empty? current-stream)
+                                                 empty-stream-version
+                                                 (message/number (last current-stream)))
+                               start-number (if (= from-version any-stream-version)
+                                              current-version
+                                              from-version)
+                               events (map #(assoc %1 message/number (+ start-number %2))
+                                           events (iterate inc 1))]
+                           (if (= (dec (count current-stream)) start-number)
                              (-> old-state
                                  (assoc stream-id (into current-stream events))
                                  (assoc all-events-stream-id (into all-stream events)))
