@@ -1,10 +1,10 @@
-(ns studyflow.web.api.query
+(ns studyflow.learning.web.api.query
   (:require [clojure.tools.logging :refer [debug]]
             [clout-link.route :as clout]
             [rill.uuid :refer [uuid]]
             [studyflow.learning.read-model.queries :as queries]
-            [studyflow.web.handler-tools :refer [combine-ring-handlers]]
-            [studyflow.web.routes :as routes]))
+            [studyflow.learning.web.handler-tools :refer [combine-ring-handlers]]
+            [studyflow.learning.web.routes :as routes]))
 
 (def handler
   "This handler returns data for the json api (or nil)"

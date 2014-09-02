@@ -1,12 +1,12 @@
-(ns studyflow.web
+(ns studyflow.learning.web
   (:require [ring.util.response :as resp]
-            [studyflow.web.api :as api]
-            [studyflow.web.authentication :as authentication]
-            [studyflow.web.browser-resources :as browser-resources]
-            [studyflow.web.caching :refer [wrap-no-cache-dwim]]
-            [studyflow.web.handler-tools :refer [combine-ring-handlers]]
-            [studyflow.web.status :as status]
-            [studyflow.web.start :as start]
+            [studyflow.learning.web.api :as api]
+            [studyflow.learning.web.authentication :as authentication]
+            [studyflow.learning.web.browser-resources :as browser-resources]
+            [studyflow.learning.web.caching :refer [wrap-no-cache-dwim]]
+            [studyflow.learning.web.handler-tools :refer [combine-ring-handlers]]
+            [studyflow.learning.web.status :as status]
+            [studyflow.learning.web.start :as start]
             [studyflow.learning.read-model :as m]))
 
 (defn fallback-handler

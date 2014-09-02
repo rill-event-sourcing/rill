@@ -1,4 +1,4 @@
-(ns studyflow.web.authorization
+(ns studyflow.learning.web.authorization
   (:require [clojure.tools.logging :as log]))
 
 (defn wrap-student-authorization [handler]

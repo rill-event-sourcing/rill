@@ -2,7 +2,7 @@
   (:require [com.stuartsierra.component :refer [Lifecycle]]
             [ring.mock.request :as ring-mock]
             [clout-link.route :as route]
-            [studyflow.web.routes :as routes]
+            [studyflow.learning.web.routes :as routes]
             [clojure.tools.logging :refer [info debug spy]]
             [clojure.java.io :as io]))
 

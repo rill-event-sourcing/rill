@@ -1,12 +1,12 @@
-(ns studyflow.web.publishing-api
+(ns studyflow.learning.web.publishing-api
   (:require [clout-link.route :as clout]
             [rill.uuid :refer [uuid]]
             [rill.web :refer [wrap-command-handler]]
             [studyflow.learning.course.commands :as course-commands]
             [studyflow.learning.course-material :as course-material]
-            [studyflow.web.handler-tools :refer [combine-ring-handlers]]
-            [studyflow.web.json-middleware :refer [wrap-json-io]]
-            [studyflow.web.routes :as routes]))
+            [studyflow.learning.web.handler-tools :refer [combine-ring-handlers]]
+            [studyflow.learning.web.json-middleware :refer [wrap-json-io]]
+            [studyflow.learning.web.routes :as routes]))
 
 ;; load command handlers
 (require 'studyflow.learning.course)

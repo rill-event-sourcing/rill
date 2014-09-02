@@ -1,5 +1,5 @@
-(ns studyflow.web.status
-  (:require [studyflow.web.routes :as routes]
+(ns studyflow.learning.web.status
+  (:require [studyflow.learning.web.routes :as routes]
             [clout-link.route :refer [handle]]))
 
 (defn status

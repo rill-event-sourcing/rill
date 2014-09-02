@@ -1,13 +1,13 @@
-(ns studyflow.web.api.command
+(ns studyflow.learning.web.api.command
   (:require [clojure.tools.logging :as log]
             [clout-link.route :as clout]
             [rill.uuid :refer [uuid]]
             [studyflow.learning.section-test.commands :as section-test]
             [studyflow.learning.entry-quiz :as entry-quiz]
             [rill.web :refer [wrap-command-handler]]
-            [studyflow.web.authorization :as authorization]
-            [studyflow.web.handler-tools :refer [combine-ring-handlers]]
-            [studyflow.web.routes :as routes]))
+            [studyflow.learning.web.authorization :as authorization]
+            [studyflow.learning.web.handler-tools :refer [combine-ring-handlers]]
+            [studyflow.learning.web.routes :as routes]))
 
 ;; Load command handlers
 (require 'studyflow.learning.section-test)

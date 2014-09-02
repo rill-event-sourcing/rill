@@ -1,12 +1,12 @@
-(ns studyflow.web.api.replay-test
-  (:require [studyflow.web.api.replay :as replay]
+(ns studyflow.learning.web.api.replay-test
+  (:require [studyflow.learning.web.api.replay :as replay]
             [studyflow.learning.section-test.events :as events]
             [studyflow.learning.course.fixture :as fixture]
             [rill.temp-store :refer [given messages=]]
             [rill.uuid :refer [new-id]]
             [clojure.test :refer [deftest testing is]]
             [ring.mock.request :refer [request]]
-            [studyflow.web.routes :as routes]
+            [studyflow.learning.web.routes :as routes]
             [clout-link.route :refer [uri-for]]))
 
 (def student-id (new-id))

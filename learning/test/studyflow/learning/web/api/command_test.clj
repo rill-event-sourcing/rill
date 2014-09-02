@@ -1,10 +1,10 @@
-(ns studyflow.web.api.command-test
-  (:use  [studyflow.web.api.command])
+(ns studyflow.learning.web.api.command-test
+  (:use  [studyflow.learning.web.api.command])
   (:require [ring.mock.request :refer [request body]]
             [clojure.test :refer [is deftest testing]]
             [clojure.tools.logging :as log]
             [clout-link.route :refer [uri-for]]
-            [studyflow.web.routes :as routes]
+            [studyflow.learning.web.routes :as routes]
             [rill.temp-store :refer [with-temp-store message=]]
             [rill.uuid :refer [new-id uuid]]
             [rill.message :as message]
@@ -12,7 +12,7 @@
             [studyflow.learning.course-material :as course-material]
             [studyflow.learning.course.commands :as course-commands]
             [studyflow.learning.section-test.commands :as section-test-commands]
-            [studyflow.web.publishing-api :as publishing-api]
+            [studyflow.learning.web.publishing-api :as publishing-api]
             [studyflow.learning.section-test.events :as events]))
 
 

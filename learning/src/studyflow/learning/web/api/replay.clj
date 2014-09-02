@@ -1,11 +1,11 @@
-(ns studyflow.web.api.replay
+(ns studyflow.learning.web.api.replay
   "Fetch old events"
   (:require [studyflow.learning.section-test.replay :refer [replay-section-test]]
             [studyflow.learning.entry-quiz.replay :refer [replay-entry-quiz]]
             [clout-link.route :as clout]
-            [studyflow.web.authorization :as authorization]
-            [studyflow.web.handler-tools :refer [combine-ring-handlers]]
-            [studyflow.web.routes :as routes]
+            [studyflow.learning.web.authorization :as authorization]
+            [studyflow.learning.web.handler-tools :refer [combine-ring-handlers]]
+            [studyflow.learning.web.routes :as routes]
             [rill.uuid :refer [uuid]]))
 
 (defn response

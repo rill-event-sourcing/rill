@@ -1,4 +1,4 @@
-(ns studyflow.web.json-middleware
+(ns studyflow.learning.web.json-middleware
   (:require [studyflow.json-tools :refer [key-to-json key-from-json]]
             [ring.middleware.json :as ring]))
 

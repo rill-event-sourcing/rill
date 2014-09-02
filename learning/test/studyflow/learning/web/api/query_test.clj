@@ -1,12 +1,12 @@
-(ns studyflow.web.api.query-test
+(ns studyflow.learning.web.api.query-test
   (:require [clojure.test :refer [deftest is testing]]
             [clout-link.route :refer [uri-for]]
             [rill.uuid :refer [new-id]]
             [ring.mock.request :refer [request]]
-            [studyflow.web.routes :as routes]
+            [studyflow.learning.web.routes :as routes]
             [clout-link.route :refer [uri-for]]
-            [studyflow.web :refer [wrap-read-model]]
-            [studyflow.web.api.query :as query]
+            [studyflow.learning.web :refer [wrap-read-model]]
+            [studyflow.learning.web.api.query :as query]
             [studyflow.learning.read-model.event-handler :refer [init-model]]
             [studyflow.learning.course.fixture :as fixture] 
             [studyflow.learning.course.events :as events]))

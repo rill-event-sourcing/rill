@@ -1,6 +1,6 @@
-(ns studyflow.web.routes-test
+(ns studyflow.learning.web.routes-test
   (:require [clojure.test :refer [deftest is]]
-            [studyflow.web.routes :as routes]
+            [studyflow.learning.web.routes :as routes]
             [clout-link.route :refer [uri-for handle]]
             [ring.mock.request :refer [request]]))
 

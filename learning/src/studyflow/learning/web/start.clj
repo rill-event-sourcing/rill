@@ -1,5 +1,5 @@
-(ns studyflow.web.start
-  (:require [studyflow.web.routes :as routes]
+(ns studyflow.learning.web.start
+  (:require [studyflow.learning.web.routes :as routes]
             [clout-link.route :refer [handle uri-for]]
             [studyflow.learning.read-model :refer [get-course-name]]
             [ring.util.response :refer [redirect]]

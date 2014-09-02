@@ -1,7 +1,7 @@
 (ns studyflow.system.components.publishing-api
   (:require [clojure.tools.logging :as log]
             [com.stuartsierra.component :refer [Lifecycle]]
-            [studyflow.web.publishing-api :as publishing-api]))
+            [studyflow.learning.web.publishing-api :as publishing-api]))
 
 (defrecord PublishingApiComponent [event-store]
   Lifecycle

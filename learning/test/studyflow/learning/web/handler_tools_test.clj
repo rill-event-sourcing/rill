@@ -1,5 +1,5 @@
-(ns studyflow.web.handler-tools-test
-  (:require [studyflow.web.handler-tools :refer [combine-ring-handlers]]
+(ns studyflow.learning.web.handler-tools-test
+  (:require [studyflow.learning.web.handler-tools :refer [combine-ring-handlers]]
             [clojure.test :refer [deftest is testing]]))
 
 (deftest test-handler-tools

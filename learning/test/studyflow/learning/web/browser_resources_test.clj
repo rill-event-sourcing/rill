@@ -1,11 +1,11 @@
-(ns studyflow.web.browser-resources-test
+(ns studyflow.learning.web.browser-resources-test
   (:require [clojure.test :refer [deftest is]]
             [studyflow.learning.course-material-test :as fixture]
             [studyflow.learning.course-material :as material]
             [clout-link.route :as route]
             [ring.mock.request :refer [body content-type request]]
-            [studyflow.web.browser-resources :as browser-resources]
-            [studyflow.web.routes :as routes]))
+            [studyflow.learning.web.browser-resources :as browser-resources]
+            [studyflow.learning.web.routes :as routes]))
 
 (def input (fixture/read-example-json))
 (def parsed-input (material/parse-course-material input))
