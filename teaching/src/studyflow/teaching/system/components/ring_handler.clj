@@ -3,7 +3,7 @@
             [studyflow.teaching.web :as web]
             [clojure.tools.logging :as log]
             [studyflow.teaching.web.authentication :refer [wrap-authentication]]
-            [ring.middleware.defaults :refer [secure-site-defaults site-defaults wrap-defaults]]))
+            [ring.middleware.defaults :refer [site-defaults wrap-defaults]]))
 
 (defn site-config [config]
   (-> config
@@ -14,7 +14,7 @@
   (fn [r]
     (f (assoc r :redirect-urls urls))))
 
-(defrecord RingHandlerComponent [secure-site-defaults? read-model redirect-urls session-store]
+(defrecord RingHandlerComponent [read-model redirect-urls session-store]
   Lifecycle
   (start [component]
     (log/info "Starting teaching ring handler")
@@ -23,13 +23,10 @@
                (wrap-authentication session-store)
                (wrap-redirect-urls redirect-urls)
                (web/wrap-read-model (:read-model read-model))
-               (wrap-defaults (site-config (if secure-site-defaults?
-                                             secure-site-defaults
-                                             site-defaults))))))
+               (wrap-defaults (site-config site-defaults)))))
   (stop [component]
     (log/info "Stopping teaching ring handler")
     component))
 
-(defn ring-handler-component [secure-site-defaults? redirect-urls]
-  (map->RingHandlerComponent {:secure-site-defaults? secure-site-defaults?
-                              :redirect-urls redirect-urls}))
+(defn ring-handler-component [redirect-urls]
+  (map->RingHandlerComponent {:redirect-urls redirect-urls}))
