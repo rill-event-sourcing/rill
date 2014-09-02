@@ -230,7 +230,7 @@ namespace :deploy do
         execute :touch, current_path.join("tmp", "restart.txt")
       else
         warn " restarting java server #{ host } ".center(72, "#")
-        execute :sudo, :supervisorctl, :restart, "studyflow_#{ role }"
+        execute :sudo, :supervisorctl, :reload, "studyflow_#{ role }"
       end
     end
   end
