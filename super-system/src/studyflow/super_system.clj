@@ -47,7 +47,8 @@
 
         teaching (-> (teaching/prod-system {:port 4001
                                             :redirect-urls {:login "http://localhost:4000"
-                                                            :teaching "http://localhost:4001"}})
+                                                            :teaching "http://localhost:4001"}
+                                            :cookie-domain nil})
                      (dissoc :event-store :session-store)
                      (namespace-system :teaching [:event-store :session-store]))
 

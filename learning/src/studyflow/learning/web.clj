@@ -5,6 +5,7 @@
             [studyflow.learning.web.browser-resources :as browser-resources]
             [studyflow.web.caching :refer [wrap-no-cache-dwim]]
             [studyflow.web.handler-tools :refer [combine-ring-handlers]]
+            [studyflow.web.authentication :refer [wrap-cookie-domain wrap-redirect-urls]]
             [studyflow.learning.web.status :as status]
             [studyflow.learning.web.start :as start]
             [studyflow.learning.read-model :as m]))
@@ -13,19 +14,10 @@
   [r]
   (resp/not-found (str "Not found.\n" (pr-str r))))
 
-(defn wrap-redirect-urls [handler redirect-urls]
-  (fn [req]
-    (handler (assoc req :redirect-urls redirect-urls))))
-
 (defn wrap-read-model
   [handler read-model-atom]
   (fn [request]
     (handler (assoc request :read-model @read-model-atom))))
-
-(defn wrap-cookie-domain
-  [handler cookie-domain]
-  (fn [request]
-    (handler (assoc request :cookie-domain cookie-domain))))
 
 (defn catchup-handler
   [{:keys [read-model]}]

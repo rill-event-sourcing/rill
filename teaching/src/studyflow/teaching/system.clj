@@ -11,11 +11,11 @@
 
 (defn prod-system [config-options]
   (log/info "Running the teaching production system")
-  (let [{:keys [port event-store-config redirect-urls session-store-url]} config-options]
+  (let [{:keys [port event-store-config redirect-urls session-store-url cookie-domain]} config-options]
     (component/system-map
      :config-options config-options
      :ring-handler (component/using
-                    (ring-handler-component redirect-urls)
+                    (ring-handler-component redirect-urls cookie-domain)
                     [:event-store :read-model :session-store])
      :jetty (component/using
              (jetty-component port)

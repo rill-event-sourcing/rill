@@ -22,3 +22,13 @@
       (redirect-login req))))
 
 
+(defn wrap-redirect-urls
+  [f urls]
+  (fn [r]
+    (f (assoc r :redirect-urls urls))))
+
+(defn wrap-cookie-domain
+  [handler cookie-domain]
+  (fn [request]
+    (handler (assoc request :cookie-domain cookie-domain))))
+
