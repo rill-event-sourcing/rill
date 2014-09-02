@@ -75,7 +75,9 @@
 
 (defmethod handle-event :studyflow.school-administration.teacher.events/DepartmentChanged
   [model {:keys [teacher-id department-id]}]
-  (assoc-in model [:teachers teacher-id :department-id] department-id))
+  (-> model
+      (assoc-in [:teachers teacher-id :department-id] department-id)
+      (update-in [:teachers teacher-id] dissoc :classes)))
 
 (defmethod handle-event :studyflow.school-administration.teacher.events/ClassAssigned
   [model {:keys [teacher-id department-id class-name] :as event}]

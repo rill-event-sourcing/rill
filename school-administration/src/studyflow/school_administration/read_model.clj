@@ -159,7 +159,7 @@
              (fn [teacher]
                (-> teacher
                    (assoc :department-id department-id)
-                   (dissoc :class-name)))))
+                   (dissoc :class-names)))))
 
 (defn assign-teacher-to-class
   [model id class-name]
