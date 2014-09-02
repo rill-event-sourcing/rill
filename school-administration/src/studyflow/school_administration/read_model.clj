@@ -171,8 +171,11 @@
 
 (defn class-names-for-department
   [model department]
-  (set (filter (complement string/blank?) (map :class-name (filter #(= (:id department) (:department-id %))
-                                                                   (vals (:students model)))))))
+  (->> (vals (:students model))
+       (filter #(= (:id department) (:department-id %)))
+       (map :class-name)
+       (filter (complement string/blank?))
+       set))
 
 ;; catchup
 
