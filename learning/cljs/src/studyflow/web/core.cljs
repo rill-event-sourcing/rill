@@ -245,7 +245,8 @@
                                                              [:view :section section-id :input field-name :answer-submitted?]
                                                              true)
                                                             (submit)
-                                                            (focus-input-field))}))
+                                                            (focus-input-field)
+                                                            false)}))
                                          (if answered-correctly?
                                            (do
                                              (om/set-state-nr! owner :submit (fn []))
