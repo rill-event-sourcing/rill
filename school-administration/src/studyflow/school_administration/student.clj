@@ -272,3 +272,10 @@
                              class-name
                              {:email email
                               :encrypted-password encrypted-password})]])))
+
+(defmethod handle-event ::events/Imported
+  [_ {:keys [student-id full-name department-id class-name credentials]}]
+  (-> (->Student student-id full-name)
+      (assoc :department-id department-id
+             :class-name class-name
+             :credentials credentials)))
