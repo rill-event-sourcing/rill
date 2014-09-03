@@ -25,9 +25,14 @@
                                               :encrypted-password (bcrypt/encrypt "student")})
                   (school/created school-id "Programmer School 1" "123456")
                   (department/created department-id school-id "Test Dept")
+                  (student/department-changed student-id department-id)
                   (student/class-assigned student-id department-id "TestKlas1")
                   (teacher/created teacher-id department-id "Leon E. Raar")
-                  (teacher/class-assigned teacher-id department-id "TestKlas1")]]
+                  (teacher/department-changed teacher-id department-id)
+                  (teacher/class-assigned teacher-id department-id "TestKlas1")
+                  (teacher/credentials-added teacher-id
+                                             {:email "leraar@studyflow.nl"
+                                              :encrypted-password (bcrypt/encrypt "leraar")})]]
       (doseq [chunk (partition-by message/primary-aggregate-id events)]
         (info [:appending chunk])
         (event-store/append-events (:store event-store) (message/primary-aggregate-id (first chunk)) -2 chunk)))
