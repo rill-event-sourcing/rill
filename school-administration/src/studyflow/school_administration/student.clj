@@ -132,6 +132,9 @@
   [:ok [(events/created student-id full-name)
         (events/edu-route-credentials-added student-id edu-route-id)]])
 
+(defmethod handle-event ::events/EduRouteCredentialsAdded
+  [student _]
+  student)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; changing email
