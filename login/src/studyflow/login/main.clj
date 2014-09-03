@@ -29,6 +29,7 @@
                (include-css "css/login.css")
                (include-css "//cloud.typography.com/6865512/722124/css/fonts.css")
                (include-js "js/usersnap.js")
+               [:link {:href "/favicon.ico" :rel "shortcut icon" :type "image/vnd.microsoft.icon"}]
                "<!-- [if lt IE 9>]"
                [:script {:src "//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.js"}]
                [:script {:src "//cdnjs.cloudflare.com/ajax/libs/respond.js/1.3.0/respond.js"}]
