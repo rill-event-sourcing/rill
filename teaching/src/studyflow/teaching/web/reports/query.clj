@@ -19,8 +19,17 @@
      (completion-percentage completion)]
     "&mdash;"))
 
+(defn- classerize [s]
+  (-> s
+      str
+      str/lower-case
+      (str/replace #"[^a-z ]" "")
+      (str/replace #"\s+" "-")))
+
 (defn render-completion [classes meijerink-criteria domains students params options]
-  (let [class (first (filter #(= (:classid params) (:id %)) classes))
+  (let [meijerink-criteria (sort meijerink-criteria)
+        domains (sort domains)
+        class (first (filter #(= (:classid params) (:id %)) classes))
         scope (:meijerink params)
         scope (if (str/blank? scope) nil scope)]
     (layout
@@ -39,7 +48,7 @@
       (form/drop-down {:onchange "this.form.submit()"}
                       "meijerink"
                       (into [["-- Kies Meijerink --" ""]]
-                            (sort meijerink-criteria))
+                            meijerink-criteria)
                       (:meijerink params))]
 
      (when students
@@ -52,17 +61,19 @@
               domains)]
         [:tbody
          (map (fn [student]
-                [:tr
+                [:tr.student {:id (str "student-" (:id student))}
                  [:td.full-name
                   (h (:full-name student))]
                  (map (fn [domain]
-                        [:td.completion.number (completion (get-in student [:completion scope domain]))])
+                        [:td.completion.number {:class (classerize domain)}
+                         (completion (get-in student [:completion scope domain]))])
                       (into [:all] domains))])
               (sort-by :full-name students))]
         [:tfoot
          [:th.average "Klassengemiddelde"]
          (map (fn [domain]
-                [:td.average.number (completion (get-in class [:completion scope domain]))])
+                [:td.average.number {:class (classerize domain)}
+                 (completion (get-in class [:completion scope domain]))])
               (into [:all] domains))]]))))
 
 (defroutes app

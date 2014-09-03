@@ -20,6 +20,7 @@
                    :dependencies
                    [[org.clojure/tools.trace "0.7.5"]
                     [org.clojure/tools.namespace "0.2.5"]
+                    [enlive "1.1.5"]
                     [ring-mock "0.1.5"]]}
              :uberjar {:aot [studyflow.teaching.main]
                        :main studyflow.teaching.main}})

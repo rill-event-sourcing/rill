@@ -7,6 +7,7 @@
             [studyflow.components.session-store :refer [get-user-id create-session]]
             [taoensso.carmine :as car]))
 
+;; TODO move to common place
 (defn query-html [data pattern]
   (seq (enlive/select
         (if (string? data)
