@@ -1,7 +1,7 @@
 (ns studyflow.login.system
   (:require [clojure.tools.logging :as log]
             [crypto.password.bcrypt :as bcrypt]
-            [com.stuartsierra.component :as component]
+            [com.stuartsierra.component :as component :refer [using]]
             [studyflow.login.credentials :as credentials]
             [studyflow.login.main :as main]
             [studyflow.components.jetty :refer [jetty-component]]
@@ -10,6 +10,7 @@
             [studyflow.components.event-channel :refer [event-channel-component channel]]
             [studyflow.components.memory-event-store :refer [memory-event-store-component]]
             [studyflow.components.atom-event-store :refer [atom-event-store-component]]
+            [studyflow.web.app-status :refer [app-status-component]]
             [studyflow.components.uncaught-exception-handler :refer [uncaught-exception-handler-component]]
             [studyflow.login.edu-route-mock-service :refer [edu-route-mock-service]]
             [studyflow.login.edu-route-production-service :refer [edu-route-production-service]]
@@ -68,17 +69,22 @@
 (defn make-system
   [{:keys [jetty-port default-redirect-paths event-store-config session-store-config session-max-age cookie-domain]}]
   (component/system-map
-   :jetty (component/using (jetty-component (or jetty-port 4000)) [:ring-handler])
-   :ring-handler (component/using (ring-handler-component (or session-max-age (* 8 60 60))
+   :jetty (-> (jetty-component (or jetty-port 4000))
+              (using [:ring-handler :app-status-component]))
+   :ring-handler (-> (ring-handler-component (or session-max-age (* 8 60 60))
                                                           (merge {"editor" "http://localhost:2000"
                                                                   "student" "http://localhost:3000"
                                                                   "teacher" "http://example.com"}
                                                                  default-redirect-paths)
                                                           cookie-domain)
-                                  [:credentials :session-store :event-store :edu-route-service])
+                     (using [:credentials :session-store :event-store :edu-route-service]))
    :edu-route-service (edu-route-production-service "DDF9nh3w45s$Wo1w" "studyflow" "qW3#f65S") ;; TODO: get implementation from config
    :session-store (redis-session-store session-store-config)
-   :credentials (component/using (credentials-component 0) [:event-channel])
-   :event-channel (component/using (event-channel-component 1) [:event-store])
-   :event-store (component/using (psql-event-store-component event-store-config) [])
-   :uncaught-exception-handler (component/using (uncaught-exception-handler-component) [])))
+   :app-status-component (-> (app-status-component 1)
+                             (using [:event-channel]))
+   :credentials (-> (credentials-component 0)
+                    (using [:event-channel]))
+   :event-channel (-> (event-channel-component 2)
+                      (using [:event-store]))
+   :event-store (psql-event-store-component event-store-config)
+   :uncaught-exception-handler (uncaught-exception-handler-component)))
