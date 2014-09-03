@@ -176,6 +176,7 @@
               answered-correctly? (get-in cursor [:view :section section-id :input field-name :answered-correctly?])
               answer-revealed (get-in cursor [:view :section section-id :input field-name :answer-revealed])]
           (dom/span nil
+
                     (dom/form #js {:className (str "m-inline_input"
                                                    (when (and answer-submitted? answered-correctly?)
                                                      " correct")
@@ -194,6 +195,8 @@
                                    :onSubmit (fn [e]
                                                (submit)
                                                false)}
+                              (when-let [prefix (:prefix field)]
+                                (str prefix " "))
                               (dom/input
                                #js {:className "inline_input"
                                     :placeholder "................."
@@ -214,6 +217,8 @@
                                                  cursor
                                                  [:view :section section-id :input field-name :given-answer]
                                                  (.. event -target -value)))})
+                              (when-let [suffix (:suffix field)]
+                                (str suffix " "))
                               (when input-focused
                                 (dom/div #js {:className "inline_input_tooltip"}
                                          (when (and answer-revealed
@@ -268,7 +273,8 @@
                                                             (om/update!
                                                              cursor
                                                              [:view :section section-id :input field-name :answer-revealed]
-                                                             true))})))))))))))
+                                                             true)
+                                                            false)})))))))))))
 
 (defn input-builders-subsection
   "mapping from input-name to create react dom element for input type"
