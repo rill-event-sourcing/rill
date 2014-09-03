@@ -4,31 +4,34 @@ default: test
 
 clean:
 	cd lib/rill && lein clean
-	lein clean
-	lein cljsbuild clean
+	lein do clean, cljsbuild clean
 
 rill:
-	cd lib/rill && make install
+	make -C lib/rill install
 
 publishing:
-	cd publishing && make build
+	make -C publishing build
 
-uberjars: css js rill
-	lein with-profile login:learning:school-administration:teaching uberjar
+uberjars: css js-prod rill
+	lein with-profile "login:learning:school-administration:teaching" uberjar
 
 build: publishing uberjars
 
 test:
-	cd lib/rill && make test
-	cd publishing && make test
+	make -C lib/rill test
+	make -C publishing test
 	lein test
 
-upload: test build
+upload: build
 	SHA=`git rev-parse HEAD` DATE=`date +'%Y%m%d-%H%M%S'`; for PROJECT in "teaching" "learning" "login" "school-administration"; do s3cmd --multipart-chunk-size-mb=5 put "target/$$PROJECT-standalone.jar" "s3://studyflow-server-images/$$SHA/$$DATE-studyflow_$$PROJECT.jar"; done
+	make -C publishing upload
 
 css:
 	make -C learning css
 	make -C login css
 
-js:
-	make -C learning js
+js-dev:
+	lein cljsbuild once
+
+js-prod:
+	lein cljsbuild once prod
