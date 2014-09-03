@@ -33,20 +33,23 @@
    set))
 
 (defn- decorate-student-completion [model student]
-  (let [sections (all-sections model)
-        finished (into (set (:finished-sections student))
-                       (remedial-sections-for-courses model (:course-entry-quiz-passed student)))
-        mk-p (fn [v] #((set (:meijerink-criteria %)) v))
-        mapping (reduce (fn [m v] (assoc m v (mk-p v)))
-                        {}
-                        (meijerink-criteria model))]
+  (let [finished-ids (into (set (:finished-sections student))
+                           (remedial-sections-for-courses model (:course-entry-quiz-passed student)))
+        sections (all-sections model)
+        completions #(let [ids (->> % (map :id) set)]
+                       {:finished (count (intersection ids finished-ids))
+                        :total (count ids)})]
     (assoc student
-      :completion (reduce (fn [m [v p]]
-                            (let [ids (->> sections (filter p) (map :id) set)]
-                              (assoc m v {:finished (count (intersection ids finished))
-                                          :total (count ids)})))
-                          {}
-                          mapping))))
+      :completion
+      (into {}
+            (map (fn [mc]
+                   (let [sections (filter #(contains? (:meijerink-criteria %) mc) sections)]
+                     {mc (into {:all (completions sections)}
+                               (map (fn [domain]
+                                      (let [sections (filter #(contains? (:domain %) domain) sections)]
+                                        {domain (completions sections)}))
+                                    (domains model)))}))
+                 (meijerink-criteria model))))))
 
 (defn students-for-class [model class]
   (->> (vals (:students model))
@@ -56,15 +59,22 @@
        (map (partial decorate-student-completion model))))
 
 (defn- decorate-class-completion [model class]
-  (let [completions-f (fn [scope] (->> (students-for-class model class)
-                                       (map :completion)
-                                       (map #(get % scope))))
-        sumf (fn [scope key] (reduce + (map key (completions-f scope))))]
+  (let [domains (domains model)
+        completions-f (fn [scope domain]
+                        (->> (students-for-class model class)
+                             (map :completion)
+                             (map #(get-in % [scope domain]))))
+        sumf (fn [scope domain key] (reduce +
+                                            (->> (completions-f scope domain)
+                                                 (map key )
+                                                 (filter identity))))]
     (assoc class
-      :completion (reduce #(assoc %1
-                             %2
-                             {:finished (sumf %2 :finished)
-                              :total (sumf %2 :total)})
+      :completion (reduce (fn [m mc]
+                            (reduce #(assoc-in %1 [mc %2]
+                                               {:finished (sumf mc %2 :finished)
+                                                :total (sumf mc %2 :total)})
+                                    m
+                                    (into [:all] domains)))
                           {}
                           (into [] (meijerink-criteria model))))))
 

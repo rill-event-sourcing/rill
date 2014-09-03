@@ -89,14 +89,14 @@
 
 (def course {:chapters [{:remedial true
                          :sections [{:id "section-1"
-                                     :meijerink-criteria ["A" "B"]
-                                     :domain ["Getallen" "Verhoudingen"]}
+                                     :meijerink-criteria #{"A" "B"}
+                                     :domain #{"Getallen" "Verhoudingen"}}
                                     {:id "section-2"
-                                     :meijerink-criteria ["B"]
-                                     :domain ["Meetkunde"]}]}
+                                     :meijerink-criteria #{"B"}
+                                     :domain #{"Meetkunde"}}]}
                         {:sections [{:id "section-3"
-                                     :meijerink-criteria ["C"]
-                                     :domain ["Meetkunde" "Verbanden"]}]}]})
+                                     :meijerink-criteria #{"C"}
+                                     :domain #{"Meetkunde" "Verbanden"}}]}]})
 
 (def model-with-fred-barney-and-course
   (load-model model-with-fred-and-barney-in-same-class
@@ -120,9 +120,21 @@
     (testing "one finished section with three section course material for two students"
       (let [model (load-model model-with-fred-barney-and-course
                               (section-test/finished "section-1" "fred"))]
-        (is (= {"A" {:finished 1, :total 2}
-                "B" {:finished 1, :total 4}
-                "C" {:finished 0, :total 2}}
+        (is (= {"A" {:all {:finished 1, :total 2}
+                     "Getallen" {:finished 1, :total 2}
+                     "Verhoudingen" {:finished 1, :total 2}
+                     "Meetkunde" {:finished 0, :total 0}
+                     "Verbanden" {:finished 0, :total 0}}
+                "B" {:all {:finished 1, :total 4}
+                     "Getallen" {:finished 1, :total 2}
+                     "Verhoudingen" {:finished 1, :total 2}
+                     "Meetkunde" {:finished 0, :total 2}
+                     "Verbanden" {:finished 0, :total 0}}
+                "C" {:all {:finished 0, :total 2}
+                     "Getallen" {:finished 0, :total 0}
+                     "Verhoudingen" {:finished 0, :total 0}
+                     "Meetkunde" {:finished 0, :total 2}
+                     "Verbanden" {:finished 0, :total 2}}}
                (:completion (first (classes model teacher)))))))
     (testing "remedial-sections-for-courses"
       (is (= #{"section-1" "section-2"}
@@ -130,7 +142,19 @@
     (testing "one entry quiz passed with three section course material for two students"
       (let [model (load-model model-with-fred-barney-and-course
                               (entry-quiz/passed "course" "fred"))]
-        (is (= {"A" {:finished 1, :total 2}
-                "B" {:finished 2, :total 4}
-                "C" {:finished 0, :total 2}}
+        (is (= {"A" {:all {:finished 1, :total 2}
+                     "Getallen" {:finished 1, :total 2}
+                     "Verhoudingen" {:finished 1, :total 2}
+                     "Meetkunde" {:finished 0, :total 0}
+                     "Verbanden" {:finished 0, :total 0}}
+                "B" {:all {:finished 2, :total 4}
+                     "Getallen" {:finished 1, :total 2}
+                     "Verhoudingen" {:finished 1, :total 2}
+                     "Meetkunde" {:finished 1, :total 2}
+                     "Verbanden" {:finished 0, :total 0}}
+                "C" {:all {:finished 0, :total 2}
+                     "Getallen" {:finished 0, :total 0}
+                     "Verhoudingen" {:finished 0, :total 0}
+                     "Meetkunde" {:finished 0, :total 2}
+                     "Verbanden" {:finished 0, :total 2}}}
                (:completion (first (classes model teacher)))))))))
