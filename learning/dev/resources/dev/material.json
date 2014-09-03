@@ -13,7 +13,7 @@
           "meijerink_criteria": [
             "1F"
           ],
-          "domain": ["Getallen"],
+          "domains": ["Getallen"],
           "subsections": [
             {
               "id": "2aa9de44-e7c9-4b4a-aad7-cd1bb304d0e5",
@@ -145,7 +145,7 @@
             "2F",
             "3F"
           ],
-          "domain": ["Getallen"],
+          "domains": ["Getallen"],
           "subsections": [
             {
               "id": "2219fc9a-122a-4205-ae42-9bdba7510b15",

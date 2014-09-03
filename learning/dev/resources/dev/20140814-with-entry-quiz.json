@@ -132,7 +132,7 @@
         {"id": "98b3997f-63db-4f1d-b89e-5378e5f19514",
          "title": "TESTABLE QUESTIONS",
          "meijerink_criteria": ["1F"],
-         "domain": ["Getallen"],
+         "domains": ["Getallen"],
          "line_input_fields": [
             {
               "name": "_INPUT_1_",
@@ -298,7 +298,7 @@
           "title": "Groeperen per 10",
           "line_input_fields": [],
           "meijerink_criteria": ["1F", "2F"],
-          "domain": ["Meetkunde"],
+          "domains": ["Meetkunde"],
           "subsections": [
             {
               "id": "d790b8d4-1381-4723-8218-96716fcd7104",
@@ -954,7 +954,7 @@
           "title": "Positie en de 0",
           "line_input_fields": [],
           "meijerink_criteria": ["1F", "2F"],
-          "domain": ["Verhoudingen"],
+          "domains": ["Verhoudingen"],
           "subsections": [
           ],
           "questions": [
@@ -1980,7 +1980,7 @@
           "title": "Over de 10 heen gaan",
           "line_input_fields": [],
           "meijerink_criteria": ["1F", "2F"],
-          "domain": ["Getallen"],
+          "domains": ["Getallen"],
           "subsections": [
 
           ],
@@ -2680,7 +2680,7 @@
           "id": "504e5222-1149-4b8f-9537-feb571f818e4",
           "title": "Splitsen van getallen en grote getallen uitspreken \t",
           "meijerink_criteria": ["1F", "2F"],
-          "domain": ["Getallen"],
+          "domains": ["Getallen"],
           "line_input_fields": [],
           "subsections": [
 
@@ -3350,7 +3350,7 @@
           "id": "1687e489-497c-4f3e-8ff2-96d2f7e88f26",
           "title": "Ordenen en de getallenlijn",
           "meijerink_criteria": ["1F", "2F"],
-          "domain": ["Meetkunde"],
+          "domains": ["Meetkunde"],
           "line_input_fields": [],
           "subsections": [
 
@@ -4184,7 +4184,7 @@
           "title": "Rekenen met nullen",
           "line_input_fields": [],
           "meijerink_criteria": ["1F", "2F", "3F"],
-          "domain": ["Getallen"],
+          "domains": ["Getallen"],
           "subsections": [
             {
               "id": "f5deeafe-e17e-42fc-8161-241be0b268fe",
@@ -4255,7 +4255,7 @@
           "title": "Volgorde aanpassen",
           "line_input_fields": [],
           "meijerink_criteria": ["2F", "3F"],
-          "domain": ["Getallen"],
+          "domains": ["Getallen"],
           "subsections": [
             {
               "id": "01f7b412-642c-410c-a228-6736fdc30a44",
@@ -4331,7 +4331,7 @@
           "title": "Compenseren",
           "line_input_fields": [],
           "meijerink_criteria": ["2F", "3F"],
-          "domain": ["Getallen"],
+          "domains": ["Getallen"],
           "subsections": [
             {
               "id": "de13bf23-96eb-4074-9605-bdb8ef7c7976",
@@ -4397,7 +4397,7 @@
           "title": "Splitsen en verdelen",
           "line_input_fields": [],
           "meijerink_criteria": ["3F"],
-          "domain": ["Getallen"],
+          "domains": ["Getallen"],
           "subsections": [
             {
               "id": "db555de5-dd9a-42b7-b450-a1d47b0d58da",
@@ -4470,7 +4470,7 @@
           "title": "De verhoudingstabel & equivalentie",
           "line_input_fields": [],
           "meijerink_criteria": ["3F"],
-          "domain": ["Verhoudingen"],
+          "domains": ["Verhoudingen"],
           "subsections": [
             {
               "id": "034020d6-618e-4583-a5d8-446dc224541c",
@@ -4551,7 +4551,7 @@
           "title": "Samenhang tussen breuken, procenten en kommagetallen",
           "line_input_fields": [],
           "meijerink_criteria": ["3F"],
-          "domain": ["Verhoudingen"],
+          "domains": ["Verhoudingen"],
           "subsections": [
             {
               "id": "896b9c01-0e4c-4e17-871c-a69847b37617",
@@ -4627,7 +4627,7 @@
           "title": "Samengestelde eenheden",
           "line_input_fields": [],
           "meijerink_criteria": ["3F"],
-          "domain": ["Getallen"],
+          "domains": ["Getallen"],
           "subsections": [
             {
               "id": "806833db-cd1d-452e-aa4a-9223783ba8ba",

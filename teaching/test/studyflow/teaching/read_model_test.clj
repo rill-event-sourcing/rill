@@ -90,13 +90,13 @@
 (def course {:chapters [{:remedial true
                          :sections [{:id "section-1"
                                      :meijerink-criteria #{"A" "B"}
-                                     :domain #{"Getallen" "Verhoudingen"}}
+                                     :domains #{"Getallen" "Verhoudingen"}}
                                     {:id "section-2"
                                      :meijerink-criteria #{"B"}
-                                     :domain #{"Meetkunde"}}]}
+                                     :domains #{"Meetkunde"}}]}
                         {:sections [{:id "section-3"
                                      :meijerink-criteria #{"C"}
-                                     :domain #{"Meetkunde" "Verbanden"}}]}]})
+                                     :domains #{"Meetkunde" "Verbanden"}}]}]})
 
 (def model-with-fred-barney-and-course
   (load-model model-with-fred-and-barney-in-same-class

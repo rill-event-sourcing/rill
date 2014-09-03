@@ -19,7 +19,7 @@
 (defn domains [model]
   (->>
    (all-sections model)
-   (mapcat :domain)
+   (mapcat :domains)
    set))
 
 (defn remedial-sections-for-courses [model courses]
@@ -46,7 +46,7 @@
                    (let [sections (filter #(contains? (:meijerink-criteria %) mc) sections)]
                      {mc (into {:all (completions sections)}
                                (map (fn [domain]
-                                      (let [sections (filter #(contains? (:domain %) domain) sections)]
+                                      (let [sections (filter #(contains? (:domains %) domain) sections)]
                                         {domain (completions sections)}))
                                     (domains model)))}))
                  (meijerink-criteria model))))))
