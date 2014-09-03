@@ -166,73 +166,115 @@
     (reify
       om/IRender
       (render [_]
-        (let [submit (fn []
+        (let [focus-input-field (fn []
+                                  (.focus (.getDOMNode (aget (.-refs owner) field-name))))
+              submit (fn []
                        (when-let [f (om/get-state owner :submit)]
                          (f)))
               input-focused (= field-name (get-in cursor [:view :section section-id :input-focused]))
-              answered-correctly (get-in cursor [:view :section section-id :input field-name :answered-correctly])
+              answer-submitted? (get-in cursor [:view :section section-id :input field-name :answer-submitted?])
+              answered-correctly? (get-in cursor [:view :section section-id :input field-name :answered-correctly?])
               answer-revealed (get-in cursor [:view :section section-id :input field-name :answer-revealed])]
           (dom/span nil
-                    (dom/form #js {:className "inline-input-form"
+                    (when-let [prefix (:prefix field)]
+                      (str prefix " "))
+                    (dom/form #js {:className (str "m-inline_input"
+                                                   (when (and answer-submitted? answered-correctly?)
+                                                     " correct")
+                                                   (when (and answer-submitted? (false? answered-correctly?))
+                                                     " incorrect"))
+                                   :onBlur (fn [event]
+                                             (om/update!
+                                              cursor
+                                              [:view :section section-id :input-focused]
+                                              nil))
+                                   :onFocus (fn [event]
+                                              (om/update!
+                                               cursor
+                                               [:view :section section-id :input-focused]
+                                               field-name))
                                    :onSubmit (fn [e]
                                                (submit)
                                                false)}
                               (dom/input
-                               #js {:className "inline-input"
+                               #js {:className "inline_input"
+                                    :placeholder "................."
                                     :react-key (:name field)
                                     :ref (:name field)
                                     :value (get-in cursor [:view :section section-id :input field-name :given-answer])
                                     :disabled (get-in cursor [:view :section section-id :input field-name :input-disabled])
-                                    :onFocus (fn [event]
-                                               (om/update!
-                                                cursor
-                                                [:view :section section-id :input-focused]
-                                                field-name))
                                     :onChange (fn [event]
+                                                (om/update!
+                                                 cursor
+                                                 [:view :section section-id :input field-name :answer-submitted?]
+                                                 false)
+                                                (om/update!
+                                                 cursor
+                                                 [:view :section section-id :input field-name :answered-correctly?]
+                                                 false)
                                                 (om/update!
                                                  cursor
                                                  [:view :section section-id :input field-name :given-answer]
                                                  (.. event -target -value)))})
-                              (when (and answer-revealed
-                                         (not answered-correctly))
-                                (dom/span nil (first correct-answers)))
-                              (when (and input-focused
-                                         (not answered-correctly))
-                                (om/set-state-nr! owner :submit
-                                                  (fn []
-                                                    (om/update!
-                                                     cursor
-                                                     [:view :section section-id :input field-name :answered-correctly]
-                                                     (contains?
-                                                      (set @correct-answers)
-                                                      (get-in @cursor [:view :section section-id :input field-name :given-answer]))
-                                                     :answered)))
-                                (dom/input
-                                 #js {:type "submit"
-                                      :value "Nakijken"
-                                      :onClick (fn [event]
-                                                 (submit))}))
-                              (if answered-correctly
-                                (do
-                                  (om/set-state-nr! owner :submit (fn []))
-                                  (om/update!
-                                   cursor
-                                   [:view :section section-id :input field-name :input-disabled]
-                                   true)
-                                  (dom/span nil "✓"))
-                                (when (false? answered-correctly)
-                                  (dom/span nil "✗")))
-                              (when (and (not answer-revealed)
-                                         (false? answered-correctly))
-                                (dom/span nil
-                                          (dom/button
-                                           #js {:className "btn inline_answer"
-                                                :onClick (fn [event]
-                                                           (om/update!
-                                                            cursor
-                                                            [:view :section section-id :input field-name :answer-revealed]
-                                                            true))}
-                                           "Toon antwoord"))))))))))
+                              (when input-focused
+                                (dom/div #js {:className "inline_input_tooltip"}
+                                         (when (and answer-revealed
+                                                    answer-submitted?
+                                                    (not answered-correctly?))
+                                           (dom/span #js {:className "answer"}
+                                                     (first correct-answers)))
+                                         (when (and input-focused
+                                                    (not answer-submitted?)
+                                                    (not answered-correctly?))
+                                           (om/set-state-nr! owner :submit
+                                                             (fn []
+                                                               (om/update!
+                                                                cursor
+                                                                [:view :section section-id :input field-name :answered-correctly?]
+                                                                (contains?
+                                                                 (set @correct-answers)
+                                                                 (get-in @cursor [:view :section section-id :input field-name :given-answer]))
+                                                                :answered)))
+                                           (dom/input
+                                            #js {:type "submit"
+                                                 :className "inline_input_button"
+                                                 :value "Nakijken"
+                                                 :onClick (fn [event]
+                                                            (om/update!
+                                                             cursor
+                                                             [:view :section section-id :input field-name :answer-submitted?]
+                                                             true)
+                                                            (submit)
+                                                            (focus-input-field)
+                                                            false)}))
+                                         (if answered-correctly?
+                                           (do
+                                             (om/set-state-nr! owner :submit (fn []))
+                                             (dom/span #js {:className "correct"} "Goed!"))
+                                           (when (and (not answer-revealed)
+                                                      answer-submitted?
+                                                      (false? answered-correctly?))
+                                             (dom/span #js {:className "incorrect"} "Fout! :(")))
+                                         (when (and (not answer-revealed)
+                                                    answer-submitted?
+                                                    (false? answered-correctly?))
+                                           (dom/input
+                                            #js {:className "inline_input_button"
+                                                 :type "submit"
+                                                 :value "Toon antwoord"
+                                                 :onClick (fn [event]
+                                                            (om/update!
+                                                             cursor
+                                                             [:view :section section-id :input field-name :answer-submitted?]
+                                                             true)
+                                                            (focus-input-field)
+                                                            (om/update!
+                                                             cursor
+                                                             [:view :section section-id :input field-name :answer-revealed]
+                                                             true)
+                                                            false)})))))
+                    (when-let [suffix (:suffix field)]
+                      (str " " suffix))))))))
 
 (defn input-builders-subsection
   "mapping from input-name to create react dom element for input type"

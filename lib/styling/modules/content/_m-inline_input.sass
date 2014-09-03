@@ -1,0 +1,79 @@
+.m-inline_input
+  position: relative
+  display: inline
+  &.correct
+    .inline_input
+      background-color: #e2f5c2
+      border-color: #e2f5c2
+    .inline_input_tooltip
+      border-color: #9cdb29
+      color: #73b100
+      &:before
+        border-bottom-color: #9cdb29
+  &.incorrect
+    .inline_input
+      background-color: #ffb1b1
+      border: 1px solid #ffb1b1
+
+  .inline_input
+    display: inline
+    +border-radius(6px)
+    border: 1px solid #d7dbe7
+    width: 79px
+    height: 40px
+    margin: -5px 4px
+    padding: 0 11px
+    &:focus
+      +box-shadow(none)
+    &::-webkit-input-placeholder
+      font-family: Helvetica
+    &::-moz-input-placeholder
+      font-family: Helvetica
+    &::-ms-input-placeholder
+      font-family: Helvetica
+
+  .inline_input_tooltip
+    line-height: 50px
+    height: 50px
+    width: 150px
+    position: absolute
+    background: rgba(255,255,255,0.6)
+    display: block
+    top: 32px
+    left: -30px
+    z-index: 400
+    border: 1px solid #a5bccf
+    border-bottom: 2px solid #a5bccf
+    +border-radius(4px)
+    text-align: center
+    &:after, &:before
+      left: 50%
+      border: solid transparent
+      content: " "
+      height: 0
+      width: 0
+      position: absolute
+      pointer-events: none
+    &:after
+      border-bottom-color: white
+      border-width: 8px
+      margin-left: -8px
+      top: -16px
+    &:before
+      border-bottom-color: #a8bdcf
+      border-width: 9px
+      margin-left: -9px
+      top: -19px
+    .incorrect
+      display: none
+
+  .inline_input_button
+    border: 0
+    color: #3f4e59
+    font-family: 'Gotham SSm A', 'Gotham SSm B', Helvetica
+    outline: 0
+    font-size: 14px
+    width: 100%
+    cursor: pointer
+    &:active, &:focus
+      +box-shadow(none)
