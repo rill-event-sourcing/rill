@@ -37,7 +37,7 @@
 
 (defmethod handle-event ::events/Created
   [_ {:keys [teacher-id event full-name department-id]}]
-  (->Teacher teacher-id full-name department-id))
+  (->Teacher teacher-id department-id full-name))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; changing name
