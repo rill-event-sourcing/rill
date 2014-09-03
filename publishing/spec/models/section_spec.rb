@@ -92,9 +92,18 @@ RSpec.describe Section, type: :model do
       section = build(:section, meijerink_criteria: [])
       section2 = build(:section, meijerink_criteria: ["3F"])
 
-      expect(section.errors_when_publishing).to include "No Meijerink criteria selected in section '#{section.name}'"
-      expect(section2.errors_when_publishing).not_to include "No Meijerink criteria selected in section '#{section2.name}'"
+      expect(section.errors_when_publishing).to include "No Meijerink criteria selected for section '#{section.name}'"
+      expect(section2.errors_when_publishing).not_to include "No Meijerink criteria selected for section '#{section2.name}'"
     end
+
+    it "should make sure at least one domains is selected" do
+      section = build(:section, domains: [])
+      section2 = build(:section, domains: ["3F"])
+
+      expect(section.errors_when_publishing).to include "No domains selected for section '#{section.name}'"
+      expect(section2.errors_when_publishing).not_to include "No domains selected for section '#{section2.name}'"
+    end
+
 
     it "should make sure all inputs are referenced" do
       @input = create(:line_input, inputable: @section1)

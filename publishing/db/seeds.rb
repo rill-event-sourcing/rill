@@ -27,7 +27,7 @@ eq_2_2_3  = Choice.create(multiple_choice_input: eq_2_2, value: "-1", correct: f
 # Two chapters
 
 ## Counting
-positional_system = Chapter.create(title: 'Positional system', active:true, description: 'Position matters', course: counting)
+positional_system = Chapter.create(title: 'Positional system', active:true, description: 'Position matters', course: counting, remedial: false)
 basic_operations = Chapter.create(title: 'Basic operations', description: 'Back to basics', course: counting)
 
 
@@ -35,12 +35,12 @@ basic_operations = Chapter.create(title: 'Basic operations', description: 'Back 
 
 ## Position system
 
-grouping_by_10 = Section.create(title: 'Grouping by 10', active: true, description: '10 by 10', chapter: positional_system, meijerink_criteria: ["1F"])
-position_of_0 = Section.create(title: 'Position of the 0', active: true, description: 'at the back or at the front?', chapter: positional_system, meijerink_criteria: ["1F", "2F","3F"])
+grouping_by_10 = Section.create(title: 'Grouping by 10', active: true, description: '10 by 10', chapter: positional_system, meijerink_criteria: ["1F-RT"], domains: ["Getallen"])
+position_of_0 = Section.create(title: 'Position of the 0', active: true, description: 'at the back or at the front?', chapter: positional_system, meijerink_criteria: ["1F-RT", "2F","3F"], domains: ["Getallen"])
 
 ## Basic operations
-addition = Section.create(title: 'Addition', description: '2+2=5 for the majority of values of 2', chapter: basic_operations, meijerink_criteria: ["1F", "2F"])
-subtraction = Section.create(title: 'Subtraction', description: 'Too many things, let me get rid of some', chapter: basic_operations, meijerink_criteria: ["1F", "2F", "3F"])
+addition = Section.create(title: 'Addition', description: '2+2=5 for the majority of values of 2', chapter: basic_operations, meijerink_criteria: ["1F-RT", "2F"], domains: ["Getallen", "Verbanden"])
+subtraction = Section.create(title: 'Subtraction', description: 'Too many things, let me get rid of some', chapter: basic_operations, meijerink_criteria: ["1F-RT", "2F", "3F"], domains: ["Getallen", "Verhoudingen", "Meetkunde", "Verbanden"])
 
 
 ## For each section, we put three subsections

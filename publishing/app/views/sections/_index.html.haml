@@ -5,6 +5,7 @@
       %th.col-md-2  Section description
       %th.col-md-1  Order
       %th.col-md-2  Meijerink criteria
+      %th.col-md-2  Domains
       %th.col-md-1  Active
       %th.col-md-1  Actions
 
@@ -20,6 +21,10 @@
           = link_to moveup_chapter_section_path(@chapter,section), method: :post do
             %span.glyphicon.glyphicon-arrow-up
         %td{style: "text-align: center"}= section.meijerink_criteria.join(", ")
+        %td
+          %ul
+            - section.domains.each do |d|
+              %li= d
         %td
           - if section.active?
             = link_to deactivate_chapter_section_path(@chapter,section), method: :post do
