@@ -3,7 +3,7 @@
 }
 
 html {
-    background-image: url('bg.png');
+    background-image: url('bg.jpg');
     box-sizing: border-box;
 }
 body {
@@ -19,26 +19,7 @@ body {
     padding: 12px 10px;
 }
 
-#logout-form {
-    float:right;
-}
-
-#logout-form button {
-    padding-right: 35px;
-    background: url('icon-logout.png') no-repeat right center;
-    color: #717e92;
-    border: 0;
-    outline: 0;
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 53px;
-}
-
-#logout-form button:hover {
-    color: #b9c7dd;
-}
-
-html, input,  button {
+html, input, select, button {
     font-family: "Helvetica Neue", Arial, "Dejavu Sans", "Bitstream Vera Sans", Ubuntu, Helvetica, sans-serif;
     font-size: 11pt;
 }
@@ -48,11 +29,12 @@ div.body {
 }
 
 h1 {
-    margin: .4em 0;
+    position: absolute;
+    top: 0;
+    margin: .4em .70em;
 }
 header {
     min-height: 50px;
-    padding: 0 20px;
 }
 header nav ul {
     list-style: none;
@@ -83,7 +65,6 @@ table {
     margin: 2em 0 1em 0;
     border-collapse: collapse;
     width: 100%;
-    border-bottom: solid #888 1pt;
 }
 th, td {
     text-align: left;
@@ -98,20 +79,12 @@ th.actions, td.actions {
     min-width: 0;
     text-align: right;
 }
-
-tbody th:first-child, td:first-child {
+th:first-child, td:first-child {
     border-left: solid #888 1pt;
 }
-
-tfoot th:first-child, td:first-child {
-    border-left: solid #888 1pt;
-}
-
-
-tbody th:last-child, td:last-child {
+th:last-child, td:last-child {
     border-right: solid #888 1pt;
 }
-
 tbody tr:first-child td {
     border-top: solid #888 1pt;
 }
@@ -169,7 +142,10 @@ form fieldset {
     display: inline-block;
     width: auto;
 }
-
+input, select {
+    min-width: 20em;
+    padding: .25em;
+}
 a {
     outline: none;
 }
