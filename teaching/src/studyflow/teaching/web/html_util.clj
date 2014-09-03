@@ -5,7 +5,7 @@
 
 (def app-title "Studyflow")
 
-(defn layout [{:keys [title warning message]} & body]
+(defn layout [{:keys [title warning message redirect-urls]} & body]
   (html5
    [:head
     [:title (h (str/join " - " [title app-title]))]
