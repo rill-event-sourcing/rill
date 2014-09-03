@@ -299,25 +299,27 @@ namespace :deploy do
 
   def check_up_server(role, port)
     on roles role, filter: fetch(:stack) do |host|
-      warn " waiting for #{ role } application to be ready on #{ host }"
+      warn " waiting for #{ role } application to be ready on #{ host }:#{ port }"
       load_time = 0
       status_up = false
       until status_up || load_time > fetch(:max_load_time)
         if role == :publish
           response = capture "curl -s --connect-timeout 1 'http://localhost/health-check'; echo 'waiting for #{ host }...'"
+          debug " response: #{ response }"
           status_up =(response =~ /{"status":"up"}/)
         else
-          response = capture "curl -s --connect-timeout 1 -I 'http://localhost:#{ port }/'; echo 'waiting for #{ host }...'"
+          response = capture "curl -s --connect-timeout 1 -I 'http://localhost:#{ port }/'; echo 'waiting for #{ host } on port #{ port }...'"
+          debug " response: #{ response }"
           status_up = (response =~ /HTTP\/1.1 200 OK/) || (response =~ /HTTP\/1.1 302 Found/)
         end
-        warn " sleeping until #{ role } application is up on #{ host } (#{ load_time } seconds)"
+        warn " sleeping until #{ role } application is up on #{ host }:#{ port } (#{ load_time } seconds)"
         sleep 5
         load_time += 5
       end
       if load_time > fetch(:max_load_time)
-        throw " #{ host } won't go up on #{ host }! ".center(72, "#")
+        throw " #{ host } won't go up on #{ host }:#{ port }! ".center(72, "#")
       else
-        warn " #{ host } is up on #{ host } ".center(72, "#")
+        warn " #{ host } is up on #{ host }:#{ port } ".center(72, "#")
       end
     end
   end

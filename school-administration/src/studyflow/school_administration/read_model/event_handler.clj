@@ -64,7 +64,8 @@
 (defmethod handle-event ::student/Imported
   [model {:keys [student-id full-name department-id class-name credentials ::message/number]}]
   (-> model
-      (m/set-student-full-name student-id full-name)
+      (m/set-student student-id {:id student-id
+                                 :full-name full-name})
       (m/set-student-department student-id department-id)
       (m/set-student-class-name student-id class-name)
       (m/set-student-email student-id (:email credentials))
