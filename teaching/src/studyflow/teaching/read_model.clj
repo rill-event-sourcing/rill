@@ -38,7 +38,7 @@
                        (remedial-sections-for-courses model (:course-entry-quiz-passed student)))
         mk-p (fn [v] #((set (:meijerink-criteria %)) v))
         mapping (reduce (fn [m v] (assoc m v (mk-p v)))
-                        {:total identity}
+                        {}
                         (meijerink-criteria model))]
     (assoc student
       :completion (reduce (fn [m [v p]]
@@ -66,7 +66,7 @@
                              {:finished (sumf %2 :finished)
                               :total (sumf %2 :total)})
                           {}
-                          (into [:total] (meijerink-criteria model))))))
+                          (into [] (meijerink-criteria model))))))
 
 (defn classes [model teacher]
   (->> (vals (:students model))

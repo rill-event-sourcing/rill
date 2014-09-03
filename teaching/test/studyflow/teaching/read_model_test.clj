@@ -110,22 +110,19 @@
     (testing "domains"
       (is (= #{"Getallen" "Verhoudingen" "Meetkunde" "Verbanden"}
              (domains model-with-fred-barney-and-course))))
-    (testing "class completion"
+    (testing "class completion without course material"
       (let [model model-with-fred-and-barney-in-same-class]
-        (is (= {:total {:finished 0, :total 0}}
-               (:completion (first (classes model-with-fred-and-barney-in-same-class teacher)))))))
+        (is (not (seq (:completion (first (classes model-with-fred-and-barney-in-same-class teacher))))))))
     (testing "one finished section without course material"
       (let [model (load-model model-with-fred-and-department-and-class
                               (section-test/finished "section-1" "fred"))]
-        (is (= {:total {:finished 0, :total 0}}
-               (:completion (first (classes model teacher)))))))
+        (is (not (seq (:completion (first (classes model teacher))))))))
     (testing "one finished section with three section course material for two students"
       (let [model (load-model model-with-fred-barney-and-course
                               (section-test/finished "section-1" "fred"))]
         (is (= {"A" {:finished 1, :total 2}
                 "B" {:finished 1, :total 4}
-                "C" {:finished 0, :total 2}
-                :total {:finished 1, :total 6}}
+                "C" {:finished 0, :total 2}}
                (:completion (first (classes model teacher)))))))
     (testing "remedial-sections-for-courses"
       (is (= #{"section-1" "section-2"}
@@ -135,6 +132,5 @@
                               (entry-quiz/passed "course" "fred"))]
         (is (= {"A" {:finished 1, :total 2}
                 "B" {:finished 2, :total 4}
-                "C" {:finished 0, :total 2}
-                :total {:finished 2, :total 6}}
+                "C" {:finished 0, :total 2}}
                (:completion (first (classes model teacher)))))))))

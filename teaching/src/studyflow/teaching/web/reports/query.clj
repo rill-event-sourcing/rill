@@ -21,7 +21,7 @@
 (defn render-completion [classes meijerink-criteria students params options]
   (let [class (first (filter #(= (:classid params) (:id %)) classes))
         scope (:meijerink params)
-        scope (if (str/blank? scope) :total scope)]
+        scope (if (str/blank? scope) nil scope)]
     (layout
      (merge {:title (if class
                       (str "Completion for \"" (:full-name class) "\"")
@@ -45,19 +45,21 @@
        [:table.students
         [:thead
          [:th.full-name]
-         [:th.completion (if (= :total scope) "Totaal" scope)]]
+         [:th.completion "Totaal"]]
         [:tbody
          (map (fn [student]
                 [:tr
                  [:td.full-name
                   (h (:full-name student))]
                  [:td.completion
-                  (completion (get-in student [:completion scope]))]])
+                  (when scope
+                    (completion (get-in student [:completion scope])))]])
               (sort-by :full-name students))]
         [:tfoot
          [:th.average "Klassengemiddelde"]
          [:td.average-completion
-          (completion (get-in class [:completion scope]))]]]))))
+          (when scope
+            (completion (get-in class [:completion scope])))]]]))))
 
 (defroutes app
   (GET "/reports/"
