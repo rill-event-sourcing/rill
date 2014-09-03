@@ -10,6 +10,9 @@
         {
           "id": "baaffea6-3094-4494-8071-87c2854fd26f",
           "title": "Grouping by 10",
+          "meijerink_criteria": [
+            "1F"
+          ],
           "subsections": [
             {
               "id": "2aa9de44-e7c9-4b4a-aad7-cd1bb304d0e5",
@@ -136,6 +139,11 @@
         {
           "id": "969a31de-2725-453c-9177-f821982634cf",
           "title": "Position of the 0",
+          "meijerink_criteria": [
+            "1F",
+            "2F",
+            "3F"
+          ],
           "subsections": [
             {
               "id": "2219fc9a-122a-4205-ae42-9bdba7510b15",

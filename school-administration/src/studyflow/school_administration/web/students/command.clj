@@ -7,6 +7,7 @@
             [ring.util.response :refer [redirect]]
             [studyflow.command-tools :refer [with-claim]]
             [studyflow.school-administration.student :as student]
+            [studyflow.credentials.email-ownership :as email-ownership]
             [studyflow.school-administration.web.command-util :refer :all]))
 
 (defn redirect-to-index []
@@ -74,11 +75,11 @@
            (if (= email original-email)
              (try-command event-store change-credentials)
              (let [[status :as result] (with-claim event-store
-                                         (student/claim-email-address! id email)
+                                         (email-ownership/claim! id email)
                                          change-credentials
-                                         (student/release-email-address! id email))]
+                                         (email-ownership/release! id email))]
                (when (and (= :ok status) (not= "" original-email))
-                 (try-command event-store (student/release-email-address! id original-email)))
+                 (try-command event-store (email-ownership/release! id original-email)))
                result))
            (redirect-to-index)
            (redirect-to-edit student-id)

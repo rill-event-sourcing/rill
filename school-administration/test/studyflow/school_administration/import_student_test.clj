@@ -37,7 +37,6 @@
 
     (testing "running import twice"
       (let [report (import-rows store department-id import-data)]
-        (prn report)
         (is (= 0 (:total-imported report)))
         (is (= 2 (count (:errors report))))))))
 

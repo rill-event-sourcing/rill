@@ -21,8 +21,10 @@
                  [com.stuartsierra/component "0.2.1"]
                  [identifiers "1.0.0"]
                  [rill "0.1.0-SNAPSHOT"]
+                 [studyflow/migrations "0.1.0-SNAPSHOT"]
                  [studyflow/components "0.1.0-SNAPSHOT"]]
   :resource-paths ["resources" "generated"]
+  :source-paths ["src" "../common/src"]
   :profiles {:dev
              {:source-paths ["dev"]
               :resource-paths ["dev/resources" "resources" "generated"]

@@ -12,6 +12,16 @@
       = f.text_field :title, size: 20, class: "form-control", tabindex: 1
 
   %div.form-group
+    = f.label :meijerink_criteria, class: "col-sm-2 control-label"
+    %div.col-sm-10
+      = f.fields_for :meijerink_criteria_hash, @section.meijerink_criteria do |m|
+        - MeijerinkCriteria.all.each do |c|
+          %label{style: "width: 50px;"}= "#{c}"
+          = m.check_box c, checked: @section.meijerink_criteria.include?(c)
+          %br
+
+
+  %div.form-group
     = f.label :description, class: "col-sm-2 control-label"
     %div.col-sm-10
       = f.text_area :description, cols: 20, rows: 4, class: "form-control auto-resize rich-text", tabindex: 4

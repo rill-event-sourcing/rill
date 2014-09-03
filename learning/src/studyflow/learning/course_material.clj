@@ -45,6 +45,7 @@
   {:id Id
    :title PlainText
    :subsections [SubSection]
+   :meijerink-criteria #{s/Str}
    :line-input-fields #{LineInputField}
    :questions (s/both #{SectionQuestion}
                       (s/pred (fn [s] (seq s)) 'not-empty))})

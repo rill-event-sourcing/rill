@@ -4,12 +4,13 @@
             [rill.repository :refer [wrap-basic-repository wrap-caching-repository]]
             [rill.handler :refer [try-command]]
             [rill.message :as message]
+            [rill.event-stream :refer [any-stream-version]]
             [rill.event-store.memory :refer [memory-store]]))
 
 (defmacro with-temp-store
   "execute body with bindings [store fetch execute]
   `store` (a temporary in-memory event store)
-, `fetch` (which loads an aggregate given an id)
+  , `fetch` (which loads an aggregate given an id)
   `execute!` executes a command."
   [[store fetch execute! :as bindings] & body]
   `(let [store# (wrap-basic-repository (memory-store))
@@ -23,10 +24,11 @@
   [given-events]
   (let [store (wrap-caching-repository (memory-store))]
     (doseq [events (partition-by message/primary-aggregate-id given-events)]
-      (append-events store
-                     (message/primary-aggregate-id (first events))
-                     nil
-                     (map #(assoc %1 message/number %2) events (iterate inc 0))))
+      (or (append-events store
+                         (message/primary-aggregate-id (first events))
+                         any-stream-version
+                         events)
+          (throw (ex-info "No events added" {:tried events}))))
     store))
 
 (defn execute

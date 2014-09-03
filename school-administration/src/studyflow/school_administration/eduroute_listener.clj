@@ -3,6 +3,7 @@
             [clojure.tools.logging :as log]
             [studyflow.components.event-channel :refer [channel]]
             [com.stuartsierra.component :as component]
+            [studyflow.credentials.edu-route-id-ownership :as edu-route-id-ownership]
             [rill.handler :refer [try-command]]
             [rill.message :as message]
             [rill.uuid :refer [new-id uuid]]
@@ -13,9 +14,9 @@
   [event-store {:keys [edu-route-id full-name]}]
   (let [student-id (new-id)]
     (with-claim event-store
-      (student/claim-edu-route-id! edu-route-id student-id)
+      (edu-route-id-ownership/claim! edu-route-id student-id)
       (student/create-from-edu-route-credentials! student-id edu-route-id full-name)
-      (student/release-edu-route-id! edu-route-id student-id))))
+      (edu-route-id-ownership/release! edu-route-id student-id))))
 
 (defn eduroute-listener [event-store event-channel]
   (go (loop []

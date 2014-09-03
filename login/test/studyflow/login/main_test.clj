@@ -110,8 +110,8 @@
 
 (deftest wrap-redirect-for-role-test
   (let [handler (wrap-redirect-for-role identity)
-        user-role "tester"
-        default-redirect-paths {"tester" "this-is-a-url"}]
+        user-role "student"
+        default-redirect-paths {"student" "this-is-a-url"}]
     (testing "without any redirect-for-role into request"
       (is (= {} (handler {}))))
     (testing "with redirect-for-role and no cookie"

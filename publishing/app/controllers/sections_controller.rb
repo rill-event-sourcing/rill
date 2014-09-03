@@ -28,7 +28,7 @@ class SectionsController < ApplicationController
 
   def update
     if @section.update(section_params)
-      redirect_to chapter_section_path(@chapter, @section), notice: 'Section was successfully updated.'
+      redirect_to chapter_sections_path(@chapter), notice: 'Section was successfully updated.'
     else
       render :show
     end
@@ -82,7 +82,7 @@ class SectionsController < ApplicationController
   end
 
   def section_params
-    params.require(:section).permit(:title, :description)
+    params.require(:section).permit!
   end
 
 end

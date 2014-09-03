@@ -17,45 +17,45 @@
 
 (defn authenticate-by-edu-route-id [db edu-route-id]
   (let [user (get-in db [:by-edu-route-id edu-route-id])]
-    (log/info [:authenticated-as user])
+    (log/debug [:authenticated-as user])
     user))
 
 ;;;; Accessors for credentials db
 
 (defn add-email-and-password-credentials
-  [db student-id {:keys [email encrypted-password]}]
+  [db user-id {:keys [email encrypted-password]} role]
   (-> db
       (assoc-in [:by-email email]
-                {:user-id student-id
-                 :user-role "student"
+                {:user-id user-id
+                 :user-role role
                  :encrypted-password encrypted-password})
-      (assoc-in [:email-by-id student-id] email)))
+      (assoc-in [:email-by-id user-id] email)))
 
 (defn change-email-and-password-credentials
-  [db student-id {:keys [email encrypted-password]}]
-  (let [old-email (get-in db [:email-by-id student-id])]
+  [db user-id {:keys [email encrypted-password]} role]
+  (let [old-email (get-in db [:email-by-id user-id])]
     (-> db
         (update-in [:by-email] dissoc old-email)
-        (assoc-in [:by-email email] {:user-id student-id
-                                     :user-role "student"
+        (assoc-in [:by-email email] {:user-id user-id
+                                     :user-role role
                                      :encrypted-password encrypted-password})
-        (assoc-in [:email-by-id student-id] email))))
+        (assoc-in [:email-by-id user-id] email))))
 
 (defn change-email
-  [db student-id {:keys [email]}]
-  (let [old-email (get-in db [:email-by-id student-id])
+  [db user-id {:keys [email]}]
+  (let [old-email (get-in db [:email-by-id user-id])
         cred (get-in db [:by-email old-email])]
     (if cred
       (-> db
           (update-in [:by-email] dissoc old-email)
           (assoc-in [:by-email email] cred)
-          (assoc-in [:email-by-id student-id] email))
+          (assoc-in [:email-by-id user-id] email))
       db)))
 
 (defn add-edu-route-credentials
-  [db student-id edu-route-id]
+  [db user-id edu-route-id]
   (assoc-in db [:by-edu-route-id edu-route-id]
-            {:user-id student-id
+            {:user-id user-id
              :user-role "student"}))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -65,15 +65,15 @@
 
 (defmethod handle-event :studyflow.school-administration.student.events/CredentialsAdded
   [db {:keys [student-id credentials]}]
-  (add-email-and-password-credentials db student-id credentials))
+  (add-email-and-password-credentials db student-id credentials "student"))
 
 (defmethod handle-event :studyflow.school-administration.student.events/Imported
   [db {:keys [student-id credentials]}]
-  (add-email-and-password-credentials db student-id credentials))
+  (add-email-and-password-credentials db student-id credentials "student"))
 
 (defmethod handle-event :studyflow.school-administration.student.events/CredentialsChanged
   [db {:keys [student-id credentials]}]
-  (change-email-and-password-credentials db student-id credentials))
+  (change-email-and-password-credentials db student-id credentials "student"))
 
 (defmethod handle-event :studyflow.school-administration.student.events/EmailChanged
   [db {:keys [student-id email]}]
@@ -83,9 +83,19 @@
   [db {:keys [edu-route-id student-id] :as event}]
   (add-edu-route-credentials db student-id edu-route-id))
 
-(defmethod handle-event :default
-  [db _]
-  db)
+(defmethod handle-event :studyflow.school-administration.teacher.events/CredentialsAdded
+  [db {:keys [teacher-id credentials]}]
+  (add-email-and-password-credentials db teacher-id credentials "teacher"))
+
+(defmethod handle-event :studyflow.school-administration.teacher.events/CredentialsChanged
+  [db {:keys [teacher-id credentials]}]
+  (change-email-and-password-credentials db teacher-id credentials "teacher"))
+
+(defmethod handle-event :studyflow.school-administration.teacher.events/EmailChanged
+  [db {:keys [teacher-id email]}]
+  (change-email db teacher-id email))
+
+(defmethod handle-event :default [db _] db)
 
 ;; catchup
 
@@ -100,8 +110,6 @@
 (defmethod handle-event ::event-channel/CaughtUp
   [db _]
   (caught-up db))
-
-
 
 ;; listener
 

@@ -1,6 +1,6 @@
 (ns studyflow.system.components.ring-handler
   (:require [com.stuartsierra.component :refer [Lifecycle]]
-            [studyflow.web :as web]
+            [studyflow.learning.web :as web]
             [clojure.tools.logging :refer [info debug spy]]))
 
 (defrecord RingHandlerComponent [event-store read-model session-store redirect-urls cookie-domain]

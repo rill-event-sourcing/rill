@@ -12,8 +12,7 @@
   (log/info "Starting read-model event listener")
   (thread
     (log/info "Started read-model event listener")
-    
+
     (while-let [e (<!! event-channel)]
-               (if (not (instance? UnprocessableMessage e))
-                 (swap! model-atom handle-event e)
-                 (log/debug [:skipped-event])))))
+               (when (not (instance? UnprocessableMessage e))
+                 (swap! model-atom handle-event e)))))

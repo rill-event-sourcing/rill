@@ -1,7 +1,7 @@
 (ns studyflow.school-administration.student
   (:require [clojure.tools.logging :as log]
             [clojure.string :as str]
-            [studyflow.school-administration.student.events :as events :refer [edu-route-claim-id]]
+            [studyflow.school-administration.student.events :as events]
             [rill.aggregate :refer [handle-event handle-command aggregate-ids]]
             [rill.message :refer [defcommand primary-aggregate-id]]
             [schema.core :as s]))
@@ -87,40 +87,6 @@
     :credentials credentials
     :has-email-credentials? true))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; create via edu route
-
-(defcommand ClaimEduRouteId!
-  :edu-route-id s/Str
-  :owner-id s/Uuid
-  edu-route-claim-id)
-
-(defmethod handle-command ::ClaimEduRouteId!
-  [{:keys [current-owner-id]} {:keys [owner-id edu-route-id]}]
-  (if (or (nil? current-owner-id)
-          (= owner-id current-owner-id))
-    [:ok [(events/edu-route-id-claimed edu-route-id owner-id)]]
-    [:rejected {:edu-route-id [(:already-claimed error-messages)]}]))
-
-(defcommand ReleaseEduRouteId!
-  :edu-route-id s/Str
-  :owner-id s/Uuid
-  edu-route-claim-id)
-
-(defmethod handle-command ::ReleaseEduRouteId!
-  [{:keys [current-owner-id]} {:keys [owner-id edu-route-id]}]
-  (if (= current-owner-id owner-id)
-    [:ok [(events/edu-route-id-released owner-id edu-route-id)]]
-    [:rejected {:edu-route-id [(:ownership-disputed error-messages)]}]))
-
-(defmethod handle-event ::events/EduRouteIdClaimed
-  [_ {:keys [owner-id edu-route-id]}]
-  {:current-owner-id owner-id})
-
-(defmethod handle-event ::events/EduRouteIdReleased
-  [claim {:keys [owner-id edu-route-id]}]
-  (dissoc claim :current-owner-id))
-
 (defcommand CreateFromEduRouteCredentials!
   :student-id s/Uuid
   :edu-route-id s/Str
@@ -147,60 +113,6 @@
 (defmethod handle-event ::events/EmailChanged
   [student {:keys [email]}]
   (assoc-in student [:credentials :email] email))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; claiming an email adress
-
-(defcommand ClaimEmailAddress!
-  :owner-id s/Uuid
-  :email s/Str)
-
-(defmethod primary-aggregate-id ::ClaimEmailAddress!
-  [{:keys [email]}]
-  (str "email-ownership-" email))
-
-(defmethod primary-aggregate-id ::events/EmailAddressClaimed
-  [{:keys [email]}]
-  (str "email-ownership-" email))
-
-(defmethod handle-command ::ClaimEmailAddress!
-  [{:keys [current-owner-id]} {:keys [owner-id email]}]
-  (if (or (nil? current-owner-id)
-          (= owner-id current-owner-id))
-    [:ok [(events/email-address-claimed owner-id email)]]
-    [:rejected {:email [(:already-claimed error-messages)]}]))
-
-(defmethod handle-event ::events/EmailAddressClaimed
-  [claim {:keys [owner-id]}]
-  (assoc claim :current-owner-id owner-id))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; releasing an email adress
-
-(defcommand ReleaseEmailAddress!
-  :owner-id s/Uuid
-  :email s/Str)
-
-(defmethod primary-aggregate-id ::ReleaseEmailAddress!
-  [command]
-  (str "email-ownership-" (:email command)))
-
-(defmethod primary-aggregate-id ::events/EmailAddressReleased
-  [event]
-  (str "email-ownership-" (:email event)))
-
-(defmethod handle-command ::ReleaseEmailAddress!
-  [{:keys [current-owner-id]} {:keys [owner-id email]}]
-  (if (= current-owner-id owner-id)
-    [:ok [(events/email-address-released owner-id email)]]
-    [:rejected {:email [(:ownership-disputed error-messages)]}]))
-
-(defmethod handle-event ::events/EmailAddressReleased
-  [claim event]
-  (dissoc claim :current-owner-id))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; associate with department
