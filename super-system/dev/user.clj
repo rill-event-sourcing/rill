@@ -28,7 +28,6 @@
   (alter-var-root #'system
                   (fn [s]
                     (log/info "stopping system")
-                    (log/info "system is" s)
                     (when s
                       (component/stop s)))))
 
