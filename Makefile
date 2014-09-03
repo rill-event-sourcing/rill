@@ -23,7 +23,7 @@ test:
 	cd publishing && make test
 	lein test
 
-upload:
+upload: test build
 	SHA=`git rev-parse HEAD` DATE=`date +'%Y%m%d-%H%M%S'`; for PROJECT in "teaching" "learning" "login" "school-administration"; do s3cmd --multipart-chunk-size-mb=5 put "target/$$PROJECT-standalone.jar" "s3://studyflow-server-images/$$SHA/$$DATE-studyflow_$$PROJECT.jar"; done
 
 css:
