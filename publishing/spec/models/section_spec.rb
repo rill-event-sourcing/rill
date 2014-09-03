@@ -19,18 +19,6 @@ RSpec.describe Section, type: :model do
     expect(Section.all.map(&:to_s)).to eq ['A', 'B', 'C']
   end
 
-  it "should provide an array with the meijerink criteria" do
-    section = build(:section)
-    section.meijerink_criteria = {"1F" => "0", "2F" => "0", "3F" => "0"}
-    expect(section.selected_meijerink_criteria).to eq []
-    section2 = build(:section)
-    section2.meijerink_criteria = {"1F" => "0", "2F" => "1", "3F" => "0"}
-    expect(section2.selected_meijerink_criteria).to eq ["2F"]
-    section3 = build(:section)
-    section3.meijerink_criteria = {"1F" => "1", "2F" => "0", "3F" => "1"}
-    expect(section3.selected_meijerink_criteria).to eq ["1F", "3F"]
-  end
-
   it "should not list trashed sections" do
     @section3.trash
     expect(Section.all.map(&:to_s)).to eq ['B', 'C']
@@ -101,8 +89,8 @@ RSpec.describe Section, type: :model do
   describe "enforcing constraints for publishing" do
 
     it "should make sure at least one meijerink criteria is selected" do
-      section = build(:section, meijerink_criteria: {"1F" => "0", "2F" => "0", "3F" => "0"})
-      section2 = build(:section, meijerink_criteria: {"1F" => "0", "2F" => "0", "3F" => "1"})
+      section = build(:section, meijerink_criteria: [])
+      section2 = build(:section, meijerink_criteria: ["3F"])
 
       expect(section.errors_when_publishing).to include "No Meijerink criteria selected in section '#{section.name}'"
       expect(section2.errors_when_publishing).not_to include "No Meijerink criteria selected in section '#{section2.name}'"
