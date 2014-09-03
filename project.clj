@@ -27,10 +27,51 @@
                  [com.mindscapehq/core "1.5.0"]
                  [identifiers/identifiers "1.0.0"]
                  [org.bovinegenius/exploding-fish "0.3.4"]]
+  :profiles {:uberjar               {:aot :all
+                                     :omit-source true}
+             :learning              {:main studyflow.main
+                                     :uberjar-name "learning-standalone.jar"}
+             :school-administration {:main studyflow.school-administration.main
+                                     :uberjar-name "school-administration-standalone.jar"}
+             :login                 {:main studyflow.login.launcher
+                                     :uberjar-name "login-standalone.jar"}
+             :teaching              {:main studyflow.teaching.main
+                                     :uberjar-name "teaching-standalone.jar"}
+             :dev                   {:resource-paths ["super-system/dev/resources"]
+                                     :source-paths ["super-system/dev" "learning/dev" "login/dev"
+                                                    "super-system/src"
+                                                    "school-administration/dev" "teaching/dev"]
+                                     :uberjar-name "dev.jar"
+                                     :dependencies [[org.clojure/tools.trace "0.7.5"]
+                                                    [org.clojure/tools.namespace "0.2.5"]
+                                                    [org.clojure/clojurescript "0.0-2311"]
+                                                    [om "0.7.1"]
+                                                    [com.facebook/react "0.9.0.1"]
+                                                    [cljs-ajax "0.2.3"]
+                                                    [cljs-uuid "0.0.4"]]
+                                     :plugins [[lein-cljsbuild "1.0.4-SNAPSHOT"]
+                                               [com.cemerick/clojurescript.test "0.3.0"]]}}
+  :cljsbuild {:builds {:dev {:source-paths ["learning/cljs/src"]
+                             :compiler {:output-to "learning/generated/learning/public/js/studyflow-dev.js"
+                                        :output-dir "learning/generated/learning/public/js/out"
+                                        :source-map "learning/generated/learning/public/js/studyflow-dev.sourcemap"
+                                        :optimizations :whitespace}}
+                       :prod {:source-paths ["learning/cljs/src"]
+                              :jar true
+                              :compiler {:output-to "learning/generated/learning/public/js/studyflow.js"
+                                         :optimizations :advanced
+                                         :elide-asserts true
+                                         :pretty-print false
+                                         ;;;; handy debug options:
+                                         ;; :pretty-print true
+                                         ;; :print-input-delimiter true
+                                         ;; :pseudo-names true
+                                         :preamble ["react/react.min.js"]
+                                         :externs ["react/externs/react.js"]}}}}
+
   :source-paths ["lib/migrations/src"
                  "lib/components/src"
                  "common/src"
-                 "super-system/src"
                  "school-administration/src"
                  "teaching/src"
                  "learning/src"
@@ -43,8 +84,4 @@
                "learning/test"
                "teaching/test"
                "common/test"
-               "login/test"]
-  :profiles {:dev {:source-paths ["super-system/dev" "learning/dev" "login/dev" "school-administration/dev" "teaching/dev"]
-                   :resource-paths ["super-system/dev/resources"]
-                   :dependencies [[org.clojure/tools.trace "0.7.5"]
-                                  [org.clojure/tools.namespace "0.2.5"]]}})
+               "login/test"])
