@@ -89,11 +89,14 @@
 
 (def course {:chapters [{:remedial true
                          :sections [{:id "section-1"
-                                     :meijerink-criteria ["A" "B"]}
+                                     :meijerink-criteria ["A" "B"]
+                                     :domain ["Getallen" "Verhoudingen"]}
                                     {:id "section-2"
-                                     :meijerink-criteria ["B"]}]}
+                                     :meijerink-criteria ["B"]
+                                     :domain ["Meetkunde"]}]}
                         {:sections [{:id "section-3"
-                                     :meijerink-criteria ["C"]}]}]})
+                                     :meijerink-criteria ["C"]
+                                     :domain ["Meetkunde" "Verbanden"]}]}]})
 
 (def model-with-fred-barney-and-course
   (load-model model-with-fred-and-barney-in-same-class
@@ -102,7 +105,11 @@
 (deftest completion
   (let [teacher (first (vals (:teachers model-with-fred-and-teacher)))]
     (testing "meijering-criteria"
-      (is (= #{"A" "B" "C"} (meijerink-criteria model-with-fred-barney-and-course))))
+      (is (= #{"A" "B" "C"}
+             (meijerink-criteria model-with-fred-barney-and-course))))
+    (testing "domains"
+      (is (= #{"Getallen" "Verhoudingen" "Meetkunde" "Verbanden"}
+             (domains model-with-fred-barney-and-course))))
     (testing "class completion"
       (let [model model-with-fred-and-barney-in-same-class]
         (is (= {:total {:finished 0, :total 0}}

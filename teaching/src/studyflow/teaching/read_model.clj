@@ -16,6 +16,12 @@
    (mapcat :meijerink-criteria)
    set))
 
+(defn domains [model]
+  (->>
+   (all-sections model)
+   (mapcat :domain)
+   set))
+
 (defn remedial-sections-for-courses [model courses]
   (->>
    (select-keys (:courses model) courses)
