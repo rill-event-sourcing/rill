@@ -45,4 +45,6 @@
                "common/test"
                "login/test"]
   :profiles {:dev {:source-paths ["super-system/dev" "learning/dev" "login/dev" "school-administration/dev" "teaching/dev"]
-                   :resource-paths ["super-system/dev/resources"]}})
+                   :resource-paths ["super-system/dev/resources"]
+                   :dependencies [[org.clojure/tools.trace "0.7.5"]
+                                  [org.clojure/tools.namespace "0.2.5"]]}})
