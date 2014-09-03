@@ -303,15 +303,9 @@ namespace :deploy do
       load_time = 0
       status_up = false
       until status_up || load_time > fetch(:max_load_time)
-        if role == :publish
-          response = capture "curl -s --connect-timeout 1 'http://localhost/health-check'; echo 'waiting for #{ host }...'"
-          debug " response: #{ response }"
-          status_up =(response =~ /{"status":"up"}/)
-        else
-          response = capture "curl -s --connect-timeout 1 -I 'http://localhost:#{ port }/'; echo 'waiting for #{ host } on port #{ port }...'"
-          debug " response: #{ response }"
-          status_up = (response =~ /HTTP\/1.1 200 OK/) || (response =~ /HTTP\/1.1 302 Found/)
-        end
+        response = capture "curl -s --connect-timeout 1 'http://localhost:#{port}/health-check'; echo 'waiting for #{ host }...'"
+        debug " response: #{ response }"
+        status_up =(response =~ /{"status":"up"}/)
         warn " sleeping until #{ role } application is up on #{ host }:#{ port } (#{ load_time } seconds)"
         sleep 5
         load_time += 5

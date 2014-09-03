@@ -19,19 +19,10 @@
   (fn [request]
     (handler (assoc request :read-model @read-model-atom))))
 
-(defn catchup-handler
-  [{:keys [read-model]}]
-  (when-not (m/caught-up? read-model)
-    {:status 503
-     :body "Server starting up."
-     :headers {"Content-Type" "text/plain"}}))
-
-
 (defn make-request-handler
   [event-store read-model session-store redirect-urls cookie-domain]
   (-> (combine-ring-handlers  browser-resources/resource-handler
                               (-> (combine-ring-handlers
-                                   catchup-handler
                                    start/handler
                                    (api/make-request-handler event-store)
                                    (wrap-redirect-urls browser-resources/course-page-handler redirect-urls))
