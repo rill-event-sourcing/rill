@@ -3,6 +3,7 @@
 pom.xml
 .nrepl-port
 .lein-repl-history
+.lein-failures
 .DS_Store
 learning/resources/public/js/out/*
 learning/resources/public/js/studyflow-dev.js
