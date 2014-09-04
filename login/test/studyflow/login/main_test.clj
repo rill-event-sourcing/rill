@@ -65,14 +65,14 @@
                                      :password "password"
                                      :authenticate-by-email-and-password (fn [x y] "something"))
                               caught-up))]
-        (is (= 302 (:status resp)))
+        (is (= 303 (:status resp)))
         (is (= "/" ((:headers resp) "Location")))
         (is (= "something" (:login-user resp))))))
 
   (testing "delete /"
     (let [resp (actions (-> (request :delete "/")
                             caught-up))]
-      (is (= 302 (:status resp)))
+      (is (= 303 (:status resp)))
       (is (= "/" ((:headers resp) "Location")))
       (is (= true (:logout-user resp))))))
 

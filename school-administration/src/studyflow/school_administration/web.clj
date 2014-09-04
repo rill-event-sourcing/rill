@@ -8,7 +8,7 @@
             [studyflow.school-administration.read-model :as m]
             [ring.middleware.defaults :refer [secure-site-defaults site-defaults wrap-defaults]]
             
-            [ring.util.response :refer [redirect resource-response]]))
+            [ring.util.response :refer [redirect-after-post resource-response]]))
 
 (defn catchup-handler
   [read-model]
@@ -29,7 +29,7 @@
 (defn make-request-handler [secure-site-defaults? event-store read-model]
   (-> (fn [{:keys [uri] :as req}]
         (if (= "/" uri)
-          (redirect "/list-students")
+          (redirect-after-post "/list-students")
           ((compojure/routes
             (fn [r]
               (catchup-handler @read-model))

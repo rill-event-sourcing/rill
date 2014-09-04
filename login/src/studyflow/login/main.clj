@@ -56,7 +56,7 @@
 ;; Controller
 
 (defn redirect-to [path]
-  {:status 302
+  {:status 303
    :headers {"Location" path}})
 
 (defn refresh [r path seconds]

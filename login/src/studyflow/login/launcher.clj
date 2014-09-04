@@ -3,7 +3,7 @@
   (:require [studyflow.login.system :as system]
             [com.stuartsierra.component :as component]))
 
-(defn -main [jetty-port publishing-url learning-url teaching-url event-store-uri session-store-uri session-max-age & [cookie-domain]]
+(defn -main [jetty-port publishing-url learning-url teaching-url event-store-uri session-store-uri session-max-age cookie-domain]
   (let [system (system/make-system {:jetty-port (Long/parseLong jetty-port)
                                     :default-redirect-paths {"editor" publishing-url
                                                              "student" learning-url

@@ -4,20 +4,20 @@
             [crypto.password.bcrypt :as bcrypt]
             [rill.handler :refer [try-command]]
             [rill.uuid :refer [new-id uuid]]
-            [ring.util.response :refer [redirect]]
+            [ring.util.response :refer [redirect-after-post]]
             [studyflow.command-tools :refer [with-claim]]
             [studyflow.school-administration.student :as student]
             [studyflow.credentials.email-ownership :as email-ownership]
             [studyflow.school-administration.web.command-util :refer :all]))
 
 (defn redirect-to-index []
-  (redirect "/list-students"))
+  (redirect-after-post "/list-students"))
 
 (defn redirect-to-edit [id]
-  (redirect (str "/edit-student/" id)))
+  (redirect-after-post (str "/edit-student/" id)))
 
 (defn redirect-to-new []
-  (redirect "/new-student"))
+  (redirect-after-post "/new-student"))
 
 (defroutes commands
   (POST "/create-student"

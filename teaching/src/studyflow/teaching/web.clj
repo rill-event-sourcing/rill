@@ -3,7 +3,7 @@
             [compojure.core :as compojure]
             [studyflow.teaching.web.query :as query]
             [studyflow.teaching.read-model :as m]
-            [ring.util.response :refer [redirect]]))
+            [ring.util.response :refer [redirect-after-post]]))
 
 (defn catchup-handler
   [{:keys [read-model]}]
@@ -19,7 +19,7 @@
 (defn app
   [{:keys [uri] :as req}]
   (if (= "/" uri)
-    (redirect "/reports/")
+    (redirect-after-post "/reports/")
     ((compojure/routes
       catchup-handler
       query/app) req)))
