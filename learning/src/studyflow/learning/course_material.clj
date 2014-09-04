@@ -163,9 +163,18 @@
                                                            (mapv
                                                             (fn [subsection]
                                                               (assoc subsection
-                                                                :tag-tree (text-with-inputs-to-tree
-                                                                           (:text subsection)
-                                                                           (map :name line-input-field-names))))
+                                                                :tag-tree
+                                                                (try
+                                                                  (text-with-inputs-to-tree
+                                                                   (:text subsection)
+                                                                   (map :name line-input-field-names))
+                                                                  (catch Exception e
+                                                                    (throw (ex-info (str "Material tag-tree failure" (:title subsection))
+                                                                                    {:material (:name material)
+                                                                                     :chapter (select-keys chapter [:id :title])
+                                                                                     :section (select-keys section [:id :title])
+                                                                                     :subsection (select-keys subsection [:id :title])}
+                                                                                    e))))))
                                                             subsections)))))
                                           sections)))) chapters))))
 
