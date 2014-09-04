@@ -1,6 +1,6 @@
-(defproject rill "0.1.0-SNAPSHOT"
+(defproject rill "0.1.0"
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [org.clojure/core.async "0.1.303.0-886421-alpha"]
+                 [org.clojure/core.async "0.1.338.0-5c5012-alpha"]
                  [org.clojure/tools.logging "0.2.6"]
                  [prismatic/schema "0.2.2"]
                  [slingshot "0.10.3"]
