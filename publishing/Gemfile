@@ -20,6 +20,7 @@ gem 'appsignal'
 gem 'httparty'
 gem 'redis'
 gem 'newrelic_rpm'
+gem 'delayed_job_active_record'
 
 group :development, :test do
   gem 'better_errors'

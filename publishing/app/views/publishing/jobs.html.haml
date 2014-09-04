@@ -1,0 +1,10 @@
+%div.container
+  %div.row
+    %div.col-md-8.col-md-offset-2
+      %ul
+        - @jobs.each do |job|
+          %li
+            %span= job.id
+            %span= job.last_error
+            %span= job.run_at
+            %span= job.created_at

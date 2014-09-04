@@ -20,13 +20,11 @@ class Course < ActiveRecord::Base
     "#{name}"
   end
 
-
   def errors_when_publishing
     errors = chapters.active.map(&:errors_when_publishing).flatten
     errors << (entry_quiz ? entry_quiz.errors_when_publishing : "No entry quiz for the course")
     errors.flatten
   end
-
 
   def to_publishing_format
     {
@@ -36,4 +34,24 @@ class Course < ActiveRecord::Base
       entry_quiz: (entry_quiz ? entry_quiz.to_publishing_format : nil)
     }
   end
+
+  def publish!
+    course_json = JSON.pretty_generate(self.to_publishing_format)
+    publishing_url = "#{StudyflowPublishing::Application.config.learning_server}/api/internal/course/#{ id }"
+
+    #begin
+      publish_response =  HTTParty.put(publishing_url,
+                                       headers: { 'Content-Type' => 'application/json' },
+                                       body: course_json,
+                                       timeout: 10)
+    #rescue Errno::ECONNREFUSED
+      # failed_publish_msg = "Connection refused while publishing to: #{ publishing_url }"
+    #rescue Net::ReadTimeout
+      # failed_publish_msg = "Timeout while publishing to: #{ publishing_url }"
+    #rescue Exception => ex
+      # failed_publish_msg = "Unknow exception while publishing to: #{ publishing_url }: #{ ex }"
+    #end
+  end
+  handle_asynchronously :publish!
+
 end
