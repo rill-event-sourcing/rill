@@ -12,3 +12,6 @@ test:
 
 install:
 	lein install
+
+clean:
+	lein clean
