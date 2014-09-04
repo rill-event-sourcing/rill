@@ -51,6 +51,7 @@ namespace :deploy do
     Rake::Task["deploy:bundle_install"].execute
     Rake::Task["deploy:migrate"].execute
     Rake::Task["deploy:restart"].execute
+    Rake::Task["deploy:restart_delayed_jobs"].execute
     Rake::Task["deploy:check_up"].execute
     Rake::Task["deploy:start_balancer"].execute
 
@@ -80,6 +81,7 @@ namespace :deploy do
     Rake::Task["deploy:bundle_install"].execute
     Rake::Task["deploy:migrate"].execute
     Rake::Task["deploy:restart"].execute
+    Rake::Task["deploy:restart_delayed_jobs"].execute
     Rake::Task["deploy:check_up"].execute
 
     Rake::Task["deploy:stack_a"].execute
@@ -186,6 +188,17 @@ namespace :deploy do
       within release_path do
         warn " running migrations on #{ host.hostname } ".center(72, "#")
         execute :bundle, "exec rake db:migrate RAILS_ENV=#{ fetch(:stage) }"
+      end
+    end
+  end
+
+
+  desc "restart delayed jobs on publishing"
+  task :restart_delayed_jobs do
+    on roles(:db) do |host|
+      within release_path do
+        warn " restarting delayed jobs on #{ host.hostname } ".center(72, "#")
+        execute "cd #{ release_path } && RAILS_ENV=#{ fetch(:stage) } script/delayed_job restart"
       end
     end
   end
