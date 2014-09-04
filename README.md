@@ -14,22 +14,15 @@
 
     make test
 
-To test the publishing of the material from the publishing app, run (from the root folder)
-
-    cd learning/server
-    lein validate-course-material path/to/material.json
-
 ## Listening to events from the event store
 
     java -jar path/to/rill-or-uberjar.jar rill.cli \
          http://127.0.0.1:2113 admin changeit
 
-## Running learning/server test with local EventStore
-    ATOM_EVENT_STORE_COMMAND="mono /home/mfex/studyflow/code/eventstore/EventStore.SingleNode.exe" lein test rill.event-store.atom-store-test
+## Deploying
 
-## Deploying to staging
+push changes to gitlab and wait for CI to build the jars/zips.
 
-**Make sure you are in the `develop` branch (not enforced for now) **
+    ./deploy [staging / production] [commit-sha]
 
-    make deploy-staging
-
+See docs/branching_model.md
