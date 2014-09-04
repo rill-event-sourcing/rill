@@ -21,10 +21,13 @@
   font-size: 15px
   padding: 2px 33px 0 33px
   +border-radius(5px)
-  +single-transition(all, 0.05s)
+  &:hover
+    +translateY(-1px)
   &[disabled]
     opacity: 0.5
     cursor: default
+    &:hover
+      +translateY(0)
     &:active
       +box-shadow(none)
       +translateY(0)
@@ -57,7 +60,6 @@
     animation-iteration-count: 1
     animation-timing-function: linear
 
-
   // Small button
   &.small
     font-size: 15px
@@ -79,12 +81,14 @@
     +text-shadow(0px 1px 1.5px rgba(0, 0, 0, 0.5))
     &:hover, &:focus
       background-color: #7BD4F8
+      border-bottom: 4px solid #259ed0
     &:active
       background-color: #59caf8
       border-bottom: 1px solid #259ed0
     &[disabled]
       &:hover, &:focus
         background-color: #59caf8
+        border-bottom: 3px solid #259ed0
       &:active
         border-bottom: 3px solid #259ed0
     &::after
@@ -98,12 +102,14 @@
     border-bottom: 2px solid #df9c32
     &:hover, &:focus
       background-color: #fbd68d
+      border-bottom: 3px solid #df9c32
     &:active
       background-color: #ffcd69
       border-bottom: 1px solid #df9c32
     &[disabled]
       &:hover, &:focus
         background-color: #ffcd69
+        border-bottom: 2px solid #df9c32
       &:active
         border-bottom: 1px solid #df9c32
     &::after
@@ -118,12 +124,14 @@
     border-bottom: 2px solid #b6c6cd
     &:hover, &:focus
       background-color: #d5d9df
+      border-bottom: 3px solid #b6c6cd
     &:active
       background-color: #e6e9ed
       border-bottom: 1px solid #b6c6cd
     &[disabled]
       &:hover, &:focus
         background-color: #e6e9ed
+        border-bottom: 2px solid #b6c6cd
       &:active
         border-bottom: 1px solid #b6c6cd
     &::after
@@ -139,6 +147,10 @@
     +text-shadow(0px 1px 1px rgba(255, 255, 255, 0.4))
     &:hover, &:focus
       background-color: #F5FBFD
+      border-bottom: 4px solid #97bdcc
+    &[disabled]
+      &:hover, &:focus
+        border-bottom: 3px solid #97bdcc
     &:active
       background-color: #e6f8fe
       border-bottom: 1px solid #97bdcc
