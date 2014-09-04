@@ -195,10 +195,12 @@ namespace :deploy do
 
   desc "restart delayed jobs on publishing"
   task :restart_delayed_jobs do
-    on roles(:db) do |host|
+    on roles(:publish) do |host|
       within release_path do
-        warn " restarting delayed jobs on #{ host.hostname } ".center(72, "#")
-        execute "cd #{ release_path } && RAILS_ENV=#{ fetch(:stage) } script/delayed_job restart"
+        with rails_env: fetch(:stage) do
+          warn " restarting delayed jobs on #{ host.hostname } ".center(72, "#")
+          execute :bundle, :exec, :'script/delayed_job', args, :restart
+        end
       end
     end
   end
