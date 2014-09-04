@@ -1,6 +1,6 @@
 default: test
 
-.PHONY: test build deploy install clean  publishing rill components css js
+.PHONY: test build deploy install clean  publishing rill components css js prepare
 
 clean:
 	cd lib/rill && lein clean
@@ -8,6 +8,8 @@ clean:
 
 rill:
 	make -C lib/rill install
+
+prepare: rill css js-dev
 
 publishing:
 	make -C publishing build
