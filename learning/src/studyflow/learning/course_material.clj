@@ -78,6 +78,14 @@
    :entry-quiz EntryQuiz
    :chapters [Chapter]})
 
+(defn split-style-string [s]
+  (into {} (for [kv (string/split s #";")
+                 :let [[k v] (string/split kv #":")
+                       k (string/trim k)
+                       v (string/trim v)]
+                 :when (and k v)]
+             [k v])))
+
 (defn text-with-inputs-to-tree [text input-names]
   (let [;; make a mapping of _SVG_n_ to svg tags, svg tags have xhtml
         ;; things that enlive eats, will be put back in the final
@@ -114,13 +122,30 @@
               :content (html/html-snippet text)}
         ;; put the original svg string as its content, to be rendered
         ;; as DangerousHtml with react
+        ;; also splice up style strings, om needs those as a map
+        ;; also create content for iframe to be used as raw-html
         tags (walk/prewalk
               (fn [node]
                 (if (map? node)
-                  (if (and (contains? node :tag)
-                           (= (:tag node) :svg))
-                    (assoc node :content (get replacements (:name (:attrs node))))
-                    node)
+                  (cond
+                   (and (contains? node :tag)
+                        (= (:tag node) :svg))
+                   (assoc node :content (get replacements (:name (:attrs node))))
+                   (and (contains? node :tag)
+                        (= (:tag node) :iframe))
+                   (assoc node
+                     :content (str "<iframe "
+                                   (apply str
+                                          (string/join " "
+                                                       (for [[k v] (:attrs node)]
+                                                         (str (name k) "=\"" v "\""))))
+                                   "></iframe>")
+                     :attrs {})
+                   (and (contains? node :tag)
+                        (contains? node :attrs)
+                        (contains? (:attrs node) :style))
+                   (update-in node [:attrs :style] split-style-string)
+                   :else node)
                   node))
               tags)]
     tags))

@@ -1,5 +1,6 @@
 (ns studyflow.web.helpers
-  (:require [om.dom :as dom]
+  (:require [om.core :as om]
+            [om.dom :as dom]
             [goog.string :as gstring]
             [clojure.string :as string]))
 
@@ -31,14 +32,31 @@
   {"a" dom/a, "b" dom/b, "big" dom/big, "br" dom/br, "dd" dom/dd, "div" dom/div,
    "dl" dom/dl, "dt" dom/dt, "em" dom/em, "fieldset" dom/fieldset,
    "h1" dom/h1, "h2" dom/h2, "h3" dom/h3, "h4" dom/h4, "h5" dom/h5, "h6" dom/h6,
-   "hr" dom/hr, "i" dom/i, "li" dom/li, "ol" dom/ol, "p" dom/p, "pre" dom/pre,
+   "hr" dom/hr, "i" dom/i, "img" dom/img, "li" dom/li, "ol" dom/ol, "p" dom/p, "pre" dom/pre,
    "q" dom/q,"s" dom/s,"small" dom/small, "span" dom/span, "strong" dom/strong,
    "sub" dom/sub, "sup" dom/sup, "table" dom/table, "tbody" dom/tbody, "td" dom/td,
    "tfoot" dom/tfoor, "th" dom/th, "thead" dom/thead, "tr" dom/tr, "u" dom/u,
    "ul" dom/ul})
 
+(defn attrs->js-obj [attrs]
+  (let [jo (js-obj)]
+    (when-let [className (:class attrs)]
+      (aset jo (name :className) className))
+    (when-let [src (:src attrs)]
+      (aset jo (name :src) src))
+    (when-let [id (:id attrs)]
+      (aset jo (name :id) id))
+    (when-let [style (:style attrs)]
+      (aset jo (name :style) (apply js-obj (mapcat (fn [[k v]] [(name k) v]) style))))
+    (when-let [width (:width attrs)]
+      (aset jo (name :width) width))
+    (when-let [height (:height attrs)]
+      (aset jo (name :height) height))
+    jo))
+
 (defn tag-tree-to-om [tag-tree inputs]
-  (let [descent (fn descent [tag-tree]
+  (let [tag-tree (om/value tag-tree)
+        descent (fn descent [tag-tree]
                   (cond
                    (and (map? tag-tree)
                         (contains? tag-tree :tag)
@@ -47,16 +65,14 @@
                    (let [{:keys [tag attrs content] :as node} tag-tree]
                      (if-let [build-fn (get html->om tag)]
                        (apply build-fn
-                              (if-let [className (:class attrs)]
-                                #js {:className className}
-                                nil)
+                              (attrs->js-obj attrs)
                               (map descent content))
                        (cond
-                        (= tag "img")
-                        (dom/img #js {:src (:src attrs)})
                         (= tag "input")
                         (get inputs (:name attrs))
                         (= tag "svg")
+                        (raw-html content)
+                        (= tag "iframe")
                         (raw-html content)
                         :else
                         (apply dom/span #js {:className "default-html-to-om"}
