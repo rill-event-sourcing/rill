@@ -5,7 +5,7 @@
             [hiccup.form :as form]
             [studyflow.teaching.read-model :as read-model]
             [studyflow.teaching.web.html-util :refer [layout]]
-            [ring.util.response :refer [redirect]]))
+            [ring.util.response :refer [redirect-after-post]]))
 
 (defn- completion-title [{:keys [finished total]}]
   (str finished "/" total))
@@ -62,7 +62,7 @@
 (defroutes app
   (GET "/reports/"
        {}
-       (redirect "/reports/completion"))
+       (redirect-after-post "/reports/completion"))
 
   (GET "/reports/completion"
        {:keys [read-model flash teacher redirect-urls]

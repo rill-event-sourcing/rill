@@ -65,14 +65,14 @@
                                      :password "password"
                                      :authenticate-by-email-and-password (fn [x y] "something"))
                               caught-up))]
-        (is (= 302 (:status resp)))
+        (is (= 303 (:status resp)))
         (is (= "/" ((:headers resp) "Location")))
         (is (= "something" (:login-user resp))))))
 
   (testing "delete /"
     (let [resp (actions (-> (request :delete "/")
                             caught-up))]
-      (is (= 302 (:status resp)))
+      (is (= 303 (:status resp)))
       (is (= "/" ((:headers resp) "Location")))
       (is (= true (:logout-user resp))))))
 
@@ -95,7 +95,7 @@
     (let [resp (handler {:logout-user true, :cookies {:studyflow_session {:value "test", :max-age 123 }}
                          :session-store (simple-session-store)})]
       (is (:cookies resp))
-      (is (= {:studyflow_session {:value "", :max-age -1, :path "/"}} (:cookies resp))))))
+      (is (= {:studyflow_session {:value "deleted", :max-age -1, :path "/"}} (:cookies resp))))))
 
 (deftest wrap-user-role-test
   (let [handler (wrap-user-role identity)
@@ -139,5 +139,5 @@
 (deftest clear-session-cookie-test
   (let [cookie-domain "domain"
         cookie (:studyflow_session (clear-session-cookie cookie-domain))]
-    (is (= "" (:value cookie)))
+    (is (= "deleted" (:value cookie)))
     (is (= -1 (:max-age cookie)))))

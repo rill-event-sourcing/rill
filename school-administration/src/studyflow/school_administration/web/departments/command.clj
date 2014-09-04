@@ -3,19 +3,19 @@
             [compojure.core :refer [POST defroutes]]
             [rill.handler :refer [try-command]]
             [rill.uuid :refer [new-id uuid]]
-            [ring.util.response :refer [redirect]]
+            [ring.util.response :refer [redirect-after-post]]
             [studyflow.school-administration.department :as department]
             [studyflow.school-administration.import-student :refer [import-tabbed-string]]
             [studyflow.school-administration.web.command-util :refer :all]))
 
 (defn redirect-to-index [school-id]
-  (redirect (str "/edit-school/" school-id)))
+  (redirect-after-post (str "/edit-school/" school-id)))
 
 (defn redirect-to-edit [school-id id]
-  (redirect (str "/edit-department/" school-id "/" id)))
+  (redirect-after-post (str "/edit-department/" school-id "/" id)))
 
 (defn redirect-to-new [school-id]
-  (redirect (str "/new-department/" school-id)))
+  (redirect-after-post (str "/new-department/" school-id)))
 
 (defroutes commands
   (POST "/create-department/:school-id"

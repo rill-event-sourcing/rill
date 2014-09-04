@@ -4,14 +4,14 @@
 
 (defn redirect-login
   [{:keys [uri cookie-domain] {:keys [learning login]} :redirect-urls}]
-  {:status 302
+  {:status 303
    :headers {"Location" login}
    :cookies (if cookie-domain
-              {:studyflow_session {:value ""
+              {:studyflow_session {:value "deleted"
                                    :domain cookie-domain
                                    :path "/"
                                    :max-age -1}}
-              {:studyflow_session {:value ""
+              {:studyflow_session {:value "deleted"
                                    :path "/"
                                    :max-age -1}})})
 
