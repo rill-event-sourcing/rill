@@ -141,8 +141,8 @@
 
 (defn clear-session-cookie [cookie-domain]
   (if cookie-domain
-    {:studyflow_session {:value "" :max-age -1 :domain cookie-domain :path "/"}}
-    {:studyflow_session {:value "" :max-age -1 :path "/"}}))
+    {:studyflow_session {:value "deleted" :max-age -1 :domain cookie-domain :path "/"}}
+    {:studyflow_session {:value "deleted" :max-age -1 :path "/"}}))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wiring
