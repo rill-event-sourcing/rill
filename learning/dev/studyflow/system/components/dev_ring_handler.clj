@@ -30,7 +30,7 @@
                 "<script type=\"text/javascript\" src=\"/js/studyflow.js\"></script>"
                 "<script src=\"/js/react_0.9.0_local_copy.js\" type=\"text/javascript\"></script>
                  <script src=\"/js/studyflow-dev.js\" type=\"text/javascript\"></script>
-                 <script type=\"text/javascript\">goog.require('studyflow.learning.web.core');</script>"))))
+                 <script type=\"text/javascript\">goog.require('studyflow.web.core');</script>"))))
   (stop [component]
     (info "Stopping handler")
     component))
