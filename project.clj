@@ -69,9 +69,7 @@
                                          :preamble ["react/react.min.js"]
                                          :externs ["react/externs/react.js"]}}}}
 
-  :source-paths ["lib/migrations/src"
-                 "lib/components/src"
-                 "common/src"
+  :source-paths ["common/src"
                  "school-administration/src"
                  "teaching/src"
                  "learning/src"
@@ -79,8 +77,7 @@
   :resource-paths ["learning/resources" "login/resources" "school-administration/resources" "teaching/resources"
                    "learning/generated" "login/generated" "school-administration/generated" "teaching/generated"
                    "learning/dev/resources" "login/dev/resources" "school-administration/dev/resources" "teaching/dev/resources"]
-  :test-paths ["lib/components/test"
-               "school-administration/test"
+  :test-paths ["school-administration/test"
                "learning/test"
                "teaching/test"
                "common/test"
