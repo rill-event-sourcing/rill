@@ -1,10 +1,25 @@
 %div.container
   %div.row
     %div.col-md-8.col-md-offset-2
-      %ul
-        - @jobs.each do |job|
-          %li
-            %span= job.id
-            %span= job.last_error
-            %span= job.run_at
-            %span= job.created_at
+      - if @jobs.empty?
+        %div.row
+          %div.alert.alert-info
+            %p{style:"text-align:center"} All scheduled jobs have completed successfully, no new jobs are scheduled
+        %div.row
+          %div.col-md-3.col-md-offset-3
+            = link_to 'Check material and publish', check_course_path, class: "btn btn-lg btn-info"
+
+      - else
+        %h1 Jobs queued
+        %table.table.table-bordered
+          %thead
+            %tr
+              %th id
+              %td created at
+              %th last error
+          %tbody
+            - @jobs.each do |job|
+              %tr
+                %td= job.id
+                %td= job.created_at
+                %td= job.last_error.to_s.truncate(100, omission: "...")

@@ -19,7 +19,7 @@ class PublishingController < ApplicationController
       redirect_to check_course_path
     else
       course.publish!
-      redirect_to root_path, notice: "Course '#{ course }' was scheduled for publishing"
+      redirect_to list_jobs_path, notice: "Course '#{ course }' was scheduled for publishing"
     end
   end
 
