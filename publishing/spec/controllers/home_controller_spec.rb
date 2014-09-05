@@ -56,6 +56,7 @@ RSpec.describe HomeController, :type => :controller do
       mocked_response = HTTParty::Response.new({},response_object,{})
       expect(HTTParty).to receive(:put).with(@url, headers: @headers, body: @body, timeout: 30).and_return(mocked_response)
       post :publish
+      p assigns(:errors)
       expect(response).to redirect_to root_path
       expect(controller.flash[:notice]).to eq "Course '#{ @course }' was succesfully published!"
     end

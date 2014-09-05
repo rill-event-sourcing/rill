@@ -80,7 +80,7 @@ class Question < ActiveRecord::Base
   end
 
   def worked_out_answer_with_default
-    worked_out_answer.blank? ? made_worked_out_answer : render_latex(worked_out_answer, "woa of question '#{name}', in '#{parent}'")
+    worked_out_answer.blank? ? made_worked_out_answer : render_latex_for_publishing(worked_out_answer, "woa of question '#{name}', in '#{parent}'")
   end
 
   def inputs_referenced_exactly_once?
