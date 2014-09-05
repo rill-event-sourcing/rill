@@ -41,6 +41,7 @@ class Course < ActiveRecord::Base
 
     errors = errors_when_publishing
     throw errors if errors.any?
+
     publish_response =  HTTParty.put(publishing_url,
                                      headers: { 'Content-Type' => 'application/json' },
                                      body: course_json,

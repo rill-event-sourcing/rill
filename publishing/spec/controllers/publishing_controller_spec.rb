@@ -59,22 +59,20 @@ RSpec.describe PublishingController, :type => :controller do
 
       DelayedJob.delete_all
       post :publish
-      worker = Delayed::Worker.new #(:quiet => false)
+      worker = Delayed::Worker.new
       worker.work_off
       expect(DelayedJob.count).to eq 0
     end
 
-    it "should warn when the course material is not published" do
-      response_object = Net::HTTPOK.new('1.1', 500, 'NOK')
-      allow(response_object).to receive(:body).and_return({foo:'bar'})
-      mocked_response = HTTParty::Response.new({},response_object,{})
-      expect(HTTParty).to receive(:put).with(@url, headers: @headers, body: @body, timeout: 600).and_return(mocked_response)
-
+    it "should warn when the course material cannot be published" do
       DelayedJob.delete_all
       post :publish
-      worker = Delayed::Worker.new #(:quiet => false)
+      worker = Delayed::Worker.new
       worker.work_off
-      # expect(DelayedJob.count).to eq 1
+      expect(DelayedJob.count).to eq 1
+      delayed_job = DelayedJob.first
+      expect(delayed_job.attempts).to eq 1
+      expect(delayed_job.last_error).to match(/Connection refused/)
     end
   end
 
