@@ -1,7 +1,7 @@
 module ApplicationHelper
 
   def text_to_html(inputs,text)
-    text = render_latex(text)
+    text = render_latex_for_editing(text)
     html = text.html_safe
     inputs.each do |input|
       input_html = input_to_html(input)
@@ -34,7 +34,7 @@ module ApplicationHelper
 
   def multiple_choice_input_to_html(input)
     content_tag(:div, style: "width: 300px;") do
-      input.choices.map{|ch| content_tag(:button, render_latex(ch.value).html_safe, class: "btn #{ ch.correct ? 'btn-success' : 'btn-default' } btn-block") }.join('').html_safe
+      input.choices.map{|ch| content_tag(:button, render_latex_for_editing(ch.value).html_safe, class: "btn #{ ch.correct ? 'btn-success' : 'btn-default' } btn-block") }.join('').html_safe
     end
   end
 

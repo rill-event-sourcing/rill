@@ -23,7 +23,7 @@ class Subsection < ActiveRecord::Base
     {
       id: id,
       title: title,
-      text: render_latex(text, "section '#{section.name}', in '#{section.parent}'")
+      text: render_latex_for_publishing(text, "section '#{section.name}', in '#{section.parent}'")
     }
   end
 
@@ -43,7 +43,7 @@ class Subsection < ActiveRecord::Base
   def errors_when_publishing
     errors = []
     begin
-      render_latex(text)
+      render_latex_for_publishing(text)
     rescue
       errors << "Errors in LaTeX rendering in section '#{section.name}', in '#{section.parent}'"
     end

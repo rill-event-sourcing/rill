@@ -39,7 +39,7 @@ describe "render_latex" do
     parsed_response = lambda { parsed_formula_inline }
     mocked_response = HTTParty::Response.new({},response_object,parsed_response)
     expect(HTTParty).to receive(:post).with(@url, body: formula_inline).and_return(mocked_response)
-    expect(render_latex(text_inline)).to eq(%(This is a text and <span class="latex">#{parsed_formula_inline}</span>))
+    expect(render_latex_for_editing(text_inline)).to eq(%(This is a text and <span class="latex">#{parsed_formula_inline}</span>))
   end
 
   it "should show a big notice when LaTeX cannot be rendered" do
@@ -51,7 +51,7 @@ describe "render_latex" do
     parsed_response = lambda { parsing_error }
     mocked_response = HTTParty::Response.new({}, response_object, parsed_response)
     expect(HTTParty).to receive(:post).with(@url, body: wrong_formula).and_return(mocked_response)
-    expect(render_latex(text_with_wrong_formula)).to eq(%(This text has a wrong formula here: <div class="alert alert-danger">'#{wrong_formula}' is not valid LaTeX</div>))
+    expect(render_latex_for_editing(text_with_wrong_formula)).to eq(%(This text has a wrong formula here: <div class="alert alert-danger">'#{wrong_formula}' is not valid LaTeX</div>))
   end
 
   it "should show a big notice when a formula is not correct" do
@@ -63,7 +63,7 @@ describe "render_latex" do
     parsed_response = lambda { parsing_error }
     mocked_response = HTTParty::Response.new({}, response_object, parsed_response)
     expect(HTTParty).to receive(:post).with(@url, body: wrong_formula).and_return(mocked_response)
-    expect(render_latex(text_with_wrong_formula)).to eq(%(This text has a wrong formula here: <span class="latex"><div class="alert alert-danger">'#{wrong_formula}' is not valid LaTeX</div></span>))
+    expect(render_latex_for_editing(text_with_wrong_formula)).to eq(%(This text has a wrong formula here: <span class="latex"><div class="alert alert-danger">'#{wrong_formula}' is not valid LaTeX</div></span>))
   end
 
 end

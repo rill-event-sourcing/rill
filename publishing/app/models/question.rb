@@ -50,7 +50,7 @@ class Question < ActiveRecord::Base
   def to_publishing_format_for_entry_quiz
     {
       id: id,
-      text: render_latex(text, "question '#{name}', in '#{parent}'"),
+      text: render_latex_for_publishing(text, "question '#{name}', in '#{parent}'"),
       tools: tools.keys,
       line_input_fields: line_inputs.map(&:to_publishing_format),
       multiple_choice_input_fields: multiple_choice_inputs.map(&:to_publishing_format)
@@ -60,7 +60,7 @@ class Question < ActiveRecord::Base
   def to_publishing_format_for_section
     hash = {
       id: id,
-      text: render_latex(text, "question '#{name}', in '#{parent}'"),
+      text: render_latex_for_publishing(text, "question '#{name}', in '#{parent}'"),
       tools: tools.keys,
       line_input_fields: line_inputs.map(&:to_publishing_format),
       multiple_choice_input_fields: multiple_choice_inputs.map(&:to_publishing_format),
@@ -74,7 +74,7 @@ class Question < ActiveRecord::Base
     if input.is_a?(LineInput)
       value = input.answers.first.value
     elsif input.is_a?(MultipleChoiceInput)
-      value = render_latex(input.choices.where(correct: true).first.value, "woa of question '#{name}', in '#{parent}'")
+      value = render_latex_for_publishing(input.choices.where(correct: true).first.value, "woa of question '#{name}', in '#{parent}'")
     end
     "Het juiste antwoord is: #{ value }"
   end
@@ -95,7 +95,7 @@ class Question < ActiveRecord::Base
   def errors_when_publishing_for_entry_quiz
     errors = []
     begin
-      render_latex(text)
+      render_latex_for_publishing(text)
     rescue
       errors << "Errors in LaTeX rendering in section in question '#{name}', in '#{parent}'"
     end
