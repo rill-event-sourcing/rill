@@ -50,7 +50,7 @@ class Question < ActiveRecord::Base
   def to_publishing_format_for_entry_quiz
     {
       id: id,
-      text: render_latex(text),
+      text: render_latex(text, "question '#{name}', in '#{parent}'"),
       tools: tools.keys,
       line_input_fields: line_inputs.map(&:to_publishing_format),
       multiple_choice_input_fields: multiple_choice_inputs.map(&:to_publishing_format)
@@ -60,7 +60,7 @@ class Question < ActiveRecord::Base
   def to_publishing_format_for_section
     hash = {
       id: id,
-      text: render_latex(text),
+      text: render_latex(text, "question '#{name}', in '#{parent}'"),
       tools: tools.keys,
       line_input_fields: line_inputs.map(&:to_publishing_format),
       multiple_choice_input_fields: multiple_choice_inputs.map(&:to_publishing_format),
@@ -74,13 +74,13 @@ class Question < ActiveRecord::Base
     if input.is_a?(LineInput)
       value = input.answers.first.value
     elsif input.is_a?(MultipleChoiceInput)
-      value = render_latex(input.choices.where(correct: true).first.value)
+      value = render_latex(input.choices.where(correct: true).first.value, "woa of question '#{name}', in '#{parent}'")
     end
     "Het juiste antwoord is: #{ value }"
   end
 
   def worked_out_answer_with_default
-    worked_out_answer.blank? ? made_worked_out_answer : render_latex(worked_out_answer)
+    worked_out_answer.blank? ? made_worked_out_answer : render_latex(worked_out_answer, "woa of question '#{name}', in '#{parent}'")
   end
 
   def inputs_referenced_exactly_once?

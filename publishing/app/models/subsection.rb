@@ -23,7 +23,7 @@ class Subsection < ActiveRecord::Base
     {
       id: id,
       title: title,
-      text: render_latex(text)
+      text: render_latex(text, "section '#{section.name}', in '#{section.parent}'")
     }
   end
 

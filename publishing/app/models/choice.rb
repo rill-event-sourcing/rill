@@ -12,7 +12,7 @@ class Choice < ActiveRecord::Base
 
   def to_publishing_format
     {
-      value: render_latex(value),
+      value: render_latex(value, "choice"),
       correct: correct
     }
   end

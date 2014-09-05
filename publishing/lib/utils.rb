@@ -18,7 +18,7 @@ def pretty_debug(value = '', type = 'debug', debug_start = false)
   @debug_date_time = start if debug_start
 end
 
-def render_latex(text)
+def render_latex(text, origin = "unknown")
   regexp = /<math>(.*?)<\/math>/m
   matches = text.scan(regexp)
   new_text = text
@@ -38,7 +38,13 @@ def render_latex(text)
       else
         rendered_formula = %(<span class="latex">#{rendered_formula}</span>)
       end
-      new_text.gsub!("<math>#{match}</math>", rendered_formula)
+      begin
+        new_text.gsub!("<math>#{match}</math>", rendered_formula)
+      rescue Encoding::CompatibilityError => ex
+        info = "LaTeX encoding error within '#{origin}' => #{ex}"
+        pretty_debug info, :warn
+        throw info
+      end
     else
       new_text = %(<div class="alert alert-danger">Error with LaTeX rendering: #{error}</div>)
       break
