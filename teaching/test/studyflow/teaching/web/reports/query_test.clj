@@ -69,7 +69,7 @@
 (deftest app
   (testing "GET /reports"
     (let [resp (t/app (request :get "/reports/"))]
-      (is (= 302 (:status resp)))
+      (is (= 303 (:status resp)))
       (is (= "/reports/completion" (get-in resp [:headers "Location"])))))
   (testing "GET /reports/completion"
     (let [resp (t/app (-> (request :get "/reports/completion")
