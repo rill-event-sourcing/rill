@@ -40,8 +40,8 @@ def render_latex(text, origin = "unknown")
       end
       begin
         new_text.gsub!("<math>#{match}</math>", rendered_formula)
-      rescue Encoding::CompatibilityError => ex
-        info = "LaTeX encoding error within '#{origin}' => #{ex}"
+      rescue Exception => ex
+        info = "LaTeX error within '#{origin}' => #{ex}"
         pretty_debug info, :warn
         throw info
       end
