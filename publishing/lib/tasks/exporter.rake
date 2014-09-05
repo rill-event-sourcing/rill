@@ -3,17 +3,16 @@ namespace :exporter do
 
   task :export => :environment  do
     require 'json'
-    course = Course.first
-    print JSON.pretty_generate(course.to_publishing_format)
+    print JSON.pretty_generate(Course.first.to_publishing_format)
   end
 
   task :test_export => :environment do
     require 'json'
-    @published_format = JSON.parse(JSON.pretty_generate(Course.first.to_publishing_format))
-    recursive_delete!(@published_format,"id")
-    @doc_file = JSON.parse(File.read(Rails.root.join('..','learning','dev','resources','dev','material.json')))
-    recursive_delete!(@doc_file,"id")
-    if @published_format == @doc_file
+    published_format = JSON.parse(JSON.pretty_generate(Course.first.to_publishing_format))
+    recursive_delete!(published_format,"id")
+    doc_file = JSON.parse(File.read(Rails.root.join('..','learning','dev','resources','dev','material.json')))
+    recursive_delete!(doc_file,"id")
+    if published_format == doc_file
       p "Exporter: OK"
     else
       abort "The exported file and the versioned control documentation are different!"

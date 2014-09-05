@@ -13,19 +13,29 @@
 (defn- completion-percentage [{:keys [finished total]}]
   (str (Math/round (float (/ (* finished 100) total))) "%"))
 
-(defn- completion [completion]
-  (when completion
+(defn- completion [{:keys [total] :as completion}]
+  (if (and completion (> total 0))
     [:span {:title (completion-title completion)}
-     (completion-percentage completion)]))
+     (completion-percentage completion)]
+    "&mdash;"))
 
-(defn render-completion [classes meijerink-criteria students params options]
-  (let [class (first (filter #(= (:classid params) (:id %)) classes))
+(defn- classerize [s]
+  (-> s
+      str
+      str/lower-case
+      (str/replace #"[^a-z ]" "")
+      (str/replace #"\s+" "-")))
+
+(defn render-completion [classes meijerink-criteria domains students params options]
+  (let [meijerink-criteria (sort meijerink-criteria)
+        domains (sort domains)
+        class (first (filter #(= (:classid params) (:id %)) classes))
         scope (:meijerink params)
-        scope (if (str/blank? scope) :total scope)]
+        scope (if (str/blank? scope) nil scope)]
     (layout
      (merge {:title (if class
-                      (str "Completion for \"" (:full-name class) "\"")
-                      "Completion")} options)
+                      (str "Rapport voor \"" (:full-name class) "\"")
+                      "Rapport")} options)
 
      [:form {:method "GET"}
       (form/drop-down {:onchange "this.form.submit()"}
@@ -37,27 +47,34 @@
                       (:classid params))
       (form/drop-down {:onchange "this.form.submit()"}
                       "meijerink"
-                      (into [["-- Kies Meijerink --" ""]]
-                            (sort meijerink-criteria))
+                      (into [["-- Kies Niveau --" ""]]
+                            meijerink-criteria)
                       (:meijerink params))]
 
      (when students
        [:table.students
         [:thead
          [:th.full-name]
-         [:th.completion (if (= :total scope) "Totaal" scope)]]
+         [:th.completion.number "Totaal"]
+         (map (fn [domain]
+                [:th.domain.number (h domain)])
+              domains)]
         [:tbody
          (map (fn [student]
-                [:tr
+                [:tr.student {:id (str "student-" (:id student))}
                  [:td.full-name
                   (h (:full-name student))]
-                 [:td.completion
-                  (completion (get-in student [:completion scope]))]])
+                 (map (fn [domain]
+                        [:td.completion.number {:class (classerize domain)}
+                         (completion (get-in student [:completion scope domain]))])
+                      (into [:all] domains))])
               (sort-by :full-name students))]
         [:tfoot
          [:th.average "Klassengemiddelde"]
-         [:td.average-completion
-          (completion (get-in class [:completion scope]))]]]))))
+         (map (fn [domain]
+                [:td.average.number {:class (classerize domain)}
+                 (completion (get-in class [:completion scope domain]))])
+              (into [:all] domains))]]))))
 
 (defroutes app
   (GET "/reports/"
@@ -69,7 +86,8 @@
         {:keys [classid] :as params} :params}
        (let [classes (read-model/classes read-model teacher)
              meijerink-criteria (read-model/meijerink-criteria read-model)
+             domains (read-model/domains read-model)
              class (first (filter #(= classid (:id %)) classes))
              students (when class (read-model/students-for-class read-model class))
              options (assoc flash :redirect-urls redirect-urls)]
-         (render-completion classes meijerink-criteria students params options))))
+         (render-completion classes meijerink-criteria domains students params options))))

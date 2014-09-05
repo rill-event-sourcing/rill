@@ -20,6 +20,15 @@
           = m.check_box c, checked: @section.meijerink_criteria.include?(c)
           %br
 
+  %div.form-group
+    = f.label :domains, class: "col-sm-2 control-label"
+    %div.col-sm-10
+      = f.fields_for :domains_hash, @section.domains do |m|
+        - Domains.all.each do |d|
+          %label{style: "width: 150px;"}= "#{d}"
+          = m.check_box d, checked: @section.domains.include?(d)
+          %br
+
 
   %div.form-group
     = f.label :description, class: "col-sm-2 control-label"

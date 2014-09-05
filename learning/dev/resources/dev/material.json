@@ -5,13 +5,15 @@
     {
       "id": "8112d048-1189-4b45-a7ba-78da2b0c389d",
       "title": "Positional system",
-      "remedial": true,
       "sections": [
         {
           "id": "baaffea6-3094-4494-8071-87c2854fd26f",
           "title": "Grouping by 10",
           "meijerink_criteria": [
-            "1F"
+            "1F-RT"
+          ],
+          "domains": [
+            "Getallen"
           ],
           "subsections": [
             {
@@ -140,9 +142,12 @@
           "id": "969a31de-2725-453c-9177-f821982634cf",
           "title": "Position of the 0",
           "meijerink_criteria": [
-            "1F",
+            "1F-RT",
             "2F",
             "3F"
+          ],
+          "domains": [
+            "Getallen"
           ],
           "subsections": [
             {
@@ -176,27 +181,30 @@
               "text": "What now?"
             }
           ],
-          "questions": 
-            [
+          "questions": [
+            {
+              "id": "267da8ca-77a9-4f35-8c63-ec001356b3e1",
+              "text": "1 + 1 _INPUT_1_",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "line_input_fields": [
                 {
-                    "id":  "f0b3d0ec-322c-4a82-84df-66cf0f9fd106",
-                    "text": "1 + 1 _INPUT_1_",
-                    "tools": ["pen_and_paper"],
-                    "worked_out_answer": "2",
-                    "line_input_fields": [
-                        {
-                            "name": "_INPUT_1_",
-                            "prefix": "pre",
-                            "suffix": "suf",
-                            "width": 150,
-                            "correct_answers": [
-                                "2"
-                            ]
-                        }
-                    ],
-                    "multiple_choice_input_fields": []
+                  "name": "_INPUT_1_",
+                  "prefix": "pre",
+                  "suffix": "suf",
+                  "width": 150,
+                  "correct_answers": [
+                    "2"
+                  ]
                 }
-            ],
+              ],
+              "multiple_choice_input_fields": [
+
+              ],
+              "worked_out_answer": "2"
+            }
+          ],
           "line_input_fields": [
 
           ]

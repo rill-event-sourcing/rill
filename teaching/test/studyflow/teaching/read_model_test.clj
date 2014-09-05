@@ -89,11 +89,14 @@
 
 (def course {:chapters [{:remedial true
                          :sections [{:id "section-1"
-                                     :meijerink-criteria ["A" "B"]}
+                                     :meijerink-criteria #{"A" "B"}
+                                     :domains #{"Getallen" "Verhoudingen"}}
                                     {:id "section-2"
-                                     :meijerink-criteria ["B"]}]}
+                                     :meijerink-criteria #{"B"}
+                                     :domains #{"Meetkunde"}}]}
                         {:sections [{:id "section-3"
-                                     :meijerink-criteria ["C"]}]}]})
+                                     :meijerink-criteria #{"C"}
+                                     :domains #{"Meetkunde" "Verbanden"}}]}]})
 
 (def model-with-fred-barney-and-course
   (load-model model-with-fred-and-barney-in-same-class
@@ -102,23 +105,36 @@
 (deftest completion
   (let [teacher (first (vals (:teachers model-with-fred-and-teacher)))]
     (testing "meijering-criteria"
-      (is (= #{"A" "B" "C"} (meijerink-criteria model-with-fred-barney-and-course))))
-    (testing "class completion"
+      (is (= #{"A" "B" "C"}
+             (meijerink-criteria model-with-fred-barney-and-course))))
+    (testing "domains"
+      (is (= #{"Getallen" "Verhoudingen" "Meetkunde" "Verbanden"}
+             (domains model-with-fred-barney-and-course))))
+    (testing "class completion without course material"
       (let [model model-with-fred-and-barney-in-same-class]
-        (is (= {:total {:finished 0, :total 0}}
-               (:completion (first (classes model-with-fred-and-barney-in-same-class teacher)))))))
+        (is (not (seq (:completion (first (classes model-with-fred-and-barney-in-same-class teacher))))))))
     (testing "one finished section without course material"
       (let [model (load-model model-with-fred-and-department-and-class
                               (section-test/finished "section-1" "fred"))]
-        (is (= {:total {:finished 0, :total 0}}
-               (:completion (first (classes model teacher)))))))
+        (is (not (seq (:completion (first (classes model teacher))))))))
     (testing "one finished section with three section course material for two students"
       (let [model (load-model model-with-fred-barney-and-course
                               (section-test/finished "section-1" "fred"))]
-        (is (= {"A" {:finished 1, :total 2}
-                "B" {:finished 1, :total 4}
-                "C" {:finished 0, :total 2}
-                :total {:finished 1, :total 6}}
+        (is (= {"A" {:all {:finished 1, :total 2}
+                     "Getallen" {:finished 1, :total 2}
+                     "Verhoudingen" {:finished 1, :total 2}
+                     "Meetkunde" {:finished 0, :total 0}
+                     "Verbanden" {:finished 0, :total 0}}
+                "B" {:all {:finished 1, :total 4}
+                     "Getallen" {:finished 1, :total 2}
+                     "Verhoudingen" {:finished 1, :total 2}
+                     "Meetkunde" {:finished 0, :total 2}
+                     "Verbanden" {:finished 0, :total 0}}
+                "C" {:all {:finished 0, :total 2}
+                     "Getallen" {:finished 0, :total 0}
+                     "Verhoudingen" {:finished 0, :total 0}
+                     "Meetkunde" {:finished 0, :total 2}
+                     "Verbanden" {:finished 0, :total 2}}}
                (:completion (first (classes model teacher)))))))
     (testing "remedial-sections-for-courses"
       (is (= #{"section-1" "section-2"}
@@ -126,8 +142,19 @@
     (testing "one entry quiz passed with three section course material for two students"
       (let [model (load-model model-with-fred-barney-and-course
                               (entry-quiz/passed "course" "fred"))]
-        (is (= {"A" {:finished 1, :total 2}
-                "B" {:finished 2, :total 4}
-                "C" {:finished 0, :total 2}
-                :total {:finished 2, :total 6}}
+        (is (= {"A" {:all {:finished 1, :total 2}
+                     "Getallen" {:finished 1, :total 2}
+                     "Verhoudingen" {:finished 1, :total 2}
+                     "Meetkunde" {:finished 0, :total 0}
+                     "Verbanden" {:finished 0, :total 0}}
+                "B" {:all {:finished 2, :total 4}
+                     "Getallen" {:finished 1, :total 2}
+                     "Verhoudingen" {:finished 1, :total 2}
+                     "Meetkunde" {:finished 1, :total 2}
+                     "Verbanden" {:finished 0, :total 0}}
+                "C" {:all {:finished 0, :total 2}
+                     "Getallen" {:finished 0, :total 0}
+                     "Verhoudingen" {:finished 0, :total 0}
+                     "Meetkunde" {:finished 0, :total 2}
+                     "Verbanden" {:finished 0, :total 2}}}
                (:completion (first (classes model teacher)))))))))
