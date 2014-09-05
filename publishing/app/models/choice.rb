@@ -12,9 +12,19 @@ class Choice < ActiveRecord::Base
 
   def to_publishing_format
     {
-      value: render_latex(value, "choice in #{multiple_choice_input} in #{multiple_choice_input.inputable}, in #{multiple_choice_input.inputable.questionable}"),
+      value: render_latex(value, "choice in #{multiple_choice_input} in #{multiple_choice_input.inputable}, in #{multiple_choice_input.inputable.quizzable}"),
       correct: correct
     }
+  end
+
+  def errors_when_publishing
+    errors = []
+    begin
+      render_latex(text)
+    rescue
+      errors << "Errors in LaTeX rendering in section '#{section.name}', in '#{section.parent}'"
+    end
+    errors
   end
 
   def to_param

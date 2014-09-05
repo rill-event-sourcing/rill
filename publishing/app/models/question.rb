@@ -94,6 +94,11 @@ class Question < ActiveRecord::Base
 
   def errors_when_publishing_for_entry_quiz
     errors = []
+    begin
+      render_latex(text)
+    rescue
+      errors << "Errors in LaTeX rendering in section in question '#{name}', in '#{parent}'"
+    end
     errors << "No Inputs on question '#{name}', in '#{parent}'" if inputs.count == 0
     errors << "Error in input referencing in question '#{name}', in '#{parent}'" unless inputs_referenced_exactly_once?
     errors << "Nonexisting inputs referenced in question '#{name}', in '#{parent}'" if nonexisting_inputs_referenced?

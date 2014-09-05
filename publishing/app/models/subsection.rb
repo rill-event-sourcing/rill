@@ -42,6 +42,11 @@ class Subsection < ActiveRecord::Base
 
   def errors_when_publishing
     errors = []
+    begin
+      render_latex(text)
+    rescue
+      errors << "Errors in LaTeX rendering in section '#{section.name}', in '#{section.parent}'"
+    end
     errors << "No content in subsection of section '#{section.name}', in '#{section.parent}'" if text.blank?
     errors
   end
