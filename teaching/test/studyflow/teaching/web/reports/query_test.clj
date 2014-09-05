@@ -18,7 +18,7 @@
 (deftest render-completion
   (testing "without data"
     (let [body (t/render-completion nil nil nil nil nil nil)]
-      (is (= "Completion - Studyflow"
+      (is (= "Rapport - Studyflow"
              (query-html-content body [[:html] [:head] [:title]])))))
   (testing "with data"
     (let [body (t/render-completion [{:id "c"
@@ -33,7 +33,7 @@
                                                         "foo" {:finished 2, :total 17}}}}]
                                     {:classid "c", :meijerink "A"}
                                     nil)]
-      (is (= "Completion for \"C1\" - Studyflow"
+      (is (= "Rapport voor \"C1\" - Studyflow"
              (query-html-content body [[:html] [:head] [:title]])))
       (is (= "C1"
              (query-html-content body [[:select (enlive/attr= :name "classid")]
