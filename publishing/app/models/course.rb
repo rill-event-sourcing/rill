@@ -39,17 +39,20 @@ class Course < ActiveRecord::Base
     course_json = JSON.pretty_generate(self.to_publishing_format)
     publishing_url = "#{StudyflowPublishing::Application.config.learning_server}/api/internal/course/#{ id }"
 
-    #begin
-      publish_response =  HTTParty.put(publishing_url,
-                                       headers: { 'Content-Type' => 'application/json' },
-                                       body: course_json,
-                                       timeout: 10)
+
+    errors = course.errors_when_publishing
+    throw errors if errors.any?
+    publish_response =  HTTParty.put(publishing_url,
+                                     headers: { 'Content-Type' => 'application/json' },
+                                     body: course_json,
+                                     timeout: 10)
+
     #rescue Errno::ECONNREFUSED
-      # failed_publish_msg = "Connection refused while publishing to: #{ publishing_url }"
+    # failed_publish_msg = "Connection refused while publishing to: #{ publishing_url }"
     #rescue Net::ReadTimeout
-      # failed_publish_msg = "Timeout while publishing to: #{ publishing_url }"
+    # failed_publish_msg = "Timeout while publishing to: #{ publishing_url }"
     #rescue Exception => ex
-      # failed_publish_msg = "Unknow exception while publishing to: #{ publishing_url }: #{ ex }"
+    # failed_publish_msg = "Unknow exception while publishing to: #{ publishing_url }: #{ ex }"
     #end
   end
   handle_asynchronously :publish!

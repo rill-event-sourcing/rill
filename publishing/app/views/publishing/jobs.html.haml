@@ -19,11 +19,13 @@
               %td failed at
               %td attempts
               %th last error
+              %th del
           %tbody
             - @jobs.each do |job|
               %tr
                 %td= job.id
-                %td= job.created_at
-                %td= job.failed_at
+                %td.col-md-2= job.created_at ? job.created_at.to_s(:short) : ''
+                %td.col-md-2= job.failed_at ? job.failed_at.to_s(:short) : ''
                 %td= job.attempts
                 %td= job.last_error.to_s.truncate(100, omission: "...")
+                %td= link_to('del', delete_job_path(id: job.id), method: :delete, data: { confirm: "Are you sure to delete job #{job.id}?" })

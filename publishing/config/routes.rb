@@ -1,9 +1,12 @@
 Rails.application.routes.draw do
 
   match 'select_course',  to: 'courses#select', via: :post
+
   match 'publish_course', to: 'publishing#publish', via: :post
   match 'check_course', to: 'publishing#check', via: :get
   match 'list_jobs', to: 'publishing#jobs', via: :get
+  match 'delete_job', to: 'publishing#delete_job', via: :delete
+
   #match 'entry_quiz', to: 'entry_quiz#show', via: :get
 
   resource :entry_quiz do
