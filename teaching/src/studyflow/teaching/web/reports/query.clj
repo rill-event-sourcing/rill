@@ -34,8 +34,8 @@
         scope (if (str/blank? scope) nil scope)]
     (layout
      (merge {:title (if class
-                      (str "Completion for \"" (:full-name class) "\"")
-                      "Completion")} options)
+                      (str "Rapport voor \"" (:full-name class) "\"")
+                      "Rapport")} options)
 
      [:form {:method "GET"}
       (form/drop-down {:onchange "this.form.submit()"}
@@ -47,7 +47,7 @@
                       (:classid params))
       (form/drop-down {:onchange "this.form.submit()"}
                       "meijerink"
-                      (into [["-- Kies Meijerink --" ""]]
+                      (into [["-- Kies Niveau --" ""]]
                             meijerink-criteria)
                       (:meijerink params))]
 
