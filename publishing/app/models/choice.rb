@@ -12,7 +12,7 @@ class Choice < ActiveRecord::Base
 
   def to_publishing_format
     {
-      value: render_latex(value, "choice"),
+      value: render_latex(value, "choice in #{multiple_choice_input} in #{multiple_choice_input.inputable}, in #{multiple_choice_input.inputable.questionable}"),
       correct: correct
     }
   end
