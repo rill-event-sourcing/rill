@@ -5,15 +5,7 @@ RSpec.describe HomeController, :type => :controller do
   before do
     @course = create(:course)
     session[:course_id] = @course.id
-    @eq = create(:entry_quiz, course: @course)
-    @question = create(:question, worked_out_answer: "", text: "_INPUT_1_", quizzable: @eq)
-    @input1 = create(:line_input, inputable: @question)
-    @answer1 = create(:answer, line_input: @input1, value: 'correct')
     controller.send :set_my_course
-
-    @url = "#{StudyflowPublishing::Application.config.learning_server}/api/internal/course/#{ @course.id }"
-    @headers = { 'Content-Type' => 'application/json' }
-    @body = JSON.pretty_generate(@course.to_publishing_format)
   end
 
   describe "GET index" do
@@ -34,41 +26,6 @@ RSpec.describe HomeController, :type => :controller do
       expect(HTTParty).to receive(:post).with("http://localhost:16000/", body: "2+2=4").and_return(mocked_response)
       post :check
       expect(assigns(:errors)).not_to include "Error with the connection to the Latex rendering engine"
-    end
-
-  end
-
-  describe "POST publish" do
-
-    it "should publish the course material when there are no errors" do
-      expect{post :publish}.not_to raise_error(Exception)
-    end
-
-    it "should throw an error when no course is selected" do
-      session[:course_id] = nil
-      controller.send :unset_my_course
-      expect{post :publish}.to raise_error(Exception)
-    end
-
-    it "should publish the course material" do
-      response_object = Net::HTTPOK.new('1.1', 200, 'OK')
-      allow(response_object).to receive(:body).and_return({foo:'bar'})
-      mocked_response = HTTParty::Response.new({},response_object,{})
-      expect(HTTParty).to receive(:put).with(@url, headers: @headers, body: @body, timeout: 30).and_return(mocked_response)
-      post :publish
-      p assigns(:errors)
-      expect(response).to redirect_to root_path
-      expect(controller.flash[:notice]).to eq "Course '#{ @course }' was succesfully published!"
-    end
-
-    it "should warn when the course material is not published" do
-      response_object = Net::HTTPOK.new('1.1', 500, 'NOK')
-      allow(response_object).to receive(:body).and_return({foo:'bar'})
-      mocked_response = HTTParty::Response.new({},response_object,{})
-      expect(HTTParty).to receive(:put).with(@url, headers: @headers, body: @body, timeout: 30).and_return(mocked_response)
-      post :publish
-      expect(response).to redirect_to root_path
-      expect(controller.flash[:alert]).to eq "Course '#{ @course }' was NOT published!"
     end
   end
 
