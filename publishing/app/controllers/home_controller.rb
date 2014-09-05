@@ -13,7 +13,13 @@ class HomeController < ApplicationController
   end
 
   def check
-    @errors = Course.current.errors_when_publishing
+    @errors = []
+    begin
+      response = HTTParty.post("http://localhost:16000/", body: "2+2=4")
+    rescue
+      @errors << "Error with the connection to the Latex rendering engine"
+    end
+    @errors << Course.current.errors_when_publishing
   end
 
   def index
