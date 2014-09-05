@@ -124,6 +124,8 @@
         ;; as DangerousHtml with react
         ;; also splice up style strings, om needs those as a map
         ;; also create content for iframe to be used as raw-html
+        ;; also replace p tags with divs, because nesting in p tags
+        ;; makes browers reorder things, which breaks react
         tags (walk/prewalk
               (fn [node]
                 (if (map? node)
@@ -141,6 +143,11 @@
                                                          (str (name k) "=\"" v "\""))))
                                    "></iframe>")
                      :attrs {})
+                   (and (contains? node :tag)
+                        (= (:tag node) :p))
+                   (-> node
+                       (assoc :tag :div)
+                       (update-in [:attrs :class] str " div-p"))
                    (and (contains? node :tag)
                         (contains? node :attrs)
                         (contains? (:attrs node) :style))
