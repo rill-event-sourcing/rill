@@ -15,7 +15,7 @@
 (def question-id #uuid  "4302505c-5498-4229-b11f-2da3aa869793")
 (def question2-id #uuid "9bcbb97b-7935-420e-8ba7-fb4650de569f")
 (def question-total 2)
-(def correct-inputs  {"_INPUT_1_" "Grouping Question 1 Line input answer value"
+(def correct-inputs  {"_INPUT_1_" "42"
                       "_INPUT_2_" "3"})
 
 (def course fixture/course-aggregate)
