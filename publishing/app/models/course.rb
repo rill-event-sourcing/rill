@@ -42,11 +42,29 @@ class Course < ActiveRecord::Base
     errors = errors_when_publishing
     throw errors if errors.any?
 
-    publish_response =  HTTParty.put(publishing_url,
-                                     headers: { 'Content-Type' => 'application/json' },
-                                     body: course_json,
-                                     timeout: 600)
+    begin
+      publish_response =  HTTParty.put(publishing_url,
+                                       headers: { 'Content-Type' => 'application/json' },
+                                       body: course_json,
+                                       timeout: 600)
+
+    rescue Errno::ECONNREFUSED
+      throw "Connection refused while publishing to: #{ publishing_url }"
+    rescue Net::ReadTimeout
+      throw "Timeout while publishing to: #{ publishing_url }"
+    rescue Exception => ex
+      throw "Unknown exception while publishing to: #{ publishing_url }: #{ ex }"
+    end
+
+    if !publish_response
+      throw "Course '#{ self }' was NOT published! No response code!"
+    end
+
+    if publish_response.code != 200
+      throw "Course '#{ self }' was NOT published! Response code was: #{ publish_response.code }"
+    end
   end
+
   handle_asynchronously :publish!
 
 end
