@@ -47,12 +47,13 @@ namespace :deploy do
 
     Rake::Task["deploy:stack_b"].execute
     Rake::Task["deploy:stop_balancer"].execute
+    Rake::Task["deploy:delayed_jobs:stop"].execute
     Rake::Task["deploy:symlink"].execute
     Rake::Task["deploy:bundle_install"].execute
     Rake::Task["deploy:migrate"].execute
     Rake::Task["deploy:restart"].execute
-    Rake::Task["deploy:delayed_jobs:restart"].execute
     Rake::Task["deploy:check_up"].execute
+    Rake::Task["deploy:delayed_jobs:start"].execute
     Rake::Task["deploy:start_balancer"].execute
 
     invoke "deploy:cleanup"
@@ -77,12 +78,13 @@ namespace :deploy do
     Rake::Task["deploy:check_up"].execute
 
     Rake::Task["deploy:stack_b"].execute
+    Rake::Task["deploy:delayed_jobs:stop"].execute
     Rake::Task["deploy:symlink"].execute
     Rake::Task["deploy:bundle_install"].execute
     Rake::Task["deploy:migrate"].execute
     Rake::Task["deploy:restart"].execute
-    Rake::Task["deploy:delayed_jobs:restart"].execute
     Rake::Task["deploy:check_up"].execute
+    Rake::Task["deploy:delayed_jobs:start"].execute
 
     Rake::Task["deploy:stack_a"].execute
     Rake::Task["deploy:start_balancer"].execute
