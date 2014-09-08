@@ -24,6 +24,20 @@ RSpec.describe HomeController, :type => :controller do
     end
   end
 
+  describe "GET check" do
+    it "should warn when the latex rendering engine is not reachable" do
+      response_object = Net::HTTPOK.new('1.1', 200, 'OK')
+      allow(response_object).to receive(:body).and_return({foo:'bar'})
+      mocked_response = HTTParty::Response.new({},response_object,{})
+      post :check
+      expect(assigns(:errors)).to include "Error with the connection to the Latex rendering engine"
+      expect(HTTParty).to receive(:post).with("http://localhost:16000/", body: "2+2=4").and_return(mocked_response)
+      post :check
+      expect(assigns(:errors)).not_to include "Error with the connection to the Latex rendering engine"
+    end
+
+  end
+
   describe "POST publish" do
 
     it "should publish the course material when there are no errors" do
@@ -42,6 +56,7 @@ RSpec.describe HomeController, :type => :controller do
       mocked_response = HTTParty::Response.new({},response_object,{})
       expect(HTTParty).to receive(:put).with(@url, headers: @headers, body: @body, timeout: 30).and_return(mocked_response)
       post :publish
+      p assigns(:errors)
       expect(response).to redirect_to root_path
       expect(controller.flash[:notice]).to eq "Course '#{ @course }' was succesfully published!"
     end
