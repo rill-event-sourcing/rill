@@ -10,7 +10,7 @@
             [studyflow.web.aggregates :as aggregates]
             [studyflow.web.service :as service]
             [studyflow.web.history :refer [history-link]]
-            [studyflow.web.helpers :refer [modal raw-html split-text-and-inputs render-question]]
+            [studyflow.web.helpers :refer [modal raw-html tag-tree-to-om]]
             [clojure.walk :as walk]
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go]]))
@@ -296,24 +296,9 @@
                                  (for [{:keys [title id]
                                         :as subsection} subsections]
                                    (dom/li nil title))))
-               (map (fn [{:keys [title text id] :as subsection}]
+               (map (fn [{:keys [title tag-tree id] :as subsection}]
                       (dom/section #js {:className "m-subsection"}
-                                   (apply dom/div nil
-                                          (for [text-or-input (split-text-and-inputs text
-                                                                                     (keys inputs))]
-                                            ;; this wrapper div is
-                                            ;; required, otherwise the
-                                            ;; dangerouslySetInnerHTML
-                                            ;; breaks when mixing html
-                                            ;; in text and inputs
-                                            (dom/div #js {:className "dangerous-html-wrap"}
-                                                     (if-let [input (get inputs text-or-input)]
-                                                       input
-                                                       (raw-html text-or-input)))))
-
-
-                                   ))
-
+                                   (tag-tree-to-om tag-tree inputs)))
                     subsections))))))
 
 (defn section-explanation-panel [cursor owner]
@@ -577,7 +562,7 @@
                                             "Volgende paragraaf"))
                          nil))
                  (dom/article #js {:id "m-section"}
-                              (render-question (:text question-data) inputs)
+                              (tag-tree-to-om (:tag-tree question-data) inputs)
                               (when revealed-answer
                                 (dom/div #js {:dangerouslySetInnerHTML #js {:__html revealed-answer}} nil)))
                  (dom/div #js {:id "m-question_bar"}
