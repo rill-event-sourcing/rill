@@ -49,20 +49,32 @@ class Course < ActiveRecord::Base
                                        timeout: 600)
 
     rescue Errno::ECONNREFUSED
-      throw "Connection refused while publishing to: #{ publishing_url }"
+      info = "Connection refused while publishing to: #{ publishing_url }"
+      pretty_debug info
+      throw info
     rescue Net::ReadTimeout
-      throw "Timeout while publishing to: #{ publishing_url }"
+      info = "Timeout while publishing to: #{ publishing_url }"
+      pretty_debug info
+      throw info
     rescue Exception => ex
-      throw "Unknown exception while publishing to: #{ publishing_url }: #{ ex }"
+      info = "Unknown exception while publishing to: #{ publishing_url }: #{ ex }"
+      pretty_debug info
+      throw info
     end
 
     if !publish_response
-      throw "Course '#{ self }' was NOT published! No response code!"
+      info = "Course '#{ self }' was NOT published! No response code!"
+      pretty_debug info
+      throw info
     end
 
     if publish_response.code != 200
-      throw "Course '#{ self }' was NOT published! Response code was: #{ publish_response.code }"
+      info = "Course '#{ self }' was NOT published! Response code was: #{ publish_response.code }"
+      pretty_debug info
+      throw info
     end
+
+    pretty_debug "Course '#{ self }' was successfully published!"
   end
 
   handle_asynchronously :publish!
