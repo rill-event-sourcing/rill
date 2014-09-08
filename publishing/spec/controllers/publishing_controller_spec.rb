@@ -47,7 +47,6 @@ RSpec.describe PublishingController, :type => :controller do
       post :check
       expect(assigns(:errors)).not_to include "Error with the connection to the Latex rendering engine"
     end
-
   end
 
   describe "POST publish async" do
