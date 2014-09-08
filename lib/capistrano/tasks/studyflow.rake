@@ -98,9 +98,8 @@ namespace :deploy do
   task :check do
     throw "no valid GIT SHA given!" unless ENV['revision'] =~ /^[0-9a-f]{40}$/
     set :current_revision, ENV['revision']
-    on roles *fetch(:release_roles) do |host|
-      execute :mkdir, '-pv', releases_path
-    end
+    invoke 'deploy:check:directories'
+    invoke 'deploy:check:linked_dirs'
   end
 
 
@@ -112,7 +111,7 @@ namespace :deploy do
     on roles *fetch(:release_roles) do |host|
       execute :mkdir, '-p', release_path
       within release_path do
-        execute "s3cmd get  #{ fetch(:s3path) }/#{ fetch(:current_revision) }/*#{ host.roles.first }* #{ release_path }/"
+        execute "s3cmd get #{ fetch(:s3path) }/#{ fetch(:current_revision) }/*#{ host.roles.first }* #{ release_path }/"
         execute "cd #{ release_path } && ls -r | sed 1d | while read i ; do echo \" -> deleting older release $i\" ; rm \"\$i\"; done"
       end
       role = host.roles.first
@@ -153,6 +152,7 @@ namespace :deploy do
         role = host.roles.first
         if role == :publish
           execute :ln, '-s', release_path, current_path
+          invoke 'deploy:symlink:linked_dirs'
         else
           jar_file = capture "ls #{ release_path }/*.jar"
           execute :ln, '-s', release_path.join(jar_file), current_path
@@ -359,5 +359,48 @@ namespace :deploy do
     end
   end
 
+
+  namespace :check do
+    desc "check dirs"
+    task :directories do
+      on roles *fetch(:release_roles) do
+        execute :mkdir, '-pv', releases_path
+      end
+      on roles :publish do
+        execute :mkdir, '-pv', shared_path
+      end
+    end
+
+    desc "check linked dirs"
+    task :linked_dirs do
+      next unless any? :linked_dirs
+      on roles :publish do
+        execute :mkdir, '-pv', linked_dirs(shared_path)
+      end
+    end
+  end
+
+
+
+  namespace :symlink do
+    desc 'Symlink linked directories'
+    task :linked_dirs do
+      next unless any? :linked_dirs
+      on roles(:publish) do
+        execute :mkdir, '-pv', linked_dir_parents(release_path)
+
+        fetch(:linked_dirs).each do |dir|
+          target = release_path.join(dir)
+          source = shared_path.join(dir)
+          unless test "[ -L #{target} ]"
+            if test "[ -d #{target} ]"
+              execute :rm, '-rf', target
+            end
+            execute :ln, '-s', source, target
+          end
+        end
+      end
+    end
+  end
 
 end # /namespace
