@@ -199,7 +199,7 @@ namespace :deploy do
       within release_path do
         with rails_env: fetch(:stage) do
           warn " restarting delayed jobs on #{ host.hostname } ".center(72, "#")
-          execute :bundle, :exec, :'script/delayed_job', args, :restart
+          execute :bundle, :exec, :'script/delayed_job', :restart
         end
       end
     end

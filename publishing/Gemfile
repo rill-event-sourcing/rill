@@ -21,6 +21,7 @@ gem 'httparty'
 gem 'redis'
 gem 'newrelic_rpm'
 gem 'delayed_job_active_record'
+gem 'daemons'
 
 group :development, :test do
   gem 'better_errors'
