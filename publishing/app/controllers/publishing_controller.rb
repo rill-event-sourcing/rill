@@ -11,7 +11,7 @@ class PublishingController < ApplicationController
     rescue
       @errors << "Error with the connection to the Latex rendering engine"
     end
-    @errors << Course.current.errors_when_publishing
+    @errors += Course.current.errors_when_publishing
   end
 
   def publish
