@@ -20,17 +20,6 @@ class ApplicationController < ActionController::Base
   def set_redirect_cookie
   end
 
-  def really_set_redirect_cookie
-    if StudyflowPublishing::Application.config.cookie_domain == "localhost"
-      cookies["studyflow_redir_to"] = { value: request.original_url }
-    else
-      cookies["studyflow_redir_to"] = {
-        value: request.original_url,
-        domain: StudyflowPublishing::Application.config.cookie_domain
-      }
-    end
-  end
-
   def check_authentication
     user_id = cookies["studyflow_session"]
     if user_id && StudyflowAuth.logged_in?(user_id)
@@ -65,6 +54,5 @@ def set_line_inputs(question, line_inputs_hash)
       end
     end
   end
-
 
 end

@@ -26,7 +26,7 @@
 
 (defn wrap-no-cache-dwim
   "Explicitly set no-caching headers on any request/response pair
-that can not be cached (no set-cookies, POSTs, redirectes etc)"
+that can not be cached (no set-cookies, POSTs, redirects etc)"
   [handler]
   (fn [request]
     (let [response (handler request)]

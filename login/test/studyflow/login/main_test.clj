@@ -119,9 +119,9 @@
       (let [resp (handler {:redirect-for-role user-role, :cookies {}, :default-redirect-paths default-redirect-paths})]
         (is (= (default-redirect-paths user-role) ((:headers resp) "Location")  "this-is-a-url"))))
     ;; cookie functionality removed
-    (testing "with redirect-for-role and cookie"
+    (testing "with redirect-for-role"
       (let [path "this-is-a-url"
-            resp (handler {:redirect-for-role user-role, :default-redirect-paths default-redirect-paths, :cookies {"studyflow_redir_to" {:value path}}})]
+            resp (handler {:redirect-for-role user-role, :default-redirect-paths default-redirect-paths})]
         (is (= path ((:headers resp) "Location")))))))
 
 (deftest get-session-id-from-cookies-test
