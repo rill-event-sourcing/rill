@@ -1,0 +1,31 @@
+%div.container
+  %div.row
+    %div.col-md-8.col-md-offset-2
+      - if @jobs.empty?
+        %div.row
+          %div.alert.alert-info
+            %p{style:"text-align:center"} All scheduled jobs have completed successfully, no new jobs are scheduled
+        %div.row
+          %div.col-md-3.col-md-offset-3
+            = link_to 'Check material and publish', check_course_path, class: "btn btn-lg btn-info"
+
+      - else
+        %h1 Jobs queued
+        %table.table.table-bordered
+          %thead
+            %tr
+              %th id
+              %td created at
+              %td failed at
+              %td attempts
+              %th last error
+              %th del
+          %tbody
+            - @jobs.each do |job|
+              %tr
+                %td= job.id
+                %td.col-md-2= job.created_at ? job.created_at.to_s(:short) : ''
+                %td.col-md-2= job.failed_at ? job.failed_at.to_s(:short) : ''
+                %td= job.attempts
+                %td= job.last_error.to_s.truncate(100, omission: "...")
+                %td= link_to('del', delete_job_path(id: job.id), method: :delete, data: { confirm: "Are you sure to delete job #{job.id}?" })

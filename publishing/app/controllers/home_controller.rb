@@ -12,51 +12,7 @@ class HomeController < ApplicationController
     end
   end
 
-  def check
-    @errors = []
-    begin
-      response = HTTParty.post("http://localhost:16000/", body: "2+2=4")
-    rescue
-      @errors << "Error with the connection to the Latex rendering engine"
-    end
-    @errors << Course.current.errors_when_publishing
-  end
-
   def index
-  end
-
-  def publish
-    course = Course.current
-    throw Exception.new("Publishing without course selected!") unless course
-
-    course_json = JSON.pretty_generate(course.to_publishing_format)
-    publishing_url = "#{StudyflowPublishing::Application.config.learning_server}/api/internal/course/#{ course.id }"
-
-    if course.errors_when_publishing.any?
-      redirect_to check_course_path
-    else
-      begin
-        publish_response =  HTTParty.put(publishing_url,
-                                         headers: { 'Content-Type' => 'application/json' },
-                                         body: course_json,
-                                         timeout: 30)
-      rescue Errno::ECONNREFUSED
-        failed_publish_msg = "Connection refused while publishing to: #{ publishing_url }"
-      rescue Net::ReadTimeout
-        failed_publish_msg = "Timeout while publishing to: #{ publishing_url }"
-      rescue Exception => ex
-        failed_publish_msg = "Unknow exception while publishing to: #{ publishing_url }: #{ ex }"
-      end
-
-      if publish_response && publish_response.code == 200
-        redirect_to root_path, notice: "Course '#{ course }' was succesfully published!"
-      else
-        flash[:alert] = "Course '#{ course }' was NOT published!"
-        failed_publish_msg ||= "Response code was: #{ publish_response.code }"
-        flash[:notice] = failed_publish_msg
-        redirect_to root_path
-      end
-    end
   end
 
   private
