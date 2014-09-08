@@ -71,7 +71,7 @@
                          ;; was already started
                          )
               :error-handler (fn [res]
-                               ;; 401 = no current events for section test
+                               ;; 204 = no current events for section test
                                (PUT (str "/api/section-test-init/" course-id "/" section-id "/" student-id)
                                     {:format :json
                                      :handler (command-aggregate-handler cursor notification-channel section-id)
@@ -160,7 +160,7 @@
                                  (handle-replay-events cursor section-id events aggregate-version)))
                     :error-handler (fn [res]
                                      ;; currently the api
-                                     ;; gives a 401 when
+                                     ;; gives a 204 when
                                      ;; there are no events
                                      ;; for an aggregate
                                      (handle-replay-events cursor section-id [] -1)
@@ -197,8 +197,8 @@
                          (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
                            (handle-replay-events cursor course-id events aggregate-version)))
               :error-handler (fn [e]
-                               ;; 401 means there are no replay events
-                               (if (= (:status e) 401)
+                               ;; 204 means there are no replay events
+                               (if (= (:status e) 204)
                                  (om/update! cursor
                                              [:view :entry-quiz-replay-done]
                                              true)

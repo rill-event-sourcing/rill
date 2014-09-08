@@ -15,7 +15,7 @@
      :body {:events events
             :aggregate-id aggregate-id
             :aggregate-version aggregate-version}}
-    {:status 401}))
+    {:status 204}))
 
 (def handler
   (combine-ring-handlers
