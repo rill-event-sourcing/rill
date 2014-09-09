@@ -26,18 +26,12 @@
     (sql/query spec ["SELECT payload, stream_order, insert_order FROM rill_events WHERE insert_order > ? ORDER BY insert_order ASC LIMIT ?"
                      cursor page-size])))
 
-(defn- lazy-select [cursor page-size selector]
-  (let [records (selector cursor page-size)]
-    (if (< (count records) page-size)
-      records
-      (concat records
-              (lazy-seq (lazy-select (:cursor (meta (last records)))
-                                     page-size
-                                     selector))))))
-
 (defn messages
   [cursor page-size selector]
-  (seq (map record->message (lazy-select cursor page-size selector))))
+  (let [p (map record->message (selector cursor page-size))]
+    (if (< (count p) page-size)
+      (seq p) ;; make sure we return nil when no messages are found
+      (concat p (lazy-seq (messages (:cursor (meta (last p))) page-size selector))))))
 
 (defrecord PsqlEventStore [spec page-size]
   EventStore
