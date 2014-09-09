@@ -69,14 +69,15 @@
               :handler (fn [res]
                          ;; when there's any event the section-test
                          ;; was already started
-                         )
-              :error-handler (fn [res]
-                               ;; 401 = no current events for section test
-                               (PUT (str "/api/section-test-init/" course-id "/" section-id "/" student-id)
-                                    {:format :json
-                                     :handler (command-aggregate-handler cursor notification-channel section-id)
-                                     :error-handler (command-error-handler cursor)
-                                     }))}))
+                         (let [{:keys [events]} (json-edn/json->edn res)]
+                           (when-not events
+                             (PUT (str "/api/section-test-init/" course-id "/" section-id "/" student-id)
+                                  {:format :json
+                                   :handler (command-aggregate-handler cursor notification-channel section-id)
+                                   :error-handler (command-error-handler cursor)
+                                   }))))
+              :error-handler basic-error-handler}))
+
       "section-test-commands/reveal-worked-out-answer"
       (let [[section-id student-id section-test-aggregate-version course-id question-id] args]
         (PUT (str "/api/section-test-reveal-worked-out-answer/" section-id "/" student-id "/" course-id "/" question-id)
@@ -157,14 +158,11 @@
                    {:format :json
                     :handler (fn [res]
                                (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
-                                 (handle-replay-events cursor section-id events aggregate-version)))
-                    :error-handler (fn [res]
-                                     ;; currently the api
-                                     ;; gives a 401 when
-                                     ;; there are no events
-                                     ;; for an aggregate
-                                     (handle-replay-events cursor section-id [] -1)
-                                     )})))))
+                                 (if events
+                                   (handle-replay-events cursor section-id events aggregate-version)
+                                   (handle-replay-events cursor section-id [] -1))))
+                    :error-handler basic-error-handler})))))
+
       "data/section-explanation"
       (let [_ (prn "section explanation get data" args)
             [chapter-id section-id] args
@@ -183,6 +181,7 @@
                                                       [:view :section (:id section-data) :data]
                                                       section-data))))
                 :error-handler basic-error-handler})))
+
       "data/entry-quiz"
       (let [[course-id student-id] args]
         (when-not (get-in @cursor [:view :course-material])
@@ -195,14 +194,9 @@
                                      [:view :entry-quiz-replay-done]
                                      true)
                          (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
-                           (handle-replay-events cursor course-id events aggregate-version)))
-              :error-handler (fn [e]
-                               ;; 401 means there are no replay events
-                               (if (= (:status e) 401)
-                                 (om/update! cursor
-                                             [:view :entry-quiz-replay-done]
-                                             true)
-                                 (basic-error-handler e)))}))
+                           (when events
+                             (handle-replay-events cursor course-id events aggregate-version))))
+              :error-handler basic-error-handler}))
 
       nil)))
 
