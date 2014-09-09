@@ -69,14 +69,18 @@
               :handler (fn [res]
                          ;; when there's any event the section-test
                          ;; was already started
+                         ;;
+                         ;; 204 = no current events for section test
+                         (when (= (:status res) 204)
+                           (PUT (str "/api/section-test-init/" course-id "/" section-id "/" student-id)
+                                {:format :json
+                                 :handler (command-aggregate-handler cursor notification-channel section-id)
+                                 :error-handler (command-error-handler cursor)
+                                 })
+                           )
                          )
-              :error-handler (fn [res]
-                               ;; 204 = no current events for section test
-                               (PUT (str "/api/section-test-init/" course-id "/" section-id "/" student-id)
-                                    {:format :json
-                                     :handler (command-aggregate-handler cursor notification-channel section-id)
-                                     :error-handler (command-error-handler cursor)
-                                     }))}))
+              :error-handler basic-error-handler}))
+
       "section-test-commands/reveal-worked-out-answer"
       (let [[section-id student-id section-test-aggregate-version course-id question-id] args]
         (PUT (str "/api/section-test-reveal-worked-out-answer/" section-id "/" student-id "/" course-id "/" question-id)
@@ -157,14 +161,15 @@
                    {:format :json
                     :handler (fn [res]
                                (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
-                                 (handle-replay-events cursor section-id events aggregate-version)))
-                    :error-handler (fn [res]
-                                     ;; currently the api
-                                     ;; gives a 204 when
-                                     ;; there are no events
-                                     ;; for an aggregate
-                                     (handle-replay-events cursor section-id [] -1)
-                                     )})))))
+                                 ;; currently the api
+                                 ;; gives a 204 when
+                                 ;; there are no events
+                                 ;; for an aggregate
+                                 (if (= (:status res) 204)
+                                   (handle-replay-events cursor section-id [] -1)
+                                   (handle-replay-events cursor section-id events aggregate-version))))
+                    :error-handler basic-error-handler})))))
+
       "data/section-explanation"
       (let [_ (prn "section explanation get data" args)
             [chapter-id section-id] args
@@ -195,14 +200,13 @@
                                      [:view :entry-quiz-replay-done]
                                      true)
                          (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
-                           (handle-replay-events cursor course-id events aggregate-version)))
-              :error-handler (fn [e]
-                               ;; 204 means there are no replay events
-                               (if (= (:status e) 204)
-                                 (om/update! cursor
-                                             [:view :entry-quiz-replay-done]
-                                             true)
-                                 (basic-error-handler e)))}))
+                           ;; 204 means there are no replay events
+                           (if (= (:status e) 204)
+                             (om/update! cursor
+                                         [:view :entry-quiz-replay-done]
+                                         true)
+                             (handle-replay-events cursor course-id events aggregate-version))))
+              :error-handler basic-error-handler e}))
 
       nil)))
 
