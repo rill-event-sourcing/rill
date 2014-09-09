@@ -568,14 +568,14 @@
                                        "Blijven oefenen"))
                          :show-stuck-modal
                          (modal (dom/span nil
-                                          (raw-html "<h1>Ouch! You slipped!</h1><img src=\"http://www.reactiongifs.com/wp-content/uploads/2012/06/xofi3.gif\">"))
+                                          (raw-html "<h1 class=\"stumbling_block\">Oeps! deze is moeilijk</h1><img src=\"https://s3-eu-west-1.amazonaws.com/studyflow-assets/images/187.gif\"><p>We raden je aan om de uitleg nog een keer te lezen.<br>Dan worden de vragen makkelijker!</p>"))
                                 (dom/button #js {:onClick
                                                  (fn [e]
                                                    (om/update! cursor
                                                                [:view :progress-modal]
                                                                :dismissed)
                                                    (js/window.location.assign explanation-link))}
-                                            "Uitleg")
+                                            "Uitleg lezen")
                                 nil)
 
                          :show-streak-completed-modal
