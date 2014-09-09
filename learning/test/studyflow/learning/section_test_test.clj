@@ -234,11 +234,11 @@
                                          (events/question-answered-incorrectly section-id student-id question-id incorrect-inputs)
                                          (events/question-answered-correctly section-id student-id question-id correct-inputs)])))
                 (conj (events/question-assigned section-id student-id question-id question-total)))
-            [status [incorrectly-answered-event stuck-event :as events]]
+            [status [answered-incorrectly-event stuck-event :as events]]
             (execute (commands/check-answer! section-id student-id 7 course-id question-id incorrect-inputs)
                      upto-third-q-stream)]
         (is (= :ok status))
-        (is (= (message/type incorrectly-answered-event)
+        (is (= (message/type answered-incorrectly-event)
                ::events/QuestionAnsweredIncorrectly))
         (is (= (message/type stuck-event)
                ::events/Stuck))
@@ -283,11 +283,11 @@
                                                (conj (events/question-assigned section-id student-id question-id question-total)))]
 
                 (testing "getting stuck again after being unstuck"
-                  (let [[status [incorrectly-answered-event stuck-event :as events]]
+                  (let [[status [answered-incorrectly-event stuck-event :as events]]
                         (execute (commands/check-answer! section-id student-id 20 course-id question-id incorrect-inputs)
                                  stuck-then-unstuck-stream)]
                     (is (= :ok status))
-                    (is (= (message/type incorrectly-answered-event)
+                    (is (= (message/type answered-incorrectly-event)
                            ::events/QuestionAnsweredIncorrectly))
                     (is (= (message/type stuck-event)
                            ::events/Stuck)))))))))))
