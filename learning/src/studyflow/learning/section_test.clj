@@ -109,8 +109,9 @@
 (def streak-to-stumbling-block 3)
 
 (defn not-correct-answer-will-trigger-stumbling-block?
-  [{:keys [stumbling-streak stuck? current-question-status]}]
+  [{:keys [stumbling-streak stuck? finished? current-question-status]}]
   (and (not stuck?)
+       (not finished?)
        (nil? current-question-status)
        (= stumbling-streak (dec streak-to-stumbling-block))))
 

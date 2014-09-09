@@ -164,6 +164,21 @@
               (is (= (message/type answered-correctly-event)
                      ::events/QuestionAnsweredCorrectly))
               (is (= (count events) 1))))
+          (testing "after a finished section-test you do not get stuck after 3 incorrect questions"
+            (let [continue-stream (-> finished-stream
+                                      (into (reduce into []
+                                                    (repeat 2 [(events/question-assigned section-id student-id question-id question-total)
+                                                               (events/question-answered-incorrectly section-id student-id question-id incorrect-inputs)
+                                                               (events/question-answered-correctly section-id student-id question-id correct-inputs)])) )
+                                      (conj (events/question-assigned section-id student-id question-id question-total)))
+                  [status [answered-incorrectly-event :as events]]
+                  (execute (commands/check-answer! section-id student-id 18 course-id question-id incorrect-inputs)
+                           continue-stream)]
+              (is (= status :ok))
+              (is (= (message/type answered-incorrectly-event)
+                     ::events/QuestionAnsweredIncorrectly))
+              (is (= (count events) 1))))
+
           (testing "after finished for another streak a StreakCompleted is generated"
             (let [continue-stream (into finished-stream
                                         (interpose
