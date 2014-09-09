@@ -29,7 +29,7 @@
 (defn render-completion [classes meijerink-criteria domains students params options]
   (let [meijerink-criteria (sort meijerink-criteria)
         domains (sort domains)
-        class (first (filter #(= (:classid params) (:id %)) classes))
+        class (first (filter #(= (:class-id params) (:id %)) classes))
         scope (:meijerink params)
         scope (if (str/blank? scope) nil scope)]
     (layout
@@ -39,12 +39,12 @@
 
      [:form {:method "GET"}
       (form/drop-down {:onchange "this.form.submit()"}
-                      "classid"
+                      "class-id"
                       (into [["-- Kies klas --" ""]]
                             (sort-by first
                                      (map #(vector (:full-name %) (:id %))
                                           classes)))
-                      (:classid params))
+                      (:class-id params))
       (form/drop-down {:onchange "this.form.submit()"}
                       "meijerink"
                       (into [["-- Kies Niveau --" ""]]
@@ -83,11 +83,11 @@
 
   (GET "/reports/completion"
        {:keys [read-model flash teacher redirect-urls]
-        {:keys [classid] :as params} :params}
+        {:keys [class-id] :as params} :params}
        (let [classes (read-model/classes read-model teacher)
              meijerink-criteria (read-model/meijerink-criteria read-model)
              domains (read-model/domains read-model)
-             class (first (filter #(= classid (:id %)) classes))
+             class (first (filter #(= class-id (:id %)) classes))
              students (when class (read-model/students-for-class read-model class))
              options (assoc flash :redirect-urls redirect-urls)]
          (render-completion classes meijerink-criteria domains students params options))))

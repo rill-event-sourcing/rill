@@ -31,12 +31,12 @@
                                       :full-name "Fred Flintstone",
                                       :completion {"A" {:all {:finished 1, :total 10}
                                                         "foo" {:finished 2, :total 17}}}}]
-                                    {:classid "c", :meijerink "A"}
+                                    {:class-id "c", :meijerink "A"}
                                     nil)]
       (is (= "Rapport voor \"C1\" - Studyflow"
              (query-html-content body [[:html] [:head] [:title]])))
       (is (= "C1"
-             (query-html-content body [[:select (enlive/attr= :name "classid")]
+             (query-html-content body [[:select (enlive/attr= :name "class-id")]
                                        [:option (enlive/attr= :selected "selected")]])))
       (is (= "A"
              (query-html-content body [[:select (enlive/attr= :name "meijerink")]
