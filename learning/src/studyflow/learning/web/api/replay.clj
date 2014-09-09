@@ -15,7 +15,9 @@
      :body {:events events
             :aggregate-id aggregate-id
             :aggregate-version aggregate-version}}
-    {:status 204}))
+    ;; 204 would be nicer, but doesn't work well with ajax-cljs
+    {:status 200
+     :body {:events nil}}))
 
 (def handler
   (combine-ring-handlers

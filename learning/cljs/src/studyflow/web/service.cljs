@@ -69,16 +69,13 @@
               :handler (fn [res]
                          ;; when there's any event the section-test
                          ;; was already started
-                         ;;
-                         ;; 204 = no current events for section test
-                         (when (= (:status res) 204)
-                           (PUT (str "/api/section-test-init/" course-id "/" section-id "/" student-id)
-                                {:format :json
-                                 :handler (command-aggregate-handler cursor notification-channel section-id)
-                                 :error-handler (command-error-handler cursor)
-                                 })
-                           )
-                         )
+                         (let [{:keys [events]} (json-edn/json->edn res)]
+                           (when-not events
+                             (PUT (str "/api/section-test-init/" course-id "/" section-id "/" student-id)
+                                  {:format :json
+                                   :handler (command-aggregate-handler cursor notification-channel section-id)
+                                   :error-handler (command-error-handler cursor)
+                                   }))))
               :error-handler basic-error-handler}))
 
       "section-test-commands/reveal-worked-out-answer"
@@ -160,14 +157,10 @@
               (GET (str "/api/section-test-replay/" section-id "/" student-id)
                    {:format :json
                     :handler (fn [res]
-                               ;; currently the api
-                               ;; gives a 204 when
-                               ;; there are no events
-                               ;; for an aggregate
-                               (if (= (:status res) 204)
-                                 (handle-replay-events cursor section-id [] -1)
-                                 (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
-                                   (handle-replay-events cursor section-id events aggregate-version))))
+                               (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
+                                 (if events
+                                   (handle-replay-events cursor section-id events aggregate-version)
+                                   (handle-replay-events cursor section-id [] -1))))
                     :error-handler basic-error-handler})))))
 
       "data/section-explanation"
@@ -200,9 +193,8 @@
                          (om/update! cursor
                                      [:view :entry-quiz-replay-done]
                                      true)
-                         ;; 204 means there are no replay events
-                         (when (= (:status e) 200)
-                           (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
+                         (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
+                           (when events
                              (handle-replay-events cursor course-id events aggregate-version))))
               :error-handler basic-error-handler}))
 
