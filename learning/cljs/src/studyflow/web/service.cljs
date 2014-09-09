@@ -206,7 +206,7 @@
                                          [:view :entry-quiz-replay-done]
                                          true)
                              (handle-replay-events cursor course-id events aggregate-version))))
-              :error-handler basic-error-handler e}))
+              :error-handler basic-error-handler}))
 
       nil)))
 
