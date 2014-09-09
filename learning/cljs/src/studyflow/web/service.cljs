@@ -160,13 +160,13 @@
               (GET (str "/api/section-test-replay/" section-id "/" student-id)
                    {:format :json
                     :handler (fn [res]
-                               (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
-                                 ;; currently the api
-                                 ;; gives a 204 when
-                                 ;; there are no events
-                                 ;; for an aggregate
-                                 (if (= (:status res) 204)
-                                   (handle-replay-events cursor section-id [] -1)
+                               ;; currently the api
+                               ;; gives a 204 when
+                               ;; there are no events
+                               ;; for an aggregate
+                               (if (= (:status res) 204)
+                                 (handle-replay-events cursor section-id [] -1)
+                                 (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
                                    (handle-replay-events cursor section-id events aggregate-version))))
                     :error-handler basic-error-handler})))))
 
@@ -188,6 +188,7 @@
                                                       [:view :section (:id section-data) :data]
                                                       section-data))))
                 :error-handler basic-error-handler})))
+
       "data/entry-quiz"
       (let [[course-id student-id] args]
         (when-not (get-in @cursor [:view :course-material])
@@ -196,15 +197,12 @@
         (GET (str "/api/entry-quiz-replay/" course-id "/" student-id)
              {:params {}
               :handler (fn [res]
-                         (om/update! cursor
-                                     [:view :entry-quiz-replay-done]
-                                     true)
-                         (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
-                           ;; 204 means there are no replay events
-                           (if (= (:status e) 204)
-                             (om/update! cursor
-                                         [:view :entry-quiz-replay-done]
-                                         true)
+                         ;; 204 means there are no replay events
+                         (if (= (:status e) 204)
+                           (om/update! cursor
+                                       [:view :entry-quiz-replay-done]
+                                       true)
+                           (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
                              (handle-replay-events cursor course-id events aggregate-version))))
               :error-handler basic-error-handler}))
 
