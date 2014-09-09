@@ -675,15 +675,21 @@
                          (om/build section-test cursor))
                        (om/build path-panel cursor)))))))
 
-(defn finished? [element]
+(defn not-finished? [element]
   (if-not (= (:status element) "finished")
     element))
 
-(defn first-non-completed-chapter [course]
-  (some finished? (:chapters course)))
+(defn first-nonfinished-section [chapter]
+  (some not-finished? (:sections chapter)))
 
-(defn first-non-completed-section [chapter]
-  (some finished? (:sections chapter)))
+(defn nonfinished-chapter-with-nonfinished-sections [chapter]
+  (if (and
+       (not (= (:status chapter) "finished"))
+       (first-nonfinished-section chapter))
+    chapter))
+
+(defn first-recommendable-chapter [course]
+  (some nonfinished-chapter-with-nonfinished-sections (:chapters course)))
 
 (defn recommended-action [cursor]
   (let [course (get-in cursor [:view :course-material])
@@ -692,15 +698,16 @@
       {:title "Instaptoets"
        :link (history-link {:main :entry-quiz})
        :id (:id entry-quiz)}
-      (let [chapter (first-non-completed-chapter course)
-            section (first-non-completed-section chapter)]
+      (let [chapter (first-recommendable-chapter course)
+            section (first-nonfinished-section chapter)]
         {:title (:title section)
          :id (:id section)
          :link (section-explanation-link cursor chapter section)} ))))
 
 (defn sections-navigation [cursor chapter]
   (apply dom/ol #js {:id "section_list"}
-         (let [recommended-id (:id (recommended-action cursor))]
+         (let [rcm-action (recommended-action cursor)
+               recommended-id (:id rcm-action)]
            (for [{:keys [title status]
                   section-id :id
                   :as section} (:sections chapter)]
