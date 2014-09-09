@@ -197,11 +197,11 @@
         (GET (str "/api/entry-quiz-replay/" course-id "/" student-id)
              {:params {}
               :handler (fn [res]
+                         (om/update! cursor
+                                     [:view :entry-quiz-replay-done]
+                                     true)
                          ;; 204 means there are no replay events
-                         (if (= (:status e) 204)
-                           (om/update! cursor
-                                       [:view :entry-quiz-replay-done]
-                                       true)
+                         (when (= (:status e) 200)
                            (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
                              (handle-replay-events cursor course-id events aggregate-version))))
               :error-handler basic-error-handler}))
