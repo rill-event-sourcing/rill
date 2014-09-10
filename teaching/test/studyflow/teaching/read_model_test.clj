@@ -65,7 +65,7 @@
     (testing "one students with departments with classes"
       (is (= 1 (count (classes model-with-fred-and-teacher teacher))))
       (is (= {"bedrock|boulder|1A" #{"Fred Flintstone"}}
-             (students-by-class model-with-fred-and-department-and-class teacher))))
+             (students-by-class model-with-fred-and-teacher teacher))))
     (testing "two students in the same class"
       (is (= 1 (count (classes model-with-fred-and-barney-in-same-class teacher))))
       (is (= {"bedrock|boulder|1A" #{"Fred Flintstone" "Barney Rubble"}}
