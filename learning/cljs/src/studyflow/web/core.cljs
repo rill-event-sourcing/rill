@@ -700,20 +700,20 @@
                        (om/build path-panel cursor)))))))
 
 (defn not-finished? [element]
-  (if-not (= (:status element) "finished")
+  (when-not (= (:status element) "finished")
     element))
 
 (defn not-stuck? [section]
-  (if-not (= (:status section) "stuck")
+  (when-not (= (:status section) "stuck")
     section))
 
 (defn first-recommendable-section [chapter]
   (some (comp not-stuck? not-finished?) (:sections chapter)))
 
 (defn nonfinished-chapter-with-recommendable-sections [chapter]
-  (if (and
-       (not (= (:status chapter) "finished"))
-       (first-recommendable-section chapter))
+  (when (and
+         (not (= (:status chapter) "finished"))
+         (first-recommendable-section chapter))
     chapter))
 
 (defn first-recommendable-chapter [course]
