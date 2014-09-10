@@ -38,7 +38,6 @@ class Course < ActiveRecord::Base
   def publish!
     course_json = JSON.pretty_generate(self.to_publishing_format)
     publishing_url = "#{StudyflowPublishing::Application.config.learning_server}/api/internal/course/#{ id }"
-
     errors = errors_when_publishing
     throw errors if errors.any?
 

@@ -1,17 +1,16 @@
 %div.container
-  %div.row
+  %div.row{style: "margin-top: 20px;"}
     %div.col-md-8.col-md-offset-2
       - if @errors.empty?
-        %div.row
-          %div.alert.alert-success
-            %p Great, no Errors!
-            %p You can proceed with publishing
+        %div.row{style: "margin-bottom: 20px;"}
+          %div.alert.alert-success{style:"text-align:center"}
+            %p The course material contains no errors, you can proceed with publishing
         %div.row
           %div.col-md-2.col-md-offset-5
             = link_to 'Publish', publish_course_path, class: "btn btn-lg btn-success", method: :post
       - else
-        %div.row
-          %div.alert.alert-danger
+        %div.row{style: "margin-bottom: 20px;"}
+          %div.alert.alert-danger{style:"text-align:center"}
             %p Oh snap! There are some errors with the course material
             %p Please fix the following errors before proceeding:
             %br
