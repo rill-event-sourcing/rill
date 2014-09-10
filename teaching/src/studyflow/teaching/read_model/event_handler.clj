@@ -1,5 +1,6 @@
 (ns studyflow.teaching.read-model.event-handler
   (:require [rill.event-channel :as event-channel]
+            [clojure.tools.logging :as log]
             [rill.message :as message]
             [studyflow.teaching.read-model :as m]))
 
@@ -97,13 +98,27 @@
                :meijerink-criteria meijerink-criteria
                :domains domains))))
 
+(defn strip-course-material [material]
+  (let [strip-section (fn [section]
+                        (dissoc section :questions :subsections :line-input-fields))
+        strip-section-list (fn [sections]
+                             (mapv strip-section sections))
+        strip-chapter (fn [chapter]
+                        (update-in chapter [:sections] strip-section-list))
+        strip-chapter-list (fn [chapters]
+                             (mapv strip-chapter chapters))
+        strip-course (fn [course]
+                       (update-in course [:chapters] strip-chapter-list))]
+    (-> (strip-course material)
+        (dissoc :entry-quiz))))
+
 (defmethod handle-event :studyflow.learning.course.events/Published
   [model {:keys [course-id material]}]
-  (update-material model course-id material))
+  (update-material model course-id (strip-course-material material)))
 
 (defmethod handle-event :studyflow.learning.course.events/Updated
   [model {:keys [course-id material]}]
-  (update-material model course-id material))
+  (update-material model course-id (strip-course-material material)))
 
 ;; teachers
 
