@@ -64,11 +64,11 @@
   (let [strip-section (fn [section]
                         (dissoc section :questions :subsections :line-input-fields))
         strip-section-list (fn [sections]
-                             (vec (map strip-section sections)))
+                             (mapv strip-section sections))
         strip-chapter (fn [chapter]
                         (update-in chapter [:sections] strip-section-list))
         strip-chapter-list (fn [chapters]
-                             (vec (map strip-chapter chapters)))
+                             (mapv strip-chapter chapters))
         strip-course (fn [course]
                        (update-in course [:chapters] strip-chapter-list))]
     (-> (strip-course material)
