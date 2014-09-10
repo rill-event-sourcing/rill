@@ -7,13 +7,15 @@
             [studyflow.learning.course.fixture :refer [course-published-event course-id course-edn]]
             [rill.uuid :refer [new-id]]
             [rill.temp-store :refer [given]]))
-
-(def section-id (:id (first (:sections (first (:chapters course-edn))))))
+(def section (first (:sections (first (:chapters course-edn)))))
+(def section-id (:id section))
+(def question-id (:id (first (:questions section))))
 (def student-id (new-id))
 
 (deftest read-model-test
   (testing "Chapters and learning steps can be requested as a tree"
     (let [model (init-model [course-published-event
+                             (section-test/question-assigned section-id student-id question-id 0)
                              (section-test/finished section-id student-id)])]
       (is (= (get-in (model/course-tree model course-id nil)
                      [:chapters 0 :sections 1 :title])

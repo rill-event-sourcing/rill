@@ -50,3 +50,13 @@
   :section-id m/Id
   :student-id m/Id
   section-test-id)
+
+(defevent Stuck
+  :section-id m/Id
+  :student-id m/Id
+  section-test-id)
+
+(defevent Unstuck
+  :section-id m/Id
+  :student-id m/Id
+  section-test-id)

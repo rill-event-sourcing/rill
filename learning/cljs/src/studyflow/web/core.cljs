@@ -93,6 +93,7 @@
                                                       "open ")
                                                     (get
                                                      {:finished "finished"
+                                                      :stuck "stumbling_block"
                                                       :in-progress "in_progress"}
                                                      (aggregates/section-test-progress
                                                       (get-in cursor [:aggregates section-id]))
@@ -447,14 +448,22 @@
                   (om/update! cursor
                               [:view :progress-modal]
                               :launchable)
+
                   "studyflow.web.ui/FinishedModal"
                   (om/update! cursor
                               [:view :progress-modal]
                               :show-finish-modal)
+
+                  "studyflow.learning.section-test.events/Stuck"
+                  (om/update! cursor
+                              [:view :progress-modal]
+                              :show-stuck-modal)
+
                   "studyflow.learning.section-test.events/StreakCompleted"
                   (om/update! cursor
                               [:view :progress-modal]
                               :show-streak-completed-modal)
+
                   "studyflow.learning.section-test.events/QuestionAnsweredIncorrectly"
                   (do (om/update! cursor
                                   [:view :shake-class]
@@ -484,6 +493,9 @@
                              (:correct question))
             finished-last-action (aggregates/finished-last-action section-test)
             progress-modal (get-in cursor [:view :progress-modal])
+            explanation-link (-> (get-in cursor [:view :selected-path])
+                                 (assoc :section-tab :explanation)
+                                 history-link)
             course-id (get-in cursor [:static :course-id])
             section-test-aggregate-version (:aggregate-version section-test)
             inputs (input-builders cursor section-id question-id question-index question-data current-answers (:inputs question) answer-correct)
@@ -554,6 +566,18 @@
                                                                     course-id])
                                                        false)}
                                        "Blijven oefenen"))
+                         :show-stuck-modal
+                         (modal (dom/span nil
+                                          (raw-html "<h1 class=\"stumbling_block\">Oeps! deze is moeilijk</h1><img src=\"https://s3-eu-west-1.amazonaws.com/studyflow-assets/images/187.gif\"><p>We raden je aan om de uitleg nog een keer te lezen.<br>Dan worden de vragen makkelijker!</p>"))
+                                (dom/button #js {:onClick
+                                                 (fn [e]
+                                                   (om/update! cursor
+                                                               [:view :progress-modal]
+                                                               :dismissed)
+                                                   (js/window.location.assign explanation-link))}
+                                            "Uitleg lezen")
+                                nil)
+
                          :show-streak-completed-modal
                          (modal (dom/span nil
                                           (raw-html "<h1>Hoppa! Weer goed!</h1><img src=\"https://s3-eu-west-1.amazonaws.com/studyflow-assets/images/184.gif\"><p>Je hebt deze paragraaf nog een keer voltooid.<br>We denken dat je hem nu wel snapt :).</p>"))
@@ -675,15 +699,25 @@
                          (om/build section-test cursor))
                        (om/build path-panel cursor)))))))
 
-(defn finished? [element]
-  (if-not (= (:status element) "finished")
+(defn not-finished? [element]
+  (when-not (= (:status element) "finished")
     element))
 
-(defn first-non-completed-chapter [course]
-  (some finished? (:chapters course)))
+(defn not-stuck? [section]
+  (when-not (= (:status section) "stuck")
+    section))
 
-(defn first-non-completed-section [chapter]
-  (some finished? (:sections chapter)))
+(defn first-recommendable-section [chapter]
+  (some (comp not-stuck? not-finished?) (:sections chapter)))
+
+(defn nonfinished-chapter-with-recommendable-sections [chapter]
+  (when (and
+         (not (= (:status chapter) "finished"))
+         (first-recommendable-section chapter))
+    chapter))
+
+(defn first-recommendable-chapter [course]
+  (some nonfinished-chapter-with-recommendable-sections (:chapters course)))
 
 (defn recommended-action [cursor]
   (let [course (get-in cursor [:view :course-material])
@@ -692,19 +726,21 @@
       {:title "Instaptoets"
        :link (history-link {:main :entry-quiz})
        :id (:id entry-quiz)}
-      (let [chapter (first-non-completed-chapter course)
-            section (first-non-completed-section chapter)]
+      (let [chapter (first-recommendable-chapter course)
+            section (first-recommendable-section chapter)]
         {:title (:title section)
          :id (:id section)
          :link (section-explanation-link cursor chapter section)} ))))
 
 (defn sections-navigation [cursor chapter]
   (apply dom/ol #js {:id "section_list"}
-         (let [recommended-id (:id (recommended-action cursor))]
+         (let [rcm-action (recommended-action cursor)
+               recommended-id (:id rcm-action)]
            (for [{:keys [title status]
                   section-id :id
                   :as section} (:sections chapter)]
              (let [section-status (get {"finished" "finished"
+                                        "stuck" "stumbling_block"
                                         "in-progress" "in_progress"} status "")
                    section-link (section-explanation-link cursor chapter section)]
                (dom/li #js {:data-id section-id

@@ -39,6 +39,7 @@
                  (seq (filter
                        (comp #{"studyflow.learning.section-test.events/Finished"
                                "studyflow.learning.section-test.events/StreakCompleted"
+                               "studyflow.learning.section-test.events/Stuck"
                                "studyflow.learning.section-test.events/QuestionAnsweredIncorrectly"} :type)
                        events))]
         (doseq [event notification-events]

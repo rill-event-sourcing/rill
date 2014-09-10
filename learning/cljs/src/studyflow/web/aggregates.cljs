@@ -7,15 +7,20 @@
       (conj (pop streak) [question-id result])
       streak ;; already recorded a streak entry
       )
-    (conj streak [question-id result])
-    ))
+    (conj streak [question-id result])))
 
 (defn section-test-progress [section-test-agg]
   (cond
+
    (:finished section-test-agg)
    :finished
+
+   (:stuck section-test-agg)
+   :stuck
+
    section-test-agg
    :in-progress
+
    :else ;; nil and false
    :not-started))
 
@@ -26,11 +31,13 @@
 
 (defn handle-event [agg event]
   (condp = (:type event)
+
     "studyflow.learning.section-test.events/Created"
     (let [aggr-id (:section-id event)]
       {:id aggr-id
        :questions []
        :streak []})
+
     "studyflow.learning.section-test.events/QuestionAssigned"
     (let [question-id (:question-id event)]
       (-> agg
@@ -38,6 +45,7 @@
                                         :question-index (count (:questions agg))})
           (update-in [:streak]
                      conj [question-id :open])))
+
     "studyflow.learning.section-test.events/AnswerRevealed"
     (let [question-id (:question-id event)
           answer (:answer event)]
@@ -51,6 +59,7 @@
                                 (assoc q
                                   :worked-out-answer answer)
                                 q)))))))
+
     "studyflow.learning.section-test.events/QuestionAnsweredCorrectly"
     (let [question-id (:question-id event)
           inputs (:inputs event)]
@@ -65,6 +74,7 @@
                                   :correct true
                                   :inputs inputs)
                                 q)))))))
+
     "studyflow.learning.section-test.events/QuestionAnsweredIncorrectly"
     (let [question-id (:question-id event)
           inputs (:inputs event)]
@@ -79,6 +89,15 @@
                                   :correct false
                                   :inputs inputs)
                                 q)))))))
+
+    "studyflow.learning.section-test.events/Stuck"
+    (assoc agg
+      :stuck true)
+
+    "studyflow.learning.section-test.events/Unstuck"
+    (assoc agg
+      :stuck false)
+
     "studyflow.learning.section-test.events/Finished"
     (assoc agg
       :finished true

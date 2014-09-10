@@ -7,15 +7,15 @@
   (assoc course :sections-by-id
          (into {} (map #(vector (:id %) %) (mapcat :sections (:chapters course))))))
 
-(defn set-student-section-status
-  [model section-id student-id status]
+(defn update-student-section-status
+  [model section-id student-id current-status new-status]
   ;; a finished section will always be marked as such, even when
   ;; continuing after
   (update-in model [:section-statuses section-id student-id]
              (fn [old-status]
-               (if (= old-status :finished)
-                 old-status
-                 status))))
+               (if (= old-status current-status)
+                 new-status
+                 old-status))))
 
 (defn set-student-remedial-chapters-status
   [model course-id student-id status]
