@@ -34,63 +34,58 @@ namespace :deploy do
 
   desc 'Hot deploy application from S3'
   task :hot do
-    invoke "deploy:check"
-    invoke "deploy:update"
+    Rake::Task["deploy:check"].execute
+    Rake::Task["deploy:update"].execute
 
     Rake::Task["deploy:stack_a"].execute
-    Rake::Task["deploy:stop_balancer"].execute
-    Rake::Task["deploy:symlink"].execute
-    Rake::Task["deploy:bundle_install"].execute
-    Rake::Task["deploy:restart"].execute
-    Rake::Task["deploy:check_up"].execute
+    Rake::Task["deploy:update_stack"].execute
     Rake::Task["deploy:start_balancer"].execute
 
     Rake::Task["deploy:stack_b"].execute
-    Rake::Task["deploy:stop_balancer"].execute
-    Rake::Task["deploy:symlink"].execute
-    Rake::Task["deploy:bundle_install"].execute
-    Rake::Task["deploy:migrate"].execute
-    Rake::Task["deploy:restart"].execute
-    Rake::Task["deploy:delayed_jobs:restart"].execute
-    Rake::Task["deploy:check_up"].execute
+    Rake::Task["deploy:update_stack"].execute
     Rake::Task["deploy:start_balancer"].execute
 
-    invoke "deploy:cleanup"
-    invoke "deploy:finished"
+    Rake::Task["deploy:cleanup"].execute
+    Rake::Task["deploy:finished"].execute
   end
 
 
   desc 'Cold deploy application from S3'
   task :cold do
-    invoke "deploy:check"
-    invoke "deploy:update"
+    Rake::Task["deploy:check"].execute
+    Rake::Task["deploy:update"].execute
 
     Rake::Task["deploy:stack_a"].execute
-    Rake::Task["deploy:stop_balancer"].execute
+    Rake::Task["deploy:update_stack"].execute
+
     Rake::Task["deploy:stack_b"].execute
-    Rake::Task["deploy:stop_balancer"].execute
+    Rake::Task["deploy:update_stack"].execute
 
     Rake::Task["deploy:stack_a"].execute
-    Rake::Task["deploy:symlink"].execute
-    Rake::Task["deploy:bundle_install"].execute
-    Rake::Task["deploy:restart"].execute
-    Rake::Task["deploy:check_up"].execute
+    Rake::Task["deploy:start_balancer"].execute
 
     Rake::Task["deploy:stack_b"].execute
+    Rake::Task["deploy:start_balancer"].execute
+
+    Rake::Task["deploy:cleanup"].execute
+    Rake::Task["deploy:finished"].execute
+  end
+
+
+  desc "updating code on a stack"
+  task :update_stack do
+    throw " => Stack not set!" unless fetch(:stack)
+    Rake::Task["deploy:stop_balancer"].execute
+
     Rake::Task["deploy:symlink"].execute
     Rake::Task["deploy:bundle_install"].execute
     Rake::Task["deploy:migrate"].execute
     Rake::Task["deploy:restart"].execute
     Rake::Task["deploy:delayed_jobs:restart"].execute
-    Rake::Task["deploy:check_up"].execute
 
-    Rake::Task["deploy:stack_a"].execute
-    Rake::Task["deploy:start_balancer"].execute
-    Rake::Task["deploy:stack_b"].execute
-    Rake::Task["deploy:start_balancer"].execute
-
-    invoke "deploy:cleanup"
-    invoke "deploy:finished"
+    run_locally do
+      warn " DONE DEPLOYING ON STACK #{ fetch(:stack) } ".center(72, "#")
+    end
   end
 
 
@@ -123,11 +118,12 @@ namespace :deploy do
       end
     end
     run_locally do
-      warn "ccccccccccccccccccccccccccccccccccccccccccccccccccc NEW CODE DOWNLOADED cccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      warn " NEW CODE DOWNLOADED ".center(72, "C")
     end
   end
 
 
+  desc "set stack to stack A"
   task :stack_a do
     set :stack, :stack_a
     run_locally do
@@ -136,6 +132,7 @@ namespace :deploy do
   end
 
 
+  desc "set stack to stack B"
   task :stack_b do
     set :stack, :stack_b
     run_locally do
@@ -184,7 +181,7 @@ namespace :deploy do
 
   desc "migrate the publishing database"
   task :migrate do
-    on roles(:db) do |host|
+    on roles :db, filter: fetch(:stack) do |host|
       within release_path do
         warn " running migrations on #{ host.hostname } ".center(72, "#")
         execute :bundle, "exec rake db:migrate RAILS_ENV=#{ fetch(:stage) }"
@@ -195,7 +192,8 @@ namespace :deploy do
 
   desc "starting the servers"
   task :start do
-    on roles *fetch(:release_roles), filter: fetch(:stack) do |host|
+    throw " => Stack not set!" unless fetch(:stack)
+    on roles(*fetch(:release_roles), filter: fetch(:stack)), in: :sequence, wait: 5 do |host|
       role = host.roles.first
       if role == :publish
         warn " starting publishing server #{ host } ".center(72, "#")
@@ -204,12 +202,14 @@ namespace :deploy do
         warn " starting java server #{ host } ".center(72, "#")
         execute :sudo, :supervisorctl, :start, "studyflow_#{ role }"
       end
+      check_up_server role
     end
   end
 
 
   desc "stopping the servers"
   task :stop do
+    throw " => Stack not set!" unless fetch(:stack)
     on roles *fetch(:release_roles), filter: fetch(:stack) do |host|
       role = host.roles.first
       if role == :publish
@@ -225,30 +225,26 @@ namespace :deploy do
 
   desc "restarting the servers"
   task :restart do
-    on roles *fetch(:release_roles), filter: fetch(:stack) do |host|
+    throw " => Stack not set!" unless fetch(:stack)
+    on roles(*fetch(:release_roles), filter: fetch(:stack)), in: :sequence, wait: 5 do |host|
       role = host.roles.first
       if role == :publish
         warn " restarting publishing server #{ host } ".center(72, "#")
         execute :touch, current_path.join("tmp", "restart.txt")
       else
         warn " restarting java server #{ host } ".center(72, "#")
-        execute :sudo, :supervisorctl, :reload, "studyflow_#{ role }"
+        execute :sudo, :supervisorctl, :stop, "studyflow_#{ role }"
+        execute :echo, " '##################### DEPLOY OF #{ fetch(:current_revision) } ON #{ fetch(:release_timestamp) } #########################################' | sudo tee -a /home/studyflow/#{ role }-stderr.log"
+        execute :echo, " '##################### DEPLOY OF #{ fetch(:current_revision) } ON #{ fetch(:release_timestamp) } #########################################' | sudo tee -a /home/studyflow/#{ role }-stdout.log"
+        execute :sudo, :supervisorctl, :start, "studyflow_#{ role }"
       end
+      check_up_server role
     end
   end
 
 
-  desc "checking status of the servers"
-  task :check_up do
-    check_up_server :learning, 3000
-    check_up_server :login,    4000
-    check_up_server :school,   5000
-    check_up_server :teaching, 4001
-    check_up_server :publish,  80
-  end
-
-
   task :stop_balancer do
+    throw " => Stack not set!" unless fetch(:stack)
     stack = fetch(:stack)
     on roles(:balancer) do
       (roles *fetch(:release_roles), filter: stack).each do |host|
@@ -262,6 +258,7 @@ namespace :deploy do
 
 
   task :start_balancer do
+    throw " => Stack not set!" unless fetch(:stack)
     stack = fetch(:stack)
     on roles(:balancer) do
       (roles *fetch(:release_roles), filter: stack).each do |host|
@@ -295,11 +292,23 @@ namespace :deploy do
 
 
   task :finished do
-    p "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv DONE vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv"
+    run_locally do
+      warn " DONE ".center(72, "#")
+    end
   end
 
 
-  def check_up_server(role, port)
+  #########################################################################################################
+
+
+  def check_up_server(role)
+    port =   80 if role == :publish
+    port = 3000 if role == :learning
+    port = 4000 if role == :login
+    port = 4001 if role == :teaching
+    port = 5000 if role == :school
+    throw "unknow port for role: #{ role }!" unless port
+
     on roles role, filter: fetch(:stack) do |host|
       warn " waiting for #{ role } application to be ready on #{ host }:#{ port }"
       load_time = 0
@@ -309,8 +318,8 @@ namespace :deploy do
         debug " response: #{ response }"
         status_up =(response =~ /{"status":"up"}/)
         warn " sleeping until #{ role } application is up on #{ host }:#{ port } (#{ load_time } seconds)"
-        sleep 5
-        load_time += 5
+        sleep 20
+        load_time += 20
       end
       if load_time > fetch(:max_load_time)
         throw " #{ host } won't go up on #{ host }:#{ port }! ".center(72, "#")
@@ -321,10 +330,13 @@ namespace :deploy do
   end
 
 
+  #########################################################################################################
+
+
   namespace :delayed_jobs do
     desc "start delayed jobs on publishing"
     task :start do
-      on roles(:publish) do |host|
+      on roles :publish, filter: fetch(:stack) do |host|
         within release_path do
           with rails_env: fetch(:stage) do
             warn " starting delayed jobs on #{ host.hostname } ".center(72, "#")
@@ -336,7 +348,7 @@ namespace :deploy do
 
     desc "restart delayed jobs on publishing"
     task :stop do
-      on roles(:publish) do |host|
+      on roles :publish, filter: fetch(:stack) do |host|
         within release_path do
           with rails_env: fetch(:stage) do
             warn " stopping delayed jobs on #{ host.hostname } ".center(72, "#")
@@ -348,7 +360,7 @@ namespace :deploy do
 
     desc "restart delayed jobs on publishing"
     task :restart do
-      on roles(:publish) do |host|
+      on roles :publish, filter: fetch(:stack) do |host|
         within release_path do
           with rails_env: fetch(:stage) do
             warn " restarting delayed jobs on #{ host.hostname } ".center(72, "#")
@@ -358,6 +370,8 @@ namespace :deploy do
       end
     end
   end
+
+  #########################################################################################################
 
 
   namespace :check do
