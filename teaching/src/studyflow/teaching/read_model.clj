@@ -1,35 +1,24 @@
 (ns studyflow.teaching.read-model
-  (:require [clojure.set :refer [intersection]]
+  (:require [clojure.tools.logging :as log]
+            [clojure.set :refer [intersection]]
             [clojure.string :as str]))
 
 (def empty-model {})
 
 (defn- all-sections [model]
-  (->>
-   (vals (:courses model))
-   (mapcat :chapters)
-   (mapcat :sections)))
+  (get-in model [:all-sections]))
 
 (defn meijerink-criteria [model]
-  (->>
-   (all-sections model)
-   (mapcat :meijerink-criteria)
-   set))
+  (get-in model [:meijerink-criteria]))
 
 (defn domains [model]
-  (->>
-   (all-sections model)
-   (mapcat :domains)
-   set))
+  (get-in model [:domains]))
 
 (defn remedial-sections-for-courses [model courses]
   (->>
    (select-keys (:courses model) courses)
    vals
-   (mapcat :chapters)
-   (filter :remedial)
-   (mapcat :sections)
-   (map :id)
+   (mapcat :remedial-sections-for-course)
    set))
 
 (defn- decorate-student-completion [model student]
@@ -52,18 +41,17 @@
                  (meijerink-criteria model))))))
 
 (defn students-for-class [model class]
-  (->> (vals (:students model))
-       (filter (fn [student]
-                 (and (= (:department-id student) (:department-id class))
-                      (= (:class-name student) (:name class)))))
-       (map (partial decorate-student-completion model))))
+  (let [class-lookup (select-keys class [:department-id :class-name])]
+    (for [student-id (get-in model [:students-by-class class-lookup])]
+      (->> (get-in model [:students student-id])
+           (decorate-student-completion model)))))
 
 (defn- decorate-class-completion [model class]
   (let [domains (domains model)
+        student-completions (->> (students-for-class model class)
+                                 (map :completion))
         completions-f (fn [scope domain]
-                        (->> (students-for-class model class)
-                             (map :completion)
-                             (map #(get-in % [scope domain]))))
+                        (map #(get-in % [scope domain]) student-completions))
         sumf (fn [scope domain key] (reduce +
                                             (->> (completions-f scope domain)
                                                  (map key )
@@ -79,24 +67,21 @@
                           (into [] (meijerink-criteria model))))))
 
 (defn classes [model teacher]
-  (->> (vals (:students model))
-       (filter :class-name)
-       (map #(select-keys % [:department-id :class-name]))
-       set
-       (intersection (:classes teacher))
-       (map #(let [name (:class-name %)
-                   department-id (:department-id %)
-                   department (get-in model [:departments department-id])
-                   school-id (:school-id department)
-                   school (get-in model [:schools school-id])]
-               {:id (str school-id "|" department-id "|" name)
-                :name name
-                :full-name (str/join " - " [(:name school) (:name department) name])
-                :department-id department-id
-                :department-name (:name department)
-                :school-id school-id
-                :school-name (:name school)}))
-       (map (partial decorate-class-completion model))))
+  (let [teacher-id (:teacher-id teacher)]
+    (->> (get-in model [:teachers teacher-id :classes])
+         (map #(let [class-name (:class-name %)
+                     department-id (:department-id %)
+                     department (get-in model [:departments department-id])
+                     school-id (:school-id department)
+                     school (get-in model [:schools school-id])]
+                 {:id (str school-id "|" department-id "|" class-name)
+                  :class-name class-name
+                  :full-name (str/join " - " [(:name school) (:name department) class-name])
+                  :department-id department-id
+                  :department-name (:name department)
+                  :school-id school-id
+                  :school-name (:name school)}))
+         (map (partial decorate-class-completion model)))))
 
 (defn get-teacher
   [model id]

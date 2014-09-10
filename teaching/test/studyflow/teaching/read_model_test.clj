@@ -1,5 +1,6 @@
 (ns studyflow.teaching.read-model-test
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [clojure.tools.logging :as log]
+            [clojure.test :refer [deftest is testing]]
             [studyflow.teaching.read-model :refer :all]
             [rill.uuid :refer [new-id]]
             [studyflow.learning.course.events :as course]
@@ -44,8 +45,12 @@
               (student/department-changed "wilma" "boulder")
               (student/class-assigned "wilma" "boulder" "1B")))
 
-(def model-fred-moved-to-vegas
+(def model-teacher-also-teaches-1b
   (load-model model-with-fred-barney-and-wilma-in-other-class
+              (teacher/class-assigned "teacher" "boulder" "1B")))
+
+(def model-fred-moved-to-vegas
+  (load-model model-teacher-also-teaches-1b
               (department/created "vegas" "bedrock" "Rock Vegas")
               (student/department-changed "fred" "vegas")))
 
@@ -64,7 +69,7 @@
     (testing "one students with departments with classes"
       (is (= 1 (count (classes model-with-fred-and-teacher teacher))))
       (is (= {"bedrock|boulder|1A" #{"Fred Flintstone"}}
-             (students-by-class model-with-fred-and-department-and-class teacher))))
+             (students-by-class model-with-fred-and-teacher teacher))))
     (testing "two students in the same class"
       (is (= 1 (count (classes model-with-fred-and-barney-in-same-class teacher))))
       (is (= {"bedrock|boulder|1A" #{"Fred Flintstone" "Barney Rubble"}}
@@ -73,14 +78,12 @@
       (is (= 1 (count (classes model-with-fred-barney-and-wilma-in-other-class teacher))))
       (is (= {"bedrock|boulder|1A" #{"Fred Flintstone" "Barney Rubble"}}
              (students-by-class model-with-fred-barney-and-wilma-in-other-class teacher))))
-    (let [model (load-model model-with-fred-barney-and-wilma-in-other-class
-                            (teacher/class-assigned "teacher" "boulder" "1B"))
-          teacher (first (vals (:teachers model)))]
+    (let [teacher (first (vals (:teachers model-teacher-also-teaches-1b)))]
       (testing "three students; two in one, the other in another class all same teacher"
-        (is (= 2 (count (classes model teacher))))
+        (is (= 2 (count (classes model-teacher-also-teaches-1b teacher))))
         (is (= {"bedrock|boulder|1A" #{"Fred Flintstone" "Barney Rubble"}
                 "bedrock|boulder|1B" #{"Wilma Flintstone"}}
-               (students-by-class model teacher))))
+               (students-by-class model-teacher-also-teaches-1b teacher))))
       (testing "three students; two different departments"
         (is (= 2 (count (classes model-fred-moved-to-vegas teacher))))
         (is (= {"bedrock|boulder|1A" #{"Barney Rubble"}
