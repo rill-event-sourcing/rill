@@ -37,9 +37,11 @@
     (update-in model [:students-by-class class] (fnil conj #{}) student-id)))
 
 (defmethod handle-event :studyflow.school-administration.student.events/ClassAssigned
-  [model {:keys [student-id class-name] :as event}]
+  [model {:keys [student-id department-id class-name] :as event}]
   (update-student model student-id (fn [student]
-                                     (assoc student :class-name class-name))))
+                                     (assoc student
+                                       :department-id department-id
+                                       :class-name class-name))))
 
 (defmethod handle-event :studyflow.school-administration.student.events/Imported
   [model {:keys [student-id full-name department-id class-name]}]
