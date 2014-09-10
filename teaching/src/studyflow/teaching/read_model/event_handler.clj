@@ -26,7 +26,9 @@
                                             (-> student
                                                 (assoc :department-id department-id)
                                                 (dissoc :class-name))))
-        (update-in [:students-by-class old-class] disj student-id))))
+        (cond->
+         (seq old-class)
+         (update-in [:students-by-class old-class] disj student-id)))))
 
 (defn update-student [model student-id f]
   (let [model (update-in model [:students student-id] f)
