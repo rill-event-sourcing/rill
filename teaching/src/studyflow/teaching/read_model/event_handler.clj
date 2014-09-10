@@ -18,17 +18,32 @@
 
 (defmethod handle-event :studyflow.school-administration.student.events/DepartmentChanged
   [model {:keys [student-id department-id]}]
-  (assoc-in model [:students student-id :department-id] department-id))
+  (let [old-class (-> (get-in model [:students student-id])
+                      (select-keys [:department-id :class-name]))]
+    (-> model
+        (update-in [:students student-id] (fn [student]
+                                            (-> student
+                                                (assoc :department-id department-id)
+                                                (dissoc :class-name))))
+        (update-in [:students-by-class old-class] disj student-id))))
+
+(defn update-student [model student-id f]
+  (let [model (update-in model [:students student-id] f)
+        class (-> (get-in model [:students student-id])
+                  (select-keys [:department-id :class-name]))]
+    (update-in model [:students-by-class class] (fnil conj #{}) student-id)))
 
 (defmethod handle-event :studyflow.school-administration.student.events/ClassAssigned
   [model {:keys [student-id class-name] :as event}]
-  (assoc-in model [:students student-id :class-name] class-name))
+  (update-student model student-id (fn [student]
+                                     (assoc student :class-name class-name))))
 
 (defmethod handle-event :studyflow.school-administration.student.events/Imported
   [model {:keys [student-id full-name department-id class-name]}]
-  (assoc-in model [:students student-id] {:full-name full-name
-                                          :department-id department-id
-                                          :class-name class-name}))
+  (update-student model student-id (fn [student]
+                                     {:full-name full-name
+                                      :department-id department-id
+                                      :class-name class-name})))
 
 (defmethod handle-event :studyflow.school-administration.school.events/Created
   [model {:keys [school-id name]}]
@@ -58,14 +73,37 @@
   (update-in model [:students student-id :course-entry-quiz-passed] (fnil conj #{}) course-id))
 
 ;; course material
+(defn update-material [model course-id material]
+  (let [remedial-sections-for-course (->> material
+                                          :chapters
+                                          (filter :remedial)
+                                          (mapcat :sections)
+                                          (map :id)
+                                          set)
+        all-sections (into (get model :all-sections #{})
+                           (->> (:chapters material)
+                                (mapcat :sections)))
+        meijerink-criteria (->> all-sections
+                                (mapcat :meijerink-criteria)
+                                set)
+        domains (->> all-sections
+                     (mapcat :domains)
+                     set)]
+    (-> model
+        (assoc-in [:courses course-id]
+                  (-> material
+                      (assoc :remedial-sections-for-course remedial-sections-for-course)))
+        (assoc :all-sections all-sections
+               :meijerink-criteria meijerink-criteria
+               :domains domains))))
 
 (defmethod handle-event :studyflow.learning.course.events/Published
   [model {:keys [course-id material]}]
-  (assoc-in model [:courses course-id] material))
+  (update-material model course-id material))
 
 (defmethod handle-event :studyflow.learning.course.events/Updated
   [model {:keys [course-id material]}]
-  (assoc-in model [:courses course-id] material))
+  (update-material model course-id material))
 
 ;; teachers
 
