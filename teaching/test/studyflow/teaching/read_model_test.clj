@@ -1,5 +1,6 @@
 (ns studyflow.teaching.read-model-test
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [clojure.tools.logging :as log]
+            [clojure.test :refer [deftest is testing]]
             [studyflow.teaching.read-model :refer :all]
             [rill.uuid :refer [new-id]]
             [studyflow.learning.course.events :as course]
