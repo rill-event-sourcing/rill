@@ -8,7 +8,8 @@
                  [rill "0.1.0-SNAPSHOT"]
                  [ring/ring-defaults "0.1.0"]
                  [studyflow/migrations "0.1.0-SNAPSHOT"]
-                 [studyflow/components "0.1.0-SNAPSHOT"]]
+                 [studyflow/components "0.1.0-SNAPSHOT"]
+                 [dk.ative/docjure "1.6.0"]]
 
   :source-paths ["src" "../common/src"]
 
