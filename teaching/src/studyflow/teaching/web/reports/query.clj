@@ -95,9 +95,9 @@
         [:a {:href (str "/reports/export?class-id=" (:class-id params)) :target "_blank"} "Exporteren naar Excel"]]))))
 
 (defn sheet-content-for-criterion [criterion class students domains]
-  (let [meta-data ["Klas" (:class-name class)
-                   "Meijerink criteria geselecteerd" criterion
-                   "Date" (local-time)]
+  (let [meta-data [(str  "Klas: " (:class-name class))
+                   (str  "Meijerink: " criterion)
+                   (str  "Date: " (local-time))]
         header (into ["Name" "Totaal"] (vec domains))
         student-data (map (fn [student]
                             (into [(h (:full-name student))]
@@ -114,28 +114,20 @@
         (into student-data)
         (conj class-data))))
 
-(defn decorate-workbook [workbook]
-  (let [header-style (excel/create-cell-style! workbook {:background :grey_25_percent
-                                                         :font {:bold true}})
-        footer-style (excel/create-cell-style! workbook {:background :light_cornflower_blue
-                                                         :font {:bold true}})]
-    (reduce (fn [wb sheet]
-              (excel/set-row-style! (second (excel/row-seq sheet))
-                                    header-style)
-              (excel/set-row-style! (last (excel/row-seq sheet))
-                                    footer-style))
-            workbook
-            (excel/sheet-seq workbook))))
+(defn decorate-sheet [sheet-title workbook column-numbers]
+  (let [sheet (excel/select-sheet sheet-title workbook)]
+    (.setColumnWidth sheet 0 8000)
+    (doseq [col (range 0 column-numbers)]
+      (.setColumnWidth sheet
+                       (inc col)
+                       4000))
 
-(defn decorate-sheet [sheet-title workbook]
-(let [sheet (excel/select-sheet sheet-title workbook)]
-        (excel/set-row-style! (second (excel/row-seq sheet))
-                              (excel/create-cell-style! workbook {:background :grey_25_percent
-                                                                  :font {:bold true}}))
-        (excel/set-row-style! (last (excel/row-seq sheet))
-                              (excel/create-cell-style! workbook {:background :light_cornflower_blue
-                                                                  :font {:bold true}})))
-  )
+    (excel/set-row-style! (second (excel/row-seq sheet))
+                          (excel/create-cell-style! workbook {:background :grey_25_percent
+                                                              :font {:bold true}}))
+    (excel/set-row-style! (last (excel/row-seq sheet))
+                          (excel/create-cell-style! workbook {:background :light_cornflower_blue
+                                                              :font {:bold true}}))))
 
 (defn render-export [classes domains students meijerink-criteria params]
   (let [class (first (filter #(= (:class-id params) (:id %)) classes))
@@ -157,7 +149,7 @@
 
         sheet (excel/select-sheet (first meijerink-criteria) workbook)]
     (doseq [criterion meijerink-criteria]
-      (decorate-sheet criterion workbook))
+      (decorate-sheet criterion workbook (inc (count domains))))
     {:status 200
      :headers {"Content-Type" "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                "Content-Disposition" (str "attachment; filename=\"" file-name "\".xslx" )
