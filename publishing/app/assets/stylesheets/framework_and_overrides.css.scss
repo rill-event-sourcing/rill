@@ -3,75 +3,84 @@
 @import "editor";
 
 main {
-  @extend .container;
-  padding-bottom: 80px;
-  width: 100%;
-  }
+    @extend .container;
+    padding-bottom: 80px;
+    width: 100%;
+}
 section {
-  @extend .row;
-  margin-top: 20px;
-  }
+    @extend .row;
+    margin-top: 20px;
+}
 iframe {
-  border: 0;
-  }
+    border: 0;
+}
 input[type="text"] {
-  width: 90%;
-  }
+    width: 90%;
+}
 
 .navbar {
-  border-radius: 0;
-  margin-bottom: 0;
-  }
+    border-radius: 0;
+    margin-bottom: 0;
+}
 .logo {
-  height: 50px;
-  margin: 0 20px 0 10px;
-  }
+    height: 50px;
+    margin: 0 20px 0 10px;
+}
 .glyphicon-ok {
-  color: green;
-  }
+    color: green;
+}
 .glyphicon-remove {
-  color: red;
-  }
+    color: red;
+}
 .glyphicon-trash {
-  color: red;
-  }
+    color: red;
+}
 .glyphicon-exclamation-sign {
-  color: red;
-  }
+    color: red;
+}
 .glyphicon-plus {
-  color: green;
-  }
+    color: green;
+}
 .glyphicon-minus {
-  color: red;
-  }
+    color: red;
+}
 .glyphicon-eye-open {
-  color: green;
-  }
+    color: green;
+}
 .glyphicon-ban-circle {
-  color: orange;
-  }
+    color: orange;
+}
 #section-row {
-  padding-left:40px;
+    padding-left:40px;
 }
 .toggle_choice, .delete-choice, .add-choice {
-  z-index: 99;
+    z-index: 99;
 }
 .copy-button {
-  cursor: pointer;
-  background-color: #ffffff !important;
+    cursor: pointer;
+    background-color: #ffffff !important;
 }
 .zeroclipboard-is-hover.zeroclipboard-is-active {
-  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
 }
 .zeroclipboard-is-hover {
-  background-color: #e6e6e6 !important;
+    background-color: #e6e6e6 !important;
 }
 .line-input-panel {
-  @extend .panel-info;
+    @extend .panel-info;
 }
 .multiple-choice-input-panel {
-  @extend .panel-success;
+    @extend .panel-success;
 }
 .answer-row, .choice-row {
-  margin-top:10px;
+    margin-top:10px;
+}
+.failed {
+    @extend .danger
+}
+.scheduled {
+    @extend .warning
+}
+.running {
+    @extend .info
 }

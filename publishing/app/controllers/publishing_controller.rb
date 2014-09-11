@@ -17,7 +17,6 @@ class PublishingController < ApplicationController
   def publish
     course = Course.current
     throw Exception.new("Publishing without course selected!") unless course
-
     course.publish!
     redirect_to list_jobs_path, notice: "Course '#{ course }' was scheduled for publishing"
   end
@@ -25,7 +24,7 @@ class PublishingController < ApplicationController
   def delete_job
     @job = DelayedJob.find(params[:id])
     @job.destroy if @job
-    redirect_to list_jobs_path, notice: "Job was destroyed"
+    redirect_to list_jobs_path, notice: "Publishing task removed"
   end
 
 end
