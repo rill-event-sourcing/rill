@@ -3,6 +3,8 @@
             [clojure.tools.logging :as log]
             [compojure.core :refer [GET defroutes]]
             [hiccup.core :refer [h]]
+            [clj-time.local :as time]
+            [clj-time.format :as format-time]
             [hiccup.form :as form]
             [studyflow.teaching.read-model :as read-model]
             [studyflow.teaching.web.html-util :refer [layout]]
@@ -26,6 +28,12 @@
   (if (and completion (> total 0))
     (completion-percentage completion)
     "-"))
+
+(defn- local-time []
+  (format-time/unparse (format-time/formatter-local "dd-MM-yyyy HH:mm:ss") (time/local-now)))
+
+(defn- local-date []
+  (time/format-local-time (time/local-now) :date))
 
 (defn- classerize [s]
   (-> s
@@ -84,43 +92,76 @@
                  [:td.average.number {:class (classerize domain)}
                   (completion-html (get-in class [:completion scope domain]))])
                (into [:all] domains))]]
-        (when scope
-          [:a {:href (str "/reports/export?class-id=" (:class-id params) "&meijerink=" scope) :target "_blank"} "export"])]))))
+        [:a {:href (str "/reports/export?class-id=" (:class-id params)) :target "_blank"} "Exporteren naar Excel"]]))))
 
-(defn render-export [classes domains students params]
-  (let [domains (sort domains)
-        class (first (filter #(= (:class-id params) (:id %)) classes))
-        scope (:meijerink params)
-        scope (if (str/blank? scope) nil scope)
-
-        title "Resultaten"
-        cols (into ["Name" "Totaal"] (vec domains))
+(defn sheet-content-for-criterion [criterion class students domains]
+  (let [meta-data ["Klas" (:class-name class)
+                   "Meijerink criteria geselecteerd" criterion
+                   "Date" (local-time)]
+        header (into ["Name" "Totaal"] (vec domains))
         student-data (map (fn [student]
                             (into [(h (:full-name student))]
                                   (map (fn [domain]
-                                         (completion-export (get-in student [:completion scope domain])))
+                                         (completion-export (get-in student [:completion criterion domain])))
                                        (into [:all] domains))))
                           (sort-by :full-name students))
         class-data (into ["Klassengemiddelde"]
                          (map (fn [domain]
-                                (completion-export (get-in class [:completion scope domain])))
-                              (into [:all] domains)))
-        data (-> [cols]
-                 (into student-data)
-                 (conj class-data))
-        workbook (excel/create-workbook title
-                                        data)
-        sheet (excel/select-sheet title workbook)
-        header-row (first (excel/row-seq sheet))
-        footer-row (last (excel/row-seq sheet))]
-    (excel/set-row-style! header-row
-                          (excel/create-cell-style! workbook {:background :grey_25_percent
-                                                              :font {:bold true}}))
-    (excel/set-row-style! footer-row
-                          (excel/create-cell-style! workbook {:background :light_cornflower_blue
-                                                              :font {:bold true}}))
+                                (completion-export (get-in class [:completion criterion domain])))
+                              (into [:all] domains)))]
+    (-> [meta-data]
+        (conj header)
+        (into student-data)
+        (conj class-data))))
+
+(defn decorate-workbook [workbook]
+  (let [header-style (excel/create-cell-style! workbook {:background :grey_25_percent
+                                                         :font {:bold true}})
+        footer-style (excel/create-cell-style! workbook {:background :light_cornflower_blue
+                                                         :font {:bold true}})]
+    (reduce (fn [wb sheet]
+              (excel/set-row-style! (second (excel/row-seq sheet))
+                                    header-style)
+              (excel/set-row-style! (last (excel/row-seq sheet))
+                                    footer-style))
+            workbook
+            (excel/sheet-seq workbook))))
+
+(defn decorate-sheet [sheet-title workbook]
+(let [sheet (excel/select-sheet sheet-title workbook)]
+        (excel/set-row-style! (second (excel/row-seq sheet))
+                              (excel/create-cell-style! workbook {:background :grey_25_percent
+                                                                  :font {:bold true}}))
+        (excel/set-row-style! (last (excel/row-seq sheet))
+                              (excel/create-cell-style! workbook {:background :light_cornflower_blue
+                                                                  :font {:bold true}})))
+  )
+
+(defn render-export [classes domains students meijerink-criteria params]
+  (let [class (first (filter #(= (:class-id params) (:id %)) classes))
+        file-name (str "studyflow-export-" (:class-name class) "-" (local-date))
+        workbook (reduce (fn [wb criterion]
+                           (let [sheet (excel/add-sheet! wb criterion)
+                                 data (sheet-content-for-criterion criterion
+                                                                   class
+                                                                   students
+                                                                   domains)]
+                             (excel/add-rows! sheet data)
+                             wb))
+                         (excel/create-workbook (first meijerink-criteria)
+                                                (sheet-content-for-criterion (first meijerink-criteria)
+                                                                             class
+                                                                             students
+                                                                             domains))
+                         (rest meijerink-criteria))
+
+        sheet (excel/select-sheet (first meijerink-criteria) workbook)]
+    (doseq [criterion meijerink-criteria]
+      (decorate-sheet criterion workbook))
     {:status 200
-     :headers {"Content-Type" "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}
+     :headers {"Content-Type" "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+               "Content-Disposition" (str "attachment; filename=\"" file-name "\".xslx" )
+               }
      :body (piped-input-stream
             (fn [out]
               (.write workbook out)))}))
@@ -145,7 +186,8 @@
        {:keys [read-model teacher]
         {:keys [class-id] :as params} :params}
        (let [classes (read-model/classes read-model teacher)
-             domains (read-model/domains read-model)
+             domains (sort (read-model/domains read-model))
+             meijerink-criteria (sort (read-model/meijerink-criteria read-model))
              class (first (filter #(= class-id (:id %)) classes))
              students (when class (read-model/students-for-class read-model class))]
-         (render-export classes domains students params))))
+         (render-export classes domains students meijerink-criteria params))))
