@@ -115,11 +115,11 @@
              (domains model-with-fred-barney-and-course))))
     (testing "class completion without course material"
       (let [model model-with-fred-and-barney-in-same-class]
-        (is (not (seq (:completion (first (classes model-with-fred-and-barney-in-same-class teacher))))))))
+        (is (not (seq (:completion (decorate-class-completion model-with-fred-and-barney-in-same-class (first (classes model-with-fred-and-barney-in-same-class teacher)))))))))
     (testing "one finished section without course material"
       (let [model (load-model model-with-fred-and-department-and-class
                               (section-test/finished "section-1" "fred"))]
-        (is (not (seq (:completion (first (classes model teacher))))))))
+        (is (not (seq (:completion (decorate-class-completion model (first (classes model teacher)))))))))
     (testing "one finished section with three section course material for two students"
       (let [model (load-model model-with-fred-barney-and-course
                               (section-test/finished "section-1" "fred"))]
@@ -138,7 +138,7 @@
                      "Verhoudingen" {:finished 0, :total 0}
                      "Meetkunde" {:finished 0, :total 2}
                      "Verbanden" {:finished 0, :total 2}}}
-               (:completion (first (classes model teacher)))))))
+               (:completion (decorate-class-completion model (first (classes model teacher))))))))
     (testing "remedial-sections-for-courses"
       (is (= #{"section-1" "section-2"}
              (remedial-sections-for-courses model-with-fred-barney-and-course #{"course"}))))
@@ -160,4 +160,8 @@
                      "Verhoudingen" {:finished 0, :total 0}
                      "Meetkunde" {:finished 0, :total 2}
                      "Verbanden" {:finished 0, :total 2}}}
-               (:completion (first (classes model teacher)))))))))
+               (->> teacher
+                    (classes model)
+                    first
+                    (decorate-class-completion model)
+                    :completion)))))))

@@ -46,7 +46,7 @@
       (->> (get-in model [:students student-id])
            (decorate-student-completion model)))))
 
-(defn- decorate-class-completion [model class]
+(defn decorate-class-completion [model class]
   (let [domains (domains model)
         student-completions (->> (students-for-class model class)
                                  (map :completion))
@@ -80,8 +80,7 @@
                   :department-id department-id
                   :department-name (:name department)
                   :school-id school-id
-                  :school-name (:name school)}))
-         (map (partial decorate-class-completion model)))))
+                  :school-name (:name school)})))))
 
 (defn get-teacher
   [model id]

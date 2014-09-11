@@ -72,7 +72,9 @@
        (let [classes (read-model/classes read-model teacher)
              meijerink-criteria (read-model/meijerink-criteria read-model)
              domains (read-model/domains read-model)
-             class (first (filter #(= class-id (:id %)) classes))
+             class (some (fn [class]
+                           (when (= class-id (:id class))
+                             (read-model/decorate-class-completion read-model class))) classes)
              students (when class (read-model/students-for-class read-model class))
              options (assoc flash :redirect-urls redirect-urls)]
          (render-completion classes meijerink-criteria domains students params options)))
