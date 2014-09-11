@@ -61,6 +61,79 @@
                (into [:all] domains))]]
         [:a {:href (str "/reports/export?class-id=" (:class-id params)) :target "_blank"} "Exporteren naar Excel"]]))))
 
+(defn render-chapter-list [classes class chapter-list params options]
+  (let [selected-chapter-id (:chapter-id params)
+        selected-section-id (:section-id params)
+        class-id (:class-id params)]
+    (layout
+     (merge {:title (if class
+                      (str "Voortgang voor \"" (:full-name class) "\"")
+                      "Voortgang")} options)
+     [:form {:method "GET"}
+      (form/drop-down {:onchange "this.form.submit()"}
+                      "class-id"
+                      (into [["-- Kies klas --" ""]]
+                            (sort-by first
+                                     (map #(vector (:full-name %) (:id %))
+                                          classes)))
+                      (:class-id params))
+      (when class
+        [:div
+         [:h1 "class selected"]
+         [:div (pr-str class)]
+         [:div "chapter-list"]
+         [:div (pr-str chapter-list)]
+         [:div "PARams:"]
+         [:div (pr-str params)]
+         [:div#m-teacher_chapter_list
+          [:h2 (:name chapter-list)]
+          [:nav#teacher_chapter_list_sidenav
+           [:ol.chapter-list
+            (for [{chapter-title :title
+                   chapter-id :id
+                   :as chapter} (:chapters chapter-list)]
+              [:li {:class (str "chapter "
+                                (when (= selected-chapter-id (str chapter-id))
+                                  "open"))}
+               [:a.chapter-title
+                {:href (str "/reports/chapter-list?class-id=" class-id
+                            "&chapter-id=" chapter-id)}
+                (str "Chapter title: " chapter-title
+                     chapter-id
+                     (when (= selected-chapter-id (str chapter-id))
+                       "[selected]"))]
+               (when (= selected-chapter-id (str chapter-id))
+                 [:ol.section-list
+                  (for [{section-title :title
+                         section-id :id
+                         :as section} (:sections chapter)]
+                    [:li {:class (str "section"
+                                      (when (= selected-section-id (str section-id))
+                                        "selected"))}
+                     [:a.section
+                      {:href (str "/reports/chapter-list?class-id=" class-id
+                                  "&chapter-id=" chapter-id
+                                  "&section-id=" section-id)}
+                      (str "Section Title" section-title
+                           section-id
+                           (when (= selected-section-id (str section-id))
+                             "[selected]"))]
+                     [:div (str "sectioncounts" chapter-id "__" section-id)]
+                     (when-let [section-counts (get-in chapter-list [:section-counts (str chapter-id) (str section-id)])]
+                       [:div.section_status
+                        [:div (str "progresses:" section-counts)]
+                        [:span.stuck "6"]
+                        [:span.in_progress "5"]
+                        [:span.unstarted "4"]
+                        [:span.finished "3"]])])])])]]]
+         (when-let [section-counts (get-in chapter-list [:section-counts selected-chapter-id selected-section-id])]
+           [:div.teacher_chapter_list_main
+            [:div (pr-str section-counts)]
+            [:div.student.stuck "Student Name stuck"]
+            [:div.student.in_progress "Student Name in progress"]
+            [:div.student.unstarted "Student Name unstarted"]
+            [:div.student.finished]])])])))
+
 (defroutes app
   (GET "/reports/"
        {}
@@ -79,7 +152,21 @@
                         (->> (read-model/students-for-class read-model class)
                              (map (partial read-model/decorate-student-completion read-model))))
              options (assoc flash :redirect-urls redirect-urls)]
-         (render-completion classes meijerink-criteria domains students params options)))
+         (binding [*current-nav-uri* "/reports/completion"]
+           (render-completion classes meijerink-criteria domains students params options))))
+
+  (GET "/reports/chapter-list"
+       {:keys [read-model flash teacher redirect-urls]
+        {:keys [class-id chapter-id section-id] :as params} :params}
+       (let [classes (read-model/classes read-model teacher)
+             class (some (fn [c]
+                           (when (= class-id (:id c))
+                             c)) classes)
+             chapter-list (when class
+                            (read-model/chapter-list read-model class chapter-id section-id))
+             options (assoc flash :redirect-urls redirect-urls)]
+         (binding [*current-nav-uri* "/reports/chapter-list"]
+           (render-chapter-list classes class chapter-list params options))))
 
   (GET "/reports/export"
        {:keys [read-model teacher]

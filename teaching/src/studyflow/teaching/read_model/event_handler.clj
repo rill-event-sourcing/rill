@@ -93,11 +93,17 @@
                                 set)
         domains (->> all-sections
                      (mapcat :domains)
-                     set)]
+                     set)
+        chapter-sections (->> (for [chapter (:chapters material)]
+                                [(str (:id chapter)) (map (fn [section]
+                                                            {:id (str (:id section))
+                                                             :title (:title section)}) (:sections chapter))])
+                              (into {}))]
     (-> model
         (assoc-in [:courses course-id]
                   (-> material
-                      (assoc :remedial-sections-for-course remedial-sections-for-course)))
+                      (assoc :remedial-sections-for-course remedial-sections-for-course
+                             :chapter-sections chapter-sections)))
         (assoc :all-sections all-sections
                :meijerink-criteria meijerink-criteria
                :domains domains))))

@@ -25,6 +25,8 @@
       (str/replace #"[^a-z ]" "")
       (str/replace #"\s+" "-")))
 
+(def ^:dynamic *current-nav-uri* nil)
+
 (defn layout [{:keys [title warning message redirect-urls]} & body]
   (html5
    [:head
@@ -33,6 +35,12 @@
     (include-css "/screen.css")]
    [:body
     [:header
+     [:nav
+      [:ul
+       (map (fn [[url label]]
+              [:li [:a (if (= url *current-nav-uri*) {} {:href url}) label]])
+            [["/reports/completion" "Rapport"]
+             ["/reports/chapter-list" "Voortgang"]])]]
      (when redirect-urls
        (form/form-to
         {:role "form" :id "logout-form"} [:post (:login redirect-urls)]
