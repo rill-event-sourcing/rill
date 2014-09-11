@@ -8,8 +8,7 @@
             [studyflow.teaching.web.html-util :refer [layout]]
             [ring.util.response :refer [redirect-after-post]]
             [dk.ative.docjure.spreadsheet :as excel]
-            [ring.util.io :refer [piped-input-stream]])
-  (:import [java.io BufferedWriter OutputStreamWriter]))
+            [ring.util.io :refer [piped-input-stream]]))
 
 (defn- completion-title [{:keys [finished total]}]
   (str finished "/" total))
@@ -17,11 +16,16 @@
 (defn- completion-percentage [{:keys [finished total]}]
   (str (Math/round (float (/ (* finished 100) total))) "%"))
 
-(defn- completion [{:keys [total] :as completion}]
+(defn- completion-html [{:keys [total] :as completion}]
   (if (and completion (> total 0))
     [:span {:title (completion-title completion)}
      (completion-percentage completion)]
     "&mdash;"))
+
+(defn- completion-export [{:keys [total] :as completion}]
+  (if (and completion (> total 0))
+    (completion-percentage completion)
+    "-"))
 
 (defn- classerize [s]
   (-> s
@@ -71,14 +75,14 @@
                    (h (:full-name student))]
                   (map (fn [domain]
                          [:td.completion.number {:class (classerize domain)}
-                          (completion (get-in student [:completion scope domain]))])
+                          (completion-html (get-in student [:completion scope domain]))])
                        (into [:all] domains))])
                (sort-by :full-name students))]
          [:tfoot
           [:th.average "Klassengemiddelde"]
           (map (fn [domain]
                  [:td.average.number {:class (classerize domain)}
-                  (completion (get-in class [:completion scope domain]))])
+                  (completion-html (get-in class [:completion scope domain]))])
                (into [:all] domains))]]
         (when scope
           [:a {:href (str "/reports/export?class-id=" (:class-id params) "&meijerink=" scope) :target "_blank"} "export"])]))))
@@ -90,24 +94,36 @@
         scope (if (str/blank? scope) nil scope)
 
         title "Resultaten"
-        cols ["Name" "Totaal"]
+        cols (into ["Name" "Totaal"] (vec domains))
+        student-data (map (fn [student]
+                            (into [(h (:full-name student))]
+                                  (map (fn [domain]
+                                         (completion-export (get-in student [:completion scope domain])))
+                                       (into [:all] domains))))
+                          (sort-by :full-name students))
+        class-data (into ["Klassengemiddelde"]
+                         (map (fn [domain]
+                                (completion-export (get-in class [:completion scope domain])))
+                              (into [:all] domains)))
+        data (-> [cols]
+                 (into student-data)
+                 (conj class-data))
         workbook (excel/create-workbook title
-                                        [cols
-                                         ["Foo Widget" 100]
-                                         ["Bar Widget" 200]])
+                                        data)
         sheet (excel/select-sheet title workbook)
-        header-row (first (excel/row-seq sheet))]
-    (excel/set-row-style! header-row (excel/create-cell-style! workbook {:background :yellow,
-                                                                         :font {:bold true}}))
-    ;; Can't both consume the stream here and then later in the body
-    ;; as  well
-    ;;(excel/save-workbook! "spreadsheet.xlsx" workbook)
+        header-row (first (excel/row-seq sheet))
+        footer-row (last (excel/row-seq sheet))]
+    (excel/set-row-style! header-row
+                          (excel/create-cell-style! workbook {:background :grey_25_percent
+                                                              :font {:bold true}}))
+    (excel/set-row-style! footer-row
+                          (excel/create-cell-style! workbook {:background :light_cornflower_blue
+                                                              :font {:bold true}}))
     {:status 200
      :headers {"Content-Type" "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}
      :body (piped-input-stream
             (fn [out]
               (.write workbook out)))}))
-
 
 (defroutes app
   (GET "/reports/"
