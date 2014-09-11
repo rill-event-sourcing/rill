@@ -21,7 +21,7 @@
    (mapcat :remedial-sections-for-course)
    set))
 
-(defn- decorate-student-completion [model student]
+(defn decorate-student-completion [model student]
   (let [finished-ids (into (set (:finished-sections student))
                            (remedial-sections-for-courses model (:course-entry-quiz-passed student)))
         sections (all-sections model)
@@ -43,12 +43,12 @@
 (defn students-for-class [model class]
   (let [class-lookup (select-keys class [:department-id :class-name])]
     (for [student-id (get-in model [:students-by-class class-lookup])]
-      (->> (get-in model [:students student-id])
-           (decorate-student-completion model)))))
+      (get-in model [:students student-id]))))
 
 (defn decorate-class-completion [model class]
   (let [domains (domains model)
         student-completions (->> (students-for-class model class)
+                                 (map (partial decorate-student-completion model))
                                  (map :completion))
         completions-f (fn [scope domain]
                         (map #(get-in % [scope domain]) student-completions))

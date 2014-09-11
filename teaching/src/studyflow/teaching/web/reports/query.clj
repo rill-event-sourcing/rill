@@ -75,7 +75,9 @@
              class (some (fn [class]
                            (when (= class-id (:id class))
                              (read-model/decorate-class-completion read-model class))) classes)
-             students (when class (read-model/students-for-class read-model class))
+             students (when class
+                        (->> (read-model/students-for-class read-model class)
+                             (map (partial read-model/decorate-student-completion read-model))))
              options (assoc flash :redirect-urls redirect-urls)]
          (render-completion classes meijerink-criteria domains students params options)))
 
