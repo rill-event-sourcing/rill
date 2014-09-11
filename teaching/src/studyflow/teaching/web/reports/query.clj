@@ -127,11 +127,6 @@
 
 (defroutes app
   (GET "/reports/"
-       {:keys [read-model teacher]}
-       (let [classes (read-model/classes read-model teacher)]
-         (redirect-after-post (str "/reports/export?class-id=" (:id (first classes)) "&meijerink=3F"))))
-
-  (GET "/reports2/"
        {}
        (redirect-after-post "/reports/completion"))
 
