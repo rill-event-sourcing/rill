@@ -99,15 +99,14 @@
         header-row (first (excel/row-seq sheet))]
     (excel/set-row-style! header-row (excel/create-cell-style! workbook {:background :yellow,
                                                                          :font {:bold true}}))
-    (excel/save-workbook! "spreadsheet.xlsx" workbook)
+    ;; Can't both consume the stream here and then later in the body
+    ;; as  well
+    ;;(excel/save-workbook! "spreadsheet.xlsx" workbook)
     {:status 200
      :headers {"Content-Type" "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}
      :body (piped-input-stream
             (fn [out]
-              (->> out
-                   (OutputStreamWriter.)
-                   (BufferedWriter.)
-                   (.write workbook))))}))
+              (.write workbook out)))}))
 
 
 (defroutes app
