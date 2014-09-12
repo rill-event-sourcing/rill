@@ -20,10 +20,10 @@
     ["-" "-"]))
 
 (defn sheet-content-for-criterion [criterion class students domains]
-  (let [meta-data ["Studyflow report"
+  (let [meta-data ["Studyflow Rapport"
                    (str  "Klas: " (:class-name class))
                    (str  "Meijerink: " criterion)
-                   (str  "Date: " (local-time))]
+                   (str  "Datum: " (local-time))]
         sup-header (into [""]
                          (interleave (into ["Totaal"] domains)
                                      (repeat "")))
@@ -36,8 +36,8 @@
         header (reduce into
                        ["Leerling naam"]
                        (map (fn [x]
-                              [(str "# Section finished (max " (get domains-total x) ")")
-                               "Percentage finished"])
+                              [(str "# Hoofdstukken afgerond (totaal " (get domains-total x) ")")
+                               "Percentage afgerond"])
                             domains-all))
         student-data (map (fn [student] (reduce into [(h (:full-name student))]
                                                 (map (fn [domain]
@@ -74,7 +74,7 @@
 
 (defn render-export [classes domains students meijerink-criteria params]
   (let [class (first (filter #(= (:class-id params) (:id %)) classes))
-        file-name (str "studyflow-export-" (:class-name class) "-" (local-date))
+        file-name (str "studyflow-rapport-" (:class-name class) "-" (local-date))
         workbook (reduce (fn [wb criterion]
                            (let [sheet (excel/add-sheet! wb criterion)
                                  data (sheet-content-for-criterion criterion
