@@ -115,9 +115,9 @@
                                "Percentage finished"])
                             domains-all))
         student-data (map (fn [student] (reduce into [(h (:full-name student))]
-                                    (map (fn [domain]
-                                           (completion-export (get-in student [:completion criterion domain])))
-                                         domains-all)))
+                                                (map (fn [domain]
+                                                       (completion-export (get-in student [:completion criterion domain])))
+                                                     domains-all)))
                           (sort-by :full-name students))
         class-data (reduce into ["Klassengemiddelde"]
                            (map (fn [domain]
@@ -135,7 +135,7 @@
     (doseq [col (range 0 column-numbers)]
       (.setColumnWidth sheet
                        (inc col)
-                       4000))
+                       6000))
 
     (excel/set-row-style! (second (excel/row-seq sheet))
                           (excel/create-cell-style! workbook {:background :grey_25_percent
