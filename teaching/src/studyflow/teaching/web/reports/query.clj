@@ -24,10 +24,10 @@
      (completion-percentage completion)]
     "&mdash;"))
 
-(defn- completion-export [{:keys [total] :as completion}]
+(defn- completion-export [{:keys [finished total] :as completion}]
   (if (and completion (> total 0))
-    (completion-percentage completion)
-    "-"))
+    [finished (completion-percentage completion)]
+    ["-" "-"]))
 
 (defn- local-time []
   (format-time/unparse (format-time/formatter-local "dd-MM-yyyy HH:mm:ss") (time/local-now)))
@@ -95,21 +95,36 @@
         [:a {:href (str "/reports/export?class-id=" (:class-id params)) :target "_blank"} "Exporteren naar Excel"]]))))
 
 (defn sheet-content-for-criterion [criterion class students domains]
-  (let [meta-data [(str  "Klas: " (:class-name class))
+  (let [meta-data ["Studyflow report"
+                   (str  "Klas: " (:class-name class))
                    (str  "Meijerink: " criterion)
                    (str  "Date: " (local-time))]
-        header (into ["Name" "Totaal"] (vec domains))
-        student-data (map (fn [student]
-                            (into [(h (:full-name student))]
-                                  (map (fn [domain]
-                                         (completion-export (get-in student [:completion criterion domain])))
-                                       (into [:all] domains))))
+        sup-header (into [""]
+                         (interleave (into ["Totaal"] domains)
+                                     (repeat "")))
+        domains-all (into [:all]
+                          domains)
+        domains-total (apply hash-map
+                             (interleave domains-all
+                                         (map (fn [x] (:total  (get-in (first students) [:completion criterion x])))
+                                              domains-all)))
+        header (reduce into
+                       ["Leerling naam"]
+                       (map (fn [x]
+                              [(str "# Section finished (max " (get domains-total x) ")")
+                               "Percentage finished"])
+                            domains-all))
+        student-data (map (fn [student] (reduce into [(h (:full-name student))]
+                                    (map (fn [domain]
+                                           (completion-export (get-in student [:completion criterion domain])))
+                                         domains-all)))
                           (sort-by :full-name students))
-        class-data (into ["Klassengemiddelde"]
-                         (map (fn [domain]
-                                (completion-export (get-in class [:completion criterion domain])))
-                              (into [:all] domains)))]
+        class-data (reduce into ["Klassengemiddelde"]
+                           (map (fn [domain]
+                                  (completion-export (get-in class [:completion criterion domain])))
+                                (into [:all] domains)))]
     (-> [meta-data]
+        (conj sup-header)
         (conj header)
         (into student-data)
         (conj class-data))))
@@ -149,7 +164,7 @@
 
         sheet (excel/select-sheet (first meijerink-criteria) workbook)]
     (doseq [criterion meijerink-criteria]
-      (decorate-sheet criterion workbook (inc (count domains))))
+      (decorate-sheet criterion workbook (* 2 (inc (count domains)))))
     {:status 200
      :headers {"Content-Type" "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                "Content-Disposition" (str "attachment; filename=\"" file-name "\".xslx" )
