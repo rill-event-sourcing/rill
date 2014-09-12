@@ -63,20 +63,28 @@
                         (contains? tag-tree :attrs)
                         (contains? tag-tree :content))
                    (let [{:keys [tag attrs content] :as node} tag-tree]
-                     (if-let [build-fn (get html->om tag)]
-                       (apply build-fn
-                              (attrs->js-obj attrs)
-                              (map descent content))
-                       (cond
-                        (= tag "input")
-                        (get inputs (:name attrs))
-                        (= tag "svg")
-                        (raw-html content)
-                        (= tag "iframe")
-                        (raw-html content)
-                        :else
-                        (apply dom/span #js {:className "default-html-to-om"}
-                               (map descent content)))))
+                     (if (= tag "img")
+                       (dom/img #js {:src (:src attrs)})
+                       (if (= tag "div")
+                         (apply dom/div #js {:className (:class attrs)}
+                                (map descent content))
+                         (if (= tag "span")
+                           (apply dom/span #js {:className (:class attrs)}
+                                  (map descent content))
+                           (if-let [build-fn (get html->om tag)]
+                             (apply build-fn
+                                    (attrs->js-obj attrs)
+                                    (map descent content))
+                             (cond
+                              (= tag "input")
+                              (get inputs (:name attrs))
+                              (= tag "svg")
+                              (raw-html content)
+                              (= tag "iframe")
+                              (raw-html content)
+                              :else
+                              (apply dom/span #js {:className "default-html-to-om"}
+                                     (map descent content))))))))
                    (string? tag-tree)
                    tag-tree))]
     (descent tag-tree)))
