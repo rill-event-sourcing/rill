@@ -141,17 +141,18 @@
                                                                   student-id
                                                                   entry-quiz-aggregate-version
                                                                   current-answers])))]
-                                                 (dom/form #js
-                                                           {:onSubmit (fn []
-                                                                        (submit)
-                                                                        false)}
+                                                 (;; dom/form #js
+                                                  ;;          {:onSubmit (fn []
+                                                  ;;                       (submit)
+                                                  ;;                       false)}
+                                                  dom/div nil
                                                            (tag-tree-to-om (:tag-tree question) inputs)
                                                            (dom/div #js {:id "m-question_bar"}
                                                                     (om/build (core/click-once-button (str "Klaar"
                                                                                                            (when (< (inc index) (count (:questions material)))
                                                                                                              " & volgende vraag"))
                                                                                                       (fn []
-                                                                                                        ;; will call onSubmit of form
+                                                                                                        (submit)
                                                                                                         nil)
                                                                                                       :enabled answering-allowed)
                                                                               cursor))))

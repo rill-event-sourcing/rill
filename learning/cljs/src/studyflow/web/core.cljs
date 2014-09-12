@@ -174,7 +174,9 @@
           (dom/span nil
                     (when-let [prefix (:prefix field)]
                       (str prefix " "))
-                    (dom/form #js {:className (str "m-inline_input"
+                    (;;dom/form 
+                     dom/div
+                     #js {:className (str "m-inline_input"
                                                    (when (and answer-submitted? answered-correctly?)
                                                      " correct")
                                                    (when (and answer-submitted? (false? answered-correctly?))
