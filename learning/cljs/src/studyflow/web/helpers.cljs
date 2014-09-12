@@ -71,20 +71,42 @@
                          (if (= tag "span")
                            (apply dom/span #js {:className (:class attrs)}
                                   (map descent content))
-                           (if-let [build-fn (get html->om tag)]
-                             (apply build-fn
-                                    (attrs->js-obj attrs)
+                           (if (= tag "ul")
+                             (apply dom/ul #js {:className (:class attrs)}
                                     (map descent content))
-                             (cond
-                              (= tag "input")
-                              (get inputs (:name attrs))
-                              (= tag "svg")
-                              (raw-html content)
-                              (= tag "iframe")
-                              (raw-html content)
-                              :else
-                              (apply dom/span #js {:className "default-html-to-om"}
-                                     (map descent content))))))))
+                             (if (= tag "li")
+                               (apply dom/li #js {:className (:class attrs)}
+                                      (map descent content))
+                               (if (= tag "u")
+                                 (apply dom/u nil
+                                        (map descent content))
+                                 (if (= tag "br")
+                                   (dom/br nil)
+                                   (if (= tag "table")
+                                     (apply dom/table #js {:className (:class attrs)}
+                                            (map descent content))
+                                     (if (= tag "tr")
+                                       (apply dom/tr #js {:className (:class attrs)}
+                                              (map descent content))
+                                       (if (= tag "td")
+                                         (apply dom/td #js {:className (:class attrs)}
+                                                (map descent content))
+                                         (if-let [build-fn (get html->om tag)]
+                                           (apply build-fn
+                                                  ;;(attrs->js-obj
+                                                  ;;attrs)
+                                                  #js {:className (get attrs :class "")}
+                                                  (map descent content))
+                                           (cond
+                                            (= tag "input")
+                                            (get inputs (:name attrs))
+                                            (= tag "svg")
+                                            (raw-html content)
+                                            (= tag "iframe")
+                                            (raw-html content)
+                                            :else
+                                            (apply dom/span #js {:className "default-html-to-om"}
+                                                   (map descent content)))))))))))))))
                    (string? tag-tree)
                    tag-tree))]
     (descent tag-tree)))
