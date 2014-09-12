@@ -136,7 +136,8 @@
       (.setColumnWidth sheet
                        (inc col)
                        6000))
-
+    (excel/set-cell-style! (first (excel/cell-seq (first (excel/row-seq sheet))))
+                           (excel/create-cell-style! workbook {:font {:bold true}}))
     (excel/set-row-style! (second (excel/row-seq sheet))
                           (excel/create-cell-style! workbook {:background :grey_25_percent
                                                               :font {:bold true}}))
