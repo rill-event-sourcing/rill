@@ -3779,7 +3779,7 @@ Something with attrs: <div class=\"tool pen_and_paper\"></div>
             },
             {
               "id": "41547b11-8f97-4a67-ab21-35cfd41bb499",
-              "text": "<img src=\"https://docs.google.com/drawings/d/1LsHVBGq3Ge_oWoj9fSCQ83AxKFEmCTRLzxUJVn_K380/pub?w=776&h=100\">\r\n\r\n<p>De pijl wijst de plaats van een getal op de getallenlijn aan.</p>\r\n\r\n<p class=”question_title”>Welk getal is dat? Kies uit:</p>\r\n",
+              "text": "<img src=\"https://docs.google.com/drawings/d/1LsHVBGq3Ge_oWoj9fSCQ83AxKFEmCTRLzxUJVn_K380/pub?w=776&h=100\">\r\n\r\n<p>De pijl wijst de plaats van een getal op de getallenlijn aan.</p>\r\n\r\n<p class=”question_title”>Welk getal is dat? Kies uit:</p>\r\n_INPUT_1_",
               "tools": ["pen_and_paper"],
               "worked_out_answer": "",
               "line_input_fields": [
