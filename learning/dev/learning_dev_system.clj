@@ -14,8 +14,7 @@
 (defn dev-system [dev-options]
   (merge (sys/prod-system dev-options)
          {:ring-handler (component/using
-                         (dev-ring-handler-component {:login "http://localhost:4000"
-                                                      :learning "http://localhost:3000"}
+                         (dev-ring-handler-component (:redirect-urls dev-options)
                                                      nil)
                          [:event-store :read-model :session-store])
           :session-store (simple-session-store)
