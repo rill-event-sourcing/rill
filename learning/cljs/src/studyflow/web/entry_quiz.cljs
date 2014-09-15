@@ -151,7 +151,7 @@
                                                                                                            (when (< (inc index) (count (:questions material)))
                                                                                                              " & volgende vraag"))
                                                                                                       (fn []
-                                                                                                        ;; will call onSubmit of form
+                ;; form handles submit
                                                                                                         nil)
                                                                                                       :enabled answering-allowed)
                                                                               cursor))))

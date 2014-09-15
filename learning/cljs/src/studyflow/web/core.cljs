@@ -15,12 +15,7 @@
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
-(set! *print-fn*
-      (let [c (some-> js/window .-console)]
-        (if (some-> c .-log .-apply)
-          (fn [& args]
-            (.apply (.-log c) c (into-array args)))
-          (fn [& args]))))
+(set! *print-fn* (fn [& args]))
 
 (defn course-id-for-page []
   (.-value (gdom/getElement "course-id")))
@@ -179,7 +174,8 @@
           (dom/span nil
                     (when-let [prefix (:prefix field)]
                       (str prefix " "))
-                    (dom/form #js {:className (str "m-inline_input"
+                    (dom/form 
+                     #js {:className (str "m-inline_input"
                                                    (when (and answer-submitted? answered-correctly?)
                                                      " correct")
                                                    (when (and answer-submitted? (false? answered-correctly?))
