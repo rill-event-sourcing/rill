@@ -64,18 +64,21 @@
                         (contains? tag-tree :content))
                    (let [{:keys [tag attrs content] :as node} tag-tree]
                      (if (= tag "img")
-                       (dom/img (if (and (:width attrs)
-                                         (:height attrs))
+                       (dom/img (if-let [style (:style attrs)]
                                   #js {:src (:src attrs)
-                                       :width (:width attrs)
-                                       :height (:height attrs)}
-                                  (if-let [width (:width attrs)]
+                                       :style (apply js-obj (mapcat (fn [[k v]] [(name k) v]) style))}
+                                  (if (and (:width attrs)
+                                           (:height attrs))
                                     #js {:src (:src attrs)
-                                         :width width}
-                                    (if-let [height (:height attrs)]
+                                         :width (:width attrs)
+                                         :height (:height attrs)}
+                                    (if-let [width (:width attrs)]
                                       #js {:src (:src attrs)
-                                           :height height}
-                                      #js {:src (:src attrs)}))))
+                                           :width width}
+                                      (if-let [height (:height attrs)]
+                                        #js {:src (:src attrs)
+                                             :height height}
+                                        #js {:src (:src attrs)})))))
                        (if (= tag "div")
                          (apply dom/div #js {:className (:class attrs)}
                                 (map descent content))
