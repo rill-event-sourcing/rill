@@ -530,9 +530,10 @@
                                     (do
                                       (om/update! cursor
                                                   [:view :selected-path]
-                                                  (-> (get-in @cursor [:view :selected-path])
-                                                      (merge (get-in @cursor [:view :course-material :forward-section-links
-                                                                              {:chapter-id chapter-id :section-id section-id}]))))
+                                                  (let [cursor @cursor]
+                                                    (-> (get-in cursor [:view :selected-path])
+                                                        (merge (get-in cursor [:view :course-material :forward-section-links
+                                                                                      {:chapter-id chapter-id :section-id section-id}])))))
                                       (om/update! cursor
                                                   [:view :progress-modal]
                                                   :dismissed)))
