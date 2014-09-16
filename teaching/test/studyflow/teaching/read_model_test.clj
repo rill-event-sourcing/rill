@@ -170,13 +170,31 @@
                     :completion)))))))
 
 (deftest chapter-list-test
-  (let [model (load-model model-with-fred-barney-and-course
-                          (section-test/finished "section-1" "fred"))
+  (let [model model-with-fred-barney-and-course
         teacher (first (vals (:teachers model)))
         class (first (classes model teacher))
-        chapter-list (chapter-list model class "chapter-1" "section-1")
-        section-counts (get-in chapter-list [:section-counts "chapter-1" "section-1"])]
-    (is (= 1 (:unstarted section-counts)))
-    (is (= 1 (:finished section-counts)))
-    (is (= ["Barney Rubble"] (map :full-name (get-in section-counts [:student-list :unstarted]))))
-    (is (= ["Fred Flintstone"] (map :full-name (get-in section-counts [:student-list :finished]))))))
+        section-counts (fn [model] (get-in (chapter-list model class "chapter-1" "section-1")
+                                           [:section-counts "chapter-1" "section-1"]))]
+    (is (= 2 (:unstarted (section-counts model))))
+    (is (= ["Barney Rubble" "Fred Flintstone"]
+           (map :full-name (get-in (section-counts model) [:student-list :unstarted]))))
+    (testing "fred starts a test"
+      (let [model (load-model model (section-test/created "section-1" "fred" "course"))]
+        (is (= 1 (:in-progress (section-counts model))))
+        (is (= ["Fred Flintstone"]
+               (map :full-name (get-in (section-counts model) [:student-list :in-progress]))))))
+    (testing "fred gets stuck"
+      (let [model (load-model model (section-test/stuck "section-1" "fred"))]
+        (is (= 1 (:stuck (section-counts model))))
+        (is (= ["Fred Flintstone"]
+               (map :full-name (get-in (section-counts model) [:student-list :stuck]))))
+        (testing "fred gets unstuck"
+          (let [model (load-model model (section-test/unstuck "section-1" "fred"))]
+            (is (= 1 (:in-progress (section-counts model))))
+            (is (= ["Fred Flintstone"]
+                   (map :full-name (get-in (section-counts model) [:student-list :in-progress]))))))))
+    (testing "fred finishes a test"
+      (let [model (load-model model (section-test/finished "section-1" "fred"))]
+        (is (= 1 (:finished (section-counts model))))
+        (is (= ["Fred Flintstone"]
+               (map :full-name (get-in (section-counts model) [:student-list :finished]))))))))
