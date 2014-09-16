@@ -10,7 +10,7 @@
             [studyflow.web.aggregates :as aggregates]
             [studyflow.web.service :as service]
             [studyflow.web.history :refer [history-link]]
-            [studyflow.web.helpers :refer [modal raw-html tag-tree-to-om]]
+            [studyflow.web.helpers :refer [modal raw-html tag-tree-to-om] :as helpers]
             [clojure.walk :as walk]
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go]]))
@@ -149,6 +149,7 @@
         (dom/button #js {:className (str "btn blue pull-right" (when className (str " " className)))
                          :onClick
                          (fn [_]
+                           (helpers/ipad-reset-header)
                            (onclick)
                            (om/set-state-nr! owner :enabled false))
                          :disabled (not (om/get-state owner :enabled))}
@@ -420,6 +421,7 @@
                            (boolean revealed-answer)
                            :onClick
                            (fn [e]
+                             (helpers/ipad-reset-header)
                              (async/put! (om/get-shared owner :command-channel)
                                          ["section-test-commands/reveal-worked-out-answer"
                                           section-id
