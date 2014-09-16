@@ -21,7 +21,7 @@
    (mapcat :remedial-sections-for-course)
    set))
 
-(defn- decorate-student-completion [model student]
+(defn decorate-student-completion [model student]
   (let [finished-ids (into (set (:finished-sections student))
                            (remedial-sections-for-courses model (:course-entry-quiz-passed student)))
         sections (all-sections model)
@@ -43,12 +43,12 @@
 (defn students-for-class [model class]
   (let [class-lookup (select-keys class [:department-id :class-name])]
     (for [student-id (get-in model [:students-by-class class-lookup])]
-      (->> (get-in model [:students student-id])
-           (decorate-student-completion model)))))
+      (get-in model [:students student-id]))))
 
-(defn- decorate-class-completion [model class]
+(defn decorate-class-completion [model class]
   (let [domains (domains model)
         student-completions (->> (students-for-class model class)
+                                 (map (partial decorate-student-completion model))
                                  (map :completion))
         completions-f (fn [scope domain]
                         (map #(get-in % [scope domain]) student-completions))
@@ -80,8 +80,32 @@
                   :department-id department-id
                   :department-name (:name department)
                   :school-id school-id
-                  :school-name (:name school)}))
-         (map (partial decorate-class-completion model)))))
+                  :school-name (:name school)})))))
+
+(defn chapter-list [model class chapter-id section-id]
+  (let [material (val (first (:courses model)))
+        students (students-for-class model class)
+        chapter-sections (get-in material [:chapter-sections chapter-id])
+        section-counts {chapter-id
+                        (into {}
+                              (for [section chapter-sections]
+                                (let [students-status
+                                      (->> students
+                                           (map
+                                            (fn [student]
+                                              (assoc student
+                                                :status
+                                                (get-in model [:students (:id student) :section-status (:id section)] :unstarted))))
+                                           (group-by :status))]
+                                  [(:id section)
+                                   (-> section
+                                       (merge (zipmap (keys students-status)
+                                                      (map count (vals students-status))))
+                                       (cond->
+                                        (= section-id (:id section))
+                                        (assoc :student-list students-status)))])))}]
+    (assoc material
+      :section-counts section-counts)))
 
 (defn get-teacher
   [model id]

@@ -90,14 +90,16 @@
                 "bedrock|boulder|1B" #{"Wilma Flintstone"}}
                (students-by-class model-fred-moved-to-vegas teacher)))))))
 
-(def course {:chapters [{:remedial true
+(def course {:chapters [{:id "chapter-1"
+                         :remedial true
                          :sections [{:id "section-1"
                                      :meijerink-criteria #{"A" "B"}
                                      :domains #{"Getallen" "Verhoudingen"}}
                                     {:id "section-2"
                                      :meijerink-criteria #{"B"}
                                      :domains #{"Meetkunde"}}]}
-                        {:sections [{:id "section-3"
+                        {:id "chapter-2"
+                         :sections [{:id "section-3"
                                      :meijerink-criteria #{"C"}
                                      :domains #{"Meetkunde" "Verbanden"}}]}]})
 
@@ -115,11 +117,12 @@
              (domains model-with-fred-barney-and-course))))
     (testing "class completion without course material"
       (let [model model-with-fred-and-barney-in-same-class]
-        (is (not (seq (:completion (first (classes model-with-fred-and-barney-in-same-class teacher))))))))
+        (is (not (seq (:completion (decorate-class-completion model-with-fred-and-barney-in-same-class
+                                                              (first (classes model-with-fred-and-barney-in-same-class teacher)))))))))
     (testing "one finished section without course material"
       (let [model (load-model model-with-fred-and-department-and-class
                               (section-test/finished "section-1" "fred"))]
-        (is (not (seq (:completion (first (classes model teacher))))))))
+        (is (not (seq (:completion (decorate-class-completion model (first (classes model teacher)))))))))
     (testing "one finished section with three section course material for two students"
       (let [model (load-model model-with-fred-barney-and-course
                               (section-test/finished "section-1" "fred"))]
@@ -138,7 +141,7 @@
                      "Verhoudingen" {:finished 0, :total 0}
                      "Meetkunde" {:finished 0, :total 2}
                      "Verbanden" {:finished 0, :total 2}}}
-               (:completion (first (classes model teacher)))))))
+               (:completion (decorate-class-completion model (first (classes model teacher))))))))
     (testing "remedial-sections-for-courses"
       (is (= #{"section-1" "section-2"}
              (remedial-sections-for-courses model-with-fred-barney-and-course #{"course"}))))
@@ -160,4 +163,38 @@
                      "Verhoudingen" {:finished 0, :total 0}
                      "Meetkunde" {:finished 0, :total 2}
                      "Verbanden" {:finished 0, :total 2}}}
-               (:completion (first (classes model teacher)))))))))
+               (->> teacher
+                    (classes model)
+                    first
+                    (decorate-class-completion model)
+                    :completion)))))))
+
+(deftest chapter-list-test
+  (let [model model-with-fred-barney-and-course
+        teacher (first (vals (:teachers model)))
+        class (first (classes model teacher))
+        section-counts (fn [model] (get-in (chapter-list model class "chapter-1" "section-1")
+                                           [:section-counts "chapter-1" "section-1"]))]
+    (is (= 2 (:unstarted (section-counts model))))
+    (is (= ["Barney Rubble" "Fred Flintstone"]
+           (map :full-name (get-in (section-counts model) [:student-list :unstarted]))))
+    (testing "fred starts a test"
+      (let [model (load-model model (section-test/created "section-1" "fred" "course"))]
+        (is (= 1 (:in-progress (section-counts model))))
+        (is (= ["Fred Flintstone"]
+               (map :full-name (get-in (section-counts model) [:student-list :in-progress]))))))
+    (testing "fred gets stuck"
+      (let [model (load-model model (section-test/stuck "section-1" "fred"))]
+        (is (= 1 (:stuck (section-counts model))))
+        (is (= ["Fred Flintstone"]
+               (map :full-name (get-in (section-counts model) [:student-list :stuck]))))
+        (testing "fred gets unstuck"
+          (let [model (load-model model (section-test/unstuck "section-1" "fred"))]
+            (is (= 1 (:in-progress (section-counts model))))
+            (is (= ["Fred Flintstone"]
+                   (map :full-name (get-in (section-counts model) [:student-list :in-progress]))))))))
+    (testing "fred finishes a test"
+      (let [model (load-model model (section-test/finished "section-1" "fred"))]
+        (is (= 1 (:finished (section-counts model))))
+        (is (= ["Fred Flintstone"]
+               (map :full-name (get-in (section-counts model) [:student-list :finished]))))))))

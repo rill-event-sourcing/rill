@@ -11,7 +11,7 @@
 
 (defmethod handle-event :studyflow.school-administration.student.events/Created
   [model {:keys [student-id full-name]}]
-  (assoc-in model [:students student-id :full-name] full-name))
+  (assoc-in model [:students student-id] {:id student-id, :full-name full-name}))
 
 (defmethod handle-event :studyflow.school-administration.student.events/NameChanged
   [model {:keys [student-id full-name]}]
@@ -71,7 +71,21 @@
 
 (defmethod handle-event :studyflow.learning.section-test.events/Finished
   [model {:keys [section-id student-id]}]
-  (update-in model [:students student-id :finished-sections] (fnil conj #{}) section-id))
+  (->  model
+       (update-in [:students student-id :finished-sections] (fnil conj #{}) section-id)
+       (update-in [:students student-id :section-status] assoc section-id :finished)))
+
+(defmethod handle-event :studyflow.learning.section-test.events/Created
+  [model {:keys [section-id student-id]}]
+  (update-in model [:students student-id :section-status] assoc section-id :in-progress))
+
+(defmethod handle-event :studyflow.learning.section-test.events/Stuck
+  [model {:keys [section-id student-id]}]
+  (update-in model [:students student-id :section-status] assoc section-id :stuck))
+
+(defmethod handle-event :studyflow.learning.section-test.events/Unstuck
+  [model {:keys [section-id student-id]}]
+  (update-in model [:students student-id :section-status] assoc section-id :in-progress))
 
 (defmethod handle-event :studyflow.learning.entry-quiz.events/Passed
   [model {:keys [student-id course-id]}]
@@ -93,11 +107,17 @@
                                 set)
         domains (->> all-sections
                      (mapcat :domains)
-                     set)]
+                     set)
+        chapter-sections (->> (for [chapter (:chapters material)]
+                                [(:id chapter) (map (fn [section]
+                                                      {:id (:id section)
+                                                       :title (:title section)}) (:sections chapter))])
+                              (into {}))]
     (-> model
         (assoc-in [:courses course-id]
                   (-> material
-                      (assoc :remedial-sections-for-course remedial-sections-for-course)))
+                      (assoc :remedial-sections-for-course remedial-sections-for-course
+                             :chapter-sections chapter-sections)))
         (assoc :all-sections all-sections
                :meijerink-criteria meijerink-criteria
                :domains domains))))

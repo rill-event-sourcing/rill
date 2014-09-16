@@ -245,3 +245,55 @@ textarea.tab-delimited-data {
     min-height: 10em;
     white-space: pre;
 }
+
+
+#m-teacher_chapter_list {
+  display: inline-block
+}
+
+#teacher_chapter_list_sidenav {
+  width: 400px;
+  border-radius: 3px;
+  border: 1px solid #ccc;
+  background: #f1f1f1;
+}
+
+#teacher_chapter_list_sidenav li {
+  list-style: none;
+}
+
+.chapter-list {
+  padding: 0;
+  margin: 0;
+}
+
+.chapter {
+  border-bottom: 1px solid #ccc;
+}
+
+.chapter-title {
+  padding: 15px 20px;
+  display: block;
+  color: #333;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.section-list {
+  padding: 0;
+}
+
+.section {
+  padding: 15px 20px;
+  border-top: 1px solid #ccc
+}
+
+.section_status {
+  padding: 15px 20px;
+}
+
+
+.teacher_chapter_list_main {
+  display: inline-block;
+  width: 500px
+}
