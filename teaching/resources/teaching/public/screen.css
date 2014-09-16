@@ -246,19 +246,54 @@ textarea.tab-delimited-data {
     white-space: pre;
 }
 
-#m-teacher_chapter_list .stuck {
-  background: #faa;
+
+#m-teacher_chapter_list {
+  display: inline-block
 }
-#m-teacher_chapter_list .in-progress {
-  background: #ff8;
+
+#teacher_chapter_list_sidenav {
+  width: 400px;
+  border-radius: 3px;
+  border: 1px solid #ccc;
+  background: #f1f1f1;
 }
-#m-teacher_chapter_list .unstarted {
-  background: #ccc;
+
+#teacher_chapter_list_sidenav li {
+  list-style: none;
 }
-#m-teacher_chapter_list .finished {
-  background: #8f8;
+
+.chapter-list {
+  padding: 0;
+  margin: 0;
 }
-#m-teacher_chapter_list .section_status span {
-  padding: .25em .5em;
+
+.chapter {
+  border-bottom: 1px solid #ccc;
+}
+
+.chapter-title {
+  padding: 15px 20px;
+  display: block;
+  color: #333;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.section-list {
+  padding: 0;
+}
+
+.section {
+  padding: 15px 20px;
+  border-top: 1px solid #ccc
+}
+
+.section_status {
+  padding: 15px 20px;
+}
+
+
+.teacher_chapter_list_main {
   display: inline-block;
+  width: 500px
 }
