@@ -1,7 +1,6 @@
 (ns studyflow.teaching.web.reports.export
   (:require [clojure.string :as str]
             [clojure.tools.logging :as log]
-            [hiccup.core :refer [h]]
             [clj-time.local :as time]
             [clj-time.format :as format-time]
             [studyflow.teaching.web.util :refer [completion-percentage]]
@@ -39,7 +38,7 @@
                               [(str "# Hoofdstukken afgerond (totaal " (get domains-total x) ")")
                                "Percentage afgerond"])
                             domains-all))
-        student-data (map (fn [student] (reduce into [(h (:full-name student))]
+        student-data (map (fn [student] (reduce into [(:full-name student)]
                                                 (map (fn [domain]
                                                        (completion-export (get-in student [:completion criterion domain])))
                                                      domains-all)))
