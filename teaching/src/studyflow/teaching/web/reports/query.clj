@@ -9,6 +9,22 @@
             [studyflow.teaching.web.util :refer :all]
             [ring.util.response :refer [redirect-after-post]]))
 
+(defn drop-down-classes [classes params]
+  (form/drop-down {:onchange "this.form.submit()"}
+                      "class-id"
+                      (into [["-- Kies klas --" ""]]
+                            (sort-by first
+                                     (map #(vector (:full-name %) (:id %))
+                                          classes)))
+                      (:class-id params)))
+
+(defn drop-down-meijerink [meijerink-criteria params]
+  (form/drop-down {:onchange "this.form.submit()"}
+                  "meijerink"
+                  (into [["-- Kies Niveau --" ""]]
+                        meijerink-criteria)
+                  (:meijerink params)))
+
 (defn render-completion [classes meijerink-criteria domains students params options]
   (let [meijerink-criteria (sort meijerink-criteria)
         domains (sort domains)
@@ -18,21 +34,12 @@
     (layout
      (merge {:title (if class
                       (str "Rapport voor \"" (:full-name class) "\"")
-                      "Rapport")} options)
+                      "Rapport")}
+            options)
 
      [:form {:method "GET"}
-      (form/drop-down {:onchange "this.form.submit()"}
-                      "class-id"
-                      (into [["-- Kies klas --" ""]]
-                            (sort-by first
-                                     (map #(vector (:full-name %) (:id %))
-                                          classes)))
-                      (:class-id params))
-      (form/drop-down {:onchange "this.form.submit()"}
-                      "meijerink"
-                      (into [["-- Kies Niveau --" ""]]
-                            meijerink-criteria)
-                      (:meijerink params))]
+      (drop-down-classes classes params)
+      (drop-down-meijerink meijerink-criteria params)]
 
      (when students
        [:div
@@ -68,71 +75,42 @@
     (layout
      (merge {:title (if class
                       (str "Voortgang voor \"" (:full-name class) "\"")
-                      "Voortgang")} options)
+                      "Voortgang")}
+            options)
+
      [:form {:method "GET"}
-      (form/drop-down {:onchange "this.form.submit()"}
-                      "class-id"
-                      (into [["-- Kies klas --" ""]]
-                            (sort-by first
-                                     (map #(vector (:full-name %) (:id %))
-                                          classes)))
-                      (:class-id params))
-      (when class
-        [:div
-         [:h1 "class selected"]
-         [:div (pr-str class)]
-         [:div "chapter-list"]
-         [:div (pr-str chapter-list)]
-         [:div "PARams:"]
-         [:div (pr-str params)]
-         [:div#m-teacher_chapter_list
-          [:h2 (:name chapter-list)]
-          [:nav#teacher_chapter_list_sidenav
-           [:ol.chapter-list
-            (for [{chapter-title :title
-                   chapter-id :id
-                   :as chapter} (:chapters chapter-list)]
-              [:li {:class (str "chapter "
-                                (when (= selected-chapter-id (str chapter-id))
-                                  "open"))}
-               [:a.chapter-title
-                {:href (str "/reports/chapter-list?class-id=" class-id
-                            "&chapter-id=" chapter-id)}
-                (str "Chapter title: " chapter-title
-                     chapter-id
-                     (when (= selected-chapter-id (str chapter-id))
-                       "[selected]"))]
-               (when (= selected-chapter-id (str chapter-id))
-                 [:ol.section-list
-                  (for [{section-title :title
-                         section-id :id
-                         :as section} (:sections chapter)]
-                    [:li {:class (str "section"
-                                      (when (= selected-section-id (str section-id))
-                                        "selected"))}
-                     [:a.section
-                      {:href (str "/reports/chapter-list?class-id=" class-id
-                                  "&chapter-id=" chapter-id
-                                  "&section-id=" section-id)}
-                      (str "Section Title" section-title
-                           section-id
-                           (when (= selected-section-id (str section-id))
-                             "[selected]"))]
-                     [:div (str "sectioncounts" chapter-id "__" section-id)]
-                     (when-let [section-counts (get-in chapter-list [:section-counts (str chapter-id) (str section-id)])]
-                       [:div.section_status
-                        [:div (str "progresses:" section-counts)]
-                        [:span.stuck "6"]
-                        [:span.in_progress "5"]
-                        [:span.unstarted "4"]
-                        [:span.finished "3"]])])])])]]]
-         (when-let [section-counts (get-in chapter-list [:section-counts selected-chapter-id selected-section-id])]
-           [:div.teacher_chapter_list_main
-            [:div (pr-str section-counts)]
-            [:div.student.stuck "Student Name stuck"]
-            [:div.student.in_progress "Student Name in progress"]
-            [:div.student.unstarted "Student Name unstarted"]
-            [:div.student.finished]])])])))
+      (drop-down-classes classes params)]
+
+     (when class
+       [:div#m-teacher_chapter_list
+        [:h2 (:name chapter-list)]
+
+        [:nav#teacher_chapter_list_sidenav
+         [:ol.chapter-list
+          (for [{chapter-title :title chapter-id :id :as chapter} (:chapters chapter-list)]
+            [:li {:class (str "chapter " (when (= selected-chapter-id (str chapter-id)) "open"))}
+             [:a.chapter-title
+              {:href (str "?class-id=" class-id "&chapter-id=" chapter-id)}
+              (h chapter-title)]
+
+             (when (= selected-chapter-id (str chapter-id))
+               [:ol.section-list
+                (for [{section-title :title section-id :id :as section} (:sections chapter)]
+                  [:li {:class (str "section" (when (= selected-section-id (str section-id)) "selected"))}
+                   [:a.section
+                    {:href (str "?class-id=" class-id "&chapter-id=" chapter-id "&section-id=" section-id)}
+                    (h section-title)]
+
+                   (when-let [section-counts (get-in chapter-list [:section-counts (str chapter-id) (str section-id)])]
+                     [:div.section_status
+                      (for [status [:stuck :in-progress :unstarted :finished]]
+                        [:span {:class (name status)} (get section-counts status 0)])])])])])]]
+
+        (when-let [section-counts (get-in chapter-list [:section-counts selected-chapter-id selected-section-id])]
+          [:div.teacher_chapter_list_main
+           (for [status [:stuck :in-progress :unstarted :finished]]
+             (for [student (get-in section-counts [:student-list status])]
+               [:div.student {:class (name status)} student]))])]))))
 
 (defroutes app
   (GET "/reports/"
