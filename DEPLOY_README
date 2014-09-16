@@ -1,0 +1,20 @@
+Deploy:
+./deploy.sh <env production or staging> <full sha you want to deploy>
+
+Capistrano finds the jar and zips for the sha from s3, that are put there after a succesfull build on the ci
+
+Check version that is deployed:
+cap <env production or staging> version
+
+Servers to deploy to are defined in config/<env>.rb if you comment out some servers you can deploy to a single server if needed. Do not comment out the load-balancer, only any of the four sf<env>learning/sf<env>login/sf<env>school/sf<env>teaching
+
+10 last jars are kept on servers, therefor rollback should be quick
+
+in ./deploy.sh edit
+cap $1 deploy:cold -s revision=$2
+
+Add my ip to kibana dashboard:
+- sudo ufw allow from <ip> on sfprodbalancer
+
+Also nice:
+www.studyflow.nl/haproxy
