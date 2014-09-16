@@ -86,27 +86,24 @@
   (let [material (val (first (:courses model)))
         students (students-for-class model class)
         chapter-sections (get-in material [:chapter-sections chapter-id])
-        section-counts {chapter-id (into {}
-                                         (for [section chapter-sections]
-                                           (let [students-status
-                                                 (->> students
-                                                      (map
-                                                       (fn [student]
-                                                         (assoc student
-                                                           :status
-                                                           (get-in model [:students (:id student) :section-status (:id section)] :unstarted))))
-                                                      (group-by :status))]
-                                             [(:id section)
-                                              (-> section
-                                                  (merge (zipmap (keys students-status)
-                                                                 (map count (vals students-status))))
-                                                  (cond->
-                                                   (= section-id (:id section))
-                                                   (assoc :student-list
-                                                     (zipmap (keys students-status)
-                                                             (sort (map
-                                                                    #(map :full-name %)
-                                                                    (vals students-status)))))))])))}]
+        section-counts {chapter-id
+                        (into {}
+                              (for [section chapter-sections]
+                                (let [students-status
+                                      (->> students
+                                           (map
+                                            (fn [student]
+                                              (assoc student
+                                                :status
+                                                (get-in model [:students (:id student) :section-status (:id section)] :unstarted))))
+                                           (group-by :status))]
+                                  [(:id section)
+                                   (-> section
+                                       (merge (zipmap (keys students-status)
+                                                      (map count (vals students-status))))
+                                       (cond->
+                                        (= section-id (:id section))
+                                        (assoc :student-list students-status)))])))}]
     (assoc material
       :section-counts section-counts)))
 

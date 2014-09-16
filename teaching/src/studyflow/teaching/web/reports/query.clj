@@ -7,6 +7,7 @@
             [studyflow.teaching.read-model :as read-model]
             [studyflow.teaching.web.reports.export :refer [render-export]]
             [studyflow.teaching.web.util :refer :all]
+            [rill.uuid :refer [uuid]]
             [ring.util.response :refer [redirect-after-post]]))
 
 (defn drop-down-classes [classes params]
@@ -69,8 +70,8 @@
         [:a {:href (str "/reports/export?class-id=" (:class-id params)) :target "_blank"} "Exporteren naar Excel"]]))))
 
 (defn render-chapter-list [classes class chapter-list params options]
-  (let [selected-chapter-id (:chapter-id params)
-        selected-section-id (:section-id params)
+  (let [selected-chapter-id (uuid (:chapter-id params))
+        selected-section-id (uuid (:section-id params))
         class-id (:class-id params)]
     (layout
      (merge {:title (if class
@@ -93,15 +94,15 @@
               {:href (str "?class-id=" class-id "&chapter-id=" chapter-id)}
               (h chapter-title)]
 
-             (when (= selected-chapter-id (str chapter-id))
+             (when (= selected-chapter-id chapter-id)
                [:ol.section-list
                 (for [{section-title :title section-id :id :as section} (:sections chapter)]
-                  [:li {:class (str "section" (when (= selected-section-id (str section-id)) "selected"))}
+                  [:li {:class (str "section" (when (= selected-section-id section-id) "selected"))}
                    [:a.section
                     {:href (str "?class-id=" class-id "&chapter-id=" chapter-id "&section-id=" section-id)}
                     (h section-title)]
 
-                   (when-let [section-counts (get-in chapter-list [:section-counts (str chapter-id) (str section-id)])]
+                   (when-let [section-counts (get-in chapter-list [:section-counts chapter-id section-id])]
                      [:div.section_status
                       (for [status [:stuck :in-progress :unstarted :finished]]
                         [:span {:class (name status)} (get section-counts status 0)])])])])])]]
@@ -109,8 +110,8 @@
         (when-let [section-counts (get-in chapter-list [:section-counts selected-chapter-id selected-section-id])]
           [:div.teacher_chapter_list_main
            (for [status [:stuck :in-progress :unstarted :finished]]
-             (for [student (get-in section-counts [:student-list status])]
-               [:div.student {:class (name status)} student]))])]))))
+             (for [student (sort-by :full-name (get-in section-counts [:student-list status]))]
+               [:div.student {:class (name status)} (:full-name student)]))])]))))
 
 (defroutes app
   (GET "/reports/"
@@ -136,12 +137,11 @@
   (GET "/reports/chapter-list"
        {:keys [read-model flash teacher redirect-urls]
         {:keys [class-id chapter-id section-id] :as params} :params}
-       (let [classes (read-model/classes read-model teacher)
-             class (some (fn [c]
-                           (when (= class-id (:id c))
-                             c)) classes)
-             chapter-list (when class
-                            (read-model/chapter-list read-model class chapter-id section-id))
+       (let [chapter-id (uuid chapter-id)
+             section-id (uuid section-id)
+             classes (read-model/classes read-model teacher)
+             class (some (fn [c] (when (= class-id (:id c)) c)) classes)
+             chapter-list (when class (read-model/chapter-list read-model class chapter-id section-id))
              options (assoc flash :redirect-urls redirect-urls)]
          (binding [*current-nav-uri* "/reports/chapter-list"]
            (render-chapter-list classes class chapter-list params options))))

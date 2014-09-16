@@ -90,14 +90,16 @@
                 "bedrock|boulder|1B" #{"Wilma Flintstone"}}
                (students-by-class model-fred-moved-to-vegas teacher)))))))
 
-(def course {:chapters [{:remedial true
+(def course {:chapters [{:id "chapter-1"
+                         :remedial true
                          :sections [{:id "section-1"
                                      :meijerink-criteria #{"A" "B"}
                                      :domains #{"Getallen" "Verhoudingen"}}
                                     {:id "section-2"
                                      :meijerink-criteria #{"B"}
                                      :domains #{"Meetkunde"}}]}
-                        {:sections [{:id "section-3"
+                        {:id "chapter-2"
+                         :sections [{:id "section-3"
                                      :meijerink-criteria #{"C"}
                                      :domains #{"Meetkunde" "Verbanden"}}]}]})
 
@@ -115,7 +117,8 @@
              (domains model-with-fred-barney-and-course))))
     (testing "class completion without course material"
       (let [model model-with-fred-and-barney-in-same-class]
-        (is (not (seq (:completion (decorate-class-completion model-with-fred-and-barney-in-same-class (first (classes model-with-fred-and-barney-in-same-class teacher)))))))))
+        (is (not (seq (:completion (decorate-class-completion model-with-fred-and-barney-in-same-class
+                                                              (first (classes model-with-fred-and-barney-in-same-class teacher)))))))))
     (testing "one finished section without course material"
       (let [model (load-model model-with-fred-and-department-and-class
                               (section-test/finished "section-1" "fred"))]
@@ -165,3 +168,15 @@
                     first
                     (decorate-class-completion model)
                     :completion)))))))
+
+(deftest chapter-list-test
+  (let [model (load-model model-with-fred-barney-and-course
+                          (section-test/finished "section-1" "fred"))
+        teacher (first (vals (:teachers model)))
+        class (first (classes model teacher))
+        chapter-list (chapter-list model class "chapter-1" "section-1")
+        section-counts (get-in chapter-list [:section-counts "chapter-1" "section-1"])]
+    (is (= 1 (:unstarted section-counts)))
+    (is (= 1 (:finished section-counts)))
+    (is (= ["Barney Rubble"] (map :full-name (get-in section-counts [:student-list :unstarted]))))
+    (is (= ["Fred Flintstone"] (map :full-name (get-in section-counts [:student-list :finished]))))))

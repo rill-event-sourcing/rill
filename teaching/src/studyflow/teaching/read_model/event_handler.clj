@@ -11,7 +11,7 @@
 
 (defmethod handle-event :studyflow.school-administration.student.events/Created
   [model {:keys [student-id full-name]}]
-  (assoc-in model [:students student-id :full-name] full-name))
+  (assoc-in model [:students student-id] {:id student-id, :full-name full-name}))
 
 (defmethod handle-event :studyflow.school-administration.student.events/NameChanged
   [model {:keys [student-id full-name]}]
@@ -71,7 +71,9 @@
 
 (defmethod handle-event :studyflow.learning.section-test.events/Finished
   [model {:keys [section-id student-id]}]
-  (update-in model [:students student-id :finished-sections] (fnil conj #{}) section-id))
+  (->  model
+       (update-in [:students student-id :finished-sections] (fnil conj #{}) section-id)
+       (update-in [:students student-id :section-status] assoc section-id :finished)))
 
 (defmethod handle-event :studyflow.learning.entry-quiz.events/Passed
   [model {:keys [student-id course-id]}]
@@ -95,9 +97,9 @@
                      (mapcat :domains)
                      set)
         chapter-sections (->> (for [chapter (:chapters material)]
-                                [(str (:id chapter)) (map (fn [section]
-                                                            {:id (str (:id section))
-                                                             :title (:title section)}) (:sections chapter))])
+                                [(:id chapter) (map (fn [section]
+                                                      {:id (:id section)
+                                                       :title (:title section)}) (:sections chapter))])
                               (into {}))]
     (-> model
         (assoc-in [:courses course-id]
