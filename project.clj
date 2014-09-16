@@ -26,7 +26,9 @@
                  [com.mindscapehq/raygun4java "1.5.0" :extension "pom"]
                  [com.mindscapehq/core "1.5.0"]
                  [identifiers/identifiers "1.0.0"]
-                 [org.bovinegenius/exploding-fish "0.3.4"]]
+                 [org.bovinegenius/exploding-fish "0.3.4"]
+                 [clj-time/clj-time "0.8.0"]
+                 [dk.ative/docjure "1.6.0"]]
   :profiles {:uberjar               {:aot :all
                                      :omit-source true}
              :learning              {:main studyflow.main

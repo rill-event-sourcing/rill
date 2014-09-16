@@ -1,30 +1,13 @@
 (ns studyflow.teaching.web.reports.query
   (:require [clojure.string :as str]
+            [clojure.tools.logging :as log]
             [compojure.core :refer [GET defroutes]]
             [hiccup.core :refer [h]]
             [hiccup.form :as form]
             [studyflow.teaching.read-model :as read-model]
-            [studyflow.teaching.web.html-util :refer [layout]]
+            [studyflow.teaching.web.reports.export :refer [render-export]]
+            [studyflow.teaching.web.util :refer :all]
             [ring.util.response :refer [redirect-after-post]]))
-
-(defn- completion-title [{:keys [finished total]}]
-  (str finished "/" total))
-
-(defn- completion-percentage [{:keys [finished total]}]
-  (str (Math/round (float (/ (* finished 100) total))) "%"))
-
-(defn- completion [{:keys [total] :as completion}]
-  (if (and completion (> total 0))
-    [:span {:title (completion-title completion)}
-     (completion-percentage completion)]
-    "&mdash;"))
-
-(defn- classerize [s]
-  (-> s
-      str
-      str/lower-case
-      (str/replace #"[^a-z ]" "")
-      (str/replace #"\s+" "-")))
 
 (defn render-completion [classes meijerink-criteria domains students params options]
   (let [meijerink-criteria (sort meijerink-criteria)
@@ -52,29 +35,31 @@
                       (:meijerink params))]
 
      (when students
-       [:table.students
-        [:thead
-         [:th.full-name]
-         [:th.completion.number "Totaal"]
-         (map (fn [domain]
-                [:th.domain.number (h domain)])
-              domains)]
-        [:tbody
-         (map (fn [student]
-                [:tr.student {:id (str "student-" (:id student))}
-                 [:td.full-name
-                  (h (:full-name student))]
-                 (map (fn [domain]
-                        [:td.completion.number {:class (classerize domain)}
-                         (completion (get-in student [:completion scope domain]))])
-                      (into [:all] domains))])
-              (sort-by :full-name students))]
-        [:tfoot
-         [:th.average "Klassengemiddelde"]
-         (map (fn [domain]
-                [:td.average.number {:class (classerize domain)}
-                 (completion (get-in class [:completion scope domain]))])
-              (into [:all] domains))]]))))
+       [:div
+        [:table.students
+         [:thead
+          [:th.full-name]
+          [:th.completion.number "Totaal"]
+          (map (fn [domain]
+                 [:th.domain.number (h domain)])
+               domains)]
+         [:tbody
+          (map (fn [student]
+                 [:tr.student {:id (str "student-" (:id student))}
+                  [:td.full-name
+                   (h (:full-name student))]
+                  (map (fn [domain]
+                         [:td.completion.number {:class (classerize domain)}
+                          (completion-html (get-in student [:completion scope domain]))])
+                       (into [:all] domains))])
+               (sort-by :full-name students))]
+         [:tfoot
+          [:th.average "Klassengemiddelde"]
+          (map (fn [domain]
+                 [:td.average.number {:class (classerize domain)}
+                  (completion-html (get-in class [:completion scope domain]))])
+               (into [:all] domains))]]
+        [:a {:href (str "/reports/export?class-id=" (:class-id params)) :target "_blank"} "Exporteren naar Excel"]]))))
 
 (defroutes app
   (GET "/reports/"
@@ -90,4 +75,14 @@
              class (first (filter #(= class-id (:id %)) classes))
              students (when class (read-model/students-for-class read-model class))
              options (assoc flash :redirect-urls redirect-urls)]
-         (render-completion classes meijerink-criteria domains students params options))))
+         (render-completion classes meijerink-criteria domains students params options)))
+
+  (GET "/reports/export"
+       {:keys [read-model teacher]
+        {:keys [class-id] :as params} :params}
+       (let [classes (read-model/classes read-model teacher)
+             domains (sort (read-model/domains read-model))
+             meijerink-criteria (sort (read-model/meijerink-criteria read-model))
+             class (first (filter #(= class-id (:id %)) classes))
+             students (when class (read-model/students-for-class read-model class))]
+         (render-export classes domains students meijerink-criteria params))))
