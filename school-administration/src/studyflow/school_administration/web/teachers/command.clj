@@ -27,7 +27,7 @@
           (-> event-store
               (try-command (teacher/create! teacher-id (when (not= "" department-id)
                                                          (uuid department-id)) full-name))
-              (result->response (redirect-to-index)
+              (result->response (merge-flash (redirect-to-edit teacher-id) {:message "teacher created"})
                                 (redirect-to-new)
                                 params))))
 
@@ -36,7 +36,7 @@
          {:keys [teacher-id expected-version full-name] :as params} :params}
         (-> event-store
             (try-command (teacher/change-name! (uuid teacher-id) (Long/parseLong expected-version) full-name))
-            (result->response (redirect-to-index)
+            (result->response (merge-flash (redirect-to-edit teacher-id) {:message "name updated"})
                               (redirect-to-edit teacher-id)
                               params)))
 
@@ -48,7 +48,7 @@
               department-id (if (not= "" department-id) (uuid department-id))]
           (-> event-store
               (try-command (teacher/change-department! teacher-id version department-id))
-              (result->response (redirect-to-index)
+              (result->response (merge-flash (redirect-to-edit teacher-id) {:message "department updated"})
                                 (redirect-to-edit teacher-id)
                                 params))))
 
@@ -59,7 +59,7 @@
               version (Long/parseLong expected-version)]
           (-> event-store
               (try-command (teacher/change-classes! teacher-id version (set class-names)))
-              (result->response (redirect-to-index)
+              (result->response (merge-flash (redirect-to-edit teacher-id) {:message "classes updated"})
                                 (redirect-to-edit teacher-id)
                                 params))))
 
@@ -80,6 +80,6 @@
                (when (and (= :ok status) (not= "" original-email))
                  (try-command event-store (email-ownership/release! id original-email)))
                result))
-           (redirect-to-index)
+           (merge-flash (redirect-to-edit teacher-id) {:message "credentials updated"})
            (redirect-to-edit teacher-id)
            params))))

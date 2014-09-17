@@ -26,7 +26,7 @@
                 (school/claim-brin! school-id brin)
                 (school/create! school-id name brin)
                 (school/release-brin! school-id brin))
-              (result->response (redirect-to-index)
+              (result->response (merge-flash (redirect-to-edit school-id) {:message "school created"})
                                 (redirect-to-new)
                                 params))))
 
@@ -35,6 +35,6 @@
          {:keys [school-id expected-version name] :as params} :params}
         (-> event-store
             (try-command (school/change-name! (uuid school-id) (Long/parseLong expected-version) name))
-            (result->response (redirect-to-index)
+            (result->response (merge-flash (redirect-to-edit school-id) {:message "name updated"})
                               (redirect-to-edit school-id)
                               params))))
