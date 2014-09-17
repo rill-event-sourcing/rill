@@ -30,6 +30,7 @@ upload: build
 css:
 	make -C learning css
 	make -C login css
+	make -C teaching css
 
 js-dev:
 	lein cljsbuild once

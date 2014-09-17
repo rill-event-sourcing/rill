@@ -12,12 +12,13 @@
                  [dk.ative/docjure "1.6.0"]]
 
   :source-paths ["src" "../common/src"]
+  :resource-paths ["resources" "generated"]
 
   :profiles {:test {:source-paths ["test"
                                    "../learning/src"
                                    "../school-administration/src"]}
              :dev {:source-paths ["dev"]
-                   :resource-paths ["dev/resources"]
+                   :resource-paths ["dev/resources" "resources" "generated"]
                    :dependencies
                    [[org.clojure/tools.trace "0.7.5"]
                     [org.clojure/tools.namespace "0.2.5"]

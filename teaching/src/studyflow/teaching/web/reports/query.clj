@@ -84,8 +84,6 @@
 
      (when class
        [:div#m-teacher_chapter_list
-        [:h2 (:name chapter-list)]
-
         [:nav#teacher_chapter_list_sidenav
          [:ol.chapter-list
           (for [{chapter-title :title chapter-id :id :as chapter} (:chapters chapter-list)]
@@ -98,7 +96,7 @@
                [:ol.section-list
                 (for [{section-title :title section-id :id :as section} (:sections chapter)]
                   [:li {:class (str "section" (when (= selected-section-id section-id) "selected"))}
-                   [:a.section
+                   [:a.section_link
                     {:href (str "?class-id=" class-id "&chapter-id=" chapter-id "&section-id=" section-id)}
                     (h section-title)]
 

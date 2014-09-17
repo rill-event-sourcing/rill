@@ -32,23 +32,25 @@
    [:head
     [:title (h (str/join " - " [title app-title]))]
     [:link {:href "/favicon.ico" :rel "shortcut icon" :type "image/vnd.microsoft.icon"}]
-    (include-css "/screen.css")]
+    (include-css "/css/teaching.css")]
    [:body
-    [:header
-     [:nav
-      [:ul
-       (map (fn [[url label]]
-              [:li [:a (if (= url *current-nav-uri*) {} {:href url}) label]])
-            [["/reports/completion" "Rapport"]
-             ["/reports/chapter-list" "Voortgang"]])]]
+    [:header#m-top_header
+     [:h1#logo "Leraren"]
      (when redirect-urls
        (form/form-to
         {:role "form" :id "logout-form"} [:post (:login redirect-urls)]
         [:input {:type "hidden" :name "_method" :value "DELETE"}]
-        [:button {:type "submit"} "Uitloggen"]))
-     [:h1 (h title)]]
-    [:div.body
-     (when warning [:div.warning (h warning)])
-     (when message [:div.message (h message)])
-     [:div.container body]]
+        [:button {:type "submit"} "Uitloggen"]))]
+    [:section#main_teaching
+     [:nav#main_container_nav
+      [:ul
+       (map (fn [[url label]]
+              [:li.main_container_nav_list_item
+               [:a.main_container_nav_tab (if (= url *current-nav-uri*) {:class "selected"} {:href url}) label]])
+            [["/reports/completion" "Rapport"]
+             ["/reports/chapter-list" "Voortgang"]])]]
+     [:div.body
+      (when warning [:div.warning (h warning)])
+      (when message [:div.message (h message)])
+      [:div.container body]]]
     [:footer]]))

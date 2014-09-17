@@ -5,10 +5,10 @@ default: test
 test:
 	STUDYFLOW_ENV=test lein test && echo "OK"
 
-#css:
-#	cd sass && bundle install && bundle exec compass compile
+css:
+	cd sass && bundle install && bundle exec compass compile
 
-build: #css
+build: css
 	lein uberjar
 
 upload:
