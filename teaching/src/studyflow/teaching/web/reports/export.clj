@@ -71,9 +71,8 @@
                           (excel/create-cell-style! workbook {:background :light_cornflower_blue
                                                               :font {:bold true}}))))
 
-(defn render-export [classes domains students meijerink-criteria params]
-  (let [class (first (filter #(= (:class-id params) (:id %)) classes))
-        file-name (str "studyflow-rapport-" (:class-name class) "-" (local-date))
+(defn render-export [class students domains meijerink-criteria]
+  (let [file-name (str "studyflow-rapport-" (:class-name class) "-" (local-date))
         workbook (reduce (fn [wb criterion]
                            (let [sheet (excel/add-sheet! wb criterion)
                                  data (sheet-content-for-criterion criterion

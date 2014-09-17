@@ -26,10 +26,9 @@
                         meijerink-criteria)
                   (:meijerink params)))
 
-(defn render-completion [classes meijerink-criteria domains students params options]
+(defn render-completion [class students classes meijerink-criteria domains params options]
   (let [meijerink-criteria (sort meijerink-criteria)
         domains (sort domains)
-        class (first (filter #(= (:class-id params) (:id %)) classes))
         scope (:meijerink params)
         scope (if (str/blank? scope) nil scope)]
     (layout
@@ -130,7 +129,7 @@
                              (map (partial read-model/decorate-student-completion read-model))))
              options (assoc flash :redirect-urls redirect-urls)]
          (binding [*current-nav-uri* "/reports/completion"]
-           (render-completion classes meijerink-criteria domains students params options))))
+           (render-completion class students classes meijerink-criteria domains params options))))
 
   (GET "/reports/chapter-list"
        {:keys [read-model flash teacher redirect-urls]
@@ -150,6 +149,10 @@
        (let [classes (read-model/classes read-model teacher)
              domains (sort (read-model/domains read-model))
              meijerink-criteria (sort (read-model/meijerink-criteria read-model))
-             class (first (filter #(= class-id (:id %)) classes))
-             students (when class (read-model/students-for-class read-model class))]
-         (render-export classes domains students meijerink-criteria params))))
+             class (some (fn [class]
+                           (when (= class-id (:id class))
+                             (read-model/decorate-class-completion read-model class))) classes)
+             students (when class
+                        (->> (read-model/students-for-class read-model class)
+                             (map (partial read-model/decorate-student-completion read-model))))]
+         (render-export class students domains meijerink-criteria))))
