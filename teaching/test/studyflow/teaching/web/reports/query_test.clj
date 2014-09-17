@@ -17,20 +17,22 @@
 
 (deftest render-completion
   (testing "without data"
-    (let [body (t/render-completion nil nil nil nil nil nil)]
+    (let [body (t/render-completion nil nil nil nil nil nil nil)]
       (is (= "Rapport - Studyflow"
              (query-html-content body [[:html] [:head] [:title]])))))
   (testing "with data"
-    (let [body (t/render-completion [{:id "c"
-                                      :full-name "C1"
-                                      :completion {"A" {:all {:finished 0, :total 10}
-                                                        "bar" {:finished 3, :total 37}}}}]
-                                    #{"A" "B"}
-                                    #{"foo" "bar"}
+    (let [class {:id "c"
+                 :full-name "C1"
+                 :completion {"A" {:all {:finished 0, :total 10}
+                                   "bar" {:finished 3, :total 37}}}}
+          body (t/render-completion class
                                     [{:id "fred",
                                       :full-name "Fred Flintstone",
                                       :completion {"A" {:all {:finished 1, :total 10}
                                                         "foo" {:finished 2, :total 17}}}}]
+                                    [class]
+                                    #{"A" "B"}
+                                    #{"foo" "bar"}
                                     {:class-id "c", :meijerink "A"}
                                     nil)]
       (is (= "Rapport voor \"C1\" - Studyflow"
