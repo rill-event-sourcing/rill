@@ -195,6 +195,7 @@ textarea.tab-delimited-data
   border-radius: 3px
   border: 1px solid #ccc
   background: #fafafa
+  float: left
   li
     list-style: none
 
@@ -230,11 +231,9 @@ textarea.tab-delimited-data
   right: 0
   top: -6px
 
-.teacher_chapter_list_main
-  display: inline-block
-  width: 500px
-
 #m-teacher_chapter_list
+  display: inline-block
+  width: 900px
 
   .stuck, .in-progress, .unstarted, .finished
     line-height: 30px
@@ -252,6 +251,50 @@ textarea.tab-delimited-data
     background: #8f8
     +border-right-radius(4px)
 
-m-teacher_chapter_list .section_status span
-  padding: .25em .5em
+.teacher_chapter_list_main
   display: inline-block
+  float: left
+  margin-left: 20px
+  width: 475px
+  .student
+    display: block !important
+    +border-radius(0 !important)
+    background: white !important
+    border: 1px solid #ccc
+    border-bottom: 0
+    line-height: 40px !important
+    position: relative
+    &:first-child
+      +border-top-radius(4px !important)
+    &:last-child
+      +border-bottom-radius(4px !important)
+      border-bottom: 1px solid #ccc
+    &:after
+      display: inline-block
+      line-height: 25px
+      background: #ffaaaa
+      color: white
+      right: 20px
+      top: 7px
+      +border-radius(3px)
+      padding: 0 15px
+      font-size: 14px
+      font-weight: 600
+    &.stuck
+      &::after
+        display: inline-block
+        position: absolute
+        content: 'Struikelblok'
+        background: #faa
+    &.unstarted
+      &::after
+        display: inline-block
+        position: absolute
+        content: 'Struikelblok'
+        background: #faa
+    &.finished
+      &::after
+        display: inline-block
+        position: absolute
+        content: 'Klaar!'
+        background: #8f8
