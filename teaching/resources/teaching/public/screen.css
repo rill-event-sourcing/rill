@@ -297,3 +297,20 @@ textarea.tab-delimited-data {
   display: inline-block;
   width: 500px
 }
+
+#m-teacher_chapter_list .stuck {
+  background: #faa;
+}
+#m-teacher_chapter_list .in-progress {
+  background: #ff8;
+}
+#m-teacher_chapter_list .unstarted {
+  background: #ccc;
+}
+#m-teacher_chapter_list .finished {
+  background: #8f8;
+}
+#m-teacher_chapter_list .section_status span {
+  padding: .25em .5em;
+  display: inline-block;
+}
