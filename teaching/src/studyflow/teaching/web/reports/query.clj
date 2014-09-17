@@ -87,7 +87,7 @@
         [:nav#teacher_chapter_list_sidenav
          [:ol.chapter-list
           (for [{chapter-title :title chapter-id :id :as chapter} (:chapters chapter-list)]
-            [:li {:class (str "chapter " (when (= selected-chapter-id (str chapter-id)) "open"))}
+            [:li {:class (str "chapter" (when (= selected-chapter-id (str chapter-id)) " open"))}
              [:a.chapter-title
               {:href (str "?class-id=" class-id "&chapter-id=" chapter-id)}
               (h chapter-title)]
@@ -95,7 +95,7 @@
              (when (= selected-chapter-id chapter-id)
                [:ol.section-list
                 (for [{section-title :title section-id :id :as section} (:sections chapter)]
-                  [:li {:class (str "section" (when (= selected-section-id section-id) "selected"))}
+                  [:li {:class (str "section" (when (= selected-section-id section-id) " selected"))}
                    [:a.section_link
                     {:href (str "?class-id=" class-id "&chapter-id=" chapter-id "&section-id=" section-id)}
                     (h section-title)]
