@@ -101,7 +101,7 @@
                                             departments)))
                         (:id department))
 
-        (field-errors (:full-name errors))]
+        (field-errors (:department-id errors))]
        [:div.actions
         [:button.primary {:type "submit"} "Update"]
         (cancel-button)]])
