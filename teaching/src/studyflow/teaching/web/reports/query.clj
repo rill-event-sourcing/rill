@@ -11,7 +11,7 @@
             [ring.util.response :refer [redirect-after-post]]))
 
 (defn drop-down-classes [classes params]
-  (form/drop-down {:onchange "this.form.submit()"}
+  (form/drop-down {:onchange "this.form.submit()", :class "selector"}
                       "class-id"
                       (into [["-- Kies klas --" ""]]
                             (sort-by first
@@ -20,7 +20,7 @@
                       (:class-id params)))
 
 (defn drop-down-meijerink [meijerink-criteria params]
-  (form/drop-down {:onchange "this.form.submit()"}
+  (form/drop-down {:onchange "this.form.submit()", :class "selector"}
                   "meijerink"
                   (into [["-- Kies Niveau --" ""]]
                         meijerink-criteria)
