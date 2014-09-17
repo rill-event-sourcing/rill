@@ -30,11 +30,11 @@ body
     color: #bbb
     line-height: 50px
     padding: 0 20px
+    cursor: pointer
     &.selected
       background: white
       color: #333
-
-
+      cursor: default
 
 table
   border: 1px solid #ddd
@@ -280,21 +280,20 @@ textarea.tab-delimited-data
       padding: 0 15px
       font-size: 14px
       font-weight: 600
+      position: absolute
     &.stuck
       &::after
-        display: inline-block
-        position: absolute
         content: 'Struikelblok'
-        background: #faa
+        background: #FF6767
+    &.in-progress
+      &::after
+        content: 'Mee bezig'
+        background: #ff8
     &.unstarted
       &::after
-        display: inline-block
-        position: absolute
-        content: 'Struikelblok'
-        background: #faa
+        content: 'Nog niet begonnen'
+        background: #ccc
     &.finished
       &::after
-        display: inline-block
-        position: absolute
         content: 'Klaar!'
-        background: #8f8
+        background: #72C43B
