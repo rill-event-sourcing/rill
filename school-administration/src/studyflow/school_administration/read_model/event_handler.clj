@@ -43,6 +43,12 @@
       (m/set-student-email student-id (:email credentials))
       (m/set-aggregate-version student-id number)))
 
+;; don't care about the payload, we only need to update the aggregate version
+(defmethod handle-event ::student/EduRouteCredentialsAdded
+  [model {:keys [student-id ::message/number]}]
+  (-> model
+      (m/set-aggregate-version student-id number)))
+
 (defmethod handle-event ::student/CredentialsChanged
   [model {:keys [student-id credentials ::message/number]}]
   (-> model
