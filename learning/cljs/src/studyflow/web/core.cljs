@@ -626,6 +626,7 @@
     om/IDidMount
     (did-mount [_]
       (focus-input-box owner)
+      (helpers/ipad-fix-scroll-after-switching)
       (let [key-handler (goog.events.KeyHandler. js/document)]
         (when-let [key @key-listener]
           (goog.events/unlistenByKey key))

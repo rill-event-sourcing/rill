@@ -149,3 +149,10 @@
 (defn ipad-reset-header []
   (when ipad?
     (js/window.scrollTo js/document.body.-scrollLeft js/document.body.-scrollTop)))
+
+(defn ipad-fix-scroll-after-switching []
+  ;; when switching between explantion and questions, if you are
+  ;; scrolled down a lot in explanation the question will be scrolled
+  ;; of screen whn switching to questions
+  (when ipad?
+    (js/document.body.scrollIntoViewIfNeeded)))
