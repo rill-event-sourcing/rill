@@ -54,11 +54,11 @@ header nav ul li a {
     padding: 1em;
     color: #000;
 }
-header nav ul li a:link, header nav ul li a:visited {
+header nav ul li {
     background: #ddd;
 }
-header nav ul li a:focus {
-    background: #eee;
+header nav ul li.current {
+    background: #fff;
 }
 
 table {

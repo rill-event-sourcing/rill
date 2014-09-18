@@ -19,7 +19,8 @@
      [:nav
       [:ul
        (map (fn [[url label]]
-              [:li [:a (if (= url *current-nav-uri*) {} {:href url}) label]])
+              [:li (when (= url *current-nav-uri*) {:class "current"})
+               [:a {:href url} label]])
             {"/list-students" "Students"
              "/list-teachers" "Teachers"
              "/list-schools" "Schools"})]]
