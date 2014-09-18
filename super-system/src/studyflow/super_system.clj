@@ -10,6 +10,13 @@
             [learning-dev-system]
             [login-dev-system]))
 
+(def redirect-urls
+  (let [root "localhost"]
+    {:editor (str "http://" root ":2000")
+     :student (str "http://" root ":3000")
+     :login (str "http://" root ":4000")
+     :teacher (str "http://" root ":4001")}))
+
 (defn namespace-system [system prefix exceptions]
   (let [exceptions (set exceptions)
         prefix-keyword (fn [kw]
@@ -26,16 +33,18 @@
 
 
 (defn make-system [config]
-  (let [learning (-> (learning-dev-system/dev-system (if (:psql config)
-                                                       (assoc learning-dev-system/dev-config :no-fixtures true)
-                                                       learning-dev-system/dev-config))
+  (let [learning (-> (learning-dev-system/dev-system (-> (if (:psql config)
+                                                           (assoc learning-dev-system/dev-config :no-fixtures true)
+                                                           learning-dev-system/dev-config)
+                                                         (assoc :redirect-urls
+                                                           (select-keys redirect-urls [:login :learning]))))
                      (dissoc :event-store :session-store)
                      (namespace-system :learning [:event-store :session-store]))
 
         login (-> (login-dev-system/make-system {:jetty-port 4000
-                                                 :default-redirect-paths {"editor" "http://localhost:2000"
-                                                                          "student" "http://localhost:3000"
-                                                                          "teacher" "http://localhost:4001"}
+                                                 :default-redirect-paths {"editor" (:editor redirect-urls)
+                                                                          "student" (:student redirect-urls)
+                                                                          "teacher" (:teacher redirect-urls)}
                                                  :session-max-age (* 8 60 60)
                                                  :cookie-domain nil})
                   (dissoc :event-store :session-store)
@@ -46,8 +55,8 @@
                                   (namespace-system :school-administration [:event-store]))
 
         teaching (-> (teaching/prod-system {:port 4001
-                                            :redirect-urls {:login "http://localhost:4000"
-                                                            :teaching "http://localhost:4001"}
+                                            :redirect-urls {:login (:login redirect-urls)
+                                                            :teaching (:login redirect-urls)}
                                             :cookie-domain nil})
                      (dissoc :event-store :session-store)
                      (namespace-system :teaching [:event-store :session-store]))

@@ -46,8 +46,8 @@
                                      :uberjar-name "dev.jar"
                                      :dependencies [[org.clojure/tools.trace "0.7.5"]
                                                     [org.clojure/tools.namespace "0.2.5"]
-                                                    [org.clojure/clojurescript "0.0-2311"]
-                                                    [om "0.7.1"]
+                                                    [org.clojure/clojurescript "0.0-2322"]
+                                                    [om "0.7.3"]
                                                     [com.facebook/react "0.9.0.1"]
                                                     [cljs-ajax "0.2.3"]
                                                     [cljs-uuid "0.0.4"]]

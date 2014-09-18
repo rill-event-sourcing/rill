@@ -1,6 +1,8 @@
 (ns studyflow.web.helpers
   (:require [om.core :as om]
             [om.dom :as dom]
+            [goog.dom :as gdom]
+            [goog.events :as gevents]
             [goog.string :as gstring]
             [clojure.string :as string]))
 
@@ -64,18 +66,21 @@
                         (contains? tag-tree :content))
                    (let [{:keys [tag attrs content] :as node} tag-tree]
                      (if (= tag "img")
-                       (dom/img (if (and (:width attrs)
-                                         (:height attrs))
+                       (dom/img (if-let [style (:style attrs)]
                                   #js {:src (:src attrs)
-                                       :width (:width attrs)
-                                       :height (:height attrs)}
-                                  (if-let [width (:width attrs)]
+                                       :style (apply js-obj (mapcat (fn [[k v]] [(name k) v]) style))}
+                                  (if (and (:width attrs)
+                                           (:height attrs))
                                     #js {:src (:src attrs)
-                                         :width width}
-                                    (if-let [height (:height attrs)]
+                                         :width (:width attrs)
+                                         :height (:height attrs)}
+                                    (if-let [width (:width attrs)]
                                       #js {:src (:src attrs)
-                                           :height height}
-                                      #js {:src (:src attrs)}))))
+                                           :width width}
+                                      (if-let [height (:height attrs)]
+                                        #js {:src (:src attrs)
+                                             :height height}
+                                        #js {:src (:src attrs)})))))
                        (if (= tag "div")
                          (apply dom/div #js {:className (:class attrs)}
                                 (map descent content))
@@ -121,3 +126,33 @@
                    (string? tag-tree)
                    tag-tree))]
     (descent tag-tree)))
+
+(def ipad? (js/navigator.userAgent.match #"iPhone|iPad|iPod"))
+
+(defn ipad-scroll-on-inputs-blur-fix []
+  ;; fixed header and side-nav move around in ipad upon focusing an
+  ;; input box (and showing the keyboard), this unfocuses the input
+  ;; when touching outside it, and that makes the ipad reset its layout
+  (when ipad?
+    (let [app (gdom/getElement "app")]
+      (gevents/listen app
+                      "touchstart"
+                      (fn [e]
+                        ;; without this you can't onclick the button
+                        ;; in the tooltip anymore
+                        (when (let [node-name (.. e -target -nodeName)]
+                                (and (not= node-name "INPUT")
+                                     (not= node-name "BUTTON")))
+                          (.blur js/document.activeElement))
+                        true)))))
+
+(defn ipad-reset-header []
+  (when ipad?
+    (js/window.scrollTo js/document.body.-scrollLeft js/document.body.-scrollTop)))
+
+(defn ipad-fix-scroll-after-switching []
+  ;; when switching between explantion and questions, if you are
+  ;; scrolled down a lot in explanation the question will be scrolled
+  ;; of screen whn switching to questions
+  (when ipad?
+    (js/document.body.scrollIntoViewIfNeeded)))

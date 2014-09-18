@@ -5,7 +5,7 @@
             [om.core :as om]
             [goog.dom :as gdom]
             [studyflow.web.history :as url-history]
-            [studyflow.web.helpers :refer [modal]]
+            [studyflow.web.helpers :refer [modal] :as helpers]
             [studyflow.web.service :as service]
             [cljs.core.async :as async]))
 
@@ -51,3 +51,5 @@
     :shared {:command-channel (async/chan)
              :data-channel (async/chan)
              :notification-channel (async/chan)}}))
+
+(helpers/ipad-scroll-on-inputs-blur-fix)
