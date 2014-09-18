@@ -642,6 +642,7 @@
   (reify
     om/IDidMount
     (did-mount [_]
+      (helpers/ipad-fix-scroll-after-switching)
       (let [{:keys [section-id]} (get-in cursor [:view :selected-path])
             student-id (get-in cursor [:static :student :id])]
         (async/put! (om/get-shared owner :command-channel)
