@@ -3675,7 +3675,7 @@ Something with attrs: <div class=\"tool pen_and_paper\"></div>
                     },
                     {
                       "value": "89, 45, 34, 10, 9, 2 ",
-                      "correct": false
+                      "correct": true
                     }
                   ]
                 }
@@ -4279,7 +4279,7 @@ Something with attrs: <div class=\"tool pen_and_paper\"></div>
             },
             {
               "id": "c02518de-d5fa-4661-995b-16adc62327dc",
-              "text": "<img src=\"https://docs.google.com/drawings/d/1umXs6erC96dbNstO52MN3Jp4HZlEsLWpKgGq3iOZmu0/pub?w=746&h=100\">\r\n\r\n<p class=”question_title”>Welk getal ligt precies tussen 900 en 1 300 in?</p>\r\n\r\n",
+              "text": "<img src=\"https://docs.google.com/drawings/d/1umXs6erC96dbNstO52MN3Jp4HZlEsLWpKgGq3iOZmu0/pub?w=746&h=100\">\r\n\r\n<p class=”question_title”>Welk getal ligt precies tussen 900 en 1 300 in?</p>\r\n\r\n_INPUT_1_",
               "tools": ["pen_and_paper"],
               "worked_out_answer": "",
               "line_input_fields": [
