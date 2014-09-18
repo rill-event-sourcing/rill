@@ -71,7 +71,14 @@
                          ;; when there's any event the section-test
                          ;; was already started
                          (let [{:keys [events]} (json-edn/json->edn res)]
-                           (when-not events
+                           (if events
+                             ;; may have started the session
+                             ;; previously, but the aggregate has not
+                             ;; yet been loaded
+                             (when-not (get-in @cursor [:aggregates section-id])
+                               (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
+                                 (handle-replay-events cursor section-id events aggregate-version)))
+                             ;; need to start the section
                              (PUT (str "/api/section-test-init/" course-id "/" section-id "/" student-id)
                                   {:format :json
                                    :handler (command-aggregate-handler cursor notification-channel section-id)
