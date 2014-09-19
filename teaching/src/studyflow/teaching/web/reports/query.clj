@@ -89,8 +89,8 @@
             [:li {:class (str "chapter" (when (= selected-chapter-id (str chapter-id)) " open"))}
              [:a.chapter-title
               {:href (str "?class-id=" class-id "&chapter-id=" chapter-id)}
-              (h chapter-title)]
-
+              (h chapter-title)
+              (completion-html (get-in chapter-list [:chapter-completions chapter-id]))]
              (when (= selected-chapter-id chapter-id)
                [:ol.section-list
                 (for [{section-title :title section-id :id :as section} (:sections chapter)]
