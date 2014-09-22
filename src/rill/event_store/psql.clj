@@ -67,9 +67,11 @@
            true
            (catch org.postgresql.util.PSQLException e
              (log/error e "append-events")
+             (log/error (.getNextException e) "append-events getNextException")
              (throw e))
            (catch java.sql.BatchUpdateException e
              (log/error e "append-events")
+             (log/error (.getNextException e) "append-events getNextException")
              (throw e))))))
 
 (defn psql-event-store [spec & [{:keys [page-size] :or {page-size 20}}]]
