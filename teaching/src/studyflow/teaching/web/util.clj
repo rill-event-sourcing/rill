@@ -18,6 +18,29 @@
      (completion-percentage completion)]
     "&mdash;"))
 
+(defn time-spend-str [secs]
+  (if (or (nil? secs)
+          (zero? secs))
+    "&mdash;"
+    (str (let [hours (long (Math/floor (/ secs (* 60 60))))]
+           (when (pos? hours)
+             (str (if (< hours 10)
+                    (str "0" hours)
+                    hours) ":")))
+         (let [mins (rem (long (Math/floor (/ secs 60))) 60)]
+           (if (< mins 10)
+             (str "0" mins)
+             mins))
+         ":"
+         (let [secs (rem secs 60)]
+           (if (< secs 10)
+             (str "0" secs)
+             secs)))))
+
+(defn time-spend-html [secs]
+  [:span {:title (str secs " seconden")}
+   (time-spend-str secs)])
+
 (defn classerize [s]
   (-> s
       str

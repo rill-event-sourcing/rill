@@ -46,6 +46,7 @@
         [:table.students
          [:thead
           [:th.full-name]
+          [:th.completion.number "Tijd"]
           [:th.completion.number "Totaal"]
           (map (fn [domain]
                  [:th.domain.number (h domain)])
@@ -55,6 +56,8 @@
                  [:tr.student {:id (str "student-" (:id student))}
                   [:td.full-name
                    (h (:full-name student))]
+                  [:td.completion.number.time-spend
+                   (time-spend-html (get-in student [:time-spend scope]))]
                   (map (fn [domain]
                          [:td.completion.number {:class (classerize domain)}
                           (completion-html (get-in student [:completion scope domain]))])
@@ -62,6 +65,8 @@
                (sort-by :full-name students))]
          [:tfoot
           [:th.average "Klassengemiddelde"]
+          [:td.average.number.time-spend
+           (time-spend-html (get-in class [:time-spend scope]))]
           (map (fn [domain]
                  [:td.average.number {:class (classerize domain)}
                   (completion-html (get-in class [:completion scope domain]))])
@@ -123,10 +128,16 @@
              domains (read-model/domains read-model)
              class (some (fn [class]
                            (when (= class-id (:id class))
-                             (read-model/decorate-class-completion read-model class))) classes)
+                             class)) classes)
              students (when class
                         (->> (read-model/students-for-class read-model class)
-                             (map (partial read-model/decorate-student-completion read-model))))
+                             (map (comp (partial read-model/decorate-student-completion read-model)
+                                        (partial read-model/decorate-student-time-spend read-model)))))
+             class (if students
+                     (->> class
+                          (read-model/decorate-class-completion read-model students)
+                          (read-model/decorate-class-time-spend read-model students))
+                     class)
              options (assoc flash :redirect-urls redirect-urls)]
          (binding [*current-nav-uri* "/reports/completion"]
            (render-completion class students classes meijerink-criteria domains params options))))

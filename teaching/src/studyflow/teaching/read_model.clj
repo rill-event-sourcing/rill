@@ -1,11 +1,14 @@
 (ns studyflow.teaching.read-model
-  (:require [clojure.tools.logging :as log]
+  (:require [clj-time.core :as t]
+            [clj-time.coerce :as time-coerce]
+            [clojure.tools.logging :as log]
             [clojure.set :refer [intersection]]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [rill.message :as message]))
 
 (def empty-model {})
 
-(defn- all-sections [model]
+(defn all-sections [model]
   (get-in model [:all-sections]))
 
 (defn meijerink-criteria [model]
@@ -40,16 +43,19 @@
                                     (domains model)))}))
                  (meijerink-criteria model))))))
 
+(defn decorate-student-time-spend [model student]
+  (assoc student
+    :time-spend
+    (get-in model [:students (:id student) :time-spend-per-criteria])))
+
 (defn students-for-class [model class]
   (let [class-lookup (select-keys class [:department-id :class-name])]
     (for [student-id (get-in model [:students-by-class class-lookup])]
       (get-in model [:students student-id]))))
 
-(defn decorate-class-completion [model class]
+(defn decorate-class-completion [model students class]
   (let [domains (domains model)
-        student-completions (->> (students-for-class model class)
-                                 (map (partial decorate-student-completion model))
-                                 (map :completion))
+        student-completions (map :completion students)
         completions-f (fn [scope domain]
                         (map #(get-in % [scope domain]) student-completions))
         sumf (fn [scope domain key] (reduce +
@@ -65,6 +71,19 @@
                                     (into [:all] domains)))
                           {}
                           (into [] (meijerink-criteria model))))))
+
+(defn decorate-class-time-spend [model students class]
+  (let [domains (domains model)
+        student-time-spend (map :time-spend students)
+        criteria (meijerink-criteria model)]
+    (assoc class
+      :time-spend
+      (zipmap criteria
+              (for [meijerink-criteria criteria]
+                (if-let [student-time-spend (seq student-time-spend)]
+                  (long (Math/floor (/ (reduce + (map #(get % meijerink-criteria 0) student-time-spend))
+                                       (count student-time-spend))))
+                  0))))))
 
 (defn classes [model teacher]
   (let [teacher-id (:teacher-id teacher)]
@@ -147,3 +166,21 @@
 (defn caught-up?
   [model]
   (boolean (:caught-up model)))
+
+(def idle-time-secs (* 5 60))
+(defn add-time-spend [current event]
+  (if-not current
+   (let [start (time-coerce/from-date (::message/timestamp event))]
+     {:start start
+      :end (t/plus start (t/seconds idle-time-secs))
+      :total-secs idle-time-secs})
+   (let [start (time-coerce/from-date (::message/timestamp event))
+         end (t/plus start (t/seconds idle-time-secs))
+         overlap (if (t/before? start (:end current))
+                   (t/in-seconds (t/interval start (:end current)))
+                   0)]
+     {:start (:start current)
+      :end end
+      :total-secs (- (+ (:total-secs current)
+                        idle-time-secs)
+                     overlap)})))

@@ -92,6 +92,38 @@
   [model {:keys [student-id course-id]}]
   (update-in model [:students student-id :course-entry-quiz-passed] (fnil conj #{}) course-id))
 
+;; student time spend tracking
+(defn add-time-spend [model {:keys [section-id student-id] :as event}]
+  (let [model (update-in model [:students student-id :section-time section-id] m/add-time-spend event)
+        total-per-criteria (reduce
+                            (fn [acc section]
+                              (reduce
+                               (fn [acc criteria]
+                                 (update-in acc [criteria]
+                                            + (get-in model [:students student-id :section-time (:id section) :total-secs] 0)))
+                               acc
+                               (:meijerink-criteria section)))
+                            (zipmap (m/meijerink-criteria model)
+                                    (repeat 0))
+                            (m/all-sections model))]
+    (assoc-in model [:students student-id :time-spend-per-criteria] total-per-criteria)))
+
+(defmethod handle-event :studyflow.learning.section-test.events/QuestionAssigned
+  [model event]
+  (add-time-spend model event))
+
+(defmethod handle-event :studyflow.learning.section-test.events/AnswerRevealed
+  [model event]
+  (add-time-spend model event))
+
+(defmethod handle-event :studyflow.learning.section-test.events/QuestionAnsweredCorrectly
+  [model event]
+  (add-time-spend model event))
+
+(defmethod handle-event :studyflow.learning.section-test.events/QuestionAnsweredIncorrectly
+  [model event]
+  (add-time-spend model event))
+
 ;; course material
 (defn update-material [model course-id material]
   (let [remedial-sections-for-course (->> material
