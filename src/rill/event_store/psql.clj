@@ -67,8 +67,6 @@
            true
            (catch java.sql.BatchUpdateException e
              (when-not (= (.getSQLState e) "23505")
-               (log/error e)
-               (log/error (.getNextException e))
                (throw e))
              false)))))
 
