@@ -21,7 +21,7 @@
 (defn time-spend-str [secs]
   (if (or (nil? secs)
           (zero? secs))
-    "&mdash;"
+    "--"
     (str (let [hours (long (Math/floor (/ secs (* 60 60))))]
            (when (pos? hours)
              (str (if (< hours 10)

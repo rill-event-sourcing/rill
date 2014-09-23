@@ -162,8 +162,14 @@
              meijerink-criteria (sort (read-model/meijerink-criteria read-model))
              class (some (fn [class]
                            (when (= class-id (:id class))
-                             (read-model/decorate-class-completion read-model class))) classes)
+                             class)) classes)
              students (when class
                         (->> (read-model/students-for-class read-model class)
-                             (map (partial read-model/decorate-student-completion read-model))))]
+                             (map (comp (partial read-model/decorate-student-completion read-model)
+                                        (partial read-model/decorate-student-time-spend read-model)))))
+             class (if students
+                     (->> class
+                          (read-model/decorate-class-completion read-model students)
+                          (read-model/decorate-class-time-spend read-model students))
+                     class)]
          (render-export class students domains meijerink-criteria))))
