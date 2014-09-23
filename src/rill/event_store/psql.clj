@@ -33,6 +33,11 @@
       (seq p) ;; make sure we return nil when no messages are found
       (concat p (lazy-seq (messages (:cursor (meta (last p))) page-size selector))))))
 
+(defn unique-violation?
+  "true when the exception was caused by a unique constraint violation"
+  [sql-exception]
+  (= (.getSQLState sql-exception) "23505"))
+
 (defrecord PsqlEventStore [spec page-size]
   EventStore
   (retrieve-events-since [this stream-id cursor wait-for-seconds]
@@ -66,9 +71,9 @@
                                events))
            true
            (catch java.sql.BatchUpdateException e
-             (when-not (= (.getSQLState e) "23505")
+             (when-not (unique-violation? e)
                (throw e))
-             false)))))
+             false))))) ;; conflict - there is already an event with the given stream_order
 
 (defn psql-event-store [spec & [{:keys [page-size] :or {page-size 20}}]]
   {:pre [(integer? page-size)]}
