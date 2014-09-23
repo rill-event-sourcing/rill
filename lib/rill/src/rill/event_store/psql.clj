@@ -65,10 +65,12 @@
                                   (nippy/freeze e)])
                                events))
            true
-           (catch org.postgresql.util.PSQLException e
-             nil)
            (catch java.sql.BatchUpdateException e
-             nil)))))
+             (when-not (= (.getSQLState e) "23505")
+               (log/error e)
+               (log/error (.getNextException e))
+               (throw e))
+             false)))))
 
 (defn psql-event-store [spec & [{:keys [page-size] :or {page-size 20}}]]
   {:pre [(integer? page-size)]}
