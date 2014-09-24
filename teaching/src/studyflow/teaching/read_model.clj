@@ -44,9 +44,19 @@
                  (meijerink-criteria model))))))
 
 (defn decorate-student-time-spend [model student]
-  (assoc student
-    :time-spend
-    (get-in model [:students (:id student) :time-spend-per-criteria])))
+  (let [total-per-criteria (reduce
+                            (fn [acc section]
+                              (reduce
+                               (fn [acc criteria]
+                                 (update-in acc [criteria]
+                                            + (get-in model [:students (:id student) :section-time (:id section) :total-secs] 0)))
+                               acc
+                               (:meijerink-criteria section)))
+                            (zipmap (meijerink-criteria model)
+                                    (repeat 0))
+                            (all-sections model))]
+    (assoc student
+      :time-spend total-per-criteria)))
 
 (defn students-for-class [model class]
   (let [class-lookup (select-keys class [:department-id :class-name])]
