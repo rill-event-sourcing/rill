@@ -112,6 +112,25 @@
   [model event]
   (add-time-spend model event))
 
+(defn add-time-spend-entry-quiz [model {:keys [student-id] :as event}]
+  (update-in model [:students student-id :entry-quiz-time-spend] m/add-time-spend event))
+
+(defmethod handle-event :studyflow.learning.entry-quiz.events/Started
+  [model event]
+  (add-time-spend-entry-quiz model event))
+
+(defmethod handle-event :studyflow.learning.entry-quiz.events/InstructionsRead
+  [model event]
+  (add-time-spend-entry-quiz model event))
+
+(defmethod handle-event :studyflow.learning.entry-quiz.events/QuestionAnsweredCorrectly
+  [model event]
+  (add-time-spend-entry-quiz model event))
+
+(defmethod handle-event :studyflow.learning.entry-quiz.events/QuestionAnsweredIncorrectly
+  [model event]
+  (add-time-spend-entry-quiz model event))
+
 ;; course material
 (defn update-material [model course-id material]
   (let [remedial-sections-for-course (->> material
@@ -126,6 +145,10 @@
         meijerink-criteria (->> all-sections
                                 (mapcat :meijerink-criteria)
                                 set)
+        entry-quiz-meijerink-criteria (reduce into #{} (for [ch (:chapters material)
+                                                             :when (:remedial ch)
+                                                             s (:sections ch)]
+                                                         (:meijerink-criteria s)))
         domains (->> all-sections
                      (mapcat :domains)
                      set)
@@ -138,6 +161,7 @@
         (assoc-in [:courses course-id]
                   (-> material
                       (assoc :remedial-sections-for-course remedial-sections-for-course
+                             :entry-quiz-meijerink-criteria entry-quiz-meijerink-criteria
                              :chapter-sections chapter-sections)))
         (assoc :all-sections all-sections
                :meijerink-criteria meijerink-criteria

@@ -44,7 +44,19 @@
                  (meijerink-criteria model))))))
 
 (defn decorate-student-time-spend [model student]
-  (let [total-per-criteria (reduce
+  (let [;; time spend on entry quiz counts as time spend in the
+        ;; remedial chapters
+        entry-quiz-criteria (->> (get-in model [:courses])
+                                 first
+                                 val
+                                 :entry-quiz-meijerink-criteria
+                                 set)
+        time-per-criteria (zipmap (meijerink-criteria model)
+                                  (for [criteria (meijerink-criteria model)]
+                                    (if (contains? entry-quiz-criteria criteria)
+                                      (get-in model [:students (:id student) :entry-quiz-time-spend :total-secs] 0)
+                                      0)))
+        total-per-criteria (reduce
                             (fn [acc section]
                               (reduce
                                (fn [acc criteria]
@@ -52,8 +64,7 @@
                                             + (get-in model [:students (:id student) :section-time (:id section) :total-secs] 0)))
                                acc
                                (:meijerink-criteria section)))
-                            (zipmap (meijerink-criteria model)
-                                    (repeat 0))
+                            time-per-criteria
                             (all-sections model))]
     (assoc student
       :time-spend total-per-criteria)))
