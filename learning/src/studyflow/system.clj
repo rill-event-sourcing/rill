@@ -5,6 +5,7 @@
             [studyflow.components.jetty :refer [jetty-component]]
             [studyflow.components.redis-session-store :refer [redis-session-store]]
             [studyflow.components.uncaught-exception-handler :refer [uncaught-exception-handler-component]]
+            [studyflow.system.components.cache-heater :refer [cache-heater]]
             [studyflow.system.components.publishing-api :refer [publishing-api-component]]
             [studyflow.system.components.read-model :refer [read-model-component]]
             [studyflow.system.components.ring-handler :refer [ring-handler-component]]
@@ -24,12 +25,14 @@
                                        :app-status-component :app-status-component}))
      :session-store (redis-session-store session-store-config)
      :ring-handler (-> (ring-handler-component redirect-urls cookie-domain)
-                       (using [:event-store :read-model :session-store]))
+                       (using [:event-store :read-model :session-store :cache-heater]))
+     :cache-heater (-> (cache-heater 2)
+                       (using [:event-channel :event-store]))
      :app-status-component (-> (app-status-component 1)
                                (using [:event-channel]))
      :jetty (-> (jetty-component port)
                 (using [:ring-handler :app-status-component]))
-     :event-channel (-> (event-channel-component 2)
+     :event-channel (-> (event-channel-component 3)
                         (using [:event-store]))
      :event-store (psql-event-store-component event-store-config)
      :read-model (-> (read-model-component 0)
