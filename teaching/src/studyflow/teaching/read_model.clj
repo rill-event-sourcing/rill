@@ -82,6 +82,27 @@
                   :school-id school-id
                   :school-name (:name school)})))))
 
+(defn count-students-who-finished-this-section [model students section]
+  (count (filter
+          (fn [student]
+            (= (get-in model [:students (:id student) :section-status (:id section)]) :finished))
+          students)))
+
+(defn count-total-number-of-finished-sections [model students sections]
+  (reduce +
+          0
+          (map (partial count-students-who-finished-this-section model students) sections)))
+
+(defn chapter-completion [model students sections]
+  {:total (* (count sections) (count students))
+   :finished (count-total-number-of-finished-sections model students sections)})
+
+(defn total-chapter-sections-completion [model chapter-sections students]
+  (zipmap (keys chapter-sections)
+          (map (fn [sections] (chapter-completion model students sections))
+               (vals chapter-sections))))
+
+
 (defn chapter-list [model class chapter-id section-id]
   (let [material (val (first (:courses model)))
         students (students-for-class model class)
@@ -103,30 +124,10 @@
                                                       (map count (vals students-status))))
                                        (cond->
                                         (= section-id (:id section))
-                                        (assoc :student-list students-status)))])))}
-        chapter-completions (let [chapter-sections (get material :chapter-sections)
-                                  students-count (count students)]
-                              (zipmap (keys chapter-sections)
-                                      (map
-                                       (fn [sections]
-                                         (let [section-count (count sections)]
-                                           {:total (* section-count students-count)
-                                            :finished
-                                            (reduce
-                                             (fn [cnt section]
-                                               (reduce
-                                                (fn [cnt student]
-                                                  (if (= (get-in model [:students (:id student) :section-status (:id section)]) :finished)
-                                                    (inc cnt)
-                                                    cnt))
-                                                cnt
-                                                students))
-                                             0
-                                             sections)}))
-                                       (vals chapter-sections))))]
+                                        (assoc :student-list students-status)))])))}]
     (assoc material
       :section-counts section-counts
-      :chapter-completions chapter-completions)))
+      :chapter-completions (total-chapter-sections-completion model (get material :chapter-sections) students))))
 
 (defn get-teacher
   [model id]
