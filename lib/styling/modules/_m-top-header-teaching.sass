@@ -6,4 +6,39 @@
   top: 0
   height: 70px
   z-index: 2000
-  background: #1caff6
+  +background-image(linear-gradient(#3BB8F5, #1FA1E0))
+  position: fixed
+  +box-shadow(0 1px 2px rgba(0,0,0,0.08), inset 0 -2px 4px rgba(0,0,0,0.08))
+
+  #logo
+    background: url(images/mark.svg) no-repeat center
+    background-size: 57px
+    float: left
+    margin: 10px 64px 0 85px
+    width: 50px
+    height: 50px
+
+  .separator
+    border-left: 1px solid #1E9DDA
+    border-right: 1px solid #46B8F0
+    height: 40px
+    display: inline-block
+    float: left
+    margin-top: 15px
+
+  #header-title
+    color: white
+    display: inline-block
+    float: left
+    line-height: 70px
+    font-size: 18px
+    font-weight: 600
+    margin-left: 50px
+
+  #logout-link
+    display: inline-block
+    float: right
+    width: 50px
+    line-height: 70px
+    background: url(images/logout.svg) no-repeat 30px 11px
+    background-size: 170px

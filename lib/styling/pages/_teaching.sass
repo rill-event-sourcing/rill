@@ -1,79 +1,108 @@
 @import compass
 
-#logo
-  color: white !important
-
 #main_teaching
   margin-left: 200px
-  padding: 30px 50px
-
-#page-title
-  font-size: 26px
-  font-weight: 500
-  color: #3c3c3c
-  margin-bottom: 40px
-  display: block
+  padding: 110px 50px 30px 50px
 
 #main-container-nav
   margin-right: -1px
   .main-container-nav-list-item
     list-style: none
     &:first-child
-      margin-top: 30px
+      margin-top: 40px
   .main-container-nav-tab
     display: block
     +border-left-radius(5px)
-    color: #bbb
+    color: #555A5F
     padding: 80px 0 20px 0
     text-align: center
     cursor: pointer
     margin: 0 0 10px 30px
+    border: 1px solid transparent
+    opacity: 0.5
+    +single-transition(opacity, 0.5s)
+    &:hover
+      opacity: 1
+    &.overview
+      background: url(images/dashboard.svg) no-repeat 58px 18px
+      background-size: 55px
+      &.selected
+        background: url(images/dashboard.svg) no-repeat 58px 18px white
+        background-size: 55px
+    &.chapter-view
+      background: url(images/book.svg) no-repeat 60px 18px
+      background-size: 45px
+      &.selected
+        background: url(images/book.svg) no-repeat 60px 18px white
+        background-size: 45px
     &.selected
-      background: white
-      color: #333
       cursor: default
-      border: 1px solid #ccc
+      border: 1px solid #c6ced3
       border-right: 0
+      opacity: 1
+      +box-shadow(-2px 1px 2px rgba(0,0,0,0.06))
 
 table
-  border: 1px solid #ddd
+  border: 1px solid #c6ced3
   +border-radius(4px)
   +box-shadow(0 1px 1px rgba(0, 0, 0, 0.08))
   width: 100%
   clear: both
   margin: 0 auto 30px auto
-  color: #3f3f3a
+  color: #555A5F
   font-size: 14px
+  border-collapse: separate
   &.align_center
     td
       text-align: center
   td
-    border-left: 1px solid #ddd
+    border-right: 1px solid #ddd
     border-top: 1px solid #ddd
-    padding: 10px
+    padding: 15px 20px
+    &.number
+      //text-align: center
   th
-    border-left: 1px solid #ddd
+    border-right: 1px solid #ddd
+    border-left: 1px solid white
     border-top: 1px solid #ddd
-    padding: 10px
-    background-color: #fafafa
-    +box-shadow(0 1px 0 rgba(255, 255, 255, 0.3) inset)
+    padding: 15px 20px
+    +background-image(linear-gradient(#FDFDFD, #F2F4F8))
+    +text-shadow(0 1px white)
     border-top: none
     font-weight: 600
-  td:first-child
-    border-left: none
+    +box-shadow(inset 0 1px 0 white)
+  td:last-child
+    border-right: none
   th
     &:first-child
-      border-left: none
       +border-radius(4px 0 0 0)
     &:last-child
       +border-radius(0 4px 0 0)
+      border-right: none
     &:only-child
       +border-radius(4px 4px 0 0)
+  tr
+    &:hover
+      background-color: #e5f4f8
+      color: #0199bf
+      td
+        //border-color: #c0e5ee
+    &:first-child
+      &:hover
+        color: #555a5f
   tr:last-child td
     &:first-child
       +border-radius(0 0 0 4px)
     &:last-child
       +border-radius(0 0 4px 0)
+  tr:nth-child(even)
+    background: #FCFCFC
+    &:hover
+      background: #e5f4f8
+  tfoot
+    td
+      background: #f2f4f8
+      font-weight: 600
 
 td.time-spent
   text-align: right
