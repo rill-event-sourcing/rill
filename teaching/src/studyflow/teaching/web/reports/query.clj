@@ -90,7 +90,7 @@
              [:a.chapter-title
               {:href (str "?class-id=" class-id "&chapter-id=" chapter-id)}
               (h chapter-title)
-              (completion-html (get-in chapter-list [:chapter-completions chapter-id]))]
+              (completion-html (get-in chapter-list [:chapters-completion chapter-id]))]
              (when (= selected-chapter-id chapter-id)
                [:ol.section-list
                 (for [{section-title :title section-id :id :as section} (:sections chapter)]
