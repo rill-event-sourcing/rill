@@ -113,7 +113,8 @@
           [:div.teacher_chapter_list_main
            (for [status [:stuck :in-progress :unstarted :finished]]
              (for [student (sort-by :full-name (get-in section-counts [:student-list status]))]
-               [:div.student {:class (name status)} (:full-name student)]))])]))))
+               [:div.student {:class (name status)} (:full-name student)
+                [:span.time-spend (time-spend-html (:time-spend student))]]))])]))))
 
 (defroutes app
   (GET "/reports/"

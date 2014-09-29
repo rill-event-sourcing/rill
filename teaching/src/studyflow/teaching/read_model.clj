@@ -150,7 +150,9 @@
         (fn [student]
           (assoc student
             :status
-            (get-in model [:students (:id student) :section-status (:id section)] :unstarted))))
+            (get-in model [:students (:id student) :section-status (:id section)] :unstarted)
+            :time-spend
+            (get-in model [:students (:id student) :section-time-spend (:id section) :total-secs] 0))))
        (group-by :status)))
 
 (defn sections-total-status [model students chapter-with-sections selected-section-id]
