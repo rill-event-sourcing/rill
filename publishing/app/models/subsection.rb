@@ -1,5 +1,5 @@
 class Subsection < ActiveRecord::Base
-  include Trashable, Activateable
+  include Trashable, Activateable, HtmlParseable
 
   belongs_to :section, touch: true
 

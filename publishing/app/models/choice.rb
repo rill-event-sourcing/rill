@@ -1,4 +1,5 @@
 class Choice < ActiveRecord::Base
+  include HtmlParseable
 
   belongs_to :multiple_choice_input
 

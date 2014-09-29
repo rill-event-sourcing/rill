@@ -22,6 +22,7 @@ gem 'redis'
 gem 'newrelic_rpm'
 gem 'delayed_job_active_record'
 gem 'daemons'
+gem 'nokogiri'
 
 group :development, :test do
   gem 'better_errors'

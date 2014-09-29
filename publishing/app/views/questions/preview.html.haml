@@ -2,9 +2,28 @@
   %div.panel-heading Question preview
   %div.panel-body
     = text_to_html(@question.inputs, @question.text)
+
 %div.panel.panel-default
   %div.panel-heading Worked out answer preview
   %div.panel-body
     = question_worked_out_answer_to_html(@question)
 
+%div.panel.panel-default
+  %div.panel-heading Parse errors
+  %div.panel-body
+    - if @question.parse_errors.any?
+      %ul
+        - @question.parse_errors.each do |p_error|
+          %li= p_error
+    - else
+      %p no parse errors
 
+%div.panel.panel-default
+  %div.panel-heading Image errors
+  %div.panel-body
+    - if @question.image_errors.any?
+      %ul
+        - @question.image_errors.each do |i_error|
+          %li= i_error
+    - else
+      %p no image_errors

@@ -1,5 +1,5 @@
 class Question < ActiveRecord::Base
-  include Trashable, Activateable
+  include Trashable, Activateable, HtmlParseable
 
   before_save :set_default_text
   after_create :set_default_tools
