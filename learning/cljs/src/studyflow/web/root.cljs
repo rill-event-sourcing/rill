@@ -6,6 +6,7 @@
             [goog.dom :as gdom]
             [studyflow.web.history :as url-history]
             [studyflow.web.helpers :refer [modal] :as helpers]
+            [studyflow.web.tracking :as tracking]
             [studyflow.web.service :as service]
             [cljs.core.async :as async]))
 
@@ -39,17 +40,19 @@
                    (om/build core/dashboard cursor)))))))
 
 (defn ^:export course-page []
-  (om/root
-   (-> widgets
-       service/wrap-service
-       url-history/wrap-history)
-   (core/init-app-state)
-   {:target (gdom/getElement "app")
-    :tx-listen (fn [tx-report cursor]
-                 (service/listen tx-report cursor)
-                 (url-history/listen tx-report cursor))
-    :shared {:command-channel (async/chan)
-             :data-channel (async/chan)
-             :notification-channel (async/chan)}}))
+  (let [command-channel (async/chan)]
+      (om/root
+       (-> widgets
+           service/wrap-service
+           url-history/wrap-history)
+       (core/init-app-state)
+       {:target (gdom/getElement "app")
+        :tx-listen (fn [tx-report cursor]
+                     (service/listen tx-report cursor)
+                     (url-history/listen tx-report cursor)
+                     (tracking/listen tx-report cursor command-channel))
+        :shared {:command-channel command-channel
+                 :data-channel (async/chan)
+                 :notification-channel (async/chan)}})))
 
 (helpers/ipad-scroll-on-inputs-blur-fix)

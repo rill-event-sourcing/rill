@@ -4,6 +4,7 @@
             [rill.uuid :refer [uuid]]
             [studyflow.learning.section-test.commands :as section-test]
             [studyflow.learning.entry-quiz :as entry-quiz]
+            [studyflow.learning.tracking.commands :as tracking]
             [rill.web :refer [wrap-command-handler]]
             [studyflow.learning.web.authorization :as authorization]
             [studyflow.web.handler-tools :refer [combine-ring-handlers]]
@@ -11,6 +12,7 @@
 
 ;; Load command handlers
 (require 'studyflow.learning.section-test)
+(require 'studyflow.learning.tracking)
 
 (def handler
   "This handler matches ring requests and returns a command (or nil) for the given request.
@@ -78,7 +80,15 @@
          (entry-quiz/submit-answer! (uuid course-id)
                                     (uuid student-id)
                                     expected-version
-                                    inputs)))))))
+                                    inputs)))))
+
+   (clout/handle
+    routes/tracking-navigation
+    (authorization/wrap-student-authorization
+     (fn [{{:keys [student-id]} :params body :body}]
+       (let [{:keys [data]} body]
+         (tracking/navigate! (uuid student-id)
+                             data)))))))
 
 (defn make-request-handler
   [event-store]

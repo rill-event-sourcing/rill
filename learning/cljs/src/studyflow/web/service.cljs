@@ -22,6 +22,8 @@
         section-links (zipmap section-links forward-links)]
     (assoc course-data :forward-section-links section-links)))
 
+(defn ignore-handler [res])
+
 (defn basic-error-handler [res]
   (println "Error handler" res)
   (println res))
@@ -131,6 +133,14 @@
               :format :json
               :handler (command-aggregate-handler cursor notification-channel course-id)
               :error-handler (command-error-handler cursor)}))
+
+      "tracking-commands/navigation"
+      (let [[student-id data] args]
+        (PUT (str "/api/tracking/navigation/" student-id)
+             {:params {:data data}
+              :format :json
+              :handler ignore-handler
+              :error-handler ignore-handler}))
       nil)))
 
 (defn load-data [cursor command]

@@ -29,3 +29,5 @@
 
 (defroute entry-quiz-submit-answer :put "/api/entry-quiz-submit-answer/:course-id/:student-id")
 (defroute entry-quiz-replay :get "/api/entry-quiz-replay/:course-id/:student-id")
+
+(defroute tracking-navigation :put "/api/tracking/navigation/:student-id")
