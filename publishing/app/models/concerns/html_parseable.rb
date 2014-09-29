@@ -10,7 +10,7 @@ module HtmlParseable
   end
 
   def acceptable_errors
-    ["Tag math invalid", "Tag toev invalid", "EntityRef: expecting ';'"]
+    ["Tag math invalid", "EntityRef: expecting ';'"]
   end
 
   def html_value
