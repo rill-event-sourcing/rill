@@ -46,7 +46,8 @@
 (defmethod handle-event :studyflow.school-administration.student.events/Imported
   [model {:keys [student-id full-name department-id class-name]}]
   (update-student model student-id (fn [student]
-                                     {:full-name full-name
+                                     {:id student-id
+                                      :full-name full-name
                                       :department-id department-id
                                       :class-name class-name})))
 
