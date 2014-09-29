@@ -61,7 +61,7 @@
                               (reduce
                                (fn [acc criteria]
                                  (update-in acc [criteria]
-                                            + (get-in model [:students (:id student) :section-time (:id section) :total-secs] 0)))
+                                            + (get-in model [:students (:id student) :section-time-spend (:id section) :total-secs] 0)))
                                acc
                                (:meijerink-criteria section)))
                             time-per-criteria
@@ -189,19 +189,25 @@
   (boolean (:caught-up model)))
 
 (def idle-time-secs (* 5 60))
+
+(defn end-time-spend [current event]
+  (when current
+    (let [current-end (:end current)
+          end (time-coerce/from-date (::message/timestamp event))
+          overlap (if (t/before? end current-end)
+                    (t/in-seconds (t/interval end current-end))
+                    0)]
+      (if (t/before? end current-end)
+        {:start (:start current)
+         :end end
+         :total-secs
+         (- (:total-secs current) overlap)}
+        current))))
+
 (defn add-time-spend [current event]
-  (if-not current
-   (let [start (time-coerce/from-date (::message/timestamp event))]
-     {:start start
-      :end (t/plus start (t/seconds idle-time-secs))
-      :total-secs idle-time-secs})
-   (let [start (time-coerce/from-date (::message/timestamp event))
-         end (t/plus start (t/seconds idle-time-secs))
-         overlap (if (t/before? start (:end current))
-                   (t/in-seconds (t/interval start (:end current)))
-                   0)]
-     {:start (:start current)
-      :end end
-      :total-secs (- (+ (:total-secs current)
-                        idle-time-secs)
-                     overlap)})))
+  (let [start (time-coerce/from-date (::message/timestamp event))
+        end (t/plus start (t/seconds idle-time-secs))]
+    {:start (:start current start)
+     :end end
+     :total-secs (+ (:total-secs current 0)
+                    idle-time-secs)}))

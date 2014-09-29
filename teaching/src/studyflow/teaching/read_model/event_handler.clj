@@ -93,27 +93,41 @@
   (update-in model [:students student-id :course-entry-quiz-passed] (fnil conj #{}) course-id))
 
 ;; student time spend tracking
-(defn add-time-spend [model {:keys [section-id student-id] :as event}]
-  (update-in model [:students student-id :section-time section-id] m/add-time-spend event))
+(defn end-time-spend [model {:keys [student-id] :as event}]
+  ;; truncate the idle time period for whatever you were doing before
+  (-> model
+      (update-in [:students student-id :dashboard-time-spend] m/end-time-spend event)
+      (update-in [:students student-id :entry-quiz-time-spend] m/end-time-spend event)
+      (update-in [:students student-id :section-time-spend]
+                 (fn [section-id+time-spend]
+                   (zipmap (keys section-id+time-spend)
+                           (map #(m/end-time-spend % event) (vals section-id+time-spend)))))))
+
+(defn add-time-spend-section-test [model {:keys [section-id student-id] :as event}]
+  (-> model
+      (end-time-spend event)
+      (update-in [:students student-id :section-time-spend section-id] m/add-time-spend event)))
 
 (defmethod handle-event :studyflow.learning.section-test.events/QuestionAssigned
   [model event]
-  (add-time-spend model event))
+  (add-time-spend-section-test model event))
 
 (defmethod handle-event :studyflow.learning.section-test.events/AnswerRevealed
   [model event]
-  (add-time-spend model event))
+  (add-time-spend-section-test model event))
 
 (defmethod handle-event :studyflow.learning.section-test.events/QuestionAnsweredCorrectly
   [model event]
-  (add-time-spend model event))
+  (add-time-spend-section-test model event))
 
 (defmethod handle-event :studyflow.learning.section-test.events/QuestionAnsweredIncorrectly
   [model event]
-  (add-time-spend model event))
+  (add-time-spend-section-test model event))
 
 (defn add-time-spend-entry-quiz [model {:keys [student-id] :as event}]
-  (update-in model [:students student-id :entry-quiz-time-spend] m/add-time-spend event))
+  (-> model
+      (end-time-spend event)
+      (update-in [:students student-id :entry-quiz-time-spend] m/add-time-spend event)))
 
 (defmethod handle-event :studyflow.learning.entry-quiz.events/Started
   [model event]
@@ -130,6 +144,30 @@
 (defmethod handle-event :studyflow.learning.entry-quiz.events/QuestionAnsweredIncorrectly
   [model event]
   (add-time-spend-entry-quiz model event))
+
+(defmethod handle-event :studyflow.learning.tracking.events/DashboardNavigated
+  [model {:keys [student-id] :as event}]
+  (-> model
+      (end-time-spend event)
+      (update-in [:students student-id :dashboard-time-spend] m/add-time-spend event)))
+
+(defmethod handle-event :studyflow.learning.tracking.events/EntryQuizNavigated
+  [model {:keys [student-id] :as event}]
+  (-> model
+      (end-time-spend event)
+      (update-in [:students student-id :entry-quiz-time-spend] m/add-time-spend event)))
+
+(defmethod handle-event :studyflow.learning.tracking.events/SectionExplanationNavigated
+  [model {:keys [student-id] :as event}]
+  (-> model
+      (end-time-spend event)
+      (update-in [:students student-id :entry-quiz-time-spend] m/add-time-spend event)))
+
+(defmethod handle-event :studyflow.learning.tracking.events/SectionTestNavigated
+  [model {:keys [student-id] :as event}]
+  (-> model
+      (end-time-spend event)
+      (update-in [:students student-id :entry-quiz-time-spend] m/add-time-spend event)))
 
 ;; course material
 (defn update-material [model course-id material]

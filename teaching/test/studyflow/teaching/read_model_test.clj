@@ -8,8 +8,9 @@
             [rill.uuid :refer [new-id]]
             [rill.message :as m]
             [studyflow.learning.course.events :as course]
-            [studyflow.learning.section-test.events :as section-test]
             [studyflow.learning.entry-quiz.events :as entry-quiz]
+            [studyflow.learning.section-test.events :as section-test]
+            [studyflow.learning.tracking.events :as tracking]
             [studyflow.school-administration.department.events :as department]
             [studyflow.school-administration.student.events :as student]
             [studyflow.school-administration.teacher.events :as teacher]
@@ -217,7 +218,7 @@
                 (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 14 5 0 0))))
         model1 (load-model {} e0 e11 e12 e13)]
     (is (= (* (+ 3 5) 60)
-           (get-in model1 [:students "fred" :section-time "section-1" :total-secs])))
+           (get-in model1 [:students "fred" :section-time-spend "section-1" :total-secs])))
     (let [e21 (-> (section-test/question-assigned "section-2" "fred" "question-1" 3)
                   (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 14 6 0 0))))
           e22 (-> (section-test/question-answered-incorrectly "section-2" "fred" "question-1" {})
@@ -226,5 +227,28 @@
                   (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 14 13 0 0))))
           model2 (load-model model1 e21 e22 e23)]
       (is (= (* (+ 5 1 5) 60)
-             (get-in model2 [:students "fred" :section-time "section-2" :total-secs])))
-      )))
+             (get-in model2 [:students "fred" :section-time-spend "section-2" :total-secs]))))
+    (let [e21 (-> (section-test/question-assigned "section-2" "fred" "question-1" 3)
+                  (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 14 6 0 0))))
+          e22 (-> (section-test/question-answered-incorrectly "section-2" "fred" "question-1" {})
+                  (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 14 12 0 0))))
+          e23 (-> (section-test/answer-revealed "section-2" "fred" "question-1" 3)
+                  (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 14 13 0 0))))
+          model2 (load-model model1 e21 e22 e23)]
+      (is (= (* (+ 5 1 5) 60)
+             (get-in model2 [:students "fred" :section-time-spend "section-2" :total-secs]))))))
+
+(deftest test-time-spend-with-end-time
+  (let [e0 (-> (student/created "fred" "Fred Flintstone")
+               (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 14 0 0 0))))
+        e1 (-> (section-test/question-assigned "section-3" "fred" "question-1" 3)
+               (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 15 8 0 0))))
+        e2 (-> (section-test/question-answered-incorrectly "section-3" "fred" "question-1" {})
+               (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 15 9 0 0))))
+        e3 (-> (section-test/answer-revealed "section-3" "fred" "question-1" 3)
+               (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 15 11 0 0))))
+        e4 (-> (tracking/dashboard-navigated "fred")
+               (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 15 12 0 0))))
+        model (load-model {} e0 e1 e2 e3 e4)]
+    (is (= (* (+ 1 2 1) 60)
+           (get-in model [:students "fred" :section-time-spend "section-3" :total-secs])))))
