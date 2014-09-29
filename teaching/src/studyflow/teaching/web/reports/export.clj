@@ -92,8 +92,8 @@
     (doseq [criterion meijerink-criteria]
       (decorate-sheet criterion workbook (* 2 (inc (count domains)))))
     {:status 200
-     :headers {"Content-Type" "application/vnd.ms-excel"
-               "Content-Disposition" (str "attachment; filename=\"" file-name ".xls\"")}
+     :headers {"Content-Type" "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+               "Content-Disposition" (str "attachment; filename=\"" file-name ".xlsx\"")}
      :body (piped-input-stream
             (fn [out]
               (.write workbook out)))}))
