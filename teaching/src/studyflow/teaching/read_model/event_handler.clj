@@ -159,15 +159,11 @@
 
 (defmethod handle-event :studyflow.learning.tracking.events/SectionExplanationNavigated
   [model {:keys [student-id] :as event}]
-  (-> model
-      (end-time-spend event)
-      (update-in [:students student-id :entry-quiz-time-spend] m/add-time-spend event)))
+  (add-time-spend-section-test model event))
 
 (defmethod handle-event :studyflow.learning.tracking.events/SectionTestNavigated
   [model {:keys [student-id] :as event}]
-  (-> model
-      (end-time-spend event)
-      (update-in [:students student-id :entry-quiz-time-spend] m/add-time-spend event)))
+  (add-time-spend-section-test model event))
 
 ;; course material
 (defn update-material [model course-id material]
