@@ -46,16 +46,8 @@ module HtmlParseable
     errors = []
     html_images.each do |el|
       src = el["src"]
-      if src
-        begin
-          response = HTTParty.get(src,
-                                  timeout: 0.5)
-          errors << "image error for '#{src}': #{response.code}" if response.code != 200
-        rescue => ex
-          errors << "image error for '#{src}': #{ex}"
-        end
-      else
-        errors << "no src given for image"
+      unless src
+        errors << "no 'src' given for image"
       end
     end
     errors
