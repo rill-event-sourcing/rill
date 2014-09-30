@@ -20,7 +20,8 @@ module HtmlParseable
   end
 
   def parse_page
-    "<html>
+    "<!DOCTYPE html>
+<html>
 <head>
 </head>
 <body>
@@ -30,7 +31,7 @@ module HtmlParseable
   end
 
   def parsed_page
-    @parsed_page ||= Nokogiri::XML(parse_page)
+    @parsed_page ||= Nokogiri::HTML(parse_page)
   end
 
   def parse_errors
