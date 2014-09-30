@@ -3,26 +3,22 @@
     %div.panel-body
       = text_to_html(@section.inputs, subsection.text)
 
-%div.panel.panel-default
-  %div.panel-heading Parse errors
-  %div.panel-body
-    - if @section.parse_errors.any?
+- if @section.parse_errors.any?
+  %div.panel.panel-danger
+    %div.panel-heading Parse errors
+    %div.panel-body
       - @section.parse_errors.each do |subs, p_errors|
-        %p= subs
+        %p.text-danger= subs
         %ul
           - p_errors.each do |p_error|
-            %li= p_error
-    - else
-      %p no parse errors
+            %li.text-danger= p_error
 
-%div.panel.panel-default
-  %div.panel-heading Image errors
-  %div.panel-body
-    - if @section.image_errors.any?
+- if @section.image_errors.any?
+  %div.panel.panel-danger
+    %div.panel-heading Image errors
+    %div.panel-body
       - @section.image_errors.each do |subs, i_errors|
-        %p= subs
+        %p.text-danger= subs
         %ul
           - i_errors.each do |i_error|
-            %li= i_error
-    - else
-      %p no image_errors
+            %li.text-danger= i_error
