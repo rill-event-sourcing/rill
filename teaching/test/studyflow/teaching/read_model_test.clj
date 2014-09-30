@@ -174,7 +174,7 @@
         teacher (first (vals (:teachers model)))
         class (first (classes model teacher))
         section-counts (fn [model] (get-in (chapter-list model class "chapter-1" "section-1")
-                                           [:section-counts "chapter-1" "section-1"]))]
+                                           [:sections-total-status "chapter-1" "section-1"]))]
     (is (= 2 (:unstarted (section-counts model))))
     (is (= ["Barney Rubble" "Fred Flintstone"]
            (map :full-name (get-in (section-counts model) [:student-list :unstarted]))))
