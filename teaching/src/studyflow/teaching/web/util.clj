@@ -87,21 +87,29 @@
     (include-js "//code.jquery.com/jquery-2.1.1.min.js")
     (include-js "/js/dropdown.js")]
    [:body
-    [:header#m-top_header
-     [:h1#logo "Leraren"]
+    [:header#m-top-header-teaching
+     [:a#logo {:href "/reports/completion"}]
+     [:h1#header-title "Leraren"]
      (when redirect-urls
        (form/form-to
         {:role "form" :id "logout-form"} [:post (:login redirect-urls)]
         [:input {:type "hidden" :name "_method" :value "DELETE"}]
         [:button {:type "submit"} "Uitloggen"]))]
+    [:nav#m-main-sidenav
+     [:ul#main-container-nav
+      (map (fn [[url class label]]
+             [:li.main-container-nav-list-item
+              [:a.main-container-nav-tab
+               (if (= url *current-nav-uri*)
+                 {:class (str class "selected") :href url}
+                 {:class class :href url})
+               label]])
+           [["/reports/completion" "overview" "Overzicht"]
+            ["/reports/chapter-list" "chapter-list" "Hoofdstukken"]])]]
     [:section#main_teaching
      [:nav#main_container_nav
       [:ul
-       (map (fn [[url label]]
-              [:li.main_container_nav_list_item
-               [:a.main_container_nav_tab (if (= url *current-nav-uri*) {:class "selected"} {:href url}) label]])
-            [["/reports/completion" "Overzicht"]
-             ["/reports/chapter-list" "Hoofdstukken"]])]]
+       ]]
      [:div.body
       (when warning [:div.warning (h warning)])
       (when message [:div.message (h message)])
