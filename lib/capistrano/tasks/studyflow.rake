@@ -193,7 +193,7 @@ namespace :deploy do
   desc "starting the servers"
   task :start do
     throw " => Stack not set!" unless fetch(:stack)
-    on roles(*fetch(:release_roles), filter: fetch(:stack)), in: :sequence, wait: 5 do |host|
+    on roles(*fetch(:release_roles), filter: fetch(:stack)) do |host|
       role = host.roles.first
       if role == :publish
         warn " starting publishing server #{ host } ".center(72, "#")
@@ -226,7 +226,7 @@ namespace :deploy do
   desc "restarting the servers"
   task :restart do
     throw " => Stack not set!" unless fetch(:stack)
-    on roles(*fetch(:release_roles), filter: fetch(:stack)), in: :sequence, wait: 5 do |host|
+    on roles(*fetch(:release_roles), filter: fetch(:stack)) do |host|
       role = host.roles.first
       if role == :publish
         warn " restarting publishing server #{ host } ".center(72, "#")
