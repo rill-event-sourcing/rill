@@ -89,8 +89,8 @@
             [:li {:class (str "chapter" (when (= selected-chapter-id (str chapter-id)) " open"))}
              [:a.chapter-title
               {:href (str "?class-id=" class-id "&chapter-id=" chapter-id)}
-              (h chapter-title)]
-
+              (h chapter-title)
+              (completion-html (get-in chapter-list [:chapters-completion chapter-id]))]
              (when (= selected-chapter-id chapter-id)
                [:ol.section-list
                 (for [{section-title :title section-id :id :as section} (:sections chapter)]
@@ -99,12 +99,12 @@
                     {:href (str "?class-id=" class-id "&chapter-id=" chapter-id "&section-id=" section-id)}
                     (h section-title)]
 
-                   (when-let [section-counts (get-in chapter-list [:section-counts chapter-id section-id])]
+                   (when-let [section-counts (get-in chapter-list [:sections-total-status chapter-id section-id])]
                      [:div.section_status
                       (for [status [:stuck :in-progress :unstarted :finished]]
                         [:span {:class (name status)} (get section-counts status 0)])])])])])]]
 
-        (when-let [section-counts (get-in chapter-list [:section-counts selected-chapter-id selected-section-id])]
+        (when-let [section-counts (get-in chapter-list [:sections-total-status selected-chapter-id selected-section-id])]
           [:div.teacher_chapter_list_main
            (for [status [:stuck :in-progress :unstarted :finished]]
              (for [student (sort-by :full-name (get-in section-counts [:student-list status]))]
