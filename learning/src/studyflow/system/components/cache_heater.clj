@@ -23,7 +23,7 @@
             (when-not (= (message/type e) ::event-channel/CaughtUp)
               (recur))))
         (close! ch)
-        (async/info [] ch) ;; drain
+        (async/into [] ch) ;; drain
         (info "Caught up with all events. Cache warmed up")
         (reset! done? true))
       (assoc component :done? done?)))
