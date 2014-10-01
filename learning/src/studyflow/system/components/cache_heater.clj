@@ -2,7 +2,7 @@
   (:require [com.stuartsierra.component :refer [Lifecycle]]
             [studyflow.components.event-channel :refer [channel]]
             [clojure.tools.logging :refer [info debug spy]]
-            [clojure.core.async :refer [thread <!! close!]]
+            [clojure.core.async :as async :refer [thread <!! close!]]
             [studyflow.learning.course.events :as course]
             [rill.message :as message]
             [rill.repository :refer [retrieve-aggregate]]
@@ -23,6 +23,7 @@
             (when-not (= (message/type e) ::event-channel/CaughtUp)
               (recur))))
         (close! ch)
+        (async/info [] ch) ;; drain
         (info "Caught up with all events. Cache warmed up")
         (reset! done? true))
       (assoc component :done? done?)))
