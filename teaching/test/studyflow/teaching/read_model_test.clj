@@ -73,26 +73,26 @@
       (is (empty? (classes model-with-fred-and-department teacher))))
     (testing "one students with departments with classes"
       (is (= 1 (count (classes model-with-fred-and-teacher teacher))))
-      (is (= {"bedrock|boulder|1A" #{"Fred Flintstone"}}
+      (is (= {"bedrock:boulder:1A" #{"Fred Flintstone"}}
              (students-by-class model-with-fred-and-teacher teacher))))
     (testing "two students in the same class"
       (is (= 1 (count (classes model-with-fred-and-barney-in-same-class teacher))))
-      (is (= {"bedrock|boulder|1A" #{"Fred Flintstone" "Barney Rubble"}}
+      (is (= {"bedrock:boulder:1A" #{"Fred Flintstone" "Barney Rubble"}}
              (students-by-class model-with-fred-and-barney-in-same-class teacher))))
     (testing "three students; two in one, the other in another class"
       (is (= 1 (count (classes model-with-fred-barney-and-wilma-in-other-class teacher))))
-      (is (= {"bedrock|boulder|1A" #{"Fred Flintstone" "Barney Rubble"}}
+      (is (= {"bedrock:boulder:1A" #{"Fred Flintstone" "Barney Rubble"}}
              (students-by-class model-with-fred-barney-and-wilma-in-other-class teacher))))
     (let [teacher (first (vals (:teachers model-teacher-also-teaches-1b)))]
       (testing "three students; two in one, the other in another class all same teacher"
         (is (= 2 (count (classes model-teacher-also-teaches-1b teacher))))
-        (is (= {"bedrock|boulder|1A" #{"Fred Flintstone" "Barney Rubble"}
-                "bedrock|boulder|1B" #{"Wilma Flintstone"}}
+        (is (= {"bedrock:boulder:1A" #{"Fred Flintstone" "Barney Rubble"}
+                "bedrock:boulder:1B" #{"Wilma Flintstone"}}
                (students-by-class model-teacher-also-teaches-1b teacher))))
       (testing "three students; two different departments"
         (is (= 2 (count (classes model-fred-moved-to-vegas teacher))))
-        (is (= {"bedrock|boulder|1A" #{"Barney Rubble"}
-                "bedrock|boulder|1B" #{"Wilma Flintstone"}}
+        (is (= {"bedrock:boulder:1A" #{"Barney Rubble"}
+                "bedrock:boulder:1B" #{"Wilma Flintstone"}}
                (students-by-class model-fred-moved-to-vegas teacher)))))))
 
 (def course {:chapters [{:id "chapter-1"
