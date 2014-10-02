@@ -50,44 +50,35 @@
                [:div.student {:class (name status)} (:full-name student)
                 [:span.time-spent (time-spent-html (:time-spent student))]]))])]))))
 
+(defn chapter-list [read-model flash teacher redirect-urls params class-id chapter-id section-id]
+  (let [chapter-id (uuid chapter-id)
+        section-id (uuid section-id)
+        classes (read-model/classes read-model teacher)
+        class (some (fn [c] (when (= class-id (:id c)) c)) classes)
+        chapter-list (when class (read-model/chapter-list read-model class chapter-id section-id))
+        options (assoc flash :redirect-urls redirect-urls)]
+    (binding [*current-nav-uri* "/reports/chapter-list"]
+      (render-chapter-list class classes chapter-list params options))))
+
 (defroutes chapter-list-routes
 
   (GET "/reports/chapter-list"
        {:keys [read-model flash teacher redirect-urls]}
-       (let [classes (read-model/classes read-model teacher)
-             options (assoc flash :redirect-urls redirect-urls)]
-         (binding [*current-nav-uri* "/reports/chapter-list"]
-           (render-chapter-list nil classes nil nil options))))
+       (chapter-list read-model flash teacher redirect-urls nil nil nil nil))
 
   (GET "/reports/:class-id/chapter-list"
        {:keys [read-model flash teacher redirect-urls]
         {:keys [class-id] :as params} :params}
-       (let [classes (read-model/classes read-model teacher)
-             class (some (fn [c] (when (= class-id (:id c)) c)) classes)
-             chapter-list (when class (read-model/chapter-list read-model class nil nil))
-             options (assoc flash :redirect-urls redirect-urls)]
-         (binding [*current-nav-uri* "/reports/chapter-list"]
-           (render-chapter-list class classes chapter-list params options))))
+       (chapter-list read-model flash teacher redirect-urls params class-id nil nil))
 
   (GET "/reports/:class-id/chapter-list/:chapter-id"
        {:keys [read-model flash teacher redirect-urls]
         {:keys [class-id chapter-id] :as params} :params}
-       (let [chapter-id (uuid chapter-id)
-             classes (read-model/classes read-model teacher)
-             class (some (fn [c] (when (= class-id (:id c)) c)) classes)
-             chapter-list (when class (read-model/chapter-list read-model class chapter-id nil))
-             options (assoc flash :redirect-urls redirect-urls)]
-         (binding [*current-nav-uri* "/reports/chapter-list"]
-           (render-chapter-list class classes chapter-list params options))))
+       (chapter-list read-model flash teacher redirect-urls params class-id chapter-id nil))
 
   (GET "/reports/:class-id/chapter-list/:chapter-id/:section-id"
        {:keys [read-model flash teacher redirect-urls]
         {:keys [class-id chapter-id section-id] :as params} :params}
-       (let [chapter-id (uuid chapter-id)
-             section-id (uuid section-id)
-             classes (read-model/classes read-model teacher)
-             class (some (fn [c] (when (= class-id (:id c)) c)) classes)
-             chapter-list (when class (read-model/chapter-list read-model class chapter-id section-id))
-             options (assoc flash :redirect-urls redirect-urls)]
-         (binding [*current-nav-uri* "/reports/chapter-list"]
-           (render-chapter-list class classes chapter-list params options)))))
+       (chapter-list read-model flash teacher redirect-urls params class-id chapter-id section-id)))
+
+

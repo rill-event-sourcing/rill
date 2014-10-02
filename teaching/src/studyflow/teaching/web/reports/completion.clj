@@ -55,6 +55,26 @@
                (into [:all] domains))]]
         [:a {:href (str "/reports/export?class-id=" (:class-id params)) :target "_blank"} "Exporteren naar Excel"]]))))
 
+(defn completion [read-model flash teacher redirect-urls params class-id meijerink]
+  (let [classes (read-model/classes read-model teacher)
+        meijerink-criteria (read-model/meijerink-criteria read-model)
+        domains (read-model/domains read-model)
+        class (some (fn [class]
+                      (when (= class-id (:id class))
+                        class)) classes)
+        students (when class
+                   (->> (read-model/students-for-class read-model class)
+                        (map (comp (partial read-model/decorate-student-completion read-model)
+                                   (partial read-model/decorate-student-time-spent read-model)))))
+        class (if students
+                (->> class
+                     (read-model/decorate-class-completion read-model students)
+                     (read-model/decorate-class-time-spent read-model students))
+                class)
+        options (assoc flash :redirect-urls redirect-urls)]
+    (binding [*current-nav-uri* "/reports/completion"]
+      (render-completion class meijerink students classes meijerink-criteria domains params options))))
+
 (defroutes completion-routes
   (GET "/reports/"
        {}
@@ -78,56 +98,19 @@
                           (read-model/decorate-class-completion read-model students)
                           (read-model/decorate-class-time-spent read-model students))
                      class)]
-
          (render-export class students domains meijerink-criteria)))
 
   (GET "/reports/completion"
        {:keys [read-model flash teacher redirect-urls]}
-       (let [classes (read-model/classes read-model teacher)
-             meijerink-criteria (read-model/meijerink-criteria read-model)
-             options (assoc flash :redirect-urls redirect-urls)]
-         (render-completion nil nil nil classes meijerink-criteria nil nil options)))
+       (completion read-model flash teacher redirect-urls nil nil nil))
 
   (GET "/reports/:class-id/completion"
        {:keys [read-model flash teacher redirect-urls]
         {:keys [class-id] :as params} :params}
-       (let [classes (read-model/classes read-model teacher)
-             meijerink-criteria (read-model/meijerink-criteria read-model)
-             domains (read-model/domains read-model)
-             class (some (fn [class]
-                           (when (= class-id (:id class))
-                             class)) classes)
-             students (when class
-                        (->> (read-model/students-for-class read-model class)
-                             (map (comp (partial read-model/decorate-student-completion read-model)
-                                        (partial read-model/decorate-student-time-spent read-model)))))
-             class (if students
-                     (->> class
-                          (read-model/decorate-class-completion read-model students)
-                          (read-model/decorate-class-time-spent read-model students))
-                     class)
-             options (assoc flash :redirect-urls redirect-urls)]
-         (binding [*current-nav-uri* "/reports/completion"]
-           (render-completion class nil students classes meijerink-criteria domains params options))))
+       (completion read-model flash teacher redirect-urls params class-id nil))
+
 
   (GET "/reports/:class-id/:meijerink/completion"
        {:keys [read-model flash teacher redirect-urls]
         {:keys [class-id meijerink] :as params} :params}
-       (let [classes (read-model/classes read-model teacher)
-             meijerink-criteria (read-model/meijerink-criteria read-model)
-             domains (read-model/domains read-model)
-             class (some (fn [class]
-                           (when (= class-id (:id class))
-                             class)) classes)
-             students (when class
-                        (->> (read-model/students-for-class read-model class)
-                             (map (comp (partial read-model/decorate-student-completion read-model)
-                                        (partial read-model/decorate-student-time-spent read-model)))))
-             class (if students
-                     (->> class
-                          (read-model/decorate-class-completion read-model students)
-                          (read-model/decorate-class-time-spent read-model students))
-                     class)
-             options (assoc flash :redirect-urls redirect-urls)]
-         (binding [*current-nav-uri* "/reports/completion"]
-           (render-completion class meijerink students classes meijerink-criteria domains params options)))))
+       (completion read-model flash teacher redirect-urls params class-id meijerink)))
