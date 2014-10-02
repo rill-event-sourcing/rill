@@ -10,26 +10,36 @@
             [rill.uuid :refer [uuid]]
             [ring.util.response :refer [redirect-after-post]]))
 
+(defn drop-list-classes [classes]
+  [:div.m-select-box.show
+   [:ul.dropdown
+    (map (fn [class]
+           [:li.dropdown-list-item
+            [:a.dropdown-link {:href (str "/reports/" (:id class) "/completion")}
+             (:full-name class)]])
+         classes)]])
+
+(defn drop-list-meijerink [class meijerink-criteria]
+  [:div.m-select-box.show
+   [:ul.dropdown
+    (map (fn [meijerink]
+           [:li.dropdown-list-item
+            [:a.dropdown-link {:href (str "/reports/" (:id class) "/" meijerink "/completion")}
+             meijerink]])
+         meijerink-criteria)]])
+
 (defn drop-down-classes [classes params]
   (form/drop-down {:onchange "this.form.submit()", :class "selector"}
-                      "class-id"
-                      (into [["-- Kies klas --" ""]]
-                            (sort-by first
-                                     (map #(vector (:full-name %) (:id %))
-                                          classes)))
-                      (:class-id params)))
+                  "class-id"
+                  (into [["-- Kies klas --" ""]]
+                        (sort-by first
+                                 (map #(vector (:full-name %) (:id %))
+                                      classes)))
+                  (:class-id params)))
 
-(defn drop-down-meijerink [meijerink-criteria params]
-  (form/drop-down {:onchange "this.form.submit()", :class "selector"}
-                  "meijerink"
-                  (into [["-- Kies Niveau --" ""]]
-                        meijerink-criteria)
-                  (:meijerink params)))
-
-(defn render-completion [class students classes meijerink-criteria domains params options]
+(defn render-completion [class scope students classes meijerink-criteria domains params options]
   (let [meijerink-criteria (sort meijerink-criteria)
         domains (sort domains)
-        scope (:meijerink params)
         scope (if (str/blank? scope) nil scope)]
     (layout
      (merge {:title (if class
@@ -37,9 +47,9 @@
                       "Rapport")}
             options)
 
-     [:form {:method "GET"}
-      (drop-down-classes classes params)
-      (drop-down-meijerink meijerink-criteria params)]
+     (drop-list-classes classes)
+     (when class
+       (drop-list-meijerink class meijerink-criteria))
 
      (when students
        [:div
@@ -126,6 +136,30 @@
         {:keys [class-id] :as params} :params}
        (let [classes (read-model/classes read-model teacher)
              meijerink-criteria (read-model/meijerink-criteria read-model)
+             options (assoc flash :redirect-urls redirect-urls)]
+         (render-completion nil nil nil classes meijerink-criteria nil params options)))
+
+  (GET "/reports/:class-id/completion"
+       {:keys [read-model flash teacher redirect-urls]
+        {:keys [class-id meijerink] :as params} :params}
+       (let [classes (read-model/classes read-model teacher)
+             meijerink-criteria (read-model/meijerink-criteria read-model)
+             domains (read-model/domains read-model)
+             class (some (fn [class]
+                           (when (= class-id (:id class))
+                             (read-model/decorate-class-completion read-model class))) classes)
+             students (when class
+                        (->> (read-model/students-for-class read-model class)
+                             (map (partial read-model/decorate-student-completion read-model))))
+             options (assoc flash :redirect-urls redirect-urls)]
+         (binding [*current-nav-uri* "/reports/completion"]
+           (render-completion class nil students classes meijerink-criteria domains params options))))
+
+  (GET "/reports/:class-id/:meijerink/completion"
+       {:keys [read-model flash teacher redirect-urls]
+        {:keys [class-id meijerink] :as params} :params}
+       (let [classes (read-model/classes read-model teacher)
+             meijerink-criteria (read-model/meijerink-criteria read-model)
              domains (read-model/domains read-model)
              class (some (fn [class]
                            (when (= class-id (:id class))
@@ -141,7 +175,7 @@
                      class)
              options (assoc flash :redirect-urls redirect-urls)]
          (binding [*current-nav-uri* "/reports/completion"]
-           (render-completion class students classes meijerink-criteria domains params options))))
+           (render-completion class meijerink students classes meijerink-criteria domains params options))))
 
   (GET "/reports/chapter-list"
        {:keys [read-model flash teacher redirect-urls]
