@@ -17,8 +17,8 @@
 
 (deftest render-completion
   (testing "without data"
-    (let [body (t/render-completion nil nil nil nil nil nil nil)]
-      (is (= "Rapport - Studyflow"
+    (let [body (t/render-completion nil nil nil nil nil nil nil nil)]
+      (is (= "Overzicht - Studyflow"
              (query-html-content body [[:html] [:head] [:title]])))))
   (testing "with data"
     (let [class {:id "c"
@@ -26,6 +26,7 @@
                  :completion {"A" {:all {:finished 0, :total 10}
                                    "bar" {:finished 3, :total 37}}}}
           body (t/render-completion class
+                                    "A"
                                     [{:id "fred",
                                       :full-name "Fred Flintstone",
                                       :completion {"A" {:all {:finished 1, :total 10}
@@ -35,14 +36,8 @@
                                     #{"foo" "bar"}
                                     {:class-id "c", :meijerink "A"}
                                     nil)]
-      (is (= "Rapport voor \"C1\" - Studyflow"
+      (is (= "Overzicht voor \"C1\" - Studyflow"
              (query-html-content body [[:html] [:head] [:title]])))
-      (is (= "C1"
-             (query-html-content body [[:select (enlive/attr= :name "class-id")]
-                                       [:option (enlive/attr= :selected "selected")]])))
-      (is (= "A"
-             (query-html-content body [[:select (enlive/attr= :name "meijerink")]
-                                       [:option (enlive/attr= :selected "selected")]])))
       (is (= "Fred Flintstone"
              (query-html-content body [[:table.students]
                                        [:tr.student#student-fred]
