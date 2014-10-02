@@ -1,5 +1,6 @@
 (ns studyflow.teaching.web.util
   (:require [clojure.string :as str]
+            [clojure.tools.logging :as log]
             [hiccup.core :refer [h]]
             [hiccup.form :as form]
             [hiccup.page :refer [html5 include-css]]))
@@ -49,6 +50,27 @@
       (str/replace #"\s+" "-")))
 
 (def ^:dynamic *current-nav-uri* nil)
+
+(defn drop-list-classes [classes current-meijerink report-name]
+  [:div.m-select-box.show
+   [:ul.dropdown
+    (map (fn [class]
+           [:li.dropdown-list-item
+            [:a.dropdown-link {:href
+                               (if current-meijerink
+                                 (str "/reports/" (:id class) "/" current-meijerink "/" report-name)
+                                 (str "/reports/" (:id class) "/" report-name))}
+             (:full-name class)]])
+         classes)]])
+
+(defn drop-list-meijerink [class meijerink-criteria report-name]
+  [:div.m-select-box.show
+   [:ul.dropdown
+    (map (fn [meijerink]
+           [:li.dropdown-list-item
+            [:a.dropdown-link {:href (str "/reports/" (:id class) "/" meijerink "/" report-name)}
+             meijerink]])
+         meijerink-criteria)]])
 
 (defn layout [{:keys [title warning message redirect-urls]} & body]
   (html5

@@ -8,28 +8,6 @@
             [studyflow.teaching.web.util :refer :all]
             [ring.util.response :refer [redirect-after-post]]))
 
-(defn drop-list-classes [classes current-meijerink report-name]
-  [:div.m-select-box.show
-   [:ul.dropdown
-    (map (fn [class]
-           [:li.dropdown-list-item
-            [:a.dropdown-link {:href
-                               (if current-meijerink
-                                 (str "/reports/" (:id class) "/" current-meijerink "/" report-name)
-                                 (str "/reports/" (:id class) "/" report-name))}
-             (:full-name class)]])
-         classes)]])
-
-(defn drop-list-meijerink [class meijerink-criteria report-name]
-  [:div.m-select-box.show
-   [:ul.dropdown
-    (map (fn [meijerink]
-           [:li.dropdown-list-item
-            [:a.dropdown-link {:href (str "/reports/" (:id class) "/" meijerink "/" report-name)}
-             meijerink]])
-         meijerink-criteria)]])
-
-
 (defn render-completion [class scope students classes meijerink-criteria domains params options]
   (let [meijerink-criteria (sort meijerink-criteria)
         domains (sort domains)
