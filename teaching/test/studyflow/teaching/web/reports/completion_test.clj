@@ -1,8 +1,8 @@
-(ns studyflow.teaching.web.reports.query-test
+(ns studyflow.teaching.web.reports.completion-test
   (:require [clojure.test :refer [deftest is testing]]
             [net.cgrand.enlive-html :as enlive]
             [ring.mock.request :refer [request]]
-            [studyflow.teaching.web.reports.query :as t]))
+            [studyflow.teaching.web.reports.completion :as t]))
 
 ;; TODO move to common place
 (defn query-html [data pattern]
@@ -63,13 +63,13 @@
                                        [:td.average.number.bar]
                                        [:span (enlive/attr= :title "3/37")]]))))))
 
-(deftest app
+(deftest completion-routes
   (testing "GET /reports"
-    (let [resp (t/app (request :get "/reports/"))]
+    (let [resp (t/completion-routes (request :get "/reports/"))]
       (is (= 303 (:status resp)))
       (is (= "/reports/completion" (get-in resp [:headers "Location"])))))
   (testing "GET /reports/completion"
-    (let [resp (t/app (-> (request :get "/reports/completion")
+    (let [resp (t/completion-routes (-> (request :get "/reports/completion")
                           (assoc :read-model
                             {:teachers {"t" {:classes #{{:department-id "d"
                                                          :class-name "1"}
