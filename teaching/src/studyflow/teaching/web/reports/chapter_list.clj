@@ -80,5 +80,3 @@
        {:keys [read-model flash teacher redirect-urls]
         params :params}
        (chapter-list read-model flash teacher redirect-urls params)))
-
-

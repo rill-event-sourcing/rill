@@ -317,3 +317,87 @@ select.selector
   font-family: inherit
   margin: 0 1em 0 0
   display: inline-block
+
+.m-select-box
+  position: relative
+  width: 200px
+  margin: 0 auto
+  padding: 10px
+  background: #fff
+  border-radius: 7px
+  border: 1px solid rgba(0,0,0,0.15)
+  box-shadow: 0 1px 1px rgba(50,50,50,0.1)
+  cursor: pointer
+  outline: none
+  color: #8AA8BD
+  &:after
+    content: ""
+    width: 0
+    height: 0
+    position: absolute
+    right: 15px
+    top: 50%
+    margin-top: -3px
+    border-width: 6px 6px 0 6px
+    border-style: solid
+    border-color: #8aa8bd transparent
+  &.active
+    .dropdown
+      opacity: 1
+      pointer-events: auto
+  .dropdown
+    position: absolute
+    top: 140%
+    left: 0
+    right: 0
+    background: white
+    border-radius: inherit
+    border: 1px solid rgba(0,0,0,0.17)
+    box-shadow: 0 0 5px rgba(0,0,0,0.1)
+    font-weight: normal
+    transition: all 0.5s ease-in
+    list-style: none
+    opacity: 0
+    pointer-events: none
+    &:after
+      content: ""
+      width: 0
+      height: 0
+      position: absolute
+      bottom: 100%
+      right: 15px
+      border-width: 0 6px 6px 6px
+      border-style: solid
+      border-color: #fff transparent
+    &:before
+      content: ""
+      width: 0
+      height: 0
+      position: absolute
+      bottom: 100%
+      right: 13px
+      border-width: 0 8px 8px 8px
+      border-style: solid
+      border-color: rgba(0,0,0,0.1) transparent
+    li
+      a
+        display: block
+        padding: 10px
+        text-decoration: none
+        color: #8aa8bd
+        border-bottom: 1px solid #e6e8ea
+        box-shadow: inset 0 1px 0 rgba(255,255,255,1)
+        transition: all 0.3s ease-out
+      i
+        float: right
+        color: inherit
+      &:first-of-type
+        a
+          border-radius: 7px 7px 0 0
+      &:last-of-type
+        a
+          border-radius: 0 0 7px 7px
+          border: none
+      &:hover
+        a
+          background: #f3f8f8
