@@ -1,6 +1,7 @@
 (ns studyflow.super-system
   (:require [com.stuartsierra.component :refer [system-map] :as component]
-            [studyflow.components.simple-session-store :refer [simple-session-store]]
+            [ring.middleware.session.memory :refer [memory-store]]
+            [clj-redis-session.core :refer [redis-store]]
             [studyflow.components.memory-event-store :as memory-event-store]
             [studyflow.components.psql-event-store :refer [psql-event-store-component]]
             [studyflow.super-system.components.dev-event-fixtures :as dev-event-fixtures]
@@ -44,9 +45,7 @@
         login (-> (login-dev-system/make-system {:jetty-port 4000
                                                  :default-redirect-paths {"editor" (:editor redirect-urls)
                                                                           "student" (:student redirect-urls)
-                                                                          "teacher" (:teacher redirect-urls)}
-                                                 :session-max-age (* 8 60 60)
-                                                 :cookie-domain nil})
+                                                                          "teacher" (:teacher redirect-urls)}})
                   (dissoc :event-store :session-store)
                   (namespace-system :login [:event-store :session-store]))
 
@@ -64,7 +63,7 @@
         shared-system {:event-store (if-let [url (:psql config)]
                                       (psql-event-store-component url)
                                       (memory-event-store/memory-event-store-component))
-                       :session-store (simple-session-store)
+                       :session-store (memory-store) ; (redis-store {:pool {} :spec {:uri "redis://localhost:6379"}})
                        :dev-event-fixtures
                        (component/using
                         (dev-event-fixtures/dev-event-fixtures-component)

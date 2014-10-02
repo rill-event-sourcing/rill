@@ -1,9 +1,7 @@
 (ns studyflow.teaching.web.authentication
   (:require [clojure.tools.logging :as log]
-            [ring.middleware.cookies :as cookies]
             [studyflow.teaching.read-model :as read-model]
-            [studyflow.web.authentication :refer [wrap-check-cookie redirect-login]]
-            [studyflow.components.session-store :as session-store]))
+            [studyflow.web.authentication :refer [wrap-check-cookie redirect-login]]))
 
 (defn wrap-teacher [handler]
   (fn [{:keys [read-model] :as req}]
@@ -15,25 +13,19 @@
           (redirect-login req)))
       req)))
 
-(defn get-teacher-id [session-store session-id]
-  (when-let [user-id (session-store/get-user-id session-store session-id)]
-    (when (= (session-store/get-role session-store session-id) "teacher")
-      user-id)))
+(defn get-teacher-id [{{:keys [user-id user-role]} :session}]
+  (when (and user-id (= user-role "teacher"))
+    user-id))
 
-(defn wrap-teacher-id [handler session-store]
+(defn wrap-teacher-id [handler]
   (fn [req]
-    (if-let [session-id (get req :session-id)]
-      (if-let [teacher-id (get-teacher-id session-store session-id)]
-        (handler (-> req
-                     (assoc :teacher-id teacher-id)
-                     (dissoc :session-id)))
-        ;; session expired
-        (redirect-login req))
-      req)))
+    (if-let [teacher-id (get-teacher-id req)]
+      (handler (-> req (assoc :teacher-id teacher-id)))
+      (redirect-login req))))
 
-(defn wrap-authentication [handler session-store]
+(defn wrap-authentication [handler]
   (-> handler
       wrap-teacher
-      (wrap-teacher-id session-store)
-      wrap-check-cookie
-      cookies/wrap-cookies))
+      wrap-teacher-id
+      wrap-check-cookie))
+

@@ -20,12 +20,12 @@
             (update-in [:headers] dissoc "Content-Length" "Last-Modified"))
         res))))
 
-(defrecord DevRingHandlerComponent [event-store read-model session-store redirect-urls cookie-domain]
+(defrecord DevRingHandlerComponent [event-store read-model redirect-urls cookie-domain session-store]
   Lifecycle
   (start [component]
-    (info "Starting handler")
+    (info ["Starting learning dev handler with session store" session-store])
     (assoc component :handler
-           (-> (web/make-request-handler (:store event-store) (:read-model read-model) session-store redirect-urls cookie-domain)
+           (-> (web/make-request-handler (:store event-store) (:read-model read-model) redirect-urls cookie-domain session-store)
                (wrap-dev-cljs
                 "<script type=\"text/javascript\" src=\"/js/studyflow.js\"></script>"
                 "<script src=\"/js/react_0.9.0_local_copy.js\" type=\"text/javascript\"></script>

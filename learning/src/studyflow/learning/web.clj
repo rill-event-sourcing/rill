@@ -3,9 +3,11 @@
             [studyflow.learning.web.api :as api]
             [studyflow.learning.web.authentication :as authentication]
             [studyflow.learning.web.browser-resources :as browser-resources]
+            [ring.middleware.cookies :refer [wrap-cookies]]
+            [ring.middleware.session :refer [wrap-session]]
             [studyflow.web.caching :refer [wrap-no-cache-dwim]]
             [studyflow.web.handler-tools :refer [combine-ring-handlers]]
-            [studyflow.web.authentication :refer [wrap-cookie-domain wrap-redirect-urls]]
+            [studyflow.web.authentication :refer [wrap-redirect-urls]]
             [studyflow.learning.web.status :as status]
             [studyflow.learning.web.start :as start]
             [studyflow.learning.read-model :as m]))
@@ -20,16 +22,20 @@
     (handler (assoc request :read-model @read-model-atom))))
 
 (defn make-request-handler
-  [event-store read-model session-store redirect-urls cookie-domain]
+  [event-store read-model redirect-urls cookie-domain session-store]
+  {:pre [session-store]}
   (-> (combine-ring-handlers  browser-resources/resource-handler
                               (-> (combine-ring-handlers
                                    start/handler
                                    (api/make-request-handler event-store)
                                    (wrap-redirect-urls browser-resources/course-page-handler redirect-urls))
-                                  (authentication/wrap-authentication session-store)
+                                  authentication/wrap-authentication
                                   (wrap-read-model read-model)
-                                  (wrap-redirect-urls redirect-urls)
-                                  (wrap-cookie-domain cookie-domain))
+                                  (wrap-redirect-urls redirect-urls))
                               status/status-handler
                               fallback-handler)
+
+      (wrap-session {:store session-store
+                     :cookie-attrs {:domain cookie-domain}})
+      wrap-cookies
       wrap-no-cache-dwim))

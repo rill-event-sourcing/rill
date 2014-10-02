@@ -14,6 +14,7 @@
                  [rill/rill "0.1.0"]
                  [ring/ring-defaults "0.1.0"]
                  [digest/digest "1.4.4"]
+                 [clj-redis-session "2.1.0"]
                  [clj-http/clj-http "0.9.1"]
                  [cheshire/cheshire "5.3.1"]
                  [enlive/enlive "1.1.5"]
