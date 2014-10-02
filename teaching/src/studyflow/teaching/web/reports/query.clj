@@ -31,15 +31,6 @@
              meijerink]])
          meijerink-criteria)]])
 
-(defn drop-down-classes [classes params]
-  (form/drop-down {:onchange "this.form.submit()", :class "selector"}
-                  "class-id"
-                  (into [["-- Kies klas --" ""]]
-                        (sort-by first
-                                 (map #(vector (:full-name %) (:id %))
-                                      classes)))
-                  (:class-id params)))
-
 (defn render-completion [class scope students classes meijerink-criteria domains params options]
   (let [meijerink-criteria (sort meijerink-criteria)
         domains (sort domains)
@@ -47,8 +38,8 @@
         scope (if (str/blank? scope) nil scope)]
     (layout
      (merge {:title (if class
-                      (str "Rapport voor \"" (:full-name class) "\"")
-                      "Rapport")}
+                      (str "Overzicht voor \"" (:full-name class) "\"")
+                      "Overzicht")}
             options)
 
      (drop-list-classes classes scope report-name)
@@ -87,18 +78,18 @@
                (into [:all] domains))]]
         [:a {:href (str "/reports/export?class-id=" (:class-id params)) :target "_blank"} "Exporteren naar Excel"]]))))
 
-(defn render-chapter-list [classes class chapter-list params options]
+(defn render-chapter-list [class classes chapter-list params options]
   (let [selected-chapter-id (uuid (:chapter-id params))
         selected-section-id (uuid (:section-id params))
-        class-id (:class-id params)]
+        class-id (:class-id params)
+        report-name "chapter-list"]
     (layout
      (merge {:title (if class
-                      (str "Voortgang voor \"" (:full-name class) "\"")
-                      "Voortgang")}
+                      (str "Hoofdstukken voor \"" (:full-name class) "\"")
+                      "Hoofdstukken")}
             options)
 
-     [:form {:method "GET"}
-      (drop-down-classes classes params)]
+     (drop-list-classes classes nil report-name)
 
      (when class
        [:div#m-teacher_chapter_list
@@ -107,7 +98,7 @@
           (for [{chapter-title :title chapter-id :id :as chapter} (:chapters chapter-list)]
             [:li {:class (str "chapter" (when (= selected-chapter-id (str chapter-id)) " open"))}
              [:a.chapter-title
-              {:href (str "?class-id=" class-id "&chapter-id=" chapter-id)}
+              {:href (str "/reports/" (:id class) "/chapter-list/" chapter-id)}
               (h chapter-title)
               (completion-html (get-in chapter-list [:chapters-completion chapter-id]))]
              (when (= selected-chapter-id chapter-id)
@@ -115,7 +106,7 @@
                 (for [{section-title :title section-id :id :as section} (:sections chapter)]
                   [:li {:class (str "section" (when (= selected-section-id section-id) " selected"))}
                    [:a.section_link
-                    {:href (str "?class-id=" class-id "&chapter-id=" chapter-id "&section-id=" section-id)}
+                    {:href (str "/reports/" (:id class) "/chapter-list/" chapter-id "/" section-id)}
                     (h section-title)]
 
                    (when-let [section-counts (get-in chapter-list [:sections-total-status chapter-id section-id])]
@@ -181,6 +172,42 @@
          (binding [*current-nav-uri* "/reports/completion"]
            (render-completion class meijerink students classes meijerink-criteria domains params options))))
 
+  (GET "/reports/:class-id/chapter-list"
+       {:keys [read-model flash teacher redirect-urls]
+        {:keys [class-id chapter-id section-id] :as params} :params}
+       (let [chapter-id (uuid chapter-id)
+             section-id (uuid section-id)
+             classes (read-model/classes read-model teacher)
+             class (some (fn [c] (when (= class-id (:id c)) c)) classes)
+             chapter-list (when class (read-model/chapter-list read-model class chapter-id section-id))
+             options (assoc flash :redirect-urls redirect-urls)]
+         (binding [*current-nav-uri* "/reports/chapter-list"]
+           (render-chapter-list class classes chapter-list params options))))
+
+  (GET "/reports/:class-id/chapter-list/:chapter-id"
+       {:keys [read-model flash teacher redirect-urls]
+        {:keys [class-id chapter-id section-id] :as params} :params}
+       (let [chapter-id (uuid chapter-id)
+             section-id (uuid section-id)
+             classes (read-model/classes read-model teacher)
+             class (some (fn [c] (when (= class-id (:id c)) c)) classes)
+             chapter-list (when class (read-model/chapter-list read-model class chapter-id section-id))
+             options (assoc flash :redirect-urls redirect-urls)]
+         (binding [*current-nav-uri* "/reports/chapter-list"]
+           (render-chapter-list class classes chapter-list params options))))
+
+  (GET "/reports/:class-id/chapter-list/:chapter-id/:section-id"
+       {:keys [read-model flash teacher redirect-urls]
+        {:keys [class-id chapter-id section-id] :as params} :params}
+       (let [chapter-id (uuid chapter-id)
+             section-id (uuid section-id)
+             classes (read-model/classes read-model teacher)
+             class (some (fn [c] (when (= class-id (:id c)) c)) classes)
+             chapter-list (when class (read-model/chapter-list read-model class chapter-id section-id))
+             options (assoc flash :redirect-urls redirect-urls)]
+         (binding [*current-nav-uri* "/reports/chapter-list"]
+           (render-chapter-list class classes chapter-list params options))))
+
   (GET "/reports/chapter-list"
        {:keys [read-model flash teacher redirect-urls]
         {:keys [class-id chapter-id section-id] :as params} :params}
@@ -191,7 +218,7 @@
              chapter-list (when class (read-model/chapter-list read-model class chapter-id section-id))
              options (assoc flash :redirect-urls redirect-urls)]
          (binding [*current-nav-uri* "/reports/chapter-list"]
-           (render-chapter-list classes class chapter-list params options))))
+           (render-chapter-list class classes chapter-list params options))))
 
   (GET "/reports/export"
        {:keys [read-model teacher]
