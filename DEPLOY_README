@@ -24,6 +24,14 @@ Add my ip to kibana dashboard:
 
   sudo ufw allow from <ip> on sfprodbalancer
 
+Restart a service on an instance:
+Learning:
+  sudo supervisorctl start studyflow_learning
+
+Disable a service on the loadbalancer:
+  ssh sfprodbalancer.studyflow.nl
+  sudo haproxyctl disable all sfprodlearning1.studyflow.nl
+
 Also nice:
 
   www.studyflow.nl/haproxy
