@@ -14,13 +14,6 @@ DropDown.prototype = {
             $(this).toggleClass('active');
             return true;
         });
-        /*
-        obj.opts.on('click',function(){
-            var opt = $(this);
-            obj.val = opt.text();
-            obj.index = opt.index();
-            obj.placeholder.text(obj.val);
-        }); */
     },
     getValue : function() {
         return this.val;
@@ -35,11 +28,5 @@ $(function() {
 
     var dd1 = new DropDown( $('#dropdown-classes') );
     var dd2 = new DropDown( $('#dropdown-meijerink') );
-/*
-    $(document).click(function() {
-        // all dropdowns
-        $('.m-select-box').removeClass('active');
-        });
-*/
     });
 
