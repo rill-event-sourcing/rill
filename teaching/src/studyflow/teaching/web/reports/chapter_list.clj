@@ -10,15 +10,14 @@
 (defn render-chapter-list [class classes chapter-list params options]
   (let [selected-chapter-id (uuid (:chapter-id params))
         selected-section-id (uuid (:section-id params))
-        class-id (:class-id params)
-        report-name "chapter-list"]
+        class-id (:class-id params)]
     (layout
      (merge {:title (if class
                       (str "Hoofdstukken voor \"" (:full-name class) "\"")
                       "Hoofdstukken")}
             options)
 
-     (drop-list-classes classes nil report-name)
+     (drop-list-classes classes nil "chapter-list")
 
      (when class
        [:div#m-teacher_chapter_list

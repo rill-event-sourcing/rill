@@ -53,7 +53,7 @@
                  [:td.average.number {:class (classerize domain)}
                   (completion-html (get-in class [:completion scope domain]))])
                (into [:all] domains))]]
-        [:a {:href (str "/reports/export?class-id=" (:class-id params)) :target "_blank"} "Exporteren naar Excel"]]))))
+        [:a {:href (str "/reports/" (:class-id params) "/completion/export") :target "_blank"} "Exporteren naar Excel"]]))))
 
 (defn completion [read-model flash teacher redirect-urls params]
   (let [classes (read-model/classes read-model teacher)
@@ -81,7 +81,16 @@
        {}
        (redirect-after-post "/reports/completion"))
 
-  (GET "/reports/export"
+  (GET "/reports/completion"
+       {:keys [read-model flash teacher redirect-urls]}
+       (completion read-model flash teacher redirect-urls nil))
+
+  (GET "/reports/:class-id/completion"
+       {:keys [read-model flash teacher redirect-urls]
+        params :params}
+       (completion read-model flash teacher redirect-urls params))
+
+  (GET "/reports/:class-id/completion/export"
        {:keys [read-model teacher]
         {:keys [class-id] :as params} :params}
        (let [classes (read-model/classes read-model teacher)
@@ -100,15 +109,6 @@
                           (read-model/decorate-class-time-spent read-model students))
                      class)]
          (render-export class students domains meijerink-criteria)))
-
-  (GET "/reports/completion"
-       {:keys [read-model flash teacher redirect-urls]}
-       (completion read-model flash teacher redirect-urls nil))
-
-  (GET "/reports/:class-id/completion"
-       {:keys [read-model flash teacher redirect-urls]
-        params :params}
-       (completion read-model flash teacher redirect-urls params))
 
   (GET "/reports/:class-id/:meijerink/completion"
        {:keys [read-model flash teacher redirect-urls]
