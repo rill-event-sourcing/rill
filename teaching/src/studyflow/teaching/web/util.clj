@@ -51,9 +51,11 @@
 
 (def ^:dynamic *current-nav-uri* nil)
 
-(defn drop-list-classes [classes current-meijerink report-name]
+(defn drop-list-classes [classes current-meijerink report-name selected-class-name]
   [:div {:class "m-select-box" :id "dropdown-classes"}
-   [:span "Klas"]
+   [:span (if selected-class-name
+            selected-class-name
+            "Klas")]
    [:ul.dropdown
     (map (fn [class]
            [:li.dropdown-list-item
@@ -64,9 +66,11 @@
              (:class-name class)]])
          classes)]])
 
-(defn drop-list-meijerink [class meijerink-criteria report-name]
+(defn drop-list-meijerink [class meijerink-criteria report-name selected-meijerink]
   [:div {:class "m-select-box" :id "dropdown-meijerink"}
-   [:span "Meijerink criteria"]
+   [:span (if selected-meijerink
+            selected-meijerink
+            "Meijerink criteria")]
    [:ul.dropdown
     (map (fn [meijerink]
            [:li.dropdown-list-item
