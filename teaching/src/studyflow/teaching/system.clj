@@ -15,7 +15,7 @@
   (let [{:keys [port event-store-config redirect-urls session-store-url cookie-domain]} config-options]
     (component/system-map
      :config-options config-options
-     :ring-handler (-> (ring-handler-component redirect-urls)
+     :ring-handler (-> (ring-handler-component redirect-urls cookie-domain)
                        (using [:event-store :read-model :session-store]))
      :session-store (durable-store session-store-url)
      :jetty (-> (jetty-component port)
