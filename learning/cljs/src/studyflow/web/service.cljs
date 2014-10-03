@@ -135,9 +135,9 @@
               :error-handler (command-error-handler cursor)}))
 
       "tracking-commands/navigation"
-      (let [[student-id data] args]
+      (let [[student-id tracking-location] args]
         (PUT (str "/api/tracking/navigation/" student-id)
-             {:params {:data data}
+             {:params {:tracking-location tracking-location}
               :format :json
               :handler ignore-handler
               :error-handler ignore-handler}))

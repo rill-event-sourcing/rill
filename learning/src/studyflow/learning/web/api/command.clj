@@ -86,9 +86,9 @@
     routes/tracking-navigation
     (authorization/wrap-student-authorization
      (fn [{{:keys [student-id]} :params body :body}]
-       (let [{:keys [data]} body]
+       (let [{:keys [tracking-location]} body]
          (tracking/navigate! (uuid student-id)
-                             data)))))))
+                             tracking-location)))))))
 
 (defn make-request-handler
   [event-store]

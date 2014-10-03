@@ -6,5 +6,5 @@
 
 (defcommand Navigate!
   :student-id m/Id
-  :data {s/Keyword #{s/Keyword m/Id}}
+  :tracking-location {s/Keyword #{s/Keyword m/Id}}
   tracking-id)

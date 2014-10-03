@@ -4,9 +4,9 @@
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]))
 
-(defn track-navigation [command-channel student-id data]
+(defn track-navigation [command-channel student-id tracking-location]
   (async/put! command-channel
-              ["tracking-commands/navigation" student-id data]))
+              ["tracking-commands/navigation" student-id tracking-location]))
 
 (defn listen [tx-report cursor command-channel]
   (let [{:keys [path old-state new-state]} tx-report]
