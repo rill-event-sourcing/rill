@@ -1,6 +1,6 @@
 (ns studyflow.login.system
   (:require [clojure.tools.logging :as log]
-            [clj-redis-session.core :refer [redis-store]]
+            [studyflow.web.durable-session-store :refer [durable-store]]
             [crypto.password.bcrypt :as bcrypt]
             [com.stuartsierra.component :as component :refer [using]]
             [studyflow.login.credentials :as credentials]
@@ -79,7 +79,7 @@
                                                     default-redirect-paths)
                                              cookie-domain)
                      (using [:credentials :session-store :event-store :edu-route-service]))
-   :session-store (redis-store {:pool {} :spec {:uri session-store-url}})
+   :session-store (durable-store session-store-url)
    :edu-route-service (edu-route-production-service "DDF9nh3w45s$Wo1w" "studyflow" "qW3#f65S") ;; TODO: get implementation from config
    :app-status-component (-> (app-status-component 1)
                              (using [:event-channel]))

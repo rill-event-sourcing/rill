@@ -1,7 +1,7 @@
 (ns studyflow.super-system
   (:require [com.stuartsierra.component :refer [system-map] :as component]
             [ring.middleware.session.memory :refer [memory-store]]
-            [clj-redis-session.core :refer [redis-store]]
+            [studyflow.web.durable-session-store :refer [durable-store]]
             [studyflow.components.memory-event-store :as memory-event-store]
             [studyflow.components.psql-event-store :refer [psql-event-store-component]]
             [studyflow.super-system.components.dev-event-fixtures :as dev-event-fixtures]
@@ -63,7 +63,7 @@
         shared-system {:event-store (if-let [url (:psql config)]
                                       (psql-event-store-component url)
                                       (memory-event-store/memory-event-store-component))
-                       :session-store (memory-store) ; (redis-store {:pool {} :spec {:uri "redis://localhost:6379"}})
+                       :session-store (memory-store) ; (durable-store "redis://localhost:6379")
                        :dev-event-fixtures
                        (component/using
                         (dev-event-fixtures/dev-event-fixtures-component)

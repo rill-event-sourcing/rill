@@ -1,6 +1,6 @@
 (ns studyflow.system
   (:require [com.stuartsierra.component :as component :refer [using]]
-            [clj-redis-session.core :refer [redis-store]]
+            [studyflow.web.durable-session-store :refer [durable-store]]
             [studyflow.components.atom-event-store :refer [atom-event-store-component]]
             [studyflow.components.event-channel :refer [event-channel-component]]
             [studyflow.components.jetty :refer [jetty-component]]
@@ -23,7 +23,7 @@
      :publishing-api-jetty (-> (jetty-component internal-api-port)
                                (using {:ring-handler :publishing-api-handler
                                        :app-status-component :app-status-component}))
-     :session-store (redis-store {:pool {} :spec {:uri session-store-url}})
+     :session-store (durable-store session-store-url)
      :ring-handler (-> (ring-handler-component redirect-urls cookie-domain)
                        (using [:event-store :read-model :session-store :cache-heater]))
      :cache-heater (-> (cache-heater 2)

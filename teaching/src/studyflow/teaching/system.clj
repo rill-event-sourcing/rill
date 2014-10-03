@@ -1,6 +1,6 @@
 (ns studyflow.teaching.system
   (:require [clojure.tools.logging :as log]
-            [clj-redis-session.core :refer [redis-store]]
+            [studyflow.web.durable-session-store :refer [durable-store]]
             [com.stuartsierra.component :as component :refer [using]]
             [studyflow.components.event-channel :refer [event-channel-component]]
             [studyflow.components.jetty :refer [jetty-component]]
@@ -17,7 +17,7 @@
      :config-options config-options
      :ring-handler (-> (ring-handler-component redirect-urls)
                        (using [:event-store :read-model :session-store]))
-     :session-store (redis-store {:pool {} :spec {:uri session-store-url}})
+     :session-store (durable-store session-store-url)
      :jetty (-> (jetty-component port)
                 (using [:ring-handler :app-status-component]))
      :app-status-component (-> (app-status-component 1)
