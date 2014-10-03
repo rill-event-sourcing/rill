@@ -56,8 +56,8 @@
                  [:tr.student {:id (str "student-" (:id student))}
                   [:td.full-name
                    (h (:full-name student))]
-                  [:td.completion.number.time-spend
-                   (time-spend-html (get-in student [:time-spend scope]))]
+                  [:td.completion.number.time-spent
+                   (time-spent-html (get-in student [:time-spent scope]))]
                   (map (fn [domain]
                          [:td.completion.number {:class (classerize domain)}
                           (completion-html (get-in student [:completion scope domain]))])
@@ -65,8 +65,8 @@
                (sort-by :full-name students))]
          [:tfoot
           [:th.average "Klassengemiddelde"]
-          [:td.average.number.time-spend
-           (time-spend-html (get-in class [:time-spend scope]))]
+          [:td.average.number.time-spent
+           (time-spent-html (get-in class [:time-spent scope]))]
           (map (fn [domain]
                  [:td.average.number {:class (classerize domain)}
                   (completion-html (get-in class [:completion scope domain]))])
@@ -114,7 +114,7 @@
            (for [status [:stuck :in-progress :unstarted :finished]]
              (for [student (sort-by :full-name (get-in section-counts [:student-list status]))]
                [:div.student {:class (name status)} (:full-name student)
-                [:span.time-spend (time-spend-html (:time-spend student))]]))])]))))
+                [:span.time-spent (time-spent-html (:time-spent student))]]))])]))))
 
 (defroutes app
   (GET "/reports/"
@@ -133,11 +133,11 @@
              students (when class
                         (->> (read-model/students-for-class read-model class)
                              (map (comp (partial read-model/decorate-student-completion read-model)
-                                        (partial read-model/decorate-student-time-spend read-model)))))
+                                        (partial read-model/decorate-student-time-spent read-model)))))
              class (if students
                      (->> class
                           (read-model/decorate-class-completion read-model students)
-                          (read-model/decorate-class-time-spend read-model students))
+                          (read-model/decorate-class-time-spent read-model students))
                      class)
              options (assoc flash :redirect-urls redirect-urls)]
          (binding [*current-nav-uri* "/reports/completion"]
@@ -167,10 +167,10 @@
              students (when class
                         (->> (read-model/students-for-class read-model class)
                              (map (comp (partial read-model/decorate-student-completion read-model)
-                                        (partial read-model/decorate-student-time-spend read-model)))))
+                                        (partial read-model/decorate-student-time-spent read-model)))))
              class (if students
                      (->> class
                           (read-model/decorate-class-completion read-model students)
-                          (read-model/decorate-class-time-spend read-model students))
+                          (read-model/decorate-class-time-spent read-model students))
                      class)]
          (render-export class students domains meijerink-criteria))))

@@ -207,7 +207,7 @@
         (is (= ["Fred Flintstone"]
                (map :full-name (get-in (section-counts model) [:student-list :finished]))))))))
 
-(deftest test-time-spend
+(deftest test-time-spent
   (let [e0 (-> (student/created "fred" "Fred Flintstone")
                (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 14 0 0 0))))
         e11 (-> (section-test/question-assigned "section-1" "fred" "question-1" 3)
@@ -218,7 +218,7 @@
                 (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 14 5 0 0))))
         model1 (load-model {} e0 e11 e12 e13)]
     (is (= (* (+ 3 5) 60)
-           (get-in model1 [:students "fred" :section-time-spend "section-1" :total-secs])))
+           (get-in model1 [:students "fred" :section-time-spent "section-1" :total-secs])))
     (let [e21 (-> (section-test/question-assigned "section-2" "fred" "question-1" 3)
                   (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 14 6 0 0))))
           e22 (-> (section-test/question-answered-incorrectly "section-2" "fred" "question-1" {})
@@ -227,7 +227,7 @@
                   (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 14 13 0 0))))
           model2 (load-model model1 e21 e22 e23)]
       (is (= (* (+ 5 1 5) 60)
-             (get-in model2 [:students "fred" :section-time-spend "section-2" :total-secs]))))
+             (get-in model2 [:students "fred" :section-time-spent "section-2" :total-secs]))))
     (let [e21 (-> (section-test/question-assigned "section-2" "fred" "question-1" 3)
                   (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 14 6 0 0))))
           e22 (-> (section-test/question-answered-incorrectly "section-2" "fred" "question-1" {})
@@ -236,9 +236,9 @@
                   (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 14 13 0 0))))
           model2 (load-model model1 e21 e22 e23)]
       (is (= (* (+ 5 1 5) 60)
-             (get-in model2 [:students "fred" :section-time-spend "section-2" :total-secs]))))))
+             (get-in model2 [:students "fred" :section-time-spent "section-2" :total-secs]))))))
 
-(deftest test-time-spend-with-end-time
+(deftest test-time-spent-with-end-time
   (let [e0 (-> (student/created "fred" "Fred Flintstone")
                (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 14 0 0 0))))
         e1 (-> (section-test/question-assigned "section-3" "fred" "question-1" 3)
@@ -251,4 +251,4 @@
                (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 15 12 0 0))))
         model (load-model {} e0 e1 e2 e3 e4)]
     (is (= (* (+ 1 2 1) 60)
-           (get-in model [:students "fred" :section-time-spend "section-3" :total-secs])))))
+           (get-in model [:students "fred" :section-time-spent "section-3" :total-secs])))))

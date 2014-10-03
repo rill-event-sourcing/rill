@@ -18,7 +18,7 @@
      (completion-percentage completion)]
     "&mdash;"))
 
-(defn time-spend-str [secs]
+(defn time-spent-str [secs]
   (if (or (nil? secs)
           (zero? secs))
     "--"
@@ -37,9 +37,9 @@
              (str "0" secs)
              secs)))))
 
-(defn time-spend-html [secs]
+(defn time-spent-html [secs]
   [:span {:title (str secs " seconden")}
-   (time-spend-str secs)])
+   (time-spent-str secs)])
 
 (defn classerize [s]
   (-> s

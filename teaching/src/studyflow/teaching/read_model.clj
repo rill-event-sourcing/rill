@@ -43,8 +43,8 @@
                                     (domains model)))}))
                  (meijerink-criteria model))))))
 
-(defn decorate-student-time-spend [model student]
-  (let [;; time spend on entry quiz counts as time spend in the
+(defn decorate-student-time-spent [model student]
+  (let [;; time spent on entry quiz counts as time spent in the
         ;; remedial chapters
         entry-quiz-criteria (->> (get-in model [:courses])
                                  first
@@ -54,20 +54,20 @@
         time-per-criteria (zipmap (meijerink-criteria model)
                                   (for [criteria (meijerink-criteria model)]
                                     (if (contains? entry-quiz-criteria criteria)
-                                      (get-in model [:students (:id student) :entry-quiz-time-spend :total-secs] 0)
+                                      (get-in model [:students (:id student) :entry-quiz-time-spent :total-secs] 0)
                                       0)))
         total-per-criteria (reduce
                             (fn [acc section]
                               (reduce
                                (fn [acc criteria]
                                  (update-in acc [criteria]
-                                            + (get-in model [:students (:id student) :section-time-spend (:id section) :total-secs] 0)))
+                                            + (get-in model [:students (:id student) :section-time-spent (:id section) :total-secs] 0)))
                                acc
                                (:meijerink-criteria section)))
                             time-per-criteria
                             (all-sections model))]
     (assoc student
-      :time-spend total-per-criteria)))
+      :time-spent total-per-criteria)))
 
 (defn students-for-class [model class]
   (let [class-lookup (select-keys class [:department-id :class-name])]
@@ -93,17 +93,17 @@
                           {}
                           (into [] (meijerink-criteria model))))))
 
-(defn decorate-class-time-spend [model students class]
+(defn decorate-class-time-spent [model students class]
   (let [domains (domains model)
-        student-time-spend (map :time-spend students)
+        student-time-spent (map :time-spent students)
         criteria (meijerink-criteria model)]
     (assoc class
-      :time-spend
+      :time-spent
       (zipmap criteria
               (for [meijerink-criteria criteria]
-                (if-let [student-time-spend (seq student-time-spend)]
-                  (long (Math/floor (/ (reduce + (map #(get % meijerink-criteria 0) student-time-spend))
-                                       (count student-time-spend))))
+                (if-let [student-time-spent (seq student-time-spent)]
+                  (long (Math/floor (/ (reduce + (map #(get % meijerink-criteria 0) student-time-spent))
+                                       (count student-time-spent))))
                   0))))))
 
 (defn classes [model teacher]
@@ -151,8 +151,8 @@
           (assoc student
             :status
             (get-in model [:students (:id student) :section-status (:id section)] :unstarted)
-            :time-spend
-            (get-in model [:students (:id student) :section-time-spend (:id section) :total-secs] 0))))
+            :time-spent
+            (get-in model [:students (:id student) :section-time-spent (:id section) :total-secs] 0))))
        (group-by :status)))
 
 (defn sections-total-status [model students chapter-with-sections selected-section-id]
@@ -192,7 +192,7 @@
 
 (def idle-time-secs (* 5 60))
 
-(defn end-time-spend [current event]
+(defn end-time-spent [current event]
   (when current
     (let [current-end (:end current)
           end (time-coerce/from-date (::message/timestamp event))
@@ -206,7 +206,7 @@
          (- (:total-secs current) overlap)}
         current))))
 
-(defn add-time-spend [current event]
+(defn add-time-spent [current event]
   (let [start (time-coerce/from-date (::message/timestamp event))
         end (t/plus start (t/seconds idle-time-secs))]
     {:start (:start current start)
