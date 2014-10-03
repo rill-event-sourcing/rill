@@ -13,7 +13,7 @@
         class-id (:class-id params)]
     (layout
      (merge {:title (if class
-                      (str "Hoofdstukken voor \"" (:full-name class) "\"")
+                      (str "Hoofdstukken voor \"" (:class-name class) "\"")
                       "Hoofdstukken")}
             options)
 

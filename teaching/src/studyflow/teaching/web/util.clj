@@ -61,7 +61,7 @@
                                (if current-meijerink
                                  (str "/reports/" (:id class) "/" current-meijerink "/" report-name)
                                  (str "/reports/" (:id class) "/" report-name))}
-             (:full-name class)]])
+             (:class-name class)]])
          classes)]])
 
 (defn drop-list-meijerink [class meijerink-criteria report-name]
