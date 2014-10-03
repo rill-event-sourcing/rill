@@ -10,7 +10,9 @@
             [rill.event-store.psql :refer [psql-event-store]]
             [rill.event-stream :refer [all-events-stream-id]]
             [rill.message :as message]
-            [studyflow.components.psql-event-store :refer [wrap-timestamps]])
+            [studyflow.components.psql-event-store :refer [wrap-timestamps]]
+            [clj-time.core :as time]
+            [clj-time.coerce :as time-coerce])
   (:gen-class))
 
 (defn -main [event-store-uri elastic-search-ip]
@@ -40,10 +42,18 @@
                 ns-parts (split (namespace msg-type) #"\.")
                 short-ns (last (filter #(not= % "events") ns-parts))
                 nice-type (str short-ns "/" (name msg-type))
-                timestamp (message/timestamp event)]
-            (println timestamp)
-            (try (esd/create conn "gibbon_reporting" nice-type (assoc event "@timestamp" timestamp))
-                 (catch Throwable e
-                   (println e)
-                   (log/error e "Error on saving event to ElasticSearch database")))))
+                timestamp (time-coerce/from-date (message/timestamp event))
+                from_date (time/minus (time/now) (time/days 28))]
+
+            (if
+                (time/after? timestamp from_date)
+              (if (= nice-type "course/Updated")
+                (println "skipping course/Updated event")
+                (do
+                  (println (str timestamp " => " nice-type))
+                  (try (esd/create conn "gibbon_reporting" nice-type (assoc event "@timestamp" timestamp))
+                       (catch Throwable e
+                         (println e)
+                         (log/error e "Error on saving event to ElasticSearch database")))))
+              (println (str "skipping " timestamp)))))
         (recur)))))
