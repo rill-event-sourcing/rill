@@ -45,15 +45,14 @@
                 timestamp (time-coerce/from-date (message/timestamp event))
                 from_date (time/minus (time/now) (time/days 28))]
 
-            (if
+            (when
                 (time/after? timestamp from_date)
               (if (= nice-type "course/Updated")
-                (println "skipping course/Updated event")
+                (println " -> skipping course/Updated event")
                 (do
                   (println (str timestamp " => " nice-type))
                   (try (esd/create conn "gibbon_reporting" nice-type (assoc event "@timestamp" timestamp))
                        (catch Throwable e
                          (println e)
-                         (log/error e "Error on saving event to ElasticSearch database")))))
-              (println (str "skipping " timestamp)))))
+                         (log/error e "Error on saving event to ElasticSearch database"))))))))
         (recur)))))
