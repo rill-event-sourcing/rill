@@ -20,7 +20,7 @@ start:
 	else \
 		echo "Directory ../../svgtex NOT found!"; \
 		echo "  installing it using:"; \
-		echo "cd ../../ && git clone git@github.com:StudyFlow\/svgtex.git && cd -"; \
+		echo "cd ../../ && git clone git@gitlab.studyflow.nl:studyflow/svgtex.git && cd -"; \
 		exit 1; \
 	fi
 	foreman start
