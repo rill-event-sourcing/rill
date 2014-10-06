@@ -271,31 +271,50 @@ textarea.tab-delimited-data
   line-height: 28px
 
 .section_status
-  padding: 15px 20px
+  padding: 20px 20px
   position: absolute
   right: 0
   top: -6px
+  width: 100px
 
 #m-teacher_chapter_list
   display: block
   margin-top: 20px
   width: 900px
 
-  .stuck, .in-progress, .unstarted, .finished
+  .stuck, .warning_sign
     line-height: 30px
-    padding: 0 10px
+    float: left
     display: inline-block
 
-  .stuck
-    background: #faa
-    +border-left-radius(4px)
-  .in-progress
-    background: #ff8
-  .unstarted
-    background: #ccc
-  .finished
-    background: #8f8
-    +border-right-radius(4px)
+  .warning_sign
+    font-size: 20pt
+    color: darkred
+    padding: 0 10px
+
+  .progress
+    height: 30px
+    line-height: 30px
+    margin-bottom: 20px
+    overflow: hidden
+    background-color: #f5f5f5
+    +border-radius(4px !important)
+    position: relative
+    //display: inline
+    //padding: 5px 10px
+    //margin: 10px
+    //width: 50px
+
+  .progress_bar
+    float: left
+    height: 100%
+    text-align: center
+    background-color: greenyellow
+    span
+      position: absolute
+      display: block
+      width: 100%
+      color: black
 
 .teacher_chapter_list_main
   display: inline-block

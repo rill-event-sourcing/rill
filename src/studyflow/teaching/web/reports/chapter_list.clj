@@ -38,8 +38,18 @@
 
                    (when-let [section-counts (get-in chapter-list [:sections-total-status chapter-id section-id])]
                      [:div.section_status
-                      (for [status [:stuck :in-progress :unstarted :finished]]
-                        [:span {:class (name status)} (get section-counts status 0)])])])])])]]
+                      [:span {:class "stuck"} (get section-counts :stuck 0)]
+                      [:span {:class "warning_sign"} "&#9888;"]
+                      (let [finished-students (get section-counts :finished 0)
+                            total-students (reduce + 0 (map
+                                                        (fn [status] (get section-counts status 0))
+                                                        [:stuck :in-progress :unstarted :finished]))]
+                        [:div {:class "progress"}
+                         [:div {:class "progress_bar"
+                                :style (str "width:"
+                                            (Math/round (float (/ (* 100 finished-students) total-students)))
+                                            "%;")}
+                          [:span (str finished-students "/" total-students)]]])])])])])]]
 
         (when-let [section-counts (get-in chapter-list [:sections-total-status selected-chapter-id selected-section-id])]
           [:div.teacher_chapter_list_main
