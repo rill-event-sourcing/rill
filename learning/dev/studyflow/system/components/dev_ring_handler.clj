@@ -23,7 +23,6 @@
 
 (defn wrap-time-track [handler event-store]
   (fn [req]
-    (log/warn "wrap-time-track" req (.startsWith (:uri req) "/time"))
     (if-not (.startsWith (:uri req) "/time")
       (handler req)
       (let [section-id "98b3997f-63db-4f1d-b89e-5378e5f19514"
@@ -32,8 +31,7 @@
             tracking-stream-id (str "tracking:" student-id)]
         {:status 200
          :headers {"Content-Type" "text/html"}
-         :body (str "hello world!!"
-                    stream-id
+         :body (str stream-id
                     (string/join "<br/>" (event-store/retrieve-events event-store stream-id))
                     "<br>------------<br>"
                     tracking-stream-id "<br/>"
