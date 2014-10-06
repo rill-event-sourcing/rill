@@ -10,7 +10,7 @@
   (-> config
       (assoc-in [:static :resources] "teaching/public")
       (assoc-in [:session :store] session-store)
-      (assoc-in [:session :cookie-attrs :domain cookie-domain])))
+      (assoc-in [:session :cookie-attrs :domain] cookie-domain)))
 
 (defrecord RingHandlerComponent [read-model redirect-urls session-store cookie-domain]
   Lifecycle
