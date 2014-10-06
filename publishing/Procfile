@@ -1,0 +1,4 @@
+web:    bundle exec rails server -p 2000
+svgtex: cd ../../svgtex/ && phantomjs main.js
+worker: bundle exec rake jobs:work
+
