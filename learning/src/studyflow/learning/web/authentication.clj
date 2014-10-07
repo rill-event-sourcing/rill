@@ -14,14 +14,14 @@
           (redirect-login req)))
       req)))
 
-(defn get-student-id [{{:keys [user-id user-role]} :session}]
-  (when (and user-id (= "student" user-role))
-    user-id))
-
 (defn wrap-student-id [handler]
-  (fn [req]
-    (if-let [student-id (get-student-id req)]
-      (handler (-> req (assoc :student-id student-id)))
+  (fn [{{:keys [user-id user-role]} :session :as req}]
+    (if (and user-id
+             (or (= "student" user-role)
+                 (= "teacher" user-role)))
+      (handler (assoc req
+                 :student-id user-id
+                 :user-role (keyword user-role)))
       (redirect-login req))))
 
 (defn wrap-authentication [handler]

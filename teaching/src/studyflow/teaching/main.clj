@@ -6,13 +6,14 @@
   (:gen-class))
 
 (defn -main []
-  (let [{:keys [jetty-port eventstore-url login-url teaching-url sessionstore-url cookie-domain]} env]
-    (assert (every? seq [jetty-port eventstore-url login-url teaching-url sessionstore-url cookie-domain]))
+  (let [{:keys [jetty-port eventstore-url login-url teaching-url learning-url sessionstore-url cookie-domain]} env]
+    (assert (every? seq [jetty-port eventstore-url login-url teaching-url learning-url sessionstore-url cookie-domain]))
     (log/info "Studyflow teaching app")
     (let [s (-> (system/prod-system {:port (Long/parseLong jetty-port)
                                      :event-store-config eventstore-url
                                      :session-store-url sessionstore-url
                                      :redirect-urls {:login login-url
+                                                     :learning learning-url
                                                      :teaching teaching-url}
                                      :cookie-domain cookie-domain})
                 component/start)]

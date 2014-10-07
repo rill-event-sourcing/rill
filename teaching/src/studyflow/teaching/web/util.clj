@@ -92,7 +92,8 @@
    [:body
     [:header#m-top-header-teaching
      [:a#logo {:href "/reports/completion"}]
-     [:h1#header-title "Leraren"]
+     [:h1#header-title "Leraren"
+      [:a#learning {:href (:student redirect-urls)} "Naar studyflow rekenen"]]
      dropdown
      (when redirect-urls
        (form/form-to
@@ -112,3 +113,4 @@
             ["/reports/chapter-list" "chapter-list" "Hoofdstukken"]])]]
     [:section#main_teaching body]
     [:footer]]))
+

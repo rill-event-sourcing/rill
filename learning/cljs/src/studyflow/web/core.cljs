@@ -35,6 +35,11 @@
 (defn logout-target-for-page []
   (.-value (gdom/getElement "logout-target")))
 
+(defn teaching-url []
+  (let [url (.-value (gdom/getElement "teaching-target"))]
+    (when (seq url)
+      url)))
+
 (defn init-app-state []
   (atom {:static {:course-id (course-id-for-page)
                   :student {:id (student-id-for-page)
@@ -818,6 +823,8 @@
                   (dom/h1 #js {:id "logo"} (:name (get-in cursor [:view :course-material])))
                   (dom/a #js {:id "help" :href "#"})
                   (dom/a #js {:id "settings" :href "#"})
+                  (when-let [url (teaching-url)]
+                    (dom/a #js {:id "teaching" :href url} "Naar Studyflow Leraren"))
                   (dom/form #js {:method "POST"
                                  :action (get-in cursor [:static :logout-target])
                                  :id "logout-form"}
