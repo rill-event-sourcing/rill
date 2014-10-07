@@ -25,8 +25,19 @@
             [:li {:class (str "chapter" (when (= selected-chapter-id (str chapter-id)) " open"))}
              [:a.chapter-title
               {:href (chapter-list-url class chapter-id nil)}
-              (h chapter-title)
-              (completion-html (get-in chapter-list [:chapters-completion chapter-id]))]
+              (h chapter-title)]
+
+             [:div.chapter_status
+              [:span {:class "stuck"} (get-in chapter-list [:chapters-completion chapter-id :stuck])]
+              [:span {:class "warning_sign"} "&#9888;"]
+              (let [students-with-all-section-finished (get-in chapter-list [:section-finished-ids chapter-id] 0)
+                    total-students (get-in chapter-list [:total-number-of-students])]
+                [:div {:class "progress"}
+                 [:div {:class "progress_bar"
+                        :style (str "width:"
+                                    (Math/round (float (/ (* 100 students-with-all-section-finished) total-students)))
+                                    "%;")}
+                  [:span (str students-with-all-section-finished "/" total-students)]]])]
 
              (when (= selected-chapter-id chapter-id)
                [:ol.section-list
