@@ -24,11 +24,6 @@
    :else ;; nil and false
    :not-started))
 
-(defn finished-last-action [section-test-agg]
-  (and (:finished section-test-agg)
-       (= (count (:questions section-test-agg))
-          (:finished-at section-test-agg))))
-
 (defn handle-event [agg event]
   (condp = (:type event)
 
