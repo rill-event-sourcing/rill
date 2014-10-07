@@ -1,9 +1,9 @@
 (ns studyflow.teaching.system
   (:require [clojure.tools.logging :as log]
+            [studyflow.web.durable-session-store :refer [durable-store]]
             [com.stuartsierra.component :as component :refer [using]]
             [studyflow.components.event-channel :refer [event-channel-component]]
             [studyflow.components.jetty :refer [jetty-component]]
-            [studyflow.components.redis-session-store :refer [redis-session-store]]
             [studyflow.components.psql-event-store :refer [psql-event-store-component]]
             [studyflow.components.uncaught-exception-handler :refer [uncaught-exception-handler-component]]
             [studyflow.web.app-status :refer [app-status-component]]
@@ -17,6 +17,7 @@
      :config-options config-options
      :ring-handler (-> (ring-handler-component redirect-urls cookie-domain)
                        (using [:event-store :read-model :session-store]))
+     :session-store (durable-store session-store-url)
      :jetty (-> (jetty-component port)
                 (using [:ring-handler :app-status-component]))
      :app-status-component (-> (app-status-component 1)
@@ -26,6 +27,5 @@
      :event-store (psql-event-store-component event-store-config)
      :read-model (-> (read-model-component 0)
                      (using [:event-store :event-channel]))
-     :session-store (redis-session-store {:uri session-store-url})
      :uncaught-exception-handler (uncaught-exception-handler-component))))
 

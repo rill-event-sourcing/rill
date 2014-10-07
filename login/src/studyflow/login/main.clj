@@ -8,7 +8,6 @@
             [hiccup.page :refer [html5 include-css include-js]]
             [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
             [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
-            [studyflow.components.session-store :refer [create-session delete-session! get-user-id get-role]]
             [ring.util.response :refer [content-type]]
             [rill.handler :refer [try-command]]
             [studyflow.login.edu-route-service :refer [get-student-info check-edu-route-signature]]
@@ -124,53 +123,29 @@
 
   (DELETE "/" {}
           (assoc (redirect-to "/") :logout-user true))
-  (not-found "De pagina kan niet gevonden worden")
-  ;;(not-found {:status 404})
-  )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Cookie management
-
-(defn get-session-id-from-cookies [cookies]
-  (:value (get cookies "studyflow_session")))
-
-(defn make-session-cookie [cookie-domain session-id]
-  (if cookie-domain
-    {:studyflow_session {:value session-id :domain cookie-domain :path "/"}}
-    {:studyflow_session {:value session-id :path "/"}}))
-
-(defn clear-session-cookie [cookie-domain]
-  (if cookie-domain
-    {:studyflow_session {:value "deleted" :max-age -1 :domain cookie-domain :path "/"}}
-    {:studyflow_session {:value "deleted" :max-age -1 :path "/"}}))
+  (not-found "De pagina kan niet gevonden worden"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wiring
 
 (defn wrap-login-user [app]
-  (fn [{:keys [session-store session-max-age cookie-domain] :as req}]
+  (fn [req]
     (let [resp (app req)]
-      (if-let [user (:login-user resp)]
-        (assoc resp :cookies (make-session-cookie cookie-domain
-                                                  (create-session session-store
-                                                                  (:user-id user)
-                                                                  (:user-role user)
-                                                                  session-max-age)))
+      (if-let [{:keys [user-role user-id]} (:login-user resp)]
+        (update-in resp [:session] assoc :user-id user-id :user-role user-role)
         resp))))
 
 (defn wrap-logout-user [app]
-  (fn [{:keys [session-store cookie-domain] :as req}]
+  (fn [req]
     (let [resp (app req)]
       (if (:logout-user resp)
-        (do
-          (delete-session! session-store (get-session-id-from-cookies (:cookies req)))
-          (assoc resp :cookies (clear-session-cookie cookie-domain)))
+        (assoc resp :session nil)
         resp))))
 
 (defn wrap-user-role [app]
-  (fn [{:keys [session-store] :as req}]
-    (let [user-role (get-role session-store (get-session-id-from-cookies (:cookies req)))]
-      (app (assoc req :user-role user-role)))))
+  (fn [{{:keys [user-role]} :session :as req}]
+    (app (assoc req :user-role user-role))))
 
 (defn wrap-redirect-for-role [app]
   (fn [{:keys [default-redirect-paths cookies] :as req}]
@@ -179,16 +154,9 @@
         (redirect-to (default-redirect-paths user-role))
         resp))))
 
-(def studyflow-site-defaults
-  (-> site-defaults ;; secure-site-defaults
-      (assoc-in [:session :cookie-name] "studyflow_login_session")
-      (assoc-in [:security :anti-forgery] false)
-      (assoc-in [:static :resources] "login/public")))
-
 (def app
   (-> (var actions)
       wrap-logout-user
       wrap-login-user
       wrap-redirect-for-role
-      wrap-user-role
-      (wrap-defaults studyflow-site-defaults)))
+      wrap-user-role))

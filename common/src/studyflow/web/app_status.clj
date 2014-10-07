@@ -19,7 +19,8 @@
     (assoc component
       :event-listener (listen! (channel event-channel num) status-atom)))
   (stop [component]
-    (close! (channel event-channel num))
+    (when-let [c (channel event-channel num)]
+      (close! c))
     (dissoc component :event-listener)))
 
 (defn app-status-component [channel-number]

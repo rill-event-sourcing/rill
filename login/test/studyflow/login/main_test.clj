@@ -2,10 +2,7 @@
   (:require [clojure.test :refer :all]
             [net.cgrand.enlive-html :as enlive]
             [ring.mock.request :refer [request]]
-            [studyflow.login.main :refer :all]
-            [studyflow.components.simple-session-store :refer [simple-session-store]]
-            [studyflow.components.session-store :refer [get-user-id create-session]]
-            [taoensso.carmine :as car]))
+            [studyflow.login.main :refer :all]))
 
 ;; TODO move to common place
 (defn query-html [data pattern]
@@ -82,32 +79,15 @@
     (is (= {} (handler {})))
     (let [user-id "test-user-id"
           user-role "test-role"
-          session-store (simple-session-store)
-          resp (handler {:login-user {:user-id user-id, :user-role user-role} :session-store session-store})
-          cookies (:cookies resp)]
-      (is cookies)
-      (let [session-id (:value (:studyflow_session cookies))]
-        (is session-id)
-        (is (= user-id (get-user-id session-store session-id)))))))
+          resp (handler {:login-user {:user-id user-id, :user-role user-role}})]
+      (is (:session resp))
+      (is (= user-id (:user-id (:session resp)))))))
 
 (deftest wrap-logout-user-test
   (let [handler (wrap-logout-user identity)]
     (is (= {} (handler {})))
-    (let [resp (handler {:logout-user true, :cookies {:studyflow_session {:value "test", :max-age 123 }}
-                         :session-store (simple-session-store)})]
-      (is (:cookies resp))
-      (is (= {:studyflow_session {:value "deleted", :max-age -1, :path "/"}} (:cookies resp))))))
-
-(deftest wrap-user-role-test
-  (let [handler (wrap-user-role identity)
-        user-id "test-user-id-2"
-        user-role "test-role-2"
-        session-store (simple-session-store)]
-    (let [session-id (create-session session-store user-id user-role 123)
-          resp (handler {:cookies {"studyflow_session" {:value session-id, :max-age 123}}
-                         :session-store session-store})]
-      (is (:user-role resp))
-      (is (= user-role (:user-role resp))))))
+    (let [resp (handler {:logout-user true :session {:foo :bar}})]
+      (is (nil? (:session resp))))))
 
 (deftest wrap-redirect-for-role-test
   (let [handler (wrap-redirect-for-role identity)
@@ -123,22 +103,3 @@
       (let [path "this-is-a-url"
             resp (handler {:redirect-for-role user-role, :default-redirect-paths default-redirect-paths})]
         (is (= path ((:headers resp) "Location")))))))
-
-(deftest get-session-id-from-cookies-test
-  (is (= "something"
-         (get-session-id-from-cookies {"studyflow_session" {:value "something"}}))))
-
-(deftest make-session-cookie-test
-  (let [cookie-domain "domain"
-        session-id "test-session-id"
-        max-age 123]
-    (let [cookie (:studyflow_session (make-session-cookie cookie-domain session-id))]
-      (is (= cookie-domain (:domain cookie)))
-      (is (= session-id (:value cookie)))
-      (is (nil? (:max-age cookie))))))
-
-(deftest clear-session-cookie-test
-  (let [cookie-domain "domain"
-        cookie (:studyflow_session (clear-session-cookie cookie-domain))]
-    (is (= "deleted" (:value cookie)))
-    (is (= -1 (:max-age cookie)))))
