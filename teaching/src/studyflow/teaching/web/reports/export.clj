@@ -3,7 +3,7 @@
             [clojure.tools.logging :as log]
             [clj-time.local :as time]
             [clj-time.format :as format-time]
-            [studyflow.teaching.web.util :refer [completion-percentage]]
+            [studyflow.teaching.web.util :refer [completion-percentage time-spent-str]]
             [dk.ative.docjure.spreadsheet :as excel]
             [ring.util.io :refer [piped-input-stream]]))
 
@@ -23,7 +23,7 @@
                    (str  "Klas: " (:class-name class))
                    (str  "Meijerink: " criterion)
                    (str  "Datum: " (local-time))]
-        sup-header (into [""]
+        sup-header (into ["" "Tijd"]
                          (interleave (into ["Totaal"] domains)
                                      (repeat "")))
         domains-all (into [:all]
@@ -33,17 +33,20 @@
                                          (map (fn [x] (:total  (get-in (first students) [:completion criterion x])))
                                               domains-all)))
         header (reduce into
-                       ["Leerling naam"]
+                       ["Leerling naam"
+                        "Tijd"]
                        (map (fn [x]
                               [(str "# Hoofdstukken afgerond (totaal " (get domains-total x) ")")
                                "Percentage afgerond"])
                             domains-all))
-        student-data (map (fn [student] (reduce into [(:full-name student)]
+        student-data (map (fn [student] (reduce into [(:full-name student)
+                                                      (time-spent-str (get-in student [:time-spent criterion]))]
                                                 (map (fn [domain]
                                                        (completion-export (get-in student [:completion criterion domain])))
                                                      domains-all)))
                           (sort-by :full-name students))
-        class-data (reduce into ["Klassengemiddelde"]
+        class-data (reduce into ["Klassengemiddelde"
+                                 (time-spent-str (get-in class [:time-spent criterion]))]
                            (map (fn [domain]
                                   (completion-export (get-in class [:completion criterion domain])))
                                 (into [:all] domains)))]

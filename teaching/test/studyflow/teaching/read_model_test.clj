@@ -1,11 +1,16 @@
 (ns studyflow.teaching.read-model-test
-  (:require [clojure.tools.logging :as log]
+  (:require [clj-time.core :as t]
+            [clj-time.coerce :as ct]
+            [rill.message :as m]
+            [clojure.tools.logging :as log]
             [clojure.test :refer [deftest is testing]]
             [studyflow.teaching.read-model :refer :all]
             [rill.uuid :refer [new-id]]
+            [rill.message :as m]
             [studyflow.learning.course.events :as course]
-            [studyflow.learning.section-test.events :as section-test]
             [studyflow.learning.entry-quiz.events :as entry-quiz]
+            [studyflow.learning.section-test.events :as section-test]
+            [studyflow.learning.tracking.events :as tracking]
             [studyflow.school-administration.department.events :as department]
             [studyflow.school-administration.student.events :as student]
             [studyflow.school-administration.teacher.events :as teacher]
@@ -107,6 +112,14 @@
   (load-model model-with-fred-and-barney-in-same-class
               (course/published "course" course)))
 
+(defn- completion-for-class [model teacher]
+  (let [class (->> teacher
+                   (classes model)
+                   first)
+        students (->> (students-for-class model class)
+                      (map (partial decorate-student-completion model)))]
+    (:completion (decorate-class-completion model students class))))
+
 (deftest completion
   (let [teacher (first (vals (:teachers model-with-fred-and-teacher)))]
     (testing "meijering-criteria"
@@ -117,12 +130,11 @@
              (domains model-with-fred-barney-and-course))))
     (testing "class completion without course material"
       (let [model model-with-fred-and-barney-in-same-class]
-        (is (not (seq (:completion (decorate-class-completion model-with-fred-and-barney-in-same-class
-                                                              (first (classes model-with-fred-and-barney-in-same-class teacher)))))))))
+        (is (not (seq (completion-for-class model teacher))))))
     (testing "one finished section without course material"
       (let [model (load-model model-with-fred-and-department-and-class
                               (section-test/finished "section-1" "fred"))]
-        (is (not (seq (:completion (decorate-class-completion model (first (classes model teacher)))))))))
+        (is (not (seq (completion-for-class model teacher))))))
     (testing "one finished section with three section course material for two students"
       (let [model (load-model model-with-fred-barney-and-course
                               (section-test/finished "section-1" "fred"))]
@@ -141,7 +153,7 @@
                      "Verhoudingen" {:finished 0, :total 0}
                      "Meetkunde" {:finished 0, :total 2}
                      "Verbanden" {:finished 0, :total 2}}}
-               (:completion (decorate-class-completion model (first (classes model teacher))))))))
+               (completion-for-class model teacher)))))
     (testing "remedial-sections-for-courses"
       (is (= #{"section-1" "section-2"}
              (remedial-sections-for-courses model-with-fred-barney-and-course #{"course"}))))
@@ -163,11 +175,7 @@
                      "Verhoudingen" {:finished 0, :total 0}
                      "Meetkunde" {:finished 0, :total 2}
                      "Verbanden" {:finished 0, :total 2}}}
-               (->> teacher
-                    (classes model)
-                    first
-                    (decorate-class-completion model)
-                    :completion)))))))
+               (completion-for-class model teacher)))))))
 
 (deftest chapter-list-test
   (let [model model-with-fred-barney-and-course
@@ -198,3 +206,49 @@
         (is (= 1 (:finished (section-counts model))))
         (is (= ["Fred Flintstone"]
                (map :full-name (get-in (section-counts model) [:student-list :finished]))))))))
+
+(deftest test-time-spent
+  (let [e0 (-> (student/created "fred" "Fred Flintstone")
+               (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 14 0 0 0))))
+        e11 (-> (section-test/question-assigned "section-1" "fred" "question-1" 3)
+                (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 14 2 0 0))))
+        e12 (-> (section-test/question-answered-correctly "section-1" "fred" "question-1" {})
+                (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 14 3 0 0))))
+        e13 (-> (section-test/question-assigned "section-1" "fred" "question-2" 3)
+                (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 14 5 0 0))))
+        model1 (load-model {} e0 e11 e12 e13)]
+    (is (= (* (+ 3 5) 60)
+           (get-in model1 [:students "fred" :section-time-spent "section-1" :total-secs])))
+    (let [e21 (-> (section-test/question-assigned "section-2" "fred" "question-1" 3)
+                  (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 14 6 0 0))))
+          e22 (-> (section-test/question-answered-incorrectly "section-2" "fred" "question-1" {})
+                  (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 14 12 0 0))))
+          e23 (-> (section-test/answer-revealed "section-2" "fred" "question-1" 3)
+                  (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 14 13 0 0))))
+          model2 (load-model model1 e21 e22 e23)]
+      (is (= (* (+ 5 1 5) 60)
+             (get-in model2 [:students "fred" :section-time-spent "section-2" :total-secs]))))
+    (let [e21 (-> (section-test/question-assigned "section-2" "fred" "question-1" 3)
+                  (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 14 6 0 0))))
+          e22 (-> (section-test/question-answered-incorrectly "section-2" "fred" "question-1" {})
+                  (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 14 12 0 0))))
+          e23 (-> (section-test/answer-revealed "section-2" "fred" "question-1" 3)
+                  (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 14 13 0 0))))
+          model2 (load-model model1 e21 e22 e23)]
+      (is (= (* (+ 5 1 5) 60)
+             (get-in model2 [:students "fred" :section-time-spent "section-2" :total-secs]))))))
+
+(deftest test-time-spent-with-end-time
+  (let [e0 (-> (student/created "fred" "Fred Flintstone")
+               (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 14 0 0 0))))
+        e1 (-> (section-test/question-assigned "section-3" "fred" "question-1" 3)
+               (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 15 8 0 0))))
+        e2 (-> (section-test/question-answered-incorrectly "section-3" "fred" "question-1" {})
+               (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 15 9 0 0))))
+        e3 (-> (section-test/answer-revealed "section-3" "fred" "question-1" 3)
+               (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 15 11 0 0))))
+        e4 (-> (tracking/dashboard-navigated "fred")
+               (assoc ::m/timestamp (ct/to-date (t/date-time 2014 9 19 15 12 0 0))))
+        model (load-model {} e0 e1 e2 e3 e4)]
+    (is (= (* (+ 1 2 1) 60)
+           (get-in model [:students "fred" :section-time-spent "section-3" :total-secs])))))

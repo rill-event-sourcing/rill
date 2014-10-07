@@ -15,7 +15,7 @@
   Lifecycle
   (start [component]
     (info "Loading event fixtures")
-    (let [student-id (uuid/new-id)
+    (let [student-id #uuid "2b45e104-821e-4f73-aa15-a5109267214c"
           school-id (uuid/new-id)
           department-id (uuid/new-id)
           teacher-id (uuid/new-id)

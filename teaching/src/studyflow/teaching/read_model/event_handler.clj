@@ -92,6 +92,79 @@
   [model {:keys [student-id course-id]}]
   (update-in model [:students student-id :course-entry-quiz-passed] (fnil conj #{}) course-id))
 
+;; student time spent tracking
+(defn end-time-spent [model {:keys [student-id] :as event}]
+  ;; truncate the idle time period for whatever you were doing before
+  (-> model
+      (update-in [:students student-id :dashboard-time-spent] m/end-time-spent event)
+      (update-in [:students student-id :entry-quiz-time-spent] m/end-time-spent event)
+      (update-in [:students student-id :section-time-spent]
+                 (fn [section-id+time-spent]
+                   (zipmap (keys section-id+time-spent)
+                           (map #(m/end-time-spent % event) (vals section-id+time-spent)))))))
+
+(defn add-time-spent-section-test [model {:keys [section-id student-id] :as event}]
+  (-> model
+      (end-time-spent event)
+      (update-in [:students student-id :section-time-spent section-id] m/add-time-spent event)))
+
+(defmethod handle-event :studyflow.learning.section-test.events/QuestionAssigned
+  [model event]
+  (add-time-spent-section-test model event))
+
+(defmethod handle-event :studyflow.learning.section-test.events/AnswerRevealed
+  [model event]
+  (add-time-spent-section-test model event))
+
+(defmethod handle-event :studyflow.learning.section-test.events/QuestionAnsweredCorrectly
+  [model event]
+  (add-time-spent-section-test model event))
+
+(defmethod handle-event :studyflow.learning.section-test.events/QuestionAnsweredIncorrectly
+  [model event]
+  (add-time-spent-section-test model event))
+
+(defn add-time-spent-entry-quiz [model {:keys [student-id] :as event}]
+  (-> model
+      (end-time-spent event)
+      (update-in [:students student-id :entry-quiz-time-spent] m/add-time-spent event)))
+
+(defmethod handle-event :studyflow.learning.entry-quiz.events/Started
+  [model event]
+  (add-time-spent-entry-quiz model event))
+
+(defmethod handle-event :studyflow.learning.entry-quiz.events/InstructionsRead
+  [model event]
+  (add-time-spent-entry-quiz model event))
+
+(defmethod handle-event :studyflow.learning.entry-quiz.events/QuestionAnsweredCorrectly
+  [model event]
+  (add-time-spent-entry-quiz model event))
+
+(defmethod handle-event :studyflow.learning.entry-quiz.events/QuestionAnsweredIncorrectly
+  [model event]
+  (add-time-spent-entry-quiz model event))
+
+(defmethod handle-event :studyflow.learning.tracking.events/DashboardNavigated
+  [model {:keys [student-id] :as event}]
+  (-> model
+      (end-time-spent event)
+      (update-in [:students student-id :dashboard-time-spent] m/add-time-spent event)))
+
+(defmethod handle-event :studyflow.learning.tracking.events/EntryQuizNavigated
+  [model {:keys [student-id] :as event}]
+  (-> model
+      (end-time-spent event)
+      (update-in [:students student-id :entry-quiz-time-spent] m/add-time-spent event)))
+
+(defmethod handle-event :studyflow.learning.tracking.events/SectionExplanationNavigated
+  [model {:keys [student-id] :as event}]
+  (add-time-spent-section-test model event))
+
+(defmethod handle-event :studyflow.learning.tracking.events/SectionTestNavigated
+  [model {:keys [student-id] :as event}]
+  (add-time-spent-section-test model event))
+
 ;; course material
 (defn update-material [model course-id material]
   (let [remedial-sections-for-course (->> material
@@ -106,6 +179,10 @@
         meijerink-criteria (->> all-sections
                                 (mapcat :meijerink-criteria)
                                 set)
+        entry-quiz-meijerink-criteria (reduce into #{} (for [ch (:chapters material)
+                                                             :when (:remedial ch)
+                                                             s (:sections ch)]
+                                                         (:meijerink-criteria s)))
         domains (->> all-sections
                      (mapcat :domains)
                      set)
@@ -118,6 +195,7 @@
         (assoc-in [:courses course-id]
                   (-> material
                       (assoc :remedial-sections-for-course remedial-sections-for-course
+                             :entry-quiz-meijerink-criteria entry-quiz-meijerink-criteria
                              :chapter-sections chapter-sections)))
         (assoc :all-sections all-sections
                :meijerink-criteria meijerink-criteria
