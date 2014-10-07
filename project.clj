@@ -13,6 +13,7 @@
                  [org.slf4j/slf4j-log4j12 "1.7.5"]
                  [rill/rill "0.1.0"]
                  [ring/ring-defaults "0.1.0"]
+                 [ring.middleware.logger "0.5.0"]
                  [digest/digest "1.4.4"]
                  [clj-redis-session "2.1.0"]
                  [clj-http/clj-http "0.9.1"]
