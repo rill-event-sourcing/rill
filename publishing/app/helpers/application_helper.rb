@@ -1,5 +1,14 @@
 module ApplicationHelper
 
+  def tools(tools_hash)
+    html = ""
+    tools_hash.each do |k,v|
+      next unless v.to_i > 0
+      html << content_tag(:div, "", class: "tools #{k}")
+    end
+    html.html_safe
+  end
+
   def text_to_html(inputs,text)
     text = render_latex_for_editing(text)
     html = text.html_safe

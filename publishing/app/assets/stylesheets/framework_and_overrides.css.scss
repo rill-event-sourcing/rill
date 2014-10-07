@@ -84,3 +84,16 @@ input[type="text"] {
 .running {
     @extend .info
 }
+
+.tools {
+    width: 23px;
+    height: 23px;
+    background-size: 23px 23px;
+    background-repeat: no-repeat;
+}
+.pen_and_paper {
+    background-image: URL('/assets/icon-paper.png');
+}
+.calculator {
+    background-image: URL('/assets/icon-calculator.png');
+}
