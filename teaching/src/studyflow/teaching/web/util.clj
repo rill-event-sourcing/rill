@@ -85,8 +85,7 @@
     [:link {:href "/favicon.ico" :rel "shortcut icon" :type "image/vnd.microsoft.icon"}]
     (include-css "/css/teaching.css")
     (include-js "//code.jquery.com/jquery-2.1.1.min.js")
-    (include-js "/dropdown.js")
-    ]
+    (include-js "/js/dropdown.js")]
    [:body
     [:header#m-top_header
      [:h1#logo "Leraren"]
