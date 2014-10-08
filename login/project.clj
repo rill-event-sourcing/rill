@@ -20,7 +20,9 @@
                  [studyflow/migrations "0.1.0-SNAPSHOT"]
                  [studyflow/components "0.1.0-SNAPSHOT"]
                  [digest "1.4.4"]]
-  :resource-paths ["resources" "generated"]
+
+  :resource-paths ["../common/resources" "resources" "generated"]
+
   :profiles {:dev {:source-paths ["dev"]
                    :resource-paths ["dev/resources" "resources" "generated"]
                    :dependencies [[org.clojure/tools.trace "0.7.5"]

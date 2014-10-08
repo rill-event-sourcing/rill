@@ -41,7 +41,7 @@
                                      :uberjar-name "login-standalone.jar"}
              :teaching              {:main studyflow.teaching.main
                                      :uberjar-name "teaching-standalone.jar"}
-             :dev                   {:resource-paths ["super-system/dev/resources"]
+             :dev                   {:resource-paths ["super-system/dev/resources" "learning/dev/resources" "login/dev/resources" "school-administration/dev/resources" "teaching/dev/resources"]
                                      :source-paths ["super-system/dev" "learning/dev" "login/dev"
                                                     "super-system/src"
                                                     "school-administration/dev" "teaching/dev"]
@@ -79,8 +79,7 @@
                  "learning/src"
                  "login/src"]
   :resource-paths ["learning/resources" "login/resources" "school-administration/resources" "teaching/resources"
-                   "learning/generated" "login/generated" "school-administration/generated" "teaching/generated"
-                   "learning/dev/resources" "login/dev/resources" "school-administration/dev/resources" "teaching/dev/resources"]
+                   "learning/generated" "login/generated" "school-administration/generated" "teaching/generated"]
   :test-paths ["school-administration/test"
                "learning/test"
                "teaching/test"

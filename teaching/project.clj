@@ -13,7 +13,7 @@
                  [studyflow/components "0.1.0-SNAPSHOT"]]
 
   :source-paths ["src" "../common/src"]
-  :resource-paths ["resources" "generated"]
+  :resource-paths ["../common/resources" "resources" "generated"]
 
   :profiles {:test {:source-paths ["test"
                                    "../learning/src"

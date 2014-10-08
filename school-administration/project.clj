@@ -16,6 +16,8 @@
                  [studyflow/migrations "0.1.0-SNAPSHOT"]
                  [org.bovinegenius/exploding-fish "0.3.4"]]
 
+  :resource-paths ["../common/resources"]
+
   :profiles {:dev
              {:source-paths ["dev"]
               :resource-paths ["dev/resources"]
