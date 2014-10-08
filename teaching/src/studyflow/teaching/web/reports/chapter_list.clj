@@ -51,33 +51,33 @@
                [:div.student {:class (name status)} (:full-name student)
                 [:span.time-spent (time-spent-html (:time-spent student))]]))])]))))
 
-(defn chapter-list [read-model flash teacher redirect-urls params]
+(defn chapter-list [read-model teacher redirect-urls params]
   (let [chapter-id (uuid (:chapter-id params))
         section-id (uuid (:section-id params))
         classes (read-model/classes read-model teacher)
         class (some (fn [c] (when (= (:class-id params) (:id c)) c)) classes)
         chapter-list (when class (read-model/chapter-list read-model class chapter-id section-id))
-        options (assoc flash :redirect-urls redirect-urls)]
+        options {:redirect-urls redirect-urls}]
     (binding [*current-nav-uri* "/reports/chapter-list"]
       (render-chapter-list class classes chapter-list params options))))
 
 (defroutes chapter-list-routes
 
   (GET "/reports/chapter-list"
-       {:keys [read-model flash teacher redirect-urls]}
-       (chapter-list read-model flash teacher redirect-urls nil))
+       {:keys [read-model teacher redirect-urls]}
+       (chapter-list read-model teacher redirect-urls nil))
 
   (GET "/reports/:class-id/chapter-list"
-       {:keys [read-model flash teacher redirect-urls]
+       {:keys [read-model teacher redirect-urls]
         params :params}
-       (chapter-list read-model flash teacher redirect-urls params))
+       (chapter-list read-model teacher redirect-urls params))
 
   (GET "/reports/:class-id/chapter-list/:chapter-id"
-       {:keys [read-model flash teacher redirect-urls]
+       {:keys [read-model teacher redirect-urls]
         params :params}
-       (chapter-list read-model flash teacher redirect-urls params))
+       (chapter-list read-model teacher redirect-urls params))
 
   (GET "/reports/:class-id/chapter-list/:chapter-id/:section-id"
-       {:keys [read-model flash teacher redirect-urls]
+       {:keys [read-model teacher redirect-urls]
         params :params}
-       (chapter-list read-model flash teacher redirect-urls params)))
+       (chapter-list read-model teacher redirect-urls params)))

@@ -55,7 +55,7 @@
                (into [:all] domains))]]
         [:a {:href (str "/reports/" (:class-id params) "/completion/export") :target "_blank"} "Exporteren naar Excel"]]))))
 
-(defn completion [read-model flash teacher redirect-urls params]
+(defn completion [read-model teacher redirect-urls params]
   (let [classes (read-model/classes read-model teacher)
         selected-meijerink (:meijerink params)
         meijerink-criteria (read-model/meijerink-criteria read-model)
@@ -72,7 +72,7 @@
                      (read-model/decorate-class-completion read-model students)
                      (read-model/decorate-class-time-spent read-model students))
                 class)
-        options (assoc flash :redirect-urls redirect-urls)]
+        options {:redirect-urls redirect-urls}]
     (binding [*current-nav-uri* "/reports/completion"]
       (render-completion class selected-meijerink students classes meijerink-criteria domains params options))))
 
@@ -82,13 +82,13 @@
        (redirect-after-post "/reports/completion"))
 
   (GET "/reports/completion"
-       {:keys [read-model flash teacher redirect-urls]}
-       (completion read-model flash teacher redirect-urls nil))
+       {:keys [read-model teacher redirect-urls]}
+       (completion read-model teacher redirect-urls nil))
 
   (GET "/reports/:class-id/completion"
-       {:keys [read-model flash teacher redirect-urls]
+       {:keys [read-model teacher redirect-urls]
         params :params}
-       (completion read-model flash teacher redirect-urls params))
+       (completion read-model teacher redirect-urls params))
 
   (GET "/reports/:class-id/completion/export"
        {:keys [read-model teacher]
@@ -111,6 +111,6 @@
          (render-export class students domains meijerink-criteria)))
 
   (GET "/reports/:class-id/:meijerink/completion"
-       {:keys [read-model flash teacher redirect-urls]
+       {:keys [read-model teacher redirect-urls]
         params :params}
-       (completion read-model flash teacher redirect-urls params)))
+       (completion read-model teacher redirect-urls params)))
