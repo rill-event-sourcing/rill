@@ -122,47 +122,34 @@
                   :school-id school-id
                   :school-name (:name school)})))))
 
-(defn students-who-finished-this-section [model students section]
-  (filter
-   (fn [student]
-     (= (get-in model [:students (:id student) :section-status (:id section)]) :finished))
-   students))
-
-(defn students-stuck-in-this-section [model students section]
-  (filter
-   (fn [student]
-     (= (get-in model [:students (:id student) :section-status (:id section)]) :stuck))
-   students))
-
 (defn students-who-passed-entry-quiz [model students]
   (filter
    (fn [student]
      (get-in model [:students (:id student) :course-entry-quiz-passed]))
    students))
 
-(defn total-number-of-finished-sections [model students sections]
-  (reduce +
-          0
-          (map (fn [section]
-                 (count (students-who-finished-this-section model students section)))
-               sections)))
+(defn students-with-this-section-status [model students section status]
+  (filter
+   (fn [student]
+     (= (get-in model [:students (:id student) :section-status (:id section)]) status))
+   students))
 
-(defn total-number-of-stuck-sections [model students sections]
+(defn total-number-of-sections-with-status [model students sections status]
   (reduce +
           0
           (map (fn [section]
-                 (count (students-stuck-in-this-section model students section)))
+                 (count (students-with-this-section-status model students section status)))
                sections)))
 
 (defn students-who-finished-all-sections-in-this-chapter [model students chapter]
   (apply intersection (map (fn [section]
-                             (set (students-who-finished-this-section model students section)))
+                             (set (students-with-this-section-status model students section :finished)))
                            (val chapter))))
 
 (defn chapter-completion [model students sections]
   {:total (* (count sections) (count students))
-   :stuck (total-number-of-stuck-sections model students sections)
-   :finished (total-number-of-finished-sections model students sections)})
+   :stuck (total-number-of-sections-with-status model students sections :stuck)
+   :finished (total-number-of-sections-with-status model students sections :finished)})
 
 (defn chapters-completion [model chapter-sections students]
   (zipmap (keys chapter-sections)
@@ -180,7 +167,7 @@
                          (students-who-finished-all-sections-in-this-chapter model students chapter)))])
               chapters)))
 
-(defn students-status-for-section [model students section]
+(defn students-status-and-time-spent-for-section [model students section]
   (->> students
        (map
         (fn [student]
@@ -194,14 +181,14 @@
 (defn sections-total-status [model students chapter-with-sections selected-section-id]
   (into {}
         (for [section chapter-with-sections]
-          (let [students-status (students-status-for-section model students section)]
+          (let [students-status-and-time-spent (students-status-and-time-spent-for-section model students section)]
             [(:id section)
              (-> section
-                 (merge (zipmap (keys students-status)
-                                (map count (vals students-status))))
+                 (merge (zipmap (keys students-status-and-time-spent)
+                                (map count (vals students-status-and-time-spent))))
                  (cond->
                   (= selected-section-id (:id section))
-                  (assoc :student-list students-status)))]))))
+                  (assoc :student-list students-status-and-time-spent)))]))))
 
 (defn chapter-list [model class chapter-id section-id]
   (let [material (val (first (:courses model)))
