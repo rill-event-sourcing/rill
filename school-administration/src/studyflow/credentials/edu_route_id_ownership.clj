@@ -28,7 +28,7 @@
 (defmethod handle-command ::Release!
   [{:keys [current-owner-id]} {:keys [owner-id edu-route-id]}]
   (if (= current-owner-id owner-id)
-    [:ok [(released owner-id edu-route-id)]]
+    [:ok [(released edu-route-id owner-id)]]
     [:rejected {:edu-route-id [(:ownership-disputed error-messages)]}]))
 
 (defmethod handle-event ::events/Claimed
