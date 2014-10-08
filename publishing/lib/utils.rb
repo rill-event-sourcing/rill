@@ -40,7 +40,7 @@ def render_latex_for_editing(text)
         rendered_formula = %(<span class="latex">#{rendered_formula}</span>)
       end
       begin
-        new_text.gsub!("<math>#{match}</math>", rendered_formula)
+        new_text = new_text.gsub("<math>#{match}</math>", rendered_formula)
       rescue Exception => ex
         new_text = %(<div class="alert alert-danger">There is an error in the LaTeX, please review the source</div>)
       end
@@ -73,7 +73,7 @@ def render_latex_for_publishing(text, origin = "unknown")
         rendered_formula = %(<span class="latex">#{rendered_formula}</span>)
       end
       begin
-        new_text.gsub!("<math>#{match}</math>", rendered_formula)
+        new_text = new_text.gsub("<math>#{match}</math>", rendered_formula)
       rescue Exception => ex
         info = "LaTeX error within '#{origin}' => #{ex}"
         pretty_debug info, :warn
