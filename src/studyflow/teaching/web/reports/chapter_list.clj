@@ -30,7 +30,7 @@
              [:div.chapter_status
               [:span {:class "stuck"} (get-in chapter-list [:chapters-completion chapter-id :stuck])]
               [:span {:class "warning_sign"} "&#9888;"]
-              (let [students-with-all-section-finished (get-in chapter-list [:section-finished-ids chapter-id] 0)
+              (let [students-with-all-section-finished (get-in chapter-list [:chapters-with-finishing-data chapter-id] 0)
                     total-students (get-in chapter-list [:total-number-of-students])]
                 [:div {:class "progress"}
                  [:div {:class "progress_bar"

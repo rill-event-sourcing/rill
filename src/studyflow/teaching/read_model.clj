@@ -156,7 +156,7 @@
           (map (fn [sections] (chapter-completion model students sections))
                (vals chapter-sections))))
 
-(defn section-finished-ids [model students chapters remedial-chapter-ids]
+(defn chapters-with-finishing-data [model students chapters remedial-chapter-ids]
   (into {}
         (mapv (fn [chapter]
                 [(key chapter)
@@ -199,7 +199,7 @@
     (assoc material
       :sections-total-status {chapter-id (sections-total-status model students chapter-with-sections section-id)}
       :total-number-of-students (count (get-in model [:students]))
-      :section-finished-ids (section-finished-ids model students chapters remedial-chapter-ids)
+      :chapters-with-finishing-data (chapters-with-finishing-data model students chapters remedial-chapter-ids)
       :chapters-completion (chapters-completion model chapters students))))
 
 (defn get-teacher
