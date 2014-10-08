@@ -92,8 +92,8 @@ input[type="text"] {
     background-repeat: no-repeat;
 }
 .pen_and_paper {
-    background-image: URL('/assets/icon-paper.png');
+    background-image: url(<%= asset_path 'icon-paper.png' %>);
 }
 .calculator {
-    background-image: URL('/assets/icon-calculator.png');
+    background-image: url(<%= asset_path 'icon-calculator.png' %>);
 }
