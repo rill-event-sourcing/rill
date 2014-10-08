@@ -49,7 +49,7 @@
       (str/replace #"[^a-z ]" "")
       (str/replace #"\s+" "-")))
 
-(def ^:dynamic *current-nav-uri* nil)
+(def ^:dynamic *current-report-name* nil)
 
 (defn drop-list-classes [classes current-meijerink report-name selected-class-name]
   [:div {:class "m-select-box" :id "dropdown-classes"}
@@ -97,14 +97,16 @@
         [:button {:type "submit"} "Uitloggen"]))]
     [:nav#m-main-sidenav
      [:ul#main-container-nav
-      (map (fn [[url class label]]
+      (map (fn [[url report-name label]]
              [:li.main-container-nav-list-item
+               (log/info :cur *current-report-name*)
+               (log/info :rep report-name)
               [:a.main-container-nav-tab
-               (if (= url *current-nav-uri*)
-                 {:class (str class "selected") :href url}
-                 {:class class :href url})
+               (if (= report-name *current-report-name*)
+                 {:class (str report-name " selected") :href url}
+                 {:class report-name :href url})
                label]])
-           [["/reports/completion" "overview" "Overzicht"]
+           [["/reports/completion" "completion" "Overzicht"]
             ["/reports/chapter-list" "chapter-list" "Hoofdstukken"]])]]
     [:section#main_teaching
      [:nav#main_container_nav

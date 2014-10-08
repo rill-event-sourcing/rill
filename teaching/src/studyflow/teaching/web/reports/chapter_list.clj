@@ -58,7 +58,7 @@
         class (some (fn [c] (when (= (:class-id params) (:id c)) c)) classes)
         chapter-list (when class (read-model/chapter-list read-model class chapter-id section-id))
         options {:redirect-urls redirect-urls}]
-    (binding [*current-nav-uri* "/reports/chapter-list"]
+    (binding [*current-report-name* "chapter-list"]
       (render-chapter-list class classes chapter-list params options))))
 
 (defroutes chapter-list-routes

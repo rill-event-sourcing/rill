@@ -73,7 +73,7 @@
                      (read-model/decorate-class-time-spent read-model students))
                 class)
         options {:redirect-urls redirect-urls}]
-    (binding [*current-nav-uri* "/reports/completion"]
+    (binding [*current-report-name* "completion"]
       (render-completion class selected-meijerink students classes meijerink-criteria domains params options))))
 
 (defroutes completion-routes
