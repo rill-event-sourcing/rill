@@ -50,7 +50,8 @@
                 "<script type=\"text/javascript\" src=\"/js/studyflow.js\"></script>"
                 "<script src=\"/js/react_0.9.0_local_copy.js\" type=\"text/javascript\"></script>
                  <script src=\"/js/studyflow-dev.js\" type=\"text/javascript\"></script>
-                 <script type=\"text/javascript\">goog.require('studyflow.web.core');</script>")
+                 <script type=\"text/javascript\">goog.require('studyflow.web.core');</script>
+                 <script type=\"text/javascript\">studyflow.web.core._STAR_println_to_console_STAR_ = true;</script>")
                (wrap-time-track (:store event-store)))))
   (stop [component]
     (info "Stopping handler")

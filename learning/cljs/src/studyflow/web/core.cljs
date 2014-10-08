@@ -15,7 +15,13 @@
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
-(set! *print-fn* (fn [& args]))
+(def ^:dynamic *println-to-console* false)
+
+(set! *print-newline* false)
+(set! *print-fn*
+      (fn [& args]
+        (when *println-to-console*
+          (.apply (.-log js/console) js/console (into-array args)))))
 
 (defn course-id-for-page []
   (.-value (gdom/getElement "course-id")))
