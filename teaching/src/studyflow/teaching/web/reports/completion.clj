@@ -27,7 +27,7 @@
        [:div
         [:table.students
          [:thead
-          [:th.full-name]
+          [:th.full-name "Leerling"]
           [:th.completion.number "Tijd"]
           [:th.completion.number "Totaal"]
           (map (fn [domain]
