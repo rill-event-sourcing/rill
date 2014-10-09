@@ -10,7 +10,7 @@
             [rill.event-store.psql :refer [psql-event-store]]
             [rill.event-stream :refer [all-events-stream-id]]
             [rill.message :as message]
-            [studyflow.components.psql-event-store :refer [wrap-timestamps]]
+            [studyflow.migrations.active-migrations :refer [wrap-active-migrations]]
             [clj-time.core :as time]
             [clj-time.coerce :as time-coerce])
   (:gen-class))
@@ -18,7 +18,7 @@
 (defn -main [event-store-uri elastic-search-ip]
   {:pre [event-store-uri elastic-search-ip]}
   (let [store (-> (psql-event-store event-store-uri)
-                  wrap-timestamps)
+                  wrap-active-migrations)
         ch (event-channel store all-events-stream-id -1 0)
         conn (es/connect [[elastic-search-ip 9300]] {"cluster.name" "elasticsearch"})]
 

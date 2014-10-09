@@ -6,6 +6,7 @@ test:
 	STUDYFLOW_ENV=test lein test && echo "OK"
 
 build:
+	cd .. && lein install # install studyflow.jar locally
 	lein uberjar
 
 upload:
