@@ -2,6 +2,7 @@
   (:require [clojure.tools.logging :refer [info]]
             [com.stuartsierra.component :refer [Lifecycle]]
             [ring.adapter.jetty :as jetty]
+            [ring.middleware.logger :as logger]
             [studyflow.components.uncaught-exception-handler :refer [wrap-uncaught-exception]]
             [studyflow.web.app-status :refer [wrap-app-status]]))
 
@@ -11,6 +12,7 @@
     (info "Starting jetty on port: " port)
     (let [handler (-> ring-handler
                       :handler
+                      (logger/wrap-with-logger)
                       (wrap-app-status app-status-component)
                       wrap-uncaught-exception)
           jetty (jetty/run-jetty handler {:port port
