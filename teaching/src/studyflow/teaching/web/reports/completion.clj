@@ -19,6 +19,8 @@
                       "Overzicht")}
             options)
 
+     [:h1#page-title "Klasse Overzicht"]
+
      (drop-list-classes classes scope report-name (:class-name class))
      (when class
        (drop-list-meijerink class meijerink-criteria report-name scope))
@@ -46,7 +48,7 @@
                        (into [:all] domains))])
                (sort-by :full-name students))]
          [:tfoot
-          [:th.average "Klassengemiddelde"]
+          [:td.average "Klassengemiddelde"]
           [:td.average.number.time-spent
            (time-spent-html (get-in class [:time-spent scope]))]
           (map (fn [domain]
