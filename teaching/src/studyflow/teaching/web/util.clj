@@ -84,6 +84,7 @@
     [:title (h (str/join " - " [title app-title]))]
     [:link {:href "/favicon.ico" :rel "shortcut icon" :type "image/vnd.microsoft.icon"}]
     (include-css "/css/teaching.css")
+    (include-css "//cloud.typography.com/6865512/722124/css/fonts.css")
     (include-js "//code.jquery.com/jquery-2.1.1.min.js")
     (include-js "/js/dropdown.js")]
    [:body
@@ -100,8 +101,8 @@
      [:ul#main-container-nav
       (map (fn [[url report-name label]]
              [:li.main-container-nav-list-item
-               (log/info :cur *current-report-name*)
-               (log/info :rep report-name)
+              (log/info :cur *current-report-name*)
+              (log/info :rep report-name)
               [:a.main-container-nav-tab
                (if (= report-name *current-report-name*)
                  {:class (str report-name " selected") :href url}
