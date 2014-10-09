@@ -18,13 +18,11 @@
                       (str "Overzicht voor \"" (:full-name class) "\"")
                       "Overzicht")}
             options)
+     (drop-list-classes classes scope report-name (:class-name class))
 
      [:h1#page-title "Klasse Overzicht"]
-
-     (drop-list-classes classes scope report-name (:class-name class))
      (when class
        (drop-list-meijerink class meijerink-criteria report-name scope))
-
      (when students
        [:div
         [:table.students

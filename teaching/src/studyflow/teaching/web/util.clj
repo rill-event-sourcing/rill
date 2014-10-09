@@ -52,7 +52,7 @@
 (def ^:dynamic *current-report-name* nil)
 
 (defn drop-list-classes [classes current-meijerink report-name selected-class-name]
-  [:div {:class "m-select-box" :id "dropdown-classes"}
+  [:div {:class "m-select-box class-select" :id "dropdown-classes"}
    [:span (if selected-class-name
             selected-class-name
             "Klas")]
@@ -78,7 +78,7 @@
              meijerink]])
          meijerink-criteria)]])
 
-(defn layout [{:keys [title warning message redirect-urls]} & body]
+(defn layout [{:keys [title warning message redirect-urls]} dropdown & body]
   (html5
    [:head
     [:title (h (str/join " - " [title app-title]))]
@@ -90,6 +90,7 @@
     [:header#m-top-header-teaching
      [:a#logo {:href "/reports/completion"}]
      [:h1#header-title "Leraren"]
+     dropdown
      (when redirect-urls
        (form/form-to
         {:role "form" :id "logout-form"} [:post (:login redirect-urls)]

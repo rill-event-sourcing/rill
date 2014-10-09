@@ -17,11 +17,9 @@
                       (str "Hoofdstukken voor \"" class-name "\"")
                       "Hoofdstukken")}
             options)
-
-     [:h1#page-title "Hoofdstukken"]
-
      (drop-list-classes classes nil "chapter-list" class-name)
 
+     [:h1#page-title "Hoofdstukken"]
      (when class
        [:div#m-teacher_chapter_list
         [:nav#teacher_chapter_list_sidenav
