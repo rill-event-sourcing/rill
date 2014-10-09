@@ -1,8 +1,9 @@
 (ns studyflow.teaching.web.util
   (:require [clojure.string :as str]
+            [clojure.tools.logging :as log]
             [hiccup.core :refer [h]]
             [hiccup.form :as form]
-            [hiccup.page :refer [html5 include-css]]))
+            [hiccup.page :refer [html5 include-css include-js]]))
 
 (def app-title "Studyflow")
 
@@ -50,12 +51,41 @@
 
 (def ^:dynamic *current-nav-uri* nil)
 
+(defn drop-list-classes [classes current-meijerink report-name selected-class-name]
+  [:div {:class "m-select-box" :id "dropdown-classes"}
+   [:span (if selected-class-name
+            selected-class-name
+            "Klas")]
+   [:ul.dropdown
+    (map (fn [class]
+           [:li.dropdown-list-item
+            [:a.dropdown-link {:href
+                               (if current-meijerink
+                                 (str "/reports/" (:id class) "/" current-meijerink "/" report-name)
+                                 (str "/reports/" (:id class) "/" report-name))}
+             (:class-name class)]])
+         classes)]])
+
+(defn drop-list-meijerink [class meijerink-criteria report-name selected-meijerink]
+  [:div {:class "m-select-box" :id "dropdown-meijerink"}
+   [:span (if selected-meijerink
+            selected-meijerink
+            "Meijerink criteria")]
+   [:ul.dropdown
+    (map (fn [meijerink]
+           [:li.dropdown-list-item
+            [:a.dropdown-link {:href (str "/reports/" (:id class) "/" meijerink "/" report-name)}
+             meijerink]])
+         meijerink-criteria)]])
+
 (defn layout [{:keys [title warning message redirect-urls]} & body]
   (html5
    [:head
     [:title (h (str/join " - " [title app-title]))]
     [:link {:href "/favicon.ico" :rel "shortcut icon" :type "image/vnd.microsoft.icon"}]
-    (include-css "/css/teaching.css")]
+    (include-css "/css/teaching.css")
+    (include-js "//code.jquery.com/jquery-2.1.1.min.js")
+    (include-js "/js/dropdown.js")]
    [:body
     [:header#m-top_header
      [:h1#logo "Leraren"]
@@ -70,8 +100,8 @@
        (map (fn [[url label]]
               [:li.main_container_nav_list_item
                [:a.main_container_nav_tab (if (= url *current-nav-uri*) {:class "selected"} {:href url}) label]])
-            [["/reports/completion" "Rapport"]
-             ["/reports/chapter-list" "Voortgang"]])]]
+            [["/reports/completion" "Overzicht"]
+             ["/reports/chapter-list" "Hoofdstukken"]])]]
      [:div.body
       (when warning [:div.warning (h warning)])
       (when message [:div.message (h message)])

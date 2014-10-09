@@ -114,7 +114,7 @@
                      department (get-in model [:departments department-id])
                      school-id (:school-id department)
                      school (get-in model [:schools school-id])]
-                 {:id (str school-id "|" department-id "|" class-name)
+                 {:id (str school-id ":" department-id ":" class-name)
                   :class-name class-name
                   :full-name (str/join " - " [(:name school) (:name department) class-name])
                   :department-id department-id
