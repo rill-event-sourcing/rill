@@ -20,7 +20,7 @@
             options)
      (drop-list-classes classes scope report-name (:class-name class))
 
-     [:h1#page-title "Klasse Overzicht"]
+     [:h1#page-title "Klas Overzicht"]
      (when class
        (drop-list-meijerink class meijerink-criteria report-name scope))
      (when students
@@ -53,7 +53,7 @@
                  [:td.average.number {:class (classerize domain)}
                   (completion-html (get-in class [:completion scope domain]))])
                (into [:all] domains))]]
-        [:a {:href (str "/reports/" (:class-id params) "/completion/export") :target "_blank"} "Exporteren naar Excel"]]))))
+        [:a {:href (str "/reports/" (:class-id params) "/completion/export") :target "_blank" :class "btn small gray export-btn"} "Exporteren naar Excel"]]))))
 
 (defn completion [read-model teacher redirect-urls params]
   (let [classes (read-model/classes read-model teacher)

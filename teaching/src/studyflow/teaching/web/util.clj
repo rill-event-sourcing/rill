@@ -94,9 +94,9 @@
      dropdown
      (when redirect-urls
        (form/form-to
-        {:role "form" :id "logout-form"} [:post (:login redirect-urls)]
+        {:role "form"} [:post (:login redirect-urls)]
         [:input {:type "hidden" :name "_method" :value "DELETE"}]
-        [:button {:type "submit"} "Uitloggen"]))]
+        [:button {:type "submit" :id "logout-form"}]))]
     [:nav#m-main-sidenav
      [:ul#main-container-nav
       (map (fn [[url report-name label]]
