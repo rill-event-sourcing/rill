@@ -588,18 +588,16 @@
                  (dom/div #js {:id "m-question_bar"}
                           (tool-box (:tools question-data))
                           (if answer-correct
-                            (if (= progress-modal :launchable)
-                              (om/build (click-once-button "Goed! Voltooi paragraaf"
-                                                           (fn []
-                                                             (submit))) cursor)
-                              ;; this doesn't have the disabled handling
-                              ;; as all the click-once-buttons because
-                              ;; we need the ref for set-focus
-                              (dom/button #js {:className "btn blue pull-right"
-                                               :ref "FOCUSED_BUTTON"
-                                               :onClick
-                                               (fn []
-                                                 (submit))}
+                            ;; this doesn't have the disabled handling
+                            ;; as all the click-once-buttons because
+                            ;; we need the ref for set-focus
+                            (dom/button #js {:className "btn blue pull-right"
+                                             :ref "FOCUSED_BUTTON"
+                                             :onClick
+                                             (fn []
+                                               (submit))}
+                                        (if (= progress-modal :launchable)
+                                          "Goed! Voltooi paragraaf"
                                           "Goed! Volgende vraag"))
                             (om/build (click-once-button "Nakijken"
                                                          (fn []
