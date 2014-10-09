@@ -101,8 +101,6 @@
      [:ul#main-container-nav
       (map (fn [[url report-name label]]
              [:li.main-container-nav-list-item
-              (log/info :cur *current-report-name*)
-              (log/info :rep report-name)
               [:a.main-container-nav-tab
                (if (= report-name *current-report-name*)
                  {:class (str report-name " selected") :href url}
