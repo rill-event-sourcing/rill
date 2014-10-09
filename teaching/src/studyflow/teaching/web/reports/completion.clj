@@ -46,7 +46,7 @@
                        (into [:all] domains))])
                (sort-by :full-name students))]
          [:tfoot
-          [:td.average "Klassengemiddelde"]
+          [:td.average "Gemiddelde"]
           [:td.average.number.time-spent
            (time-spent-html (get-in class [:time-spent scope]))]
           (map (fn [domain]
