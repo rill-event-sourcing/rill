@@ -24,6 +24,8 @@
     +single-transition(opacity, 0.5s)
     &:hover
       opacity: 1
+    &::-moz-focus-inner
+      border: 0
     &.completion
       background: url(/images/dashboard.svg) no-repeat 58px 18px
       background-size: 55px
@@ -165,10 +167,10 @@ input
   &:focus
     box-shadow: 0 0 5px rgba(0, 0, 255, 0.5)
 
-button:focus, a:focus, select:focus
+button:focus, select:focus
   box-shadow: 0 0 5px rgba(0, 0, 255, 0.5)
 
-button, a.button
+button
   border: solid #ddd 2pt
   border-radius: 5px
   padding: .25em .75em
@@ -177,10 +179,10 @@ button, a.button
   text-decoration: none
   display: inline-block
 
-button:focus, a.button:focus
+button:focus
   background: #ccc
 
-button:active, a.button:active
+button:active
   background: #aaa
 
 div.actions
