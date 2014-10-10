@@ -386,6 +386,15 @@
                              (when-let [suffix (:suffix li)]
                                (str " " suffix)))]))))))
 
+(defn some-input-in-question-selected [refs]
+  (let [active (.-activeElement js/document)]
+    (some #{active}
+          (-> (js->clj refs)
+              (dissoc "FOCUSED_INPUT")
+              vals
+              (->>
+               (map #(.getDOMNode %)))))))
+
 (defn focus-input-box [owner]
   ;; we always call this, even when there's no element called
   ;; "FOCUSED_INPUT". om/get-node can't handle that case
@@ -396,7 +405,8 @@
         (.focus button))
       (when-let [input-ref (aget refs "FOCUSED_INPUT")]
         (when-let [input-field (.getDOMNode input-ref)]
-          (when (= "" (.-value input-field))
+          (when (and (= "" (.-value input-field))
+                     (not (some-input-in-question-selected refs)))
             (.focus input-field)))))))
 
 (defn tool-box
