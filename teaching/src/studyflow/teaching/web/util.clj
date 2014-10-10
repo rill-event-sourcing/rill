@@ -78,7 +78,7 @@
              meijerink]])
          meijerink-criteria)]])
 
-(defn layout [{:keys [title warning message redirect-urls]} dropdown & body]
+(defn layout [{:keys [title redirect-urls]} dropdown & body]
   (html5
    [:head
     [:title (h (str/join " - " [title app-title]))]
@@ -108,12 +108,5 @@
                label]])
            [["/reports/completion" "completion" "Overzicht"]
             ["/reports/chapter-list" "chapter-list" "Hoofdstukken"]])]]
-    [:section#main_teaching
-     [:nav#main_container_nav
-      [:ul
-       ]]
-     [:div.body
-      (when warning [:div.warning (h warning)])
-      (when message [:div.message (h message)])
-      [:div.container body]]]
+    [:section#main_teaching body]
     [:footer]]))
