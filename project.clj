@@ -78,7 +78,7 @@
                  "teaching/src"
                  "learning/src"
                  "login/src"]
-  :resource-paths ["learning/resources" "login/resources" "school-administration/resources" "teaching/resources"
+  :resource-paths ["common/resources" "learning/resources" "login/resources" "school-administration/resources" "teaching/resources"
                    "learning/generated" "login/generated" "school-administration/generated" "teaching/generated"]
   :test-paths ["school-administration/test"
                "learning/test"
