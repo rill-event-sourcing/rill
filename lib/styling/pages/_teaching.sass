@@ -1,80 +1,118 @@
 @import compass
 
-body
-  background: url(/images/bg.png) repeat 5px 6px #eee
-  position: relative
-
-#logo
-  color: white !important
-
 #main_teaching
-  padding: 0px 30px 75px 30px
-  width: 900px
-  margin: 150px auto 50px auto
-  background: white
-  +border-radius(4px)
-  +border-top-left-radius(0px)
+  margin-left: 200px
+  padding: 110px 50px 30px 50px
 
-#main_container_nav
-  position: relative
-  top: -50px
-  left: -30px
-
-  .main_container_nav_list_item
-    display: inline-block
+#main-container-nav
+  margin-right: -1px
+  .main-container-nav-list-item
     list-style: none
-  .main_container_nav_tab
-    display: inline-block
-    +border-top-radius(4px)
-    background: #f5f5f5
-    color: #bbb
-    line-height: 50px
-    padding: 0 20px
+    &:first-child
+      margin-top: 40px
+  .main-container-nav-tab
+    display: block
+    font-size: 16px
+    +border-left-radius(5px)
+    color: #555A5F
+    padding: 80px 0 20px 0
+    text-align: center
     cursor: pointer
+    margin: 0 0 10px 30px
+    border: 1px solid transparent
+    opacity: 0.5
+    +single-transition(opacity, 0.5s)
+    &:hover
+      opacity: 1
+    &::-moz-focus-inner
+      border: 0
+    &.completion
+      background: url(/images/dashboard.svg) no-repeat 58px 18px
+      background-size: 55px
+      &.selected
+        background: url(/images/dashboard.svg) no-repeat 58px 18px white
+        background-size: 55px
+    &.chapter-list
+      background: url(/images/book.svg) no-repeat 60px 18px
+      background-size: 45px
+      &.selected
+        background: url(/images/book.svg) no-repeat 60px 18px white
+        background-size: 45px
     &.selected
-      background: white
-      color: #333
       cursor: default
+      border: 1px solid #c6ced3
+      border-right: 0
+      opacity: 1
+      +box-shadow(-2px 1px 2px rgba(0,0,0,0.06))
+
+#page-title
+  font-size: 18px
+  font-weight: 600
+  display: inline-block
+  line-height: 38px
+  color: #555a5f
 
 table
-  border: 1px solid #ddd
+  border: 1px solid #c6ced3
   +border-radius(4px)
   +box-shadow(0 1px 1px rgba(0, 0, 0, 0.08))
   width: 100%
   clear: both
   margin: 0 auto 30px auto
-  color: #3f3f3a
+  color: #555A5F
   font-size: 14px
+  border-collapse: separate
   &.align_center
     td
       text-align: center
   td
-    border-left: 1px solid #ddd
+    border-right: 1px solid #ddd
     border-top: 1px solid #ddd
-    padding: 10px
+    padding: 15px 20px
+    &.number
+      //text-align: center
   th
-    border-left: 1px solid #ddd
+    border-right: 1px solid #ddd
+    border-left: 1px solid white
     border-top: 1px solid #ddd
-    padding: 10px
-    background-color: #fafafa
-    +box-shadow(0 1px 0 rgba(255, 255, 255, 0.3) inset)
+    padding: 15px 20px
+    +background-image(linear-gradient(#FDFDFD, #F2F4F8))
+    +text-shadow(0 1px white)
     border-top: none
     font-weight: 600
-  td:first-child
-    border-left: none
+    +box-shadow(inset 0 1px 0 white)
+  td:last-child
+    border-right: none
   th
     &:first-child
-      border-left: none
       +border-radius(4px 0 0 0)
     &:last-child
       +border-radius(0 4px 0 0)
+      border-right: none
     &:only-child
       +border-radius(4px 4px 0 0)
+  tr
+    &:hover
+      background-color: #e5f4f8
+      color: #0199bf
+      td
+        //border-color: #c0e5ee
+  thead tr, tfoot tr
+    &:hover
+      color: #555a5f
   tr:last-child td
     &:first-child
       +border-radius(0 0 0 4px)
     &:last-child
       +border-radius(0 0 4px 0)
+  tr:nth-child(even)
+    background: #FCFCFC
+    &:hover
+      background: #e5f4f8
+  tfoot
+    td
+      background: #f2f4f8
+      font-weight: 600
 
 td.time-spent
   text-align: right
@@ -129,10 +167,10 @@ input
   &:focus
     box-shadow: 0 0 5px rgba(0, 0, 255, 0.5)
 
-button:focus, a:focus, select:focus
+button:focus, select:focus
   box-shadow: 0 0 5px rgba(0, 0, 255, 0.5)
 
-button, a.button
+button
   border: solid #ddd 2pt
   border-radius: 5px
   padding: .25em .75em
@@ -141,10 +179,10 @@ button, a.button
   text-decoration: none
   display: inline-block
 
-button:focus, a.button:focus
+button:focus
   background: #ccc
 
-button:active, a.button:active
+button:active
   background: #aaa
 
 div.actions
@@ -188,9 +226,6 @@ textarea.tab-delimited-data
   min-width: 75em
   min-height: 10em
   white-space: pre
-
-#m-teacher_chapter_list
-  display: inline-block
 
 #teacher_chapter_list_sidenav
   width: 400px
@@ -240,7 +275,8 @@ textarea.tab-delimited-data
   top: -6px
 
 #m-teacher_chapter_list
-  display: inline-block
+  display: block
+  margin-top: 20px
   width: 900px
 
   .stuck, .in-progress, .unstarted, .finished
@@ -319,87 +355,8 @@ select.selector
   margin: 0 1em 0 0
   display: inline-block
 
-.m-select-box
-  position: relative
-  width: 200px
-  float: left
-  margin: 0 20px 20px 0
+#clarification
+  float: right
+  font-size: 15px
   padding: 10px
-  background: #fff
-  border-radius: 7px
-  border: 1px solid rgba(0,0,0,0.15)
-  box-shadow: 0 1px 1px rgba(50,50,50,0.1)
-  cursor: pointer
-  outline: none
-  color: #8AA8BD
-  &:after
-    content: ""
-    width: 0
-    height: 0
-    position: absolute
-    right: 15px
-    top: 50%
-    margin-top: -3px
-    border-width: 6px 6px 0 6px
-    border-style: solid
-    border-color: #8aa8bd transparent
-  &.active
-    .dropdown
-      opacity: 1
-      pointer-events: auto
-  .dropdown
-    position: absolute
-    top: 140%
-    left: 0
-    right: 0
-    background: white
-    border-radius: inherit
-    border: 1px solid rgba(0,0,0,0.17)
-    box-shadow: 0 0 5px rgba(0,0,0,0.1)
-    font-weight: normal
-    transition: all 0.1s ease-in
-    list-style: none
-    opacity: 0
-    pointer-events: none
-    &:after
-      content: ""
-      width: 0
-      height: 0
-      position: absolute
-      bottom: 100%
-      right: 15px
-      border-width: 0 6px 6px 6px
-      border-style: solid
-      border-color: #fff transparent
-    &:before
-      content: ""
-      width: 0
-      height: 0
-      position: absolute
-      bottom: 100%
-      right: 13px
-      border-width: 0 8px 8px 8px
-      border-style: solid
-      border-color: rgba(0,0,0,0.1) transparent
-    li
-      a
-        display: block
-        padding: 10px
-        text-decoration: none
-        color: #8aa8bd
-        border-bottom: 1px solid #e6e8ea
-        box-shadow: inset 0 1px 0 rgba(255,255,255,1)
-        transition: all 0.1s ease-out
-      i
-        float: right
-        color: inherit
-      &:first-of-type
-        a
-          border-radius: 7px 7px 0 0
-      &:last-of-type
-        a
-          border-radius: 0 0 7px 7px
-          border: none
-      &:hover
-        a
-          background: #f3f8f8
+  color: darkred

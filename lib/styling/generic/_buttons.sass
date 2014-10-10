@@ -21,8 +21,6 @@
   font-size: 15px
   padding: 2px 33px 0 33px
   +border-radius(5px)
-  &:hover
-    +translateY(-1px)
   &[disabled]
     opacity: 0.5
     cursor: default
@@ -81,7 +79,6 @@
     +text-shadow(0px 1px 1.5px rgba(0, 0, 0, 0.5))
     &:hover, &:focus
       background-color: #7BD4F8
-      border-bottom: 4px solid #259ed0
     &:active
       background-color: #59caf8
       border-bottom: 1px solid #259ed0
@@ -102,7 +99,6 @@
     border-bottom: 2px solid #df9c32
     &:hover, &:focus
       background-color: #fbd68d
-      border-bottom: 3px solid #df9c32
     &:active
       background-color: #ffcd69
       border-bottom: 1px solid #df9c32
@@ -124,7 +120,6 @@
     border-bottom: 2px solid #b6c6cd
     &:hover, &:focus
       background-color: #d5d9df
-      border-bottom: 3px solid #b6c6cd
     &:active
       background-color: #e6e9ed
       border-bottom: 1px solid #b6c6cd
@@ -142,7 +137,6 @@
   &.light_blue
     background-color: #e6f8fe
     border: 1px solid #97bdcc
-    border-bottom: 3px solid #97bdcc
     color: #88afbe
     +text-shadow(0px 1px 1px rgba(255, 255, 255, 0.4))
     &:hover, &:focus
@@ -187,3 +181,17 @@
     width: 91%
     margin: 0 auto
     display: block
+
+  &.export-btn
+    float: right
+    padding-right: 75px
+    &:before
+      display: block
+      content: ''
+      background: url(/images/excel.svg) no-repeat center
+      width: 30px
+      height: 30px
+      background-size: 25px
+      position: absolute
+      right: 30px
+      top: 5px

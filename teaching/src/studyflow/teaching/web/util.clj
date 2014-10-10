@@ -49,10 +49,10 @@
       (str/replace #"[^a-z ]" "")
       (str/replace #"\s+" "-")))
 
-(def ^:dynamic *current-nav-uri* nil)
+(def ^:dynamic *current-report-name* nil)
 
 (defn drop-list-classes [classes current-meijerink report-name selected-class-name]
-  [:div {:class "m-select-box" :id "dropdown-classes"}
+  [:div {:class "m-select-box class-select" :id "dropdown-classes"}
    [:span (if selected-class-name
             selected-class-name
             "Klas")]
@@ -78,32 +78,35 @@
              meijerink]])
          meijerink-criteria)]])
 
-(defn layout [{:keys [title warning message redirect-urls]} & body]
+(defn layout [{:keys [title redirect-urls]} dropdown & body]
   (html5
    [:head
     [:title (h (str/join " - " [title app-title]))]
     [:link {:href "/favicon.ico" :rel "shortcut icon" :type "image/vnd.microsoft.icon"}]
     (include-css "/css/teaching.css")
+    (include-css "//cloud.typography.com/6865512/722124/css/fonts.css")
     (include-js "//code.jquery.com/jquery-2.1.1.min.js")
     (include-js "/js/dropdown.js")]
    [:body
-    [:header#m-top_header
-     [:h1#logo "Leraren"]
+    [:header#m-top-header-teaching
+     [:a#logo {:href "/reports/completion"}]
+     [:h1#header-title "Leraren"]
+     dropdown
      (when redirect-urls
        (form/form-to
-        {:role "form" :id "logout-form"} [:post (:login redirect-urls)]
+        {:role "form"} [:post (:login redirect-urls)]
         [:input {:type "hidden" :name "_method" :value "DELETE"}]
-        [:button {:type "submit"} "Uitloggen"]))]
-    [:section#main_teaching
-     [:nav#main_container_nav
-      [:ul
-       (map (fn [[url label]]
-              [:li.main_container_nav_list_item
-               [:a.main_container_nav_tab (if (= url *current-nav-uri*) {:class "selected"} {:href url}) label]])
-            [["/reports/completion" "Overzicht"]
-             ["/reports/chapter-list" "Hoofdstukken"]])]]
-     [:div.body
-      (when warning [:div.warning (h warning)])
-      (when message [:div.message (h message)])
-      [:div.container body]]]
+        [:button {:type "submit" :id "logout-form"}]))]
+    [:nav#m-main-sidenav
+     [:ul#main-container-nav
+      (map (fn [[url report-name label]]
+             [:li.main-container-nav-list-item
+              [:a.main-container-nav-tab
+               (if (= report-name *current-report-name*)
+                 {:class (str report-name " selected") :href url}
+                 {:class report-name :href url})
+               label]])
+           [["/reports/completion" "completion" "Overzicht"]
+            ["/reports/chapter-list" "chapter-list" "Hoofdstukken"]])]]
+    [:section#main_teaching body]
     [:footer]]))

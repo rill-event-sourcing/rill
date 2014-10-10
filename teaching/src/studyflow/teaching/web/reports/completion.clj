@@ -18,16 +18,22 @@
                       (str "Overzicht voor \"" (:full-name class) "\"")
                       "Overzicht")}
             options)
-
      (drop-list-classes classes scope report-name (:class-name class))
-     (when class
-       (drop-list-meijerink class meijerink-criteria report-name scope))
 
+     [:h1#page-title "Klas Overzicht"]
+     (when class
+       [:div
+        (drop-list-meijerink class meijerink-criteria report-name scope)
+        [:span#clarification (condp = scope
+                               "1F-RT" "Dit rapport gaat alleen over de 1F-RT hoofdstukken (hoofstuk 1 t/m 6)"
+                               "2F" "Dit rapport gaat alleen over de 2F hoofdstukken (7 t/m 26). Werk aan 1F-RT hoofdstukken wordt hier niet getoond."
+                               "3F" "Dit rapport gaat alleen over de 3F hoofdstukken (7 t/m 28). Werk aan 1F-RT hoofdstukken wordt hier niet getoond."
+                               "")]])
      (when students
        [:div
         [:table.students
          [:thead
-          [:th.full-name]
+          [:th.full-name "Leerling"]
           [:th.completion.number "Tijd"]
           [:th.completion.number "Totaal"]
           (map (fn [domain]
@@ -46,14 +52,14 @@
                        (into [:all] domains))])
                (sort-by :full-name students))]
          [:tfoot
-          [:th.average "Klassengemiddelde"]
+          [:td.average "Gemiddelde"]
           [:td.average.number.time-spent
            (time-spent-html (get-in class [:time-spent scope]))]
           (map (fn [domain]
                  [:td.average.number {:class (classerize domain)}
                   (completion-html (get-in class [:completion scope domain]))])
                (into [:all] domains))]]
-        [:a {:href (str "/reports/" (:class-id params) "/completion/export") :target "_blank"} "Exporteren naar Excel"]]))))
+        [:a {:href (str "/reports/" (:class-id params) "/completion/export") :target "_blank" :class "btn small gray export-btn"} "Exporteren naar Excel"]]))))
 
 (defn completion [read-model teacher redirect-urls params]
   (let [classes (read-model/classes read-model teacher)
@@ -73,7 +79,7 @@
                      (read-model/decorate-class-time-spent read-model students))
                 class)
         options {:redirect-urls redirect-urls}]
-    (binding [*current-nav-uri* "/reports/completion"]
+    (binding [*current-report-name* "completion"]
       (render-completion class selected-meijerink students classes meijerink-criteria domains params options))))
 
 (defroutes completion-routes
@@ -88,7 +94,7 @@
   (GET "/reports/:class-id/completion"
        {:keys [read-model teacher redirect-urls]
         params :params}
-       (completion read-model teacher redirect-urls params))
+       (redirect-after-post (str "/reports/" (:class-id params) "/1F-RT/completion")))
 
   (GET "/reports/:class-id/completion/export"
        {:keys [read-model teacher]

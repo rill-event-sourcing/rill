@@ -17,9 +17,9 @@
                       (str "Hoofdstukken voor \"" class-name "\"")
                       "Hoofdstukken")}
             options)
-
      (drop-list-classes classes nil "chapter-list" class-name)
 
+     [:h1#page-title "Hoofdstukken"]
      (when class
        [:div#m-teacher_chapter_list
         [:nav#teacher_chapter_list_sidenav
@@ -58,7 +58,7 @@
         class (some (fn [c] (when (= (:class-id params) (:id c)) c)) classes)
         chapter-list (when class (read-model/chapter-list read-model class chapter-id section-id))
         options {:redirect-urls redirect-urls}]
-    (binding [*current-nav-uri* "/reports/chapter-list"]
+    (binding [*current-report-name* "chapter-list"]
       (render-chapter-list class classes chapter-list params options))))
 
 (defroutes chapter-list-routes

@@ -9,6 +9,7 @@ function DropDown(el) {
 DropDown.prototype = {
     initEvents : function() {
         var obj = this;
+        var i = 0;
 
         obj.dd.on('click', function(event){
             $(this).toggleClass('active');
@@ -23,10 +24,19 @@ DropDown.prototype = {
     }
 }
 
-
 $(function() {
 
     var dd1 = new DropDown( $('#dropdown-classes') );
     var dd2 = new DropDown( $('#dropdown-meijerink') );
-    });
 
+    $(document).on('click', function(event) {
+
+        if (!$(event.target).closest('#dropdown-classes').length) {
+            $('#dropdown-classes').removeClass('active');
+        }
+
+        if (!$(event.target).closest('#dropdown-meijerink').length) {
+            $('#dropdown-meijerink').removeClass('active');
+        }
+    });
+});
