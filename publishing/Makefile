@@ -25,7 +25,7 @@ start:
 	fi
 	foreman start
 
-prepare-db:
+prepare:
 	bundle exec rake db:drop db:create db:migrate db:seed
 
 build:
