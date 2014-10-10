@@ -38,10 +38,17 @@
 
 (defmethod handle-event :studyflow.school-administration.student.events/ClassAssigned
   [model {:keys [student-id department-id class-name] :as event}]
-  (update-student model student-id (fn [student]
-                                     (assoc student
-                                       :department-id department-id
-                                       :class-name class-name))))
+  (let [old-class (-> (get-in model [:students student-id])
+                      (select-keys [:department-id :class-name]))
+        class {:department-id department-id
+               :class-name class-name}]
+    (-> model
+        (cond->
+         (and old-class
+              (not= old-class class))
+         (update-in [:students-by-class old-class] disj student-id))
+        (update-student student-id (fn [student]
+                                     (merge student class))))))
 
 (defmethod handle-event :studyflow.school-administration.student.events/Imported
   [model {:keys [student-id full-name department-id class-name]}]
