@@ -22,7 +22,13 @@
 
      [:h1#page-title "Klas Overzicht"]
      (when class
-       (drop-list-meijerink class meijerink-criteria report-name scope))
+       [:div
+        (drop-list-meijerink class meijerink-criteria report-name scope)
+        [:span#clarification (condp = scope
+                               "1F-RT" "Dit rapport gaat alleen over de 1F-RT hoofdstukken (hoofstuk 1 t/m 6)"
+                               "2F" "Dit rapport gaat alleen over de 2F hoofdstukken (7 t/m 26). Werk aan 1F-RT hoofdstukken wordt hier niet getoond."
+                               "3F" "Dit rapport gaat alleen over de 3F hoofdstukken (7 t/m 28). Werk aan 1F-RT hoofdstukken wordt hier niet getoond."
+                               "")]])
      (when students
        [:div
         [:table.students
@@ -88,7 +94,7 @@
   (GET "/reports/:class-id/completion"
        {:keys [read-model teacher redirect-urls]
         params :params}
-       (completion read-model teacher redirect-urls params))
+       (redirect-after-post (str "/reports/" (:class-id params) "/1F-RT/completion")))
 
   (GET "/reports/:class-id/completion/export"
        {:keys [read-model teacher]

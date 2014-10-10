@@ -11,14 +11,14 @@
   (start [component]
     (info "Starting fixtures-loading-component")
     (let [handler (:handler ring-handler)
-          materials (slurp (io/resource "dev/20140814-with-entry-quiz.json"))
+          materials (slurp (io/resource "dev/20141010-entry-quiz-and-meijerink.json"))
           course-id (let [[_ rest] (.split ^String materials ":")
                           [quoted-id] (.split ^String rest ",")
                           [_ id] (.split ^String quoted-id "\"")]
                       id)
           response (handler (-> (ring-mock/request :put (route/uri-for routes/update-course-material course-id)
-                                       materials)
-                    (ring-mock/content-type "application/json")))]
+                                                   materials)
+                                (ring-mock/content-type "application/json")))]
       (when (not= (:status response) 200)
         (throw (Exception. (str "Fixture loading failed for course-material: " response)))))
     component)
@@ -26,5 +26,5 @@
     (info "Stopping fixtures-loading-component, not removing anything")
     component))
 
-(defn fixtures-loading-component [] 
+(defn fixtures-loading-component []
   (map->FixturesLoadingComponent {}))
