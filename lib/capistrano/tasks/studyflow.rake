@@ -233,10 +233,13 @@ namespace :deploy do
         execute :touch, current_path.join("tmp", "restart.txt")
       else
         warn " restarting java server #{ host } ".center(72, "#")
-        execute :sudo, :supervisorctl, :stop, "studyflow_#{ role }"
+#        execute :sudo, :supervisorctl, :stop, "studyflow_#{ role }"
+        execute :sudo, :"/etc/init.d/supervisor", :stop
         execute :echo, " '##################### DEPLOY OF #{ fetch(:current_revision) } ON #{ fetch(:release_timestamp) } #########################################' | sudo tee -a /home/studyflow/#{ role }-stderr.log"
         execute :echo, " '##################### DEPLOY OF #{ fetch(:current_revision) } ON #{ fetch(:release_timestamp) } #########################################' | sudo tee -a /home/studyflow/#{ role }-stdout.log"
-        execute :sudo, :supervisorctl, :start, "studyflow_#{ role }"
+        sleep 2
+        execute :sudo, :"/etc/init.d/supervisor", :start
+#        execute :sudo, :supervisorctl, :start, "studyflow_#{ role }"
       end
       check_up_server role
     end
