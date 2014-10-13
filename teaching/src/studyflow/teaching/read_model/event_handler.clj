@@ -180,7 +180,7 @@
                                           (mapcat :sections)
                                           (map :id)
                                           set)
-        all-sections (into (get model :all-sections #{})
+        all-sections (into #{}
                            (->> (:chapters material)
                                 (mapcat :sections)))
         meijerink-criteria (->> all-sections
