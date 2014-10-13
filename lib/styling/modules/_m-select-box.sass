@@ -44,8 +44,6 @@
     transition: all 0.08s ease
     list-style: none
     display: none
-    max-height: 400px
-    overflow: auto
     &:after
       content: ""
       width: 0
@@ -66,6 +64,9 @@
       border-width: 0 8px 8px 8px
       border-style: solid
       border-color: rgba(0,0,0,0.1) transparent
+    ul
+      overflow: auto
+      max-height: 400px
     li
       a
         display: block
@@ -73,7 +74,6 @@
         text-decoration: none
         color: #8aa8bd
         border-bottom: 1px solid #e6e8ea
-        box-shadow: inset 0 1px 0 rgba(255,255,255,1)
       i
         float: right
         color: inherit
