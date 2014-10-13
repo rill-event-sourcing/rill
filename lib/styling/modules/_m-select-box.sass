@@ -40,12 +40,13 @@
     right: 0
     background: white
     border-radius: inherit
-    border: 1px solid rgba(0,0,0,0.17)
-    box-shadow: 0 0 5px rgba(0,0,0,0.1)
+    +box-shadow(0 1px 2px rgba(0, 0, 0, 0.3))
     font-weight: normal
     transition: all 0.08s ease
     list-style: none
     display: none
+    max-height: 400px
+    overflow: auto
     &:after
       content: ""
       width: 0
