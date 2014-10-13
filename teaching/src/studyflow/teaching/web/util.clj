@@ -56,27 +56,29 @@
    [:span (if selected-class-name
             selected-class-name
             "Klas")]
-   [:ul.dropdown
-    (map (fn [class]
-           [:li.dropdown-list-item
-            [:a.dropdown-link {:href
-                               (if current-meijerink
-                                 (str "/reports/" (:id class) "/" current-meijerink "/" report-name)
-                                 (str "/reports/" (:id class) "/" report-name))}
-             (:class-name class)]])
-         classes)]])
+   [:div.dropdown
+    [:ul
+     (map (fn [class]
+            [:li.dropdown-list-item
+             [:a.dropdown-link {:href
+                                (if current-meijerink
+                                  (str "/reports/" (:id class) "/" current-meijerink "/" report-name)
+                                  (str "/reports/" (:id class) "/" report-name))}
+              (:class-name class)]])
+          classes)]]])
 
 (defn drop-list-meijerink [class meijerink-criteria report-name selected-meijerink]
   [:div {:class "m-select-box" :id "dropdown-meijerink"}
    [:span (if selected-meijerink
             selected-meijerink
             "Meijerink criteria")]
-   [:ul.dropdown
-    (map (fn [meijerink]
-           [:li.dropdown-list-item
-            [:a.dropdown-link {:href (str "/reports/" (:id class) "/" meijerink "/" report-name)}
-             meijerink]])
-         meijerink-criteria)]])
+   [:div.dropdown
+    [:ul
+     (map (fn [meijerink]
+            [:li.dropdown-list-item
+             [:a.dropdown-link {:href (str "/reports/" (:id class) "/" meijerink "/" report-name)}
+              meijerink]])
+          meijerink-criteria)]]])
 
 (defn layout [{:keys [title redirect-urls]} dropdown & body]
   (html5
