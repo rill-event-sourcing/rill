@@ -25,7 +25,7 @@
        [:div
         (drop-list-meijerink class meijerink-criteria report-name scope)
         [:span#clarification (condp = scope
-                               "1F-RT" "Dit rapport gaat alleen over de 1F-RT hoofdstukken (hoofstuk 1 t/m 6)"
+                               "1F-RT" "Dit rapport gaat alleen over de 1F-RT hoofdstukken (hoofdstuk 1 t/m 6)"
                                "2F" "Dit rapport gaat alleen over de 2F hoofdstukken (7 t/m 26). Werk aan 1F-RT hoofdstukken wordt hier niet getoond."
                                "3F" "Dit rapport gaat alleen over de 3F hoofdstukken (7 t/m 28). Werk aan 1F-RT hoofdstukken wordt hier niet getoond."
                                "")]])
