@@ -21,7 +21,6 @@
 (def course-page-handler
   (clout/handle routes/get-course-page
                 (fn [{:keys [read-model student redirect-urls user-role] {:keys [course-name]} :params :as req}]
-                  (log/warn [redirect-urls user-role])
                   (let [course-id (get-course-id read-model course-name)
                         body (apply str (course-frame course-id student (:login redirect-urls)
                                                       (when (= user-role :teacher)
