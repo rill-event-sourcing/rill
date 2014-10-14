@@ -128,7 +128,7 @@
                  [:div.field
                   [:label {:for id} (h %)]
                   (form/check-box {:id id} "class-names[]" (get class-names %) %)])
-              all-class-names)
+              (sort all-class-names))
          (field-errors (:class-names errors))
          [:div.actions
           [:button.primary {:type "submit"} "Update"]
