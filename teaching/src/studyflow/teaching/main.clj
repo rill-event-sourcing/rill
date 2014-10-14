@@ -13,7 +13,7 @@
                                      :event-store-config eventstore-url
                                      :session-store-url sessionstore-url
                                      :redirect-urls {:login login-url
-                                                     :learning learning-url
+                                                     :student learning-url
                                                      :teaching teaching-url}
                                      :cookie-domain cookie-domain})
                 component/start)]
