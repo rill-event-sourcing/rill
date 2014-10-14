@@ -65,7 +65,7 @@
                                   (str "/reports/" (:id class) "/" current-meijerink "/" report-name)
                                   (str "/reports/" (:id class) "/" report-name))}
               (:class-name class)]])
-          classes)]]])
+          (sort-by :class-name classes))]]])
 
 (defn drop-list-meijerink [class meijerink-criteria report-name selected-meijerink]
   [:div {:class "m-select-box" :id "dropdown-meijerink"}
