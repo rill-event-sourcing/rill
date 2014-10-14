@@ -80,7 +80,7 @@
               meijerink]])
           meijerink-criteria)]]])
 
-(defn layout [{:keys [title redirect-urls]} dropdown & body]
+(defn layout [{:keys [title redirect-urls]} dropdown selected-class-id & body]
   (html5
    [:head
     [:title (h (str/join " - " [title app-title]))]
@@ -101,14 +101,16 @@
       [:button {:type "submit" :id "logout-form"}])]
     [:nav#m-main-sidenav
      [:ul#main-container-nav
-      (map (fn [[url report-name label]]
+      (map (fn [[report-name label]]
              [:li.main-container-nav-list-item
               [:a.main-container-nav-tab
-               (if (= report-name *current-report-name*)
-                 {:class (str report-name " selected") :href url}
-                 {:class report-name :href url})
+               {:class (str report-name (when (= report-name *current-report-name*)
+                                          " selected"))
+                :href (if selected-class-id
+                        (str "/reports/" selected-class-id "/" report-name)
+                        (str "/reports/" report-name))}
                label]])
-           [["/reports/completion" "completion" "Overzicht"]
-            ["/reports/chapter-list" "chapter-list" "Hoofdstukken"]])]]
+           [["completion" "Overzicht"]
+            ["chapter-list" "Hoofdstukken"]])]]
     [:section#main_teaching body]
     [:footer]]))

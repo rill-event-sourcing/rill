@@ -19,6 +19,7 @@
                       "Overzicht")}
             options)
      (drop-list-classes classes scope report-name (:class-name class))
+     (:id class)
 
      [:h1#page-title "Klas Overzicht"]
      (when class

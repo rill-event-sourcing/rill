@@ -18,6 +18,7 @@
                       "Hoofdstukken")}
             options)
      (drop-list-classes classes nil "chapter-list" class-name)
+     (:id class)
 
      [:h1#page-title "Hoofdstukken"]
      (when class
