@@ -2,7 +2,6 @@
   (:require [clojure.tools.logging :as log]
             [studyflow.learning.read-model :as m]
             [studyflow.learning.course.events :as course-events]
-            [studyflow.learning.course.events :as events]
             [studyflow.learning.entry-quiz.events :as entry-quiz]
             [studyflow.learning.section-test.events :as section-test]
             [rill.event-channel :as event-channel]
@@ -65,6 +64,10 @@
 (defmethod handle-event ::section-test/Finished
   [model {:keys [student-id section-id]}]
   (m/update-student-section-status model section-id student-id :in-progress :finished))
+
+(defmethod handle-event :studyflow.school-administration.teacher.events/Created
+  [model {:keys [teacher-id full-name]}]
+  (m/set-student model teacher-id {:full-name full-name}))
 
 (defmethod handle-event :studyflow.school-administration.student.events/Created
   [model {:keys [student-id full-name]}]

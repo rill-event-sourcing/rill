@@ -38,7 +38,7 @@
                                                            (assoc learning-dev-system/dev-config :no-fixtures true)
                                                            learning-dev-system/dev-config)
                                                          (assoc :redirect-urls
-                                                           (select-keys redirect-urls [:login :learning]))))
+                                                           redirect-urls)))
                      (dissoc :event-store :session-store)
                      (namespace-system :learning [:event-store :session-store]))
 
@@ -54,8 +54,7 @@
                                   (namespace-system :school-administration [:event-store]))
 
         teaching (-> (teaching/prod-system {:port 4001
-                                            :redirect-urls {:login (:login redirect-urls)
-                                                            :teaching (:login redirect-urls)}
+                                            :redirect-urls redirect-urls
                                             :cookie-domain nil})
                      (dissoc :event-store :session-store)
                      (namespace-system :teaching [:event-store :session-store]))
