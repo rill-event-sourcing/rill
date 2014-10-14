@@ -92,14 +92,13 @@
    [:body
     [:header#m-top-header-teaching
      [:a#logo {:href "/reports/completion"}]
-     [:h1#header-title "Leraren"
-      [:a#learning {:href (:student redirect-urls)} "Naar studyflow rekenen"]]
+     [:h1#header-title "Leraren"]
      dropdown
-     (when redirect-urls
-       (form/form-to
-        {:role "form"} [:post (:login redirect-urls)]
-        [:input {:type "hidden" :name "_method" :value "DELETE"}]
-        [:button {:type "submit" :id "logout-form"}]))]
+     [:a#learning {:href (:student redirect-urls)} "Naar Studyflow Rekenen"]
+     (form/form-to
+      {:role "form"} [:post (:login redirect-urls)]
+      [:input {:type "hidden" :name "_method" :value "DELETE"}]
+      [:button {:type "submit" :id "logout-form"}])]
     [:nav#m-main-sidenav
      [:ul#main-container-nav
       (map (fn [[url report-name label]]
@@ -113,4 +112,3 @@
             ["/reports/chapter-list" "chapter-list" "Hoofdstukken"]])]]
     [:section#main_teaching body]
     [:footer]]))
-
