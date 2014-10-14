@@ -15,9 +15,12 @@
 (defn query-html-content [data pattern]
   (apply str (mapcat :content (query-html data pattern))))
 
+(def options {:redirect-urls {:learning "http://example.com"
+                   :login "http://example.com"}})
+
 (deftest render-completion
   (testing "without data"
-    (let [body (t/render-completion nil nil nil nil nil nil nil nil)]
+    (let [body (t/render-completion nil nil nil nil nil nil nil options)]
       (is (= "Overzicht - Studyflow"
              (query-html-content body [[:html] [:head] [:title]])))))
   (testing "with data"
@@ -35,7 +38,7 @@
                                     #{"A" "B"}
                                     #{"foo" "bar"}
                                     {:class-id "c", :meijerink "A"}
-                                    nil)]
+                                    options)]
       (is (= "Overzicht voor \"C1\" - Studyflow"
              (query-html-content body [[:html] [:head] [:title]])))
       (is (= "Fred Flintstone"
@@ -69,12 +72,13 @@
       (is (= 303 (:status resp)))
       (is (= "/reports/completion" (get-in resp [:headers "Location"])))))
   (testing "GET /reports/completion"
-    (let [resp (t/completion-routes (-> (request :get "/reports/completion")
-                          (assoc :read-model
-                            {:teachers {"t" {:classes #{{:department-id "d"
-                                                         :class-name "1"}
-                                                        {:department-id "d"
-                                                         :class-name "2"}}}}
-                             :students {}})))]
+    (let [resp (t/completion-routes (assoc (request :get "/reports/completion")
+                                      :read-model {:teachers {"t" {:classes #{{:department-id "d"
+                                                                               :class-name "1"}
+                                                                              {:department-id "d"
+                                                                               :class-name "2"}}}}
+                                                   :students {}}
+                                      :redirect-urls {:learning "http://example.com"
+                                                      :login "http://example.com"}))]
       (is (= 200 (:status resp)))
       (is (= "text/html; charset=utf-8" (get-in resp [:headers "Content-Type"]))))))
