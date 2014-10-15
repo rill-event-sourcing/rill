@@ -20,9 +20,7 @@
 
 (deftest render-completion
   (testing "without data"
-    (let [body (t/render-completion nil nil nil nil nil nil nil options)]
-      (is (= "Overzicht - Studyflow"
-             (query-html-content body [[:html] [:head] [:title]])))))
+    (let [body (t/render-completion nil nil nil nil nil nil nil options)]))
   (testing "with data"
     (let [class {:id "c"
                  :full-name "C1"
@@ -39,8 +37,6 @@
                                     #{"foo" "bar"}
                                     {:class-id "c", :meijerink "A"}
                                     options)]
-      (is (= "Overzicht voor \"C1\" - Studyflow"
-             (query-html-content body [[:html] [:head] [:title]])))
       (is (= "Fred Flintstone"
              (query-html-content body [[:table.students]
                                        [:tr.student#student-fred]
