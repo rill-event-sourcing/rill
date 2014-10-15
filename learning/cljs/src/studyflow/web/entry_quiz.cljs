@@ -179,7 +179,7 @@
            course-id (get-in cursor [:static :course-id])
            student-id (get-in cursor [:static :student :id])
            ;; TODO should come from entry-quiz material
-           nag-screen-text "<img src=\"https://s3-eu-west-1.amazonaws.com/studyflow-assets/images/cat-fly.gif\"><p>Maak een vliegende start en bepaal waar je begint<br> met de instaptoets:</p>
+           nag-screen-text "<img src=\"https://assets.studyflow.nl/learning/cat-fly.gif\"><p>Maak een vliegende start en bepaal waar je begint<br> met de instaptoets:</p>
                             <ul class=\"m-icon_row\"><li class=\"m-icon_row_item time\">Duurt ongeveer 30 minuten</li><li class=\"m-icon_row_item onlyonce\">Kun je maar <br>1 keer<br> doen</li><li class=\"m-icon_row_item stopgo\">Stoppen en later weer verder gaan</li></ul>"
            dismiss-modal (fn []
                            (om/update! cursor [:view :entry-quiz-modal] :dismissed)
