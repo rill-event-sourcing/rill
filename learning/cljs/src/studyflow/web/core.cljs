@@ -406,7 +406,6 @@
               vals
               (->>
                (map #(.getDOMNode %)))))))
-
 (defn focus-input-box [owner]
   ;; we always call this, even when there's no element called
   ;; "FOCUSED_INPUT". om/get-node can't handle that case
@@ -512,6 +511,13 @@
             answer-correct (when (contains? question :correct)
                              (:correct question))
             progress-modal (get-in cursor [:view :progress-modal])
+            complete-again-section-gif "https://assets.studyflow.nl/learning/184.gif"
+            stumbling-gif "https://assets.studyflow.nl/learning/187.gif"
+            finish-section-gif (rand-nth ["https://assets.studyflow.nl/learning/206.gif"
+                                          "https://assets.studyflow.nl/learning/haters.gif"
+                                          "https://assets.studyflow.nl/learning/helping-dogs.gif"
+                                          "https://assets.studyflow.nl/learning/sewing.gif"
+                                          "https://assets.studyflow.nl/learning/milk.gif"])
             explanation-link (-> (get-in cursor [:view :selected-path])
                                  (assoc :section-tab :explanation)
                                  history-link)
@@ -566,7 +572,7 @@
         (dom/div nil (condp = progress-modal
                        :show-finish-modal
                        (modal (dom/span nil
-                                        (raw-html "<h1>Yes! Je hebt 5 vragen achter elkaar goed!</h1><img src=\"https://s3-eu-west-1.amazonaws.com/studyflow-assets/images/206.gif\"><p>Deze paragraaf is nu klaar. Ga verder naar de volgende paragraaf (of blijf nog even oefenen).</p>"))
+                                        (raw-html (str "<h1>Yes! Je hebt 5 vragen achter elkaar goed!</h1><img src=\"" finish-section-gif "\"><p>Deze paragraaf is nu klaar. Ga verder naar de volgende paragraaf (of blijf nog even oefenen).</p>")))
                               (dom/button #js {:onClick (fn [e]
                                                           (submit))}
                                           "Volgende paragraaf")
@@ -585,7 +591,8 @@
                                      "Blijven oefenen"))
                        :show-stuck-modal
                        (modal (dom/span nil
-                                        (raw-html "<h1 class=\"stumbling_block\">Oeps! deze is moeilijk</h1><img src=\"https://s3-eu-west-1.amazonaws.com/studyflow-assets/images/187.gif\"><p>We raden je aan om de uitleg nog een keer te lezen.<br>Dan worden de vragen makkelijker!</p>"))
+                                          (raw-html (str "<h1 class=\"stumbling_block\">Oeps! deze is moeilijk</h1><img src=\"" stumbling-gif "\"><p>We raden je aan om de uitleg nog een keer te lezen.<br>Dan worden de vragen makkelijker!</p>"))
+)
                               (dom/button #js {:onClick
                                                (fn [e]
                                                  (om/update! cursor
@@ -597,7 +604,8 @@
 
                        :show-streak-completed-modal
                        (modal (dom/span nil
-                                        (raw-html "<h1>Hoppa! Weer goed!</h1><img src=\"https://s3-eu-west-1.amazonaws.com/studyflow-assets/images/184.gif\"><p>Je hebt deze paragraaf nog een keer voltooid.<br>We denken dat je hem nu wel snapt :).</p>"))
+                                        (raw-html (str "<h1>Hoppa! Weer goed!</h1><img src=\"" complete-again-section-gif "\"><p>Je hebt deze paragraaf nog een keer voltooid.<br>We denken dat je hem nu wel snapt :).</p>"))
+)
                               (dom/button #js {:onClick (fn [e]
                                                           (submit))}
                                           "Volgende paragraaf"))
