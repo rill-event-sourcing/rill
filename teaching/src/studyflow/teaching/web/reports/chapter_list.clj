@@ -9,15 +9,11 @@
 
 (defn render-chapter-list [class classes chapter-list params options]
   (let [selected-chapter-id (uuid (:chapter-id params))
-        selected-section-id (uuid (:section-id params))
-        class-name (:class-name class)
-        class-id (:class-id params)]
+        selected-section-id (uuid (:section-id params))]
     (layout
-     (merge {:title (if class
-                      (str "Hoofdstukken voor \"" class-name "\"")
-                      "Hoofdstukken")}
-            options)
-     (drop-list-classes classes nil "chapter-list" class-name)
+     options
+     (drop-list-classes classes nil "chapter-list" (:class-name class))
+     (:id class)
 
      [:h1#page-title "Hoofdstukken"]
      (when class
@@ -52,12 +48,16 @@
                 [:span.time-spent (time-spent-html (:time-spent student))]]))])]))))
 
 (defn chapter-list [read-model teacher redirect-urls params]
-  (let [chapter-id (uuid (:chapter-id params))
-        section-id (uuid (:section-id params))
-        classes (read-model/classes read-model teacher)
+  (let [classes (read-model/classes read-model teacher)
         class (some (fn [c] (when (= (:class-id params) (:id c)) c)) classes)
-        chapter-list (when class (read-model/chapter-list read-model class chapter-id section-id))
-        options {:redirect-urls redirect-urls}]
+        chapter-list (when class (read-model/chapter-list read-model
+                                                          class
+                                                          (uuid (:chapter-id params))
+                                                          (uuid (:section-id params))))
+        options {:redirect-urls redirect-urls
+                 :title (if class
+                          (str "Hoofdstukken voor \"" (:class-name class) "\"")
+                          "Hoofdstukken")}]
     (binding [*current-report-name* "chapter-list"]
       (render-chapter-list class classes chapter-list params options))))
 

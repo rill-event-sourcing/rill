@@ -9,16 +9,12 @@
             [ring.util.response :refer [redirect-after-post]]))
 
 (defn render-completion [class scope students classes meijerink-criteria domains params options]
-  (let [meijerink-criteria (sort meijerink-criteria)
-        domains (sort domains)
-        report-name "completion"
+  (let [report-name "completion"
         scope (if (str/blank? scope) nil scope)]
     (layout
-     (merge {:title (if class
-                      (str "Overzicht voor \"" (:full-name class) "\"")
-                      "Overzicht")}
-            options)
+     options
      (drop-list-classes classes scope report-name (:class-name class))
+     (:id class)
 
      [:h1#page-title "Klas Overzicht"]
      (when class
@@ -64,8 +60,8 @@
 (defn completion [read-model teacher redirect-urls params]
   (let [classes (read-model/classes read-model teacher)
         selected-meijerink (:meijerink params)
-        meijerink-criteria (read-model/meijerink-criteria read-model)
-        domains (read-model/domains read-model)
+        meijerink-criteria (sort (read-model/meijerink-criteria read-model))
+        domains (sort (read-model/domains read-model))
         class (some (fn [class]
                       (when (= (:class-id params) (:id class))
                         class)) classes)
@@ -78,7 +74,10 @@
                      (read-model/decorate-class-completion read-model students)
                      (read-model/decorate-class-time-spent read-model students))
                 class)
-        options {:redirect-urls redirect-urls}]
+        options {:redirect-urls redirect-urls
+                 :title (if class
+                          (str "Overzicht voor \"" (:class-name class) "\"")
+                          "Overzicht")}]
     (binding [*current-report-name* "completion"]
       (render-completion class selected-meijerink students classes meijerink-criteria domains params options))))
 
