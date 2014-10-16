@@ -3,10 +3,8 @@
    [studyflow.school-administration.department.events :as events]
    [studyflow.school-administration.school.events :as school]
    [studyflow.school-administration.department :as department]
-   [rill.temp-store :refer [with-temp-store execute messages= message= command-result=]]
+   [rill.temp-store :refer [execute command-result=]]
    [rill.uuid :refer [new-id]]
-   [rill.message :as message]
-   [rill.aggregate :refer [handle-event handle-command load-aggregate update-aggregate]]
    [clojure.test :refer [deftest testing is]]))
 
 (def school-id (new-id))
@@ -17,6 +15,7 @@
     (is (command-result= [:ok [(events/created department-id school-id "DEPARTMENT")]]
                          (execute (department/create! department-id school-id "DEPARTMENT" )
                                   [(school/created school-id "school" "123T")]))))
+
   (testing "changing name"
     (testing "with an empty name"
       (is (= :rejected
@@ -28,8 +27,7 @@
       (is (command-result= [:ok [(events/name-changed department-id "DEP")]]
                            (execute (department/change-name! department-id 0 "DEP")
                                     [(school/created school-id "school" "123T")
-                                     (events/created department-id school-id "DEPARTMENT")
-                                     ])))))
+                                     (events/created department-id school-id "DEPARTMENT")])))))
 
   (testing "changing sales data"
     (is (command-result= [:ok [(events/sales-data-changed department-id 123 "pilot")]]
