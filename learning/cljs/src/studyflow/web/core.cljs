@@ -406,7 +406,6 @@
               vals
               (->>
                (map #(.getDOMNode %)))))))
-
 (defn focus-input-box [owner]
   ;; we always call this, even when there's no element called
   ;; "FOCUSED_INPUT". om/get-node can't handle that case
@@ -512,6 +511,13 @@
             answer-correct (when (contains? question :correct)
                              (:correct question))
             progress-modal (get-in cursor [:view :progress-modal])
+            complete-again-section-gif "https://assets.studyflow.nl/learning/184.gif"
+            stumbling-gif "https://assets.studyflow.nl/learning/187.gif"
+            finish-section-gif (rand-nth ["https://assets.studyflow.nl/learning/206.gif"
+                                          "https://assets.studyflow.nl/learning/haters.gif"
+                                          "https://assets.studyflow.nl/learning/helping-dogs.gif"
+                                          "https://assets.studyflow.nl/learning/sewing.gif"
+                                          "https://assets.studyflow.nl/learning/milk.gif"])
             explanation-link (-> (get-in cursor [:view :selected-path])
                                  (assoc :section-tab :explanation)
                                  history-link)
@@ -563,10 +569,13 @@
                      (when-let [f (om/get-state owner :submit)]
                        (f)))
             revealed-answer (get question :worked-out-answer)]
+
         (dom/div nil (condp = progress-modal
                        :show-finish-modal
                        (modal (dom/span nil
-                                        (raw-html "<h1>Yes! Je hebt 5 vragen achter elkaar goed!</h1><img src=\"https://s3-eu-west-1.amazonaws.com/studyflow-assets/images/206.gif\"><p>Deze paragraaf is nu klaar. Ga verder naar de volgende paragraaf (of blijf nog even oefenen).</p>"))
+                                        (dom/h1 nil "Yes! Je hebt 5 vragen achter elkaar goed!")
+                                        (dom/img #js {:src finish-section-gif})
+                                        (dom/p nil "Deze paragraaf is nu klaar. Ga verder naar de volgende paragraaf (of blijf nog even oefenen)." ))
                               (dom/button #js {:onClick (fn [e]
                                                           (submit))}
                                           "Volgende paragraaf")
@@ -585,7 +594,10 @@
                                      "Blijven oefenen"))
                        :show-stuck-modal
                        (modal (dom/span nil
-                                        (raw-html "<h1 class=\"stumbling_block\">Oeps! deze is moeilijk</h1><img src=\"https://s3-eu-west-1.amazonaws.com/studyflow-assets/images/187.gif\"><p>We raden je aan om de uitleg nog een keer te lezen.<br>Dan worden de vragen makkelijker!</p>"))
+                                        (dom/h1 #js {:className "stumbling_block"} "Oeps! deze is moeilijk")
+                                        (dom/img #js {:src stumbling-gif})
+                                        (dom/p nil "We raden je aan om de uitleg nog een keer te lezen." (dom/br nil) "Dan worden de vragen makkelijker!"))
+
                               (dom/button #js {:onClick
                                                (fn [e]
                                                  (om/update! cursor
@@ -597,11 +609,14 @@
 
                        :show-streak-completed-modal
                        (modal (dom/span nil
-                                        (raw-html "<h1>Hoppa! Weer goed!</h1><img src=\"https://s3-eu-west-1.amazonaws.com/studyflow-assets/images/184.gif\"><p>Je hebt deze paragraaf nog een keer voltooid.<br>We denken dat je hem nu wel snapt :).</p>"))
+                                        (dom/h1 nil "Hoppa! Weer goed!")
+                                        (dom/img #js {:src complete-again-section-gif})
+                                        (dom/p nil "Je hebt deze paragraaf nog een keer voltooid.<br>We denken dat je hem nu wel snapt :)."))
                               (dom/button #js {:onClick (fn [e]
                                                           (submit))}
                                           "Volgende paragraaf"))
                        nil)
+
                  (dom/article #js {:id "m-section"}
                               (tag-tree-to-om (:tag-tree question-data) inputs)
                               (when revealed-answer
