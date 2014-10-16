@@ -14,7 +14,7 @@ publishing:
 	make -C publishing build
 
 uberjars: css js-prod rill
-	lein with-profile "login:learning:school-administration:teaching" uberjar
+	lein with-profile "login:learning:school-administration:teaching:reporting" uberjar
 
 build: publishing uberjars
 
@@ -28,9 +28,7 @@ upload: build
 	make -C publishing upload
 
 css:
-	make -C learning css
-	make -C login css
-	make -C teaching css
+	make -C sass css
 
 js-dev:
 	lein cljsbuild once

@@ -1,36 +1,36 @@
 (defproject studyflow/studyflow "0.1.0-SNAPSHOT"
-  :dependencies [[compojure/compojure "1.1.8"]
+  :dependencies [[cheshire/cheshire "5.3.1"]
+                 [clj-http/clj-http "0.9.1"]
+                 [clj-redis-session "2.1.0"]
+                 [clj-time/clj-time "0.8.0"]
+                 [clojurewerkz/elastisch "2.1.0-beta4"]
+                 [clout-link/clout-link "0.0.6" :exclusions [clout]]
+                 [com.mindscapehq/core "1.5.0"]
+                 [com.mindscapehq/raygun4java "1.5.0" :extension "pom"]
                  [com.stuartsierra/component "0.2.1"]
                  [com.taoensso/carmine "2.6.2"]
                  [crypto-password/crypto-password "0.1.3"]
+                 [digest/digest "1.4.4"]
+                 [dk.ative/docjure "1.6.0"]
+                 [enlive/enlive "1.1.5"]
                  [environ/environ "0.5.0"]
                  [hiccup/hiccup "1.0.5"]
                  [nl.studyflow/eduroute-api "0.0.3"]
+                 [org.bovinegenius/exploding-fish "0.3.4"]
                  [org.clojure/clojure "1.6.0"]
                  [org.clojure/core.async "0.1.338.0-5c5012-alpha"]
                  [org.clojure/data.json "0.2.5"]
                  [org.clojure/tools.logging "0.3.0"]
                  [org.slf4j/slf4j-log4j12 "1.7.5"]
-                 [rill/rill "0.1.0"]
-                 [ring/ring-defaults "0.1.0"]
-                 [ring.middleware.logger "0.5.0"]
-                 [digest/digest "1.4.4"]
-                 [clj-redis-session "2.1.0"]
-                 [clj-http/clj-http "0.9.1"]
-                 [cheshire/cheshire "5.3.1"]
-                 [enlive/enlive "1.1.5"]
                  [prismatic/schema "0.2.2"]
-                 [ring/ring-json "0.3.1"]
-                 [ring/ring-jetty-adapter "1.3.0"]
-                 [clout-link/clout-link "0.0.6"]
+                 [rill/rill "0.1.0"]
                  [ring-mock/ring-mock "0.1.5"]
+                 [ring.middleware.logger "0.5.0"]
+                 [ring/ring-defaults "0.1.0"]
                  [ring/ring-devel "1.2.1"]
-                 [com.mindscapehq/raygun4java "1.5.0" :extension "pom"]
-                 [com.mindscapehq/core "1.5.0"]
-                 [identifiers/identifiers "1.0.0"]
-                 [org.bovinegenius/exploding-fish "0.3.4"]
-                 [clj-time/clj-time "0.8.0"]
-                 [dk.ative/docjure "1.6.0"]]
+                 [ring/ring-jetty-adapter "1.3.0"]
+                 [ring/ring-json "0.3.1"]
+                 [compojure/compojure "1.1.8"]]
   :profiles {:uberjar               {:aot :all
                                      :omit-source true}
              :learning              {:main studyflow.main
@@ -41,10 +41,10 @@
                                      :uberjar-name "login-standalone.jar"}
              :teaching              {:main studyflow.teaching.main
                                      :uberjar-name "teaching-standalone.jar"}
-             :dev                   {:resource-paths ["super-system/dev/resources" "learning/dev/resources" "login/dev/resources" "school-administration/dev/resources" "teaching/dev/resources"]
-                                     :source-paths ["super-system/dev" "learning/dev" "login/dev"
-                                                    "super-system/src"
-                                                    "school-administration/dev" "teaching/dev"]
+             :reporting             {:main studyflow.reporting.main
+                                     :uberjar-name "reporting-standalone.jar"}
+             :dev                   {:resource-paths ["dev/resources"]
+                                     :source-paths ["dev"]
                                      :uberjar-name "dev.jar"
                                      :dependencies [[org.clojure/tools.trace "0.7.5"]
                                                     [org.clojure/tools.namespace "0.2.5"]
@@ -55,14 +55,14 @@
                                                     [cljs-uuid "0.0.4"]]
                                      :plugins [[lein-cljsbuild "1.0.4-SNAPSHOT"]
                                                [com.cemerick/clojurescript.test "0.3.0"]]}}
-  :cljsbuild {:builds {:dev {:source-paths ["learning/cljs/src"]
-                             :compiler {:output-to "learning/generated/learning/public/js/studyflow-dev.js"
-                                        :output-dir "learning/generated/learning/public/js/out"
-                                        :source-map "learning/generated/learning/public/js/studyflow-dev.sourcemap"
+  :cljsbuild {:builds {:dev {:source-paths ["cljs"]
+                             :compiler {:output-to "generated/learning/public/js/studyflow-dev.js"
+                                        :output-dir "generated/learning/public/js/out"
+                                        :source-map "generated/learning/public/js/studyflow-dev.sourcemap"
                                         :optimizations :whitespace}}
-                       :prod {:source-paths ["learning/cljs/src"]
+                       :prod {:source-paths ["cljs"]
                               :jar true
-                              :compiler {:output-to "learning/generated/learning/public/js/studyflow.js"
+                              :compiler {:output-to "generated/learning/public/js/studyflow.js"
                                          :optimizations :advanced
                                          :elide-asserts true
                                          :pretty-print false
@@ -73,15 +73,6 @@
                                          :preamble ["react/react.min.js"]
                                          :externs ["react/externs/react.js"]}}}}
 
-  :source-paths ["common/src"
-                 "school-administration/src"
-                 "teaching/src"
-                 "learning/src"
-                 "login/src"]
-  :resource-paths ["common/resources" "learning/resources" "login/resources" "school-administration/resources" "teaching/resources"
-                   "learning/generated" "login/generated" "school-administration/generated" "teaching/generated"]
-  :test-paths ["school-administration/test"
-               "learning/test"
-               "teaching/test"
-               "common/test"
-               "login/test"])
+  :source-paths ["src"]
+  :resource-paths ["resources" "generated"]
+  :test-paths ["test"])
