@@ -611,7 +611,7 @@
                        (modal (dom/span nil
                                         (dom/h1 nil "Hoppa! Weer goed!")
                                         (dom/img #js {:src complete-again-section-gif})
-                                        (dom/p nil "Je hebt deze paragraaf nog een keer voltooid.<br>We denken dat je hem nu wel snapt :)."))
+                                        (dom/p nil "Je hebt deze paragraaf nog een keer voltooid." (dom/br nil) "We denken dat je hem nu wel snapt :)."))
                               (dom/button #js {:onClick (fn [e]
                                                           (submit))}
                                           "Volgende paragraaf"))
