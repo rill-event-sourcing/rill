@@ -12,9 +12,14 @@
   %div.panel.panel-danger
     %div.panel-heading Parse errors
     %div.panel-body
-      %ul
+      %table.table.table-bordered
+        %tr
+          %th.danger is
+          %th.success moet zijn
         - @question.parse_errors.each do |p_error|
-          %li.text-danger= p_error
+          %tr
+            %td= p_error.first
+            %td= p_error.last
 
 - if @question.image_errors.any?
   %div.panel.panel-danger

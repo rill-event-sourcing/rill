@@ -7,11 +7,17 @@
   %div.panel.panel-danger
     %div.panel-heading Parse errors
     %div.panel-body
-      - @section.parse_errors.each do |subs, p_errors|
-        %p.text-danger= subs
-        %ul
+      %table.table.table-bordered
+        %tr
+          %th item
+          %th.danger is
+          %th.success moet zijn
+        - @section.parse_errors.each do |item_id, p_errors|
           - p_errors.each do |p_error|
-            %li.text-danger= p_error
+            %tr
+              %td= item_id
+              %td= p_error.first
+              %td= p_error.last
 
 - if @section.image_errors.any?
   %div.panel.panel-danger

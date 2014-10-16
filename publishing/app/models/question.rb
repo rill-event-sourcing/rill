@@ -10,9 +10,9 @@ class Question < ActiveRecord::Base
   has_many :inputs, as: :inputable
   has_many :line_inputs, as: :inputable
   has_many :multiple_choice_inputs, as: :inputable
+  has_many :choices, through: :multiple_choice_inputs
 
   default_scope { order(:position, :name, :text) }
-
 
   scope :active, -> { where(active: true) }
   scope :for_short_uuid, ->(id) { where(["SUBSTRING(CAST(id AS VARCHAR), 1, 8) = ?", id]) }
@@ -122,6 +122,22 @@ class Question < ActiveRecord::Base
 
   def increase_max_position
     max_inputs if increment!(:max_inputs)
+  end
+
+  def reference
+    "question '#{name}', in '#{parent}'"
+  end
+
+  def image_errors
+    errors = super
+    errors += choices.map(&:image_errors)
+    errors.flatten
+  end
+
+  def parse_errors
+    errors = super
+    choices.map{|chc| errors += chc.parse_errors}
+    errors
   end
 
 end

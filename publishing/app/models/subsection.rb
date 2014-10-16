@@ -51,4 +51,8 @@ class Subsection < ActiveRecord::Base
     errors
   end
 
+  def reference
+    "subsection of section '#{section.name}', in '#{section.parent}'"
+  end
+
 end

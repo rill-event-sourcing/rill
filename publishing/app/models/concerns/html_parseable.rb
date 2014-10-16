@@ -17,12 +17,15 @@ module HtmlParseable
     return value if respond_to?(:value)
   end
 
+  def fix_parsing_page
+    [
+     [/allowfullscreen/, "allowfullscreen=\"\""],
+     ["\r", ""]
+    ]
+  end
+
   def parse_page
-    "<!DOCTYPE html>
-<html><body>
-#{ html_value.gsub("allowfullscreen", "allowfullscreen=\"\"").gsub("\r", "") }
-</body></html>"
-    html_value.gsub("allowfullscreen", "allowfullscreen=\"\"").gsub("\r", "")
+    fix_parsing_page.inject(html_value){|val, repl| val = val.gsub(repl.first, repl.last) }
   end
 
   def validation_hash
@@ -52,7 +55,6 @@ module HtmlParseable
 
   def parse_errors
     parsed = Sanitize.fragment(parse_page, validation_hash)
-    logger.debug "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
     lines1 = parse_page.lines
     lines2 = parsed.lines
 
@@ -60,16 +62,12 @@ module HtmlParseable
     [lines1.length, lines2.length].max.times do |nr|
       line1 = lines1[nr].to_s.strip
       line2 = lines2[nr].to_s.strip
-      unless line1 == line2
-        logger.debug "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-        logger.debug "XXX#{ nr } => "
-        logger.debug "XXX#{ line1.inspect }"
-        logger.debug "XXX#{ line2.inspect }"
-      end
-      errors << "#{ line1 } bedoel je '#{ line2 }'?" unless line1 == line2
+      errors << [line1, line2] unless line1 == line2
     end
     errors
   end
+
+  #######################################################################################
 
   def html_images
     parsed_page = Nokogiri::HTML(parse_page)
@@ -82,7 +80,7 @@ module HtmlParseable
     html_images.each do |el|
       src = el["src"]
       if src
-        errors << "`#{ src }` is not a valid src for image" unless src =~ /^#{ asset_host }\//
+        errors << "`#{ src }` is not valid. src must be on #{asset_host}/" unless src =~ /^#{ asset_host }\//
       else
         errors << "no 'src' given for image"
       end

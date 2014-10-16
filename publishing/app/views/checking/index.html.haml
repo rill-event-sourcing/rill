@@ -1,0 +1,32 @@
+%div.panel.panel-danger
+  %div.panel-heading Parse errors (#{@parse_errors.length})
+  - if @parse_errors.any?
+    %div.panel-body
+      %table.table.table-bordered
+        %tr
+          %th item
+          %th.danger is
+          %th.success moet zijn
+          - @parse_errors.each do |item_id, p_errors|
+            - p_errors.each do |p_error|
+              %tr
+                %td= item_id
+                %td= p_error.first
+                %td= p_error.last
+  - else
+    %div.panel-body
+      %p no parse errors
+
+%div.panel.panel-danger
+  %div.panel-heading Image errors
+  - if @image_errors.any?
+    - @image_errors.each do |item_id, i_errors|
+      %div.panel-body
+        %p= item_id
+        - i_errors.each do |i_error|
+          %ul
+            %li.text-danger= i_error
+  - else
+    %div.panel-body
+      %p no image errors
+

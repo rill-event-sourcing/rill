@@ -26,6 +26,7 @@ autoResize = ->
     text = text.replace(/’/g, "'") # Alt + Shift + ] produces a closing single curly quote ( ’ )
     text = text.replace(/“/g, '"') # Alt + [ produces an opening double curly quote ( “ )
     text = text.replace(/”/g, '"') # Alt + Shift + [ produces a closing double curly quote ( ” )
+    text = text.replace(//g, '"')
     $(this).val text
 
 $ ->
