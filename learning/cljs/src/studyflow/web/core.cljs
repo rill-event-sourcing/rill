@@ -569,10 +569,13 @@
                      (when-let [f (om/get-state owner :submit)]
                        (f)))
             revealed-answer (get question :worked-out-answer)]
+
         (dom/div nil (condp = progress-modal
                        :show-finish-modal
                        (modal (dom/span nil
-                                        (raw-html (str "<h1>Yes! Je hebt 5 vragen achter elkaar goed!</h1><img src=\"" finish-section-gif "\"><p>Deze paragraaf is nu klaar. Ga verder naar de volgende paragraaf (of blijf nog even oefenen).</p>")))
+                                        (dom/h1 nil "Yes! Je hebt 5 vragen achter elkaar goed!")
+                                        (dom/img #js {:src finish-section-gif})
+                                        (dom/p nil "Deze paragraaf is nu klaar. Ga verder naar de volgende paragraaf (of blijf nog even oefenen)." ))
                               (dom/button #js {:onClick (fn [e]
                                                           (submit))}
                                           "Volgende paragraaf")
@@ -591,8 +594,10 @@
                                      "Blijven oefenen"))
                        :show-stuck-modal
                        (modal (dom/span nil
-                                          (raw-html (str "<h1 class=\"stumbling_block\">Oeps! deze is moeilijk</h1><img src=\"" stumbling-gif "\"><p>We raden je aan om de uitleg nog een keer te lezen.<br>Dan worden de vragen makkelijker!</p>"))
-)
+                                        (dom/h1 #js {:className "stumbling_block"} "Oeps! deze is moeilijk")
+                                        (dom/img #js {:src stumbling-gif})
+                                        (dom/p nil "We raden je aan om de uitleg nog een keer te lezen." (dom/br nil) "Dan worden de vragen makkelijker!"))
+
                               (dom/button #js {:onClick
                                                (fn [e]
                                                  (om/update! cursor
@@ -604,12 +609,14 @@
 
                        :show-streak-completed-modal
                        (modal (dom/span nil
-                                        (raw-html (str "<h1>Hoppa! Weer goed!</h1><img src=\"" complete-again-section-gif "\"><p>Je hebt deze paragraaf nog een keer voltooid.<br>We denken dat je hem nu wel snapt :).</p>"))
-)
+                                        (dom/h1 nil "Hoppa! Weer goed!")
+                                        (dom/img #js {:src complete-again-section-gif})
+                                        (dom/p nil "Je hebt deze paragraaf nog een keer voltooid.<br>We denken dat je hem nu wel snapt :)."))
                               (dom/button #js {:onClick (fn [e]
                                                           (submit))}
                                           "Volgende paragraaf"))
                        nil)
+
                  (dom/article #js {:id "m-section"}
                               (tag-tree-to-om (:tag-tree question-data) inputs)
                               (when revealed-answer
