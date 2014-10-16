@@ -1,0 +1,16 @@
+* Release Changelog 
+** NEXT-RELEASE
+*** New: attemted fix for "5 in a row" issue
+*** New: improved class navigation for teachers
+** release-2014-10-14.1
+*** New: view learning environment as a teacher
+*** New: teaching redesign v2
+** release-2014-10-10.1
+*** Fix: edu route login bug (4 students affected)
+*** New: dropdown redesign in teacher environment
+*** New: more logging of http requests
+*** Ops: improved configuration passing for deployment
+** release-2014-10-07.2
+*** New: student time tracking and reporting
+** release-2014-10-07.1
+*** 
