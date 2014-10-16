@@ -398,6 +398,15 @@
                              (when-let [suffix (:suffix li)]
                                (str " " suffix)))]))))))
 
+(defn some-input-in-question-selected [refs]
+  (let [active (.-activeElement js/document)]
+    (some #{active}
+          (-> (js->clj refs)
+              (dissoc "FOCUSED_INPUT")
+              vals
+              (->>
+               (map #(.getDOMNode %)))))))
+
 (defn focus-input-box [owner]
   ;; we always call this, even when there's no element called
   ;; "FOCUSED_INPUT". om/get-node can't handle that case
@@ -408,7 +417,8 @@
         (.focus button))
       (when-let [input-ref (aget refs "FOCUSED_INPUT")]
         (when-let [input-field (.getDOMNode input-ref)]
-          (when (= "" (.-value input-field))
+          (when (and (= "" (.-value input-field))
+                     (not (some-input-in-question-selected refs)))
             (.focus input-field)))))))
 
 (defn tool-box
@@ -501,7 +511,6 @@
                                  (into {}))
             answer-correct (when (contains? question :correct)
                              (:correct question))
-            finished-last-action (aggregates/finished-last-action section-test)
             progress-modal (get-in cursor [:view :progress-modal])
             explanation-link (-> (get-in cursor [:view :selected-path])
                                  (assoc :section-tab :explanation)
@@ -525,20 +534,18 @@
                                       course-id
                                       question-id
                                       current-answers]))
-                                  (when answer-correct
-                                    (when (and finished-last-action
-                                               (= progress-modal :launchable))
-                                      (let [notification-channel (om/get-shared owner :notification-channel)]
-                                        (async/put! notification-channel {:type "studyflow.web.ui/FinishedModal"})))
-                                    (when (or (not finished-last-action)
-                                              (or (not progress-modal)
-                                                  (= progress-modal :dismissed)))
-                                      (async/put! (om/get-shared owner :command-channel)
-                                                  ["section-test-commands/next-question"
-                                                   section-id
-                                                   student-id
-                                                   section-test-aggregate-version
-                                                   course-id])))
+                                  (let [progress-modal (get-in @cursor [:view :progress-modal])]
+                                    (when answer-correct
+                                      (if (= progress-modal :launchable)
+                                        (let [notification-channel (om/get-shared owner :notification-channel)]
+                                          (async/put! notification-channel {:type "studyflow.web.ui/FinishedModal"}))
+                                        ;; not= progress-modal :launchable
+                                        (async/put! (om/get-shared owner :command-channel)
+                                                    ["section-test-commands/next-question"
+                                                     section-id
+                                                     student-id
+                                                     section-test-aggregate-version
+                                                     course-id]))))
                                   (when (or (= progress-modal :show-finish-modal)
                                             (= progress-modal :show-streak-completed-modal))
                                     (do
@@ -547,7 +554,7 @@
                                                   (let [cursor @cursor]
                                                     (-> (get-in cursor [:view :selected-path])
                                                         (merge (get-in cursor [:view :course-material :forward-section-links
-                                                                                      {:chapter-id chapter-id :section-id section-id}])))))
+                                                                               {:chapter-id chapter-id :section-id section-id}])))))
                                       (om/update! cursor
                                                   [:view :progress-modal]
                                                   :dismissed)))
@@ -556,46 +563,45 @@
                      (when-let [f (om/get-state owner :submit)]
                        (f)))
             revealed-answer (get question :worked-out-answer)]
-        (dom/div nil (let [progress-modal (get-in cursor [:view :progress-modal])]
-                       (condp = progress-modal
-                         :show-finish-modal
-                         (modal (dom/span nil
-                                          (raw-html "<h1>Yes! Je hebt 5 vragen achter elkaar goed!</h1><img src=\"https://s3-eu-west-1.amazonaws.com/studyflow-assets/images/206.gif\"><p>Deze paragraaf is nu klaar. Ga verder naar de volgende paragraaf (of blijf nog even oefenen).</p>"))
-                                (dom/button #js {:onClick (fn [e]
-                                                            (submit))}
-                                            "Volgende paragraaf")
-                                (dom/a #js {:href ""
-                                            :onClick (fn [e]
-                                                       (om/update! cursor
-                                                                   [:view :progress-modal]
-                                                                   :dismissed)
-                                                       (async/put! (om/get-shared owner :command-channel)
-                                                                   ["section-test-commands/next-question"
-                                                                    section-id
-                                                                    student-id
-                                                                    section-test-aggregate-version
-                                                                    course-id])
-                                                       false)}
-                                       "Blijven oefenen"))
-                         :show-stuck-modal
-                         (modal (dom/span nil
-                                          (raw-html "<h1 class=\"stumbling_block\">Oeps! deze is moeilijk</h1><img src=\"https://s3-eu-west-1.amazonaws.com/studyflow-assets/images/187.gif\"><p>We raden je aan om de uitleg nog een keer te lezen.<br>Dan worden de vragen makkelijker!</p>"))
-                                (dom/button #js {:onClick
-                                                 (fn [e]
-                                                   (om/update! cursor
-                                                               [:view :progress-modal]
-                                                               :dismissed)
-                                                   (js/window.location.assign explanation-link))}
-                                            "Uitleg lezen")
-                                nil)
+        (dom/div nil (condp = progress-modal
+                       :show-finish-modal
+                       (modal (dom/span nil
+                                        (raw-html "<h1>Yes! Je hebt 5 vragen achter elkaar goed!</h1><img src=\"https://s3-eu-west-1.amazonaws.com/studyflow-assets/images/206.gif\"><p>Deze paragraaf is nu klaar. Ga verder naar de volgende paragraaf (of blijf nog even oefenen).</p>"))
+                              (dom/button #js {:onClick (fn [e]
+                                                          (submit))}
+                                          "Volgende paragraaf")
+                              (dom/a #js {:href ""
+                                          :onClick (fn [e]
+                                                     (om/update! cursor
+                                                                 [:view :progress-modal]
+                                                                 :dismissed)
+                                                     (async/put! (om/get-shared owner :command-channel)
+                                                                 ["section-test-commands/next-question"
+                                                                  section-id
+                                                                  student-id
+                                                                  section-test-aggregate-version
+                                                                  course-id])
+                                                     false)}
+                                     "Blijven oefenen"))
+                       :show-stuck-modal
+                       (modal (dom/span nil
+                                        (raw-html "<h1 class=\"stumbling_block\">Oeps! deze is moeilijk</h1><img src=\"https://s3-eu-west-1.amazonaws.com/studyflow-assets/images/187.gif\"><p>We raden je aan om de uitleg nog een keer te lezen.<br>Dan worden de vragen makkelijker!</p>"))
+                              (dom/button #js {:onClick
+                                               (fn [e]
+                                                 (om/update! cursor
+                                                             [:view :progress-modal]
+                                                             :dismissed)
+                                                 (js/window.location.assign explanation-link))}
+                                          "Uitleg lezen")
+                              nil)
 
-                         :show-streak-completed-modal
-                         (modal (dom/span nil
-                                          (raw-html "<h1>Hoppa! Weer goed!</h1><img src=\"https://s3-eu-west-1.amazonaws.com/studyflow-assets/images/184.gif\"><p>Je hebt deze paragraaf nog een keer voltooid.<br>We denken dat je hem nu wel snapt :).</p>"))
-                                (dom/button #js {:onClick (fn [e]
-                                                            (submit))}
-                                            "Volgende paragraaf"))
-                         nil))
+                       :show-streak-completed-modal
+                       (modal (dom/span nil
+                                        (raw-html "<h1>Hoppa! Weer goed!</h1><img src=\"https://s3-eu-west-1.amazonaws.com/studyflow-assets/images/184.gif\"><p>Je hebt deze paragraaf nog een keer voltooid.<br>We denken dat je hem nu wel snapt :).</p>"))
+                              (dom/button #js {:onClick (fn [e]
+                                                          (submit))}
+                                          "Volgende paragraaf"))
+                       nil)
                  (dom/article #js {:id "m-section"}
                               (tag-tree-to-om (:tag-tree question-data) inputs)
                               (when revealed-answer
@@ -604,19 +610,16 @@
                  (dom/div #js {:id "m-question_bar"}
                           (tool-box (:tools question-data))
                           (if answer-correct
-                            (if (and finished-last-action
-                                     (= progress-modal :launchable))
-                              (om/build (click-once-button "Goed! Voltooi paragraaf"
-                                                           (fn []
-                                                             (submit))) cursor)
-                              ;; this doesn't have the disabled handling
-                              ;; as all the click-once-buttons because
-                              ;; we need the ref for set-focus
-                              (dom/button #js {:className "btn blue pull-right"
-                                               :ref "FOCUSED_BUTTON"
-                                               :onClick
-                                               (fn []
-                                                 (submit))}
+                            ;; this doesn't have the disabled handling
+                            ;; as all the click-once-buttons because
+                            ;; we need the ref for set-focus
+                            (dom/button #js {:className "btn blue pull-right"
+                                             :ref "FOCUSED_BUTTON"
+                                             :onClick
+                                             (fn []
+                                               (submit))}
+                                        (if (= progress-modal :launchable)
+                                          "Goed! Voltooi paragraaf"
                                           "Goed! Volgende vraag"))
                             (om/build (click-once-button "Nakijken"
                                                          (fn []
