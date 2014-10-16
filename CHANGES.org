@@ -1,7 +1,8 @@
-* Release Changelog 
-** NEXT-RELEASE
+* Release Changelog
+** release-2014-10.16.1
 *** New: attemted fix for "5 in a row" issue
 *** New: improved class navigation for teachers
+*** New: more cat gifs
 ** release-2014-10-14.1
 *** New: view learning environment as a teacher
 *** New: teaching redesign v2
@@ -13,4 +14,21 @@
 ** release-2014-10-07.2
 *** New: student time tracking and reporting
 ** release-2014-10-07.1
-*** 
+*** Fix: login issues
+*** Fix: feedback on wrong answer in IE9
+** release-2014-10-01.1
+*** Ops: Deployment fix release
+** release-2014-09-30.2/1
+*** Ops: Improve (re)start code for deploying
+** release-2014-09-29.2
+*** Fix: chapterlist views for teacher
+*** Ops: Cache heating on startup
+*** Fix: excel export
+** release-2014-09.29.1
+*** Ops: exception reporting for background threads
+*** Fix: fix up <toev> tags in publishing
+** release-2014-09.23.1
+*** Ops: better exception reporting for JDBC errors
+** release-2014-09.18.1
+*** New: school-admin UX improvements
+*** New: iPad layout improvments
