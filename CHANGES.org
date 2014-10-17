@@ -1,6 +1,7 @@
 * Release Changelog
+** NEXT RELEASE:
 ** release-2014-10.16.1
-*** New: attemted fix for "5 in a row" issue
+*** New: attempted fix for "5 in a row" issue
 *** New: improved class navigation for teachers
 *** New: more cat gifs
 ** release-2014-10-14.1
