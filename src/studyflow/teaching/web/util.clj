@@ -2,6 +2,7 @@
   (:require [clojure.string :as str]
             [clojure.tools.logging :as log]
             [hiccup.core :refer [h]]
+            [ring.util.codec :refer [url-encode]]
             [hiccup.form :as form]
             [hiccup.page :refer [html5 include-css include-js]]))
 
@@ -62,8 +63,8 @@
             [:li.dropdown-list-item
              [:a.dropdown-link {:href
                                 (if current-meijerink
-                                  (str "/reports/" (:id class) "/" current-meijerink "/" report-name)
-                                  (str "/reports/" (:id class) "/" report-name))}
+                                  (str "/reports/" (url-encode (:id class)) "/" current-meijerink "/" report-name)
+                                  (str "/reports/" (url-encode (:id class)) "/" report-name))}
               (:class-name class)]])
           (sort-by :class-name classes))]]])
 
@@ -76,7 +77,7 @@
     [:ul
      (map (fn [meijerink]
             [:li.dropdown-list-item
-             [:a.dropdown-link {:href (str "/reports/" (:id class) "/" meijerink "/" report-name)}
+             [:a.dropdown-link {:href (str "/reports/" (url-encode (:id class)) "/" meijerink "/" report-name)}
               meijerink]])
           meijerink-criteria)]]])
 
@@ -107,7 +108,7 @@
                {:class (str report-name (when (= report-name *current-report-name*)
                                           " selected"))
                 :href (if selected-class-id
-                        (str "/reports/" selected-class-id "/" report-name)
+                        (str "/reports/" (url-encode selected-class-id) "/" report-name)
                         (str "/reports/" report-name))}
                label]])
            [["completion" "Overzicht"]

@@ -3,6 +3,7 @@
             [clojure.tools.logging :as log]
             [compojure.core :refer [GET defroutes]]
             [hiccup.core :refer [h]]
+            [ring.util.codec :refer [url-encode]]
             [studyflow.teaching.read-model :as read-model]
             [studyflow.teaching.web.reports.export :refer [render-export]]
             [studyflow.teaching.web.util :refer :all]
@@ -93,7 +94,7 @@
   (GET "/reports/:class-id/completion"
        {:keys [read-model teacher redirect-urls]
         params :params}
-       (redirect-after-post (str "/reports/" (:class-id params) "/1F-RT/completion")))
+       (redirect-after-post (str "/reports/" (url-encode (:class-id params)) "/1F-RT/completion")))
 
   (GET "/reports/:class-id/completion/export"
        {:keys [read-model teacher]
