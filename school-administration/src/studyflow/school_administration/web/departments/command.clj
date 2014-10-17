@@ -45,7 +45,9 @@
          {:keys [school-id department-id expected-version licenses-sold status] :as params} :params}
         (let [department-id (uuid department-id)
               version (Long/parseLong expected-version)
-              licenses-sold (Long/parseLong licenses-sold)]
+              licenses-sold (if (str/blank? licenses-sold)
+                              0
+                              (Long/parseLong licenses-sold))]
           (-> event-store
               (try-command (department/change-sales-data! department-id version licenses-sold status))
               (result->response (redirect-to-index school-id)

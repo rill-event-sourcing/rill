@@ -4,10 +4,8 @@
    [studyflow.school-administration.department.events :as department]
    [studyflow.school-administration.school.events :as school]
    [studyflow.school-administration.teacher :as teacher]
-   [rill.temp-store :refer [with-temp-store execute messages= message= command-result=]]
+   [rill.temp-store :refer [execute command-result=]]
    [rill.uuid :refer [new-id]]
-   [rill.message :as message]
-   [rill.aggregate :refer [handle-event handle-command load-aggregate update-aggregate]]
    [clojure.test :refer [deftest testing is]]))
 
 (def teacher-id (new-id))
