@@ -14,7 +14,7 @@
     (layout
      options
      (drop-list-classes classes nil "chapter-list" (:class-name class))
-     (:id class)
+     class
 
      [:h1#page-title "Hoofdstukken"]
      (when class
@@ -24,7 +24,7 @@
           (for [{chapter-title :title chapter-id :id :as chapter} (:chapters chapter-list)]
             [:li {:class (str "chapter" (when (= selected-chapter-id (str chapter-id)) " open"))}
              [:a.chapter-title
-              {:href (str "/reports/" (url-encode (:id class)) "/chapter-list/" chapter-id)}
+              {:href (chapter-list-url class chapter-id nil)}
               (h chapter-title)
               (completion-html (get-in chapter-list [:chapters-completion chapter-id]))]
 
@@ -33,7 +33,7 @@
                 (for [{section-title :title section-id :id :as section} (:sections chapter)]
                   [:li {:class (str "section" (when (= selected-section-id section-id) " selected"))}
                    [:a.section_link
-                    {:href (str "/reports/" (url-encode (:id class)) "/chapter-list/" chapter-id "/" section-id)}
+                    {:href (chapter-list-url class chapter-id section-id)}
                     (h section-title)]
 
                    (when-let [section-counts (get-in chapter-list [:sections-total-status chapter-id section-id])]
