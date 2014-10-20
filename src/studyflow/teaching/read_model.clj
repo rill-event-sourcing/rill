@@ -198,7 +198,7 @@
         chapter-with-sections (get-in chapters [chapter-id])]
     (assoc material
       :sections-total-status {chapter-id (sections-total-status model students chapter-with-sections section-id)}
-      :total-number-of-students (count (get-in model [:students]))
+      :total-number-of-students (count students)
       :chapters-with-finishing-data (chapters-with-finishing-data model students chapters remedial-chapter-ids)
       :chapters-completion (chapters-completion model chapters students))))
 
