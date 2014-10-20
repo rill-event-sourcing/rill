@@ -28,8 +28,11 @@
               (h chapter-title)]
 
              [:div.chapter_status
-              [:span {:class "stuck"} (get-in chapter-list [:chapters-completion chapter-id :stuck])]
-              [:span {:class "warning_sign"} "&#9888;"]
+              (let [total-students-stuck-in-chapter (get-in chapter-list [:chapters-completion chapter-id :stuck])]
+                (when-not (= 0 total-students-stuck-in-chapter)
+                  [:div
+                   [:span {:class "stuck"} (str total-students-stuck-in-chapter)]
+                   [:span {:class "warning_sign"} "&#9888;"]]))
               (let [students-with-all-section-finished (get-in chapter-list [:chapters-with-finishing-data chapter-id] 0)
                     total-students (get-in chapter-list [:total-number-of-students])]
                 [:div {:class "progress"}
@@ -49,8 +52,11 @@
 
                    (when-let [section-counts (get-in chapter-list [:sections-total-status chapter-id section-id])]
                      [:div.section_status
-                      [:span {:class "stuck"} (get section-counts :stuck 0)]
-                      [:span {:class "warning_sign"} "&#9888;"]
+                      (let [students-stuck-in-section (get section-counts :stuck)]
+                        (when students-stuck-in-section
+                          [:div
+                           [:span {:class "stuck"} students-stuck-in-section]
+                           [:span {:class "warning_sign"} "&#9888;"]]))
                       (let [finished-students (get section-counts :finished 0)
                             total-students (reduce + 0 (map
                                                         (fn [status] (get section-counts status 0))
