@@ -1,5 +1,6 @@
 (ns rill.event-store.psql
-  (:require [rill.event-store :refer [EventStore]]
+  (:require [clojure.core.async :refer [thread <!! >!! chan close!]]
+            [rill.event-store :refer [EventStore]]
             [rill.event-stream :refer [all-events-stream-id]]
             [clojure.java.jdbc :as sql]
             [rill.message :as message]
@@ -38,20 +39,74 @@
   [sql-exception]
   (= (.getSQLState sql-exception) "23505"))
 
+(defn catch-up-events [spec]
+  (log/info "Catch-up-events")
+  (let [page-size 100 ;; arbitrary
+        in (chan 3)
+        out (chan 3)]
+    ;; db thread
+    (thread
+      (log/info "[db] Check which insert_order the database is at (and count events)")
+      (let [{watermark :max_insert_order
+             row-count :row_count} (first (sql/query spec ["SELECT MAX(insert_order) as max_insert_order, COUNT(*) as row_count FROM rill_events"]))]
+        (log/info "[db] Event-store max :insert_order " watermark " and row-count: " row-count)
+        (loop [cursor -1]
+          (let [rows (sql/query spec ["SELECT payload, stream_order, insert_order FROM rill_events WHERE insert_order > ? ORDER BY insert_order ASC LIMIT ?"
+                                      cursor page-size]
+                                :result-set-fn vec)
+                highest-insert-order (:insert_order (peek rows))]
+            (>!! in rows)
+            (log/info "[db] Passed along upto :insert_order" highest-insert-order " cursor: " cursor)
+            (if (< (count rows) page-size)
+              (log/info "[db] Got a batch with less than page-size events, done with reading db [watermark old-cursor highest-insert-order]" [watermark cursor highest-insert-order])
+              (recur highest-insert-order))))
+        (log/info "[db] Caught up now, double check the watermarks")
+        (let [new-watermark (:max_insert_order (first (sql/query spec ["SELECT MAX(insert_order) as max_insert_order FROM rill_events"])))]
+          (log/info "[db] new watermark: " new-watermark " number of events since starting catch-up: " (- new-watermark watermark))))
+      (log/info "[db] Finished catching up from db")
+      (close! in))
+
+    ;; deserializer thread
+    (thread
+      (log/info "[deserializer] Starting deserializer")
+      (loop []
+        (when-let [rows (<!! in)]
+          (log/info "[deserializer] Deserializing from " (:insert_order (first rows)) " upto " (:insert_order (peek rows)))
+          (let [transformed (mapv record->message rows)]
+            (>!! out transformed))
+          (recur)))
+      (close! out)
+      (log/info "[deserializer] Stopped deserializer"))
+
+    ;; lazy-seq
+    (let [out-seq (fn out-seq []
+                    (if-let [events (<!! out)]
+                      (concat events (lazy-seq (out-seq)))
+                      (do (log/info "[lazy-seq] Ending lazy-seq from catch-up events")
+                          nil)))]
+      (log/info "[lazy-seq] Delivering to lazy-seq")
+      (out-seq))
+    ))
+
 (defrecord PsqlEventStore [spec page-size]
   EventStore
   (retrieve-events-since [this stream-id cursor wait-for-seconds]
-    (let [cursor (if (number? cursor)
-                   cursor
-                   (or (message/number cursor)
-                       (throw (ex-info (str "Not a valid cursor: " cursor) {:cursor cursor}))))]
-      (or (messages cursor page-size
-                    (if (= stream-id all-events-stream-id)
-                      (select-all-fn spec)
-                      (select-stream-fn spec stream-id)))
-          (do (when (< 0 wait-for-seconds)
-                (Thread/sleep 200))
-              []))))
+    (if (and (= stream-id all-events-stream-id)
+             (= cursor -1))
+      ;; catching up case
+      (catch-up-events spec)
+      ;; listening after catching up and aggregate case
+      (let [cursor (if (number? cursor)
+                     cursor
+                     (or (message/number cursor)
+                         (throw (ex-info (str "Not a valid cursor: " cursor) {:cursor cursor}))))]
+        (or (messages cursor page-size
+                      (if (= stream-id all-events-stream-id)
+                        (select-all-fn spec)
+                        (select-stream-fn spec stream-id)))
+            (do (when (< 0 wait-for-seconds)
+                  (Thread/sleep 200))
+                [])))))
 
   (append-events [this stream-id from-version events]
     (if (= from-version -2) ;; generate our own stream_order
