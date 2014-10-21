@@ -20,7 +20,8 @@ module HtmlParseable
   def fix_parsing_page
     [
      [/allowfullscreen/, "allowfullscreen=\"\""],
-     ["\r", ""]
+     ["\r", ""],
+     [/<math\b[^>]*>(.*?)<\/math>/, "<math></math>"]
     ]
   end
 
