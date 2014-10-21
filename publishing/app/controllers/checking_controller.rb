@@ -1,5 +1,7 @@
 class CheckingController < ApplicationController
 
+  before_action :set_breadcrumb
+
   def index
     @parse_errors = {}
     @image_errors = {}
@@ -26,5 +28,9 @@ class CheckingController < ApplicationController
         end
       end
     end
+  end
+
+  def set_breadcrumb
+    @crumbs = [{name: Course.current.name, url: root_path}] if Course.current
   end
 end
