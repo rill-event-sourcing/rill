@@ -33,7 +33,7 @@
                        :login (str "http://" root ":4000")
                        :teacher (str "http://" root ":4001")}
         cookie-domain (if (= root "localhost")
-                        nil
+                        false
                         root)
         learning (-> (learning-dev-system/dev-system (-> (if (:psql config)
                                                            (assoc learning-dev-system/dev-config :no-fixtures true)
