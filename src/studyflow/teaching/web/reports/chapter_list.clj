@@ -33,14 +33,10 @@
                   [:div
                    [:span {:class "stuck"} (str total-students-stuck-in-chapter)]
                    [:span {:class "warning_sign"} "&#9888;"]]))
-              (let [students-with-all-section-finished (get-in chapter-list [:chapters-with-finishing-data chapter-id] 0)
+              (let [students-who-completed-this-chapter (get-in chapter-list [:chapters-with-finishing-data chapter-id] 0)
                     total-students (get-in chapter-list [:total-number-of-students])]
-                [:div {:class "progress"}
-                 [:div {:class "progress_bar"
-                        :style (str "width:"
-                                    (Math/round (float (/ (* 100 students-with-all-section-finished) total-students)))
-                                    "%;")}
-                  [:span (str students-with-all-section-finished "/" total-students)]]])]
+                [:span (str (Math/round (float (/ (* 100 students-who-completed-this-chapter) total-students)))
+                            "%")])]
 
              (when (= selected-chapter-id chapter-id)
                [:ol.section-list

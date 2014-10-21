@@ -160,11 +160,9 @@
   (into {}
         (mapv (fn [chapter]
                 [(key chapter)
-                 (count (union
-                         (if (contains? remedial-chapter-ids (key chapter))
-                           (set (students-who-passed-entry-quiz model students))
-                           #{})
-                         (students-who-finished-all-sections-in-this-chapter model students chapter)))])
+                 (if (contains? remedial-chapter-ids (key chapter))
+                   (count (set (students-who-passed-entry-quiz model students)))
+                   0)])
               chapters)))
 
 (defn students-status-and-time-spent-for-section [model students section]
