@@ -64,12 +64,11 @@
 (defn completion-url [class meijerink]
   (if class
     (if meijerink
-      (str "/reports/" (url-encode (:id class)) "/" meijerink "/completion")
+      (str "/reports/" (url-encode (:id class)) "/" (url-encode meijerink) "/completion")
       (str "/reports/" (url-encode (:id class)) "/completion"))
     "/reports/completion"))
 
 (defn build-url [& {:keys [report-name class meijerink chapter-id section-id]}]
-  ;;(clojure.pprint/pprint [:report-name report-name :class class :meijerink meijerink :chapter-id chapter-id :section-id section-id])
   (condp = report-name
     "chapter-list" (chapter-list-url class chapter-id section-id)
     "completion" (completion-url class meijerink)))
