@@ -1,22 +1,21 @@
 %div.panel.panel-danger
   %div.panel-heading Parse errors (#{@parse_errors.length})
   - if @parse_errors.any?
-    %div.panel-body
-      %table.table.table-bordered
-        %tr
-          %th #
-          %th item
-          %th.danger current
-          %th.success suggestion
-          - index = 1
-          - @parse_errors.each do |item_id, p_errors|
-            - p_errors.each do |p_error|
-              %tr
-                %td= index
-                %td= item_id
-                %td= p_error.first
-                %td= p_error.last
-                - index += 1
+    %table.table.table-bordered
+      %tr
+        %th #
+        %th item
+        %th.danger current
+        %th.success suggestion
+        - index = 1
+        - @parse_errors.each do |item_id, p_errors|
+          - p_errors.each do |p_error|
+            %tr
+              %td= index
+              %td= item_id
+              %td= p_error.first
+              %td= p_error.last
+              - index += 1
   - else
     %div.panel-body
       %p no parse errors
@@ -28,7 +27,7 @@
       %div.panel-body
         %p= item_id
         - i_errors.each do |i_error|
-          %ul
+          %ol
             %li.text-danger= i_error
   - else
     %div.panel-body

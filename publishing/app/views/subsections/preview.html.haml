@@ -6,18 +6,22 @@
 - if @section.parse_errors.any?
   %div.panel.panel-danger
     %div.panel-heading Parse errors
-    %div.panel-body
-      %table.table.table-bordered
-        %tr
-          %th item
-          %th.danger is
-          %th.success moet zijn
-        - @section.parse_errors.each do |item_id, p_errors|
-          - p_errors.each do |p_error|
-            %tr
-              %td= item_id
-              %td= p_error.first
-              %td= p_error.last
+    %table.table.table-bordered
+      %tr
+        %th #
+        %th item
+        %th.danger current
+        %th.success suggestion
+      - index = 1
+      - @section.parse_errors.each do |item_id, p_errors|
+        - p_errors.each do |p_error|
+          %tr
+            %td= index
+            %td= item_id
+            %td= p_error.first
+            %td= p_error.last
+            - index += 1
+
 
 - if @section.image_errors.any?
   %div.panel.panel-danger

@@ -11,15 +11,18 @@
 - if @question.parse_errors.any?
   %div.panel.panel-danger
     %div.panel-heading Parse errors
-    %div.panel-body
-      %table.table.table-bordered
+    %table.table.table-bordered
+      %tr
+        %th #
+        %th.danger current
+        %th.success suggestion
+      - index = 1
+      - @question.parse_errors.each do |p_error|
         %tr
-          %th.danger is
-          %th.success moet zijn
-        - @question.parse_errors.each do |p_error|
-          %tr
-            %td= p_error.first
-            %td= p_error.last
+          %td= index
+          %td= p_error.first
+          %td= p_error.last
+          - index += 1
 
 - if @question.image_errors.any?
   %div.panel.panel-danger
