@@ -10,3 +10,4 @@ learning/resources/public/js/studyflow-dev.js
 learning/resources/public/js/studyflow.js
 .sass-cache
 target/
+generated
