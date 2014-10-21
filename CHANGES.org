@@ -1,33 +1,36 @@
 * Release Changelog
 ** NEXT RELEASE:
+*** Fix: Fixed a problem where teacher with a "/" in the class name would not see any report
+*** Fix: Updating the sales status of a school without entering specifiying the number of licenses sets them to 0.
 ** release-2014-10.16.1
-*** New: attempted fix for "5 in a row" issue
-*** New: improved class navigation for teachers
-*** New: more cat gifs
+*** New: Attempt at fixing the modal not always showing when 5 questions in a row are answered correctly
+*** New: Improved class navigation for teachers (classes sorted by name + class selection persists when changing report)
+*** New: Moar cat gifs!!!1!!1!
 ** release-2014-10-14.1
-*** New: view learning environment as a teacher
-*** New: teaching redesign v2
+*** New: Teachers can see the learning environment as if they were a student
+*** New: Redesign of the teaching dashboard: more functional, way cooler
 ** release-2014-10-10.1
-*** Fix: edu route login bug (4 students affected)
-*** New: dropdown redesign in teacher environment
-*** New: more logging of http requests
-*** Ops: improved configuration passing for deployment
+*** Fix: Fixed the bug in which 4 students were not able to access our site from edu route
+*** Fix: Clearer explanation of the completion report with a note explaining which Meijerink are included
+*** New: Improved teaching dashboard navigation by changing the dropdown and making nice URLs
+*** New: Logging of all traffic to our applications
+*** Ops: Passing of configuration parameters much easier for deployment
 ** release-2014-10-07.2
-*** New: student time tracking and reporting
+*** New: Teacher can see how much time students spend reading our explanations and answering questions
 ** release-2014-10-07.1
 *** Fix: login issues
-*** Fix: feedback on wrong answer in IE9
+*** Fix: Answering incorrectly a question with IE9 gives feedback!
 ** release-2014-10-01.1
-*** Ops: Deployment fix release
+*** Ops: Parallel deployment re-enabled, deployment time significatively
 ** release-2014-09-30.2/1
-*** Ops: Improve (re)start code for deploying
+*** Fix: Removal of <toev> HTML tags from the course material
+*** Ops: During deployment, servers correctly report when they are ready to start working
 ** release-2014-09-29.2
-*** Fix: chapterlist views for teacher
+*** Ops: Exception reporting for background threads
 *** Ops: Cache heating on startup
-*** Fix: excel export
+*** New: Teacher can now export the progress of their classes to Excel
 ** release-2014-09.29.1
-*** Ops: exception reporting for background threads
-*** Fix: fix up <toev> tags in publishing
+*** Fix: Data from imported student is correctly displayed in the "Chapter List" report
 ** release-2014-09.23.1
 *** Ops: better exception reporting for JDBC errors
 ** release-2014-09.18.1
