@@ -20,7 +20,7 @@ end
 
 
 def render_latex_for_editing(text)
-  regexp = /<math>(.*?)<\/math>/m
+  regexp = /<math>(.*?)<\/math>/m,
   matches = text.scan(regexp)
   new_text = text
   matches.each do |array_of_matches|
