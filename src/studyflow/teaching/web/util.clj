@@ -2,6 +2,7 @@
   (:require [clojure.string :as str]
             [clojure.tools.logging :as log]
             [hiccup.core :refer [h]]
+            [ring.util.codec :refer [url-encode]]
             [hiccup.form :as form]
             [hiccup.page :refer [html5 include-css include-js]]))
 
@@ -51,6 +52,28 @@
 
 (def ^:dynamic *current-report-name* nil)
 
+(defn chapter-list-url [class chapter-id section-id]
+  (if class
+    (if chapter-id
+      (if section-id
+        (str "/reports/" (url-encode (:id class)) "/chapter-list/" chapter-id "/" section-id)
+        (str "/reports/" (url-encode (:id class)) "/chapter-list/" chapter-id))
+      (str "/reports/" (url-encode (:id class)) "/chapter-list"))
+    "/reports/chapter-list"))
+
+(defn completion-url [class meijerink]
+  (if class
+    (if meijerink
+      (str "/reports/" (url-encode (:id class)) "/" meijerink "/completion")
+      (str "/reports/" (url-encode (:id class)) "/completion"))
+    "/reports/completion"))
+
+(defn build-url [& {:keys [report-name class meijerink chapter-id section-id]}]
+  ;;(clojure.pprint/pprint [:report-name report-name :class class :meijerink meijerink :chapter-id chapter-id :section-id section-id])
+  (condp = report-name
+    "chapter-list" (chapter-list-url class chapter-id section-id)
+    "completion" (completion-url class meijerink)))
+
 (defn drop-list-classes [classes current-meijerink report-name selected-class-name]
   [:div {:class "m-select-box class-select" :id "dropdown-classes"}
    [:span (if selected-class-name
@@ -60,10 +83,7 @@
     [:ul
      (map (fn [class]
             [:li.dropdown-list-item
-             [:a.dropdown-link {:href
-                                (if current-meijerink
-                                  (str "/reports/" (:id class) "/" current-meijerink "/" report-name)
-                                  (str "/reports/" (:id class) "/" report-name))}
+             [:a.dropdown-link {:href (build-url :report-name report-name :class class :meijerink current-meijerink)}
               (:class-name class)]])
           (sort-by :class-name classes))]]])
 
@@ -76,11 +96,11 @@
     [:ul
      (map (fn [meijerink]
             [:li.dropdown-list-item
-             [:a.dropdown-link {:href (str "/reports/" (:id class) "/" meijerink "/" report-name)}
+             [:a.dropdown-link {:href (build-url :report-name report-name :class class :meijerink meijerink)}
               meijerink]])
           meijerink-criteria)]]])
 
-(defn layout [{:keys [title redirect-urls]} dropdown selected-class-id & body]
+(defn layout [{:keys [title redirect-urls]} dropdown class & body]
   (html5
    [:head
     [:title (h (str/join " - " [title app-title]))]
@@ -106,9 +126,7 @@
               [:a.main-container-nav-tab
                {:class (str report-name (when (= report-name *current-report-name*)
                                           " selected"))
-                :href (if selected-class-id
-                        (str "/reports/" selected-class-id "/" report-name)
-                        (str "/reports/" report-name))}
+                :href (build-url :report-name report-name :class class)}
                label]])
            [["completion" "Overzicht"]
             ["chapter-list" "Hoofdstukken"]])]]
