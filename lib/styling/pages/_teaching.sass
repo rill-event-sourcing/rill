@@ -244,9 +244,10 @@ textarea.tab-delimited-data
 
 .chapter
   border-bottom: 1px solid #ccc
+  position: relative
 
 .chapter-title
-  padding: 15px 20px
+  padding: 20px 140px 20px 20px
   display: block
   color: #333
   font-weight: 600
@@ -271,31 +272,67 @@ textarea.tab-delimited-data
   line-height: 28px
 
 .section_status
-  padding: 15px 20px
+  padding: 20px 20px
   position: absolute
   right: 0
   top: -6px
+  width: 100px
+
+.chapter_status
+  padding: 20px 20px
+  position: absolute
+  right: 0
+  top: 0
+  width: 100px
 
 #m-teacher_chapter_list
   display: block
   margin-top: 20px
   width: 900px
 
-  .stuck, .in-progress, .unstarted, .finished
-    line-height: 30px
-    padding: 0 10px
+  .stuck, .warning_sign
+    float: left
+    color: darkred
     display: inline-block
 
-  .stuck
-    background: #faa
-    +border-left-radius(4px)
-  .in-progress
-    background: #ff8
-  .unstarted
-    background: #ccc
-  .finished
-    background: #8f8
-    +border-right-radius(4px)
+  .warning_sign
+    font-size: 20pt
+    padding: 2px 10px
+
+  .section_status
+    .stuck
+      line-height: 30px
+    .progress
+      background-color: #f5f5f5
+
+  .chapter_status
+    .warning_sign
+      margin-top: -6px
+    .progress
+      background-color: white
+
+
+  .progress
+    height: 30px
+    line-height: 30px
+    margin-bottom: 20px
+    overflow: hidden
+    border: 1px solid #DDD
+
+    +border-radius(4px !important)
+    position: relative
+
+  .progress_bar
+    float: left
+    height: 100%
+    text-align: center
+    background-color: #72c43b
+    span
+      letter-spacing: 1px
+      position: absolute
+      display: block
+      width: 100%
+      color: black
 
 .teacher_chapter_list_main
   display: inline-block
@@ -304,6 +341,7 @@ textarea.tab-delimited-data
   width: 475px
   .student
     display: block !important
+    padding: 0 10px
     +border-radius(0 !important)
     background: white !important
     border: 1px solid #ccc

@@ -2,7 +2,7 @@
   (:require [clj-time.core :as t]
             [clj-time.coerce :as time-coerce]
             [clojure.tools.logging :as log]
-            [clojure.set :refer [intersection]]
+            [clojure.set :refer [intersection union]]
             [clojure.string :as str]
             [rill.message :as message]))
 
@@ -122,29 +122,50 @@
                   :school-id school-id
                   :school-name (:name school)})))))
 
-(defn students-who-finished-this-section [model students section]
+(defn students-who-passed-entry-quiz [model students]
   (filter
    (fn [student]
-     (= (get-in model [:students (:id student) :section-status (:id section)]) :finished))
+     (get-in model [:students (:id student) :course-entry-quiz-passed]))
    students))
 
-(defn total-number-of-finished-sections [model students sections]
+(defn students-with-this-section-status [model students section status]
+  (filter
+   (fn [student]
+     (= (get-in model [:students (:id student) :section-status (:id section)]) status))
+   students))
+
+(defn total-number-of-sections-with-status [model students sections status]
   (reduce +
           0
           (map (fn [section]
-                 (count (students-who-finished-this-section model students section)))
+                 (count (students-with-this-section-status model students section status)))
                sections)))
+
+(defn students-who-finished-all-sections-in-this-chapter [model students chapter]
+  (apply intersection (map (fn [section]
+                             (set (students-with-this-section-status model students section :finished)))
+                           (val chapter))))
 
 (defn chapter-completion [model students sections]
   {:total (* (count sections) (count students))
-   :finished (total-number-of-finished-sections model students sections)})
+   :stuck (total-number-of-sections-with-status model students sections :stuck)
+   :finished (total-number-of-sections-with-status model students sections :finished)})
 
 (defn chapters-completion [model chapter-sections students]
   (zipmap (keys chapter-sections)
           (map (fn [sections] (chapter-completion model students sections))
                (vals chapter-sections))))
 
-(defn students-status-for-section [model students section]
+(defn chapters-with-finishing-data [model students chapters remedial-chapter-ids]
+  (into {}
+        (mapv (fn [chapter]
+                [(key chapter)
+                 (if (contains? remedial-chapter-ids (key chapter))
+                   (count (set (students-who-passed-entry-quiz model students)))
+                   0)])
+              chapters)))
+
+(defn students-status-and-time-spent-for-section [model students section]
   (->> students
        (map
         (fn [student]
@@ -158,22 +179,25 @@
 (defn sections-total-status [model students chapter-with-sections selected-section-id]
   (into {}
         (for [section chapter-with-sections]
-          (let [students-status (students-status-for-section model students section)]
+          (let [students-status-and-time-spent (students-status-and-time-spent-for-section model students section)]
             [(:id section)
              (-> section
-                 (merge (zipmap (keys students-status)
-                                (map count (vals students-status))))
+                 (merge (zipmap (keys students-status-and-time-spent)
+                                (map count (vals students-status-and-time-spent))))
                  (cond->
                   (= selected-section-id (:id section))
-                  (assoc :student-list students-status)))]))))
+                  (assoc :student-list students-status-and-time-spent)))]))))
 
 (defn chapter-list [model class chapter-id section-id]
   (let [material (val (first (:courses model)))
+        remedial-chapter-ids (set (map :id (filter :remedial (:chapters material))))
         students (students-for-class model class)
         chapters (get material :chapter-sections)
         chapter-with-sections (get-in chapters [chapter-id])]
     (assoc material
       :sections-total-status {chapter-id (sections-total-status model students chapter-with-sections section-id)}
+      :total-number-of-students (count students)
+      :chapters-with-finishing-data (chapters-with-finishing-data model students chapters remedial-chapter-ids)
       :chapters-completion (chapters-completion model chapters students))))
 
 (defn get-teacher

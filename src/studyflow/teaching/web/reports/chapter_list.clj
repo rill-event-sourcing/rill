@@ -25,8 +25,18 @@
             [:li {:class (str "chapter" (when (= selected-chapter-id (str chapter-id)) " open"))}
              [:a.chapter-title
               {:href (chapter-list-url class chapter-id nil)}
-              (h chapter-title)
-              (completion-html (get-in chapter-list [:chapters-completion chapter-id]))]
+              (h chapter-title)]
+
+             [:div.chapter_status
+              (let [total-students-stuck-in-chapter (get-in chapter-list [:chapters-completion chapter-id :stuck])]
+                (when-not (= 0 total-students-stuck-in-chapter)
+                  [:div
+                   [:span {:class "stuck"} (str total-students-stuck-in-chapter)]
+                   [:span {:class "warning_sign"} "&#9888;"]]))
+              (let [students-who-completed-this-chapter (get-in chapter-list [:chapters-with-finishing-data chapter-id] 0)
+                    total-students (get-in chapter-list [:total-number-of-students])]
+                [:span (str (Math/round (float (/ (* 100 students-who-completed-this-chapter) total-students)))
+                            "%")])]
 
              (when (= selected-chapter-id chapter-id)
                [:ol.section-list
@@ -38,8 +48,21 @@
 
                    (when-let [section-counts (get-in chapter-list [:sections-total-status chapter-id section-id])]
                      [:div.section_status
-                      (for [status [:stuck :in-progress :unstarted :finished]]
-                        [:span {:class (name status)} (get section-counts status 0)])])])])])]]
+                      (let [students-stuck-in-section (get section-counts :stuck)]
+                        (when students-stuck-in-section
+                          [:div
+                           [:span {:class "stuck"} students-stuck-in-section]
+                           [:span {:class "warning_sign"} "&#9888;"]]))
+                      (let [finished-students (get section-counts :finished 0)
+                            total-students (reduce + 0 (map
+                                                        (fn [status] (get section-counts status 0))
+                                                        [:stuck :in-progress :unstarted :finished]))]
+                        [:div {:class "progress"}
+                         [:div {:class "progress_bar"
+                                :style (str "width:"
+                                            (Math/round (float (/ (* 100 finished-students) total-students)))
+                                            "%;")}
+                          [:span (str finished-students "/" total-students)]]])])])])])]]
 
         (when-let [section-counts (get-in chapter-list [:sections-total-status selected-chapter-id selected-section-id])]
           [:div.teacher_chapter_list_main
