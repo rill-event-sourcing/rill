@@ -28,9 +28,12 @@ Rails.application.routes.draw do
         member do
           post 'moveup'
           post 'movedown'
-          # get 'preview'
         end
-        resources :chapter_quiz_questions, as: :questions
+        resources :chapter_quiz_questions, as: :questions do
+          member do
+            get 'preview'
+          end
+        end
       end
     end
 

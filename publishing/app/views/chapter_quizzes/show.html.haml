@@ -9,6 +9,7 @@
   %div.row
     - @chapter_quiz.chapter_questions_sets.each do |questions_set|
       %div.panel.panel-default
+
         %div.panel-heading
           %div.row
             %div.col-md-8
@@ -24,12 +25,24 @@
                 %span.glyphicon.glyphicon-arrow-down
               = link_to moveup_chapter_chapter_quiz_chapter_questions_set_path(@chapter, questions_set), method: :post do
                 %span.glyphicon.glyphicon-arrow-up
+
         %div.panel-body
-          %table.table.table-bordered
-            %thead
-              %tr
-                %th title
-            %tbody
-              - questions_set.questions.each do |question|
+          = link_to "Add question", chapter_chapter_quiz_chapter_questions_set_questions_path(@chapter, questions_set), method: :post, class: "btn btn-primary pull-right"
+          - if questions_set.questions.empty?
+            %p= "No questions, yet"
+          - else
+            %table.table.table-bordered
+              %thead
                 %tr
-                  %td question
+                  %th.col-md-2 Name
+                  %th.col-md-7 Title
+                  %th.col-md-1 Remove
+
+              %tbody
+                - questions_set.questions.each do |question|
+                  %tr{class: question.active? ? "success" : "danger"}
+                    %td= question.name
+                    %td= link_to question.to_s.truncate(90, omission: '...'), edit_chapter_chapter_quiz_chapter_questions_set_question_path(@chapter, questions_set, question)
+                    %td
+                      = link_to chapter_chapter_quiz_chapter_questions_set_question_path(@chapter, questions_set, question), method: :delete, data: { confirm: "Are you sure you want to delete this question?" } do
+                        %span.glyphicon.glyphicon-trash
