@@ -27,29 +27,33 @@
           %div.panel{class: chapter.active? ? "panel-success" : "panel-danger"}
             %div.panel-heading
               %h4= link_to chapter.title, chapter
-            %div.panel-body.success
-              %table.table.table-bordered
-                %thead
-                  %tr
-                    %th{colspan: 2}
-                      Section
-                      %span.pull-right
-                        = "#{chapter.sections.active.length} / #{chapter.sections.length} published"
-                    %th
-                      %span.pull-right # subsections
-                    %th
-                      %span.pull-right # questions
-                %tbody
-                  - chapter.sections.each_with_index do |section, index|
-                    %tr{class: section.active? ? "success" : "danger", id: "section-row"}
-                      %td= index + 1
-                      %td
-                        = link_to section.title, [chapter, section]
-                      %td
-                        %span.label.label-primary.pull-right
-                          = "#{section.subsections.length}"
-                      %td
-                        %span.label.label-success.pull-right= section.questions.length
+
+            %table.table.table-bordered
+              %thead
+                %tr
+                  %th{colspan: 2}
+                    Section
+                    %span.pull-right
+                      = "#{chapter.sections.active.length} / #{chapter.sections.length} published"
+                  %th
+                    %span.pull-right # subsections
+                  %th
+                    %span.pull-right # questions
+              %tbody
+                - chapter.sections.each_with_index do |section, index|
+                  %tr{class: section.active? ? "success" : "danger", id: "section-row"}
+                    %td= index + 1
+                    %td
+                      = link_to section.title, [chapter, section]
+                    %td
+                      %span.label.label-primary.pull-right
+                        = "#{section.subsections.length}"
+                    %td
+                      %span.label.label-success.pull-right= section.questions.length
+                %tr
+                  %td
+                    %h4= link_to "Chapter quiz", chapter_chapter_quiz_path(chapter)
+
       %div.col-md-2
         %strong Guide:
         %table.table.table-condensed.table-bordered
