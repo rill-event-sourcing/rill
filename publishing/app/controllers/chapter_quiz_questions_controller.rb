@@ -1,6 +1,6 @@
 class ChapterQuizQuestionsController < ApplicationController
   before_action :set_param_objects
-  before_action :set_breadcrumb
+  before_action :set_breadcrumb, except: [:create]
 
   def index
   end
