@@ -1,7 +1,7 @@
 class ChapterQuiz < ActiveRecord::Base
 
   belongs_to :chapter
-  has_many :chapter_questions_sets
+  has_many :chapter_questions_sets, -> { order(:position) }
   has_many :questions, through: :chapter_questions_sets
   validates :chapter, presence: true
 

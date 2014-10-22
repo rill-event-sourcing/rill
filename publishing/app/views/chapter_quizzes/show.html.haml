@@ -10,6 +10,18 @@
     - @chapter_quiz.chapter_questions_sets.each do |questions_set|
       %div.panel.panel-default
         %div.panel-heading
-          %h4= "#{questions_set.position} #{questions_set}"
-          = link_to "Edit", edit_chapter_chapter_quiz_chapter_questions_set_path(@chapter, questions_set), class: "btn btn-primary"
+          %div.row
+            %div.col-md-8
+              %h4= "#{questions_set.position}: #{questions_set}"
+            %div.col-md-1
+              = link_to edit_chapter_chapter_quiz_chapter_questions_set_path(@chapter, questions_set) do
+                %span.glyphicon.glyphicon-pencil
+            %div.col-md-1
+              = link_to chapter_chapter_quiz_chapter_questions_set_path(@chapter, questions_set), method: :delete, data: {confirm: "Are you sure to delete Question set `#{questions_set}`?"} do
+                %span.glyphicon.glyphicon-trash
+            %div.col-md-2
+              = link_to movedown_chapter_chapter_quiz_chapter_questions_set_path(@chapter, questions_set), method: :post do
+                %span.glyphicon.glyphicon-arrow-down
+              = link_to moveup_chapter_chapter_quiz_chapter_questions_set_path(@chapter, questions_set), method: :post do
+                %span.glyphicon.glyphicon-arrow-up
         %div.panel-body

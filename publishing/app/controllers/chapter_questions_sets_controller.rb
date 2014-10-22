@@ -34,7 +34,7 @@ class ChapterQuestionsSetsController < ApplicationController
   end
 
   def destroy
-    @chapter.trash
+    @chapter_questions_set.destroy
     redirect_to chapter_chapter_quiz_path(@chapter), notice: 'Questions set was successfully destroyed.'
   end
 

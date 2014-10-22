@@ -25,6 +25,11 @@ Rails.application.routes.draw do
   resources :chapters do
     resource :chapter_quiz, :only => [:show] do
       resources :chapter_questions_sets do
+        member do
+          post 'moveup'
+          post 'movedown'
+          # get 'preview'
+        end
         resources :chapter_quiz_questions, as: :questions
       end
     end
