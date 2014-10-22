@@ -1,4 +1,5 @@
 class Choice < ActiveRecord::Base
+  include HtmlParseable
 
   belongs_to :multiple_choice_input
 
@@ -12,7 +13,7 @@ class Choice < ActiveRecord::Base
 
   def to_publishing_format
     {
-      value: render_latex_for_publishing(value, "choice in #{multiple_choice_input} in #{multiple_choice_input.inputable}, in #{multiple_choice_input.inputable.quizzable}"),
+      value: render_latex_for_publishing(value, "choice in #{multiple_choice_input} #{multiple_choice_input.inputable.name}, in #{multiple_choice_input.inputable.quizzable}"),
       correct: correct
     }
   end
@@ -22,13 +23,17 @@ class Choice < ActiveRecord::Base
     begin
       render_latex_for_publishing(text)
     rescue
-      errors << "Errors in LaTeX rendering in section '#{section.name}', in '#{section.parent}'"
+      errors << "Errors in LaTeX rendering in choice in #{multiple_choice_input} #{multiple_choice_input.inputable.name}, in #{multiple_choice_input.inputable.quizzable}"
     end
     errors
   end
 
   def to_param
     "#{id[0,8]}"
+  end
+
+  def reference
+    "choice #{multiple_choice_input.position} in #{multiple_choice_input.inputable_type} #{multiple_choice_input.inputable.name}, in #{multiple_choice_input.inputable.quizzable}"
   end
 
 end

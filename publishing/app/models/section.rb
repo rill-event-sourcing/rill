@@ -57,6 +57,27 @@ class Section < ActiveRecord::Base
     chapter
   end
 
+  def parse_errors
+    errors = {}
+    subsections.map do |subs|
+      subs_err = subs.parse_errors
+      if subs_err.any?
+        errors["Subsection '#{subs}':"] = subs_err
+      end
+    end
+    errors
+  end
+
+  def image_errors
+    errors = {}
+    subsections.map do |subs|
+      subs_err = subs.image_errors
+      if subs_err.any?
+        errors["Subsection '#{subs}':"] = subs_err
+      end
+    end
+    errors
+  end
 
   def to_publishing_format
     {

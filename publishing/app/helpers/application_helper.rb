@@ -9,7 +9,7 @@ module ApplicationHelper
     html.html_safe
   end
 
-  def text_to_html(inputs,text)
+  def text_to_html(inputs, text)
     text = render_latex_for_editing(text)
     html = text.html_safe
     inputs.each do |input|

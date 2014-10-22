@@ -1,5 +1,5 @@
 class Subsection < ActiveRecord::Base
-  include Trashable, Activateable
+  include Trashable, Activateable, HtmlParseable
 
   belongs_to :section, touch: true
 
@@ -49,6 +49,10 @@ class Subsection < ActiveRecord::Base
     end
     errors << "No content in subsection of section '#{section.name}', in '#{section.parent}'" if text.blank?
     errors
+  end
+
+  def reference
+    "subsection of section '#{section.name}', in '#{section.parent}'"
   end
 
 end

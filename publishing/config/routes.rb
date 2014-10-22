@@ -7,6 +7,8 @@ Rails.application.routes.draw do
   match 'list_jobs', to: 'publishing#jobs', via: :get
   match 'delete_job', to: 'publishing#delete_job', via: :delete
 
+  match 'check_content', to: 'checking#index', via: :get
+
   #match 'entry_quiz', to: 'entry_quiz#show', via: :get
 
   resource :entry_quiz do
