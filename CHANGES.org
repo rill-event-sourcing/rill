@@ -1,5 +1,6 @@
 * Release Changelog
 ** NEXT RELEASE:
+*** Fix: Starting up time during deploy is shortened
 *** Fix: Fixed a problem where teacher with a "/" in the class name would not see any report
 *** Fix: Updating the sales status of a school without entering specifiying the number of licenses sets them to 0.
 *** Fix: Testing with IE9 locally during development is restored 
