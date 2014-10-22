@@ -1,0 +1,23 @@
+= form_for([@chapter, @chapter_quiz, @chapter_questions_set], html: {class: "form-horizontal", role: "form"}) do |f|
+  - if @chapter_questions_set.errors.any?
+    %div.error_explanation
+      %h2= "#{ pluralize(@chapter_quiz_questions_set.errors.count, "error") } prohibited this question set from being saved:"
+      %ul
+        - @chapter_questions_set.errors.full_messages.each do |message|
+          %li= message
+
+  %div.form-group
+    = f.label :name, class: "col-sm-2 control-label"
+    %div.col-sm-10
+      = f.text_field :name, size: 20, class: "form-control", tabindex: 1
+
+  - if @chapter_questions_set
+    %div.form-group
+      %div.col-sm-offset-2.col-sm-10
+        = link_to 'cancel', chapter_chapter_quiz_path(@chapter), class: "btn btn-default", tabindex: 3
+        = submit_tag('update', class: "btn btn-primary", tabindex: 2)
+  - else
+    %div.form-group
+      %div.col-sm-offset-2.col-sm-10
+        = link_to 'cancel', chapter_chapter_quiz_path(@chapter), class: "btn btn-default", tabindex: 3
+        = submit_tag('save', class: "btn btn-primary", tabindex: 2)

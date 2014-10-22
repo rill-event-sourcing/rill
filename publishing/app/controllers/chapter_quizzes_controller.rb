@@ -1,32 +1,9 @@
 class ChapterQuizzesController < ApplicationController
   before_action :set_param_objects
-  before_action :set_breadcrumb, except: [:create]
+  before_action :set_breadcrumb
 
   def show
   end
-
-  # def new
-  # end
-
-  # def create
-  #   @entry_quiz = @course.build_entry_quiz(entry_quiz_params)
-  #   if @entry_quiz.save
-  #     redirect_to entry_quiz_path, notice: "Entry quiz was created successfully"
-  #   else
-  #     render :new
-  #   end
-  # end
-
-  # def edit
-  # end
-
-  # def update
-  #   if @entry_quiz.update(entry_quiz_params)
-  #     redirect_to entry_quiz_path, notice: "Entry Quiz successfully updated."
-  #   else
-  #     render :edit
-  #   end
-  # end
 
   private
 
@@ -37,8 +14,9 @@ class ChapterQuizzesController < ApplicationController
   end
 
   def set_breadcrumb
-    #@crumbs = [{name: @chapter.name, url: root_path}]
-    #@crumbs << {name: "Chapter Quiz", url: entry_quiz_path}
+    @crumbs = [{name: @course.name, url: root_path}]
+    @crumbs << {name: @chapter.title, url: chapter_sections_path(@chapter)}
+    @crumbs << {name: "Chapter quiz", url: chapter_chapter_quiz_path(@chapter)}
   end
 
   def entry_quiz_params

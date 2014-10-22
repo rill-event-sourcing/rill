@@ -25,7 +25,7 @@ ActiveRecord::Schema.define(version: 20141022101653) do
     t.datetime "updated_at"
   end
 
-  create_table "chapter_questions_sets", force: true do |t|
+  create_table "chapter_questions_sets", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
     t.uuid     "chapter_quiz_id"
     t.integer  "position"
     t.string   "name"

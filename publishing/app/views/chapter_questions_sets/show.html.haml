@@ -1,0 +1,25 @@
+%div.container
+  %div.row
+    %div.col-md-8.col-md-offset-2
+      %h2
+        = @chapter.title
+        - if @chapter.active?
+          = link_to "Active", toggle_activation_chapter_path(@chapter), class: "label label-success", method: :post
+        - else
+          = link_to "Not active", toggle_activation_chapter_path(@chapter), class: "label label-danger", method: :post
+        - if @chapter.remedial?
+          %span.label.label-info Remedial
+
+      %div.panel.panel-default{style: "margin-top:30px;"}
+        %div.panel-heading
+          %strong Chapter description:
+        %div.panel-body= @chapter.description
+
+    %div.col-md-8.col-md-offset-2
+      %p= link_to 'Chapter Quiz', chapter_chapter_quiz_path(@chapter)
+
+    %div.col-md-2
+      = link_to 'New Section', new_chapter_section_path(@chapter), class: "btn btn-success"
+  %div.row
+    %div.col-md-8.col-md-offset-2
+      = render 'sections/index'

@@ -6,8 +6,10 @@
     %div.col-md-2
       = link_to "Add Set of questions", new_chapter_chapter_quiz_chapter_questions_set_path(@chapter), class: "btn btn-lg btn-primary"
 
-      - @chapter_quiz.chapter_questions_sets.each do |questions_set|
-        %div.panel
-          %div.panel-heading
-            %h4= questions_set
-          %div.panel-body
+  %div.row
+    - @chapter_quiz.chapter_questions_sets.each do |questions_set|
+      %div.panel.panel-default
+        %div.panel-heading
+          %h4= "#{questions_set.position} #{questions_set}"
+          = link_to "Edit", edit_chapter_chapter_quiz_chapter_questions_set_path(@chapter, questions_set), class: "btn btn-primary"
+        %div.panel-body
