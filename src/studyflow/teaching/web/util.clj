@@ -113,7 +113,7 @@
      [:a#logo {:href "/reports/completion"}]
      [:h1#header-title "Leraren"]
      dropdown
-     [:a#learning {:href (:student redirect-urls)} "Naar Studyflow Rekenen"]
+     [:a#learning {:href (:student redirect-urls)} "Leerling omgeving"]
      (form/form-to
       {:role "form"} [:post (:login redirect-urls)]
       [:input {:type "hidden" :name "_method" :value "DELETE"}]

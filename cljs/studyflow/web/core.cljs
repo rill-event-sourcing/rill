@@ -843,7 +843,7 @@
                   (dom/a #js {:id "help" :href "#"})
                   (dom/a #js {:id "settings" :href "#"})
                   (when-let [url (get-in cursor [:static :teaching-url])]
-                    (dom/a #js {:id "teaching" :href url} "Naar Studyflow Leraren"))
+                    (dom/a #js {:id "teaching" :href url} "Docent omgeving"))
                   (dom/form #js {:method "POST"
                                  :action (get-in cursor [:static :logout-target])
                                  :id "logout-form"}
