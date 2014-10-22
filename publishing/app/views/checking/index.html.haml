@@ -1,5 +1,5 @@
 %div.panel.panel-danger
-  %div.panel-heading Parse errors (#{@parse_errors.length})
+  %div.panel-heading Parse errors (#{@parse_errors.length} items)
   - if @parse_errors.any?
     %table.table.table-bordered
       %tr
@@ -21,7 +21,7 @@
       %p no parse errors
 
 %div.panel.panel-danger
-  %div.panel-heading Image errors
+  %div.panel-heading Image errors (#{@image_errors.length} items)
   - if @image_errors.any?
     - @image_errors.each do |item_id, i_errors|
       %div.panel-body

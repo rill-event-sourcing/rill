@@ -18,7 +18,7 @@ class CheckingController < ApplicationController
                 ref = %(<a href="/chapters/#{item.quizzable.chapter.to_param}/sections/#{item.quizzable.to_param}/questions/#{item.to_param}/edit">#{item.reference}</a>).html_safe
               end
             elsif item.is_a?(Subsection)
-              ref = %(<a href="/chapters/#{item.section.chapter.to_param}/sections/#{item.section.to_param}/sections/#{item.section.to_param}/edit">#{item.reference}</a>).html_safe
+              ref = %(<a href="/chapters/#{item.section.chapter.to_param}/sections/#{item.section.to_param}/subsections">#{item.reference}</a>).html_safe
             elsif item.is_a?(Choice)
               ref = %(<a href="/chapters/#{item.multiple_choice_input.inputable.quizzable.chapter.to_param}/sections/#{item.multiple_choice_input.inputable.quizzable.to_param}/questions/#{item.multiple_choice_input.inputable.to_param}/edit">#{item.reference}</a>).html_safe
             end
