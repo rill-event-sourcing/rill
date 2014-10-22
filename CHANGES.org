@@ -2,7 +2,8 @@
 ** NEXT RELEASE:
 *** Fix: Fixed a problem where teacher with a "/" in the class name would not see any report
 *** Fix: Updating the sales status of a school without entering specifiying the number of licenses sets them to 0.
-*** New: html parsing and checking for publishing
+*** Fix: Testing with IE9 locally during development is restored 
+*** New: Publishing application now can check the HTML code inserted by the editors
 ** release-2014-10.16.1
 *** New: Attempt at fixing the modal not always showing when 5 questions in a row are answered correctly
 *** New: Improved class navigation for teachers (classes sorted by name + class selection persists when changing report)
