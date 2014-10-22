@@ -5,6 +5,7 @@ class Chapter < ActiveRecord::Base
   acts_as_list scope: :course
 
   has_many :sections, -> { order(:position) }
+  has_one :chapter_quiz
 
   validates :course, presence: true
   validates :title, presence: true

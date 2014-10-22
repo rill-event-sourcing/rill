@@ -15,6 +15,9 @@
           %strong Chapter description:
         %div.panel-body= @chapter.description
 
+    %div.col-md-8.col-md-offset-2
+      %p= link_to 'Chapter Quiz', chapter_chapter_quiz_path(@chapter)
+
     %div.col-md-2
       = link_to 'New Section', new_chapter_section_path(@chapter), class: "btn btn-success"
   %div.row

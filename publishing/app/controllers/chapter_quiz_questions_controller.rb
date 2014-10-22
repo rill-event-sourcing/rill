@@ -1,0 +1,2 @@
+class ChapterQuizQuestionsController < ApplicationController
+end
