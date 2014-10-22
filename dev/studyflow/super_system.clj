@@ -11,13 +11,6 @@
             [learning-dev-system]
             [login-dev-system]))
 
-(def redirect-urls
-  (let [root "localhost"]
-    {:editor (str "http://" root ":2000")
-     :student (str "http://" root ":3000")
-     :login (str "http://" root ":4000")
-     :teacher (str "http://" root ":4001")}))
-
 (defn namespace-system [system prefix exceptions]
   (let [exceptions (set exceptions)
         prefix-keyword (fn [kw]
@@ -34,28 +27,38 @@
 
 
 (defn make-system [config]
-  (let [learning (-> (learning-dev-system/dev-system (-> (if (:psql config)
+  (let [root "localhost"
+        redirect-urls {:editor (str "http://" root ":2000")
+                       :student (str "http://" root ":3000")
+                       :login (str "http://" root ":4000")
+                       :teacher (str "http://" root ":4001")}
+        cookie-domain (if (= root "localhost")
+                        false
+                        root)
+        learning (-> (learning-dev-system/dev-system (-> (if (:psql config)
                                                            (assoc learning-dev-system/dev-config :no-fixtures true)
                                                            learning-dev-system/dev-config)
-                                                         (assoc :redirect-urls
-                                                           redirect-urls)))
+                                                         (assoc :redirect-urls redirect-urls)
+                                                         (assoc :cookie-domain cookie-domain)))
                      (dissoc :event-store :session-store)
                      (namespace-system :learning [:event-store :session-store]))
 
         login (-> (login-dev-system/make-system {:jetty-port 4000
+                                                 :cookie-domain cookie-domain
                                                  :default-redirect-paths {"editor" (:editor redirect-urls)
                                                                           "student" (:student redirect-urls)
                                                                           "teacher" (:teacher redirect-urls)}})
                   (dissoc :event-store :session-store)
                   (namespace-system :login [:event-store :session-store]))
 
-        school-administration (-> (school-administration/prod-system {:port 5000})
+        school-administration (-> (school-administration/prod-system {:port 5000
+                                                                      :cookie-domain cookie-domain})
                                   (dissoc :event-store)
                                   (namespace-system :school-administration [:event-store]))
 
         teaching (-> (teaching/prod-system {:port 4001
-                                            :redirect-urls redirect-urls
-                                            :cookie-domain nil})
+                                            :cookie-domain cookie-domain
+                                            :redirect-urls redirect-urls})
                      (dissoc :event-store :session-store)
                      (namespace-system :teaching [:event-store :session-store]))
 
