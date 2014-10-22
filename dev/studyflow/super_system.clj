@@ -38,8 +38,7 @@
         learning (-> (learning-dev-system/dev-system (-> (if (:psql config)
                                                            (assoc learning-dev-system/dev-config :no-fixtures true)
                                                            learning-dev-system/dev-config)
-                                                         (assoc :redirect-urls
-                                                           (select-keys redirect-urls [:login :learning]))
+                                                         (assoc :redirect-urls redirect-urls)
                                                          (assoc :cookie-domain cookie-domain)))
                      (dissoc :event-store :session-store)
                      (namespace-system :learning [:event-store :session-store]))
@@ -59,8 +58,7 @@
 
         teaching (-> (teaching/prod-system {:port 4001
                                             :cookie-domain cookie-domain
-                                            :redirect-urls {:login (:login redirect-urls)
-                                                            :teaching (:teaching redirect-urls)}})
+                                            :redirect-urls redirect-urls})
                      (dissoc :event-store :session-store)
                      (namespace-system :teaching [:event-store :session-store]))
 
