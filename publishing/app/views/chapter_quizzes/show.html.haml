@@ -1,11 +1,10 @@
 %div.container
   %div.row
-    %div.col-md-8.col-md-offset-2
-      %div.col-md-8
-        %h2= @chapter_quiz.to_s
+    %div.col-md-8
+      %h2= @chapter_quiz.to_s
 
-    %div.col-md-8.col-md-offset-2
-      = link_to 'Add Set', new_chapter_chapter_quiz_chapter_questions_set_path(@chapter)
+    %div.col-md-2
+      = link_to "Add Set of questions", new_chapter_chapter_quiz_chapter_questions_set_path(@chapter), class: "btn btn-lg btn-primary"
 
       - @chapter_quiz.chapter_questions_sets.each do |questions_set|
         %div.panel

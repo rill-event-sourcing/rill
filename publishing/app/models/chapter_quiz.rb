@@ -17,7 +17,7 @@ class ChapterQuiz < ActiveRecord::Base
   end
 
   def to_s
-    "Chapter Quiz for #{chapter}"
+    "#{chapter} - Chapter Quiz"
   end
 
   # def errors_when_publishing
