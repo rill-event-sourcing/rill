@@ -25,3 +25,11 @@
               = link_to moveup_chapter_chapter_quiz_chapter_questions_set_path(@chapter, questions_set), method: :post do
                 %span.glyphicon.glyphicon-arrow-up
         %div.panel-body
+          %table.table.table-bordered
+            %thead
+              %tr
+                %th title
+            %tbody
+              - questions_set.questions.each do |question|
+                %tr
+                  %td question
