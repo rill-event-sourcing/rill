@@ -48,6 +48,15 @@ class Question < ActiveRecord::Base
   end
 
   def to_publishing_format_for_entry_quiz
+    to_publishing_format_for_quiz
+  end
+
+  def to_publishing_format_for_chapter_quiz
+    to_publishing_format_for_quiz
+  end
+
+
+  def to_publishing_format_for_quiz
     {
       id: id,
       text: render_latex_for_publishing(text, "question '#{name}', in '#{parent}'"),
@@ -93,6 +102,14 @@ class Question < ActiveRecord::Base
   end
 
   def errors_when_publishing_for_entry_quiz
+    errors_when_publishing_for_quiz
+  end
+
+  def errors_when_publishing_for_chapter_quiz
+    errors_when_publishing_for_quiz
+  end
+
+  def errors_when_publishing_for_quiz
     errors = []
     begin
       render_latex_for_publishing(text)

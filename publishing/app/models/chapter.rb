@@ -31,7 +31,8 @@ class Chapter < ActiveRecord::Base
       id: id,
       title: title,
       sections: sections.active.map(&:to_publishing_format),
-      remedial: remedial?
+      remedial: remedial?,
+      chapter_quiz: chapter_quiz.to_publishing_format
     }
   end
 

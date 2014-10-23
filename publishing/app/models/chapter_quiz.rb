@@ -20,6 +20,10 @@ class ChapterQuiz < ActiveRecord::Base
     "#{chapter} - Chapter Quiz"
   end
 
+  def to_publishing_format
+    chapter_questions_sets.map(&:to_publishing_format)
+  end
+
   # def errors_when_publishing
   #   errors = []
   #   errors << "No questions in the chapter quiz" if questions.active.empty?

@@ -54,10 +54,23 @@
    :questions (s/both #{SectionQuestion}
                       (s/pred (fn [s] (seq s)) 'not-empty))})
 
+
+(def ChapterQuizQuestionSet
+  :title PlainText
+  :questions #{ChapterQuizQuestion})
+
+(def ChapterQuizQuestion
+  {:id Id
+   :text RichText
+   :tools [Tool]
+   :line-input-fields [LineInputField]
+   :multiple-choice-input-fields [MultipleChoiceInputField]})
+
 (def Chapter
   {:id Id
    :title PlainText
    :remedial s/Bool
+   :chapter-quiz [ChapterQuizQuestionSet]
    :sections [Section]})
 
 (def EntryQuizQuestion

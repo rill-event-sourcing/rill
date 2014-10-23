@@ -17,6 +17,13 @@ class ChapterQuestionsSet < ActiveRecord::Base
     "#{name}"
   end
 
+  def to_publishing_format
+    {
+      title: name,
+      questions: questions.map(&:to_publishing_format_for_chapter_quiz)
+    }
+  end
+
   def to_param
     "#{id[0,8]}"
   end
