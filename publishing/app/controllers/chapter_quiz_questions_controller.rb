@@ -52,7 +52,7 @@ class ChapterQuizQuestionsController < ApplicationController
     @crumbs = [{name: @course.name, url: root_path}]
     @crumbs << {name: @chapter.title, url: chapter_sections_path(@chapter)}
     @crumbs << {name: "Chapter quiz", url: chapter_chapter_quiz_path(@chapter)}
-    @crumbs << {name: @chapter_questions_set.name}
+    @crumbs << {name: @chapter_questions_set.title}
     @crumbs << {name: @question.to_param, url: chapter_chapter_quiz_chapter_questions_set_question_path(@chapter, @chapter_questions_set, @question)}
   end
 
