@@ -54,7 +54,6 @@
    :questions (s/both #{SectionQuestion}
                       (s/pred (fn [s] (seq s)) 'not-empty))})
 
-
 (def ChapterQuizQuestion
   {:id Id
    :text RichText
@@ -70,7 +69,7 @@
   {:id Id
    :title PlainText
    :remedial s/Bool
-   :chapter-quiz [ChapterQuizQuestionSet]
+   (s/optional-key :chapter-quiz) [ChapterQuizQuestionSet]
    :sections [Section]})
 
 (def EntryQuizQuestion
