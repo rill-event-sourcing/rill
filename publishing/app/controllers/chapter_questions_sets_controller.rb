@@ -63,7 +63,7 @@ class ChapterQuestionsSetsController < ApplicationController
     @crumbs << {name: @chapter.title, url: chapter_sections_path(@chapter)}
     @crumbs << {name: "Chapter quiz", url: chapter_chapter_quiz_path(@chapter)}
     if @chapter_questions_set
-      @crumbs << {name: @chapter_questions_set.name, url: chapter_chapter_quiz_chapter_questions_set_path(@chapter,@chapter_questions_set)}
+      @crumbs << {name: @chapter_questions_set.title, url: chapter_chapter_quiz_chapter_questions_set_path(@chapter,@chapter_questions_set)}
     else
       @crumbs << {name: "New question set", url: ""}
     end
@@ -71,7 +71,7 @@ class ChapterQuestionsSetsController < ApplicationController
 
 
   def questions_set_params
-    params.require(:chapter_questions_set).permit(:name)
+    params.require(:chapter_questions_set).permit(:title)
   end
 
 end

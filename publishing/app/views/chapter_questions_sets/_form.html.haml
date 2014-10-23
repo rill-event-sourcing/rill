@@ -14,11 +14,11 @@
           %li= message
 
   %div.form-group
-    = f.label :name, class: "col-sm-2 control-label"
+    = f.label :title, class: "col-sm-2 control-label"
     %div.col-sm-10
-      = f.text_field :name, size: 20, class: "form-control", tabindex: 1
+      = f.text_field :title, size: 20, class: "form-control", tabindex: 1
 
-  - if @chapter_questions_set
+  - if @chapter_questions_set.id
     %div.form-group
       %div.col-sm-offset-2.col-sm-10
         = link_to 'cancel', chapter_chapter_quiz_path(@chapter), class: "btn btn-default", tabindex: 3

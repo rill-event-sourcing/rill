@@ -14,12 +14,12 @@ class ChapterQuestionsSet < ActiveRecord::Base
   end
 
   def to_s
-    "#{name}"
+    "#{title}"
   end
 
   def to_publishing_format
     {
-      title: name,
+      title: title,
       questions: questions.map(&:to_publishing_format_for_chapter_quiz)
     }
   end
