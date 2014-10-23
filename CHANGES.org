@@ -1,5 +1,6 @@
 * Release Changelog
 ** NEXT RELEASE:
+*** Fix: Fixed styling bugs in chapter-list: now students with a stumbling block are shown correctly and there is a hint at what the warning sign means
 ** release-2014-10-22.2
 *** New: Updated link texts for switching between Student & Teacher environments
 ** release-2014-10-22.1
