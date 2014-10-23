@@ -30,7 +30,9 @@
              [:div.chapter_status
               (let [total-students-stuck-in-chapter (get-in chapter-list [:chapters-completion chapter-id :stuck])]
                 (when-not (= 0 total-students-stuck-in-chapter)
-                  [:div
+                  [:div {:title (str total-students-stuck-in-chapter (if (= 1 total-students-stuck-in-chapter)
+                                                                       " struikelblok"
+                                                                       " struikelblokken"))}
                    [:span {:class "stuck_sign"} (str total-students-stuck-in-chapter)]
                    [:span {:class "warning_sign"} "&#9888;"]]))
               (let [students-who-completed-this-chapter (get-in chapter-list [:chapters-with-finishing-data chapter-id] 0)
@@ -50,7 +52,9 @@
                      [:div.section_status
                       (let [students-stuck-in-section (get section-counts :stuck)]
                         (when students-stuck-in-section
-                          [:div
+                          [:div {:title (str students-stuck-in-section (if (= 1 students-stuck-in-section)
+                                                                       " struikelblok"
+                                                                       " struikelblokken"))}
                            [:span {:class "stuck_sign"} students-stuck-in-section]
                            [:span {:class "warning_sign"} "&#9888;"]]))
                       (let [finished-students (get section-counts :finished 0)
