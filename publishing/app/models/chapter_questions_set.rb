@@ -8,9 +8,10 @@ class ChapterQuestionsSet < ActiveRecord::Base
 
   scope :for_short_uuid, ->(id) { where(["SUBSTRING(CAST(id AS VARCHAR), 1, 8) = ?", id]) }
   def self.find_by_uuid(id, with_404 = true)
-    chapter_questions_sets = for_short_uuid(id)
-    raise ActiveRecord::RecordNotFound if chapter_questions_sets.empty? && with_404
-    chapter_questions_sets.first
+    qs = for_short_uuid(id)
+    raise ActiveRecord::RecordNotFound if qs.empty? && with_404
+    raise StudyflowPublishing::ShortUuidDoubleError.new("Multiple sections found for uuid: #{id}") if qs.length > 1
+    qs.first
   end
 
   def to_s
@@ -22,6 +23,13 @@ class ChapterQuestionsSet < ActiveRecord::Base
       title: title,
       questions: questions.map(&:to_publishing_format_for_chapter_quiz)
     }
+  end
+
+  def errors_when_publishing
+    errors = []
+    errors << "No questions in the chapter quiz for chapter '#{chapter_quiz.chapter.title}'" if questions.empty?
+    errors << questions.map(&:errors_when_publishing_for_chapter_quiz)
+    errors.flatten
   end
 
   def to_param

@@ -68,4 +68,14 @@ RSpec.describe Chapter, type: :model do
     expect{Chapter.find_by_uuid(uuid[0,8])}.to raise_error(StudyflowPublishing::ShortUuidDoubleError)
   end
 
+  describe "enforcing constraints for publishing" do
+
+    it "should make sure there is a chapter quiz" do
+      q1 = create(:chapter_quiz, chapter: @chapter1)
+      expect(@chapter1.errors_when_publishing).not_to include "No chapter quiz in chapter '#{@chapter1.title}'"
+      expect(@chapter2.errors_when_publishing).to include "No chapter quiz in chapter '#{@chapter2.title}'"
+    end
+  end
+
+
 end

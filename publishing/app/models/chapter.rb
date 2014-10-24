@@ -39,6 +39,8 @@ class Chapter < ActiveRecord::Base
   def errors_when_publishing
     errors = []
     errors << sections.active.map(&:errors_when_publishing)
+    errors << "No chapter quiz in chapter '#{title}'" unless chapter_quiz
+    errors << chapter_quiz.errors_when_publishing if chapter_quiz
     errors.flatten
   end
 

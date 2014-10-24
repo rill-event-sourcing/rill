@@ -19,8 +19,5 @@ class ChapterQuizzesController < ApplicationController
     @crumbs << {name: "Chapter quiz", url: chapter_chapter_quiz_path(@chapter)}
   end
 
-  def entry_quiz_params
-    params.require(:chapter_quiz).permit()
-  end
 
 end

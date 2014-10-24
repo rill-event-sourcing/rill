@@ -25,12 +25,11 @@ class ChapterQuiz < ActiveRecord::Base
     chapter_questions_sets.map(&:to_publishing_format)
   end
 
-  #def errors_when_publishing
-  #   errors = []
-  #   errors << "No questions in the chapter quiz" if questions.active.empty?
-  #   errors << questions.active.map(&:errors_when_publishing_for_entry_quiz)
-  #   errors.flatten
-  # end
-
+  def errors_when_publishing
+    errors = []
+    errors << "No question sets in the chapter quiz of chapter '#{chapter.title}'" if chapter_questions_sets.empty?
+    errors << chapter_questions_sets.map(&:errors_when_publishing)
+    errors.flatten
+  end
 
 end

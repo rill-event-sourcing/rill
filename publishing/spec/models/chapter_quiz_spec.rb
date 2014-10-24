@@ -8,14 +8,12 @@ RSpec.describe ChapterQuiz, :type => :model do
 
   before do
     @ch1 = create(:chapter)
-    @ch2 = create(:chapter)
     @q1 = create(:chapter_quiz, chapter: @ch1)
-    @q2 = create(:chapter_quiz, chapter: @ch2)
+    @q2 = create(:chapter_quiz)
 
     @q1s1 = create(:chapter_questions_set, chapter_quiz: @q1, title: "Q1S1")
     @q1s2 = create(:chapter_questions_set, chapter_quiz: @q1, title: "Q1S2")
-    @q2s1 = create(:chapter_questions_set, chapter_quiz: @q2, title: "Q2S1")
-    @q2s2 = create(:chapter_questions_set, chapter_quiz: @q2, title: "Q2S2")
+
   end
 
   it "should list questions set in the right order" do
@@ -54,6 +52,11 @@ RSpec.describe ChapterQuiz, :type => :model do
 
   it "should publish its questions sets" do
     expect(@q1.to_publishing_format).to eq @q1.chapter_questions_sets.map(&:to_publishing_format)
+  end
+
+  it "should make sure there are question sets" do
+    q3 = create(:chapter_quiz)
+    expect(q3.errors_when_publishing).to include("No question sets in the chapter quiz of chapter '#{@ch1.title}'")
   end
 
 end
