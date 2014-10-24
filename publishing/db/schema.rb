@@ -35,6 +35,7 @@ ActiveRecord::Schema.define(version: 20141022101653) do
 
   create_table "chapter_quizzes", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
     t.uuid     "chapter_id"
+    t.boolean  "active",     default: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

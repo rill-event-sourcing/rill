@@ -1,7 +1,12 @@
 %div.container
   %div.row
     %div.col-md-8
-      %h2= @chapter_quiz.to_s
+      %h2
+        = @chapter_quiz.to_s
+        - if @chapter_quiz.active?
+          = link_to "Active", toggle_activation_chapter_chapter_quiz_path(@chapter), class: "label label-success", method: :post
+        - else
+          = link_to "Not active", toggle_activation_chapter_chapter_quiz_path(@chapter), class: "label label-danger", method: :post
 
     %div.col-md-2
       = link_to "Add Set of questions", new_chapter_chapter_quiz_chapter_questions_set_path(@chapter), class: "btn btn-lg btn-primary"

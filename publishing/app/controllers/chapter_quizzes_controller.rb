@@ -5,6 +5,12 @@ class ChapterQuizzesController < ApplicationController
   def show
   end
 
+  def toggle_activation
+    @chapter_quiz.active? ? @chapter_quiz.deactivate : @chapter_quiz.activate
+    redirect_to chapter_chapter_quiz_path(@chapter)
+  end
+
+
   private
 
   def set_param_objects

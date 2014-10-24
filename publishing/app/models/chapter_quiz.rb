@@ -1,4 +1,5 @@
 class ChapterQuiz < ActiveRecord::Base
+  include Activateable
 
   belongs_to :chapter
   has_many :chapter_questions_sets, -> { order(:position) }

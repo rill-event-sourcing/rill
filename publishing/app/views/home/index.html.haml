@@ -50,8 +50,8 @@
                         = "#{section.subsections.length}"
                     %td
                       %span.label.label-success.pull-right= section.questions.length
-                %tr
-                  %td
+                %tr{class: chapter.chapter_quiz.active? ? "success" : "danger"}
+                  %td{colspan: 4}ch
                     %h4= link_to "Chapter quiz", chapter_chapter_quiz_path(chapter)
 
       %div.col-md-2

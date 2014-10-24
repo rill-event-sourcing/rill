@@ -31,16 +31,16 @@ class Chapter < ActiveRecord::Base
       id: id,
       title: title,
       sections: sections.active.map(&:to_publishing_format),
-      remedial: remedial?,
-      chapter_quiz: chapter_quiz.to_publishing_format
+      remedial: remedial?
     }
+    hash[:chapter_quiz] = chapter_quiz.to_publishing_format if chapter_quiz && chapter_quiz.active?
+    hash
   end
 
   def errors_when_publishing
     errors = []
     errors << sections.active.map(&:errors_when_publishing)
-    errors << "No chapter quiz in chapter '#{title}'" unless chapter_quiz
-    errors << chapter_quiz.errors_when_publishing if chapter_quiz
+    errors << chapter_quiz.errors_when_publishing if chapter_quiz.active?
     errors.flatten
   end
 

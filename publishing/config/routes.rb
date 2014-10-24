@@ -24,6 +24,9 @@ Rails.application.routes.draw do
 
   resources :chapters do
     resource :chapter_quiz, :only => [:show] do
+      member do
+        post 'toggle_activation'
+      end
       resources :chapter_questions_sets do
         member do
           post 'moveup'

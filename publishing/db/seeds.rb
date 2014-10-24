@@ -104,7 +104,7 @@ pos0q1ia = Answer.create(value: "2", line_input: pos0q1i)
 
 ### Chapter quiz
 
-ch1_quiz = ChapterQuiz.create(chapter: positional_system)
+ch1_quiz = ChapterQuiz.create(chapter: positional_system, active: true)
 
 ch1_quiz_set1 = ChapterQuestionsSet.create(title: "QS1", chapter_quiz: ch1_quiz)
 
