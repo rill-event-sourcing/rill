@@ -40,7 +40,7 @@ class Chapter < ActiveRecord::Base
   def errors_when_publishing
     errors = []
     errors << sections.active.map(&:errors_when_publishing)
-    errors << chapter_quiz.errors_when_publishing if chapter_quiz.active?
+    errors << chapter_quiz.errors_when_publishing if chapter_quiz && chapter_quiz.active?
     errors.flatten
   end
 
