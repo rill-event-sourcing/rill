@@ -8,11 +8,13 @@
   (str "chapter-quiz:" chapter-id ":" student-id))
 
 (defevent Started
+  :course-id m/Id
   :chapter-id m/Id
   :student-id m/Id
   chapter-quiz-id)
 
 (defevent QuestionAnsweredCorrectly
+  :course-id m/Id
   :chapter-id m/Id
   :student-id m/Id
   :question-id m/Id
@@ -20,23 +22,46 @@
   chapter-quiz-id)
 
 (defevent QuestionAnsweredIncorrectly
+  :course-id m/Id
   :chapter-id m/Id
   :student-id m/Id
   :question-id m/Id
   :inputs {m/FieldName s/Str}
   chapter-quiz-id)
 
+(defevent QuestionAssigned
+  :course-id m/Id
+  :chapter-id m/Id
+  :student-id m/Id
+  :question-id m/Id
+  chapter-quiz-id)
+
 (defevent Failed
+  :course-id m/Id
   :chapter-id m/Id
   :student-id m/Id
   chapter-quiz-id)
 
 (defevent Passed
+  :course-id m/Id
   :chapter-id m/Id
   :student-id m/Id
   chapter-quiz-id)
 
 (defevent Stopped
+  :course-id m/Id
+  :chapter-id m/Id
+  :student-id m/Id
+  chapter-quiz-id)
+
+(defevent Locked
+  :course-id m/Id
+  :chapter-id m/Id
+  :student-id m/Id
+  chapter-quiz-id)
+
+(defevent UnLocked
+  :course-id m/Id
   :chapter-id m/Id
   :student-id m/Id
   chapter-quiz-id)

@@ -19,6 +19,11 @@
   (find-by-id (mapcat :sections (:chapters course))
               section-id))
 
+(defn chapter
+  [course chapter-id]
+  (-> (:chapters course)
+      chapter-id))
+
 (defn questions-for-section
   [course section-id]
   {:pre [course section-id]
@@ -37,6 +42,10 @@
   {:pre [course (:entry-quiz course)]
    :post [%]}
   (get-in course [:entry-quiz :questions question-index]))
+
+(defn question-sets-for-chapter-quiz
+  [course chapter-id]
+  (-> course (chapter chapter-id) :chapter-quiz))
 
 (defn line-input-fields-answers-correct?
   [input-fields input-values]
