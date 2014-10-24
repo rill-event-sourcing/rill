@@ -146,8 +146,6 @@ RSpec.describe EntryQuizQuestionsController, :type => :controller do
     end
   end
 
-
-
   describe "POST moveup" do
 
     it "should moveup the question and redirect" do

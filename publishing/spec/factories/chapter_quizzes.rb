@@ -2,5 +2,6 @@
 
 FactoryGirl.define do
   factory :chapter_quiz do
+    chapter
   end
 end

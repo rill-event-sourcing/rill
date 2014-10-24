@@ -2,13 +2,6 @@ class ChapterQuestionsSetsController < ApplicationController
   before_action :set_param_objects
   before_action :set_breadcrumb
 
-  def index
-    @chapter_questions_sets = @chapter_quiz.chapter_questions_sets
-  end
-
-  def show
-  end
-
   def new
     @chapter_questions_set = @chapter_quiz.chapter_questions_sets.build
   end
