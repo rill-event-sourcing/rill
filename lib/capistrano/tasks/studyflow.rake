@@ -225,7 +225,7 @@ namespace :deploy do
 
   desc "restarting the servers"
   task :restart do
-    throw " => Stack not set!" unless fetch(:stack)
+    # throw " => Stack not set!" unless fetch(:stack)
     on roles(*fetch(:release_roles), filter: fetch(:stack)) do |host|
       role = host.roles.first
       if role == :publish
@@ -233,13 +233,11 @@ namespace :deploy do
         execute :touch, current_path.join("tmp", "restart.txt")
       else
         warn " restarting java server #{ host } ".center(72, "#")
-#        execute :sudo, :supervisorctl, :stop, "studyflow_#{ role }"
         execute :sudo, :"/etc/init.d/supervisor", :stop
         execute :echo, " '##################### DEPLOY OF #{ fetch(:current_revision) } ON #{ fetch(:release_timestamp) } #########################################' | sudo tee -a /home/studyflow/#{ role }-stderr.log"
         execute :echo, " '##################### DEPLOY OF #{ fetch(:current_revision) } ON #{ fetch(:release_timestamp) } #########################################' | sudo tee -a /home/studyflow/#{ role }-stdout.log"
         sleep 2
         execute :sudo, :"/etc/init.d/supervisor", :start
-#        execute :sudo, :supervisorctl, :start, "studyflow_#{ role }"
       end
       check_up_server role
     end
