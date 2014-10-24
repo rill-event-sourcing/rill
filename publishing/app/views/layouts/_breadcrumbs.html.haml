@@ -1,7 +1,7 @@
 %ol.breadcrumb
   - if @crumbs
-    - @crumbs.each_with_index do |crumb,index|
-      - if index == @crumbs.length-1
+    - @crumbs.each_with_index do |crumb, index|
+      - if index == @crumbs.length-1 || crumb[:url].blank?
         %li.active= crumb[:name]
       - else
         %li

@@ -1,0 +1,47 @@
+%form.form-horizontal#question-form{action: chapter_chapter_quiz_chapter_questions_set_question_path(@chapter, @chapter_questions_set, @question), role: :form}
+  %div.row
+    %div.col-md-9
+      %h2
+        Editing question
+
+    %div.col-md-1
+      %span.btn.btn-primary.btn-lg.save Save
+    %div.col-md-2
+      %small
+        %span#edit-time{style: "min-height:30px;"}
+          Saved on:
+          = l @question.updated_at, format: :long
+  %div.row{style: "padding-bottom: 10px;"}
+    %div.col-md-4
+      %div.input-group
+        %span.input-group-addon Name:
+        = text_field :question, :name, style: "width: 100px;", class: "form-control", maxlength: 5
+
+    %div.col-md-8
+      %div.input-group
+        %span.input-group-addon Tools:
+        - Tools.all.each do |tool|
+          %div.checkbox.btn.btn-default
+            %label
+              = check_box_tag "question[tools][#{ tool }]", 1, @question.tools.include?(tool)
+              = tool
+
+  %div.row
+    %div.col-md-6
+      = text_area :question, :text, style: "width: 100%", rows: 5, class: "form-control auto-resize rich-text"
+
+      %div.panel.panel-default
+        %div.panel-heading
+          %div.col-md-4
+            %select.form-control#input-type
+              %option line-input
+              %option multiple-choice
+          %span.btn.btn-default#add-input{data: { url: inputs_path(question_id: @question.to_param) } } Add
+
+        %div.panel-body#inputs-list
+          - @question.inputs.each do |input|
+            = render partial: 'inputs/edit', locals: {input: input}
+
+    %div.col-md-6
+      - url = preview_chapter_chapter_quiz_chapter_questions_set_question_path(@chapter, @chapter_questions_set, @question)
+      %iframe.fill.col-md-12{id: "preview", data: {url: url}, src: url, style: "min-height: 800px;" }

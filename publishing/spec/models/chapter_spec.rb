@@ -68,4 +68,15 @@ RSpec.describe Chapter, type: :model do
     expect{Chapter.find_by_uuid(uuid[0,8])}.to raise_error(StudyflowPublishing::ShortUuidDoubleError)
   end
 
+  describe "when publishing" do
+    it "should include the chapter quiz when it has one and it is active" do
+      q1 = create(:chapter_quiz, chapter: @chapter1)
+      @chapter1.reload
+      expect(@chapter1.to_publishing_format.has_key?(:chapter_quiz)).to eq false
+      @chapter1.chapter_quiz.activate
+      expect(@chapter1.to_publishing_format.has_key?(:chapter_quiz)).to eq true
+    end
+  end
+
+
 end

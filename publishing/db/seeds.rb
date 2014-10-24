@@ -101,3 +101,48 @@ grouping_question_2_multiple_choice_input_choice3 = Choice.create(multiple_choic
 pos0q1 = Question.create(text: "1 + 1 _INPUT_1_", worked_out_answer: "2", quizzable: position_of_0)
 pos0q1i = LineInput.create(inputable: pos0q1, prefix: "pre", suffix: "suf")
 pos0q1ia = Answer.create(value: "2", line_input: pos0q1i)
+
+### Chapter quiz
+
+ch1_quiz = ChapterQuiz.create(chapter: positional_system, active: true)
+
+ch1_quiz_set1 = ChapterQuestionsSet.create(title: "QS1", chapter_quiz: ch1_quiz)
+
+ch1_s1_1 = Question.create(text: "1+1= _INPUT_1_ Which one is highest? _INPUT_2_", active: true, worked_out_answer: "2 and 2", quizzable: ch1_quiz_set1)
+ch1_s1_1_1 = LineInput.create(inputable: ch1_s1_1, prefix: "", suffix: "")
+ch1_s1_1_1_answer = Answer.create(value: "2", line_input: ch1_s1_1_1)
+ch1_s1_1_2 = MultipleChoiceInput.create(inputable: ch1_s1_1)
+ch1_s1_1_2_1 = Choice.create(multiple_choice_input: ch1_s1_1_2, value: "1", correct: false)
+ch1_s1_1_2_2 = Choice.create(multiple_choice_input: ch1_s1_1_2, value: "0", correct: false)
+ch1_s1_1_2_3 = Choice.create(multiple_choice_input: ch1_s1_1_2, value: "2", correct: true)
+
+ch1_s1_2 = Question.create(text: "Five mangoes plus two mangoes? _INPUT_2_ What is the lowest even number greater than 0? _INPUT_1_", active: true, worked_out_answer: "seven mangoes! 2", quizzable: ch1_quiz_set1)
+ch1_s1_2_1 = LineInput.create(inputable: ch1_s1_2, suffix: "mangoes")
+ch1_s1_2_1_answer = Answer.create(value: "7", line_input: ch1_s1_2_1)
+ch1_s1_2_1_answer_2  = Answer.create(value: "seven", line_input: ch1_s1_2_1)
+
+ch1_s1_2_2  = MultipleChoiceInput.create(inputable: ch1_s1_2)
+ch1_s1_2_2_1  = Choice.create(multiple_choice_input: ch1_s1_2_2, value: "1", correct: false)
+ch1_s1_2_2_2  = Choice.create(multiple_choice_input: ch1_s1_2_2, value: "2", correct: true)
+ch1_s1_2_2_3  = Choice.create(multiple_choice_input: ch1_s1_2_2, value: "-1", correct: false)
+
+##
+ch1_quiz_set2 = ChapterQuestionsSet.create(title: "Question set 2", chapter_quiz: ch1_quiz)
+
+ch1_s2_1 = Question.create(text: "3+3= _INPUT_1_ Which one is highest? _INPUT_2_", active: true, worked_out_answer: "6 and 100", quizzable: ch1_quiz_set2)
+ch1_s2_1_1 = LineInput.create(inputable: ch1_s2_1, prefix: "", suffix: "")
+ch1_s2_1_1_answer = Answer.create(value: "6", line_input: ch1_s2_1_1)
+ch1_s2_1_2 = MultipleChoiceInput.create(inputable: ch1_s2_1)
+ch1_s2_1_2_1 = Choice.create(multiple_choice_input: ch1_s2_1_2, value: "100", correct: true)
+ch1_s2_1_2_2 = Choice.create(multiple_choice_input: ch1_s2_1_2, value: "16", correct: false)
+ch1_s2_1_2_3 = Choice.create(multiple_choice_input: ch1_s2_1_2, value: "42", correct: false)
+
+ch1_s2_2 = Question.create(text: "One kiwi plus two kiwis? _INPUT_2_ What is the lowest odd number? _INPUT_1_", active: true, worked_out_answer: "three kiwis! 1", quizzable: ch1_quiz_set2)
+ch1_s2_2_1 = LineInput.create(inputable: ch1_s2_2, suffix: "kiwis")
+ch1_s2_2_1_answer = Answer.create(value: "3", line_input: ch1_s2_2_1)
+ch1_s2_2_1_answer_2  = Answer.create(value: "three", line_input: ch1_s2_2_1)
+
+ch1_s2_2_2  = MultipleChoiceInput.create(inputable: ch1_s2_2)
+ch1_s2_2_2_1  = Choice.create(multiple_choice_input: ch1_s2_2_2, value: "1", correct: false)
+ch1_s2_2_2_2  = Choice.create(multiple_choice_input: ch1_s2_2_2, value: "0", correct: true)
+ch1_s2_2_2_3  = Choice.create(multiple_choice_input: ch1_s2_2_2, value: "-1", correct: false)

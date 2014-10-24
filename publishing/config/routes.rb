@@ -9,8 +9,6 @@ Rails.application.routes.draw do
 
   match 'check_content', to: 'checking#index', via: :get
 
-  #match 'entry_quiz', to: 'entry_quiz#show', via: :get
-
   resource :entry_quiz do
     resources :entry_quiz_questions, as: :questions do
       member do
@@ -25,6 +23,23 @@ Rails.application.routes.draw do
   end
 
   resources :chapters do
+    resource :chapter_quiz, :only => [:show] do
+      member do
+        post 'toggle_activation'
+      end
+      resources :chapter_questions_sets do
+        member do
+          post 'moveup'
+          post 'movedown'
+        end
+        resources :chapter_quiz_questions, as: :questions do
+          member do
+            get 'preview'
+          end
+        end
+      end
+    end
+
     member do
       post 'activate'
       post 'deactivate'

@@ -13,9 +13,11 @@ class CheckingController < ApplicationController
           if perr.any? || ierr.any?
             if item.is_a?(Question)
               if item.quizzable.is_a?(EntryQuiz)
-                ref = %(<a href="/entry_quiz/entry_quiz_questions/#{item.to_param}/edit">#{item.reference}/edit</a>).html_safe
+                ref = %(<a href="/entry_quiz/entry_quiz_questions/#{item.to_param}/edit">#{item.reference}</a>).html_safe
               elsif item.quizzable.is_a?(Section)
                 ref = %(<a href="/chapters/#{item.quizzable.chapter.to_param}/sections/#{item.quizzable.to_param}/questions/#{item.to_param}/edit">#{item.reference}</a>).html_safe
+              elsif item.quizzable.is_a?(ChapterQuestionsSet)
+                ref = %(<a href="/chapters/#{item.quizzable.chapter_quiz.chapter.to_param}/chapter_quiz/chapter_questions_sets/#{item.quizzable.to_param}/chapter_quiz_questions/#{item.to_param}/edit">#{item.reference}</a>).html_safe
               end
             elsif item.is_a?(Subsection)
               ref = %(<a href="/chapters/#{item.section.chapter.to_param}/sections/#{item.section.to_param}/subsections">#{item.reference}</a>).html_safe

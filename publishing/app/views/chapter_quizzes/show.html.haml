@@ -1,0 +1,52 @@
+%div.container
+  %div.row
+    %div.col-md-8
+      %h2
+        = @chapter_quiz.to_s
+        - if @chapter_quiz.active?
+          = link_to "Active", toggle_activation_chapter_chapter_quiz_path(@chapter), class: "label label-success", method: :post
+        - else
+          = link_to "Not active", toggle_activation_chapter_chapter_quiz_path(@chapter), class: "label label-danger", method: :post
+
+    %div.col-md-2
+      = link_to "Add Set of questions", new_chapter_chapter_quiz_chapter_questions_set_path(@chapter), class: "btn btn-lg btn-primary"
+
+  %div.row
+    - @chapter_quiz.chapter_questions_sets.each do |questions_set|
+      %div.panel.panel-default
+
+        %div.panel-heading
+          %div.row
+            %div.col-md-7
+              %h4= "#{questions_set.position}: #{questions_set}"
+            %div.col-md-3
+              %div.pull-right
+                = link_to edit_chapter_chapter_quiz_chapter_questions_set_path(@chapter, questions_set) do
+                  %span.glyphicon.glyphicon-pencil.btn.btn-default
+                = link_to chapter_chapter_quiz_chapter_questions_set_path(@chapter, questions_set), method: :delete, data: {confirm: "Are you sure to delete Question set `#{questions_set}`?"} do
+                  %span.glyphicon.glyphicon-trash.btn.btn-default
+                = link_to moveup_chapter_chapter_quiz_chapter_questions_set_path(@chapter, questions_set), method: :post do
+                  %span.glyphicon.glyphicon-arrow-up.btn.btn-default
+                = link_to movedown_chapter_chapter_quiz_chapter_questions_set_path(@chapter, questions_set), method: :post do
+                  %span.glyphicon.glyphicon-arrow-down.btn.btn-default
+            %div.col-md-2
+              = link_to "Add question", chapter_chapter_quiz_chapter_questions_set_questions_path(@chapter, questions_set), method: :post, class: "btn btn-primary pull-right"
+
+
+        %table.table.table-bordered
+          %thead
+            %tr
+              %th.col-md-2 Name
+              %th.col-md-7 Excerpt
+              %th.col-md-1 Tools
+              %th.col-md-1 Remove
+
+          %tbody
+            - questions_set.questions.each do |question|
+              %tr{class: question.active? ? "success" : "danger"}
+                %td= question.name
+                %td= link_to question.to_s.truncate(90, omission: '...'), edit_chapter_chapter_quiz_chapter_questions_set_question_path(@chapter, questions_set, question)
+                %td= tools(question.tools)
+                %td
+                  = link_to chapter_chapter_quiz_chapter_questions_set_question_path(@chapter, questions_set, question), method: :delete, data: { confirm: "Are you sure you want to delete this question?" } do
+                    %span.glyphicon.glyphicon-trash

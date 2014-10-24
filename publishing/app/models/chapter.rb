@@ -5,6 +5,7 @@ class Chapter < ActiveRecord::Base
   acts_as_list scope: :course
 
   has_many :sections, -> { order(:position) }
+  has_one :chapter_quiz
 
   validates :course, presence: true
   validates :title, presence: true
@@ -32,11 +33,14 @@ class Chapter < ActiveRecord::Base
       sections: sections.active.map(&:to_publishing_format),
       remedial: remedial?
     }
+    hash[:chapter_quiz] = chapter_quiz.to_publishing_format if chapter_quiz && chapter_quiz.active?
+    hash
   end
 
   def errors_when_publishing
     errors = []
     errors << sections.active.map(&:errors_when_publishing)
+    errors << chapter_quiz.errors_when_publishing if chapter_quiz && chapter_quiz.active?
     errors.flatten
   end
 
