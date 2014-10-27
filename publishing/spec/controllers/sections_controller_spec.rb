@@ -152,7 +152,33 @@ RSpec.describe SectionsController, :type => :controller do
       @answer.reload
       expect(@answer.value).to eq new_value
     end
+  end
 
+
+  describe "search section" do
+    it "shoudl show a search page" do
+      get :search
+      expect(assigns(:section)).not_to eq nil
+      expect(assigns(:section).new_record?).to eq true
+      expect(response).to render_template('search')
+    end
+
+    it "should not complain on not finding a section" do
+      post :search, search_id: 'blabla'
+      expect(assigns(:section)).not_to eq nil
+      expect(assigns(:section).new_record?).to eq true
+      expect(response).to render_template('search')
+    end
+
+    it "should not be able to find a section by uuid" do
+      post :search, search_id: @section1.id
+      expect(response).to redirect_to chapter_section_path(@chapter, @section1)
+    end
+
+    it "should not be able to find a section by short uuid" do
+      post :search, search_id: @section1.to_param
+      expect(response).to redirect_to chapter_section_path(@chapter, @section1)
+    end
   end
 
 end
