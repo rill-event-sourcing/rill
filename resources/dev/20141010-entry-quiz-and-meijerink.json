@@ -128,6 +128,170 @@
       "id": "1e8d8c4b-0581-4400-bd7d-a66d0500621e",
       "title": "1 Het positie stelsel",
       "remedial": true,
+      "chapter_quiz": [
+        {
+          "title": "QS1",
+          "id": "34f80676-4f31-43bb-99d2-a14ef6acf426",
+          "questions": [
+            {
+              "id": "24f80676-6d1c-4a31-906b-533878270a9b",
+              "text": "1+1= _INPUT_1_ Which one is highest? _INPUT_2_",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "prefix": "",
+                  "suffix": "",
+                  "width": 150,
+                  "correct_answers": [
+                    "2"
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+                {
+                  "name": "_INPUT_2_",
+                  "choices": [
+                    {
+                      "value": "1",
+                      "correct": false
+                    },
+                    {
+                      "value": "0",
+                      "correct": false
+                    },
+                    {
+                      "value": "2",
+                      "correct": true
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "3a4195a3-4f31-43bb-99d2-a14ef6acf426",
+              "text": "Five mangoes plus two mangoes? _INPUT_2_ What is the lowest even number greater than 0? _INPUT_1_",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "prefix": "",
+                  "suffix": "mangoes",
+                  "width": 150,
+                  "correct_answers": [
+                    "7",
+                    "seven"
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+                {
+                  "name": "_INPUT_2_",
+                  "choices": [
+                    {
+                      "value": "1",
+                      "correct": false
+                    },
+                    {
+                      "value": "2",
+                      "correct": true
+                    },
+                    {
+                      "value": "-1",
+                      "correct": false
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Question set 2",
+          "id": "3a4195f3-4f31-43bb-99d2-a14ef6acf426",
+          "questions": [
+            {
+              "id": "f02d81f7-df3f-48e2-a5d9-fc4094c8bf14",
+              "text": "3+3= _INPUT_1_ Which one is highest? _INPUT_2_",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "prefix": "",
+                  "suffix": "",
+                  "width": 150,
+                  "correct_answers": [
+                    "6"
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+                {
+                  "name": "_INPUT_2_",
+                  "choices": [
+                    {
+                      "value": "100",
+                      "correct": true
+                    },
+                    {
+                      "value": "16",
+                      "correct": false
+                    },
+                    {
+                      "value": "42",
+                      "correct": false
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "50ee5d38-86c6-4297-aaea-9148e067d8bc",
+              "text": "One kiwi plus two kiwis? _INPUT_2_ What is the lowest odd number? _INPUT_1_",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "prefix": "",
+                  "suffix": "kiwis",
+                  "width": 150,
+                  "correct_answers": [
+                    "3",
+                    "three"
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+                {
+                  "name": "_INPUT_2_",
+                  "choices": [
+                    {
+                      "value": "1",
+                      "correct": false
+                    },
+                    {
+                      "value": "0",
+                      "correct": true
+                    },
+                    {
+                      "value": "-1",
+                      "correct": false
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
       "sections": [
         {"id": "98b3997f-63db-4f1d-b89e-5378e5f19514",
          "title": "TESTABLE QUESTIONS",
