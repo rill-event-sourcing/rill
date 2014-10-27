@@ -36,15 +36,12 @@
     (rand-nth (vec available-questions))))
 
 (defmethod handle-command ::Start!
-  [{:keys [previously-seen-questions locked? running?] :as chapter-quiz} {:keys [student-id course-id chapter-id]} course]
+  [{:keys [locked? running?] :as chapter-quiz} {:keys [student-id course-id chapter-id]} course]
   (if (or locked? running?)
     [:rejected]
     (let [question-set (first (course/question-sets-for-chapter-quiz course chapter-id))]
-      [:ok [(events/started chapter-id student-id)
-            (events/question-assigned course-id
-                                      chapter-id
-                                      student-id
-                                      (select-random-question question-set))]])))
+      [:ok [(events/started course-id chapter-id student-id)
+            (events/question-assigned course-id chapter-id student-id (select-random-question question-set))]])))
 
 (defmethod handle-event ::events/Started
   [chapter-quiz {:keys [course-id student-id chapter-id]}]
@@ -67,11 +64,10 @@
   [{:keys [course-id]}]
   [course-id])
 
-
 (defmethod handle-command ::SubmitAnswer!
   [{:keys [current-question-id current-question-set-index chapter-id student-id fast-route?] :as chapter-quiz} {:keys [inputs question-id] :as command} course]
-  {:pre [(= current-question=id question-id)]}
-  (if (course/answer-correct? (course/question-for-chapter-quiz course chapter-id current-question-id))
+  {:pre [(= current-question-id question-id)]}
+  (if (course/answer-correct? (course/question-for-chapter-quiz course chapter-id current-question-id) inputs)
     (let [correct-answer-event (events/question-answered-correctly chapter-id student-id question-id inputs)]
       (if (= current-question-set-index
              (count (course/question-sets-for-chapter-quiz course chapter-id)))
@@ -79,40 +75,39 @@
               (events/passed course-id chapter-id student-id)]]
         (let [next-question-set (get (course/question-sets-for-chapter-quiz course chapter-id) (inc current-question-set-index))]
           [:ok [correct-answer-event
-                (events/question-assigned course-id
-                                          chapter-id
-                                          student-id
-                                          (select-random-question next-question-set))]])))
-    (let [incorrect-answer-event (events/question-answered-correctly chapter-id student-id question-id inputs)
-          number-of-errors (inc (:number-of-errors chapter-quiz))]
+                (events/question-assigned course-id chapter-id student-id (select-random-question next-question-set))]])))
+    (let [incorrect-answer-event (events/question-answered-correctly chapter-id student-id question-id inputs)]
       (cond
-       (and (= 2 (number-of-errors))
-            fast-route?) [:ok [incorrect-answer-event
-                               (events/failed course-id chapter-id student-id)
-                               (events/locked course-id chapter-id student-id)]]
-            (= 3 (number-of-errors)) [:ok [incorrect-answer-event
-                                           (events/failed course-id chapter-id student-id)]]
-            :else (let [next-question-set (get (course/question-sets-for-chapter-quiz course chapter-id) (inc current-question-set-index))]
-                    [:ok [incorrect-answer-event
-                          (events/question-assigned course-id
-                                                    chapter-id
-                                                    student-id
-                                                    (select-random-question next-question-set))]])))))
 
+       (and fast-route?
+            (= 1 number-of-errors))
+       [:ok [incorrect-answer-event
+             (events/failed course-id chapter-id student-id)
+             (events/locked course-id chapter-id student-id)]]
+
+       (= 2 (number-of-errors))
+       [:ok [incorrect-answer-event
+             (events/failed course-id chapter-id student-id)]]
+
+       (= current-question-set-index
+          (count (course/question-sets-for-chapter-quiz course chapter-id)))
+       [:ok [incorrect-answer-event
+             (events/passed course-id chapter-id student-id)]]
+
+       :else [:ok [incorrect-answer-event]]))))
 
 (defmethod handle-event ::events/QuestionAssigned
   [{:keys [current-question-set-id current-question-id] :as chapter-quiz} _]
-  (assoc-in chapter-quiz [:previously-seen-questions question-set-id] current-question-id))
+  (-> chapter-quiz
+      (assoc-in [:previously-seen-questions question-set-id] current-question-id))
+  (update-in [:current-question-set-index] inc))
 
-(defmethod handle-event ::events/QuestionAnsweredCorrectly
-  [{:keys [current-question-set-index current-question-id] :as chapter-quiz} _]
-  (update-in chapter-quiz [:current-question-set-index] inc))
+#_(defmethod handle-event ::events/QuestionAnsweredCorrectly
+  [{:keys [current-question-set-index current-question-id] :as chapter-quiz} _])
 
 (defmethod handle-event ::events/QuestionAnsweredIncorrectly
   [{:keys [current-question-set-index] :as chapter-quiz} _]
-  (-> chapter-quiz
-      (update-in [:current-question-set-index] inc)
-      (update-in [:number-of-errors] inc)))
+  (update-in chapter-quiz [:number-of-errors] inc))
 
 (defmethod handle-event ::events/Passed
   [chapter-quiz _]
@@ -132,8 +127,22 @@
   [{:keys [course-id]}]
   [course-id])
 
+(defmethod handle-command ::DismissErrorScreen!
+  [{:keys [current-question-set-index chapter-id student-id]}]
+  [:ok (events/question-assigned course-id
+                                 chapter-id
+                                 student-id
+                                 (select-random-question (get (course/question-sets-for-chapter-quiz course chapter-id) (inc current-question-set-index))))])
+
 (defcommand Stop!
   :course-id m/Id
   :chapter-id m/Id
   :student-id m/Id
   chapter-quiz-id)
+
+(defmethod handle-command ::Stop!
+  [{:keys [fast-route?]} {:keys [student-id course-id chapter-id]} course]
+  (if fast-route?
+    [:ok [(events/stopped course-id chapter-id student-id)
+          (events/locked course-id chapter-id student-id)]]
+    [:ok [(events/stopped course-id chapter-id student-id)]]))
