@@ -113,11 +113,13 @@
     "studyflow.learning.entry-quiz.events/InstructionsRead"
     (assoc agg
       :status :in-progress
-      :question-index 0)
+      :question-index 0
+      :correct 0)
 
     "studyflow.learning.entry-quiz.events/QuestionAnsweredCorrectly"
     (-> agg
         (update-in [:question-index] inc)
+        (update-in [:correct] inc)
         (assoc :status :in-progress))
 
     "studyflow.learning.entry-quiz.events/QuestionAnsweredIncorrectly"

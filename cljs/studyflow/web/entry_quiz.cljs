@@ -76,13 +76,33 @@
                                        (submit))) cursor)))))))
 
 
-(defn to-dashboard-bar []
+(defn to-dashboard-bar [status]
   (dom/div #js {:id "m-question_bar"}
            (dom/button #js {:className "btn blue small pull-right"
                             :onClick (fn []
                                        (set! (.-location js/window)
                                              (history-link {:main :dashboard})))}
-                       "Naar je Dashboard")))
+                       (if (or (= status :failed) (= status :passed))
+                         "Let's Go!"
+                         "Naar je Dashboard"))))
+
+(defn entry-quiz-result [status student-name correct-answer-number total-question-number]
+  (let [style #js {:width (str (Math/round (float (/ (* 100 correct-answer-number) total-question-number))) "%;")}]
+    (dom/div nil
+             (dom/p nil (str "Hoi " student-name))
+             (dom/p nil (str "Je had " correct-answer-number " van de " total-question-number " vragen goed!"))
+             (dom/div #js {:className "progress"}
+                      (dom/div #js {:className "progress_bar" :style style}
+                               (dom/span nil (str correct-answer-number "/" total-question-number))))
+             (if (= status :passed)
+               (dom/p nil "We raden je aan om bij hoofdstuk 7 te beginnen.")
+               (dom/p nil "We raden je aan om bij het begin te beginnen, zodat je alles nog even kan opfrissen."))
+             (to-dashboard-bar status))))
+
+(defn entry-quiz-title [status]
+  (if (or (= status :failed) (= status :passed))
+    "Einde toets"
+    "Welkom op Studyflow!"))
 
 (defn entry-quiz-panel [cursor owner]
   (reify
@@ -96,14 +116,17 @@
     (render [_]
       (let [course-id (get-in cursor [:static :course-id])
             entry-quiz (get-in cursor [:aggregates course-id])
-            material (get-in cursor [:view :course-material :entry-quiz])]
+            material (get-in cursor [:view :course-material :entry-quiz])
+            status (:status entry-quiz)
+            correct (:correct entry-quiz)
+            student-name (get-in cursor [:static :student :full-name])]
         (dom/div #js {:id "m-entry-quiz"
                       :className "entry_exam_page"}
                  (dom/header #js {:id "m-top_header"}
                              (dom/a #js {:id "home"
                                          :href (history-link {:main :dashboard})})
                              (dom/h1 #js {:id "page_heading"}
-                                     "Welkom op Studyflow!") ;; TODO title is not in aggregate
+                                     (entry-quiz-title status)) ;; TODO title is not in aggregate
                              (when-let [index (:question-index entry-quiz)]
                                (dom/p #js {:id "quiz_counter"}
                                       (str "Vraag " (inc index) " van " (count (:questions material))))))
@@ -111,8 +134,8 @@
                               (dom/article #js {:id "m-section"}
                                            (if-not (get-in cursor [:view :entry-quiz-replay-done])
                                              (dom/div nil "Instaptoets laden"
-                                                      (to-dashboard-bar))
-                                             (case (:status entry-quiz)
+                                                      (to-dashboard-bar status))
+                                             (case status
                                                nil ; entry-quiz not yet started
                                                (om/build instructions-panel cursor)
                                                :dismissed
@@ -151,18 +174,16 @@
                                                                                                            (when (< (inc index) (count (:questions material)))
                                                                                                              " & volgende vraag"))
                                                                                                       (fn []
-                ;; form handles submit
+                                                                                                        ;; form handles submit
                                                                                                         nil)
                                                                                                       :enabled answering-allowed)
                                                                               cursor))))
                                                :passed
-                                               (dom/div nil
-                                                        (dom/div nil (raw-html (:feedback material)))
-                                                        (to-dashboard-bar))
+                                               (do
+                                                 (println (get-in cursor [:view :entry-quiz]))
+                                                 (dom/div nil (entry-quiz-result :passed student-name correct (count (:questions material)))))
                                                :failed
-                                               (dom/div nil
-                                                        (dom/div nil (raw-html (:feedback material)))
-                                                        (to-dashboard-bar))
+                                               (dom/div nil (entry-quiz-result :failed student-name correct (count (:questions material))))
                                                nil)))))))
     om/IDidMount
     (did-mount [_]
