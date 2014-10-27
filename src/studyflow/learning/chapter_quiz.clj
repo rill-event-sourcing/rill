@@ -13,6 +13,7 @@
      student-id
      current-question-id
      current-question-set-index
+     current-question-set-id
      previously-seen-questions ;; question-set-id => #{ question-id ... }
      number-of-errors])
 
@@ -76,7 +77,7 @@
              (count (course/question-sets-for-chapter-quiz course chapter-id)))
         [:ok [correct-answer-event
               (events/passed course-id chapter-id student-id)]]
-        (let [next-question-set (get (course-question-sets-for-chapter-quiz course chapter-id) (inc current-question-set-index))]
+        (let [next-question-set (get (course/question-sets-for-chapter-quiz course chapter-id) (inc current-question-set-index))]
           [:ok [correct-answer-event
                 (events/question-assigned course-id
                                           chapter-id
@@ -91,7 +92,35 @@
                                (events/locked course-id chapter-id student-id)]]
             (= 3 (number-of-errors)) [:ok [incorrect-answer-event
                                            (events/failed course-id chapter-id student-id)]]
-            :else (assoc chapter-quiz :number-of-errors number-of-errors)))))
+            :else (let [next-question-set (get (course/question-sets-for-chapter-quiz course chapter-id) (inc current-question-set-index))]
+                    [:ok [incorrect-answer-event
+                          (events/question-assigned course-id
+                                                    chapter-id
+                                                    student-id
+                                                    (select-random-question next-question-set))]])))))
+
+
+(defmethod handle-event ::events/QuestionAssigned
+  [{:keys [current-question-set-id current-question-id] :as chapter-quiz} _]
+  (assoc-in chapter-quiz [:previously-seen-questions question-set-id] current-question-id))
+
+(defmethod handle-event ::events/QuestionAnsweredCorrectly
+  [{:keys [current-question-set-index current-question-id] :as chapter-quiz} _]
+  (update-in chapter-quiz [:current-question-set-index] inc))
+
+(defmethod handle-event ::events/QuestionAnsweredIncorrectly
+  [{:keys [current-question-set-index] :as chapter-quiz} _]
+  (-> chapter-quiz
+      (update-in [:current-question-set-index] inc)
+      (update-in [:number-of-errors] inc)))
+
+(defmethod handle-event ::events/Passed
+  [chapter-quiz _]
+  (assoc chapter-quiz :finished? true))
+
+(defmethod handle-event ::events/Failed
+  [chapter-quiz _]
+  (assoc chapter-quiz :number-of-errors 0 :running? false))
 
 (defcommand DismissErrorScreen!
   :course-id m/Id
