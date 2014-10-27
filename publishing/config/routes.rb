@@ -9,6 +9,8 @@ Rails.application.routes.draw do
 
   match 'check_content', to: 'checking#index', via: :get
 
+  match 'search_section', to: 'sections#search', via: [:get, :post]
+
   resource :entry_quiz do
     resources :entry_quiz_questions, as: :questions do
       member do
