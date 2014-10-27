@@ -1,11 +1,12 @@
 (ns rekenmachien.core
   (:require [clojure.string :as s]
+            [rekenmachien.program :as program]
             [reagent.core :as reagent :refer [atom]]))
 
-(defonce program-atom (atom []))
-(defonce result-atom (atom nil))
+(defonce program-atom (atom program/empty))
 (defonce inv-mode-atom (atom false))
-(defonce ins-mode-atom (atom false))
+(defonce cursor-location-atom (atom 0))
+(defonce result-atom (atom nil))
 
 (def button-labels
   {:inv "INV"
@@ -14,21 +15,32 @@
    :left "←" :right "→" :ins "INS" :del "DEL" :clear "C"
    :dot "." :neg "(-)" :ans "ANS" :mul "×" :div "/" :add "+" :sub "-" :open "(" :close ")" :show "="})
 
-(defn key-press! [val]
+(defn button-press! [val]
   (case val
-    :clear (reset! program-atom [])
-    :del (swap! program-atom pop)
     :inv (swap! inv-mode-atom not)
-    :ins (swap! ins-mode-atom not)
+
+    :left (swap! program-atom program/left)
+    :right (swap! program-atom program/right)
+    :ins (swap! program-atom program/toggle-ins-mode)
+    :del (swap! program-atom program/del)
+    :clear (reset! program-atom program/empty)
+
     :show (swap! result-atom #(rand))
 
     ;; otherwise
-    (swap! program-atom conj val)))
+    (swap! program-atom program/insert val)))
 
 (defn program-component []
-  (let [program @program-atom]
+  (let [{:keys [cursor tokens]} @program-atom]
     [:div.program
-     (s/join " " (map str program))]))
+     (map (fn [token loc]
+            [:span
+             (if (= loc cursor) {:class "with-cursor"})
+             (str token)])
+          tokens
+          (iterate inc 0))
+     (when (>= cursor (count tokens))
+       [:span.with-cursor " "])]))
 
 (defn result-component []
   (let [result @result-atom]
@@ -38,7 +50,7 @@
   [:div.rekenmachien
    [:div.display
     (when @inv-mode-atom [:span.inv-mode "i"])
-    (when @ins-mode-atom [:span.ins-mode "ins"])
+    (when (program/ins-mode? @program-atom) [:span.ins-mode "ins"])
     [program-component]
     [result-component]]
    [:div.keyboard
@@ -54,7 +66,7 @@
        (for [row rows]
          [:div.row
           (for [button row]
-            [:button {:type "button" :on-click #(key-press! button)
+            [:button {:type "button" :on-click #(button-press! button)
                       :class (if (keyword? button) (name button) (str button))}
              [:span.label (get button-labels button (str button))]])])])]
    [:style {:type "text/css"}
@@ -65,7 +77,9 @@
      ".rekenmachien .display .inv-mode, .rekenmachien .display .ins-mode { position: absolute; top: .5em; font-size: 66%; background: black; color: #eee; padding: .1em .25em; border-radius: .3em; }"
      ".rekenmachien .display .inv-mode { left: .5em; }"
      ".rekenmachien .display .ins-mode { right: .5em; }"
-     ".rekenmachien .display .program {  padding: .5em 1.5em .25em 1.5em; background: #eee; } "
+     ".rekenmachien .display .program { padding: .5em 1.5em .25em 1.5em; background: #eee; } "
+     ".rekenmachien .display .program span { display: inline-block; } "
+     ".rekenmachien .display .program .with-cursor { border-bottom: 1px solid #000; min-width: .5em; } "
      ".rekenmachien .display .result { font-size: 175%; font-weight: bold; position: absolute; bottom: .25em; right: 1em;}"
      ".rekenmachien button { width: 3em; height: 3em; margin: .25em; }"
      ".rekenmachien .keyboard section { display: inline-block; vertical-align: top; margin: 1em; }")]])
