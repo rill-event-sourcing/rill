@@ -78,11 +78,47 @@
      ".rekenmachien .display .inv-mode { left: .5em; }"
      ".rekenmachien .display .ins-mode { right: .5em; }"
      ".rekenmachien .display .program { padding: .5em 1.5em .25em 1.5em; background: #eee; } "
-     ".rekenmachien .display .program span { display: inline-block; } "
-     ".rekenmachien .display .program .with-cursor { border-bottom: 1px solid #000; min-width: .5em; } "
+     ".rekenmachien .display .program sup, .rekenmachien .display .program sub { font-size: 66%; }"
+     ".rekenmachien .display .program small { font-size: 75%; }"
+     ".rekenmachien .display .program span { display: inline-block; text-align: center; } "
+     ".rekenmachien .display .program span.placeholder { width: .5em; } "
+     ".rekenmachien .display .program .with-cursor { border-bottom: 2px solid #000; } "
      ".rekenmachien .display .result { font-size: 175%; font-weight: bold; position: absolute; bottom: .25em; right: 1em;}"
      ".rekenmachien button { width: 3em; height: 3em; margin: .25em; }"
      ".rekenmachien .keyboard section { display: inline-block; vertical-align: top; margin: 1em; }")]])
 
+(def key-code->button
+  {:normal {8 :del
+            13 :show
+            37 :left
+            39 :right
+            45 :ins
+            46 :del
+            48 0, 49 1, 50 2, 51 3, 52 4, 53 5, 54 6, 55 7, 56 8, 57 9
+            65 :show
+            67 :cos
+            83 :sin
+            84 :tan
+            106 :mul
+            107 :add
+            109 :sub
+            110 :dot
+            111 :div
+            187 :show
+            189 :sub
+            190 :dot
+            191 :div}
+   :shifted {48 :close
+             54 :pow
+             56 :mul
+             57 :open
+             67 :clear
+             187 :add}})
+
 (defn main []
+  (set! (.-onkeydown js/document)
+        #(when-let [button (get-in key-code->button
+                                   [(if (.-shiftKey %) :shifted :normal) (.-keyCode %)])]
+           (.preventDefault %)
+           (button-press! button)))
   (reagent/render-component [main-component] (.getElementById js/document "app")))
