@@ -36,11 +36,11 @@
      (map (fn [token loc]
             [:span
              (if (= loc cursor) {:class "with-cursor"})
-             (str token)])
+             (program/token-labels token)])
           tokens
           (iterate inc 0))
      (when (>= cursor (count tokens))
-       [:span.with-cursor " "])]))
+       [:span.placeholder.with-cursor " "])]))
 
 (defn result-component []
   (let [result @result-atom]

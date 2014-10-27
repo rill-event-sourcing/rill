@@ -3,6 +3,14 @@
 
 (def empty {:tokens [], :cursor 0, :ins false})
 
+(defn token-labels [token]
+  (get
+   {:sin "sin(" :cos "cos(" :tan "tan("
+    :abc [:sub "~"] :x10x [:sub "10"] :sqrt "√(" :x2 [:sup "2"] :pow "^" :x1 [:sup "-1"] :pi "π"
+    :dot "," :neg [:small "-"] :ans "Ans" :mul "×" :div "/" :add "+" :sub "-" :open "(" :close ")"}
+   token
+   (str token)))
+
 (defn left [{:keys [cursor] :as program}]
   (if (> cursor 0)
     (update-in program [:cursor] dec)
