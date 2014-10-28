@@ -27,6 +27,14 @@
 
 (def incorrect-inputs {"_INPUT_1_" "not 2"
                        "_INPUT_2_" "not 2"})
+(def correct-inputs-by-id {#uuid "24f80676-6d1c-4a31-906b-533878270a9b" {"_INPUT_1_" "2"
+                                                                         "_INPUT_2_" "2"}
+                           #uuid "3a4195a3-4f31-43bb-99d2-a14ef6acf426" {"_INPUT_1_" "7"
+                                                                         "_INPUT_2_" "2"}
+                           #uuid "f02d81f7-df3f-48e2-a5d9-fc4094c8bf14" {"_INPUT_1_" "6"
+                                                                         "_INPUT_2_" "100"}
+                           #uuid "50ee5d38-86c6-4297-aaea-9148e067d8bc" {"_INPUT_1_" "3"
+                                                                         "_INPUT_2_" "1"}})
 
 (def course fixture/course-aggregate)
 (def course-id (:id course))
@@ -52,5 +60,50 @@
                                (execute (chapter-quiz/submit-answer! course-id chapter-id student-id question-id 1 inputs)
                                         [fixture/course-published-event
                                          (events/started course-id chapter-id student-id)
-                                         (events/question-assigned course-id chapter-id student-id question-set-1-id question-id)])))))))
+                                         (events/question-assigned course-id chapter-id student-id question-set-1-id question-id)])))))
+      (testing "with an incorrect answer"
+        (let [inputs incorrect-inputs]
+          (is (command-result= [:ok [(events/question-answered-incorrectly course-id chapter-id student-id question-id inputs)]]
+                               (execute (chapter-quiz/submit-answer! course-id chapter-id student-id question-id 1 inputs)
+                                        [fixture/course-published-event
+                                         (events/started course-id chapter-id student-id)
+                                         (events/question-assigned course-id chapter-id student-id question-set-1-id question-id)])))))
+      (testing "dismissing the first error"
+        (is (command-result= [:ok [(events/question-assigned course-id chapter-id student-id question-set-2-id qs-2-question-1-id)]]
+                             (execute (chapter-quiz/dismiss-error-screen! course-id chapter-id student-id)
+                                      [fixture/course-published-event
+                                       (events/started course-id chapter-id student-id)
+                                       (events/question-assigned course-id chapter-id student-id question-set-1-id question-id)
+                                       (events/question-answered-incorrectly course-id chapter-id student-id question-id incorrect-inputs)]))))
+      (testing "an incorrect and then correct answer"
+        (is (command-result= [:ok [(events/question-answered-correctly course-id chapter-id student-id qs-2-question-1-id (correct-inputs-by-id qs-2-question-1-id))
+                                   (events/passed course-id chapter-id student-id)]]
+                             (execute (chapter-quiz/submit-answer! course-id chapter-id student-id qs-2-question-1-id 3 (correct-inputs-by-id qs-2-question-1-id))
+                                      [fixture/course-published-event
+                                       (events/started course-id chapter-id student-id)
+                                       (events/question-assigned course-id chapter-id student-id question-set-1-id question-id)
+                                       (events/question-answered-incorrectly course-id chapter-id student-id question-id incorrect-inputs)
+                                       (events/question-assigned course-id chapter-id student-id question-set-2-id qs-2-question-1-id)])))
+        )
+      (testing "two incorrect answers"
+        (is (command-result= [:ok [(events/question-answered-incorrectly course-id chapter-id student-id qs-2-question-1-id (correct-inputs-by-id question-id))]]
+                             (execute (chapter-quiz/submit-answer! course-id chapter-id student-id qs-2-question-1-id 3 (correct-inputs-by-id question-id))
+                                      [fixture/course-published-event
+                                       (events/started course-id chapter-id student-id)
+                                       (events/question-assigned course-id chapter-id student-id question-set-1-id question-id)
+                                       (events/question-answered-incorrectly course-id chapter-id student-id question-id incorrect-inputs)
+                                       (events/question-assigned course-id chapter-id student-id question-set-2-id qs-2-question-1-id)])))
+        )
+      (testing "two incorrect answers and dismissed error"
+        (is (command-result= [:ok [(events/failed course-id chapter-id student-id)
+                                   (events/locked course-id chapter-id student-id)]]
+                             (execute (chapter-quiz/dismiss-error-screen! course-id chapter-id student-id)
+                                      [fixture/course-published-event
+                                       (events/started course-id chapter-id student-id)
+                                       (events/question-assigned course-id chapter-id student-id question-set-1-id question-id)
+                                       (events/question-answered-incorrectly course-id chapter-id student-id question-id incorrect-inputs)
+                                       (events/question-assigned course-id chapter-id student-id question-set-2-id qs-2-question-1-id)
+                                       (events/question-answered-incorrectly course-id chapter-id student-id qs-2-question-1-id (correct-inputs-by-id question-id))])))
+        )
+      ))
   )

@@ -16,6 +16,7 @@
      current-question-id
      current-question-set-index
      current-question-set-id
+     fast-route?
      previously-seen-questions ;; {question-set-id => #{ question-id ... }}
      number-of-errors])
 
@@ -54,8 +55,9 @@
       :current-question-set-index -1
       :current-question-set-id nil
       :current-question-id nil
+      :fast-route? false
       :running? true)
-    (->ChapterQuiz course-id chapter-id student-id nil -1 nil {} 0)))
+    (->ChapterQuiz course-id chapter-id student-id nil -1 nil true {} 0)))
 
 (defcommand SubmitAnswer!
   :course-id m/Id
@@ -75,32 +77,16 @@
   {:pre [(= current-question-id question-id)]}
   (if (course/answer-correct? (course/question-for-chapter-quiz course chapter-id current-question-id) inputs)
     (let [correct-answer-event (events/question-answered-correctly course-id chapter-id student-id question-id inputs)]
-      (if (= current-question-set-index
+      (if (= (inc current-question-set-index)
              (count (course/question-sets-for-chapter-quiz course chapter-id)))
+
         [:ok [correct-answer-event
               (events/passed course-id chapter-id student-id)]]
+
         (let [next-question-set (get (course/question-sets-for-chapter-quiz course chapter-id) (inc current-question-set-index))]
           [:ok [correct-answer-event
                 (events/question-assigned course-id chapter-id student-id (:id next-question-set) (:id (select-random-question next-question-set previously-seen-questions)))]])))
-    (let [incorrect-answer-event (events/question-answered-correctly chapter-id student-id question-id inputs)]
-      (cond
-
-       (and fast-route?
-            (= 1 number-of-errors))
-       [:ok [incorrect-answer-event
-             (events/failed course-id chapter-id student-id)
-             (events/locked course-id chapter-id student-id)]]
-
-       (= 2 (number-of-errors))
-       [:ok [incorrect-answer-event
-             (events/failed course-id chapter-id student-id)]]
-
-       (= current-question-set-index
-          (count (course/question-sets-for-chapter-quiz course chapter-id)))
-       [:ok [incorrect-answer-event
-             (events/passed course-id chapter-id student-id)]]
-
-       :else [:ok [incorrect-answer-event]]))))
+    [:ok [(events/question-answered-incorrectly course-id chapter-id student-id question-id inputs)]]))
 
 (defmethod handle-event ::events/QuestionAssigned
   [chapter-quiz {:keys [question-set-id question-id]}]
@@ -136,14 +122,26 @@
   [course-id])
 
 (defmethod handle-command ::DismissErrorScreen!
-  [{:keys [previously-seen-questions]} {:keys [current-question-set-index chapter-id course-id student-id]} course]
-  (let [next-question-set (get (course/question-sets-for-chapter-quiz course chapter-id) (inc current-question-set-index))]
-    [:ok (events/question-assigned course-id
-                                   chapter-id
-                                   student-id
-                                   (:id next-question-set)
-                                   (:id (select-random-question next-question-set
-                                                                previously-seen-questions)))]))
+  [{:keys [fast-route? number-of-errors previously-seen-questions current-question-set-index]} {:keys [chapter-id course-id student-id]} course]
+  (cond
+   (and fast-route?
+        (= 2 number-of-errors))
+   [:ok [(events/failed course-id chapter-id student-id)
+         (events/locked course-id chapter-id student-id)]]
+
+   (= 3 number-of-errors)
+   [:ok [(events/failed course-id chapter-id student-id)]]
+
+   (= (inc current-question-set-index)
+      (count (course/question-sets-for-chapter-quiz course chapter-id)))
+   [:ok [(events/passed course-id chapter-id student-id)]]
+   :else (let [next-question-set (get (course/question-sets-for-chapter-quiz course chapter-id) (inc current-question-set-index))]
+           [:ok [(events/question-assigned course-id
+                                           chapter-id
+                                           student-id
+                                           (:id next-question-set)
+                                           (:id (select-random-question next-question-set
+                                                                        previously-seen-questions)))]])))
 
 (defcommand Stop!
   :course-id m/Id
