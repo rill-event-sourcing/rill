@@ -53,8 +53,8 @@
 (defn question-for-chapter-quiz
   [course chapter-id question-id]
   {:pre [course chapter-id question-id]
-   "post" [%]}
-  (find-by-id (question-sets-for-chapter-quiz course chapter-id)))
+   :post [%]}
+  (find-by-id (question-sets-for-chapter-quiz course chapter-id) question-id))
 
 (defn line-input-fields-answers-correct?
   [input-fields input-values]
