@@ -46,6 +46,7 @@
 
 (defn question-sets-for-chapter-quiz
   [course chapter-id]
+  {:post [(seq %)] :pre [course chapter-id]}
   (-> course
       (chapter chapter-id)
       :chapter-quiz))
@@ -54,7 +55,7 @@
   [course chapter-id question-id]
   {:pre [course chapter-id question-id]
    :post [%]}
-  (find-by-id (question-sets-for-chapter-quiz course chapter-id) question-id))
+  (find-by-id (mapcat :questions (question-sets-for-chapter-quiz course chapter-id)) question-id))
 
 (defn line-input-fields-answers-correct?
   [input-fields input-values]

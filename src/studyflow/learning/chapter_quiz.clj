@@ -10,12 +10,13 @@
             [rill.uuid :refer [new-id]]))
 
 (defrecord ChapterQuiz
-    [chapter-id
+    [course-id
+     chapter-id
      student-id
      current-question-id
      current-question-set-index
      current-question-set-id
-     previously-seen-questions ;; question-set-id => #{ question-id ... }
+     previously-seen-questions ;; {question-set-id => #{ question-id ... }}
      number-of-errors])
 
 (defcommand Start!
@@ -42,7 +43,7 @@
     [:rejected]
     (let [question-set (first (course/question-sets-for-chapter-quiz course chapter-id))]
       [:ok [(events/started course-id chapter-id student-id)
-            (events/question-assigned course-id chapter-id student-id (select-random-question question-set previously-seen-questions))]])))
+            (events/question-assigned course-id chapter-id student-id (:id question-set) (:id (select-random-question question-set previously-seen-questions)))]])))
 
 (defmethod handle-event ::events/Started
   [chapter-quiz {:keys [course-id student-id chapter-id]}]
@@ -50,13 +51,17 @@
     ;; restarted
     (assoc chapter-quiz
       :number-of-errors 0
+      :current-question-set-index -1
+      :current-question-set-id nil
+      :current-question-id nil
       :running? true)
-    (->ChapterQuiz chapter-id student-id nil 0 nil {} 0)))
+    (->ChapterQuiz course-id chapter-id student-id nil -1 nil {} 0)))
 
 (defcommand SubmitAnswer!
   :course-id m/Id
   :chapter-id m/Id
   :student-id m/Id
+  :question-id m/Id
   :expected-version s/Int
   :inputs {m/FieldName s/Str}
   chapter-quiz-id)
@@ -76,7 +81,7 @@
               (events/passed course-id chapter-id student-id)]]
         (let [next-question-set (get (course/question-sets-for-chapter-quiz course chapter-id) (inc current-question-set-index))]
           [:ok [correct-answer-event
-                (events/question-assigned course-id chapter-id student-id (select-random-question next-question-set previously-seen-questions))]])))
+                (events/question-assigned course-id chapter-id student-id (:id next-question-set) (:id (select-random-question next-question-set previously-seen-questions)))]])))
     (let [incorrect-answer-event (events/question-answered-correctly chapter-id student-id question-id inputs)]
       (cond
 
@@ -98,10 +103,11 @@
        :else [:ok [incorrect-answer-event]]))))
 
 (defmethod handle-event ::events/QuestionAssigned
-  [{:keys [current-question-set-id current-question-id question-set-id] :as chapter-quiz} _]
+  [chapter-quiz {:keys [question-set-id question-id]}]
   (-> chapter-quiz
-      (assoc-in [:previously-seen-questions question-set-id] current-question-id)
-      (assoc :current-question-id current-question-id)
+      (update-in [:previously-seen-questions question-set-id] (fnil conj #{}) question-id)
+      (assoc :current-question-id question-id)
+      (assoc :current-question-set-id question-set-id)
       (update-in [:current-question-set-index] inc)))
 
 #_(defmethod handle-event ::events/QuestionAnsweredCorrectly
@@ -131,12 +137,13 @@
 
 (defmethod handle-command ::DismissErrorScreen!
   [{:keys [previously-seen-questions]} {:keys [current-question-set-index chapter-id course-id student-id]} course]
-  [:ok (events/question-assigned course-id
-                                 chapter-id
-                                 student-id
-                                 (select-random-question (get (course/question-sets-for-chapter-quiz course chapter-id) (inc current-question-set-index)
-                                                              )
-                                                         previously-seen-questions))])
+  (let [next-question-set (get (course/question-sets-for-chapter-quiz course chapter-id) (inc current-question-set-index))]
+    [:ok (events/question-assigned course-id
+                                   chapter-id
+                                   student-id
+                                   (:id next-question-set)
+                                   (:id (select-random-question next-question-set
+                                                                previously-seen-questions)))]))
 
 (defcommand Stop!
   :course-id m/Id

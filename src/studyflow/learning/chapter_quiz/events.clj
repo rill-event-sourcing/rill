@@ -33,6 +33,7 @@
   :course-id m/Id
   :chapter-id m/Id
   :student-id m/Id
+  :question-set-id m/Id
   :question-id m/Id
   chapter-quiz-id)
 
