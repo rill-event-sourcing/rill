@@ -86,14 +86,14 @@
                          "Let's Go!"
                          "Naar je Dashboard"))))
 
-(defn entry-quiz-result [status student-name correct-answer-number total-question-number]
-  (let [style #js {:width (str (Math/round (float (/ (* 100 correct-answer-number) total-question-number))) "%;")}]
+(defn entry-quiz-result [status student-name correct-answers-number total-questions-number]
+  (let [style #js {:width (str (Math/round (float (/ (* 100 correct-answers-number) total-questions-number))) "%;")}]
     (dom/div nil
              (dom/p nil (str "Hoi " student-name))
-             (dom/p nil (str "Je had " correct-answer-number " van de " total-question-number " vragen goed!"))
+             (dom/p nil (str "Je had " correct-answers-number " van de " total-questions-number " vragen goed!"))
              (dom/div #js {:className "progress"}
                       (dom/div #js {:className "progress_bar" :style style}
-                               (dom/span nil (str correct-answer-number "/" total-question-number))))
+                               (dom/span nil (str correct-answers-number "/" total-questions-number))))
              (if (= status :passed)
                (dom/p nil "We raden je aan om bij hoofdstuk 7 te beginnen.")
                (dom/p nil "We raden je aan om bij het begin te beginnen, zodat je alles nog even kan opfrissen."))
@@ -118,7 +118,7 @@
             entry-quiz (get-in cursor [:aggregates course-id])
             material (get-in cursor [:view :course-material :entry-quiz])
             status (:status entry-quiz)
-            correct (:correct entry-quiz)
+            correct-answers-number (:correct-answers-number entry-quiz)
             student-name (get-in cursor [:static :student :full-name])]
         (dom/div #js {:id "m-entry-quiz"
                       :className "entry_exam_page"}
@@ -179,11 +179,9 @@
                                                                                                       :enabled answering-allowed)
                                                                               cursor))))
                                                :passed
-                                               (do
-                                                 (println (get-in cursor [:view :entry-quiz]))
-                                                 (dom/div nil (entry-quiz-result :passed student-name correct (count (:questions material)))))
+                                               (dom/div nil (entry-quiz-result :passed student-name correct-answers-number (count (:questions material))))
                                                :failed
-                                               (dom/div nil (entry-quiz-result :failed student-name correct (count (:questions material))))
+                                               (dom/div nil (entry-quiz-result :failed student-name correct-answers-number (count (:questions material))))
                                                nil)))))))
     om/IDidMount
     (did-mount [_]
