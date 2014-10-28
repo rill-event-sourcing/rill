@@ -143,6 +143,6 @@ ch1_s2_2_1_answer = Answer.create(value: "3", line_input: ch1_s2_2_1)
 ch1_s2_2_1_answer_2  = Answer.create(value: "three", line_input: ch1_s2_2_1)
 
 ch1_s2_2_2  = MultipleChoiceInput.create(inputable: ch1_s2_2)
-ch1_s2_2_2_1  = Choice.create(multiple_choice_input: ch1_s2_2_2, value: "1", correct: false)
-ch1_s2_2_2_2  = Choice.create(multiple_choice_input: ch1_s2_2_2, value: "0", correct: true)
+ch1_s2_2_2_1  = Choice.create(multiple_choice_input: ch1_s2_2_2, value: "1", correct: true)
+ch1_s2_2_2_2  = Choice.create(multiple_choice_input: ch1_s2_2_2, value: "0", correct: false)
 ch1_s2_2_2_3  = Choice.create(multiple_choice_input: ch1_s2_2_2, value: "-1", correct: false)

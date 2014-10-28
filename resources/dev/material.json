@@ -152,11 +152,11 @@
                   "choices": [
                     {
                       "value": "1",
-                      "correct": false
+                      "correct": true
                     },
                     {
                       "value": "0",
-                      "correct": true
+                      "correct": false
                     },
                     {
                       "value": "-1",

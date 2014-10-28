@@ -30,6 +30,7 @@
 (defn select-random-question
   [question-set previously-seen-questions]
   (let [question-previously-done? (set (get previously-seen-questions (:id question-set)))
+        _ (clojure.pprint/pprint question-set)
         available-questions (filter (fn [question] (not (question-previously-done? (:id question))))
                                     (:questions question-set))]
     (assert (seq available-questions))
@@ -39,7 +40,8 @@
   [{:keys [locked? running? previously-seen-questions] :as chapter-quiz} {:keys [student-id course-id chapter-id]} course]
   (if (or locked? running?)
     [:rejected]
-    (let [question-set (first (course/question-sets-for-chapter-quiz course chapter-id))]
+    (let [question-set (first (course/question-sets-for-chapter-quiz course chapter-id))
+          _ (clojure.pprint/pprint [:qs question-set])]
       [:ok [(events/started course-id chapter-id student-id)
             (events/question-assigned course-id chapter-id student-id (select-random-question question-set previously-seen-questions))]])))
 
@@ -111,11 +113,11 @@
 
 (defmethod handle-event ::events/Passed
   [chapter-quiz _]
-  (assoc chapter-quiz :finished? true))
+  (assoc chapter-quiz :running? false))
 
 (defmethod handle-event ::events/Failed
   [chapter-quiz _]
-  (assoc chapter-quiz :number-of-errors 0 :running? false))
+  (assoc chapter-quiz :running? false))
 
 (defcommand DismissErrorScreen!
   :course-id m/Id
