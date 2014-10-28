@@ -92,6 +92,23 @@ RSpec.describe SectionsController, :type => :controller do
     end
   end
 
+  describe "POST toggle_activation" do
+    it "should activate the section and redirect" do
+      @section1.update_attribute :active, false
+      post :toggle_activation, chapter_id: @chapter.to_param, id: @section1.to_param
+      expect(response).to redirect_to chapter_section_path(@chapter, @section1)
+      @section1.reload
+      expect(@section1.active).to eq true
+    end
+    it "should deactivate the section and redirect" do
+      @section1.update_attribute :active, true
+      post :toggle_activation, chapter_id: @chapter.to_param, id: @section1.to_param
+      expect(response).to redirect_to chapter_section_path(@chapter, @section1)
+      @section1.reload
+      expect(@section1.active).to eq false
+    end
+  end
+
   describe "POST moveup" do
     it "should moveup the section and redirect" do
       expect(@section2.position).to eq 2
