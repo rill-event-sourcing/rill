@@ -96,8 +96,9 @@
       (assoc :current-question-set-id question-set-id)
       (update-in [:current-question-set-index] inc)))
 
-#_(defmethod handle-event ::events/QuestionAnsweredCorrectly
-    [{:keys [current-question-set-index current-question-id] :as chapter-quiz} _])
+(defmethod handle-event ::events/QuestionAnsweredCorrectly
+  [chapter-quiz _]
+  chapter-quiz)
 
 (defmethod handle-event ::events/QuestionAnsweredIncorrectly
   [{:keys [current-question-set-index] :as chapter-quiz} _]
