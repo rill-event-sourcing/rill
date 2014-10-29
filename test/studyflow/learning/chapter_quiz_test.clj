@@ -2,6 +2,8 @@
   (:require [clojure.tools.logging :as log]
             [studyflow.learning.chapter-quiz :as chapter-quiz]
             [studyflow.learning.chapter-quiz.events :as events]
+            [studyflow.learning.section-test.commands :as section-test]
+            [studyflow.learning.section-test.events :as section-test-events]
             [studyflow.learning.course.fixture :as fixture]
             [studyflow.learning.course :as course]
             [rill.temp-store :refer [with-temp-store execute messages= message= command-result=]]
@@ -19,6 +21,8 @@
 (def question-set-2-id #uuid "aa4195a3-4f31-43bb-99d2-a14ef6acf426")
 (def qs-2-question-1-id #uuid "50ee5d38-86c6-4297-aaea-9148e067d8bc")
 (def qs-2-question-2-id #uuid "f02d81f7-df3f-48e2-a5d9-fc4094c8bf14")
+
+(def section-ids (map :id (:sections (course/chapter fixture/course-edn chapter-id))))
 
 (def question-id qs-1-question-1-id)
 
@@ -103,7 +107,28 @@
                                        (events/question-assigned course-id chapter-id student-id question-set-1-id question-id)
                                        (events/question-answered-incorrectly course-id chapter-id student-id question-id incorrect-inputs)
                                        (events/question-assigned course-id chapter-id student-id question-set-2-id qs-2-question-1-id)
-                                       (events/question-answered-incorrectly course-id chapter-id student-id qs-2-question-1-id (correct-inputs-by-id question-id))])))
-        )
-      ))
-  )
+                                       (events/question-answered-incorrectly course-id chapter-id student-id qs-2-question-1-id (correct-inputs-by-id question-id))])))))))
+
+
+(def section-question (first (:questions (second (:sections (course/chapter fixture/course-edn chapter-id))))))
+(def section-question-input  {"_INPUT_1_" (-> section-question :line-input-fields first :correct-answers first)})
+
+(deftest test-unlocking
+  (is (command-result= [:ok [(section-test-events/question-answered-correctly (second section-ids) student-id (:id section-question) section-question-input)
+                             (section-test-events/finished (second section-ids) student-id chapter-id course-id)
+                             (events/section-finished course-id chapter-id student-id (second section-ids) (set section-ids))
+                             (events/un-locked course-id chapter-id student-id)]]
+                       (execute (section-test/check-answer! (second section-ids) student-id 9 course-id (:id section-question) section-question-input)
+                                [fixture/course-published-event
+                                 (events/section-finished course-id chapter-id student-id (first section-ids) (set section-ids))
+                                 (section-test-events/created (second section-ids) student-id course-id)
+                                 (section-test-events/question-assigned (second section-ids) student-id 1 10)
+                                 (section-test-events/question-answered-correctly (second section-ids) student-id 1 {:foo :bar})
+                                 (section-test-events/question-assigned (second section-ids) student-id 2 10)
+                                 (section-test-events/question-answered-correctly (second section-ids) student-id 2 {:foo :bar})
+                                 (section-test-events/question-assigned (second section-ids) student-id 3 10)
+                                 (section-test-events/question-answered-correctly (second section-ids) student-id 3 {:foo :bar})
+                                 (section-test-events/question-assigned (second section-ids) student-id 4 10)
+                                 (section-test-events/question-answered-correctly (second section-ids) student-id 4 {:foo :bar})
+                                 (section-test-events/question-assigned (second section-ids) student-id (:id section-question) 10)]))))
+

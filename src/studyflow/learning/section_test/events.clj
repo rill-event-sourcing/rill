@@ -1,5 +1,6 @@
 (ns studyflow.learning.section-test.events
-  (:require [rill.message :refer [defevent]]
+  (:require [rill.message :refer [defevent process-manager-id]]
+            [studyflow.learning.chapter-quiz.events :refer [chapter-quiz-id]]
             [studyflow.learning.course-material :as m]
             [schema.core :as s]))
 
@@ -44,7 +45,13 @@
 (defevent Finished
   :section-id m/Id
   :student-id m/Id
+  :chapter-id m/Id
+  :course-id m/Id
   section-test-id)
+
+(defmethod process-manager-id ::Finished
+  [event]
+  (chapter-quiz-id event))
 
 (defevent StreakCompleted
   :section-id m/Id

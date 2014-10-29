@@ -133,11 +133,11 @@
         (is (not (seq (completion-for-class model teacher))))))
     (testing "one finished section without course material"
       (let [model (load-model model-with-fred-and-department-and-class
-                              (section-test/finished "section-1" "fred"))]
+                              (section-test/finished "section-1" "fred" "chapter-1" 1))]
         (is (not (seq (completion-for-class model teacher))))))
     (testing "one finished section with three section course material for two students"
       (let [model (load-model model-with-fred-barney-and-course
-                              (section-test/finished "section-1" "fred"))]
+                              (section-test/finished "section-1" "fred" "chapter-1" 1))]
         (is (= {"A" {:all {:finished 1, :total 2}
                      "Getallen" {:finished 1, :total 2}
                      "Verhoudingen" {:finished 1, :total 2}
@@ -222,7 +222,7 @@
             (is (= ["Fred Flintstone"]
                    (map :full-name (get-in (section-total-status model) [:student-list :in-progress]))))))))
     (testing "fred finishes section 1, chapter 1"
-      (let [model (load-model model (section-test/finished "section-1" "fred"))]
+      (let [model (load-model model (section-test/finished "section-1" "fred" "chapter-1" 1))]
         (is (and (= 0 (get (chapters-with-finishing-data model) "chapter-1"))
                  (= 0 (get (chapters-with-finishing-data model) "chapter-2"))))
         (is (= {:total 4, :stuck 0, :finished 1} (get (chapter-completion model) "chapter-1")))

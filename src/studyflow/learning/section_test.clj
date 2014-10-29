@@ -8,6 +8,7 @@
 
 (defrecord SectionTest
     [section-id
+     course-id
      student-id
      current-question-id
      current-question-status
@@ -40,8 +41,8 @@
          (count (course/questions-for-section course section-id)))]])
 
 (defmethod handle-event ::events/Created
-  [_ {:keys [section-id student-id section-id]}]
-  (->SectionTest section-id student-id nil nil 0 0 false false false nil))
+  [_ {:keys [section-id student-id section-id course-id]}]
+  (->SectionTest section-id course-id student-id nil nil 0 0 false false false nil))
 
 (defn set-previous-question-ids
   [question-ids question-id question-total]
@@ -135,14 +136,15 @@
        (= streak-length (dec streak-length-to-finish-test))))
 
 (defmethod handle-command ::commands/CheckAnswer!
-  [{:keys [current-question-id section-id student-id question-finished? finished?] :as this} {:keys [inputs question-id] :as command} course]
+  [{:keys [course-id current-question-id section-id student-id question-finished? finished?] :as this} {:keys [inputs question-id] :as command} course]
   {:pre [(= current-question-id question-id)
+         course-id
          (not question-finished?)]}
   (if (course/answer-correct? (course/question-for-section course section-id question-id) inputs)
     (let [correct-answer-event (events/question-answered-correctly section-id student-id question-id inputs)]
       (if (correct-answer-will-finish-test? this)
         [:ok [correct-answer-event
-              (events/finished section-id student-id)]]
+              (events/finished section-id student-id (:id (course/chapter-for-section course section-id)) course-id)]]
         (if (correct-answer-will-complete-streak? this)
           [:ok [correct-answer-event
                 (events/streak-completed section-id student-id)]]

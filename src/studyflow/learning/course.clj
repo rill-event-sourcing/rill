@@ -19,6 +19,12 @@
   (find-by-id (mapcat :sections (:chapters course))
               section-id))
 
+(defn chapter-for-section
+  [course section-id]
+  {:pre [course section-id]
+   :post [%]}
+  (first (filter #(find-by-id (:sections %) section-id)
+                 (:chapters course))))
 
 (defn questions-for-section
   [course section-id]

@@ -29,3 +29,7 @@
   [_]
   nil)
 
+(defmulti handle-notification
+  (fn [process-manager event & aggregates]
+    (message/type event)))
+
