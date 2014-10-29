@@ -45,6 +45,7 @@
   [model chapter student-id remedial-chapters-status]
   {:id (:id chapter)
    :title (:title chapter)
+   :chapter-quiz {:number-of-questions (count (:chapter-quiz chapter))}
    :status (when (:remedial chapter)
              remedial-chapters-status)
    :sections (mapv #(section-leaf model % student-id) (:sections chapter))})
