@@ -24,7 +24,7 @@ test:
 	lein test
 
 upload: build
-	SHA=`git rev-parse HEAD` DATE=`date +'%Y%m%d-%H%M%S'`; for PROJECT in "teaching" "learning" "login" "school-administration"; do s3cmd --multipart-chunk-size-mb=5 put "target/$$PROJECT-standalone.jar" "s3://studyflow-server-images/$$SHA/$$DATE-studyflow_$$PROJECT.jar"; done
+	SHA=`git rev-parse HEAD` DATE=`date +'%Y%m%d-%H%M%S'`; for PROJECT in "teaching" "learning" "login" "school-administration" "reporting"; do s3cmd --multipart-chunk-size-mb=5 put "target/$$PROJECT-standalone.jar" "s3://studyflow-server-images/$$SHA/$$DATE-studyflow_$$PROJECT.jar"; done
 	make -C publishing upload
 
 css:
