@@ -10,6 +10,7 @@
 (defroute query-section :get "/api/course-material/:course-id/chapter/:chapter-id/section/:section-id")
 
 (defroute query-question :get "/api/course-material/:course-id/chapter/:chapter-id/section/:section-id/question/:question-id")
+(defroute query-chapter-quiz-question :get "/api/course-material/:course-id/chapter/:chapter-id/question/:question-id")
 
 (defroute get-status :get "/status")
 (defroute get-start :get "/")

@@ -74,6 +74,10 @@
   [course section-id]
   (get-in course [:sections-by-id section-id]))
 
+(defn get-chapter
+  [course chapter-id]
+  (first (filter (fn [chapter] (= chapter-id (:id chapter))) (:chapters course))))
+
 (defn get-question
   [section question-id]
   (some
@@ -81,6 +85,14 @@
      (when (= id question-id)
        question))
    (:questions section)))
+
+(defn get-chapter-quiz-question
+  [chapter question-id]
+  (let [all-questions (mapcat :questions (:chapter-quiz chapter))]
+    (some (fn [{:keys [id] :as question}]
+            (when (= id question-id)
+              question))
+          all-questions)))
 
 (defn set-student
   [model student-id student]
