@@ -18,6 +18,21 @@
       (assoc :has-worked-out-answer (contains? question :worked-out-answer))
       (dissoc :worked-out-answer)))
 
+(defn remove-answers-from-chapter-quiz-question [question]
+  (-> question
+      (update-in [:multiple-choice-input-fields]
+                 (fn [inputs]
+                   (->> (for [input inputs]
+                          (update-in input [:choices]
+                                     (fn [choices]
+                                       (mapv #(dissoc % :correct) choices))))
+                        (into []))))
+      (update-in [:line-input-fields]
+                 (fn [inputs]
+                   (->> (for [input inputs]
+                          (dissoc input :correct-answers))
+                        (into []))))))
+
 (defn course-material
   [m course-id student-id]
   (-> (model/course-tree m course-id student-id)
@@ -44,4 +59,4 @@
       (model/get-course course-id)
       (model/get-chapter chapter-id)
       (model/get-chapter-quiz-question question-id)
-      remove-answers))
+      remove-answers-from-chapter-quiz-question))
