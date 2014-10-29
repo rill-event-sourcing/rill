@@ -17,18 +17,18 @@
   (:import [org.elasticsearch.action.bulk BulkRequestBuilder BulkResponse BulkItemResponse])
   (:gen-class))
 
-(defn -main [event-store-uri elastic-search-ip]
-  {:pre [event-store-uri elastic-search-ip]}
-  (let [conn (es/connect [[elastic-search-ip 9300]] {"cluster.name" "studyflow"})]
-      (println "Making clean ElasticSearch database...")
-      (try (esi/delete conn "gibbon_reporting")
-           (while (esi/exists? conn "gibbon_reporting")
-             (log/info "Waiting until index is deleted")
-             (Thread/sleep 1000))
-           (catch Throwable e
-             (println e)
-             (log/error e "Could not delete gibbon_reporting index on ElasticSearch")))
-      (esi/create conn "gibbon_reporting" :settings {"number_of_shards" 20})
+(defn -main [event-store-uri elastic-search-ip1 elastic-search-ip2 elastic-search-ip3]
+  {:pre [event-store-uri elastic-search-ip1 elastic-search-ip2 elastic-search-ip3]}
+  (let [conn (es/connect [[elastic-search-ip1 9300][elastic-search-ip2 9300][elastic-search-ip3 9300]] {"cluster.name" "studyflow"})]
+    (println "Making clean ElasticSearch database...")
+    (try (esi/delete conn "gibbon_reporting")
+         (while (esi/exists? conn "gibbon_reporting")
+           (log/info "Waiting until index is deleted")
+           (Thread/sleep 1000))
+         (catch Throwable e
+           (println e)
+           (log/error e "Could not delete gibbon_reporting index on ElasticSearch")))
+    (esi/create conn "gibbon_reporting" :settings {"number_of_shards" 20})
 
     (let [store (-> (psql-event-store event-store-uri)
                     wrap-active-migrations)
@@ -48,8 +48,6 @@
                              (.add bulk-request request))
                            (.prepareBulk conn)
                            batch)]
-                      (doseq [request batch]
-                        (.add bulk-request request))
                       (let [^BulkResponse res (.. bulk-request execute actionGet)]
                         (when (.hasFailures res)
                           (doseq [[response request] (zipmap (.getItems res)
