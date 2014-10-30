@@ -41,11 +41,12 @@
     (*rand-nth* (vec available-questions))))
 
 (defmethod handle-command ::Start!
-  [{:keys [locked? running? previously-seen-questions] :as chapter-quiz} {:keys [student-id course-id chapter-id]} course]
+  [{:keys [locked? running? previously-seen-questions fast-route?] :as chapter-quiz} {:keys [student-id course-id chapter-id]} course]
   (if (or locked? running?)
     [:rejected]
-    (let [question-set (first (course/question-sets-for-chapter-quiz course chapter-id))]
-      [:ok [(events/started course-id chapter-id student-id)
+    (let [question-set (first (course/question-sets-for-chapter-quiz course chapter-id))
+          fast-route? (if (nil? fast-route?) true fast-route?)]
+      [:ok [(events/started course-id chapter-id student-id fast-route?)
             (events/question-assigned course-id chapter-id student-id (:id question-set) (:id (select-random-question question-set previously-seen-questions)))]])))
 
 (defmethod handle-event ::events/Started
@@ -146,6 +147,10 @@
                                            (:id (select-random-question next-question-set
                                                                         previously-seen-questions)))]])))
 
+(defmethod handle-event ::events/Locked
+  [chapter-quiz _]
+  (assoc chapter-quiz :locked? true))
+
 (defcommand Stop!
   :course-id m/Id
   :chapter-id m/Id
@@ -180,3 +185,11 @@
   (when (= (set/intersection finished-sections all-sections) all-sections)
     [(events/un-locked course-id chapter-id student-id)]))
 
+(defmethod handle-event ::events/UnLocked
+  [chapter-quiz {:keys [course-id chapter-id student-id]}]
+  (if chapter-quiz
+    ;; restarted
+    (assoc chapter-quiz
+      :locked? false
+      :fast-route? false)
+    (->ChapterQuiz course-id chapter-id student-id nil -1 nil false {} 0)))

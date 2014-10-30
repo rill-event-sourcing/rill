@@ -11,6 +11,7 @@
   :course-id m/Id
   :chapter-id m/Id
   :student-id m/Id
+  :fast-route? s/Bool
   chapter-quiz-id)
 
 (defevent QuestionAnsweredCorrectly

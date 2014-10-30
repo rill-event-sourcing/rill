@@ -21,8 +21,7 @@
                           (section-test/question-assigned section-id student-id question-id question-total)
                           (section-test/question-answered-correctly section-id student-id question-id {"__INPUT_1__" "Incorrect input"})])
 
-(def chapter-quiz-events [(chapter-quiz/started course-id chapter-id student-id)
-                          (chapter-quiz/started course-id chapter-id student-id)
+(def chapter-quiz-events [(chapter-quiz/started course-id chapter-id student-id false)
                           (chapter-quiz/question-assigned course-id chapter-id student-id (new-id) (new-id))
                           (chapter-quiz/question-answered-incorrectly course-id chapter-id student-id (new-id) {"_INPUT_1_" "2"
                                                                                                                 "_INPUT_2_" "2"})])
