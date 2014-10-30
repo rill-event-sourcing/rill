@@ -27,7 +27,7 @@
 (defroute chapter-quiz-start :put "/api/chapter-quiz-start/:course-id/:chapter-id/:student-id")
 (defroute chapter-quiz-submit-answer :put "/api/chapter-quiz-submit-answer/:course-id/:chapter-id/:student-id/:question-id")
 (defroute chapter-quiz-dismiss-error-screen :put "/api/chapter-quiz-dismiss-error-screen/:course-id/:chapter-id/:student-id")
-(defroute chapter-quiz-stop :put "/api/chapter-quiz-dismiss-error-screen/:course-id/:chapter-id/:student-id")
+(defroute chapter-quiz-stop :put "/api/chapter-quiz-stop/:course-id/:chapter-id/:student-id")
 
 (defroute chapter-quiz-replay :get "/api/chapter-quiz-replay/:course-id/:chapter-id/:student-id")
 
