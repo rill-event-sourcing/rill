@@ -16,7 +16,7 @@
   (testing "Chapters and learning steps can be requested as a tree"
     (let [model (init-model [course-published-event
                              (section-test/question-assigned section-id student-id question-id 0)
-                             (section-test/finished section-id student-id)])]
+                             (section-test/finished section-id student-id nil course-id)])]
       (is (= (get-in (model/course-tree model course-id nil)
                      [:chapters 0 :sections 1 :title])
              "Position of the 0"))

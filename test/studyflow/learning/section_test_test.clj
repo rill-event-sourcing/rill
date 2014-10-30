@@ -11,9 +11,11 @@
             [rill.aggregate :refer [handle-event handle-command load-aggregate update-aggregate]]
             [clojure.test :refer [deftest testing is]]))
 
-(def section-id #uuid   "baaffea6-3094-4494-8071-87c2854fd26f")
-(def question-id #uuid  "4302505c-5498-4229-b11f-2da3aa869793")
+(def chapter-id   #uuid "8112d048-1189-4b45-a7ba-78da2b0c389d")
+(def section-id   #uuid "baaffea6-3094-4494-8071-87c2854fd26f")
+(def question-id  #uuid "4302505c-5498-4229-b11f-2da3aa869793")
 (def question2-id #uuid "9bcbb97b-7935-420e-8ba7-fb4650de569f")
+
 (def question-total 2)
 (def correct-inputs  {"_INPUT_1_" "42"
                       "_INPUT_2_" "3"})
@@ -146,6 +148,8 @@
                ::events/QuestionAnsweredCorrectly))
         (is (= (message/type finished-event)
                ::events/Finished))
+        (testing "Finished events include chapter-id so we can relate this event to the chapter quiz"
+          (is (= (:chapter-id finished-event) chapter-id)))
         (let [finished-stream (into upto-fifth-q-stream events)]
           (testing "after a finished section-test you can continue"
             (let [[status [assigned-event :as events]]

@@ -3,7 +3,7 @@
             [rill.aggregate :as aggregate]
             [rill.event-store :as store]
             [rill.repository :refer [retrieve-aggregate-and-version retrieve-aggregate]]
-            [rill.event-stream :as stream]
+            [rill.event-stream :as stream :refer [any-stream-version]]
             [rill.message :as message]))
 
 (defn valid-commit?
@@ -39,6 +39,17 @@
         additional-aggregates (map #(retrieve-aggregate event-store %) additional-ids)]
     (into [id current-version aggregate] additional-aggregates)))
 
+(defn notify-process-manager
+  [event-store event]
+  (if-let [pm-id (message/process-manager-id event)]
+    (let [pm (retrieve-aggregate event-store pm-id)
+          primary (retrieve-aggregate event-store (message/primary-aggregate-id event))
+          rest-aggregates (map #(retrieve-aggregate event-store %) (aggregate/aggregate-ids event))
+          triggered-events (seq (apply aggregate/handle-notification pm event primary rest-aggregates))]
+      (when (and triggered-events
+                 (commit-events event-store pm-id any-stream-version triggered-events))
+        (concat triggered-events (mapcat (partial notify-process-manager event-store) triggered-events))))))
+
 (defn try-command
   [event-store command]
   (let [[id version & [primary-aggregate & rest-aggregates]] (prepare-aggregates event-store command)]
@@ -48,6 +59,9 @@
       (let [[status events :as response] (apply aggregate/handle-command primary-aggregate command rest-aggregates)]
         (case status
           :ok (if (commit-events event-store id version events)
-                  [:ok events (+ version (count events))]
-                  [:conflict])
+                (let [triggered (mapcat (partial notify-process-manager event-store) events)
+                      all-events (concat events triggered)]
+                  [:ok all-events (+ version (count (filter #(= id (message/primary-aggregate-id %)) all-events)))])
+                [:conflict])
           :rejected response)))))
+
