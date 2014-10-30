@@ -15,34 +15,33 @@
 
 (def chapter-id #uuid "8112d048-1189-4b45-a7ba-78da2b0c389d")
 (def question-set-1-id #uuid "24380676-6d1c-4a31-906b-533878270a9b")
-(def qs-1-question-1-id #uuid "24f80676-6d1c-4a31-906b-533878270a9b")
-(def qs-1-question-2-id #uuid "3a4195a3-4f31-43bb-99d2-a14ef6acf426")
+
+(def question-id #uuid "24f80676-6d1c-4a31-906b-533878270a9b")
 
 (def question-set-2-id #uuid "aa4195a3-4f31-43bb-99d2-a14ef6acf426")
-(def qs-2-question-1-id #uuid "50ee5d38-86c6-4297-aaea-9148e067d8bc")
+(def question-2-id #uuid "50ee5d38-86c6-4297-aaea-9148e067d8bc")
 
 (def question-set-3-id #uuid "32c63461-5fd2-45a7-b123-ddcfb869eb32")
-(def question-set-4-id #uuid "df9cd899-54e4-486d-b2f8-14ecc6cee79c")
 (def question-3-id #uuid "28af4894-e20d-4fad-bdd8-957ab20d7a2c")
+
+(def question-set-4-id #uuid "df9cd899-54e4-486d-b2f8-14ecc6cee79c")
 (def question-4-id #uuid "600137bd-f95c-4c41-b30c-41ef14999759")
 
 (def section-ids (map :id (:sections (course/chapter fixture/course-edn chapter-id))))
-
-(def question-id qs-1-question-1-id)
 
 (def correct-inputs {"_INPUT_1_" "2"
                      "_INPUT_2_" "2"})
 
 (def incorrect-inputs {"_INPUT_1_" "not 2"
                        "_INPUT_2_" "not 2"})
-(def correct-inputs-by-id {#uuid "24f80676-6d1c-4a31-906b-533878270a9b" {"_INPUT_1_" "2"
+(def correct-inputs-by-id {#uuid "24f80676-6d1c-4a31-906b-533878270a9b" {"_INPUT_1_" "2"  ; question-id
                                                                          "_INPUT_2_" "2"}
-                           #uuid "3a4195a3-4f31-43bb-99d2-a14ef6acf426" {"_INPUT_1_" "7"
-                                                                         "_INPUT_2_" "2"}
-                           #uuid "f02d81f7-df3f-48e2-a5d9-fc4094c8bf14" {"_INPUT_1_" "6"
-                                                                         "_INPUT_2_" "100"}
-                           #uuid "50ee5d38-86c6-4297-aaea-9148e067d8bc" {"_INPUT_1_" "3"
-                                                                         "_INPUT_2_" "1"}})
+                           #uuid "50ee5d38-86c6-4297-aaea-9148e067d8bc" {"_INPUT_1_" "3"  ; question-2-id
+                                                                         "_INPUT_2_" "1"}
+                           #uuid "28af4894-e20d-4fad-bdd8-957ab20d7a2c" {"_INPUT_1_" "12" ; question-3-id
+                                                                         "_INPUT_2_" "10"}
+                           #uuid "600137bd-f95c-4c41-b30c-41ef14999759" {"_INPUT_1_" "42" ; question-4-id
+                                                                         "_INPUT_2_" "101"}})
 
 (def course fixture/course-aggregate)
 (def course-id (:id course))
@@ -59,12 +58,12 @@
                            (execute (chapter-quiz/start! course-id chapter-id student-id)
                                     [fixture/course-published-event])))))
 
-  (binding [*rand-nth* (constantly (course/question-for-chapter-quiz course chapter-id qs-2-question-1-id))]
+  (binding [*rand-nth* (constantly (course/question-for-chapter-quiz course chapter-id question-2-id))]
     (testing "submitting an answer"
       (testing "with a correct answer"
         (let [inputs correct-inputs]
           (is (command-result= [:ok [(events/question-answered-correctly course-id chapter-id student-id question-id inputs)
-                                     (events/question-assigned course-id chapter-id student-id question-set-2-id qs-2-question-1-id)]]
+                                     (events/question-assigned course-id chapter-id student-id question-set-2-id question-2-id)]]
                                (execute (chapter-quiz/submit-answer! course-id chapter-id student-id question-id 1 inputs)
                                         [fixture/course-published-event
                                          (events/started course-id chapter-id student-id true)
@@ -78,7 +77,7 @@
                                          (events/question-assigned course-id chapter-id student-id question-set-1-id question-id)])))))
 
       (testing "dismissing the first error"
-        (is (command-result= [:ok [(events/question-assigned course-id chapter-id student-id question-set-2-id qs-2-question-1-id)]]
+        (is (command-result= [:ok [(events/question-assigned course-id chapter-id student-id question-set-2-id question-2-id)]]
                              (execute (chapter-quiz/dismiss-error-screen! course-id chapter-id student-id)
                                       [fixture/course-published-event
                                        (events/started course-id chapter-id student-id true)
@@ -86,22 +85,22 @@
                                        (events/question-answered-incorrectly course-id chapter-id student-id question-id incorrect-inputs)]))))
       (binding [*rand-nth* (constantly (course/question-for-chapter-quiz course chapter-id question-3-id))]
         (testing "an incorrect and then correct answer"
-          (is (command-result= [:ok [(events/question-answered-correctly course-id chapter-id student-id qs-2-question-1-id (correct-inputs-by-id qs-2-question-1-id))
+          (is (command-result= [:ok [(events/question-answered-correctly course-id chapter-id student-id question-2-id (correct-inputs-by-id question-2-id))
                                      (events/question-assigned course-id chapter-id student-id question-set-3-id question-3-id)]]
-                               (execute (chapter-quiz/submit-answer! course-id chapter-id student-id qs-2-question-1-id 3 (correct-inputs-by-id qs-2-question-1-id))
+                               (execute (chapter-quiz/submit-answer! course-id chapter-id student-id question-2-id 3 (correct-inputs-by-id question-2-id))
                                         [fixture/course-published-event
                                          (events/started course-id chapter-id student-id true)
                                          (events/question-assigned course-id chapter-id student-id question-set-1-id question-id)
                                          (events/question-answered-incorrectly course-id chapter-id student-id question-id incorrect-inputs)
-                                         (events/question-assigned course-id chapter-id student-id question-set-2-id qs-2-question-1-id)])))))
+                                         (events/question-assigned course-id chapter-id student-id question-set-2-id question-2-id)])))))
       (testing "two incorrect answers"
-        (is (command-result= [:ok [(events/question-answered-incorrectly course-id chapter-id student-id qs-2-question-1-id (correct-inputs-by-id question-id))]]
-                             (execute (chapter-quiz/submit-answer! course-id chapter-id student-id qs-2-question-1-id 3 (correct-inputs-by-id question-id))
+        (is (command-result= [:ok [(events/question-answered-incorrectly course-id chapter-id student-id question-2-id (correct-inputs-by-id question-id))]]
+                             (execute (chapter-quiz/submit-answer! course-id chapter-id student-id question-2-id 3 (correct-inputs-by-id question-id))
                                       [fixture/course-published-event
                                        (events/started course-id chapter-id student-id true)
                                        (events/question-assigned course-id chapter-id student-id question-set-1-id question-id)
                                        (events/question-answered-incorrectly course-id chapter-id student-id question-id incorrect-inputs)
-                                       (events/question-assigned course-id chapter-id student-id question-set-2-id qs-2-question-1-id)]))))
+                                       (events/question-assigned course-id chapter-id student-id question-set-2-id question-2-id)]))))
 
       (testing "two incorrect answers and dismissed error"
         (is (command-result= [:ok [(events/failed course-id chapter-id student-id)
@@ -111,8 +110,25 @@
                                        (events/started course-id chapter-id student-id true)
                                        (events/question-assigned course-id chapter-id student-id question-set-1-id question-id)
                                        (events/question-answered-incorrectly course-id chapter-id student-id question-id incorrect-inputs)
-                                       (events/question-assigned course-id chapter-id student-id question-set-2-id qs-2-question-1-id)
-                                       (events/question-answered-incorrectly course-id chapter-id student-id qs-2-question-1-id (correct-inputs-by-id question-id))])))))))
+                                       (events/question-assigned course-id chapter-id student-id question-set-2-id question-2-id)
+                                       (events/question-answered-incorrectly course-id chapter-id student-id question-2-id (correct-inputs-by-id question-id))]))))
+
+      (testing "four correct answers (and a pass) in a row"
+        (is (command-result= [:ok [(events/question-answered-correctly course-id chapter-id student-id question-4-id (correct-inputs-by-id question-4-id))
+                                   (events/passed course-id chapter-id student-id)
+                                   ]]
+                             (execute (chapter-quiz/submit-answer! course-id chapter-id student-id question-4-id 7 (correct-inputs-by-id question-4-id))
+                                      [fixture/course-published-event
+                                       (events/started course-id chapter-id student-id true)
+                                       (events/question-assigned course-id chapter-id student-id question-set-1-id question-id)
+                                       (events/question-answered-correctly course-id chapter-id student-id question-id (correct-inputs-by-id question-id))
+                                       (events/question-assigned course-id chapter-id student-id question-set-2-id question-2-id)
+                                       (events/question-answered-correctly course-id chapter-id student-id question-2-id (correct-inputs-by-id question-2-id))
+                                       (events/question-assigned course-id chapter-id student-id question-set-3-id question-3-id)
+                                       (events/question-answered-correctly course-id chapter-id student-id question-3-id (correct-inputs-by-id question-3-id))
+                                       (events/question-assigned course-id chapter-id student-id question-set-4-id question-4-id)
+
+])))))))
 
 
 (def section-question (first (:questions (second (:sections (course/chapter fixture/course-edn chapter-id))))))
@@ -167,8 +183,8 @@
                                      (events/started course-id chapter-id student-id true)
                                      (events/question-assigned course-id chapter-id student-id question-set-1-id question-id)
                                      (events/question-answered-incorrectly course-id chapter-id student-id question-id incorrect-inputs)
-                                     (events/question-assigned course-id chapter-id student-id question-set-2-id qs-2-question-1-id)
-                                     (events/question-answered-incorrectly course-id chapter-id student-id qs-2-question-1-id (correct-inputs-by-id question-id))
+                                     (events/question-assigned course-id chapter-id student-id question-set-2-id question-2-id)
+                                     (events/question-answered-incorrectly course-id chapter-id student-id question-2-id (correct-inputs-by-id question-id))
                                      (events/failed course-id chapter-id student-id)
                                      (events/locked course-id chapter-id student-id)
                                      (events/section-finished course-id chapter-id student-id (first section-ids) (set section-ids))
