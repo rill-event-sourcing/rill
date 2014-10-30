@@ -136,10 +136,11 @@
 
 (deftest test-unlocking
   (testing "unlocking the chapter-quiz"
-    (is (command-result= [:ok [(section-test-events/question-answered-correctly (second section-ids) student-id (:id section-question) section-question-input)
-                               (section-test-events/finished (second section-ids) student-id chapter-id course-id)
-                               (events/section-finished course-id chapter-id student-id (second section-ids) (set section-ids))
-                               (events/un-locked course-id chapter-id student-id)]]
+    (is (command-result= [:ok
+                          [(section-test-events/question-answered-correctly (second section-ids) student-id (:id section-question) section-question-input)
+                           (section-test-events/finished (second section-ids) student-id chapter-id course-id)]
+                          [(events/section-finished course-id chapter-id student-id (second section-ids) (set section-ids))
+                           (events/un-locked course-id chapter-id student-id)]]
                          (execute (section-test/check-answer! (second section-ids) student-id 9 course-id (:id section-question) section-question-input)
                                   [fixture/course-published-event
                                    (events/section-finished course-id chapter-id student-id (first section-ids) (set section-ids))

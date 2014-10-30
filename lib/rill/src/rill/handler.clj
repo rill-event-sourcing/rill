@@ -59,9 +59,8 @@
       (let [[status events :as response] (apply aggregate/handle-command primary-aggregate command rest-aggregates)]
         (case status
           :ok (if (commit-events event-store id version events)
-                (let [triggered (mapcat (partial notify-process-manager event-store) events)
-                      all-events (concat events triggered)]
-                  [:ok all-events (+ version (count (filter #(= id (message/primary-aggregate-id %)) all-events)))])
+                (let [triggered (mapcat (partial notify-process-manager event-store) events)]
+                  [:ok events (+ version (count events)) triggered])
                 [:conflict])
           :rejected response)))))
 
