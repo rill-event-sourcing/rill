@@ -10,7 +10,8 @@
             [studyflow.web.aggregates :as aggregates]
             [studyflow.web.service :as service]
             [studyflow.web.history :refer [history-link]]
-            [studyflow.web.helpers :refer [modal raw-html tag-tree-to-om] :as helpers]
+            [studyflow.web.helpers :refer [modal raw-html tag-tree-to-om focus-input-box section-explanation-link] :as helpers]
+            [studyflow.web.recommended-action :refer [recommended-action]]
             [clojure.walk :as walk]
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go]]))
@@ -62,14 +63,6 @@
                                    cursor
                                    [:view :side-navigation :shown]
                                    (not (get-in @cursor [:view :side-navigation :shown]))))}))))
-
-(defn section-explanation-link [cursor chapter section]
-  (-> (get-in cursor [:view :selected-path])
-      (assoc :chapter-id (:id chapter)
-             :section-id (:id section)
-             :section-tab :explanation
-             :main :learning)
-      history-link))
 
 (defn navigation [cursor owner]
   (reify
@@ -398,28 +391,6 @@
                              (when-let [suffix (:suffix li)]
                                (str " " suffix)))]))))))
 
-(defn some-input-in-question-selected [refs]
-  (let [active (.-activeElement js/document)]
-    (some #{active}
-          (-> (js->clj refs)
-              (dissoc "FOCUSED_INPUT")
-              vals
-              (->>
-               (map #(.getDOMNode %)))))))
-(defn focus-input-box [owner]
-  ;; we always call this, even when there's no element called
-  ;; "FOCUSED_INPUT". om/get-node can't handle that case
-  (when-let [refs (.-refs owner)]
-    ;; need to set the focus on a non disabled field for firefox key handling
-    (if-let [button-ref (aget refs "FOCUSED_BUTTON")]
-      (when-let [button (.getDOMNode button-ref)]
-        (.focus button))
-      (when-let [input-ref (aget refs "FOCUSED_INPUT")]
-        (when-let [input-field (.getDOMNode input-ref)]
-          (when (and (= "" (.-value input-field))
-                     (not (some-input-in-question-selected refs)))
-            (.focus input-field)))))))
-
 (defn tool-box
   [tools]
   (let [tool-names {"pen_and_paper" "Pen & Papier"
@@ -730,39 +701,6 @@
                                         "Maak een keuze uit het menu"))
                          (om/build section-test cursor))
                        (om/build path-panel cursor)))))))
-
-(defn not-finished? [element]
-  (when-not (= (:status element) "finished")
-    element))
-
-(defn not-stuck? [section]
-  (when-not (= (:status section) "stuck")
-    section))
-
-(defn first-recommendable-section [chapter]
-  (some (comp not-stuck? not-finished?) (:sections chapter)))
-
-(defn nonfinished-chapter-with-recommendable-sections [chapter]
-  (when (and
-         (not (= (:status chapter) "finished"))
-         (first-recommendable-section chapter))
-    chapter))
-
-(defn first-recommendable-chapter [course]
-  (some nonfinished-chapter-with-recommendable-sections (:chapters course)))
-
-(defn recommended-action [cursor]
-  (let [course (get-in cursor [:view :course-material])
-        entry-quiz (:entry-quiz course)]
-    (if (not (contains? #{"passed" "failed"} (:status entry-quiz)))
-      {:title "Instaptoets"
-       :link (history-link {:main :entry-quiz})
-       :id (:id entry-quiz)}
-      (let [chapter (first-recommendable-chapter course)
-            section (first-recommendable-section chapter)]
-        {:title (:title section)
-         :id (:id section)
-         :link (section-explanation-link cursor chapter section)} ))))
 
 (defn sections-navigation [cursor chapter]
   (apply dom/ol #js {:id "section_list"}
