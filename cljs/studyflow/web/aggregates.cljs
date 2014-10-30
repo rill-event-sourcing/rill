@@ -142,6 +142,7 @@
        :fast-route true
        :questions []
        :questions-correct-count 0
+       :questions-wrong-count 0
        :status :running})
 
     "studyflow.learning.chapter-quiz.events/QuestionAssigned"
@@ -164,6 +165,7 @@
     (let [question-id (:question-id event)
           inputs (:inputs event)]
       (-> agg
+          (update-in [:questions-wrong-count] inc)
           (update-in [:questions]
                      (fn [qs]
                        (conj (pop qs)

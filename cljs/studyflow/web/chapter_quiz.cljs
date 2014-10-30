@@ -227,13 +227,11 @@
             answers (om/value (:inputs question))
             inputs (input-builders-disabled cursor chapter-id question-id question-data answers)
             question-total (get-in cursor [:view :course-material :chapters-by-id chapter-id :chapter-quiz :number-of-questions])
-            final-question (= question-total (count questions))
-            final-wrong-question (when final-question
-                                   (let [questions-correct-count (get-in cursor [:aggregates chapter-id :questions-correct-count])
-                                         wrong-count (- question-total questions-correct-count)]
-                                     (if (:fast-route chapter-quiz)
-                                       (= 2 wrong-count)
-                                       (= 3 wrong-count))))]
+            last-question (= question-total (count questions))
+            failed-quiz (let [wrong-count (get-in cursor [:aggregates chapter-id :questions-wrong-count])]
+                          (if (:fast-route chapter-quiz)
+                            (= 2 wrong-count)
+                            (= 3 wrong-count)))]
         (om/set-state-nr! owner :submit
                           (fn []
                             (async/put!
@@ -249,11 +247,11 @@
                  (dom/article #js {:id "m-section"}
                               (tag-tree-to-om (:tag-tree question-data) inputs))
                  (footer-bar (str "Fout! "
-                                  (if final-question
-                                    (if final-wrong-question
-                                      " Stop toets"
-                                      " Voltooi toets")
-                                    " Volgende vraag"))
+                                  (if failed-quiz
+                                    " Stop toets"
+                                    (if last-question
+                                      " Voltooi toets"
+                                      " Volgende vraag")))
                              (fn []
                                (when-let [f (om/get-state owner :submit)]
                                  (f)))
