@@ -72,7 +72,8 @@ Rails.application.routes.draw do
           post 'toggle_activation'
           post 'moveup'
           post 'movedown'
-          get 'preview'
+          get 'preview_content'
+          get 'preview_worked_out_answer'
         end
       end
     end

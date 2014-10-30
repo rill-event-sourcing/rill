@@ -7,8 +7,12 @@ class QuestionsController < ApplicationController
   def index
   end
 
-  def preview
-    render layout: 'preview'
+  def preview_content
+    render layout: 'preview_html'
+  end
+
+  def preview_worked_out_answer
+    render layout: 'preview_html'
   end
 
   def edit
