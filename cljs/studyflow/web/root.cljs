@@ -1,6 +1,7 @@
 (ns studyflow.web.root
   (:require [studyflow.web.core :as core]
             [studyflow.web.entry-quiz :as entry-quiz]
+            [studyflow.web.chapter-quiz :as chapter-quiz]
             [om.dom :as dom]
             [om.core :as om]
             [goog.dom :as gdom]
@@ -28,9 +29,13 @@
                  (when-not (= :entry-quiz
                               (get-in cursor [:view :selected-path :main]))
                    (entry-quiz/entry-quiz-modal cursor owner))
+                 (when (get-in cursor [:view :chapter-quiz-modal :show])
+                   (om/build chapter-quiz/chapter-quiz-modal cursor))
                  (case (get-in cursor [:view :selected-path :main])
                    :entry-quiz
                    (om/build entry-quiz/entry-quiz-panel cursor)
+                   :chapter-quiz
+                   (om/build chapter-quiz/chapter-quiz-panel cursor)
                    :learning
                    (dom/div nil
                             (om/build core/page-header cursor)

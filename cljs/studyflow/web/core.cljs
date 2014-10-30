@@ -8,6 +8,7 @@
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [studyflow.web.aggregates :as aggregates]
+            [studyflow.web.chapter-quiz :as chapter-quiz]
             [studyflow.web.service :as service]
             [studyflow.web.history :refer [history-link]]
             [studyflow.web.helpers :refer [modal raw-html tag-tree-to-om focus-input-box section-explanation-link] :as helpers]
@@ -82,40 +83,42 @@
         (dom/div nil
                  (dom/h1 #js {:id "sidenav_chapter_title"} (:title chapter))
                  (apply dom/ul nil
-                        (for [{:keys [title]
-                               section-id :id
-                               :as section} (:sections chapter)]
-                          (let [open-section (= section-id
-                                                (get-in cursor [:view :selected-path :section-id]))]
-                            (apply dom/li #js {:className
-                                               (str "section_list_item "
-                                                    (when open-section
-                                                      "open ")
-                                                    (get
-                                                     {:finished "finished"
-                                                      :stuck "stumbling_block"
-                                                      :in-progress "in_progress"}
-                                                     (aggregates/section-test-progress
-                                                      (get-in cursor [:aggregates section-id]))
-                                                     ""))}
-                                   (dom/a #js {:href (section-explanation-link cursor chapter section)
-                                               :className "section_link"}
-                                          title)
-                                   (when open-section
-                                     [(dom/a #js {:className (str "section_tab explanation"
-                                                                  (when (= section-tab :explanation)
-                                                                    " selected"))
-                                                  :href (-> (get-in cursor [:view :selected-path])
-                                                            (assoc :section-tab :explanation)
-                                                            history-link)}
-                                             "Uitleg")
-                                      (dom/a #js {:className (str "section_tab questions"
-                                                                  (when (= section-tab :questions)
-                                                                    " selected"))
-                                                  :href (-> (get-in cursor [:view :selected-path])
-                                                            (assoc :section-tab :questions)
-                                                            history-link)}
-                                             "Vragen")])))))
+                        (concat
+                         (for [{:keys [title]
+                                section-id :id
+                                :as section} (:sections chapter)]
+                           (let [open-section (= section-id
+                                                 (get-in cursor [:view :selected-path :section-id]))]
+                             (apply dom/li #js {:className
+                                                (str "section_list_item "
+                                                     (when open-section
+                                                       "open ")
+                                                     (get
+                                                      {:finished "finished"
+                                                       :stuck "stumbling_block"
+                                                       :in-progress "in_progress"}
+                                                      (aggregates/section-test-progress
+                                                       (get-in cursor [:aggregates section-id]))
+                                                      ""))}
+                                    (dom/a #js {:href (section-explanation-link cursor chapter section)
+                                                :className "section_link"}
+                                           title)
+                                    (when open-section
+                                      [(dom/a #js {:className (str "section_tab explanation"
+                                                                   (when (= section-tab :explanation)
+                                                                     " selected"))
+                                                   :href (-> (get-in cursor [:view :selected-path])
+                                                             (assoc :section-tab :explanation)
+                                                             history-link)}
+                                              "Uitleg")
+                                       (dom/a #js {:className (str "section_tab questions"
+                                                                   (when (= section-tab :questions)
+                                                                     " selected"))
+                                                   :href (-> (get-in cursor [:view :selected-path])
+                                                             (assoc :section-tab :questions)
+                                                             history-link)}
+                                              "Vragen")]))))
+                         [(chapter-quiz/chapter-quiz-navigation-button cursor chapter-id)]))
                  (dom/div #js {:id "meta_content"}
                           (om/build show-sidebar cursor)))))))
 
@@ -704,24 +707,27 @@
 
 (defn sections-navigation [cursor chapter]
   (apply dom/ol #js {:id "section_list"}
-         (let [rcm-action (recommended-action cursor)
+         (let [chapter-id (:id chapter)
+               rcm-action (recommended-action cursor)
                recommended-id (:id rcm-action)]
-           (for [{:keys [title status]
-                  section-id :id
-                  :as section} (:sections chapter)]
-             (let [section-status (get {"finished" "finished"
-                                        "stuck" "stumbling_block"
-                                        "in-progress" "in_progress"} status "")
-                   section-link (section-explanation-link cursor chapter section)]
-               (dom/li #js {:data-id section-id
-                            :className (str "section_list_item " section-status
-                                            (when (= recommended-id section-id) " recommended")) }
-                       (dom/a #js {:href section-link
-                                   :className (str "section_link "
-                                                   section-status)}
-                              title)
-                       (dom/a #js {:className "btn blue chapter_nav_btn"
-                                   :href section-link} "Start")))))))
+           (concat
+            (for [{:keys [title status]
+                   section-id :id
+                   :as section} (:sections chapter)]
+              (let [section-status (get {"finished" "finished"
+                                         "stuck" "stumbling_block"
+                                         "in-progress" "in_progress"} status "")
+                    section-link (section-explanation-link cursor chapter section)]
+                (dom/li #js {:data-id section-id
+                             :className (str "section_list_item " section-status
+                                             (when (= recommended-id section-id) " recommended")) }
+                        (dom/a #js {:href section-link
+                                    :className (str "section_link "
+                                                    section-status)}
+                               title)
+                        (dom/a #js {:className "btn blue chapter_nav_btn"
+                                    :href section-link} "Start"))))
+            [(chapter-quiz/chapter-quiz-navigation-button cursor chapter-id)]))))
 
 (defn chapter-navigation [cursor selected-chapter-id course chapter]
   (let [selected? (= selected-chapter-id (:id chapter))]
