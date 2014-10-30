@@ -326,6 +326,23 @@
                                                :chapter-id chapter-id})))
                              true))))))
 
+(defn hearts-bar [cursor owner]
+  (reify
+    om/IRender
+    (render [_]
+      (let [chapter-id (get-in cursor [:view :selected-path :chapter-id])
+            chapter-quiz (get-in cursor [:aggregates chapter-id])
+            questions-wrong-count (get-in cursor [:aggregates chapter-id :questions-wrong-count])
+            lives (if (:fast-route chapter-quiz)
+                    2
+                    3)
+            dead questions-wrong-count
+            alive (- lives dead)]
+        (apply dom/div nil
+               "Hearts: "
+               (concat (repeatedly dead #(dom/span nil "X"))
+                       (repeatedly alive #(dom/span nil "O"))))))))
+
 (defn chapter-quiz-panel [cursor owner]
   (reify
     om/IRender
@@ -368,6 +385,8 @@
                                      (condp = chapter-quiz-status
                                        :passed "Einde toets"
                                        "Chapter quiz"))
+                             (when chapter-quiz-agg
+                               (om/build hearts-bar cursor))
                              (when (= chapter-quiz-status :running)
                                (dom/p #js {:id "quiz_counter"}
                                       (str "Vraag " question-index  " van " question-total))))
