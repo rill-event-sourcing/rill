@@ -20,7 +20,11 @@
 
 (def question-set-2-id #uuid "aa4195a3-4f31-43bb-99d2-a14ef6acf426")
 (def qs-2-question-1-id #uuid "50ee5d38-86c6-4297-aaea-9148e067d8bc")
-(def qs-2-question-2-id #uuid "f02d81f7-df3f-48e2-a5d9-fc4094c8bf14")
+
+(def question-set-3-id #uuid "32c63461-5fd2-45a7-b123-ddcfb869eb32")
+(def question-set-4-id #uuid "df9cd899-54e4-486d-b2f8-14ecc6cee79c")
+(def question-3-id #uuid "28af4894-e20d-4fad-bdd8-957ab20d7a2c")
+(def question-4-id #uuid "600137bd-f95c-4c41-b30c-41ef14999759")
 
 (def section-ids (map :id (:sections (course/chapter fixture/course-edn chapter-id))))
 
@@ -72,6 +76,7 @@
                                         [fixture/course-published-event
                                          (events/started course-id chapter-id student-id true)
                                          (events/question-assigned course-id chapter-id student-id question-set-1-id question-id)])))))
+
       (testing "dismissing the first error"
         (is (command-result= [:ok [(events/question-assigned course-id chapter-id student-id question-set-2-id qs-2-question-1-id)]]
                              (execute (chapter-quiz/dismiss-error-screen! course-id chapter-id student-id)
@@ -79,15 +84,16 @@
                                        (events/started course-id chapter-id student-id true)
                                        (events/question-assigned course-id chapter-id student-id question-set-1-id question-id)
                                        (events/question-answered-incorrectly course-id chapter-id student-id question-id incorrect-inputs)]))))
-      (testing "an incorrect and then correct answer"
-        (is (command-result= [:ok [(events/question-answered-correctly course-id chapter-id student-id qs-2-question-1-id (correct-inputs-by-id qs-2-question-1-id))
-                                   (events/passed course-id chapter-id student-id)]]
-                             (execute (chapter-quiz/submit-answer! course-id chapter-id student-id qs-2-question-1-id 3 (correct-inputs-by-id qs-2-question-1-id))
-                                      [fixture/course-published-event
-                                       (events/started course-id chapter-id student-id true)
-                                       (events/question-assigned course-id chapter-id student-id question-set-1-id question-id)
-                                       (events/question-answered-incorrectly course-id chapter-id student-id question-id incorrect-inputs)
-                                       (events/question-assigned course-id chapter-id student-id question-set-2-id qs-2-question-1-id)]))))
+      (binding [*rand-nth* (constantly (course/question-for-chapter-quiz course chapter-id question-3-id))]
+        (testing "an incorrect and then correct answer"
+          (is (command-result= [:ok [(events/question-answered-correctly course-id chapter-id student-id qs-2-question-1-id (correct-inputs-by-id qs-2-question-1-id))
+                                     (events/question-assigned course-id chapter-id student-id question-set-3-id question-3-id)]]
+                               (execute (chapter-quiz/submit-answer! course-id chapter-id student-id qs-2-question-1-id 3 (correct-inputs-by-id qs-2-question-1-id))
+                                        [fixture/course-published-event
+                                         (events/started course-id chapter-id student-id true)
+                                         (events/question-assigned course-id chapter-id student-id question-set-1-id question-id)
+                                         (events/question-answered-incorrectly course-id chapter-id student-id question-id incorrect-inputs)
+                                         (events/question-assigned course-id chapter-id student-id question-set-2-id qs-2-question-1-id)])))))
       (testing "two incorrect answers"
         (is (command-result= [:ok [(events/question-answered-incorrectly course-id chapter-id student-id qs-2-question-1-id (correct-inputs-by-id question-id))]]
                              (execute (chapter-quiz/submit-answer! course-id chapter-id student-id qs-2-question-1-id 3 (correct-inputs-by-id question-id))
