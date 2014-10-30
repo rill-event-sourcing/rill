@@ -137,9 +137,9 @@ autoSave = ->
   setTimeout(autoSave,10000)
 
 refreshPreview = ->
-  $('#preview').attr("src", $('#preview').attr("src"))
-  height = document.getElementById('preview').contentWindow.document.body.scrollHeight
-  $('#preview').css('height', height)
+  $('#preview_content').attr("src", $('#preview_content').attr("src"))
+  height = document.getElementById('preview_content').contentWindow.document.body.scrollHeight
+  $('#preview_content').css('height', height)
 
 ################################################################################
 

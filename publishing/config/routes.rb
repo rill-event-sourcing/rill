@@ -36,7 +36,7 @@ Rails.application.routes.draw do
         end
         resources :chapter_quiz_questions, as: :questions do
           member do
-            get 'preview'
+            get 'preview_content'
           end
         end
       end

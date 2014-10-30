@@ -1,12 +1,9 @@
 %div.panel.panel-default
   %div.panel-heading Question preview
   %div.panel-body
-    = text_to_html(@question.inputs, @question.text)
+    - url = preview_content_chapter_chapter_quiz_chapter_questions_set_question_path(@chapter, @chapter_questions_set, @question)
+    %iframe.fill.col-md-12{id: "preview_content", data: {url: url}, src: url, style: "min-height: 800px;" }
 
-%div.panel.panel-default
-  %div.panel-heading Worked out answer preview
-  %div.panel-body
-    = question_worked_out_answer_to_html(@question)
 
 - if @question.parse_errors.any?
   %div.panel.panel-danger

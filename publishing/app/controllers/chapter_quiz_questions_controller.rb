@@ -2,8 +2,8 @@ class ChapterQuizQuestionsController < ApplicationController
   before_action :set_param_objects
   before_action :set_breadcrumb, except: [:create]
 
-  def preview
-    render layout: 'preview'
+  def preview_content
+    render layout: 'preview_html'
   end
 
   def edit
