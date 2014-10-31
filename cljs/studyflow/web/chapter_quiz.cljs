@@ -17,14 +17,13 @@
                       "TODO")]
     (prn [:status chapter-quiz-status])
     (dom/li #js {:className (str "chapter-quiz " chapter-quiz-status) }
-            (dom/button (if (or (= chapter-quiz-status "un-locked")
-                                (nil? chapter-quiz-status))
+            (dom/button (if (= chapter-quiz-status "locked")
+                          #js {:className "btn yellow"
+                               :disabled :disabled}
                           #js {:className "btn yellow"
                                :onClick (fn []
                                           (om/update! cursor [:view :chapter-quiz-modal] {:show true
-                                                                                          :chapter-id chapter-id}))}
-                          #js {:className "btn yellow"
-                               :disabled :disabled})
+                                                                                          :chapter-id chapter-id}))})
                         (str "Chapter quiz " button-icon)))))
 
 (defn chapter-quiz-modal [cursor owner]
@@ -32,10 +31,14 @@
     om/IRender
     (render [_]
       (let [chapter-id (get-in cursor [:view :chapter-quiz-modal :chapter-id])
+            student-id (get-in cursor [:static :student :id])
             dismiss-modal (fn [] (om/update! cursor [:view :chapter-quiz-modal :show] false))]
         (modal (dom/h1 nil "Hoi, chapter-quiz modal")
                (dom/button #js {:onClick (fn []
                                            (dismiss-modal)
+                                           (async/put! (om/get-shared owner :command-channel)
+                                                       ["chapter-quiz-commands/start"
+                                                        chapter-id student-id])
                                            (set! (.-location js/window)
                                                  (history-link {:main :chapter-quiz
                                                                 :chapter-id chapter-id})))}
@@ -66,7 +69,7 @@
       (let [chapter-id (get-in cursor [:view :selected-path :chapter-id])
             student-id (get-in cursor [:static :student :id])]
         (async/put! (om/get-shared owner :command-channel)
-                    ["chapter-quiz-commands/init-when-nil"
+                    ["chapter-quiz-commands/reload"
                      chapter-id
                      student-id])))
     om/IRender
@@ -407,15 +410,17 @@
                                       (str "Vraag " question-index  " van " question-total))))
 
                  (dom/section #js {:id "main"}
-                              (cond
-                               (nil? chapter-quiz-agg)
-                               (om/build chapter-quiz-loading cursor)
-                               (= chapter-quiz-status :passed)
-                               (om/build chapter-quiz-passed cursor)
-                               (= chapter-quiz-status :failed)
-                               (om/build chapter-quiz-failed cursor)
-                               :else
-                               (om/build chapter-quiz-question cursor))))))
+                              (do (prn [:chapter-quis==== chapter-quiz-agg])
+                                  (cond
+                                   (or (nil? chapter-quiz-agg)
+                                       (= (:locked chapter-quiz-agg) false))
+                                   (om/build chapter-quiz-loading cursor)
+                                   (= chapter-quiz-status :passed)
+                                   (om/build chapter-quiz-passed cursor)
+                                   (= chapter-quiz-status :failed)
+                                   (om/build chapter-quiz-failed cursor)
+                                   :else
+                                   (om/build chapter-quiz-question cursor)))))))
     om/IWillMount
     (will-mount [_]
       (helpers/ipad-fix-scroll-after-switching))))

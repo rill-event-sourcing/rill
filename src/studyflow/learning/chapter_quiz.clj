@@ -19,7 +19,7 @@
      current-question-set-index
      current-question-set-id
      fast-route?
-     previously-seen-questions ;; {question-set-id => #{ question-id ... }}
+     previously-seen-questions ;; {question-set-id => [ first-seen-question-id second-seen-question-id ... ]}
      number-of-errors])
 
 (defcommand Start!
@@ -32,11 +32,17 @@
   [{:keys [course-id]}]
   [course-id])
 
+
 (defn select-random-question
-  [question-set previously-seen-questions]
-  (let [question-previously-done? (set (get previously-seen-questions (:id question-set)))
-        available-questions (filter (fn [question] (not (question-previously-done? (:id question))))
-                                    (:questions question-set))]
+  [{:keys [questions] :as question-set} previously-seen-questions]
+  (let [dont-pick-these (if (< (count questions) (count previously-seen-questions))
+                          (set previously-seen-questions)
+                          (if (or (<= 4 (count questions))
+                                  (<= 2 (count previously-seen-questions)))
+                            #{}
+                            (set (take-last (- (count questions) 2) previously-seen-questions))))
+        available-questions (filter (fn [question] (not (dont-pick-these (:id question))))
+                                    questions)]
     (assert (seq available-questions))
     (*rand-nth* (vec available-questions))))
 
@@ -88,13 +94,14 @@
 
         (let [next-question-set (get (course/question-sets-for-chapter-quiz course chapter-id) (inc current-question-set-index))]
           [:ok [correct-answer-event
-                (events/question-assigned course-id chapter-id student-id (:id next-question-set) (:id (select-random-question next-question-set previously-seen-questions)))]])))
+                (events/question-assigned course-id chapter-id student-id (:id next-question-set)
+                                          (:id (select-random-question next-question-set previously-seen-questions)))]])))
     [:ok [(events/question-answered-incorrectly course-id chapter-id student-id question-id inputs)]]))
 
 (defmethod handle-event ::events/QuestionAssigned
   [chapter-quiz {:keys [question-set-id question-id]}]
   (-> chapter-quiz
-      (update-in [:previously-seen-questions question-set-id] (fnil conj #{}) question-id)
+      (update-in [:previously-seen-questions question-set-id] (fnil conj []) question-id)
       (assoc :current-question-id question-id)
       (assoc :current-question-set-id question-set-id)
       (update-in [:current-question-set-index] inc)))

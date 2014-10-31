@@ -34,6 +34,7 @@
 
 (defn command-error-handler [cursor]
   (fn [res]
+    (prn [:ERROR! res])
     (om/update! cursor
                 [:aggregates :failed]
                 true)))
@@ -58,12 +59,12 @@
 (defn handle-replay-events [cursor aggregate-id events aggregate-version]
   (om/transact! cursor
                 [:aggregates aggregate-id]
-                (fn [agg]
+                (fn [_]
                   (if (seq events)
-                    (aggregates/apply-events agg aggregate-version events)
+                    (aggregates/apply-events nil aggregate-version events)
                     nil))))
 
-(defn try-command [cursor notification-channel command]
+(defn try-command [cursor notification-channel command-channel command]
   (prn :try-command command)
   (let [[command-type & args] command]
     (condp = command-type
@@ -138,7 +139,16 @@
               :handler (command-aggregate-handler cursor notification-channel course-id)
               :error-handler (command-error-handler cursor)}))
 
-      "chapter-quiz-commands/init-when-nil"
+      "chapter-quiz-commands/start"
+      (let [[chapter-id student-id] args
+            course-id (get-in @cursor [:static :course-id])]
+        (PUT (str "/api/chapter-quiz-start/" course-id "/" chapter-id "/" student-id)
+             {:format :json
+              :handler (fn [_]
+                         (async/put! command-channel ["chapter-quiz-commands/reload" chapter-id student-id]))
+              :error-handler (command-error-handler cursor)}))
+
+      "chapter-quiz-commands/reload"
       (let [[chapter-id student-id] args
             course-id (get-in @cursor [:static :course-id])]
         (GET (str "/api/chapter-quiz-replay/" course-id "/" chapter-id "/" student-id)
@@ -146,19 +156,10 @@
               :handler (fn [res]
                          (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
                            (when (seq events)
-                             (handle-replay-events cursor chapter-id events aggregate-version))
-                           (when (or (not (seq events))
-                                     (let [quiz (get-in @cursor [:aggregates chapter-id])]
-                                       (and (not (:locked quiz))
-                                            (= :failed (:status quiz)))))
-                             ;; need to start the chapter-quiz
-                             (PUT (str "/api/chapter-quiz-start/" course-id "/" chapter-id "/" student-id)
-                                  {:format :json
-                                   :handler (command-aggregate-handler cursor notification-channel chapter-id)
-                                   :error-handler (command-error-handler cursor)
-                                   }))))
+                             (handle-replay-events cursor chapter-id events aggregate-version))))
               :error-handler basic-error-handler}))
-
+      
+      
       "chapter-quiz-commands/check-answer"
       (let [[chapter-id student-id chapter-quiz-aggregate-version course-id question-id inputs] args]
         (PUT (str "/api/chapter-quiz-submit-answer/" course-id "/" chapter-id "/" student-id "/" question-id)
@@ -298,7 +299,7 @@
               notification-channel (om/get-shared owner :notification-channel)]
           (go (loop []
                 (when-let [command (<! command-channel)]
-                  (try-command cursor notification-channel command)
+                  (try-command cursor notification-channel command-channel command)
                   (recur)))))
 
         ;; data requests from UI
