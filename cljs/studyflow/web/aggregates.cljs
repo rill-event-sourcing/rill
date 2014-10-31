@@ -129,6 +129,7 @@
     (-> agg
         (assoc :status :passed)
         (dissoc :question-index))
+
     "studyflow.learning.entry-quiz.events/Failed"
     (-> agg
         (assoc :status :failed)
@@ -172,6 +173,14 @@
                              (assoc (peek qs)
                                :correct false
                                :inputs inputs))))))
+
+    "studyflow.learning.chapter-quiz.events/Locked"
+    (-> agg
+        (assoc :locked true))
+    
+    "studyflow.learning.chapter-quiz.events/UnLocked"
+    (-> agg
+        (assoc :locked false))
 
     "studyflow.learning.chapter-quiz.events/Passed"
     (-> agg

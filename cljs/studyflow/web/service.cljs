@@ -145,9 +145,12 @@
              {:format :json
               :handler (fn [res]
                          (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
-                           (if events
-                             (when-not (get-in @cursor [:aggregates chapter-id])
-                               (handle-replay-events cursor chapter-id events aggregate-version))
+                           (when (seq events)
+                             (handle-replay-events cursor chapter-id events aggregate-version))
+                           (when (or (not (seq events))
+                                     (let [quiz (get-in @cursor [:aggregates chapter-id])]
+                                       (and (not (:locked quiz))
+                                            (= :failed (:status quiz)))))
                              ;; need to start the chapter-quiz
                              (PUT (str "/api/chapter-quiz-start/" course-id "/" chapter-id "/" student-id)
                                   {:format :json
