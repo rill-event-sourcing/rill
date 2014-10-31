@@ -204,10 +204,21 @@
     &:before
       display: block
       content: ''
-      background: url(/images/fast-track.svg) no-repeat center
+      background: url(/images/chapter-quiz.svg) no-repeat center
       width: 30px
       height: 30px
       background-size: 20px
       position: absolute
       right: 65px
       top: 5px
+    &[disabled]
+      &:before
+        background: url(/images/icon-lock.svg) no-repeat center
+        background-size: 20px
+    &.fast-track-btn
+      &:before
+        background: url(/images/fast-track.svg) no-repeat center
+        background-size: 25px
+#dashboard-chapter-nav
+  .chapter-quiz-btn
+    width: 40% !important
