@@ -139,7 +139,7 @@
     "studyflow.learning.chapter-quiz.events/Started"
     (let [aggr-id (:chapter-id event)]
       {:id aggr-id
-       :fast-route true
+       :fast-route (:fast-route? event)
        :questions []
        :questions-correct-count 0
        :questions-wrong-count 0
