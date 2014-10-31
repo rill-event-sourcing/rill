@@ -47,6 +47,7 @@
   ([text on-click enabled]
      (dom/div #js {:id "m-question_bar"}
             (dom/button #js {:className "btn blue small pull-right"
+                             :ref "FOCUSED_BUTTON"
                              :disabled (not enabled)
                              :onClick (fn []
                                         (helpers/ipad-reset-header)
@@ -266,6 +267,7 @@
                              true))))
     om/IDidMount
     (did-mount [_]
+      (focus-input-box owner)
       (set-key-handler owner))))
 
 (defn chapter-quiz-question [cursor owner]
