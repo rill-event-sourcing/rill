@@ -28,15 +28,14 @@
     :left (swap! program-atom program/left)
     :right (swap! program-atom program/right)
     :del (swap! program-atom program/del)
-    :backsp (swap! program-atom program/backsp)
-    :clear (do
-             (reset! program-atom program/empty)
-             (reset! result-atom nil))
+    :clear (do (reset! program-atom program/empty)
+               (reset! result-atom nil))
 
     :show (swap! result-atom #(program/run @program-atom))
 
     ;; otherwise
-    (swap! program-atom program/insert val)))
+    (do (reset! inv-mode-atom false)
+        (swap! program-atom program/insert val))))
 
 (defn program-component []
   (let [{:keys [cursor tokens]} @program-atom]
