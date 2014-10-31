@@ -25,13 +25,6 @@ RSpec.describe EntryQuizQuestionsController, :type => :controller do
     end
   end
 
-  describe 'GET preview' do
-    it "should render the preview page" do
-      get :preview, entry_quiz_id: @eq.to_param, id: @question1.to_param
-      expect(response).to render_template('preview')
-    end
-  end
-
   describe 'POST create' do
 
     it "should create a new question" do
