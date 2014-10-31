@@ -6,6 +6,10 @@ class ChapterQuizQuestionsController < ApplicationController
     render layout: 'preview_html'
   end
 
+  def error_content
+    render partial: 'error_content'
+  end
+
   def edit
   end
 
@@ -33,7 +37,6 @@ class ChapterQuizQuestionsController < ApplicationController
     @question.trash if @question
     redirect_to chapter_chapter_quiz_path(@chapter)
   end
-
 
   private
 

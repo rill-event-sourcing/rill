@@ -132,7 +132,6 @@ updateErrors = ->
   updateWOAError()
 
 updateContentError = ->
-  console.log 'uo'
   url = $("#error_content").data('url')
   $.ajax url,
     type: 'GET'
@@ -143,7 +142,6 @@ updateContentError = ->
       $("#error_content").html(data)
 
 updateWOAError = ->
-  console.log 'woa'
   url = $("#error_worked_out_answer").data('url')
   $.ajax url,
     type: 'GET'

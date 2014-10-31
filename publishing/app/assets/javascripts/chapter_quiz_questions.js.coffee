@@ -127,6 +127,16 @@ save = ->
       $("#edit-time").html("Saved on: " + data.updated_at)
       refreshPreview()
 
+updateErrors = ->
+  url = $("#error_content").data('url')
+  $.ajax url,
+    type: 'GET'
+    dataType: 'html'
+    error: (jqXHR, textStatus, errorThrown) ->
+      console.log "AJAX Error: #{ textStatus }"
+    success: (data, textStatus, jqXHR) ->
+      $("#error_content").html(data)
+
 initializeAutoSave = ->
   form = $("#question-form")
   if form.length > 0
@@ -140,6 +150,7 @@ refreshPreview = ->
   $('#preview_content').attr("src", $('#preview_content').attr("src"))
   height = document.getElementById('preview_content').contentWindow.document.body.scrollHeight
   $('#preview_content').css('height', height)
+  updateErrors()
 
 ################################################################################
 
