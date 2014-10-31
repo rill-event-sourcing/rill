@@ -74,6 +74,8 @@ Rails.application.routes.draw do
           post 'movedown'
           get 'preview_content'
           get 'preview_worked_out_answer'
+          get 'error_content'
+          get 'error_worked_out_answer'
         end
       end
     end

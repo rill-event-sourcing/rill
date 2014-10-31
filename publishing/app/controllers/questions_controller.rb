@@ -15,6 +15,14 @@ class QuestionsController < ApplicationController
     render layout: 'preview_html'
   end
 
+  def error_content
+    render partial: 'error_content'
+  end
+
+  def error_worked_out_answer
+    render partial: 'error_worked_out_answer'
+  end
+
   def edit
   end
 

@@ -10,7 +10,7 @@
         - if @chapter.remedial?
           %span.label.label-info Remedial
 
-      %p= link_to 'Chapter Quiz', chapter_chapter_quiz_path(@chapter), class: "btn #{@chapter.chapter_quiz.active? ? "btn-success" : "btn-danger"}"
+      %p= link_to 'Chapter Quiz', chapter_chapter_quiz_path(@chapter), class: "btn #{@chapter.chapter_quiz && @chapter.chapter_quiz.active? ? "btn-success" : "btn-danger"}"
 
       %div.panel.panel-default{style: "margin-top:30px;"}
         %div.panel-heading
