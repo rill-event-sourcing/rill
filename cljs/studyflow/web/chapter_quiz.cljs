@@ -3,7 +3,7 @@
             [goog.events :as gevents]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [studyflow.web.helpers :refer [modal raw-html tag-tree-to-om focus-input-box]]
+            [studyflow.web.helpers :refer [modal raw-html tag-tree-to-om focus-input-box] :as helpers]
             [studyflow.web.recommended-action :refer [recommended-action]]
             [studyflow.web.history :refer [history-link]]))
 
@@ -42,7 +42,9 @@
      (dom/div #js {:id "m-question_bar"}
             (dom/button #js {:className "btn blue small pull-right"
                              :disabled (not enabled)
-                             :onClick on-click}
+                             :onClick (fn []
+                                        (helpers/ipad-reset-header)
+                                        (on-click))}
                         text))))
 
 (defn chapter-quiz-loading [cursor owner]
@@ -400,4 +402,7 @@
                                (= chapter-quiz-status :failed)
                                (om/build chapter-quiz-failed cursor)
                                :else
-                               (om/build chapter-quiz-question cursor))))))))
+                               (om/build chapter-quiz-question cursor))))))
+    om/IWillMount
+    (will-mount [_]
+      (helpers/ipad-fix-scroll-after-switching))))
