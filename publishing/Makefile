@@ -28,8 +28,9 @@ prepare:
 
 build:
 	rm -Rf public/assets && \
+	rm -Rf log/* && \
+	cp ../generated/learning/public/css/learning.css app/assets/stylesheets/ && \
 	RAILS_ENV=production rake assets:clean assets:precompile && \
-	cp ../generated/learning/public/css/learning.css public/assets/
 	tar -zcf ../target/studyflow_publish.tar * && \
 	rm -Rf public/assets
 
