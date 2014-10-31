@@ -10,7 +10,7 @@ rill:
 
 prepare: rill css js-dev
 
-publishing:
+publishing: css
 	make -C publishing build
 
 uberjars: css js-prod rill

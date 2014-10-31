@@ -127,6 +127,30 @@ save = ->
       $("#edit-time").html("Saved on: " + data.updated_at)
       refreshPreview()
 
+updateErrors = ->
+  updateContentError()
+  updateWOAError()
+
+updateContentError = ->
+  url = $("#error_content").data('url')
+  $.ajax url,
+    type: 'GET'
+    dataType: 'html'
+    error: (jqXHR, textStatus, errorThrown) ->
+      console.log "AJAX Error: #{ textStatus }"
+    success: (data, textStatus, jqXHR) ->
+      $("#error_content").html(data)
+
+updateWOAError = ->
+  url = $("#error_worked_out_answer").data('url')
+  $.ajax url,
+    type: 'GET'
+    dataType: 'html'
+    error: (jqXHR, textStatus, errorThrown) ->
+      console.log "AJAX Error: #{ textStatus }"
+    success: (data, textStatus, jqXHR) ->
+      $("#error_worked_out_answer").html(data)
+
 initializeAutoSave = ->
   form = $("#question-form")
   if form.length > 0
@@ -137,9 +161,13 @@ autoSave = ->
   setTimeout(autoSave,10000)
 
 refreshPreview = ->
-  $('#preview').attr("src", $('#preview').attr("src"))
-  height = document.getElementById('preview').contentWindow.document.body.scrollHeight
-  $('#preview').css('height', height)
+  $('#preview_content').attr("src", $('#preview_content').attr("src"))
+  $('#preview_worked_out_answer').attr("src", $('#preview_worked_out_answer').attr("src"))
+  height_content = document.getElementById('preview_content').contentWindow.document.body.scrollHeight
+  height_worked_out_answer = document.getElementById('preview_worked_out_answer').contentWindow.document.body.scrollHeight
+  $('#preview_content').css('height', height_content)
+  $('#preview_worked_out_answer').css('height', height_worked_out_answer)
+  updateErrors()
 
 ################################################################################
 

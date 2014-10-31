@@ -2,8 +2,12 @@ class ChapterQuizQuestionsController < ApplicationController
   before_action :set_param_objects
   before_action :set_breadcrumb, except: [:create]
 
-  def preview
-    render layout: 'preview'
+  def preview_content
+    render layout: 'preview_html'
+  end
+
+  def error_content
+    render partial: 'error_content'
   end
 
   def edit
@@ -33,7 +37,6 @@ class ChapterQuizQuestionsController < ApplicationController
     @question.trash if @question
     redirect_to chapter_chapter_quiz_path(@chapter)
   end
-
 
   private
 

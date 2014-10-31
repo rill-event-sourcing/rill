@@ -27,13 +27,6 @@ RSpec.describe QuestionsController, :type => :controller do
     end
   end
 
-  describe 'GET preview' do
-    it "should render the preview page" do
-      get :preview, chapter_id: @chapter.to_param, section_id: @section.to_param, id: @question1.to_param
-      expect(response).to render_template('preview')
-    end
-  end
-
   describe 'POST create' do
 
     it "should create a new question" do

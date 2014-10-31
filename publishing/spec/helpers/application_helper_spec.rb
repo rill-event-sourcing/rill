@@ -69,8 +69,7 @@ RSpec.describe ApplicationHelper, :type => :helper do
       input = build(:multiple_choice_input)
       input.choices << build(:choice, value: 'choice A')
       input.choices << build(:choice, value: 'choice B')
-      expect(helper.multiple_choice_input_to_html(input)).to match /div/
-      expect(helper.multiple_choice_input_to_html(input)).to match /button/
+      expect(helper.multiple_choice_input_to_html(input)).to match /span/
       expect(helper.multiple_choice_input_to_html(input)).to match /choice A/
       expect(helper.multiple_choice_input_to_html(input)).to match /choice B/
     end

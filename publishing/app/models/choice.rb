@@ -3,6 +3,8 @@ class Choice < ActiveRecord::Base
 
   belongs_to :multiple_choice_input
 
+  default_scope { order(:created_at) }
+
   scope :for_short_uuid, ->(id) { where(["SUBSTRING(CAST(id AS VARCHAR), 1, 8) = ?", id]) }
   def self.find_by_uuid(id, with_404 = true)
     choices = for_short_uuid(id)

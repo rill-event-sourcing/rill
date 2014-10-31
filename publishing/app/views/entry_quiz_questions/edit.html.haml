@@ -47,5 +47,4 @@
             = render partial: 'inputs/edit', locals: {input: input}
 
     %div.col-md-6
-      - url = preview_entry_quiz_question_path(@question)
-      %iframe.fill.col-md-12{id: "preview", data: {url: url}, src: url, style: "min-height: 800px;" }
+      = render 'preview'

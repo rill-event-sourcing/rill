@@ -7,8 +7,12 @@ class EntryQuizQuestionsController < ApplicationController
   def index
   end
 
-  def preview
-    render layout: 'preview'
+  def preview_content
+    render layout: 'preview_html'
+  end
+
+  def error_content
+    render partial: 'error_content'
   end
 
   def edit
@@ -84,8 +88,5 @@ class EntryQuizQuestionsController < ApplicationController
   def question_params
     params.require(:question).permit!
   end
-
-
-
 
 end

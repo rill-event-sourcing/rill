@@ -57,10 +57,10 @@ class Section < ActiveRecord::Base
     chapter
   end
 
-  def parse_errors
+  def parse_errors(attr)
     errors = {}
     subsections.map do |subs|
-      subs_err = subs.parse_errors
+      subs_err = subs.parse_errors(attr)
       if subs_err.any?
         errors["Subsection '#{subs}':"] = subs_err
       end
@@ -68,10 +68,10 @@ class Section < ActiveRecord::Base
     errors
   end
 
-  def image_errors
+  def image_errors(attr)
     errors = {}
     subsections.map do |subs|
-      subs_err = subs.image_errors
+      subs_err = subs.image_errors(attr)
       if subs_err.any?
         errors["Subsection '#{subs}':"] = subs_err
       end

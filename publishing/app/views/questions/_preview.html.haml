@@ -1,0 +1,19 @@
+%div.panel.panel-default
+  %div.panel-heading Question preview
+  %div.panel-body
+    - url = preview_content_chapter_section_question_path(@chapter, @section, @question)
+    %iframe.fill.col-md-12{id: "preview_content", data: {url: url}, src: url, style: "min-height: 400px;" }
+
+- url = error_content_chapter_section_question_path(@chapter, @section, @question)
+%div{id: "error_content", data: {url: url}}
+  = render partial: 'error_content'
+
+%div.panel.panel-default
+  %div.panel-heading Worked out answer preview
+  %div.panel-body
+    - url = preview_worked_out_answer_chapter_section_question_path(@chapter, @section, @question)
+    %iframe.fill.col-md-12{id: "preview_worked_out_answer", data: {url: url}, src: url, style: "min-height: 200px;" }
+
+- url = error_worked_out_answer_chapter_section_question_path(@chapter, @section, @question)
+%div{id: "error_worked_out_answer", data: {url: url}}
+  = render partial: 'error_worked_out_answer'
