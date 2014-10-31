@@ -44,7 +44,7 @@
      (map (fn [token loc]
             [:span
              (if (= loc cursor) {:class "with-cursor"})
-             (program/token-labels token)])
+             (program/label token)])
           tokens
           (iterate inc 0))
      (when (>= cursor (count tokens))

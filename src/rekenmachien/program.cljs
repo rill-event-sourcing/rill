@@ -4,7 +4,7 @@
 
 (def empty {:tokens [], :cursor 0})
 
-(defn token-labels [token]
+(defn label [token]
   (get
    {:sin "sin(", :cos "cos(", :tan "tan(",
     :asin [:span "sin" [:sup "-1"] "("],
@@ -31,8 +31,9 @@
 (defn del [{:keys [tokens cursor] :as program}]
   (if (> cursor 0)
     (-> program
-        (update-in [:cursor] dec)
-        (assoc :tokens (into [] (concat (take (dec cursor) tokens) (drop cursor tokens)))))
+        left
+        (assoc :tokens (into [] (concat (take (dec cursor) tokens)
+                                        (drop cursor tokens)))))
     program))
 
 (defn insert [{:keys [tokens cursor] :as program} val]
@@ -44,6 +45,21 @@
 (defn round-for-display [val]
   (js/parseFloat (.toPrecision val 10)))
 
+(def keyword->math
+  {:add +
+   :sub -
+   :mul *
+   :div /
+   :pow #(.pow js/Math %1 %2)
+   :sin #(.sin js/Math %)
+   :cos #(.cos js/Math %)
+   :tan #(.tan js/Math %)
+   :asin #(.asin js/Math %)
+   :acos #(.acos js/Math %)
+   :atan #(.atan js/Math %)
+   :sqrt #(.sqrt js/Math %)
+   :open identity})
+
 (defn calc [ast]
   (cond
    (= :pi ast)
@@ -53,19 +69,10 @@
    ast
 
    (sequential? ast)
-   (let [oper (first ast)
-         args (map calc (next ast))]
-     (case (first ast)
-       :add (apply + args)
-       :sub (apply - args)
-       :mul (apply * args)
-       :div (apply / args)
-       :cos (.cos js/Math (first args))
-       :sin (.sin js/Math (first args))
-       :tan (.tan js/Math (first args))
-       :open (calc (first (rest ast)))))
+   (apply (keyword->math (first ast))
+          (map calc (next ast)))
 
-   :else (throw (js/Error. "syntax error"))))
+   :else (throw (js/Error. (str "syntax error: " (pr-str ast))))))
 
 (defn run [{:keys [tokens]}]
   (try

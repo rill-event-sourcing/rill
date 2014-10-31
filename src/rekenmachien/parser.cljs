@@ -28,11 +28,11 @@
 (defn- reduce-infixes [tokens] ; Het Mannetje Won Van De Oude Aap
   (prewalk (fn [x]
              (if (sequential? x)
-               (reduce reduce-infix x [:mul :div :add :sub])
+               (reduce reduce-infix x [:pow :mul :div :add :sub])
                x))
            tokens))
 
-(def openers #{:open :sin :cos :tan :sqrt})
+(def openers #{:open :sin :cos :tan :asin :acos :atan :sqrt})
 
 (defn- find-closing [tokens n]
   (if (seq tokens)
