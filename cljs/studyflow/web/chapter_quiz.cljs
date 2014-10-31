@@ -9,17 +9,22 @@
 
 (defn chapter-quiz-navigation-button [cursor chapter-quiz-status chapter-id]
   (let [chapter-test-agg (get-in cursor [:aggregates chapter-id])
-        button-icon (condp = chapter-quiz-status
+        button-icon (case chapter-quiz-status
                       nil ">>"
-                      "locked" "🔒"
-                      "unlocked" ""
+                      "locked" "\uD83D\uDD12"
+                      "un-locked" ""
                       "passed" "✓"
                       "TODO")]
+    (prn [:status chapter-quiz-status])
     (dom/li #js {:className (str "chapter-quiz " chapter-quiz-status) }
-            (dom/button #js {:className "btn yellow"
-                             :onClick (fn []
-                                        (om/update! cursor [:view :chapter-quiz-modal] {:show true
-                                                                                        :chapter-id chapter-id}))}
+            (dom/button (if (or (= chapter-quiz-status "un-locked")
+                                (nil? chapter-quiz-status))
+                          #js {:className "btn yellow"
+                               :onClick (fn []
+                                          (om/update! cursor [:view :chapter-quiz-modal] {:show true
+                                                                                          :chapter-id chapter-id}))}
+                          #js {:className "btn yellow"
+                               :disabled :disabled})
                         (str "Chapter quiz " button-icon)))))
 
 (defn chapter-quiz-modal [cursor owner]
@@ -46,13 +51,13 @@
      (dom/div #js {:id "m-question_bar"}))
   ([text on-click enabled]
      (dom/div #js {:id "m-question_bar"}
-            (dom/button #js {:className "btn blue small pull-right"
-                             :ref "FOCUSED_BUTTON"
-                             :disabled (not enabled)
-                             :onClick (fn []
-                                        (helpers/ipad-reset-header)
-                                        (on-click))}
-                        text))))
+              (dom/button #js {:className "btn blue small pull-right"
+                               :ref "FOCUSED_BUTTON"
+                               :disabled (not enabled)
+                               :onClick (fn []
+                                          (helpers/ipad-reset-header)
+                                          (on-click))}
+                          text))))
 
 (defn chapter-quiz-loading [cursor owner]
   (reify
