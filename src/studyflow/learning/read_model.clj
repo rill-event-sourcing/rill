@@ -44,14 +44,28 @@
 (defn set-student-chapter-quiz-status [model chapter-id student-id status]
   (assoc-in model [:chapter-quiz-statuses chapter-id student-id] status))
 
+(defn get-chapter-status [model chapter-id student-id]
+  (get-in model [:chapter-statuses chapter-id student-id]))
+
+(defn set-chapter-status [model chapter-id student-id status]
+  (assoc-in model [:chapter-statuses chapter-id student-id] status))
+
+(defn set-remedial-chapters-finished [model course-id student-id]
+  (let [course (get-course model course-id)
+        chapters (:chapters course)]
+    (reduce (fn [model chapter]
+              (if (:remedial chapter)
+                (set-chapter-status model (:id chapter) student-id :finished)
+                model))
+            model chapters)))
+
 (defn chapter-tree
   [model chapter student-id remedial-chapters-status]
   {:id (:id chapter)
    :title (:title chapter)
    :chapter-quiz {:number-of-questions (count (:chapter-quiz chapter))
                   :status (get-in model [:chapter-quiz-statuses (:id chapter) student-id])}
-   :status (when (:remedial chapter)
-             remedial-chapters-status)
+   :status (get-chapter-status model (:id chapter) student-id)
    :sections (mapv #(section-leaf model % student-id) (:sections chapter))})
 
 (defn get-student-entry-quiz-status [model entry-quiz-id student-id]
