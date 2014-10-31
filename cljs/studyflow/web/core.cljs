@@ -8,9 +8,11 @@
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [studyflow.web.aggregates :as aggregates]
+            [studyflow.web.chapter-quiz :as chapter-quiz]
             [studyflow.web.service :as service]
             [studyflow.web.history :refer [history-link]]
-            [studyflow.web.helpers :refer [modal raw-html tag-tree-to-om] :as helpers]
+            [studyflow.web.helpers :refer [modal raw-html tag-tree-to-om focus-input-box section-explanation-link] :as helpers]
+            [studyflow.web.recommended-action :refer [recommended-action]]
             [clojure.walk :as walk]
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go]]))
@@ -63,14 +65,6 @@
                                    [:view :side-navigation :shown]
                                    (not (get-in @cursor [:view :side-navigation :shown]))))}))))
 
-(defn section-explanation-link [cursor chapter section]
-  (-> (get-in cursor [:view :selected-path])
-      (assoc :chapter-id (:id chapter)
-             :section-id (:id section)
-             :section-tab :explanation
-             :main :learning)
-      history-link))
-
 (defn navigation [cursor owner]
   (reify
     om/IWillMount
@@ -89,40 +83,42 @@
         (dom/div nil
                  (dom/h1 #js {:id "sidenav_chapter_title"} (:title chapter))
                  (apply dom/ul nil
-                        (for [{:keys [title]
-                               section-id :id
-                               :as section} (:sections chapter)]
-                          (let [open-section (= section-id
-                                                (get-in cursor [:view :selected-path :section-id]))]
-                            (apply dom/li #js {:className
-                                               (str "section_list_item "
-                                                    (when open-section
-                                                      "open ")
-                                                    (get
-                                                     {:finished "finished"
-                                                      :stuck "stumbling_block"
-                                                      :in-progress "in_progress"}
-                                                     (aggregates/section-test-progress
-                                                      (get-in cursor [:aggregates section-id]))
-                                                     ""))}
-                                   (dom/a #js {:href (section-explanation-link cursor chapter section)
-                                               :className "section_link"}
-                                          title)
-                                   (when open-section
-                                     [(dom/a #js {:className (str "section_tab explanation"
-                                                                  (when (= section-tab :explanation)
-                                                                    " selected"))
-                                                  :href (-> (get-in cursor [:view :selected-path])
-                                                            (assoc :section-tab :explanation)
-                                                            history-link)}
-                                             "Uitleg")
-                                      (dom/a #js {:className (str "section_tab questions"
-                                                                  (when (= section-tab :questions)
-                                                                    " selected"))
-                                                  :href (-> (get-in cursor [:view :selected-path])
-                                                            (assoc :section-tab :questions)
-                                                            history-link)}
-                                             "Vragen")])))))
+                        (concat
+                         (for [{:keys [title]
+                                section-id :id
+                                :as section} (:sections chapter)]
+                           (let [open-section (= section-id
+                                                 (get-in cursor [:view :selected-path :section-id]))]
+                             (apply dom/li #js {:className
+                                                (str "section_list_item "
+                                                     (when open-section
+                                                       "open ")
+                                                     (get
+                                                      {:finished "finished"
+                                                       :stuck "stumbling_block"
+                                                       :in-progress "in_progress"}
+                                                      (aggregates/section-test-progress
+                                                       (get-in cursor [:aggregates section-id]))
+                                                      ""))}
+                                    (dom/a #js {:href (section-explanation-link cursor chapter section)
+                                                :className "section_link"}
+                                           title)
+                                    (when open-section
+                                      [(dom/a #js {:className (str "section_tab explanation"
+                                                                   (when (= section-tab :explanation)
+                                                                     " selected"))
+                                                   :href (-> (get-in cursor [:view :selected-path])
+                                                             (assoc :section-tab :explanation)
+                                                             history-link)}
+                                              "Uitleg")
+                                       (dom/a #js {:className (str "section_tab questions"
+                                                                   (when (= section-tab :questions)
+                                                                     " selected"))
+                                                   :href (-> (get-in cursor [:view :selected-path])
+                                                             (assoc :section-tab :questions)
+                                                             history-link)}
+                                              "Vragen")]))))
+                         [(chapter-quiz/chapter-quiz-navigation-button cursor chapter-id)]))
                  (dom/div #js {:id "meta_content"}
                           (om/build show-sidebar cursor)))))))
 
@@ -397,28 +393,6 @@
                                                 (.. event -target -value)))})
                              (when-let [suffix (:suffix li)]
                                (str " " suffix)))]))))))
-
-(defn some-input-in-question-selected [refs]
-  (let [active (.-activeElement js/document)]
-    (some #{active}
-          (-> (js->clj refs)
-              (dissoc "FOCUSED_INPUT")
-              vals
-              (->>
-               (map #(.getDOMNode %)))))))
-(defn focus-input-box [owner]
-  ;; we always call this, even when there's no element called
-  ;; "FOCUSED_INPUT". om/get-node can't handle that case
-  (when-let [refs (.-refs owner)]
-    ;; need to set the focus on a non disabled field for firefox key handling
-    (if-let [button-ref (aget refs "FOCUSED_BUTTON")]
-      (when-let [button (.getDOMNode button-ref)]
-        (.focus button))
-      (when-let [input-ref (aget refs "FOCUSED_INPUT")]
-        (when-let [input-field (.getDOMNode input-ref)]
-          (when (and (= "" (.-value input-field))
-                     (not (some-input-in-question-selected refs)))
-            (.focus input-field)))))))
 
 (defn tool-box
   [tools]
@@ -731,59 +705,29 @@
                          (om/build section-test cursor))
                        (om/build path-panel cursor)))))))
 
-(defn not-finished? [element]
-  (when-not (= (:status element) "finished")
-    element))
-
-(defn not-stuck? [section]
-  (when-not (= (:status section) "stuck")
-    section))
-
-(defn first-recommendable-section [chapter]
-  (some (comp not-stuck? not-finished?) (:sections chapter)))
-
-(defn nonfinished-chapter-with-recommendable-sections [chapter]
-  (when (and
-         (not (= (:status chapter) "finished"))
-         (first-recommendable-section chapter))
-    chapter))
-
-(defn first-recommendable-chapter [course]
-  (some nonfinished-chapter-with-recommendable-sections (:chapters course)))
-
-(defn recommended-action [cursor]
-  (let [course (get-in cursor [:view :course-material])
-        entry-quiz (:entry-quiz course)]
-    (if (not (contains? #{"passed" "failed"} (:status entry-quiz)))
-      {:title "Instaptoets"
-       :link (history-link {:main :entry-quiz})
-       :id (:id entry-quiz)}
-      (let [chapter (first-recommendable-chapter course)
-            section (first-recommendable-section chapter)]
-        {:title (:title section)
-         :id (:id section)
-         :link (section-explanation-link cursor chapter section)} ))))
-
 (defn sections-navigation [cursor chapter]
   (apply dom/ol #js {:id "section_list"}
-         (let [rcm-action (recommended-action cursor)
+         (let [chapter-id (:id chapter)
+               rcm-action (recommended-action cursor)
                recommended-id (:id rcm-action)]
-           (for [{:keys [title status]
-                  section-id :id
-                  :as section} (:sections chapter)]
-             (let [section-status (get {"finished" "finished"
-                                        "stuck" "stumbling_block"
-                                        "in-progress" "in_progress"} status "")
-                   section-link (section-explanation-link cursor chapter section)]
-               (dom/li #js {:data-id section-id
-                            :className (str "section_list_item " section-status
-                                            (when (= recommended-id section-id) " recommended")) }
-                       (dom/a #js {:href section-link
-                                   :className (str "section_link "
-                                                   section-status)}
-                              title)
-                       (dom/a #js {:className "btn blue chapter_nav_btn"
-                                   :href section-link} "Start")))))))
+           (concat
+            (for [{:keys [title status]
+                   section-id :id
+                   :as section} (:sections chapter)]
+              (let [section-status (get {"finished" "finished"
+                                         "stuck" "stumbling_block"
+                                         "in-progress" "in_progress"} status "")
+                    section-link (section-explanation-link cursor chapter section)]
+                (dom/li #js {:data-id section-id
+                             :className (str "section_list_item " section-status
+                                             (when (= recommended-id section-id) " recommended")) }
+                        (dom/a #js {:href section-link
+                                    :className (str "section_link "
+                                                    section-status)}
+                               title)
+                        (dom/a #js {:className "btn blue chapter_nav_btn"
+                                    :href section-link} "Start"))))
+            [(chapter-quiz/chapter-quiz-navigation-button cursor chapter-id)]))))
 
 (defn chapter-navigation [cursor selected-chapter-id course chapter]
   (let [selected? (= selected-chapter-id (:id chapter))]

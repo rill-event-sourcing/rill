@@ -22,6 +22,10 @@
         section-links (zipmap section-links forward-links)]
     (assoc course-data :forward-section-links section-links)))
 
+(defn add-chapter-index-mapping [course-data]
+  (let [chapters-by-id (into {} (map (juxt :id identity) (:chapters course-data)))]
+    (assoc course-data :chapters-by-id chapters-by-id)))
+
 (defn ignore-handler [res])
 
 (defn basic-error-handler [res]
@@ -134,6 +138,41 @@
               :handler (command-aggregate-handler cursor notification-channel course-id)
               :error-handler (command-error-handler cursor)}))
 
+      "chapter-quiz-commands/init-when-nil"
+      (let [[chapter-id student-id] args
+            course-id (get-in @cursor [:static :course-id])]
+        (GET (str "/api/chapter-quiz-replay/" course-id "/" chapter-id "/" student-id)
+             {:format :json
+              :handler (fn [res]
+                         (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
+                           (if events
+                             (when-not (get-in @cursor [:aggregates chapter-id])
+                               (handle-replay-events cursor chapter-id events aggregate-version))
+                             ;; need to start the chapter-quiz
+                             (PUT (str "/api/chapter-quiz-start/" course-id "/" chapter-id "/" student-id)
+                                  {:format :json
+                                   :handler (command-aggregate-handler cursor notification-channel chapter-id)
+                                   :error-handler (command-error-handler cursor)
+                                   }))))
+              :error-handler basic-error-handler}))
+
+      "chapter-quiz-commands/check-answer"
+      (let [[chapter-id student-id chapter-quiz-aggregate-version course-id question-id inputs] args]
+        (PUT (str "/api/chapter-quiz-submit-answer/" course-id "/" chapter-id "/" student-id "/" question-id)
+             {:params {:expected-version chapter-quiz-aggregate-version
+                       :inputs inputs}
+              :format :json
+              :handler (command-aggregate-handler cursor notification-channel chapter-id)
+              :error-handler (command-error-handler cursor)}))
+
+      "chapter-quiz-commands/next-question"
+      (let [[chapter-id student-id chapter-quiz-aggregate-version course-id] args]
+        (PUT (str "/api/chapter-quiz-dismiss-error-screen/" course-id "/" chapter-id "/" student-id)
+             {:params {:expected-version chapter-quiz-aggregate-version}
+              :format :json
+              :handler (command-aggregate-handler cursor notification-channel chapter-id)
+              :error-handler (command-error-handler cursor)}))
+
       "tracking-commands/navigation"
       (let [[student-id tracking-location] args]
         (PUT (str "/api/tracking/navigation/" student-id)
@@ -156,6 +195,7 @@
              {:params {}
               :handler (fn [res]
                          (let [course-data (-> (json-edn/json->edn res)
+                                               add-chapter-index-mapping
                                                add-forward-section-links)]
                            (om/update! cursor
                                        [:view :course-material] course-data)))
@@ -215,6 +255,24 @@
                            (when events
                              (handle-replay-events cursor course-id events aggregate-version))))
               :error-handler basic-error-handler}))
+
+      "data/chapter-quiz-question"
+      (let [[chapter-id question-id] args
+            course-id (get-in @cursor [:static :course-id])]
+        (if-let [question-data (get-in @cursor [:view :chapter-quiz chapter-id :questions question-id])]
+          nil ;; data already loaded
+          (GET (str "/api/course-material/"
+                    course-id
+                    "/chapter/" chapter-id
+                    "/question/" question-id)
+               {:params {}
+                :handler (fn [res]
+                           (let [question-data (json-edn/json->edn res)]
+                             (om/transact! cursor
+                                           #(assoc-in %
+                                                      [:view :chapter-quiz chapter-id :questions question-id]
+                                                      question-data))))
+                :error-handler basic-error-handler})))
 
       nil)))
 

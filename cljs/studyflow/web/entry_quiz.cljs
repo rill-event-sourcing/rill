@@ -4,7 +4,7 @@
             [om.dom :as dom :include-macros true]
             [studyflow.web.aggregates :as aggregates]
             [studyflow.web.core :as core]
-            [studyflow.web.helpers :refer [raw-html modal tag-tree-to-om]]
+            [studyflow.web.helpers :refer [raw-html modal tag-tree-to-om focus-input-box]]
             [studyflow.web.history :refer [history-link]]
             [studyflow.web.service :as service]
             [cljs.core.async :as async])
@@ -166,7 +166,7 @@
                                                nil)))))))
     om/IDidMount
     (did-mount [_]
-      (core/focus-input-box owner))))
+      (focus-input-box owner))))
 
 
 (defn entry-quiz-modal [cursor owner]

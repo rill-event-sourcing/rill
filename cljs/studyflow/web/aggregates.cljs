@@ -134,6 +134,54 @@
         (assoc :status :failed)
         (dissoc :question-index))
 
+    ;; TODO first events for chapter-quiz canbe more than just started, for
+    ;; example could be unlocked before ever being started
+    "studyflow.learning.chapter-quiz.events/Started"
+    (let [aggr-id (:chapter-id event)]
+      {:id aggr-id
+       :fast-route true
+       :questions []
+       :questions-correct-count 0
+       :questions-wrong-count 0
+       :status :running})
+
+    "studyflow.learning.chapter-quiz.events/QuestionAssigned"
+    (let [question-id (:question-id event)]
+      (-> agg
+          (update-in [:questions] conj {:question-id question-id
+                                        :question-index (count (:questions agg))})))
+
+    "studyflow.learning.chapter-quiz.events/QuestionAnsweredCorrectly"
+    (let [question-id (:question-id event)]
+      (-> agg
+          (update-in [:questions-correct-count] inc)
+          (update-in [:questions]
+                     (fn [qs]
+                       (conj (pop qs)
+                             (assoc (peek qs)
+                               :correct true))))))
+
+    "studyflow.learning.chapter-quiz.events/QuestionAnsweredIncorrectly"
+    (let [question-id (:question-id event)
+          inputs (:inputs event)]
+      (-> agg
+          (update-in [:questions-wrong-count] inc)
+          (update-in [:questions]
+                     (fn [qs]
+                       (conj (pop qs)
+                             (assoc (peek qs)
+                               :correct false
+                               :inputs inputs))))))
+
+    "studyflow.learning.chapter-quiz.events/Passed"
+    (-> agg
+        (assoc :status :passed))
+
+    "studyflow.learning.chapter-quiz.events/Failed"
+    (-> agg
+        (assoc :status :failed))
+
+
     (do
       (prn "Aggregate can't handle event: " event)
       agg)))
