@@ -118,7 +118,7 @@
                                                              (assoc :section-tab :questions)
                                                              history-link)}
                                               "Vragen")]))))
-                         [(chapter-quiz/chapter-quiz-navigation-button cursor chapter-id)]))
+                         [(chapter-quiz/chapter-quiz-navigation-button cursor (:status (:chapter-quiz chapter)) chapter-id)]))
                  (dom/div #js {:id "meta_content"}
                           (om/build show-sidebar cursor)))))))
 
@@ -727,7 +727,7 @@
                                title)
                         (dom/a #js {:className "btn blue chapter_nav_btn"
                                     :href section-link} "Start"))))
-            [(chapter-quiz/chapter-quiz-navigation-button cursor chapter-id)]))))
+            [(chapter-quiz/chapter-quiz-navigation-button cursor (:status (:chapter-quiz chapter)) chapter-id)]))))
 
 (defn chapter-navigation [cursor selected-chapter-id course chapter]
   (let [selected? (= selected-chapter-id (:id chapter))]

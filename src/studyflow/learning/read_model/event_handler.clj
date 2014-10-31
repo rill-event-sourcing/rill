@@ -4,6 +4,7 @@
             [studyflow.learning.course.events :as course-events]
             [studyflow.learning.entry-quiz.events :as entry-quiz]
             [studyflow.learning.section-test.events :as section-test]
+            [studyflow.learning.chapter-quiz.events :as chapter-quiz]
             [rill.event-channel :as event-channel]
             [rill.message :as message]))
 
@@ -64,6 +65,22 @@
 (defmethod handle-event ::section-test/Finished
   [model {:keys [student-id section-id]}]
   (m/update-student-section-status model section-id student-id :in-progress :finished))
+
+(defmethod handle-event ::chapter-quiz/Started
+  [model {:keys [chapter-id student-id]}]
+  (m/set-student-chapter-quiz-status model chapter-id student-id :started))
+
+(defmethod handle-event ::chapter-quiz/Locked
+  [model {:keys [chapter-id student-id]}]
+  (m/set-student-chapter-quiz-status model chapter-id student-id :locked))
+
+(defmethod handle-event ::chapter-quiz/UnLocked
+  [model {:keys [chapter-id student-id]}]
+  (m/set-student-chapter-quiz-status model chapter-id student-id :un-locked))
+
+(defmethod handle-event ::chapter-quiz/Passed
+  [model {:keys [chapter-id student-id]}]
+  (m/set-student-chapter-quiz-status model chapter-id student-id :passed))
 
 (defmethod handle-event :studyflow.school-administration.teacher.events/Created
   [model {:keys [teacher-id full-name]}]
