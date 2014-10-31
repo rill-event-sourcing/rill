@@ -107,30 +107,40 @@
 
 (def key-code->button
   {:normal {8 :del
-            13 :show
-            37 :left
-            39 :right
-            46 :del
-            48 0, 49 1, 50 2, 51 3, 52 4, 53 5, 54 6, 55 7, 56 8, 57 9
-            65 :show
-            67 :cos
-            83 :sin
-            84 :tan
-            106 :mul
-            107 :add
-            109 :sub
-            110 :dot
-            111 :div
-            187 :show
-            189 :sub
-            190 :dot
-            191 :div}
-   :shifted {48 :close
-             54 :pow
-             56 :mul
-             57 :open
-             67 :clear
-             187 :add}})
+            13 :show  ; enter
+            37 :left  ; left
+            39 :right ; right
+            46 :del   ; del
+            48 0, 49 1, 50 2, 51 3, 52 4, 53 5, 54 6, 55 7, 56 8, 57 9 ; 0 .. 9
+            65 :ans   ; A
+            66 :abc   ; B
+            67 :clear ; C
+            73 :inv   ; I
+            76 :light ; L
+            77 :neg   ; M
+            79 :cos   ; O
+            80 :pi    ; P
+            83 :sin   ; S
+            84 :tan   ; T
+            86 :x10y  ; V
+            87 :sqrt  ; W
+            106 :mul  ; *
+            107 :add  ; +
+            109 :sub  ; -
+            110 :dot  ; .
+            111 :div  ; /
+            187 :show ; =
+            188 :dot  ; ,
+            189 :sub  ; -
+            190 :dot  ; .
+            191 :div  ; /
+            }
+   :shifted {48 :close ; )
+             54 :pow   ; ^
+             56 :mul   ; *
+             57 :open  ; (
+             187 :add  ; +
+             }})
 
 (defn main []
   (set! (.-onkeydown js/document)
