@@ -136,6 +136,11 @@
       (end-time-spent event)
       (update-in [:students student-id :entry-quiz-time-spent] m/add-time-spent event)))
 
+
+(defmethod handle-event :studyflow.learning.chapter-quiz.events/Passed
+  [model {:keys [chapter-id student-id]}]
+  (update-in model [:students student-id :chapter-status] assoc chapter-id :finished))
+
 (defmethod handle-event :studyflow.learning.entry-quiz.events/Started
   [model event]
   (add-time-spent-entry-quiz model event))
