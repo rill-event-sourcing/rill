@@ -9,11 +9,17 @@
 (defonce result-atom (atom nil))
 
 (def button-labels
-  {:inv "INV"
-   :sin "sin" :cos "cos" :tan "tan"
-   :abc [:span "a" [:sup "b"] "/" [:sub "c"]] :x10x [:span "x10" [:sup "x"]] :sqrt "√" :x2 "x²" :pow "^" :x1 "x⁻¹" :pi "π"
-   :left "←" :right "→" :ins "INS" :del "DEL" :clear "C"
-   :dot "." :neg "(-)" :ans "ANS" :mul "×" :div "÷" :add "+" :sub "-" :open "(" :close ")" :show "="})
+  {:inv "INV", :dec "f↔d"
+   :sin "sin", :cos "cos", :tan "tan",
+   :asin [:span "sin" [:sup "-1"]],
+   :acos [:span "cos" [:sup "-1"]],
+   :atan [:span "tan" [:sup "-1"]],
+   :abc [:span "a" [:sup "b"] "/" [:sub "c"]],
+   :x10y [:span "x10" [:sup "y"]], :sqrt "√", :x2 "x²", :pow "^", :x1 "x⁻¹",
+   :left "⇐", :right "⇒", :del "DEL", :clear "C",
+   :pi "π", :dot ",", :neg "(-)", :ans "ANS",
+   :mul "×", :div "÷", :add "+", :sub "−",
+   :open "(", :close ")", :show "="})
 
 (defn button-press! [val]
   (case val
@@ -21,10 +27,11 @@
 
     :left (swap! program-atom program/left)
     :right (swap! program-atom program/right)
-    :ins (swap! program-atom program/toggle-ins-mode)
     :del (swap! program-atom program/del)
     :backsp (swap! program-atom program/backsp)
-    :clear (reset! program-atom program/empty)
+    :clear (do
+             (reset! program-atom program/empty)
+             (reset! result-atom nil))
 
     :show (swap! result-atom #(program/run @program-atom))
 
@@ -50,50 +57,60 @@
 (defn main-component []
   [:div.rekenmachien
    [:div.display
-    (when @inv-mode-atom [:span.inv-mode "i"])
-    (when (program/ins-mode? @program-atom) [:span.ins-mode "ins"])
     [program-component]
     [result-component]]
    [:div.keyboard
-    (for [[section rows] [[:functions [[:inv]
-                                       [:sin :cos :tan :abc :x10x]
+    [:section.inv
+     (for [button (if @inv-mode-atom
+                    [:sin :cos :tan :abc]
+                    [:asin :acos :atan :dec])]
+       [:label [:span.label (get button-labels button)]])]
+    (for [[section rows] [[:functions [(if @inv-mode-atom
+                                         [:asin :acos :atan :dec :x10y]
+                                         [:sin :cos :tan :abc :x10y])
                                        [:sqrt :x2 :pow :x1 :pi]]]
-                          [:number-oper [[:left :right :ins :del :clear]
-                                         [7 8 9 :mul :div]
-                                         [4 5 6 :add :sub]
-                                         [1 2 3 :open :close]
+                          [:number-oper [[:inv :left :right :open :close]
+                                         [7 8 9 :del :clear]
+                                         [4 5 6 :mul :div]
+                                         [1 2 3 :add :sub]
                                          [0 :dot :neg :ans :show]]]]]
       [:section {:key section :class section}
        (for [row rows]
          [:div.row
           (for [button row]
             [:button {:type "button" :on-click #(button-press! button)
-                      :class (if (keyword? button) (name button) (str button))}
+                      :class (if (keyword? button) (name button) "digit")}
              [:span.label (get button-labels button (str button))]])])])]
    [:style {:type "text/css"}
     (str
-     ".rekenmachien { background: #ccc; padding: 1em; width: calc((3.5em * 10) + 6em); border-radius: 1em; }"
+     ".rekenmachien { background: #888; padding: 1em; width: calc((4.5em * 5) + 2em); border-radius: .5em; }"
      ".rekenmachien, .rekenmachien * { box-sizing: border-box; font-size: 14px; font-family: sans-serif; }"
-     ".rekenmachien .display { position: relative; width: calc((3.5em * 10) + 4em); height: 5em; background: #ddd; border-radius: .5em; overflow: hidden; }"
-     ".rekenmachien .display .inv-mode, .rekenmachien .display .ins-mode { position: absolute; top: .5em; font-size: 66%; background: black; color: #eee; padding: .1em .25em; border-radius: .3em; }"
-     ".rekenmachien .display .inv-mode { left: .5em; }"
-     ".rekenmachien .display .ins-mode { right: .5em; }"
-     ".rekenmachien .display .program { padding: .5em 1.5em .25em 1.5em; background: #eee; } "
-     ".rekenmachien .display .program sup, .rekenmachien .display .program sub { font-size: 66%; }"
+     ".rekenmachien .display { position: relative; width: calc((4.5em * 5)); height: 5em; background: #bc6; border: solid #000 2px; border-radius: .5em; overflow: hidden; }"
+     ".rekenmachien .display .program { padding: .5em .5em .25em .5em; background: #ab5; } "
+     ".rekenmachien sup, .rekenmachien sub { font-size: 66%; }"
      ".rekenmachien .display .program small { font-size: 75%; }"
      ".rekenmachien .display .program span { display: inline-block; text-align: center; } "
      ".rekenmachien .display .program span.placeholder { width: .5em; } "
-     ".rekenmachien .display .program .with-cursor { border-bottom: 2px solid #000; } "
-     ".rekenmachien .display .result { font-size: 175%; font-weight: bold; position: absolute; bottom: .25em; right: 1em;}"
-     ".rekenmachien button { width: 3em; height: 3em; margin: .25em; }"
-     ".rekenmachien .keyboard section { display: inline-block; vertical-align: top; margin: 1em; }")]])
+     ".rekenmachien .display .program .with-cursor { border-left: 1px solid #000; } "
+     ".rekenmachien .display .result { font-size: 150%; position: absolute; bottom: .25em; right: .5em;}"
+     ".rekenmachien button, .rekenmachien section.inv label { width: 4em; height: 3em; margin: .25em; padding: 0; display: inline-block; }"
+     ".rekenmachien button { color: #000; background: #ddd; font-weight: bold; border-radius: .5em; border: solid #aaa 2px; }"
+     ".rekenmachien button .label { font-size: 125%; } "
+     ".rekenmachien button.digit { color: #fff; background: #444; } "
+     ".rekenmachien button.digit .label { font-size: 150%; }"
+     ".rekenmachien button.inv { background: #fc0; } "
+     ".rekenmachien button.show { color: #fff; background: #00f; } "
+     ".rekenmachien section.inv label { text-align: center; vertical-align: bottom; color: #fc0; height: 1em; }"
+     ".rekenmachien section.inv label span.label { font-size: 75%; }"
+     ".rekenmachien section.inv label span.label span { font-size: inherit; }"
+     ".rekenmachien button.del, .rekenmachien button.clear { color: #fff; background: #c00; } "
+     ".rekenmachien .keyboard section { display: inline-block; vertical-align: top; margin: 0; }")]])
 
 (def key-code->button
-  {:normal {8 :backsp
+  {:normal {8 :del
             13 :show
             37 :left
             39 :right
-            45 :ins
             46 :del
             48 0, 49 1, 50 2, 51 3, 52 4, 53 5, 54 6, 55 7, 56 8, 57 9
             65 :show
