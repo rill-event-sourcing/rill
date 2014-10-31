@@ -7,14 +7,20 @@
             [studyflow.web.recommended-action :refer [recommended-action]]
             [studyflow.web.history :refer [history-link]]))
 
-(defn chapter-quiz-navigation-button [cursor chapter-id]
-  (let [chapter-test-agg (get-in cursor [:aggregates chapter-id])]
-    ;; todo get locked/unlocked | quick/normal
-    (dom/li #js {:className "chapter-quiz"}
-            (dom/button #js {:onClick (fn []
+(defn chapter-quiz-navigation-button [cursor chapter-quiz-status chapter-id]
+  (let [chapter-test-agg (get-in cursor [:aggregates chapter-id])
+        button-icon (condp = chapter-quiz-status
+                      nil ">>"
+                      "locked" "🔒"
+                      "unlocked" ""
+                      "passed" "✓"
+                      "TODO")]
+    (dom/li #js {:className (str "chapter-quiz " chapter-quiz-status) }
+            (dom/button #js {:className "btn yellow"
+                             :onClick (fn []
                                         (om/update! cursor [:view :chapter-quiz-modal] {:show true
                                                                                         :chapter-id chapter-id}))}
-                        "Chapter quiz"))))
+                        (str "Chapter quiz " button-icon)))))
 
 (defn chapter-quiz-modal [cursor owner]
   (reify
