@@ -13,7 +13,7 @@
    :sin "sin" :cos "cos" :tan "tan"
    :abc [:span "a" [:sup "b"] "/" [:sub "c"]] :x10x [:span "x10" [:sup "x"]] :sqrt "√" :x2 "x²" :pow "^" :x1 "x⁻¹" :pi "π"
    :left "←" :right "→" :ins "INS" :del "DEL" :clear "C"
-   :dot "." :neg "(-)" :ans "ANS" :mul "×" :div "/" :add "+" :sub "-" :open "(" :close ")" :show "="})
+   :dot "." :neg "(-)" :ans "ANS" :mul "×" :div "÷" :add "+" :sub "-" :open "(" :close ")" :show "="})
 
 (defn button-press! [val]
   (case val
@@ -23,9 +23,10 @@
     :right (swap! program-atom program/right)
     :ins (swap! program-atom program/toggle-ins-mode)
     :del (swap! program-atom program/del)
+    :backsp (swap! program-atom program/backsp)
     :clear (reset! program-atom program/empty)
 
-    :show (swap! result-atom #(rand))
+    :show (swap! result-atom #(program/run @program-atom))
 
     ;; otherwise
     (swap! program-atom program/insert val)))
@@ -88,7 +89,7 @@
      ".rekenmachien .keyboard section { display: inline-block; vertical-align: top; margin: 1em; }")]])
 
 (def key-code->button
-  {:normal {8 :del
+  {:normal {8 :backsp
             13 :show
             37 :left
             39 :right
