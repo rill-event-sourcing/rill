@@ -42,9 +42,6 @@
                                            [val]
                                            (drop cursor tokens))))))
 
-(defn round-for-display [val]
-  (js/parseFloat (.toPrecision val 10)))
-
 (def keyword->math
   {:add +
    :sub -
@@ -77,7 +74,5 @@
 
 (defn run [{:keys [tokens]}]
   (try
-    (-> (parser/parse tokens)
-        calc
-        round-for-display)
+    (calc (parser/parse tokens))
     (catch js/Object ex "SYNTAX ERROR")))

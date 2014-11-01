@@ -49,9 +49,20 @@
      (when (>= cursor (count tokens))
        [:span.placeholder.with-cursor " "])]))
 
+
+(defn round-for-display [val]
+  (-> val
+      (.toPrecision 10)
+      js/parseFloat
+      str
+      (.replace "." ",")))
+
 (defn result-component []
   (let [result @result-atom]
-    [:div.result result]))
+    [:div.result
+     (if (number? result)
+       (round-for-display result)
+       (str result))]))
 
 (defn main-component []
   [:div.rekenmachien
