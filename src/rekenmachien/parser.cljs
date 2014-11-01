@@ -28,7 +28,7 @@
 (defn- reduce-infixes [tokens] ; Het Mannetje Won Van De Oude Aap
   (prewalk (fn [x]
              (if (sequential? x)
-               (reduce reduce-infix x [:pow :mul :div :add :sub])
+               (reduce reduce-infix x [:pow :x10y :mul :div :add :sub])
                x))
            tokens))
 
@@ -60,7 +60,9 @@
      (into [(first tokens)] (reduce-blocks (next tokens))))))
 
 (defn parse [tokens]
-  (-> tokens
-      reduce-decimals
-      reduce-blocks
-      reduce-infixes))
+  (let [ast (-> tokens
+                reduce-decimals
+                reduce-blocks
+                reduce-infixes)]
+    (when (> (count ast) 1) (throw (js/Error. "too many calculations")))
+    (first ast)))

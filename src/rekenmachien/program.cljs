@@ -11,7 +11,7 @@
     :acos [:span "cos" [:sup "-1"] "("],
     :atan [:span "tan" [:sup "-1"] "("],
     :abc "/",
-    :x10x [:sub "10"], :sqrt "√(", :x2 [:sup "2"], :pow "^", :x1 [:sup "-1"],
+    :x10y "×10^", :sqrt "√(", :x2 [:sup "2"], :pow "^", :x1 [:sup "-1"],
     :pi "π", :dot ",", :neg [:small "-"], :ans "Ans",
     :mul "×", :div "÷", :add "+", :sub "-",
     :open "(", :close ")"}
@@ -51,6 +51,7 @@
    :mul *
    :div /
    :pow #(.pow js/Math %1 %2)
+   :x10y #(* %1 (.pow js/Math 10 %2))
    :sin #(.sin js/Math %)
    :cos #(.cos js/Math %)
    :tan #(.tan js/Math %)
@@ -76,6 +77,7 @@
 
 (defn run [{:keys [tokens]}]
   (try
-    (let [ast (parser/parse tokens)]
-      (round-for-display (calc (first ast))))
+    (-> (parser/parse tokens)
+        calc
+        round-for-display)
     (catch js/Object ex "SYNTAX ERROR")))
