@@ -63,6 +63,7 @@
   [model chapter student-id remedial-chapters-status]
   {:id (:id chapter)
    :title (:title chapter)
+
    :chapter-quiz {:number-of-questions (count (:chapter-quiz chapter))
                   :status (get-in model [:chapter-quiz-statuses (:id chapter) student-id])}
    :status (get-chapter-status model (:id chapter) student-id)
