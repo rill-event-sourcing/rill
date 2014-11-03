@@ -334,7 +334,7 @@
             },
             {
               "id": "dc8ad24a-5ef2-4d44-a615-595350273680",
-              "text": "4 four _INPUT_2_ 123 _INPUT_1_",
+              "text": "4 four _INPUT_1_ 123 _INPUT_2_",
               "tools": [
                 "pen_and_paper"
               ],
