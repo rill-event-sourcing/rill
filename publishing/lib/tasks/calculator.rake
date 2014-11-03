@@ -18,4 +18,20 @@ namespace :calculator do
       section.questions.map{|q| q.update_attribute(:tools, {"pen_and_paper" => 1, "calculator" => 1}) }
     end
   end
+
+  desc "add calculator to chapter_quizzes"
+  task :add_chapter_quizzes => :environment do
+    course = Course.first
+    p "adding calculator for course: #{ course }"
+    sections = []
+
+    chapters = course.chapters.where(position: [18, 23, 24, 25, 26, 27, 28])
+    quizes = chapters.map(&:chapter_quiz).compact
+
+    quizes.each do |quiz|
+      p " - chapter quiz #{ quiz.chapter.title }"
+      quiz.questions.map{|q| q.update_attribute(:tools, {"pen_and_paper" => 1, "calculator" => 1}) }
+    end
+  end
+
 end
