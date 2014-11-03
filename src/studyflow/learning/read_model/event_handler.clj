@@ -44,7 +44,8 @@
   [model {:keys [student-id course-id]}]
   (-> model
       (m/set-student-remedial-chapters-status course-id student-id :finished)
-      (m/set-student-entry-quiz-status course-id student-id :passed)))
+      (m/set-student-entry-quiz-status course-id student-id :passed)
+      (m/set-remedial-chapters-finished course-id student-id)))
 
 (defmethod handle-event ::entry-quiz/Failed
   [model {:keys [student-id course-id]}]
@@ -80,7 +81,9 @@
 
 (defmethod handle-event ::chapter-quiz/Passed
   [model {:keys [chapter-id student-id]}]
-  (m/set-student-chapter-quiz-status model chapter-id student-id :passed))
+  (-> model
+      (m/set-chapter-status chapter-id student-id :finished)
+      (m/set-student-chapter-quiz-status chapter-id student-id :passed)))
 
 (defmethod handle-event :studyflow.school-administration.teacher.events/Created
   [model {:keys [teacher-id full-name]}]
