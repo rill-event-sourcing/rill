@@ -315,7 +315,8 @@
             chapter-title (get-in cursor [:view :course-material :chapters-by-id chapter-id :title])]
         (dom/div nil
                  (dom/article #js {:id "m-section"}
-                              (dom/p nil "Je had " questions-correct-count " van de " question-total " vragen goed")
+                              (dom/p nil (str "Hoi " (get-in cursor [:static :student :full-name])))
+                              (dom/p nil "Je had " questions-correct-count " van de " question-total " vragen goed!")
                               (dom/p nil "Je hebt hiermee "
                                      (dom/b nil chapter-title)
                                      " afgerond"))
