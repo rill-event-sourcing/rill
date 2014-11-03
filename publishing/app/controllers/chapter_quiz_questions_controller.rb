@@ -1,4 +1,6 @@
 class ChapterQuizQuestionsController < ApplicationController
+  include InputActions
+
   before_action :set_param_objects
   before_action :set_breadcrumb, except: [:create]
 
