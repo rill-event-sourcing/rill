@@ -25,7 +25,7 @@
   {:name FieldName
    :prefix s/Str
    :suffix s/Str
-   :width s/Int
+   (s/optional-key :width) s/Int
    :correct-answers  #{s/Str}})
 
 (def Tool
