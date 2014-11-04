@@ -11,3 +11,4 @@ learning/resources/public/js/studyflow.js
 .sass-cache
 target/
 generated
+publishing/app/assets/stylesheets/learning.css

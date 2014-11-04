@@ -2,14 +2,13 @@
   - @course = Course.current
   %div.container
     %div.row
-      %div.col-md-8.col-md-offset-2
+      %div.col-md-6.col-md-offset-2
         %h1
           = @course.name
-      %div.col-md-2
-        = link_to 'Publish',  list_jobs_path, class: "btn btn-lg btn-success"
-        %br
-        %br
-        = link_to 'Check HTML',  check_content_path, class: "btn btn-lg btn-warning"
+      %div.col-md-4
+        = link_to 'Publish', list_jobs_path, class: "btn btn-default btn-success"
+        = link_to 'Check HTML', check_content_path, class: "btn btn-default btn-warning"
+        = link_to 'Search Section', search_section_path, class: "btn btn-default btn-info"
 
     %div.row{style: "margin-top:10px;"}
       %div.col-md-8.col-md-offset-2

@@ -5,14 +5,14 @@
         %div.col-md-3
           %label Prefix
           = text_field_tag "line_inputs[#{input.id}][prefix]", input.prefix, class: "form-control"
-          %div.col-md-3
-            %label Suffix
-            = text_field_tag "line_inputs[#{input.id}][suffix]", input.suffix, class: "form-control"
-      %div.col-md-4
-        %label Width
-        %div.input-group
-          = text_field_tag "line_inputs[#{input.id}][width]", input.width, class: "form-control"
-          %div.input-group-addon px
+        %div.col-md-3
+          %label Suffix
+          = text_field_tag "line_inputs[#{input.id}][suffix]", input.suffix, class: "form-control"
+        %div.col-md-4
+          %label Width
+          %div.input-group
+            = text_field_tag "line_inputs[#{input.id}][width]", input.width, class: "form-control"
+            %div.input-group-addon px
   %div.col-md-2
     - if @question
       %span.pull-right.btn.btn-default.glyphicon.glyphicon-plus.add-answer{data: { item: "input-#{ input.id }", url: input_answers_path(input, question_id: @question.to_param) } }

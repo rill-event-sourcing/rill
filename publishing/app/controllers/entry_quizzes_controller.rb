@@ -28,6 +28,10 @@ class EntryQuizzesController < ApplicationController
     end
   end
 
+  def error_content
+    render partial: 'error_content'
+  end
+
   private
 
   def set_param_objects

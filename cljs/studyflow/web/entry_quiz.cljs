@@ -77,6 +77,7 @@
                                        (submit))) cursor)))))))
 
 
+
 (defn to-dashboard-bar [status chapter-id]
   (dom/div #js {:id "m-question_bar"}
            (dom/button #js {:className "btn blue small pull-right"
@@ -87,6 +88,7 @@
                        (if (or (= status :failed) (= status :passed))
                          "Let's Go!"
                          "Naar je Dashboard"))))
+
 
 (defn entry-quiz-result [status student-name correct-answers-number total-questions-number link-chapter-id]
   (let [style #js {:width (str (Math/round (float (/ (* 100 correct-answers-number) total-questions-number))) "%;")}]
@@ -131,7 +133,7 @@
                              (dom/a #js {:id "home"
                                          :href (history-link {:main :dashboard})})
                              (dom/h1 #js {:id "page_heading"}
-                                     "Welkom op Studyflow!") ;; TODO title is not in aggregate
+                                     (entry-quiz-title status)) ;; TODO title is not in aggregate
                              (when-let [index (:question-index entry-quiz)]
                                (dom/p #js {:id "quiz_counter"}
                                       (str "Vraag " (inc index) " van " (count (:questions material))))))
@@ -145,7 +147,6 @@
                                                (om/build instructions-panel cursor)
                                                :dismissed
                                                (om/build instructions-panel cursor)
-
                                                :in-progress
                                                (let [course-id (:id entry-quiz)
                                                      entry-quiz-aggregate-version (:aggregate-version entry-quiz)
@@ -153,7 +154,6 @@
                                                      index  (:question-index entry-quiz)
                                                      question (get-in material [:questions index])
                                                      question-text (:text question)
-
                                                      current-answers (om/value (get-in cursor [:view :entry-quiz index :answer] {}))
                                                      inputs (input-builders cursor index question current-answers)
                                                      answering-allowed
@@ -179,7 +179,7 @@
                                                                                                            (when (< (inc index) (count (:questions material)))
                                                                                                              " & volgende vraag"))
                                                                                                       (fn []
-                ;; form handles submit
+                                                                                                        ;; form handles submit
                                                                                                         nil)
                                                                                                       :enabled answering-allowed)
                                                                               cursor))))

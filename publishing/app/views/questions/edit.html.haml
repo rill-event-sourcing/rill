@@ -52,5 +52,4 @@
           = text_area :question, :worked_out_answer, style: "width:100%;", rows: 5, class: "form-control auto-resize rich-text"
 
     %div.col-md-6
-      - url = preview_chapter_section_question_path(@chapter, @section, @question)
-      %iframe.fill.col-md-12{id: "preview", data: {url: url}, src: url, style: "min-height: 800px;" }
+      = render 'preview'

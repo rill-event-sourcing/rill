@@ -1,0 +1,23 @@
+- if @question.parse_errors(:text).any?
+  %div.panel.panel-danger
+    %div.panel-heading Parse errors
+    %table.table.table-bordered
+      %tr
+        %th #
+        %th.danger current
+        %th.success suggestion
+      - index = 1
+      - @question.parse_errors(:text).each do |p_error|
+        %tr
+          %td= index
+          %td= p_error.first
+          %td= p_error.last
+          - index += 1
+
+- if @question.image_errors(:text).any?
+  %div.panel.panel-danger
+    %div.panel-heading Image errors
+    %div.panel-body
+      %ul
+        - @question.image_errors(:text).each do |i_error|
+          %li.text-danger= i_error

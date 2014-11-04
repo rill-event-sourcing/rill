@@ -9,6 +9,8 @@ Rails.application.routes.draw do
 
   match 'check_content', to: 'checking#index', via: :get
 
+  match 'search_section', to: 'sections#search', via: [:get, :post]
+
   resource :entry_quiz do
     resources :entry_quiz_questions, as: :questions do
       member do
@@ -17,7 +19,8 @@ Rails.application.routes.draw do
         post 'toggle_activation'
         post 'moveup'
         post 'movedown'
-        get 'preview'
+        get 'preview_content'
+        get 'error_content'
       end
     end
   end
@@ -34,7 +37,8 @@ Rails.application.routes.draw do
         end
         resources :chapter_quiz_questions, as: :questions do
           member do
-            get 'preview'
+            get 'preview_content'
+            get 'error_content'
           end
         end
       end
@@ -70,7 +74,10 @@ Rails.application.routes.draw do
           post 'toggle_activation'
           post 'moveup'
           post 'movedown'
-          get 'preview'
+          get 'preview_content'
+          get 'preview_worked_out_answer'
+          get 'error_content'
+          get 'error_worked_out_answer'
         end
       end
     end

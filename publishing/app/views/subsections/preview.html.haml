@@ -3,7 +3,7 @@
     %div.panel-body
       = text_to_html(@section.inputs, subsection.text)
 
-- if @section.parse_errors.any?
+- if @section.parse_errors(:text).any?
   %div.panel.panel-danger
     %div.panel-heading Parse errors
     %table.table.table-bordered
@@ -13,7 +13,7 @@
         %th.danger current
         %th.success suggestion
       - index = 1
-      - @section.parse_errors.each do |item_id, p_errors|
+      - @section.parse_errors(:text).each do |item_id, p_errors|
         - p_errors.each do |p_error|
           %tr
             %td= index
@@ -23,11 +23,11 @@
             - index += 1
 
 
-- if @section.image_errors.any?
+- if @section.image_errors(:text).any?
   %div.panel.panel-danger
     %div.panel-heading Image errors
     %div.panel-body
-      - @section.image_errors.each do |subs, i_errors|
+      - @section.image_errors(:text).each do |subs, i_errors|
         %p.text-danger= subs
         %ul
           - i_errors.each do |i_error|

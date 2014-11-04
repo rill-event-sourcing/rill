@@ -1,5 +1,9 @@
 * Release Changelog
 ** NEXT RELEASE:
+*** Fix: preview of publishing questions render using learning styling
+*** New: Sections can be searched from ID in the publishing application.
+*** Fix: Excel report for teacher now correctly says that the percentages are about sections, not chapters
+*** New: Students, upon completion of the entry quiz, now see how they did and where are they supposed to start learning.
 ** release-2014-10-23.1
 *** Fix: Fixed styling bugs in chapter-list: now students with a stumbling block are shown correctly and there is a hint at what the warning sign means
 ** release-2014-10-22.2

@@ -27,16 +27,15 @@ prepare:
 	bundle exec rake db:drop db:create db:migrate db:seed
 
 build:
-	rm -f studyflow_publish.tar && \
 	rm -Rf public/assets && \
+	rm -Rf log/* && \
+	cp ../generated/learning/public/css/learning.css app/assets/stylesheets/ && \
 	RAILS_ENV=production rake assets:clean assets:precompile && \
-	tar -zcf studyflow_publish.tar * && \
+	tar -zcf ../target/studyflow_publish.tar * && \
 	rm -Rf public/assets
 
 upload:
 	SHA=`git rev-parse HEAD` && \
 	DATE=`date +'%Y%m%d-%H%M%S'` && \
 	S3_FILE="s3://studyflow-server-images/$$SHA/$$DATE-studyflow_publish.tar" && \
-	s3cmd --multipart-chunk-size-mb=5 put studyflow_publish.tar $$S3_FILE && \
-	rm -f studyflow_publish.tar && \
-	rm -Rf public/assets
+	s3cmd --multipart-chunk-size-mb=5 put ../target/studyflow_publish.tar $$S3_FILE

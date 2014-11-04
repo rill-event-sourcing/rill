@@ -32,18 +32,23 @@ module ApplicationHelper
   end
 
   def line_input_to_html(input)
-    content_tag(:div, class: "input-group", style: "width:#{input.width}px") do
-      html = ""
-      html << content_tag(:span, input.prefix, class: "input-group-addon") unless input.prefix.blank?
-      html << content_tag(:input, nil, class: 'form-control')
-      html << content_tag(:span, input.suffix, class: "input-group-addon") unless input.suffix.blank?
-      html.html_safe
+    content_tag(:span) do
+      content_tag(:span, input.prefix) +
+      content_tag(:input, nil) +
+      content_tag(:span, input.suffix)
     end
   end
 
   def multiple_choice_input_to_html(input)
-    content_tag(:div, style: "width: 300px;") do
-      input.choices.map{|ch| content_tag(:button, render_latex_for_editing(ch.value).html_safe, class: "btn #{ ch.correct ? 'btn-success' : 'btn-default' } btn-block") }.join('').html_safe
+    content_tag(:span, class: "mc-list") do
+      input.choices.map do |ch|
+        content_tag(:span, class: "mc-choice") do
+          content_tag(:label) do
+            radio_button_tag("#{ch.multiple_choice_input.id}", nil, ch.correct?) +
+            content_tag(:span, render_latex_for_editing(ch.value).html_safe)
+          end
+        end
+      end.join('').html_safe
     end
   end
 

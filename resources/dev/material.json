@@ -19,8 +19,6 @@
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
-                  "prefix": "",
-                  "suffix": "",
                   "width": 150,
                   "correct_answers": [
                     "2"
@@ -56,8 +54,6 @@
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
-                  "prefix": "",
-                  "suffix": "",
                   "width": 150,
                   "correct_answers": [
                     "7",
@@ -100,8 +96,6 @@
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
-                  "prefix": "",
-                  "suffix": "",
                   "width": 150,
                   "correct_answers": [
                     "6"
@@ -137,8 +131,6 @@
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
-                  "prefix": "",
-                  "suffix": "",
                   "width": 150,
                   "correct_answers": [
                     "3",
@@ -420,7 +412,6 @@
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
-                  "prefix": "",
                   "suffix": "ohlala",
                   "width": 150,
                   "correct_answers": [
@@ -552,8 +543,6 @@
         "line_input_fields": [
           {
             "name": "_INPUT_1_",
-            "prefix": "",
-            "suffix": "",
             "width": 150,
             "correct_answers": [
               "4"
@@ -589,9 +578,8 @@
         "line_input_fields": [
           {
             "name": "_INPUT_1_",
-            "prefix": "",
             "suffix": "bananas",
-            "width": 150,
+            "width": 200,
             "correct_answers": [
               "3",
               "three"

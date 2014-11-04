@@ -1,4 +1,6 @@
 class SubsectionsController < ApplicationController
+  include InputActions
+
   before_action :set_param_objects
   before_action :set_redirect_cookie, only: [:index]
   before_action :set_breadcrumb

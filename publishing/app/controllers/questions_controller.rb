@@ -1,4 +1,5 @@
 class QuestionsController < ApplicationController
+  include InputActions
 
   before_action :set_param_objects
   before_action :set_redirect_cookie, only: [:index, :edit]
@@ -7,8 +8,20 @@ class QuestionsController < ApplicationController
   def index
   end
 
-  def preview
-    render layout: 'preview'
+  def preview_content
+    render layout: 'preview_html'
+  end
+
+  def preview_worked_out_answer
+    render layout: 'preview_html'
+  end
+
+  def error_content
+    render partial: 'error_content'
+  end
+
+  def error_worked_out_answer
+    render partial: 'error_worked_out_answer'
   end
 
   def edit

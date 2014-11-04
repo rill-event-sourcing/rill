@@ -1,7 +1,7 @@
 class SectionsController < ApplicationController
-  before_action :set_param_objects
+  before_action :set_param_objects, except: [:search]
   before_action :set_redirect_cookie, only: [:index, :show, :new, :edit]
-  before_action :set_breadcrumb, except: [:create]
+  before_action :set_breadcrumb, except: [:create, :search]
 
   def index
     redirect_to @chapter
@@ -65,6 +65,26 @@ class SectionsController < ApplicationController
     @section.move_lower
     redirect_to chapter_sections_path, notice: 'Section was successfully moved down.'
   end
+
+  def search
+    @course = Course.current
+    @crumbs = [{name: @course.name, url: root_path}, {name: "Search Section"}]
+    @section ||= Section.new
+    if request.post?
+      begin
+        @section = Section.find_by_uuid(params[:search_id], false)
+        @section ||= Section.where(id: params[:search_id]).first
+      rescue # PG::InvalidTextRepresentation
+      end
+      if @section
+        redirect_to chapter_section_path(@section.chapter, @section)
+      else
+        flash[:error] = "Section not found for: '#{params[:search_id]}'"
+      end
+    end
+    @section ||= Section.new
+  end
+
 
   private
 

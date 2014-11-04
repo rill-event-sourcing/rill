@@ -1,0 +1,9 @@
+= form_tag(search_section_path, method: :post, class: "form-horizontal", role: "form") do |f|
+  %div.form-group
+    = label_tag :search_id, :uuid, class: "col-sm-2 control-label"
+    %div.col-sm-10
+      = text_field_tag :search_id, params[:search_id], size: 20, class: "form-control", tabindex: 1
+
+  %div.form-group
+    %div.col-sm-offset-2.col-sm-10
+      = submit_tag('search', class: "btn btn-primary", tabindex: 2)

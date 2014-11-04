@@ -145,15 +145,15 @@ class Question < ActiveRecord::Base
     "question '#{name}', in '#{parent}'"
   end
 
-  def image_errors
-    errors = super
-    errors += choices.map(&:image_errors)
+  def image_errors(attr)
+    errors = super(attr)
+    errors += choices.map{|ch|ch.image_errors(:value)} unless attr == :worked_out_answer
     errors.flatten
   end
 
-  def parse_errors
-    errors = super
-    choices.map{|chc| errors += chc.parse_errors}
+  def parse_errors(attr)
+    errors = super(attr)
+    choices.map{|ch| errors += ch.parse_errors(:value)} unless attr == :worked_out_answer
     errors
   end
 

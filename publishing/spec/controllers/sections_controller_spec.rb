@@ -92,6 +92,23 @@ RSpec.describe SectionsController, :type => :controller do
     end
   end
 
+  describe "POST toggle_activation" do
+    it "should activate the section and redirect" do
+      @section1.update_attribute :active, false
+      post :toggle_activation, chapter_id: @chapter.to_param, id: @section1.to_param
+      expect(response).to redirect_to chapter_section_path(@chapter, @section1)
+      @section1.reload
+      expect(@section1.active).to eq true
+    end
+    it "should deactivate the section and redirect" do
+      @section1.update_attribute :active, true
+      post :toggle_activation, chapter_id: @chapter.to_param, id: @section1.to_param
+      expect(response).to redirect_to chapter_section_path(@chapter, @section1)
+      @section1.reload
+      expect(@section1.active).to eq false
+    end
+  end
+
   describe "POST moveup" do
     it "should moveup the section and redirect" do
       expect(@section2.position).to eq 2
@@ -124,35 +141,6 @@ RSpec.describe SectionsController, :type => :controller do
       my_params = controller.send(:section_params)
       expect(my_params).to eq( {'title' => 'my title', 'description' => "my description"})
     end
-  end
-
-  describe "setting inputs" do
-    it "should correctly set line inputs" do
-      @section = create(:section)
-      @input = create(:line_input, inputable: @section)
-      @answer = create(:answer, line_input: @input, value: "ok")
-      new_value = "I changed this!"
-      line_inputs_hash = {
-        "#{@input.id}"=> {
-          prefix: "new_pre",
-          suffix: "after_post",
-          width: 10,
-          answers: {
-            "#{@answer.id}"=>{
-              value: new_value
-            }
-          }
-        }
-      }
-      controller.send(:set_line_inputs, @section, line_inputs_hash)
-      @input.reload
-      expect(@input.prefix).to eq "new_pre"
-      expect(@input.suffix).to eq "after_post"
-      expect(@input.width).to eq 10
-      @answer.reload
-      expect(@answer.value).to eq new_value
-    end
-
   end
 
 end

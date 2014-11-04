@@ -36,7 +36,7 @@
                        ["Leerling naam"
                         "Tijd"]
                        (map (fn [x]
-                              [(str "# Hoofdstukken afgerond (totaal " (get domains-total x) ")")
+                              [(str "# Paragrafen afgerond (totaal " (get domains-total x) ")")
                                "Percentage afgerond"])
                             domains-all))
         student-data (map (fn [student] (reduce into [(:full-name student)

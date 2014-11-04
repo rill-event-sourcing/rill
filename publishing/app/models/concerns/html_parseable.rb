@@ -11,12 +11,6 @@ module HtmlParseable
   module ClassMethods
   end
 
-  def html_value
-    return "#{text}#{worked_out_answer}" if respond_to?(:text) && respond_to?(:worked_out_answer)
-    return text  if respond_to?(:text)
-    return value if respond_to?(:value)
-  end
-
   def fix_parsing_page
     [
      [/allowfullscreen/, "allowfullscreen=\"\""],
@@ -25,8 +19,9 @@ module HtmlParseable
     ]
   end
 
-  def parse_page
-    fix_parsing_page.inject(html_value){|val, repl| val = val.gsub(repl.first, repl.last) }
+  def parse_page(attr)
+    html = send(attr)
+    fix_parsing_page.inject(html){|val, repl| val = val.gsub(repl.first, repl.last) }
   end
 
   def validation_hash
@@ -54,9 +49,10 @@ module HtmlParseable
     }
   end
 
-  def parse_errors
-    parsed = Sanitize.fragment(parse_page, validation_hash)
-    lines1 = parse_page.lines
+  def parse_errors(attr)
+    page = parse_page(attr)
+    parsed = Sanitize.fragment(page, validation_hash)
+    lines1 = page.lines
     lines2 = parsed.lines
 
     errors = []
@@ -70,18 +66,19 @@ module HtmlParseable
 
   #######################################################################################
 
-  def html_images
-    parsed_page = Nokogiri::HTML(parse_page)
+  def html_images(attr)
+    page = parse_page(attr)
+    parsed_page = Nokogiri::HTML(page)
     parsed_page.css('img')
   end
 
-  def image_errors
+  def image_errors(attr)
     asset_host = "https://assets.studyflow.nl"
     errors = []
-    html_images.each do |el|
+    html_images(attr).each do |el|
       src = el["src"]
       if src
-        errors << "`#{ src }` is not valid. src must be on #{asset_host}/" unless src =~ /^#{ asset_host }\//
+        errors << "`#{ src }` is not a valid image src. It must be on #{asset_host}/" unless src =~ /^#{ asset_host }\//
       else
         errors << "no 'src' given for image"
       end

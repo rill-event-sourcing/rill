@@ -14,13 +14,6 @@ RSpec.describe ChapterQuizQuestionsController, :type => :controller do
     @q3 = create(:question, quizzable: @qs)
   end
 
-  describe "GET preview" do
-    it "should render the preview page" do
-      get :preview, chapter_id: @chapter.to_param, chapter_questions_set_id: @qs.to_param, id: @q1.to_param
-      expect(response).to render_template('preview')
-    end
-  end
-
   describe 'POST create' do
 
     it "should create a new question" do
