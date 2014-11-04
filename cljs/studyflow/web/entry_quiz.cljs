@@ -119,9 +119,8 @@
             entry-quiz (get-in cursor [:aggregates course-id])
             material (get-in cursor [:view :course-material :entry-quiz])
             chapters (:chapters (get-in cursor [:view :course-material]))
-            first-non-remedial-chapter-id (:id (first (filter
-                                                       (fn [chapter] (not (:remedial chapter)))
-                                                       chapters)))
+            course (get-in cursor [:view :course-material])
+            first-non-finished-chapter-id (:id (core/first-recommendable-chapter course))
             status (:status entry-quiz)
             correct-answers-number (:correct-answers-number entry-quiz)
             student-name (get-in cursor [:static :student :full-name])]
@@ -184,7 +183,7 @@
                                                                                                       :enabled answering-allowed)
                                                                               cursor))))
                                                :passed
-                                               (dom/div nil (entry-quiz-result :passed student-name correct-answers-number (count (:questions material)) first-non-remedial-chapter-id))
+                                               (dom/div nil (entry-quiz-result :passed student-name correct-answers-number (count (:questions material)) first-non-finished-chapter-id))
                                                :failed
                                                (dom/div nil (entry-quiz-result :failed student-name correct-answers-number (count (:questions material)) (:id (first chapters))))
                                                nil)))))))
