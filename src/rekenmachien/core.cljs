@@ -3,8 +3,11 @@
             [rekenmachien.program :as program]
             [reagent.core :as reagent :refer [atom]]))
 
+(defonce app-title "Rekenmachine")
+
 (defonce program-atom (atom program/empty))
 (defonce inv-mode-atom (atom false))
+(defonce light-mode-atom (atom false))
 (defonce cursor-location-atom (atom 0))
 (defonce result-atom (atom nil))
 
@@ -24,6 +27,7 @@
 (defn button-press! [val]
   (case val
     :inv (swap! inv-mode-atom not)
+    :light (swap! light-mode-atom not)
 
     :left (swap! program-atom program/left)
     :right (swap! program-atom program/right)
@@ -66,19 +70,26 @@
 
 (defn main-component []
   [:div.rekenmachien
+   [:h1
+    [:a.toggle-light-mode {:on-click #(button-press! :light)}
+     (if @light-mode-atom "▼" "▲")]
+    " "
+    app-title]
    [:div.display
     [program-component]
     [result-component]]
    [:div.keyboard
-    [:section.inv
-     (for [button (if @inv-mode-atom
-                    [:sin :cos :tan :abc]
-                    [:asin :acos :atan :dec])]
-       [:label [:span.label (get button-labels button)]])]
-    (for [[section rows] [[:functions [(if @inv-mode-atom
-                                         [:asin :acos :atan :dec :x10y]
-                                         [:sin :cos :tan :abc :x10y])
-                                       [:sqrt :x2 :pow :x1 :pi]]]
+    (when-not @light-mode-atom
+      [:section.inv
+       (for [button (if @inv-mode-atom
+                      [:sin :cos :tan :abc]
+                      [:asin :acos :atan :dec])]
+         [:label [:span.label (get button-labels button)]])])
+    (for [[section rows] [(when-not @light-mode-atom
+                            [:functions [(if @inv-mode-atom
+                                           [:asin :acos :atan :dec :x10y]
+                                           [:sin :cos :tan :abc :x10y])
+                                         [:sqrt :x2 :pow :x1 :pi]]])
                           [:number-oper [[:inv :left :right :open :close]
                                          [7 8 9 :del :clear]
                                          [4 5 6 :mul :div]
@@ -95,6 +106,7 @@
     (str
      ".rekenmachien { background: #888; padding: 1em; width: calc((4.5em * 5) + 2em); border-radius: .5em; }"
      ".rekenmachien, .rekenmachien * { box-sizing: border-box; font-size: 14px; font-family: sans-serif; }"
+     ".rekenmachien h1 { font-size: 14px; margin: 0; padding: 0 0 1em 0; }"
      ".rekenmachien .display { position: relative; width: calc((4.5em * 5)); height: 5em; background: #bc6; border: solid #000 2px; border-radius: .5em; overflow: hidden; }"
      ".rekenmachien .display .program { padding: .5em .5em .25em .5em; background: #ab5; } "
      ".rekenmachien sup, .rekenmachien sub { font-size: 66%; }"
