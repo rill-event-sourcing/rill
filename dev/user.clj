@@ -10,6 +10,7 @@
 
 (defroutes routes
   (resources "/")
+  (GET "/test" req (io/resource "test.html"))
   (GET "/*" req (io/resource "index.html")))
 
 (def http-handler (reload/wrap-reload (api #'routes)))
