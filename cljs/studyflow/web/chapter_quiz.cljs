@@ -36,8 +36,31 @@
     (render [_]
       (let [chapter-id (get-in cursor [:view :chapter-quiz-modal :chapter-id])
             student-id (get-in cursor [:static :student :id])
+            course (get-in cursor [:view :course-material])
+            chapter (first (filter (fn [{:keys [id] :as chapter}]
+                                     (= id chapter-id)) (:chapters course)))
+            chapter-status (:status (:chapter-quiz chapter))
             dismiss-modal (fn [] (om/update! cursor [:view :chapter-quiz-modal :show] false))]
-        (modal (dom/h1 nil "Hoi, chapter-quiz modal")
+        (modal (if (nil? chapter-status)
+                 (dom/div nil
+                          (dom/h1 nil "Hoofdstuktest (Snelle route)")
+                          (dom/img #js {:src (rand-nth ["https://assets.studyflow.nl/learning/treadmill-cat.gif"
+                                                        "https://assets.studyflow.nl/learning/fast-cat.gif"])})
+                          (dom/p nil "Maak de Hoofdstuktest om het hoofdstuk over te slaan." )
+                          (dom/p nil "Deze test bevat vragen uit alle paragrafen in dit hoofdstuk.")
+                          (dom/ul nil
+                                  (dom/li nil "Je kunt de snelle route maar 1 keer proberen")
+                                  (dom/li nil "Duurt ongeveer 10-30 minuten")))
+                 (dom/div nil
+                          (dom/h1 nil "Hoofdstuktest")
+                          (dom/img #js {:src (rand-nth ["https://assets.studyflow.nl/learning/glasses-cat.gif"
+                                                        "https://assets.studyflow.nl/learning/studyflow-cat.gif"])})
+                          (dom/p nil "Maak de Hoofdstuktest om het hoofdstuk af te sluiten." )
+                          (dom/p nil "Deze test bevat vragen uit alle paragrafen in dit hoofdstuk.")
+                          (dom/ul nil
+                                  (dom/li nil "Je kunt de test zo vaak proberen als je wilt")
+                                  (dom/li nil "Duurt ongeveer 10-30 minuten")
+                                  (dom/li nil "Als je stopt moet je opnieuw"))))
                (dom/button #js {:onClick (fn []
                                            (dismiss-modal)
                                            (async/put! (om/get-shared owner :command-channel)
@@ -250,7 +273,7 @@
             question-total (get-in cursor [:view :course-material :chapters-by-id chapter-id :chapter-quiz :number-of-questions])
             last-question (= question-total (count questions))
             failed-quiz (let [wrong-count (get-in cursor [:aggregates chapter-id :questions-wrong-count])]
-                          (if (:fast-route chapter-quiz)
+                          (if (:fast-route? chapter-quiz)
                             (= 2 wrong-count)
                             (= 3 wrong-count)))]
         (om/set-state-nr! owner :submit
@@ -356,7 +379,7 @@
       (let [chapter-id (get-in cursor [:view :selected-path :chapter-id])
             chapter-quiz (get-in cursor [:aggregates chapter-id])
             questions-wrong-count (get-in cursor [:aggregates chapter-id :questions-wrong-count])
-            lives (if (:fast-route chapter-quiz)
+            lives (if (:fast-route? chapter-quiz)
                     2
                     3)
             dead questions-wrong-count
@@ -376,22 +399,30 @@
             chapter-quiz-agg (get-in cursor [:aggregates chapter-id])
             question-index (inc (:question-index (peek (:questions chapter-quiz-agg))))
             question-total (get-in cursor [:view :course-material :chapters-by-id chapter-id :chapter-quiz :number-of-questions])
-            chapter-quiz-status (:status chapter-quiz-agg)]
+            chapter-quiz-status (:status chapter-quiz-agg)
+            fast-route? (:fast-route? chapter-quiz-agg)]
         (dom/div #js {:id "m-chapter-quiz"
                       :className "chapter_quiz_page"}
                  (when show-exit-modal
-                   (modal (dom/h1 nil "Leaving means stopping the chapter-quiz")
-                          (dom/button #js {:onClick (fn []
-                                                      (dismiss-modal)
-                                                      (set! (.-location js/window)
-                                                            (history-link {:main :dashboard
-                                                                           :chapter-id chapter-id})))}
-                                      "Stop Chapter Quiz")
-                          (dom/a #js {:href ""
-                                      :onClick (fn []
-                                                 (dismiss-modal)
-                                                 false)}
-                                 "Continue")))
+                   (modal  (if fast-route?
+                             (dom/div nil
+                                      (dom/h1 nil "Hoofdstuktest")
+                                      (dom/p nil "Weet je zeker dat je de Hoofdstuktest wil stoppen? Als je de test nu stopt, kun je hem pas weer maken wanneer je alle paragrafen in dit hoofdstuk hebt afgerond."))
+                             (dom/div nil
+                                      (dom/h1 nil "Hoofdstuktest")
+                                      (dom/p nil "Weet je zeker dat je de Hoofdstuktest wil stoppen?")
+                                      (dom/p nil "Als je de test stopt moet je hem opnieuw maken.")))
+                           (dom/button #js {:onClick (fn []
+                                                       (dismiss-modal)
+                                                       (set! (.-location js/window)
+                                                             (history-link {:main :dashboard
+                                                                            :chapter-id chapter-id})))}
+                                       "Stop Hoofdstuktest")
+                           (dom/a #js {:href ""
+                                       :onClick (fn []
+                                                  (dismiss-modal)
+                                                  false)}
+                                  "Doorgaan")))
                  (dom/header #js {:id "m-top_header"}
                              (if (= :running chapter-quiz-status)
                                ;; only need to confirm leaving when
