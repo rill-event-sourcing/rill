@@ -47,7 +47,8 @@
                        (comp #{"studyflow.learning.section-test.events/Finished"
                                "studyflow.learning.section-test.events/StreakCompleted"
                                "studyflow.learning.section-test.events/Stuck"
-                               "studyflow.learning.section-test.events/QuestionAnsweredIncorrectly"} :type)
+                               "studyflow.learning.section-test.events/QuestionAnsweredIncorrectly"
+                               "studyflow.learning.chapter-quiz.events/QuestionAssigned"} :type)
                        events))]
         (doseq [event notification-events]
           (async/put! notification-channel event)))

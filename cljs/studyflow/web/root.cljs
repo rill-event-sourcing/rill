@@ -13,6 +13,9 @@
 
 (defn widgets [cursor owner]
   (reify
+    om/IWillMount
+    (will-mount [_]
+      (core/watch-notifications! (om/get-shared owner :notification-channel) cursor))
     om/IRender
     (render [_]
       (let [{:keys [main section-tab]} (get-in cursor [:view :selected-path])]
@@ -46,18 +49,18 @@
 
 (defn ^:export course-page []
   (let [command-channel (async/chan)]
-      (om/root
-       (-> widgets
-           service/wrap-service
-           url-history/wrap-history)
-       (core/init-app-state)
-       {:target (gdom/getElement "app")
-        :tx-listen (fn [tx-report cursor]
-                     (service/listen tx-report cursor)
-                     (url-history/listen tx-report cursor)
-                     (tracking/listen tx-report cursor command-channel))
-        :shared {:command-channel command-channel
-                 :data-channel (async/chan)
-                 :notification-channel (async/chan)}})))
+    (om/root
+     (-> widgets
+         service/wrap-service
+         url-history/wrap-history)
+     (core/init-app-state)
+     {:target (gdom/getElement "app")
+      :tx-listen (fn [tx-report cursor]
+                   (service/listen tx-report cursor)
+                   (url-history/listen tx-report cursor)
+                   (tracking/listen tx-report cursor command-channel))
+      :shared {:command-channel command-channel
+               :data-channel (async/chan)
+               :notification-channel (async/chan)}})))
 
 (helpers/ipad-scroll-on-inputs-blur-fix)
