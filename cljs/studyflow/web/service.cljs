@@ -57,6 +57,7 @@
                        events))]
         (doseq [event notification-events]
           (async/put! notification-channel event))))))
+
 (defn handle-replay-events [cursor aggregate-id events aggregate-version]
   (om/transact! cursor
                 [:aggregates aggregate-id]
@@ -142,10 +143,12 @@
 
       "chapter-quiz-commands/start"
       (let [[chapter-id student-id] args
-            course-id (get-in @cursor [:static :course-id])]
+            course-id (get-in @cursor [:static :course-id])
+            handler (command-aggregate-handler cursor notification-channel chapter-id)]
         (PUT (str "/api/chapter-quiz-start/" course-id "/" chapter-id "/" student-id)
              {:format :json
-              :handler (fn [_]
+              :handler (fn [res]
+                         (handler res)
                          (async/put! command-channel ["chapter-quiz-commands/reload" chapter-id student-id]))
               :error-handler (command-error-handler cursor)}))
 
