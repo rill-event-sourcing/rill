@@ -173,8 +173,6 @@
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
-                  "prefix": "",
-                  "suffix": "",
                   "width": 150,
                   "correct_answers": [
                     "12"
@@ -210,8 +208,6 @@
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
-                  "prefix": "",
-                  "suffix": "",
                   "width": 150,
                   "correct_answers": [
                     "4",
@@ -254,8 +250,6 @@
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
-                  "prefix": "",
-                  "suffix": "",
                   "width": 150,
                   "correct_answers": [
                     "42"
@@ -291,8 +285,6 @@
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
-                  "prefix": "",
-                  "suffix": "",
                   "width": 150,
                   "correct_answers": [
                     "321"
