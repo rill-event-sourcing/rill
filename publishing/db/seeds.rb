@@ -15,7 +15,7 @@ eq_1_2_2 = Choice.create(multiple_choice_input: eq_1_2, value: "16", correct: fa
 eq_1_2_3 = Choice.create(multiple_choice_input: eq_1_2, value: "42", correct: true)
 
 eq_2 = Question.create(text: "One banana plus two bananas? _INPUT_2_ What is the lowest natural number? _INPUT_1_", active: true, worked_out_answer: "three bananas! 0", quizzable: entry_quiz_counting)
-eq_2_1 = LineInput.create(inputable: eq_2, suffix: "bananas")
+eq_2_1 = LineInput.create(inputable: eq_2, suffix: "bananas", width: 200)
 eq_2_1_answer = Answer.create(value: "3", line_input: eq_2_1)
 eq_2_1_answer_2  = Answer.create(value: "three", line_input: eq_2_1)
 

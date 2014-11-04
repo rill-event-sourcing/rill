@@ -10,13 +10,14 @@ class LineInput < Input
   end
 
   def to_publishing_format
-    {
+    hash = {
       name: "_INPUT_#{position}_",
-      prefix: prefix || "",
-      suffix: suffix || "",
-      width: width,
       correct_answers: answers.map(&:value)
     }
+    hash[:prefix] = prefix unless prefix.blank?
+    hash[:suffix] = suffix unless suffix.blank?
+    hash[:width]  = width  if width.to_i > 0
+    hash
   end
 
 end
