@@ -122,7 +122,7 @@
       font-size: 14px
       font-weight: 500
       line-height: 40px
-      padding-left: 15px
+      padding-left: 45px
       border: 2px solid transparent
       color: #888d91
       text-shadow: 0 1px rgba(255,255,255,0.4)
@@ -131,10 +131,23 @@
         color: #515b62
       &.selected
         background: white
-        +border-left-radius(3px)
+        +border-left-radius(6px)
         color: #434d56
         border: 2px solid #dddcd9
         border-right: 0
+
+      &.explanation
+        background: url(/images/icon-explanation-inactive.png) no-repeat 7px 5px
+        background-size: 30px
+        &.selected
+          background: url(/images/icon-explanation.png) no-repeat 7px 5px white
+          background-size: 30px
+      &.questions
+        background: url(/images/icon-questions-inactive.png) no-repeat 11px 8px
+        background-size: 25px
+        &.selected
+          background: url(/images/icon-questions.png) no-repeat 9px 6px white
+          background-size: 30px
 
 #meta_content
   position: fixed
