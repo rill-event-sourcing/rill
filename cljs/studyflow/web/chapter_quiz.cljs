@@ -11,24 +11,22 @@
   (when (not (zero? (:number-of-questions chapter-quiz)))
     (let [chapter-quiz-status (:status chapter-quiz)
           chapter-test-agg (get-in cursor [:aggregates chapter-id])
-          button-icon (case chapter-quiz-status
-                        nil ">>"
-                        "locked" "\uD83D\uDD12"
-                        "un-locked" ""
-                        "passed" "✓"
-                        nil)]
+          button-class (str "btn chapter-quiz-btn yellow "
+                            (case chapter-quiz-status
+                              nil "fast-track-btn"
+                              "un-locked" ""
+                              "passed" "passed"
+                              nil))]
       (prn [:status chapter-quiz-status])
       (dom/li #js {:className (str "chapter-quiz " chapter-quiz-status) }
               (dom/button (if (#{"locked" "passed"} chapter-quiz-status)
-                            #js {:className "btn yellow"
+                            #js {:className button-class
                                  :disabled :disabled}
-                            #js {:className "btn yellow"
+                            #js {:className button-class
                                  :onClick (fn []
                                             (om/update! cursor [:view :chapter-quiz-modal] {:show true
                                                                                             :chapter-id chapter-id}))})
-                          (if button-icon
-                            (str "Chapter quiz " button-icon)
-                            "Chapter quiz"))))))
+                          "Hoofdstuktest")))))
 
 (defn chapter-quiz-modal [cursor owner]
   (reify
