@@ -9,7 +9,19 @@
             [studyflow.web.helpers :refer [modal] :as helpers]
             [studyflow.web.tracking :as tracking]
             [studyflow.web.service :as service]
+            [studyflow.web.history :refer [history-link]]
             [cljs.core.async :as async]))
+
+(defn running-chapter-quiz
+  [cursor]
+  (let [material (get-in cursor [:view :course-material])]
+    (first (filter (fn [c]
+                     (let [aggregate (get-in cursor [:aggregates (:id c)])]
+                       (and (= (-> c :chapter-quiz :status) "started")
+                            (if aggregate
+                              (= :running (:status aggregate))
+                              true))))
+                   (:chapters material)))))
 
 (defn widgets [cursor owner]
   (reify
@@ -19,6 +31,10 @@
     om/IRender
     (render [_]
       (let [{:keys [main section-tab]} (get-in cursor [:view :selected-path])]
+        (when-let [quiz (running-chapter-quiz cursor)]
+          (set! (.-location js/window)
+                (history-link {:main :chapter-quiz
+                               :chapter-id (:id quiz)})))
         (dom/div #js {:className (if (and (= main :learning)
                                           (= section-tab :questions))
                                    "questions_page"

@@ -79,6 +79,14 @@
   [model {:keys [chapter-id student-id]}]
   (m/set-student-chapter-quiz-status model chapter-id student-id :un-locked))
 
+(defmethod handle-event ::chapter-quiz/Stopped
+  [model {:keys [chapter-id student-id]}]
+  (m/set-student-chapter-quiz-status model chapter-id student-id :failed))
+
+(defmethod handle-event ::chapter-quiz/Failed
+  [model {:keys [chapter-id student-id]}]
+  (m/set-student-chapter-quiz-status model chapter-id student-id :failed))
+
 (defmethod handle-event ::chapter-quiz/Passed
   [model {:keys [chapter-id student-id]}]
   (-> model

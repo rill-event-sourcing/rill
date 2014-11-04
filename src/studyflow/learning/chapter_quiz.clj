@@ -164,12 +164,22 @@
   :student-id m/Id
   chapter-quiz-id)
 
+(defmethod aggregate-ids ::Stop!
+  [{:keys [course-id]}]
+  [course-id])
+
 (defmethod handle-command ::Stop!
   [{:keys [fast-route?]} {:keys [student-id course-id chapter-id]} course]
   (if fast-route?
     [:ok [(events/stopped course-id chapter-id student-id)
           (events/locked course-id chapter-id student-id)]]
     [:ok [(events/stopped course-id chapter-id student-id)]]))
+
+(defmethod handle-event ::events/Stopped
+  [chapter-quiz event]
+  (assoc chapter-quiz
+    :running? false
+    :fast-route? false))
 
 (defmethod aggregate-ids ::section-test/Finished
   [{:keys [course-id]}]

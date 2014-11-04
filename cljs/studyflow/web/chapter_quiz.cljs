@@ -391,7 +391,8 @@
   (reify
     om/IRender
     (render [_]
-      (let [chapter-id (get-in cursor [:view :selected-path :chapter-id])
+      (let [student-id (get-in cursor [:static :student :id])
+            chapter-id (get-in cursor [:view :selected-path :chapter-id])
             show-exit-modal (get-in cursor [:view :chapter-quiz-exit-modal])
             dismiss-modal (fn [] (om/update! cursor [:view :chapter-quiz-exit-modal] nil))
             chapter-quiz-agg (get-in cursor [:aggregates chapter-id])
@@ -412,9 +413,9 @@
                                       (dom/p nil "Als je de test stopt moet je hem opnieuw maken.")))
                            (dom/button #js {:onClick (fn []
                                                        (dismiss-modal)
-                                                       (set! (.-location js/window)
-                                                             (history-link {:main :dashboard
-                                                                            :chapter-id chapter-id})))}
+                                                       (async/put! (om/get-shared owner :command-channel)
+                                                                   ["chapter-quiz-commands/stop"
+                                                                    chapter-id student-id]))}
                                        "Stop Hoofdstuktest")
                            (dom/a #js {:href ""
                                        :onClick (fn []
