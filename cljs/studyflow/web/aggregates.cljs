@@ -177,7 +177,7 @@
     "studyflow.learning.chapter-quiz.events/Locked"
     (-> agg
         (assoc :locked true))
-    
+
     "studyflow.learning.chapter-quiz.events/UnLocked"
     (-> agg
         (assoc :locked false))
@@ -190,6 +190,10 @@
     (-> agg
         (assoc :status :failed))
 
+    "studyflow.learning.chapter-quiz.events/Stopped"
+    (assoc agg
+      :status :failed
+      :locked (:fast-route agg))
 
     (do
       (prn "Aggregate can't handle event: " event)

@@ -13,10 +13,15 @@
             [cljs.core.async :as async]))
 
 (defn running-chapter-quiz
-  [material]
-  (first (filter (fn [c]
-                   (= (-> c :chapter-quiz :status) "started"))
-                 (:chapters material))))
+  [cursor]
+  (let [material (get-in cursor [:view :course-material])]
+    (first (filter (fn [c]
+                     (let [aggregate (get-in cursor [:aggregates (:id c)])]
+                       (and (= (-> c :chapter-quiz :status) "started")
+                            (if aggregate
+                              (= :running (:status aggregate))
+                              true))))
+                   (:chapters material)))))
 
 (defn widgets [cursor owner]
   (reify
@@ -25,9 +30,8 @@
       (core/watch-notifications! (om/get-shared owner :notification-channel) cursor))
     om/IRender
     (render [_]
-      (let [{:keys [main section-tab]} (get-in cursor [:view :selected-path])
-            course (get-in cursor [:view :course-material])]
-        (when-let [quiz (running-chapter-quiz course)]
+      (let [{:keys [main section-tab]} (get-in cursor [:view :selected-path])]
+        (when-let [quiz (running-chapter-quiz cursor)]
           (set! (.-location js/window)
                 (history-link {:main :chapter-quiz
                                :chapter-id (:id quiz)})))

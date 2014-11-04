@@ -42,21 +42,21 @@
 (defn command-aggregate-handler [cursor notification-channel aggregate-id]
   (fn [res]
     (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
+      (om/transact! cursor
+                    [:aggregates aggregate-id]
+                    (fn [agg]
+                      (aggregates/apply-events agg aggregate-version events)))
       (when-let [notification-events
                  (seq (filter
                        (comp #{"studyflow.learning.section-test.events/Finished"
                                "studyflow.learning.section-test.events/StreakCompleted"
                                "studyflow.learning.section-test.events/Stuck"
                                "studyflow.learning.section-test.events/QuestionAnsweredIncorrectly"
-                               "studyflow.learning.chapter-quiz.events/QuestionAssigned"} :type)
+                               "studyflow.learning.chapter-quiz.events/QuestionAssigned"
+                               "studyflow.learning.chapter-quiz.events/Stopped"} :type)
                        events))]
         (doseq [event notification-events]
-          (async/put! notification-channel event)))
-      (om/transact! cursor
-                    [:aggregates aggregate-id]
-                    (fn [agg]
-                      (aggregates/apply-events agg aggregate-version events))))))
-
+          (async/put! notification-channel event))))))
 (defn handle-replay-events [cursor aggregate-id events aggregate-version]
   (om/transact! cursor
                 [:aggregates aggregate-id]
@@ -149,6 +149,14 @@
                          (async/put! command-channel ["chapter-quiz-commands/reload" chapter-id student-id]))
               :error-handler (command-error-handler cursor)}))
 
+      "chapter-quiz-commands/stop"
+      (let [[chapter-id student-id] args
+            course-id (get-in @cursor [:static :course-id])]
+        (PUT (str "/api/chapter-quiz-stop/" course-id "/" chapter-id "/" student-id)
+             {:format :json
+              :handler (command-aggregate-handler cursor notification-channel chapter-id)
+              :error-handler (command-error-handler cursor)}))
+
       "chapter-quiz-commands/reload"
       (let [[chapter-id student-id] args
             course-id (get-in @cursor [:static :course-id])]
@@ -159,8 +167,8 @@
                            (when (seq events)
                              (handle-replay-events cursor chapter-id events aggregate-version))))
               :error-handler basic-error-handler}))
-      
-      
+
+
       "chapter-quiz-commands/check-answer"
       (let [[chapter-id student-id chapter-quiz-aggregate-version course-id question-id inputs] args]
         (PUT (str "/api/chapter-quiz-submit-answer/" course-id "/" chapter-id "/" student-id "/" question-id)

@@ -433,7 +433,7 @@
   [notification-channel cursor]
   (go (loop []
         (when-let [event (<! notification-channel)]
-          (condp = (:type event)
+          (case (:type event)
             "studyflow.learning.section-test.events/Finished"
             (om/update! cursor
                         [:view :progress-modal]
@@ -468,6 +468,11 @@
             "studyflow.learning.chapter-quiz.events/QuestionAssigned"
             (om/update! cursor [:view :chapter-quiz (:chapter-id event) :test :questions] {})
 
+            "studyflow.learning.chapter-quiz.events/Stopped"
+            (set! (.-location js/window)
+                  (history-link {:main :dashboard
+                                 :chapter-id (:chapter-id event)
+                                 :section-id nil}))
             nil)
           (recur)))))
 
