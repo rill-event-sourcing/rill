@@ -7,6 +7,7 @@
             [studyflow.web.helpers :refer [raw-html modal tag-tree-to-om focus-input-box]]
             [studyflow.web.history :refer [history-link]]
             [studyflow.web.service :as service]
+            [studyflow.web.recommended-action :refer [first-recommendable-chapter]]
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
@@ -76,13 +77,34 @@
                                        (submit))) cursor)))))))
 
 
-(defn to-dashboard-bar []
+(defn to-dashboard-bar [status chapter-id]
   (dom/div #js {:id "m-question_bar"}
            (dom/button #js {:className "btn blue small pull-right"
                             :onClick (fn []
                                        (set! (.-location js/window)
-                                             (history-link {:main :dashboard})))}
-                       "Naar je Dashboard")))
+                                             (history-link {:main :dashboard
+                                                            :chapter-id chapter-id})))}
+                       (if (or (= status :failed) (= status :passed))
+                         "Let's Go!"
+                         "Naar je Dashboard"))))
+
+(defn entry-quiz-result [status student-name correct-answers-number total-questions-number link-chapter-id]
+  (let [style #js {:width (str (Math/round (float (/ (* 100 correct-answers-number) total-questions-number))) "%;")}]
+    (dom/div nil
+             (dom/p nil (str "Hoi " student-name))
+             (dom/p nil (str "Je had " correct-answers-number " van de " total-questions-number " vragen goed!"))
+             (dom/div #js {:className "progress"}
+                      (dom/div #js {:className "progress_bar" :style style}
+                               (dom/span nil (str correct-answers-number "/" total-questions-number))))
+             (if (= status :passed)
+               (dom/p nil "We raden je aan om bij hoofdstuk 7 te beginnen.")
+               (dom/p nil "We raden je aan om bij het begin te beginnen, zodat je alles nog even kan opfrissen."))
+             (to-dashboard-bar status link-chapter-id))))
+
+(defn entry-quiz-title [status]
+  (if (or (= status :failed) (= status :passed))
+    "Einde toets"
+    "Welkom op Studyflow!"))
 
 (defn entry-quiz-panel [cursor owner]
   (reify
@@ -96,7 +118,13 @@
     (render [_]
       (let [course-id (get-in cursor [:static :course-id])
             entry-quiz (get-in cursor [:aggregates course-id])
-            material (get-in cursor [:view :course-material :entry-quiz])]
+            material (get-in cursor [:view :course-material :entry-quiz])
+            chapters (:chapters (get-in cursor [:view :course-material]))
+            course (get-in cursor [:view :course-material])
+            first-non-finished-chapter-id (:id (first-recommendable-chapter course))
+            status (:status entry-quiz)
+            correct-answers-number (:correct-answers-number entry-quiz)
+            student-name (get-in cursor [:static :student :full-name])]
         (dom/div #js {:id "m-entry-quiz"
                       :className "entry_exam_page"}
                  (dom/header #js {:id "m-top_header"}
@@ -111,8 +139,8 @@
                               (dom/article #js {:id "m-section"}
                                            (if-not (get-in cursor [:view :entry-quiz-replay-done])
                                              (dom/div nil "Instaptoets laden"
-                                                      (to-dashboard-bar))
-                                             (case (:status entry-quiz)
+                                                      (to-dashboard-bar status nil))
+                                             (case status
                                                nil ; entry-quiz not yet started
                                                (om/build instructions-panel cursor)
                                                :dismissed
@@ -156,13 +184,9 @@
                                                                                                       :enabled answering-allowed)
                                                                               cursor))))
                                                :passed
-                                               (dom/div nil
-                                                        (dom/div nil (raw-html (:feedback material)))
-                                                        (to-dashboard-bar))
+                                               (dom/div nil (entry-quiz-result :passed student-name correct-answers-number (count (:questions material)) first-non-finished-chapter-id))
                                                :failed
-                                               (dom/div nil
-                                                        (dom/div nil (raw-html (:feedback material)))
-                                                        (to-dashboard-bar))
+                                               (dom/div nil (entry-quiz-result :failed student-name correct-answers-number (count (:questions material)) (:id (first chapters))))
                                                nil)))))))
     om/IDidMount
     (did-mount [_]
