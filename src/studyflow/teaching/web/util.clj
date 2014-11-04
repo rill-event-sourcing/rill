@@ -105,9 +105,7 @@
     [:title (h (str/join " - " [title app-title]))]
     [:link {:href "/favicon.ico" :rel "shortcut icon" :type "image/vnd.microsoft.icon"}]
     (include-css "/css/teaching.css")
-    (include-css "//cloud.typography.com/6865512/722124/css/fonts.css")
-    (include-js "//code.jquery.com/jquery-2.1.1.min.js")
-    (include-js "/js/dropdown.js")]
+    (include-css "//cloud.typography.com/6865512/722124/css/fonts.css")]
    [:body
     [:header#m-top-header-teaching
      [:a#logo {:href "/reports/completion"}]
@@ -130,4 +128,7 @@
            [["completion" "Overzicht"]
             ["chapter-list" "Hoofdstukken"]])]]
     [:section#main_teaching body]
-    [:footer]]))
+    [:footer]
+    (include-js "//code.jquery.com/jquery-2.1.1.min.js")
+    (include-js "/js/dropdown.js")
+    (include-js "/js/usersnap.js")]))
