@@ -399,24 +399,30 @@
             chapter-quiz-agg (get-in cursor [:aggregates chapter-id])
             question-index (inc (:question-index (peek (:questions chapter-quiz-agg))))
             question-total (get-in cursor [:view :course-material :chapters-by-id chapter-id :chapter-quiz :number-of-questions])
-            chapter-quiz-status (:status chapter-quiz-agg)]
+            chapter-quiz-status (:status chapter-quiz-agg)
+            fast-route? (:fast-route? chapter-quiz-agg)]
         (dom/div #js {:id "m-chapter-quiz"
                       :className "chapter_quiz_page"}
                  (when show-exit-modal
-                   (modal (dom/div nil
-                                   (dom/h1 nil "Hoofdstuktest")
-                                   (dom/p nil "Weet je zeker dat je de Hoofdstuktest wil stoppen? Als je de test nu stopt, kun je hem pas weer maken wanneer je alle paragrafen in dit hoofdstuk hebt afgerond."))
-                          (dom/button #js {:onClick (fn []
-                                                      (dismiss-modal)
-                                                      (set! (.-location js/window)
-                                                            (history-link {:main :dashboard
-                                                                           :chapter-id chapter-id})))}
-                                      "Stop Hoofdstuktest")
-                          (dom/a #js {:href ""
-                                      :onClick (fn []
-                                                 (dismiss-modal)
-                                                 false)}
-                                 "Doorgaan")))
+                   (modal  (if fast-route?
+                             (dom/div nil
+                                      (dom/h1 nil "Hoofdstuktest")
+                                      (dom/p nil "Weet je zeker dat je de Hoofdstuktest wil stoppen? Als je de test nu stopt, kun je hem pas weer maken wanneer je alle paragrafen in dit hoofdstuk hebt afgerond."))
+                             (dom/div nil
+                                      (dom/h1 nil "Hoofdstuktest")
+                                      (dom/p nil "Weet je zeker dat je de Hoofdstuktest wil stoppen?")
+                                      (dom/p nil "Als je de test stopt moet je hem opnieuw maken.")))
+                           (dom/button #js {:onClick (fn []
+                                                       (dismiss-modal)
+                                                       (set! (.-location js/window)
+                                                             (history-link {:main :dashboard
+                                                                            :chapter-id chapter-id})))}
+                                       "Stop Hoofdstuktest")
+                           (dom/a #js {:href ""
+                                       :onClick (fn []
+                                                  (dismiss-modal)
+                                                  false)}
+                                  "Doorgaan")))
                  (dom/header #js {:id "m-top_header"}
                              (if (= :running chapter-quiz-status)
                                ;; only need to confirm leaving when
