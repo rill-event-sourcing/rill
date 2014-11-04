@@ -7,6 +7,7 @@
             [studyflow.web.helpers :refer [raw-html modal tag-tree-to-om focus-input-box]]
             [studyflow.web.history :refer [history-link]]
             [studyflow.web.service :as service]
+            [studyflow.web.recommended-action :refer [first-recommendable-chapter]]
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
@@ -120,7 +121,7 @@
             material (get-in cursor [:view :course-material :entry-quiz])
             chapters (:chapters (get-in cursor [:view :course-material]))
             course (get-in cursor [:view :course-material])
-            first-non-finished-chapter-id (:id (core/first-recommendable-chapter course))
+            first-non-finished-chapter-id (:id (first-recommendable-chapter course))
             status (:status entry-quiz)
             correct-answers-number (:correct-answers-number entry-quiz)
             student-name (get-in cursor [:static :student :full-name])]
