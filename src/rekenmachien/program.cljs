@@ -47,6 +47,8 @@
    :sub -
    :mul *
    :div /
+   :x1 #(.pow js/Math %1 -1)
+   :x2 #(.pow js/Math %1 2)
    :pow #(.pow js/Math %1 %2)
    :x10y #(* %1 (.pow js/Math 10 %2))
    :sin #(.sin js/Math %)
