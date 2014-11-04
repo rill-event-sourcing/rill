@@ -14,17 +14,19 @@
                       "locked" "\uD83D\uDD12"
                       "un-locked" ""
                       "passed" "✓"
-                      "TODO")]
+                      nil)]
     (prn [:status chapter-quiz-status])
     (dom/li #js {:className (str "chapter-quiz " chapter-quiz-status) }
-            (dom/button (if (= chapter-quiz-status "locked")
+            (dom/button (if (#{"locked" "passed"} chapter-quiz-status)
                           #js {:className "btn yellow"
                                :disabled :disabled}
                           #js {:className "btn yellow"
                                :onClick (fn []
                                           (om/update! cursor [:view :chapter-quiz-modal] {:show true
                                                                                           :chapter-id chapter-id}))})
-                        (str "Chapter quiz " button-icon)))))
+                        (if button-icon
+                          (str "Chapter quiz " button-icon)
+                          "Chapter quiz")))))
 
 (defn chapter-quiz-modal [cursor owner]
   (reify
