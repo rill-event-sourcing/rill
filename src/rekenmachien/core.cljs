@@ -35,7 +35,9 @@
     :clear (do (reset! program-atom program/empty)
                (reset! result-atom nil))
 
-    :show (swap! result-atom #(program/run @program-atom))
+    :show (let [result (program/run @program-atom)]
+            (swap! program-atom program/do-clear-on-insert)
+            (reset! result-atom result))
 
     ;; otherwise
     (do (reset! inv-mode-atom false)
