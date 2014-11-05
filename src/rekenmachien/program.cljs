@@ -75,7 +75,25 @@
 
    :else (throw (js/Error. (str "syntax error: " (pr-str ast))))))
 
+(def precision 10)
+(def max-digits (+ precision 2))
+
+(defn- take-exp [s]
+  (js/parseInt (or (last (re-find #"e(.*)" s)) "0")))
+
+(defn render-result [val]
+  (let [val (js/parseFloat (.toPrecision val precision))
+        exp (js/parseInt (or (last (re-find #"e(.*)" (.toExponential val 10))) "0"))
+        res (if (< -0.01 val 0.01) (.toExponential val 10) (str val))
+        res (if (< -9 exp -1)
+              (.replace (.toFixed val precision) #",?0*$" "")
+              res)
+        res (if (> exp 9) (.toExponential val 10) res)
+        res (.replace res "." ",")
+        res (.replace res #",?0*e\+?" "×10^")]
+    res))
+
 (defn run [{:keys [tokens]}]
   (try
-    (calc (parser/parse tokens))
+    (render-result (calc (parser/parse tokens)))
     (catch js/Object ex "SYNTAX ERROR")))

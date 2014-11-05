@@ -1,6 +1,7 @@
 (ns rekenmachien.core-test
   (:require [cemerick.cljs.test :refer [run-all-tests]]
-            [rekenmachien.parser-test :as parser-test]))
+            [rekenmachien.parser-test :as parser-test]
+            [rekenmachien.program-test :as program-test]))
 
 (defn ^:export run []
   (let [output (atom "")]
