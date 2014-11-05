@@ -206,7 +206,7 @@
                  (dom/article #js {:id "m-section"}
                               (tag-tree-to-om (:tag-tree question-data) inputs))
                  (footer-bar "Nakijken" ;; TODO should be "Voltooi
-                             ;; toets" for final question but that's
+                             ;; test" for final question but that's
                              ;; only the case if we know you can't
                              ;; fail the quiz with this question,
                              ;; using "Nakijken" always at least is consistent
@@ -292,9 +292,9 @@
                               (tag-tree-to-om (:tag-tree question-data) inputs))
                  (footer-bar (str "Fout! "
                                   (if failed-quiz
-                                    " Stop toets"
+                                    " Stop test"
                                     (if last-question
-                                      " Voltooi toets"
+                                      " Voltooi test"
                                       " Volgende vraag")))
                              (fn []
                                (when-let [f (om/get-state owner :submit)]
@@ -440,9 +440,10 @@
                                            :href (history-link {:main :dashboard
                                                                 :chapter-id chapter-id})}))
                              (dom/h1 #js {:id "page_heading"}
-                                     (condp = chapter-quiz-status
-                                       :passed "Einde toets"
-                                       "Chapter quiz"))
+                                     (case chapter-quiz-status
+                                       :passed "Einde test"
+                                       :failed "Einde test"
+                                       "Hoofdstuktest"))
                              (when chapter-quiz-agg
                                (om/build hearts-bar cursor))
                              (when (= chapter-quiz-status :running)
