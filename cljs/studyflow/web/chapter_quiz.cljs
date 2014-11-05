@@ -43,6 +43,7 @@
                  (dom/div nil
                           (dom/h1 nil "Hoofdstuktest (Snelle route)")
                           (dom/img #js {:src (rand-nth ["https://assets.studyflow.nl/learning/treadmill-cat.gif"
+                                                        "https://assets.studyflow.nl/learning/bulldog-waterski.gif"
                                                         "https://assets.studyflow.nl/learning/fast-cat.gif"])})
                           (dom/p nil "Maak de Hoofdstuktest om het hoofdstuk over te slaan." )
                           (dom/p nil "Deze test bevat vragen uit alle paragrafen in dit hoofdstuk.")
