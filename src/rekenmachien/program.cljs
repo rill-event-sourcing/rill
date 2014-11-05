@@ -47,6 +47,7 @@
    :sub -
    :mul *
    :div /
+   :neg #(* % -1)
    :x1 #(.pow js/Math %1 -1)
    :x2 #(.pow js/Math %1 2)
    :pow #(.pow js/Math %1 %2)
