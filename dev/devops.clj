@@ -4,7 +4,7 @@
             [rill.message :as message :refer [primary-aggregate-id]]
             [rill.handler :refer [try-command]]
             [rill.aggregate :refer [load-aggregate]]
-            [rill.repository :refer [retrieve-aggregate wrap-basic-repository]]
+            [rill.repository :refer [retrieve-aggregate wrap-basic-repository wrap-caching-repository]]
             [studyflow.migrations.active-migrations :refer [wrap-active-migrations]]
             [studyflow.credentials.email-ownership :as email]
             [studyflow.credentials.edu-route-id-ownership :as edu-route]
@@ -14,7 +14,7 @@
   [url]
   (-> (psql-event-store url)
       wrap-active-migrations
-      wrap-basic-repository))
+      wrap-caching-repository))
 
 (defn email-owner
   [repository email-address]
@@ -63,4 +63,5 @@
                     :studyflow.credentials.edu-route-id-ownership.events/Claimed)
                  (not (seq (retrieve-events repo (:owner-id c))))))
           events))
+
 
