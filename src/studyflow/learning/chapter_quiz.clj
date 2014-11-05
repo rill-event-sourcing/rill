@@ -192,10 +192,10 @@
 
 (defmethod handle-event ::events/SectionFinished
   [chapter-quiz {:keys [section-id course-id chapter-id student-id all-sections]}]
-  (-> chapter-quiz
+  (-> (or chapter-quiz
+          (->ChapterQuiz course-id chapter-id student-id nil -1 nil true {} 0))
       (update-in [:finished-sections] (fnil conj #{}) section-id)
       (assoc-in [:all-sections] all-sections)))
-
 
 (defmethod handle-notification ::events/SectionFinished
   [{:keys [finished-sections all-sections]} {:keys [student-id course-id chapter-id]} _]
