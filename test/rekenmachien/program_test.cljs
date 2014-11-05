@@ -36,4 +36,5 @@
        [:cos :neg 9 0]      , "0"
        [:cos 4 5 0]         , "0"
        [:tan 0]             , "0"
-       [:tan 90]            , "MATH ERROR"))
+       [:tan 90]            , "MATH ERROR"
+       [:sqrt]              , "SYNTAX ERROR"))

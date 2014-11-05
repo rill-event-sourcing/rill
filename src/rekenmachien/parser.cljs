@@ -22,11 +22,11 @@
 (defn parse-blocks [tokens]
   (when (seq tokens)
     (if (block-oper? (first tokens))
-     (let [pos (find-closing (next tokens) 0)]
-       (into [(into [(first tokens)]
-                    (parse-blocks (take pos (next tokens))))]
-             (parse-blocks (next (drop pos (next tokens))))))
-     (into [(first tokens)] (parse-blocks (next tokens))))))
+      (let [pos (find-closing (next tokens) 0)]
+        (into [(into [(first tokens)]
+                     (parse-blocks (take pos (next tokens))))]
+              (parse-blocks (next (drop pos (next tokens))))))
+      (into [(first tokens)] (parse-blocks (next tokens))))))
 
 (defn parse-prefix [tokens oper?]
   (when (seq tokens)
