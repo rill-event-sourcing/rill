@@ -4,6 +4,7 @@
             [rill.event-stream :refer [all-events-stream-id any-stream-version]]
             [rill.message :as message]
             [rill.handler :refer [notify-process-manager]]
+            [studyflow.learning.section-test]
             [studyflow.learning.section-test.events :as section-test]
             [studyflow.learning.chapter-quiz]
             [studyflow.learning.chapter-quiz.events :as chapter-quiz]))
