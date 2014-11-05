@@ -23,6 +23,12 @@ ActiveRecord::Migration.maintain_test_schema!
 
 RSpec.configure do |config|
 
+  # Use color in STDOUT
+  config.color = true
+
+  # Use color not only in STDOUT but also in pagers and files
+  config.tty = true
+
   require 'capybara/poltergeist'
   Capybara.default_wait_time = 8
   Capybara.register_driver :poltergeist do |app|
