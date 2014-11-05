@@ -385,10 +385,13 @@
                     3)
             dead questions-wrong-count
             alive (- lives dead)]
-        (apply dom/div nil
-               "Hearts: "
-               (concat (repeatedly dead #(dom/span nil "X"))
-                       (repeatedly alive #(dom/span nil "O"))))))))
+        (apply dom/ul #js {:className "heart-bar"}
+               (concat (repeatedly dead #(dom/li nil
+                                                 (dom/span #js {:className "heart lost-heart"})
+                                                 (dom/span #js {:className "heart-gray"})))
+                       (repeatedly alive #(dom/li nil
+                                                  (dom/span #js {:className "heart"})
+                                                  (dom/span #js {:className "heart-gray"})))))))))
 
 (defn chapter-quiz-panel [cursor owner]
   (reify
