@@ -195,16 +195,17 @@
 
 (defn entry-quiz-modal [cursor owner]
   (when-let [entry-quiz (get-in cursor [:view :course-material :entry-quiz])]
-    (let [{:keys [status nag-screen-text]
+    (let [{:keys [status]
            entry-quiz-id :id} entry-quiz
            status (if (= :dismissed (get-in cursor [:view :entry-quiz-modal]))
                     :dismissed
                     (keyword status))
            course-id (get-in cursor [:static :course-id])
            student-id (get-in cursor [:static :student :id])
+           entry-quiz-gif (rand-nth ["https://assets.studyflow.nl/learning/cat-fly.gif"
+                                     "https://assets.studyflow.nl/learning/diving-corgi.gif"])
            ;; TODO should come from entry-quiz material
-           nag-screen-text "<img src=\"https://assets.studyflow.nl/learning/cat-fly.gif\"><p>Maak een vliegende start en bepaal waar je begint<br> met de instaptoets:</p>
-                            <ul class=\"m-icon_row\"><li class=\"m-icon_row_item time\">Duurt ongeveer 30 minuten</li><li class=\"m-icon_row_item onlyonce\">Kun je maar <br>1 keer<br> doen</li><li class=\"m-icon_row_item stopgo\">Stoppen en later weer verder gaan</li></ul>"
+
            dismiss-modal (fn []
                            (om/update! cursor [:view :entry-quiz-modal] :dismissed)
                            (async/put! (om/get-shared owner :command-channel)
@@ -214,7 +215,12 @@
       (condp = status
         nil (modal (dom/div nil
                             (dom/h1 nil "Hoi, welkom op Studyflow!")
-                            (raw-html nag-screen-text))
+                            (dom/img #js {:src entry-quiz-gif})
+                            (dom/p nil "Maak een vliegende start en bepaal waar je begint" (dom/br nil) "met de instaptoets:")
+                            (dom/ul #js {:className "m-icon_row"}
+                                    (dom/li #js {:className "m-icon_row_item time"} "Duurt ongeveer 30 minuten")
+                                    (dom/li #js {:className "m-icon_row_item onlyonce"} "Kun je maar " (dom/br nil) "1 keer" (dom/br nil) "doen")
+                                    (dom/li #js {:className "m-icon_row_item stopgo"} "Stoppen en later weer verder gaan")))
                    (dom/button #js {:onClick (fn []
                                                (dismiss-modal)
                                                (set! (.-location js/window)
