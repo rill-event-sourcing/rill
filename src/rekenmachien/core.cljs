@@ -75,13 +75,14 @@
        (for [button (if @inv-mode-atom
                       [:sin :cos :tan :abc]
                       [:asin :acos :atan :dec])]
-         [:label [:span.label (get button-labels button)]])])
+         [:span.button-placeholder (get button-labels button)])])
     (for [[section rows] [(when-not @light-mode-atom
                             [:functions [(if @inv-mode-atom
                                            [:asin :acos :atan :dec :x10y]
                                            [:sin :cos :tan :abc :x10y])
                                          [:sqrt :x2 :pow :x1 :pi]]])
-                          [:number-oper [[:inv :left :right :open :close]
+                          [:number-oper [[(when-not @light-mode-atom :inv)
+                                          :left :right :open :close]
                                          [7 8 9 :del :clear]
                                          [4 5 6 :mul :div]
                                          [1 2 3 :add :sub]
@@ -90,9 +91,11 @@
        (for [row rows]
          [:div.row
           (for [button row]
-            [:button {:type "button" :on-click #(button-press! button)
-                      :class (if (keyword? button) (name button) "digit")}
-             [:span.label (get button-labels button (str button))]])])])]
+            (if button
+              [:button {:type "button" :on-click #(button-press! button)
+                        :class (if (keyword? button) (name button) "digit")}
+               [:span.label (get button-labels button (str button))]]
+              [:span.button-placeholder]))])])]
    [:style {:type "text/css"}
     (str
      ".rekenmachien { background: #888; padding: 1em; width: calc((4.5em * 5) + 2em); border-radius: .5em; }"
@@ -106,16 +109,14 @@
      ".rekenmachien .display .program span.placeholder { width: .5em; } "
      ".rekenmachien .display .program .with-cursor { border-left: 1px solid #000; } "
      ".rekenmachien .display .result { font-size: 150%; position: absolute; bottom: .25em; right: .5em;}"
-     ".rekenmachien button, .rekenmachien section.inv label { width: 4em; height: 3em; margin: .25em; padding: 0; display: inline-block; }"
+     ".rekenmachien button, .rekenmachien .button-placeholder, .rekenmachien section.inv label { width: 4em; height: 3em; margin: .25em; padding: 0; display: inline-block; }"
      ".rekenmachien button { color: #000; background: #ddd; font-weight: bold; border-radius: .5em; border: solid #aaa 2px; }"
      ".rekenmachien button .label { font-size: 125%; } "
      ".rekenmachien button.digit { color: #fff; background: #444; } "
      ".rekenmachien button.digit .label { font-size: 150%; }"
      ".rekenmachien button.inv { background: #fc0; } "
      ".rekenmachien button.show { color: #fff; background: #00f; } "
-     ".rekenmachien section.inv label { text-align: center; vertical-align: bottom; color: #fc0; height: 1em; }"
-     ".rekenmachien section.inv label span.label { font-size: 75%; }"
-     ".rekenmachien section.inv label span.label span { font-size: inherit; }"
+     ".rekenmachien section.inv span { text-align: center; vertical-align: bottom; color: #fc0; height: 1em; }"
      ".rekenmachien button.del, .rekenmachien button.clear { color: #fff; background: #c00; } "
      ".rekenmachien .keyboard section { display: inline-block; vertical-align: top; margin: 0; }")]])
 
