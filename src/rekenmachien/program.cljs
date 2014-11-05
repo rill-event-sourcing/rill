@@ -1,6 +1,7 @@
 (ns rekenmachien.program
   (:refer-clojure :exclude [empty])
-  (:require [rekenmachien.parser :as parser]))
+  (:require [rekenmachien.math :as math]
+            [rekenmachien.parser :as parser]))
 
 (defonce empty {:tokens [], :cursor 0, :clear-on-insert false})
 (defonce previous-result-atom (atom nil))
@@ -61,28 +62,28 @@
                                              (drop cursor tokens)))))))
 
 (def keyword->math
-  {:add +
-   :sub -
-   :mul *
-   :div /
-   :neg #(* % -1)
-   :x1 #(.pow js/Math %1 -1)
-   :x2 #(.pow js/Math %1 2)
-   :pow #(.pow js/Math %1 %2)
-   :x10y #(* %1 (.pow js/Math 10 %2))
-   :sin #(.sin js/Math %)
-   :cos #(.cos js/Math %)
-   :tan #(.tan js/Math %)
-   :asin #(.asin js/Math %)
-   :acos #(.acos js/Math %)
-   :atan #(.atan js/Math %)
-   :sqrt #(.sqrt js/Math %)
+  {:add math/add
+   :sub math/sub
+   :mul math/mul
+   :div math/div
+   :neg math/neg
+   :x1 math/x1
+   :x2 math/x2
+   :pow math/pow
+   :x10y math/x10y
+   :sin math/sin
+   :cos math/cos
+   :tan math/tan
+   :asin math/asin
+   :acos math/acos
+   :atan math/atan
+   :sqrt math/sqrt
    :open identity})
 
 (defn calc [ast]
   (cond
    (= :pi ast)
-   (.-PI js/Math)
+   math/pi
 
    (= :ans ast)
    (or @previous-result-atom 0)
@@ -106,9 +107,7 @@
   (let [val (js/parseFloat (.toPrecision val precision))
         exp (js/parseInt (or (last (re-find #"e(.*)" (.toExponential val 10))) "0"))
         res (if (< -0.01 val 0.01) (.toExponential val 10) (str val))
-        res (if (< -9 exp -1)
-              (.replace (.toFixed val precision) #",?0*$" "")
-              res)
+        res (if (< -9 exp 1) (.replace (.toFixed val precision) #"\.?0*$" "") res)
         res (if (> exp 9) (.toExponential val 10) res)
         res (.replace res "." ",")
         res (.replace res #",?0*e\+?" "×10^")]
@@ -116,7 +115,8 @@
 
 (defn finite? [val]
   (and (number? val)
-       (not (or (= js/Infinity val)
+       (not (or (.isNaN js/window val)
+                (= js/Infinity val)
                 (= (* -1 js/Infinity) val)))))
 
 (defn run [{:keys [tokens]}]
@@ -127,4 +127,4 @@
           (reset! previous-result-atom val)
           (render-result val))
         "MATH ERROR"))
-    (catch js/Object ex "SYNTAX ERROR")))
+    (catch js/Object ex (str "SYNTAX ERROR" " " ex))))
