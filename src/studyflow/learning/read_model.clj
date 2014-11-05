@@ -42,7 +42,10 @@
       (assoc :status (get-in model [:section-statuses (:id section) student-id]))))
 
 (defn set-student-chapter-quiz-status [model chapter-id student-id status]
-  (assoc-in model [:chapter-quiz-statuses chapter-id student-id] status))
+  ;; A passed chapter-quiz is left always as passed
+  (if (= :passed (get-in model [:chapter-quiz-statuses chapter-id student-id]))
+    model
+    (assoc-in model [:chapter-quiz-statuses chapter-id student-id] status)))
 
 (defn get-chapter-status [model chapter-id student-id]
   (get-in model [:chapter-statuses chapter-id student-id]))
