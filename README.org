@@ -23,8 +23,11 @@ $ lein repl
 (run)
 #+END_SRC
 
-   Open a browser and go to http://localhost:10555 ans start figwheel:
+   Start figwheel:
 
 #+BEGIN_SRC clj
 (start-figwheel)
 #+END_SRC
+
+   Open a browser and go to http://localhost:10555 for the calculator
+   and http://localhost:10555/test of the tests.

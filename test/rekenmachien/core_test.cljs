@@ -1,8 +1,9 @@
 (ns rekenmachien.core-test
-  (:require-macros [cemerick.cljs.test :refer [are is deftest run-tests]])
-  (:require [cemerick.cljs.test :as _]))
-
-(enable-console-print!)
+  (:require [cemerick.cljs.test :refer [run-all-tests]]
+            [rekenmachien.parser-test :as parser-test]))
 
 (defn ^:export run []
-  (prn-str (run-tests 'rekenmachien.parser-test)))
+  (let [output (atom "")]
+    (set-print-fn! (fn [& args] (swap! output #(str % "\n" (apply str args)))))
+    (run-all-tests)
+    (set! (.-textContent (.getElementById js/document "output")) @output)))

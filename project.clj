@@ -21,15 +21,12 @@
   :figwheel {:http-server-root "public"
              :port 3449}
 
-  :cljsbuild {:builds [{:id "app"
-                        :source-paths ["src" "dev"]
-                        :compiler {:output-to "resources/public/js/app.js"
-                                   :output-dir "resources/public/js/out"
-                                   :source-map "resources/public/js/out.js.map"}}
-                       {:id "tests"
-                        :source-paths ["src" "test"]
-                        :compiler {:optimization :simple
-                                   :preamble ["reagent/react.js"]
-                                   :output-to "resources/public/js/tests.js"
-                                   :output-dir "resources/public/js/tests"
-                                   :source-map "resources/public/js/tests.js.map"}}]})
+  :cljsbuild {:builds {:app {:source-paths ["src"]
+                             :compiler {:output-to "target/js/app.js"
+                                        :output-dir "target/js/app"
+                                        :optimizations :advanced}}
+                       :dev {:source-paths ["dev" "src" "test"]
+                             :compiler {:output-to "resources/public/js/app.js"
+                                        :output-dir "resources/public/js/out"
+                                        :source-map "resources/public/js/out.js.map"
+                                        :optimizations :none}}}})
