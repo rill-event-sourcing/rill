@@ -359,13 +359,18 @@
     om/IRender
     (render [_]
       (let [chapter-id (get-in cursor [:view :selected-path :chapter-id])
-            questions-correct-count (get-in cursor [:aggregates chapter-id :questions-correct-count])
+            chapter-quiz (get-in cursor [:aggregates chapter-id])
+            questions-correct-count (:questions-correct-count chapter-quiz)
             question-total (get-in cursor [:view :course-material :chapters-by-id chapter-id :chapter-quiz :number-of-questions])
             chapter-title (get-in cursor [:view :course-material :chapters-by-id chapter-id :title])]
         (dom/div nil
                  (dom/article #js {:id "m-section"}
-                              (dom/p nil "FAILED")
-                              (dom/p nil "Je had " questions-correct-count " van de " question-total " vragen goed"))
+                              (if (:fast-route? chapter-quiz)
+                                (dom/div nil
+                                         (dom/p nil "Oops! Je hebt 2 hartjes verloren. We raden je aan om eerst je kennis van dit hoofdstuk op te frissen, en het daarna nog een keer te proberen.")
+                                         (dom/p nil "Je kunt de test pas weer maken wanneer je alle paragrafen in dit hoofdstuk hebt afgerond."))
+                                (dom/div nil
+                                         (dom/p nil "Oops! Je hebt 3 hartjes verloren. We raden je aan om eerst je kennis van dit hoofdstuk op te frissen, en het daarna nog een keer te proberen"))))
                  (footer-bar "Ga verder met het hoofdstuk"
                              (fn []
                                (js/window.location.assign
