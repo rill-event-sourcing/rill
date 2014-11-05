@@ -68,7 +68,7 @@
                                            (set! (.-location js/window)
                                                  (history-link {:main :chapter-quiz
                                                                 :chapter-id chapter-id})))}
-                           "Start Chapter Quiz")
+                           "Start Hoofdstuktest")
                (dom/a #js {:href ""
                            :onClick (fn []
                                       (dismiss-modal)
@@ -385,10 +385,13 @@
                     3)
             dead questions-wrong-count
             alive (- lives dead)]
-        (apply dom/div nil
-               "Hearts: "
-               (concat (repeatedly dead #(dom/span nil "X"))
-                       (repeatedly alive #(dom/span nil "O"))))))))
+        (apply dom/ul #js {:className "m-heart-bar"}
+               (concat (repeatedly dead #(dom/li nil
+                                                 (dom/span #js {:className "heart lost-heart"})
+                                                 (dom/span #js {:className "heart-gray"})))
+                       (repeatedly alive #(dom/li nil
+                                                  (dom/span #js {:className "heart"})
+                                                  (dom/span #js {:className "heart-gray"})))))))))
 
 (defn chapter-quiz-panel [cursor owner]
   (reify
@@ -403,8 +406,7 @@
             question-total (get-in cursor [:view :course-material :chapters-by-id chapter-id :chapter-quiz :number-of-questions])
             chapter-quiz-status (:status chapter-quiz-agg)
             fast-route? (:fast-route? chapter-quiz-agg)]
-        (dom/div #js {:id "m-chapter-quiz"
-                      :className "chapter_quiz_page"}
+        (dom/div #js {:id "quiz-page"}
                  (when show-exit-modal
                    (modal  (if fast-route?
                              (dom/div nil

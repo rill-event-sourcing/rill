@@ -127,8 +127,7 @@
             status (:status entry-quiz)
             correct-answers-number (:correct-answers-number entry-quiz)
             student-name (get-in cursor [:static :student :full-name])]
-        (dom/div #js {:id "m-entry-quiz"
-                      :className "entry_exam_page"}
+        (dom/div #js {:id "quiz-page"}
                  (dom/header #js {:id "m-top_header"}
                              (dom/a #js {:id "home"
                                          :href (history-link {:main :dashboard})})
