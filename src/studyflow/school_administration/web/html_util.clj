@@ -13,7 +13,8 @@
   (html5
    [:head
     [:title (h (str/join " - " [title app-title]))]
-    (include-css "/screen.css")]
+    (include-css "/screen.css")
+    [:link {:href "/favicon.ico" :rel "shortcut icon" :type "image/vnd.microsoft.icon"}]]
    [:body
     [:header
      [:nav

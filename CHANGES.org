@@ -1,5 +1,6 @@
 * Release Changelog
 ** NEXT RELEASE:
+*** New: Updated favicon in all applications to reflect the new login
 ** release-2014-11-05.1
 *** New: Chapter quizzes!
 *** New: New logo in login and learning
