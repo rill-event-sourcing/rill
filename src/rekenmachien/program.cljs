@@ -20,6 +20,9 @@
    token
    (str token)))
 
+(defn empty? [{:keys [tokens]}]
+  (not (seq tokens)))
+
 (defn do-clear-on-insert [program]
   (assoc program :clear-on-insert true))
 
@@ -37,6 +40,10 @@
    (if (< cursor (count tokens))
      (update-in program [:cursor] inc)
      program)))
+
+(defn move-to [program loc]
+  (no-clear-on-insert
+   (assoc program :cursor loc)))
 
 (defn del [{:keys [tokens cursor] :as program}]
   (no-clear-on-insert

@@ -35,9 +35,10 @@
     :clear (do (reset! program-atom program/empty)
                (reset! result-atom nil))
 
-    :show (let [result (program/run @program-atom)]
-            (swap! program-atom program/do-clear-on-insert)
-            (reset! result-atom result))
+    :show (when-not (program/empty? @program-atom)
+            (let [result (program/run @program-atom)]
+              (swap! program-atom program/do-clear-on-insert)
+              (reset! result-atom result)))
 
     ;; otherwise
     (do (reset! inv-mode-atom false)
@@ -48,12 +49,17 @@
     [:div.program
      (map (fn [token loc]
             [:span
-             (if (= loc cursor) {:class "with-cursor"})
+             (merge
+              {:on-click #(swap! program-atom program/move-to loc)}
+              (when (= loc cursor) {:class "with-cursor"}))
              (program/label token)])
           tokens
           (iterate inc 0))
-     (when (>= cursor (count tokens))
-       [:span.placeholder.with-cursor " "])]))
+     [:span.placeholder
+      (merge
+       {:on-click #(swap! program-atom program/move-to (count tokens))}
+       (when (>= cursor (count tokens)) {:class "with-cursor"}))
+      " "]]))
 
 (defn result-component []
   (let [result @result-atom]
@@ -106,7 +112,7 @@
      ".rekenmachien sup, .rekenmachien sub { font-size: 66%; }"
      ".rekenmachien .display .program small { font-size: 75%; }"
      ".rekenmachien .display .program span { display: inline-block; text-align: center; } "
-     ".rekenmachien .display .program span.placeholder { width: .5em; } "
+     ".rekenmachien .display .program span.placeholder { width: 2em; } "
      ".rekenmachien .display .program .with-cursor { border-left: 1px solid #000; } "
      ".rekenmachien .display .result { font-size: 150%; position: absolute; bottom: .25em; right: .5em;}"
      ".rekenmachien button, .rekenmachien .button-placeholder, .rekenmachien section.inv label { width: 4em; height: 3em; margin: .25em; padding: 0; display: inline-block; }"
