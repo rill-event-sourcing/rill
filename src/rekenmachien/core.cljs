@@ -72,9 +72,9 @@
   [:div.rekenmachien
    [:h1
     [:a.toggle-light-mode {:on-click #(button-press! :light)}
-     (if @light-mode-atom "▼" "▲")]
-    " "
-    app-title]
+     [:span (if @light-mode-atom "▼" "▲")]
+     " "
+     app-title]]
    [:div.display
     [program-component]
     [result-component]]
