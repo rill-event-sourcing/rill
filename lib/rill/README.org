@@ -2,4 +2,6 @@
 
 * Changelog
 
+  0.1.2 - Add process managers
+  0.1.1 - ???
   0.1.0 - First beta release

@@ -41,19 +41,41 @@
       (select-keys [:id :title])
       (assoc :status (get-in model [:section-statuses (:id section) student-id]))))
 
+(defn set-student-chapter-quiz-status [model chapter-id student-id status]
+  ;; A passed chapter-quiz is left always as passed
+  (if (= :passed (get-in model [:chapter-quiz-statuses chapter-id student-id]))
+    model
+    (assoc-in model [:chapter-quiz-statuses chapter-id student-id] status)))
+
+(defn get-chapter-status [model chapter-id student-id]
+  (get-in model [:chapter-statuses chapter-id student-id]))
+
+(defn set-chapter-status [model chapter-id student-id status]
+  (assoc-in model [:chapter-statuses chapter-id student-id] status))
+
+(defn set-remedial-chapters-finished [model course-id student-id]
+  (let [course (get-course model course-id)
+        chapters (:chapters course)]
+    (reduce (fn [model chapter]
+              (if (:remedial chapter)
+                (set-chapter-status model (:id chapter) student-id :finished)
+                model))
+            model chapters)))
+
 (defn chapter-tree
   [model chapter student-id remedial-chapters-status]
   {:id (:id chapter)
    :title (:title chapter)
-   :status (when (:remedial chapter)
-             remedial-chapters-status)
+   :chapter-quiz {:number-of-questions (count (:chapter-quiz chapter))
+                  :status (get-in model [:chapter-quiz-statuses (:id chapter) student-id])}
+   :status (get-chapter-status model (:id chapter) student-id)
    :sections (mapv #(section-leaf model % student-id) (:sections chapter))})
 
 (defn get-student-entry-quiz-status [model entry-quiz-id student-id]
-  (get-in model [:entry-quiz-statusses student-id]))
+  (get-in model [:entry-quiz-statuses student-id]))
 
 (defn set-student-entry-quiz-status [model entry-quiz-id student-id status]
-  (assoc-in model [:entry-quiz-statusses student-id] status))
+  (assoc-in model [:entry-quiz-statuses student-id] status))
 
 (defn entry-quiz [model course-id student-id]
   (let [entry-quiz (:entry-quiz (get-course model course-id))
@@ -74,6 +96,10 @@
   [course section-id]
   (get-in course [:sections-by-id section-id]))
 
+(defn get-chapter
+  [course chapter-id]
+  (first (filter (fn [chapter] (= chapter-id (:id chapter))) (:chapters course))))
+
 (defn get-question
   [section question-id]
   (some
@@ -81,6 +107,14 @@
      (when (= id question-id)
        question))
    (:questions section)))
+
+(defn get-chapter-quiz-question
+  [chapter question-id]
+  (let [all-questions (mapcat :questions (:chapter-quiz chapter))]
+    (some (fn [{:keys [id] :as question}]
+            (when (= id question-id)
+              question))
+          all-questions)))
 
 (defn set-student
   [model student-id student]

@@ -63,6 +63,7 @@
 
 (def ChapterQuizQuestionSet
   {:title PlainText
+   :id Id
    :questions #{ChapterQuizQuestion}})
 
 (def Chapter

@@ -28,6 +28,15 @@
   "The id of the aggregate that will handle this message"
   type)
 
+(defmulti process-manager-id
+  "The id of the aggregate (if any) that will receive this message after it is successfully committed."
+  type)
+
+(defmethod process-manager-id
+  :default
+  [_]
+  nil)
+
 (defn make-message
   "Create a new message with type `message-type` and data"
   [message-type data]

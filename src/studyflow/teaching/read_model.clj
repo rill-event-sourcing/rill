@@ -146,6 +146,11 @@
                              (set (students-with-this-section-status model students section :finished)))
                            (val chapter))))
 
+(defn students-who-finished-this-chapter [model students chapter-id]
+  (filter
+   (fn [student] (= (get-in model [:students (:id student) :chapter-status chapter-id]) :finished))
+   students))
+
 (defn chapter-completion [model students sections]
   {:total (* (count sections) (count students))
    :stuck (total-number-of-sections-with-status model students sections :stuck)
@@ -160,9 +165,11 @@
   (into {}
         (mapv (fn [chapter]
                 [(key chapter)
-                 (if (contains? remedial-chapter-ids (key chapter))
-                   (count (set (students-who-passed-entry-quiz model students)))
-                   0)])
+                 (count (set (concat (students-who-finished-this-chapter model students (key chapter))
+                                     (if (contains? remedial-chapter-ids (key chapter))
+                                       (students-who-passed-entry-quiz model students)
+                                       []
+                                       ))))])
               chapters)))
 
 (defn students-status-and-time-spent-for-section [model students section]

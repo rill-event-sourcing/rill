@@ -3,6 +3,7 @@
             [clout-link.route :as clout]
             [rill.uuid :refer [uuid]]
             [studyflow.learning.section-test.commands :as section-test]
+            [studyflow.learning.chapter-quiz :as chapter-quiz]
             [studyflow.learning.entry-quiz :as entry-quiz]
             [studyflow.learning.tracking.commands :as tracking]
             [rill.web :refer [wrap-command-handler]]
@@ -22,7 +23,7 @@
    (clout/handle
     routes/section-test-init
     (authorization/wrap-student-authorization
-     (fn [{{:keys [section-id student-id section-id course-id]} :params :as params}]
+     (fn [{{:keys [section-id student-id course-id]} :params :as params}]
        (section-test/init! (uuid section-id)
                            (uuid student-id)
                            (uuid course-id)))))
@@ -81,6 +82,42 @@
                                     (uuid student-id)
                                     expected-version
                                     inputs)))))
+
+   (clout/handle
+    routes/chapter-quiz-start
+    (authorization/wrap-student-authorization
+     (fn [{{:keys [course-id chapter-id student-id]} :params :as params}]
+       (chapter-quiz/start! (uuid course-id)
+                            (uuid chapter-id)
+                            (uuid student-id)))))
+
+   (clout/handle
+    routes/chapter-quiz-submit-answer
+    (authorization/wrap-student-authorization
+     (fn [{{:keys [course-id chapter-id student-id question-id]} :params
+           {:keys [expected-version inputs]} :body}]
+       (chapter-quiz/submit-answer! (uuid course-id)
+                                    (uuid chapter-id)
+                                    (uuid student-id)
+                                    (uuid question-id)
+                                    expected-version
+                                    inputs))))
+
+   (clout/handle
+    routes/chapter-quiz-dismiss-error-screen
+    (authorization/wrap-student-authorization
+     (fn [{{:keys [course-id chapter-id student-id]} :params :as params}]
+       (chapter-quiz/dismiss-error-screen! (uuid course-id)
+                                           (uuid chapter-id)
+                                           (uuid student-id)))))
+
+   (clout/handle
+    routes/chapter-quiz-stop
+    (authorization/wrap-student-authorization
+     (fn [{{:keys [course-id chapter-id student-id]} :params :as params}]
+       (chapter-quiz/stop! (uuid course-id)
+                           (uuid chapter-id)
+                           (uuid student-id)))))
 
    (clout/handle
     routes/tracking-navigation

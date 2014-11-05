@@ -1,5 +1,5 @@
 (ns studyflow.learning.web.api.query
-  (:require [clojure.tools.logging :refer [debug]]
+  (:require [clojure.tools.logging :refer [debug info]]
             [clout-link.route :as clout]
             [rill.uuid :refer [uuid]]
             [studyflow.learning.read-model.queries :as queries]
@@ -25,5 +25,12 @@
                  (fn [{model :read-model {:keys [course-id section-id question-id]} :params}]
                    (debug "Query handler for " course-id ", " section-id " and " question-id "with model: " model)
                    (if-let [question (queries/question model (uuid course-id) (uuid section-id) (uuid question-id))]
+                     {:status 200 :body question}
+                     {:status 400})))
+
+   (clout/handle routes/query-chapter-quiz-question
+                 (fn [{model :read-model {:keys [course-id chapter-id question-id]} :params}]
+                   (debug "Query handler for " course-id ", " chapter-id " and " question-id "with model")
+                   (if-let [question (queries/chapter-quiz-question model (uuid course-id) (uuid chapter-id) (uuid question-id))]
                      {:status 200 :body question}
                      {:status 400})))))

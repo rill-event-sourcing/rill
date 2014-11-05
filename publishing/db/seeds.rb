@@ -108,7 +108,7 @@ ch1_quiz = ChapterQuiz.create(chapter: positional_system, active: true)
 
 ch1_quiz_set1 = ChapterQuestionsSet.create(title: "QS1", chapter_quiz: ch1_quiz)
 
-ch1_s1_1 = Question.create(text: "1+1= _INPUT_1_ Which one is highest? _INPUT_2_", active: true, worked_out_answer: "2 and 2", quizzable: ch1_quiz_set1)
+ch1_s1_1 = Question.create(text: "2 _INPUT_1_ 2 _INPUT_2_", active: true, worked_out_answer: "2 and 2", quizzable: ch1_quiz_set1)
 ch1_s1_1_1 = LineInput.create(inputable: ch1_s1_1, prefix: "", suffix: "")
 ch1_s1_1_1_answer = Answer.create(value: "2", line_input: ch1_s1_1_1)
 ch1_s1_1_2 = MultipleChoiceInput.create(inputable: ch1_s1_1)
@@ -116,8 +116,8 @@ ch1_s1_1_2_1 = Choice.create(multiple_choice_input: ch1_s1_1_2, value: "1", corr
 ch1_s1_1_2_2 = Choice.create(multiple_choice_input: ch1_s1_1_2, value: "0", correct: false)
 ch1_s1_1_2_3 = Choice.create(multiple_choice_input: ch1_s1_1_2, value: "2", correct: true)
 
-ch1_s1_2 = Question.create(text: "Five mangoes plus two mangoes? _INPUT_2_ What is the lowest even number greater than 0? _INPUT_1_", active: true, worked_out_answer: "seven mangoes! 2", quizzable: ch1_quiz_set1)
-ch1_s1_2_1 = LineInput.create(inputable: ch1_s1_2, suffix: "mangoes")
+ch1_s1_2 = Question.create(text: "7 _INPUT_2_ 2 _INPUT_1_", active: true, worked_out_answer: "7 2", quizzable: ch1_quiz_set1)
+ch1_s1_2_1 = LineInput.create(inputable: ch1_s1_2, suffix: "")
 ch1_s1_2_1_answer = Answer.create(value: "7", line_input: ch1_s1_2_1)
 ch1_s1_2_1_answer_2  = Answer.create(value: "seven", line_input: ch1_s1_2_1)
 
@@ -129,7 +129,7 @@ ch1_s1_2_2_3  = Choice.create(multiple_choice_input: ch1_s1_2_2, value: "-1", co
 ##
 ch1_quiz_set2 = ChapterQuestionsSet.create(title: "Question set 2", chapter_quiz: ch1_quiz)
 
-ch1_s2_1 = Question.create(text: "3+3= _INPUT_1_ Which one is highest? _INPUT_2_", active: true, worked_out_answer: "6 and 100", quizzable: ch1_quiz_set2)
+ch1_s2_1 = Question.create(text: "6 _INPUT_1_ 100 _INPUT_2_", active: true, worked_out_answer: "6 and 100", quizzable: ch1_quiz_set2)
 ch1_s2_1_1 = LineInput.create(inputable: ch1_s2_1, prefix: "", suffix: "")
 ch1_s2_1_1_answer = Answer.create(value: "6", line_input: ch1_s2_1_1)
 ch1_s2_1_2 = MultipleChoiceInput.create(inputable: ch1_s2_1)
@@ -137,12 +137,54 @@ ch1_s2_1_2_1 = Choice.create(multiple_choice_input: ch1_s2_1_2, value: "100", co
 ch1_s2_1_2_2 = Choice.create(multiple_choice_input: ch1_s2_1_2, value: "16", correct: false)
 ch1_s2_1_2_3 = Choice.create(multiple_choice_input: ch1_s2_1_2, value: "42", correct: false)
 
-ch1_s2_2 = Question.create(text: "One kiwi plus two kiwis? _INPUT_2_ What is the lowest odd number? _INPUT_1_", active: true, worked_out_answer: "three kiwis! 1", quizzable: ch1_quiz_set2)
-ch1_s2_2_1 = LineInput.create(inputable: ch1_s2_2, suffix: "kiwis")
+ch1_s2_2 = Question.create(text: "3 three _INPUT_2_ 1 _INPUT_1_", active: true, worked_out_answer: "three kiwis! 1", quizzable: ch1_quiz_set2)
+ch1_s2_2_1 = LineInput.create(inputable: ch1_s2_2, suffix: "")
 ch1_s2_2_1_answer = Answer.create(value: "3", line_input: ch1_s2_2_1)
 ch1_s2_2_1_answer_2  = Answer.create(value: "three", line_input: ch1_s2_2_1)
 
 ch1_s2_2_2  = MultipleChoiceInput.create(inputable: ch1_s2_2)
-ch1_s2_2_2_1  = Choice.create(multiple_choice_input: ch1_s2_2_2, value: "1", correct: false)
-ch1_s2_2_2_2  = Choice.create(multiple_choice_input: ch1_s2_2_2, value: "0", correct: true)
+ch1_s2_2_2_1  = Choice.create(multiple_choice_input: ch1_s2_2_2, value: "1", correct: true)
+ch1_s2_2_2_2  = Choice.create(multiple_choice_input: ch1_s2_2_2, value: "0", correct: false)
 ch1_s2_2_2_3  = Choice.create(multiple_choice_input: ch1_s2_2_2, value: "-1", correct: false)
+
+#
+ch1_quiz_set3 = ChapterQuestionsSet.create(title: "Question set 3", chapter_quiz: ch1_quiz)
+
+ch1_s3_1 = Question.create(text: "12 _INPUT_1_ 10 _INPUT_2_", active: true, worked_out_answer: "12 and 10", quizzable: ch1_quiz_set3)
+ch1_s3_1_1 = LineInput.create(inputable: ch1_s3_1, prefix: "", suffix: "")
+ch1_s3_1_1_answer = Answer.create(value: "12", line_input: ch1_s3_1_1)
+ch1_s3_1_2 = MultipleChoiceInput.create(inputable: ch1_s3_1)
+ch1_s3_1_2_1 = Choice.create(multiple_choice_input: ch1_s3_1_2, value: "100", correct: false)
+ch1_s3_1_2_2 = Choice.create(multiple_choice_input: ch1_s3_1_2, value: "10", correct: true)
+ch1_s3_1_2_3 = Choice.create(multiple_choice_input: ch1_s3_1_2, value: "42", correct: false)
+
+ch1_s3_2 = Question.create(text: "4 four _INPUT_2_ 123 _INPUT_1_", active: true, worked_out_answer: "4 123", quizzable: ch1_quiz_set3)
+ch1_s3_2_1 = LineInput.create(inputable: ch1_s3_2, suffix: "")
+ch1_s3_2_1_answer = Answer.create(value: "4", line_input: ch1_s3_2_1)
+ch1_s3_2_1_answer_2  = Answer.create(value: "four", line_input: ch1_s3_2_1)
+
+ch1_s3_2_2  = MultipleChoiceInput.create(inputable: ch1_s3_2)
+ch1_s3_2_2_1  = Choice.create(multiple_choice_input: ch1_s3_2_2, value: "1", correct: false)
+ch1_s3_2_2_2  = Choice.create(multiple_choice_input: ch1_s3_2_2, value: "123", correct: true)
+ch1_s3_2_2_3  = Choice.create(multiple_choice_input: ch1_s3_2_2, value: "-1", correct: false)
+
+#
+ch1_quiz_set4 = ChapterQuestionsSet.create(title: "Qs4", chapter_quiz: ch1_quiz)
+
+ch1_s4_1 = Question.create(text: "42 _INPUT_1_ 101 _INPUT_2_", active: true, worked_out_answer: "42 and 101", quizzable: ch1_quiz_set4)
+ch1_s4_1_1 = LineInput.create(inputable: ch1_s4_1, prefix: "", suffix: "")
+ch1_s4_1_1_answer = Answer.create(value: "42", line_input: ch1_s4_1_1)
+ch1_s4_1_2 = MultipleChoiceInput.create(inputable: ch1_s4_1)
+ch1_s4_1_2_1 = Choice.create(multiple_choice_input: ch1_s4_1_2, value: "101", correct: true)
+ch1_s4_1_2_2 = Choice.create(multiple_choice_input: ch1_s4_1_2, value: "16", correct: false)
+ch1_s4_1_2_3 = Choice.create(multiple_choice_input: ch1_s4_1_2, value: "23", correct: false)
+
+ch1_s4_2 = Question.create(text: "321 three _INPUT_2_ 101 _INPUT_1_", active: true, worked_out_answer: "321 101", quizzable: ch1_quiz_set4)
+ch1_s4_2_1 = LineInput.create(inputable: ch1_s4_2, suffix: "")
+ch1_s4_2_1_answer = Answer.create(value: "321", line_input: ch1_s4_2_1)
+
+ch1_s4_2_2  = MultipleChoiceInput.create(inputable: ch1_s4_2)
+ch1_s4_2_2_1  = Choice.create(multiple_choice_input: ch1_s4_2_2, value: "1", correct: false)
+ch1_s4_2_2_2  = Choice.create(multiple_choice_input: ch1_s4_2_2, value: "0", correct: false)
+ch1_s4_2_2_3  = Choice.create(multiple_choice_input: ch1_s4_2_2, value: "101", correct: true)
+

@@ -22,6 +22,10 @@
         section-links (zipmap section-links forward-links)]
     (assoc course-data :forward-section-links section-links)))
 
+(defn add-chapter-index-mapping [course-data]
+  (let [chapters-by-id (into {} (map (juxt :id identity) (:chapters course-data)))]
+    (assoc course-data :chapters-by-id chapters-by-id)))
+
 (defn ignore-handler [res])
 
 (defn basic-error-handler [res]
@@ -30,6 +34,7 @@
 
 (defn command-error-handler [cursor]
   (fn [res]
+    (prn [:ERROR! res])
     (om/update! cursor
                 [:aggregates :failed]
                 true)))
@@ -37,29 +42,31 @@
 (defn command-aggregate-handler [cursor notification-channel aggregate-id]
   (fn [res]
     (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
+      (om/transact! cursor
+                    [:aggregates aggregate-id]
+                    (fn [agg]
+                      (aggregates/apply-events agg aggregate-version events)))
       (when-let [notification-events
                  (seq (filter
                        (comp #{"studyflow.learning.section-test.events/Finished"
                                "studyflow.learning.section-test.events/StreakCompleted"
                                "studyflow.learning.section-test.events/Stuck"
-                               "studyflow.learning.section-test.events/QuestionAnsweredIncorrectly"} :type)
+                               "studyflow.learning.section-test.events/QuestionAnsweredIncorrectly"
+                               "studyflow.learning.chapter-quiz.events/QuestionAssigned"
+                               "studyflow.learning.chapter-quiz.events/Stopped"} :type)
                        events))]
         (doseq [event notification-events]
-          (async/put! notification-channel event)))
-      (om/transact! cursor
-                    [:aggregates aggregate-id]
-                    (fn [agg]
-                      (aggregates/apply-events agg aggregate-version events))))))
+          (async/put! notification-channel event))))))
 
 (defn handle-replay-events [cursor aggregate-id events aggregate-version]
   (om/transact! cursor
                 [:aggregates aggregate-id]
-                (fn [agg]
+                (fn [_]
                   (if (seq events)
-                    (aggregates/apply-events agg aggregate-version events)
+                    (aggregates/apply-events nil aggregate-version events)
                     nil))))
 
-(defn try-command [cursor notification-channel command]
+(defn try-command [cursor notification-channel command-channel command]
   (prn :try-command command)
   (let [[command-type & args] command]
     (condp = command-type
@@ -134,6 +141,54 @@
               :handler (command-aggregate-handler cursor notification-channel course-id)
               :error-handler (command-error-handler cursor)}))
 
+      "chapter-quiz-commands/start"
+      (let [[chapter-id student-id] args
+            course-id (get-in @cursor [:static :course-id])
+            handler (command-aggregate-handler cursor notification-channel chapter-id)]
+        (PUT (str "/api/chapter-quiz-start/" course-id "/" chapter-id "/" student-id)
+             {:format :json
+              :handler (fn [res]
+                         (handler res)
+                         (async/put! command-channel ["chapter-quiz-commands/reload" chapter-id student-id]))
+              :error-handler (command-error-handler cursor)}))
+
+      "chapter-quiz-commands/stop"
+      (let [[chapter-id student-id] args
+            course-id (get-in @cursor [:static :course-id])]
+        (PUT (str "/api/chapter-quiz-stop/" course-id "/" chapter-id "/" student-id)
+             {:format :json
+              :handler (command-aggregate-handler cursor notification-channel chapter-id)
+              :error-handler (command-error-handler cursor)}))
+
+      "chapter-quiz-commands/reload"
+      (let [[chapter-id student-id] args
+            course-id (get-in @cursor [:static :course-id])]
+        (GET (str "/api/chapter-quiz-replay/" course-id "/" chapter-id "/" student-id)
+             {:format :json
+              :handler (fn [res]
+                         (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
+                           (when (seq events)
+                             (handle-replay-events cursor chapter-id events aggregate-version))))
+              :error-handler basic-error-handler}))
+
+
+      "chapter-quiz-commands/check-answer"
+      (let [[chapter-id student-id chapter-quiz-aggregate-version course-id question-id inputs] args]
+        (PUT (str "/api/chapter-quiz-submit-answer/" course-id "/" chapter-id "/" student-id "/" question-id)
+             {:params {:expected-version chapter-quiz-aggregate-version
+                       :inputs inputs}
+              :format :json
+              :handler (command-aggregate-handler cursor notification-channel chapter-id)
+              :error-handler (command-error-handler cursor)}))
+
+      "chapter-quiz-commands/next-question"
+      (let [[chapter-id student-id chapter-quiz-aggregate-version course-id] args]
+        (PUT (str "/api/chapter-quiz-dismiss-error-screen/" course-id "/" chapter-id "/" student-id)
+             {:params {:expected-version chapter-quiz-aggregate-version}
+              :format :json
+              :handler (command-aggregate-handler cursor notification-channel chapter-id)
+              :error-handler (command-error-handler cursor)}))
+
       "tracking-commands/navigation"
       (let [[student-id tracking-location] args]
         (PUT (str "/api/tracking/navigation/" student-id)
@@ -156,6 +211,7 @@
              {:params {}
               :handler (fn [res]
                          (let [course-data (-> (json-edn/json->edn res)
+                                               add-chapter-index-mapping
                                                add-forward-section-links)]
                            (om/update! cursor
                                        [:view :course-material] course-data)))
@@ -216,6 +272,24 @@
                              (handle-replay-events cursor course-id events aggregate-version))))
               :error-handler basic-error-handler}))
 
+      "data/chapter-quiz-question"
+      (let [[chapter-id question-id] args
+            course-id (get-in @cursor [:static :course-id])]
+        (if-let [question-data (get-in @cursor [:view :chapter-quiz chapter-id :questions question-id])]
+          nil ;; data already loaded
+          (GET (str "/api/course-material/"
+                    course-id
+                    "/chapter/" chapter-id
+                    "/question/" question-id)
+               {:params {}
+                :handler (fn [res]
+                           (let [question-data (json-edn/json->edn res)]
+                             (om/transact! cursor
+                                           #(assoc-in %
+                                                      [:view :chapter-quiz chapter-id :questions question-id]
+                                                      question-data))))
+                :error-handler basic-error-handler})))
+
       nil)))
 
 ;; a bit silly to use an Om component for something that is not UI,
@@ -237,7 +311,7 @@
               notification-channel (om/get-shared owner :notification-channel)]
           (go (loop []
                 (when-let [command (<! command-channel)]
-                  (try-command cursor notification-channel command)
+                  (try-command cursor notification-channel command-channel command)
                   (recur)))))
 
         ;; data requests from UI

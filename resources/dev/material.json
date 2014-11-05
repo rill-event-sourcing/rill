@@ -5,13 +5,14 @@
     {
       "id": "8112d048-1189-4b45-a7ba-78da2b0c389d",
       "title": "Positional system",
-"chapter_quiz": [
+      "chapter_quiz": [
         {
+          "id": "24380676-6d1c-4a31-906b-533878270a9b",
           "title": "QS1",
           "questions": [
             {
               "id": "24f80676-6d1c-4a31-906b-533878270a9b",
-              "text": "1+1= _INPUT_1_ Which one is highest? _INPUT_2_",
+              "text": "2 _INPUT_1_ 2 _INPUT_2_",
               "tools": [
                 "pen_and_paper"
               ],
@@ -46,14 +47,13 @@
             },
             {
               "id": "3a4195a3-4f31-43bb-99d2-a14ef6acf426",
-              "text": "Five mangoes plus two mangoes? _INPUT_2_ What is the lowest even number greater than 0? _INPUT_1_",
+              "text": "7 _INPUT_2_ 2 _INPUT_1_",
               "tools": [
                 "pen_and_paper"
               ],
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
-                  "suffix": "mangoes",
                   "width": 150,
                   "correct_answers": [
                     "7",
@@ -84,11 +84,12 @@
           ]
         },
         {
+          "id": "aa4195a3-4f31-43bb-99d2-a14ef6acf426",
           "title": "Question set 2",
           "questions": [
             {
               "id": "f02d81f7-df3f-48e2-a5d9-fc4094c8bf14",
-              "text": "3+3= _INPUT_1_ Which one is highest? _INPUT_2_",
+              "text": "6 _INPUT_1_ 100 _INPUT_2_",
               "tools": [
                 "pen_and_paper"
               ],
@@ -123,14 +124,13 @@
             },
             {
               "id": "50ee5d38-86c6-4297-aaea-9148e067d8bc",
-              "text": "One kiwi plus two kiwis? _INPUT_2_ What is the lowest odd number? _INPUT_1_",
+              "text": "3 three _INPUT_2_ 1 _INPUT_1_",
               "tools": [
                 "pen_and_paper"
               ],
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
-                  "suffix": "kiwis",
                   "width": 150,
                   "correct_answers": [
                     "3",
@@ -144,15 +144,168 @@
                   "choices": [
                     {
                       "value": "1",
-                      "correct": false
+                      "correct": true
                     },
                     {
                       "value": "0",
+                      "correct": false
+                    },
+                    {
+                      "value": "-1",
+                      "correct": false
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "32c63461-5fd2-45a7-b123-ddcfb869eb32",
+          "title": "Question set 3",
+          "questions": [
+            {
+              "id": "28af4894-e20d-4fad-bdd8-957ab20d7a2c",
+              "text": "12 _INPUT_1_ 10 _INPUT_2_",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "width": 150,
+                  "correct_answers": [
+                    "12"
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+                {
+                  "name": "_INPUT_2_",
+                  "choices": [
+                    {
+                      "value": "100",
+                      "correct": false
+                    },
+                    {
+                      "value": "10",
+                      "correct": true
+                    },
+                    {
+                      "value": "42",
+                      "correct": false
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "dc8ad24a-5ef2-4d44-a615-595350273680",
+              "text": "4 four _INPUT_2_ 123 _INPUT_1_",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "width": 150,
+                  "correct_answers": [
+                    "4",
+                    "four"
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+                {
+                  "name": "_INPUT_2_",
+                  "choices": [
+                    {
+                      "value": "1",
+                      "correct": false
+                    },
+                    {
+                      "value": "123",
                       "correct": true
                     },
                     {
                       "value": "-1",
                       "correct": false
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "df9cd899-54e4-486d-b2f8-14ecc6cee79c",
+          "title": "Qs4",
+          "questions": [
+            {
+              "id": "600137bd-f95c-4c41-b30c-41ef14999759",
+              "text": "42 _INPUT_1_ 101 _INPUT_2_",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "width": 150,
+                  "correct_answers": [
+                    "42"
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+                {
+                  "name": "_INPUT_2_",
+                  "choices": [
+                    {
+                      "value": "101",
+                      "correct": true
+                    },
+                    {
+                      "value": "16",
+                      "correct": false
+                    },
+                    {
+                      "value": "23",
+                      "correct": false
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "3f0825a5-f6c4-4fd7-a335-f9f8de57977c",
+              "text": "321 three _INPUT_2_ 101 _INPUT_1_",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "line_input_fields": [
+                {
+                  "name": "_INPUT_1_",
+                  "width": 150,
+                  "correct_answers": [
+                    "321"
+                  ]
+                }
+              ],
+              "multiple_choice_input_fields": [
+                {
+                  "name": "_INPUT_2_",
+                  "choices": [
+                    {
+                      "value": "1",
+                      "correct": false
+                    },
+                    {
+                      "value": "0",
+                      "correct": false
+                    },
+                    {
+                      "value": "101",
+                      "correct": true
                     }
                   ]
                 }

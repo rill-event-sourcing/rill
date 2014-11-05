@@ -4,7 +4,8 @@
             [goog.dom :as gdom]
             [goog.events :as gevents]
             [goog.string :as gstring]
-            [clojure.string :as string]))
+            [clojure.string :as string]
+            [studyflow.web.history :refer [history-link]]))
 
 (defn raw-html
   [raw]
@@ -126,6 +127,37 @@
                    (string? tag-tree)
                    tag-tree))]
     (descent tag-tree)))
+
+(defn some-input-in-question-selected [refs]
+  (let [active (.-activeElement js/document)]
+    (some #{active}
+          (-> (js->clj refs)
+              (dissoc "FOCUSED_INPUT")
+              vals
+              (->>
+               (map #(.getDOMNode %)))))))
+
+(defn focus-input-box [owner]
+  ;; we always call this, even when there's no element called
+  ;; "FOCUSED_INPUT". om/get-node can't handle that case
+  (when-let [refs (.-refs owner)]
+    ;; need to set the focus on a non disabled field for firefox key handling
+    (if-let [button-ref (aget refs "FOCUSED_BUTTON")]
+      (when-let [button (.getDOMNode button-ref)]
+        (.focus button))
+      (when-let [input-ref (aget refs "FOCUSED_INPUT")]
+        (when-let [input-field (.getDOMNode input-ref)]
+          (when (and (= "" (.-value input-field))
+                     (not (some-input-in-question-selected refs)))
+            (.focus input-field)))))))
+
+(defn section-explanation-link [cursor chapter section]
+  (-> (get-in cursor [:view :selected-path])
+      (assoc :chapter-id (:id chapter)
+             :section-id (:id section)
+             :section-tab :explanation
+             :main :learning)
+      history-link))
 
 (def ipad? (js/navigator.userAgent.match #"iPhone|iPad|iPod"))
 

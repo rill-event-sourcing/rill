@@ -4,9 +4,10 @@
             [om.dom :as dom :include-macros true]
             [studyflow.web.aggregates :as aggregates]
             [studyflow.web.core :as core]
-            [studyflow.web.helpers :refer [raw-html modal tag-tree-to-om]]
+            [studyflow.web.helpers :refer [raw-html modal tag-tree-to-om focus-input-box]]
             [studyflow.web.history :refer [history-link]]
             [studyflow.web.service :as service]
+            [studyflow.web.recommended-action :refer [first-recommendable-chapter]]
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
@@ -76,17 +77,20 @@
                                        (submit))) cursor)))))))
 
 
-(defn to-dashboard-bar [status]
+
+(defn to-dashboard-bar [status chapter-id]
   (dom/div #js {:id "m-question_bar"}
            (dom/button #js {:className "btn blue small pull-right"
                             :onClick (fn []
                                        (set! (.-location js/window)
-                                             (history-link {:main :dashboard})))}
+                                             (history-link {:main :dashboard
+                                                            :chapter-id chapter-id})))}
                        (if (or (= status :failed) (= status :passed))
                          "Let's Go!"
                          "Naar je Dashboard"))))
 
-(defn entry-quiz-result [status student-name correct-answers-number total-questions-number]
+
+(defn entry-quiz-result [status student-name correct-answers-number total-questions-number link-chapter-id]
   (let [style #js {:width (str (Math/round (float (/ (* 100 correct-answers-number) total-questions-number))) "%;")}]
     (dom/div nil
              (dom/p nil (str "Hoi " student-name))
@@ -97,7 +101,7 @@
              (if (= status :passed)
                (dom/p nil "We raden je aan om bij hoofdstuk 7 te beginnen.")
                (dom/p nil "We raden je aan om bij het begin te beginnen, zodat je alles nog even kan opfrissen."))
-             (to-dashboard-bar status))))
+             (to-dashboard-bar status link-chapter-id))))
 
 (defn entry-quiz-title [status]
   (if (or (= status :failed) (= status :passed))
@@ -117,11 +121,13 @@
       (let [course-id (get-in cursor [:static :course-id])
             entry-quiz (get-in cursor [:aggregates course-id])
             material (get-in cursor [:view :course-material :entry-quiz])
+            chapters (:chapters (get-in cursor [:view :course-material]))
+            course (get-in cursor [:view :course-material])
+            first-non-finished-chapter-id (:id (first-recommendable-chapter course))
             status (:status entry-quiz)
             correct-answers-number (:correct-answers-number entry-quiz)
             student-name (get-in cursor [:static :student :full-name])]
-        (dom/div #js {:id "m-entry-quiz"
-                      :className "entry_exam_page"}
+        (dom/div #js {:id "quiz-page"}
                  (dom/header #js {:id "m-top_header"}
                              (dom/a #js {:id "home"
                                          :href (history-link {:main :dashboard})})
@@ -134,13 +140,12 @@
                               (dom/article #js {:id "m-section"}
                                            (if-not (get-in cursor [:view :entry-quiz-replay-done])
                                              (dom/div nil "Instaptoets laden"
-                                                      (to-dashboard-bar status))
+                                                      (to-dashboard-bar status nil))
                                              (case status
                                                nil ; entry-quiz not yet started
                                                (om/build instructions-panel cursor)
                                                :dismissed
                                                (om/build instructions-panel cursor)
-
                                                :in-progress
                                                (let [course-id (:id entry-quiz)
                                                      entry-quiz-aggregate-version (:aggregate-version entry-quiz)
@@ -148,7 +153,6 @@
                                                      index  (:question-index entry-quiz)
                                                      question (get-in material [:questions index])
                                                      question-text (:text question)
-
                                                      current-answers (om/value (get-in cursor [:view :entry-quiz index :answer] {}))
                                                      inputs (input-builders cursor index question current-answers)
                                                      answering-allowed
@@ -179,27 +183,28 @@
                                                                                                       :enabled answering-allowed)
                                                                               cursor))))
                                                :passed
-                                               (dom/div nil (entry-quiz-result :passed student-name correct-answers-number (count (:questions material))))
+                                               (dom/div nil (entry-quiz-result :passed student-name correct-answers-number (count (:questions material)) first-non-finished-chapter-id))
                                                :failed
-                                               (dom/div nil (entry-quiz-result :failed student-name correct-answers-number (count (:questions material))))
+                                               (dom/div nil (entry-quiz-result :failed student-name correct-answers-number (count (:questions material)) (:id (first chapters))))
                                                nil)))))))
     om/IDidMount
     (did-mount [_]
-      (core/focus-input-box owner))))
+      (focus-input-box owner))))
 
 
 (defn entry-quiz-modal [cursor owner]
   (when-let [entry-quiz (get-in cursor [:view :course-material :entry-quiz])]
-    (let [{:keys [status nag-screen-text]
+    (let [{:keys [status]
            entry-quiz-id :id} entry-quiz
            status (if (= :dismissed (get-in cursor [:view :entry-quiz-modal]))
                     :dismissed
                     (keyword status))
            course-id (get-in cursor [:static :course-id])
            student-id (get-in cursor [:static :student :id])
+           entry-quiz-gif (rand-nth ["https://assets.studyflow.nl/learning/cat-fly.gif"
+                                     "https://assets.studyflow.nl/learning/diving-corgi.gif"])
            ;; TODO should come from entry-quiz material
-           nag-screen-text "<img src=\"https://assets.studyflow.nl/learning/cat-fly.gif\"><p>Maak een vliegende start en bepaal waar je begint<br> met de instaptoets:</p>
-                            <ul class=\"m-icon_row\"><li class=\"m-icon_row_item time\">Duurt ongeveer 30 minuten</li><li class=\"m-icon_row_item onlyonce\">Kun je maar <br>1 keer<br> doen</li><li class=\"m-icon_row_item stopgo\">Stoppen en later weer verder gaan</li></ul>"
+
            dismiss-modal (fn []
                            (om/update! cursor [:view :entry-quiz-modal] :dismissed)
                            (async/put! (om/get-shared owner :command-channel)
@@ -209,7 +214,12 @@
       (condp = status
         nil (modal (dom/div nil
                             (dom/h1 nil "Hoi, welkom op Studyflow!")
-                            (raw-html nag-screen-text))
+                            (dom/img #js {:src entry-quiz-gif})
+                            (dom/p nil "Maak een vliegende start en bepaal waar je begint" (dom/br nil) "met de instaptoets:")
+                            (dom/ul #js {:className "m-icon_row"}
+                                    (dom/li #js {:className "m-icon_row_item time"} "Duurt ongeveer 30 minuten")
+                                    (dom/li #js {:className "m-icon_row_item onlyonce"} "Kun je maar " (dom/br nil) "1 keer" (dom/br nil) "doen")
+                                    (dom/li #js {:className "m-icon_row_item stopgo"} "Stoppen en later weer verder gaan")))
                    (dom/button #js {:onClick (fn []
                                                (dismiss-modal)
                                                (set! (.-location js/window)

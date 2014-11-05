@@ -4,6 +4,7 @@
             [studyflow.learning.course.events :as course-events]
             [studyflow.learning.entry-quiz.events :as entry-quiz]
             [studyflow.learning.section-test.events :as section-test]
+            [studyflow.learning.chapter-quiz.events :as chapter-quiz]
             [rill.event-channel :as event-channel]
             [rill.message :as message]))
 
@@ -43,7 +44,8 @@
   [model {:keys [student-id course-id]}]
   (-> model
       (m/set-student-remedial-chapters-status course-id student-id :finished)
-      (m/set-student-entry-quiz-status course-id student-id :passed)))
+      (m/set-student-entry-quiz-status course-id student-id :passed)
+      (m/set-remedial-chapters-finished course-id student-id)))
 
 (defmethod handle-event ::entry-quiz/Failed
   [model {:keys [student-id course-id]}]
@@ -64,6 +66,32 @@
 (defmethod handle-event ::section-test/Finished
   [model {:keys [student-id section-id]}]
   (m/update-student-section-status model section-id student-id :in-progress :finished))
+
+(defmethod handle-event ::chapter-quiz/Started
+  [model {:keys [chapter-id student-id]}]
+  (m/set-student-chapter-quiz-status model chapter-id student-id :started))
+
+(defmethod handle-event ::chapter-quiz/Locked
+  [model {:keys [chapter-id student-id]}]
+  (m/set-student-chapter-quiz-status model chapter-id student-id :locked))
+
+(defmethod handle-event ::chapter-quiz/UnLocked
+  [model {:keys [chapter-id student-id]}]
+  (m/set-student-chapter-quiz-status model chapter-id student-id :un-locked))
+
+(defmethod handle-event ::chapter-quiz/Stopped
+  [model {:keys [chapter-id student-id]}]
+  (m/set-student-chapter-quiz-status model chapter-id student-id :failed))
+
+(defmethod handle-event ::chapter-quiz/Failed
+  [model {:keys [chapter-id student-id]}]
+  (m/set-student-chapter-quiz-status model chapter-id student-id :failed))
+
+(defmethod handle-event ::chapter-quiz/Passed
+  [model {:keys [chapter-id student-id]}]
+  (-> model
+      (m/set-chapter-status chapter-id student-id :finished)
+      (m/set-student-chapter-quiz-status chapter-id student-id :passed)))
 
 (defmethod handle-event :studyflow.school-administration.teacher.events/Created
   [model {:keys [teacher-id full-name]}]
