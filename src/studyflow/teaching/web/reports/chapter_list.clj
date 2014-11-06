@@ -35,10 +35,8 @@
                                                                        " struikelblokken"))}
                    [:span {:class "stuck_sign"} (str total-students-stuck-in-chapter)]
                    [:span {:class "warning_sign"} "&#9888;"]]))
-              (let [students-who-completed-this-chapter (get-in chapter-list [:chapters-with-finishing-data chapter-id] 0)
-                    total-students (get-in chapter-list [:total-number-of-students])]
-                [:span (str (Math/round (float (/ (* 100 students-who-completed-this-chapter) total-students)))
-                            "%")])]
+              (let [average-students-completion (get-in chapter-list [:average-students-completion chapter-id] 0)]
+                [:span (str average-students-completion "%")])]
 
              (when (= selected-chapter-id chapter-id)
                [:ol.section-list

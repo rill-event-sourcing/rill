@@ -122,11 +122,16 @@
                   :school-id school-id
                   :school-name (:name school)})))))
 
-(defn students-who-passed-entry-quiz [model students]
-  (filter
-   (fn [student]
-     (get-in model [:students (:id student) :course-entry-quiz-passed]))
-   students))
+(defn set-chapter-status [model chapter-id student-id status]
+  (assoc-in model [:students student-id :chapter-status chapter-id] status))
+
+(defn set-remedial-chapters-finished [model student-id]
+  (let [material (val (first (:courses model)))]
+    (reduce (fn [model chapter]
+              (if (:remedial chapter)
+                (set-chapter-status model (:id chapter) student-id :finished)
+                model))
+            model (:chapters material))))
 
 (defn students-with-this-section-status [model students section status]
   (filter
@@ -161,15 +166,30 @@
           (map (fn [sections] (chapter-completion model students sections))
                (vals chapter-sections))))
 
-(defn chapters-with-finishing-data [model students chapters remedial-chapter-ids]
+(defn student-percentage-progress-in-chapter [model student-id chapter]
+  (let [sections (:sections chapter)
+        result (if (= (get-in model [:students student-id :chapter-status (:id chapter)]) :finished)
+                 100
+                 (Math/round (float (* 100 (/ (count (filter (fn [section] (= :finished
+                                                                              (get-in model [:students student-id :section-status (:id section)]))) sections))
+                                              (+ 1 (count sections)))))))]
+    result))
+
+(defn average-students-completion [model students chapters]
+  (into {}
+        (mapv (fn [chapter]
+                [(:id chapter)
+                 (Math/round (float (/ (reduce + (map (fn [student]
+                                                        (student-percentage-progress-in-chapter model (:id student) chapter))
+                                                      students))
+                                       (count students))))])
+              chapters)))
+
+(defn chapters-with-finishing-data [model students chapters]
   (into {}
         (mapv (fn [chapter]
                 [(key chapter)
-                 (count (set (concat (students-who-finished-this-chapter model students (key chapter))
-                                     (if (contains? remedial-chapter-ids (key chapter))
-                                       (students-who-passed-entry-quiz model students)
-                                       []
-                                       ))))])
+                 (count (set (students-who-finished-this-chapter model students (key chapter))))])
               chapters)))
 
 (defn students-status-and-time-spent-for-section [model students section]
@@ -203,9 +223,10 @@
         chapter-with-sections (get-in chapters [chapter-id])]
     (assoc material
       :sections-total-status {chapter-id (sections-total-status model students chapter-with-sections section-id)}
-      :total-number-of-students (count students)
-      :chapters-with-finishing-data (chapters-with-finishing-data model students chapters remedial-chapter-ids)
+      :average-students-completion (average-students-completion model students (:chapters material))
       :chapters-completion (chapters-completion model chapters students))))
+
+
 
 (defn get-teacher
   [model id]
