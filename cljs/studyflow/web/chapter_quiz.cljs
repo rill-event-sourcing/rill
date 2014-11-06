@@ -78,9 +78,9 @@
 (defn footer-bar
   ([]
      (dom/div #js {:id "m-question_bar"}))
-  ([text on-click enabled]
+  ([text on-click enabled color]
      (dom/div #js {:id "m-question_bar"}
-              (dom/button #js {:className "btn blue small pull-right"
+              (dom/button #js {:className (str "btn small pull-right " color)
                                :ref "MAIN_BUTTON"
                                :disabled (not enabled)
                                :onClick (fn []
@@ -213,7 +213,8 @@
                              (fn []
                                (when-let [f (om/get-state owner :submit)]
                                  (f)))
-                             answering-allowed))))
+                             answering-allowed
+                             "blue"))))
     om/IDidMount
     (did-mount [_]
       (focus-input-box owner)
@@ -299,7 +300,8 @@
                              (fn []
                                (when-let [f (om/get-state owner :submit)]
                                  (f)))
-                             true))))
+                             true
+                             "red"))))
     om/IDidMount
     (did-mount [_]
       (when-let [button (om/get-node owner "MAIN_BUTTON")]
@@ -352,7 +354,8 @@
                    (footer-bar (str "Ga verder met " title)
                                (fn []
                                  (js/window.location.assign link))
-                               true)))))))
+                               true
+                               "blue")))))))
 
 (defn chapter-quiz-failed [cursor owner]
   (reify
@@ -376,7 +379,8 @@
                                (js/window.location.assign
                                 (history-link {:main :dashboard
                                                :chapter-id chapter-id})))
-                             true))))))
+                             true
+                             "blue"))))))
 
 (defn hearts-bar [cursor owner]
   (reify
