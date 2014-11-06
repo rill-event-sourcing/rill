@@ -4,7 +4,7 @@
             [om.dom :as dom :include-macros true]
             [studyflow.web.aggregates :as aggregates]
             [studyflow.web.core :as core]
-            [studyflow.web.helpers :refer [raw-html modal tag-tree-to-om focus-input-box]]
+            [studyflow.web.helpers :refer [tool-box raw-html modal tag-tree-to-om focus-input-box]]
             [studyflow.web.history :refer [history-link]]
             [studyflow.web.service :as service]
             [studyflow.web.recommended-action :refer [first-recommendable-chapter]]
@@ -174,6 +174,7 @@
                                                                         false)}
                                                            (tag-tree-to-om (:tag-tree question) inputs)
                                                            (dom/div #js {:id "m-question_bar"}
+                                                                    (tool-box (:tools question))
                                                                     (om/build (core/click-once-button (str "Klaar"
                                                                                                            (when (< (inc index) (count (:questions material)))
                                                                                                              " & volgende vraag"))

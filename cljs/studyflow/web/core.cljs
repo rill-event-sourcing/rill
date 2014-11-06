@@ -11,7 +11,7 @@
             [studyflow.web.chapter-quiz :as chapter-quiz]
             [studyflow.web.service :as service]
             [studyflow.web.history :refer [history-link]]
-            [studyflow.web.helpers :refer [modal raw-html tag-tree-to-om focus-input-box section-explanation-link] :as helpers]
+            [studyflow.web.helpers :refer [tool-box modal raw-html tag-tree-to-om focus-input-box section-explanation-link] :as helpers]
             [studyflow.web.recommended-action :refer [recommended-action]]
             [clojure.walk :as walk]
             [cljs.core.async :as async])
@@ -394,15 +394,6 @@
                              (when-let [suffix (:suffix li)]
                                (str " " suffix)))]))))))
 
-(defn tool-box
-  [tools]
-  (let [tool-names {"pen_and_paper" "Pen & Papier"
-                    "calculator" "Rekenmachine"}]
-    (apply dom/div #js {:id "toolbox"}
-           (map (fn [tool]
-                  (dom/div #js {:className (str "tool " tool)}
-                           (dom/div #js {:className "m-tooltip"} (get tool-names tool) )))
-                tools))))
 
 (defn reveal-answer-button [cursor owner]
   (reify
