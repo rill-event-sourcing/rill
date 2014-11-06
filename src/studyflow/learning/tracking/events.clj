@@ -14,6 +14,11 @@
   :student-id m/Id
   tracking-id)
 
+(defevent ChapterQuizNavigated
+  :student-id m/Id
+  :chapter-id m/Id
+  tracking-id)
+
 (defevent SectionExplanationNavigated
   :student-id m/Id
   :section-id m/Id

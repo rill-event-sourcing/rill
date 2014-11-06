@@ -21,9 +21,8 @@
           :entry-quiz
           (track-navigation command-channel student-id {:main :entry-quiz})
           :learning
-          (track-navigation command-channel student-id
-                            {:main :learning
-                             :section-id (:section-id selected-path)
-                             :section-tab (:section-tab selected-path)})
+          (track-navigation command-channel student-id (select-keys selected-path [:main :section-id :section-tab]))
+          :chapter-quiz
+          (track-navigation command-channel student-id (select-keys selected-path [:main :chapter-id]))
           nil)))))
 

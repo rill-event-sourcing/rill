@@ -21,6 +21,10 @@
   [tracking event]
   tracking)
 
+(defmethod handle-event ::events/ChapterQuizNavigated
+  [tracking event]
+  tracking)
+
 
 (defmethod handle-command ::commands/Navigate!
   [agg {:keys [student-id tracking-location]}]
@@ -28,6 +32,7 @@
   (if-let [event (condp = (keyword (:main tracking-location))
                    :dashboard (events/dashboard-navigated student-id)
                    :entry-quiz (events/entry-quiz-navigated student-id)
+                   :chapter-quiz (events/chapter-quiz-navigated student-id (uuid (:chapter-id tracking-location)))
                    :learning
                    (if (= (keyword (:section-tab tracking-location)) :explanation)
                      (events/section-explanation-navigated student-id (uuid (:section-id tracking-location)))
