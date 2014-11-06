@@ -3,7 +3,7 @@
             [goog.events :as gevents]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [studyflow.web.helpers :refer [modal raw-html tag-tree-to-om focus-input-box] :as helpers]
+            [studyflow.web.helpers :refer [tool-box modal raw-html tag-tree-to-om focus-input-box] :as helpers]
             [studyflow.web.recommended-action :refer [recommended-action]]
             [studyflow.web.history :refer [history-link]]))
 
@@ -78,8 +78,9 @@
 (defn footer-bar
   ([]
      (dom/div #js {:id "m-question_bar"}))
-  ([text on-click enabled color]
+  ([text on-click enabled color tools]
      (dom/div #js {:id "m-question_bar"}
+              (tool-box tools)
               (dom/button #js {:className (str "btn small pull-right " color)
                                :ref "MAIN_BUTTON"
                                :disabled (not enabled)
@@ -214,7 +215,8 @@
                                (when-let [f (om/get-state owner :submit)]
                                  (f)))
                              answering-allowed
-                             "blue"))))
+                             "blue"
+                             (:tools question-data)))))
     om/IDidMount
     (did-mount [_]
       (focus-input-box owner)
@@ -301,7 +303,8 @@
                                (when-let [f (om/get-state owner :submit)]
                                  (f)))
                              true
-                             "red"))))
+                             "red"
+                             (:tools question-data)))))
     om/IDidMount
     (did-mount [_]
       (when-let [button (om/get-node owner "MAIN_BUTTON")]
@@ -355,7 +358,8 @@
                                (fn []
                                  (js/window.location.assign link))
                                true
-                               "blue")))))))
+                               "blue"
+                               [])))))))
 
 (defn chapter-quiz-failed [cursor owner]
   (reify
@@ -380,7 +384,8 @@
                                 (history-link {:main :dashboard
                                                :chapter-id chapter-id})))
                              true
-                             "blue"))))))
+                             "blue"
+                             []))))))
 
 (defn hearts-bar [cursor owner]
   (reify
