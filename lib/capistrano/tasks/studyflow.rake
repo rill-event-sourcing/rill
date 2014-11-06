@@ -32,16 +32,63 @@ end
 
 namespace :deploy do
 
-  desc 'Hot deploy application from S3'
-  task :hot do
+  desc 'Start stack A'
+  task :start_a do
+    Rake::Task["deploy:stack_a"].execute
+    Rake::Task["deploy:start_balancer"].execute
+  end
+
+  desc 'Start stack B'
+  task :start_b do
+    Rake::Task["deploy:stack_b"].execute
+    Rake::Task["deploy:start_balancer"].execute
+  end
+
+  desc 'Stop stack A'
+  task :stop_a do
+    Rake::Task["deploy:stack_a"].execute
+    Rake::Task["deploy:stop_balancer"].execute
+  end
+
+  desc 'Stop stack B'
+  task :stop_b do
+    Rake::Task["deploy:stack_b"].execute
+    Rake::Task["deploy:stop_balancer"].execute
+  end
+
+  desc 'Deploy only to stack A'
+  task :deploy_a do
+    Rake::Task["deploy:stack_a"].execute
     Rake::Task["deploy:check"].execute
     Rake::Task["deploy:update"].execute
+    Rake::Task["deploy:update_stack"].execute
 
+    Rake::Task["deploy:cleanup"].execute
+    Rake::Task["deploy:finished"].execute
+  end
+
+  desc 'Deploy only to stack B'
+  task :deploy_b do
+    Rake::Task["deploy:stack_b"].execute
+    Rake::Task["deploy:check"].execute
+    Rake::Task["deploy:update"].execute
+    Rake::Task["deploy:update_stack"].execute
+
+    Rake::Task["deploy:cleanup"].execute
+    Rake::Task["deploy:finished"].execute
+  end
+
+  desc 'Hot deploy application from S3'
+  task :hot do
     Rake::Task["deploy:stack_a"].execute
+    Rake::Task["deploy:check"].execute
+    Rake::Task["deploy:update"].execute
     Rake::Task["deploy:update_stack"].execute
     Rake::Task["deploy:start_balancer"].execute
 
     Rake::Task["deploy:stack_b"].execute
+    Rake::Task["deploy:check"].execute
+    Rake::Task["deploy:update"].execute
     Rake::Task["deploy:update_stack"].execute
     Rake::Task["deploy:start_balancer"].execute
 
@@ -52,13 +99,14 @@ namespace :deploy do
 
   desc 'Cold deploy application from S3'
   task :cold do
+    Rake::Task["deploy:stack_a"].execute
     Rake::Task["deploy:check"].execute
     Rake::Task["deploy:update"].execute
-
-    Rake::Task["deploy:stack_a"].execute
     Rake::Task["deploy:update_stack"].execute
 
     Rake::Task["deploy:stack_b"].execute
+    Rake::Task["deploy:check"].execute
+    Rake::Task["deploy:update"].execute
     Rake::Task["deploy:update_stack"].execute
 
     Rake::Task["deploy:stack_a"].execute
@@ -103,7 +151,7 @@ namespace :deploy do
     timestamp = Time.now.strftime("%Y%m%d%H%M%S")
     set(:release_timestamp, timestamp)
     set(:release_path, releases_path.join(timestamp))
-    on roles *fetch(:release_roles) do |host|
+    on roles *fetch(:release_roles), filter: fetch(:stack) do |host|
       execute :mkdir, '-p', release_path
       within release_path do
         execute "s3cmd get #{ fetch(:s3path) }/#{ fetch(:current_revision) }/*#{ host.roles.first }* #{ release_path }/"
@@ -378,10 +426,10 @@ namespace :deploy do
   namespace :check do
     desc "check dirs"
     task :directories do
-      on roles *fetch(:release_roles) do
+      on roles *fetch(:release_roles), filter: fetch(:stack) do
         execute :mkdir, '-pv', releases_path
       end
-      on roles :publish do
+      on roles :publish, filter: fetch(:stack) do
         execute :mkdir, '-pv', shared_path
       end
     end
@@ -389,7 +437,7 @@ namespace :deploy do
     desc "check linked dirs"
     task :linked_dirs do
       next unless any? :linked_dirs
-      on roles :publish do
+      on roles :publish, filter: fetch(:stack) do
         execute :mkdir, '-pv', linked_dirs(shared_path)
       end
     end
@@ -401,7 +449,7 @@ namespace :deploy do
     desc 'Symlink linked directories'
     task :linked_dirs do
       next unless any? :linked_dirs
-      on roles(:publish) do
+      on roles :publish, filter: fetch(:stack) do
         execute :mkdir, '-pv', linked_dir_parents(release_path)
 
         fetch(:linked_dirs).each do |dir|
