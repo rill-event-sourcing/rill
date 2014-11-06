@@ -28,32 +28,26 @@
               (parse-blocks (next (drop pos (next tokens))))))
       (into [(first tokens)] (parse-blocks (next tokens))))))
 
-(defn parse-prefix [tokens oper?]
-  (when (seq tokens)
-    (if (oper? (first tokens))
-      (parse-prefix (into [[(first tokens) (second tokens)]] (drop 2 tokens)) oper?)
-      (into [(first tokens)] (parse-prefix (next tokens) oper?)))))
-
 (defn parse-infix [tokens oper]
   (when (seq tokens)
     (if (= (second tokens) oper)
       (parse-infix (into [[oper (first tokens) (nth tokens 2)]] (drop 3 tokens)) oper)
       (into [(first tokens)] (parse-infix (next tokens) oper)))))
 
-(defn parse-postfix [tokens oper?]
+(defn parse-special [tokens oper?]
   (when (seq tokens)
-    (if (oper? (second tokens))
-      (parse-postfix (into [[(second tokens) (first tokens)]] (drop 2 tokens)) oper?)
-      (into [(first tokens)] (parse-postfix (next tokens) oper?)))))
+    (if-let [oper (oper? (first tokens))]
+      (into oper (parse-special (next tokens) oper?))
+      (into [(first tokens)] (parse-special (next tokens) oper?)))))
 
 (defn parse-opers [tokens] ; Het Mannetje Won Van De Oude Aap
   (postwalk (fn [x]
               (if (sequential? x)
                 (reduce parse-infix
-                        (parse-prefix
-                         (parse-postfix x #{:x1 :x2})
-                         #{:neg})
-                        [:pow :x10y :mul :div :add :sub])
+                        (parse-special x {:neg [-1 :mul]
+                                          :x1 [:pow -1]
+                                          :x2 [:pow 2]})
+                        [:frac :pow :x10y :mul :div :add :sub])
                 x))
             tokens))
 

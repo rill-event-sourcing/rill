@@ -1,5 +1,5 @@
 (ns rekenmachien.program
-  (:refer-clojure :exclude [empty])
+  (:refer-clojure :exclude [empty empty?])
   (:require [rekenmachien.math :as math]
             [rekenmachien.parser :as parser]))
 
@@ -12,7 +12,7 @@
     :asin [:span "sin" [:sup "-1"] "("],
     :acos [:span "cos" [:sup "-1"] "("],
     :atan [:span "tan" [:sup "-1"] "("],
-    :abc "/",
+    :frac "/",
     :x10y "×10^", :sqrt "√(", :x2 [:sup "2"], :pow "^", :x1 [:sup "-1"],
     :pi "π", :dot ",", :neg [:small "-"], :ans "Ans",
     :mul "×", :div "÷", :add "+", :sub "-",
@@ -54,7 +54,7 @@
                                          (drop cursor tokens)))))
      program)))
 
-(def post-or-infix-oper? #{:pow :x10y :mul :div :add :sub :x1 :x2 :abc})
+(def post-or-infix-oper? #{:pow :frac :x10y :mul :div :add :sub :x1 :x2})
 
 (defn insert [program val]
   (let [program (if (:clear-on-insert program)
@@ -69,7 +69,8 @@
                                              (drop cursor tokens)))))))
 
 (def keyword->math
-  {:add math/add
+  {:frac math/frac
+   :add math/add
    :sub math/sub
    :mul math/mul
    :div math/div
@@ -98,7 +99,7 @@
    (= :ans ast)
    (or @previous-result-atom 0)
 
-   (number? ast)
+   (or (number? ast) (math/fraction? ast))
    ast
 
    (sequential? ast)
@@ -115,24 +116,22 @@
   (js/parseInt (or (last (re-find #"e(.*)" s)) "0")))
 
 (defn render-result [val]
-  (let [val (js/parseFloat (.toPrecision val precision))
-        exp (js/parseInt (or (last (re-find #"e(.*)" (.toExponential val 10))) "0"))
-        res (if (< -0.01 val 0.01) (.toExponential val 10) (str val))
-        res (if (< -9 exp 1) (.replace (.toFixed val precision) #"\.?0*$" "") res)
-        res (if (> exp 9) (.toExponential val 10) res)
-        res (.replace res "." ",")
-        res (.replace res #",?0*e\+?" "×10^")]
-    res))
-
-(defn finite? [val]
-  (not (or (.isNaN js/window val)
-           (= js/Infinity val)
-           (= (* -1 js/Infinity) val))))
+  (if (math/fraction? val)
+    (str val)
+    (let [val (js/parseFloat (.toPrecision val precision))
+          exp (js/parseInt (or (last (re-find #"e(.*)" (.toExponential val 10))) "0"))
+          res (if (< -0.01 val 0.01) (.toExponential val 10) (str val))
+          res (if (< -9 exp 1) (.replace (.toFixed val precision) #"\.?0*$" "") res)
+          res (if (> exp 9) (.toExponential val 10) res)
+          res (.replace res "." ",")
+          res (.replace res #",?0*e\+?" "×10^")]
+      res)))
 
 (defn run [{:keys [tokens]}]
   (try
     (let [val (calc (parser/parse tokens))]
-      (if (finite? val)
+      (if (or (math/finite? val)
+              (math/fraction? val))
         (do
           (reset! previous-result-atom val)
           (render-result val))

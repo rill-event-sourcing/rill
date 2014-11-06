@@ -17,7 +17,7 @@
    :asin [:span "sin" [:sup "-1"]],
    :acos [:span "cos" [:sup "-1"]],
    :atan [:span "tan" [:sup "-1"]],
-   :abc [:span "a" [:sup "b"] "/" [:sub "c"]],
+   :frac [:span "a" [:sup "b"] "/" [:sub "c"]],
    :x10y [:span "x10" [:sup "y"]], :sqrt "√", :x2 "x²", :pow "^", :x1 "x⁻¹",
    :left "⇐", :right "⇒", :del "DEL", :clear "C",
    :pi "π", :dot ",", :neg "(-)", :ans "ANS",
@@ -79,13 +79,13 @@
     (when-not @light-mode-atom
       [:section.inv
        (for [button (if @inv-mode-atom
-                      [:sin :cos :tan :abc]
+                      [:sin :cos :tan :frac]
                       [:asin :acos :atan :dec])]
          [:span.button-placeholder (get button-labels button)])])
     (for [[section rows] [(when-not @light-mode-atom
                             [:functions [(if @inv-mode-atom
                                            [:asin :acos :atan :dec :x10y]
-                                           [:sin :cos :tan :abc :x10y])
+                                           [:sin :cos :tan :frac :x10y])
                                          [:sqrt :x2 :pow :x1 :pi]]])
                           [:number-oper [[(when-not @light-mode-atom :inv)
                                           :left :right :open :close]
@@ -134,7 +134,7 @@
             46 :del   ; del
             48 0, 49 1, 50 2, 51 3, 52 4, 53 5, 54 6, 55 7, 56 8, 57 9 ; 0 .. 9
             65 :ans   ; A
-            66 :abc   ; B
+            66 :frac  ; B
             67 :clear ; C
             73 :inv   ; I
             76 :light ; L

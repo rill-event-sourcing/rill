@@ -1,5 +1,6 @@
 (ns rekenmachien.core-test
   (:require [cemerick.cljs.test :refer [run-all-tests]]
+            [rekenmachien.math-test :as math-test]
             [rekenmachien.parser-test :as parser-test]
             [rekenmachien.program-test :as program-test]))
 
