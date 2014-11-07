@@ -109,12 +109,12 @@
 (def streak-length-to-finish-test 5)
 (def streak-to-stumbling-block 3)
 
-(defn not-correct-answer-will-trigger-stumbling-block?
+(defn action-will-trigger-stumbling-block?
   [{:keys [stumbling-streak stuck? finished? current-question-status]}]
   (and (not stuck?)
        (not finished?)
        (nil? current-question-status)
-       (= stumbling-streak (dec streak-to-stumbling-block))))
+       (>= stumbling-streak (dec streak-to-stumbling-block))))
 
 (defn correct-answer-will-unstuck?
   [{:keys [stuck? current-question-status]}]
@@ -153,7 +153,7 @@
                   (events/unstuck section-id student-id)]]
             [:ok [correct-answer-event]]))))
     (let [incorrect-answer-event (events/question-answered-incorrectly section-id student-id question-id inputs)]
-      (if (not-correct-answer-will-trigger-stumbling-block? this)
+      (if (action-will-trigger-stumbling-block? this)
         [:ok [incorrect-answer-event
               (events/stuck section-id student-id)]]
         [:ok [incorrect-answer-event]]))))
@@ -162,12 +162,16 @@
   [{:keys [course-id]}]
   [course-id])
 
+
 (defmethod handle-command ::commands/RevealAnswer!
   [{:keys [current-question-id section-id student-id question-finished? answer-revealed?] :as this} {:keys [question-id] :as command} course]
   {:pre [(= current-question-id question-id)
          (not answer-revealed?)]}
   (if-let [answer (:worked-out-answer (course/question-for-section course section-id question-id))]
-    [:ok [(events/answer-revealed section-id student-id question-id answer)]]
+    (if (action-will-trigger-stumbling-block? this)
+      [:ok [(events/answer-revealed section-id student-id question-id answer)
+            (events/stuck section-id student-id)]]
+      [:ok [(events/answer-revealed section-id student-id question-id answer)]])
     [:rejected]))
 
 (defmethod aggregate-ids ::commands/NextQuestion!
