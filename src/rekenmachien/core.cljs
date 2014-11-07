@@ -52,7 +52,8 @@
      (map (fn [token loc]
             [:span
              (merge
-              {:on-click #(swap! program-atom program/move-to loc)}
+              {:key loc
+               :on-click #(swap! program-atom program/move-to loc)}
               (when (= loc cursor) {:class "with-cursor"}))
              (program/label token)])
           tokens
@@ -83,7 +84,7 @@
        (for [button (if @inv-mode-atom
                       [:sin :cos :tan :frac]
                       [:asin :acos :atan :dec])]
-         [:span.button-placeholder (get button-labels button)])])
+         [:span.button-placeholder {:key button} (get button-labels button)])])
     (for [[section rows] [(when-not @light-mode-atom
                             [:functions [(if @inv-mode-atom
                                            [:asin :acos :atan :dec :x10y]
@@ -97,10 +98,11 @@
                                          [0 :dot :neg :ans :show]]]]]
       [:section {:key section :class section}
        (for [row rows]
-         [:div.row
+         [:div.row {:key row}
           (for [button row]
             (if button
-              [:button {:type "button" :on-click #(button-press! button)
+              [:button {:key button
+                        :type "button" :on-click #(button-press! button)
                         :class (if (keyword? button) (name button) "digit")}
                [:span.label (get button-labels button (str button))]]
               [:span.button-placeholder]))])])]
