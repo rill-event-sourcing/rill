@@ -32,31 +32,31 @@ end
 
 namespace :deploy do
 
-  desc 'Start stack A'
-  task :start_a do
+  desc 'Start balancing to stack A'
+  task :enable_a do
     Rake::Task["deploy:stack_a"].execute
     Rake::Task["deploy:start_balancer"].execute
   end
 
-  desc 'Start stack B'
-  task :start_b do
+  desc 'Start balancing to stack B'
+  task :enable_b do
     Rake::Task["deploy:stack_b"].execute
     Rake::Task["deploy:start_balancer"].execute
   end
 
-  desc 'Stop stack A'
-  task :stop_a do
+  desc 'Stop balancing to stack A'
+  task :disable_a do
     Rake::Task["deploy:stack_a"].execute
     Rake::Task["deploy:stop_balancer"].execute
   end
 
-  desc 'Stop stack B'
-  task :stop_b do
+  desc 'Stop balancing to stack B'
+  task :disable_b do
     Rake::Task["deploy:stack_b"].execute
     Rake::Task["deploy:stop_balancer"].execute
   end
 
-  desc 'Deploy only to stack A'
+  desc 'Deploy only to stack A without putting it online'
   task :deploy_a do
     Rake::Task["deploy:stack_a"].execute
     Rake::Task["deploy:check"].execute
@@ -67,7 +67,7 @@ namespace :deploy do
     Rake::Task["deploy:finished"].execute
   end
 
-  desc 'Deploy only to stack B'
+  desc 'Deploy only to stack B without putting it online'
   task :deploy_b do
     Rake::Task["deploy:stack_b"].execute
     Rake::Task["deploy:check"].execute
