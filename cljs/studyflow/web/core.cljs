@@ -141,6 +141,7 @@
 
 (defn question-by-id [cursor section-id question-id]
   (if-let [question (get-in cursor [:view :section section-id :test question-id])]
+
     question
     (do (om/update! cursor [:view :section section-id :test question-id] nil)
         nil)))
@@ -179,10 +180,14 @@
               input-focused (= field-name (get-in cursor [:view :section section-id :input-focused]))
               answer-submitted? (get-in cursor [:view :section section-id :input field-name :answer-submitted?])
               answered-correctly? (get-in cursor [:view :section section-id :input field-name :answered-correctly?])
-              answer-revealed (get-in cursor [:view :section section-id :input field-name :answer-revealed])]
+              answer-revealed (get-in cursor [:view :section section-id :input field-name :answer-revealed])
+              input-classes (str ""
+                                 (when (:prefix field) "has-prefix ")
+                                 (when (:suffix field) "has-suffix"))
+              ]
           (dom/span nil
                     (when-let [prefix (:prefix field)]
-                      (str prefix " "))
+                      (dom/span #js {:className "prefix"} prefix))
                     (dom/form
                      #js {:className (str "m-inline_input"
                                           (when (and answer-submitted? answered-correctly?)
@@ -203,7 +208,7 @@
                                       (submit)
                                       false)}
                      (dom/input
-                      #js {:className "inline_input"
+                      #js {:className (str "inline_input " input-classes)
                            :placeholder "................."
                            :react-key (:name field)
                            :ref (:name field)
@@ -280,7 +285,7 @@
                                                     true)
                                                    false)})))))
                     (when-let [suffix (:suffix field)]
-                      (str " " suffix))))))))
+                      (dom/span #js {:className "suffix"} suffix))))))))
 
 (defn input-builders-subsection
   "mapping from input-name to create react dom element for input type"
@@ -376,13 +381,17 @@
                                   (:line-input-fields question-data)
                                   (into ["FOCUSED_INPUT"]
                                         (rest (map :name (:line-input-fields question-data)))))]
-                (let [input-name (:name li)]
+                (let [input-name (:name li)
+                      input-classes (str ""
+                                        (when (:prefix li) "has-prefix ")
+                                        (when (:suffix li) "has-suffix"))]
                   [input-name
                    (dom/span nil
                              (when-let [prefix (:prefix li)]
-                               (str prefix " "))
+                               (dom/span #js {:className "prefix"} prefix))
                              (dom/input
-                              #js {:value (get current-answers input-name "")
+                              #js {:className input-classes
+                                   :value (get current-answers input-name "")
                                    :react-key (str question-id "-" question-index "-" ref)
                                    :ref ref
                                    :disabled disabled
@@ -392,7 +401,7 @@
                                                 [:view :section section-id :test :questions [question-id question-index] :answer input-name]
                                                 (.. event -target -value)))})
                              (when-let [suffix (:suffix li)]
-                               (str " " suffix)))]))))))
+                               (dom/span #js {:className "suffix"} suffix)))]))))))
 
 
 (defn reveal-answer-button [cursor owner]

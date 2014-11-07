@@ -154,13 +154,17 @@
                                 (:line-input-fields question-data)
                                 (into ["FOCUSED_INPUT"]
                                       (rest (map :name (:line-input-fields question-data)))))]
-              (let [input-name (:name li)]
+              (let [input-name (:name li)
+                    input-classes (str ""
+                                 (when (:prefix li) "has-prefix ")
+                                 (when (:suffix li) "has-suffix"))]
                 [input-name
                  (dom/span nil
                            (when-let [prefix (:prefix li)]
-                             (str prefix " "))
+                             (dom/span #js {:className "prefix"} prefix))
                            (dom/input
-                            #js {:value (get current-answers input-name "")
+                            #js {:className input-classes
+                                 :value (get current-answers input-name "")
                                  :react-key (str question-id "-" ref)
                                  :ref ref
                                  :onChange (fn [event]
@@ -169,7 +173,7 @@
                                               [:view :chapter-quiz chapter-id :test :questions question-id :answer input-name]
                                               (.. event -target -value)))})
                            (when-let [suffix (:suffix li)]
-                             (str " " suffix)))])))))
+                             (dom/span #js {:className "suffix"} suffix)))])))))
 
 (defn chapter-quiz-question-open [cursor owner]
   (reify
@@ -244,17 +248,21 @@
       (into (for [[li ref] (map list
                                 (:line-input-fields question-data)
                                 (map :name (:line-input-fields question-data)))]
-              (let [input-name (:name li)]
+              (let [input-name (:name li)
+                    input-classes (str ""
+                                 (when (:prefix li) "has-prefix ")
+                                 (when (:suffix li) "has-suffix"))]
                 [input-name
                  (dom/span nil
                            (when-let [prefix (:prefix li)]
-                             (str prefix " "))
+                             (dom/span #js {:className "prefix"} prefix))
                            (dom/input
-                            #js {:value (get answers (keyword input-name) "")
+                            #js {:className input-classes
+                                 :value (get answers (keyword input-name) "")
                                  :react-key (str question-id "-" ref)
                                  :disabled true})
                            (when-let [suffix (:suffix li)]
-                             (str " " suffix)))])))))
+                             (dom/span #js {:className "suffix"} suffix)))])))))
 
 (defn chapter-quiz-question-wrong [cursor owner]
   (reify
