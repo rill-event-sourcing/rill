@@ -1,6 +1,7 @@
 * Release Changelog
 ** NEXT RELEASE:
 *** Fix: Login form on iOS 8 position problems
+*** New: Progress bar in chapter quiz window!
 *** New: Updated computation of percentage for chapters in chapter list (now more closely reflect the status of the class)
 *** New: When opening a chapter in the chapter-list report, you see which student have and have not finished the chapter
 *** New: Show students & teachers in department and school editing screens
