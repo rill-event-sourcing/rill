@@ -118,7 +118,7 @@
   (cond
    (fraction? x)
    (if (.-done x)
-     (throw (js/Error "frac full!"))
+     (throw :syntax-error)
      (let [v (Frac. (+ (mul (.-n x) y) (.-d x)) y)]
        (set! (.-done v) true)
        v))

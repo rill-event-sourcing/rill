@@ -72,5 +72,5 @@
                 parse-decimals
                 parse-blocks
                 parse-opers)]
-    (when (> (count ast) 1) (throw (js/Error. "too many calculations")))
+    (when (> (count ast) 1) (throw :syntax-error))
     (first ast)))

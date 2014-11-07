@@ -88,9 +88,6 @@
    :sqrt math/sqrt
    :open identity})
 
-(defn syntax-error [ast]
-  (throw (js/Error. (str "syntax error: " (pr-str ast)))))
-
 (defn calc [ast]
   (cond
    (= :pi ast)
@@ -104,10 +101,10 @@
 
    (sequential? ast)
    (let [args (map calc (next ast))]
-     (when-not (seq args) (syntax-error ast))
+     (when-not (seq args) (throw :syntax-error))
      (apply (keyword->math (first ast)) args))
 
-   :else (syntax-error ast)))
+   :else (throw :syntax-error)))
 
 (def precision 10)
 (def max-digits (+ precision 2))
@@ -130,10 +127,9 @@
 (defn run [{:keys [tokens]}]
   (try
     (let [val (calc (parser/parse tokens))]
-      (if (or (math/finite? val)
-              (math/fraction? val))
-        (do
-          (reset! previous-result-atom val)
-          (render-result val))
-        "MATH ERROR"))
-    (catch js/Object ex "SYNTAX ERROR")))
+      (when-not (or (math/finite? val) (math/fraction? val))
+        (throw :math-error))
+      (reset! previous-result-atom val)
+      (render-result val))
+    (catch js/Object ex
+      (if (= :math-error ex) "MATH ERROR" "SYNTAX ERROR"))))
