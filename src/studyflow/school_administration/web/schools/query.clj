@@ -59,7 +59,23 @@
       [:button.primary {:type "submit"} "Add school"]
       (cancel-button)]])))
 
-(defn render-edit [school post-params {:keys [errors] :as options}]
+(defn students-table
+  [students]
+  [:table
+   [:caption "Students"]
+   [:thead
+    [:tr [:th.name "Name"] [:th.email "E-mail"] [:th.deparmetn "Department"] [:th.department "Class"]  [:th.actions]]]
+   (into [:tbody] (map (fn [{:keys [full-name email class-name department id]}]
+                         [:tr
+                          [:td (h full-name)]
+                          [:td (h email)]
+                          [:td (h (:name department))]
+                          [:td (h class-name)]
+                          [:td.actions
+                           [:a.button.edit {:href (str "/edit-student/" id)} "Edit"]]])
+                       students))])
+
+(defn render-edit [school students post-params {:keys [errors] :as options}]
   (let [{:keys [id version name brin]} (merge school post-params)
         departments (:departments school)
         {original-name :name} school]
@@ -109,7 +125,9 @@
                   [:td.actions
                    [:a.button.edit {:href (str "/edit-department/" id "/" department-id)} "Edit"]]])
                departments)]]
-        [:div.no-records "No departments added yet."])])))
+        [:div.no-records "No departments added yet."])]
+
+     (students-table students))))
 
 
 (defroutes app
@@ -121,7 +139,7 @@
                            {:keys [id]} :params
                            {:keys [post-params errors warning] :as flash} :flash}
        (let [school (read-model/get-school read-model (uuid id))]
-         (render-edit school post-params flash))))
+         (render-edit school (read-model/list-students read-model (set (map :id (:departments school)))) post-params flash))))
 
 (def queries
   (fn [req]

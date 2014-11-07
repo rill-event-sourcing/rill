@@ -92,9 +92,13 @@
       :department department
       :version (aggregate-version model (:id student)))))
 
-(defn list-students [model]
-  (map (partial decorate-student model)
-       (sort-by :full-name (vals (:students model)))))
+(defn list-students
+  ([model]
+     (map (partial decorate-student model)
+          (sort-by :full-name (vals (:students model)))))
+  ([model department-ids]
+     (map (partial decorate-student model)
+          (sort-by :full-name (filter #(get department-ids (:department-id %)) (vals (:students model)))))))
 
 (defn get-student [model id]
   (decorate-student model (get-in model [:students id])))

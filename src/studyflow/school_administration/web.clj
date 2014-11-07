@@ -29,7 +29,7 @@
 (defn make-request-handler [secure-site-defaults? event-store read-model]
   (-> (fn [{:keys [uri] :as req}]
         (if (= "/" uri)
-          (redirect-after-post "/list-students")
+          (redirect-after-post "/list-schools")
           ((compojure/routes
             (fn [r]
               (catchup-handler @read-model))
