@@ -2,7 +2,7 @@
   (:require [clj-time.core :as t]
             [clj-time.coerce :as time-coerce]
             [clojure.tools.logging :as log]
-            [clojure.set :refer [intersection union]]
+            [clojure.set :refer [intersection union difference]]
             [clojure.string :as str]
             [rill.message :as message]))
 
@@ -191,6 +191,12 @@
                        (Math/round))])
                 chapters))))
 
+(defn chapter-status-list [model students chapter-id]
+  (let [finished-students (set (students-who-finished-this-chapter model students chapter-id))
+        unfinished-students (difference (set students) finished-students)]
+    {:finished finished-students
+     :unfinished unfinished-students}))
+
 (defn students-status-and-time-spent-for-section [model students section]
   (->> students
        (map
@@ -222,6 +228,7 @@
         selected-chapter-with-sections (get-in chapters-with-sections [chapter-id])]
     (assoc material
       :sections-total-status {chapter-id (sections-total-status model students selected-chapter-with-sections section-id)}
+      :chapter-status-list (chapter-status-list model students chapter-id)
       :average-students-completion (average-students-completion model students (:chapters material))
       :chapters-completion (chapters-completion model chapters-with-sections students))))
 
