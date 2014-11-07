@@ -1,5 +1,7 @@
 (ns rekenmachien.core
   (:require [clojure.string :as s]
+            [clojure.browser.dom :as dom]
+            [clojure.browser.event :as event]
             [rekenmachien.program :as program]
             [reagent.core :as reagent :refer [atom]]))
 
@@ -163,10 +165,25 @@
              187 :add  ; +
              }})
 
+(defn key-listener [ev]
+  (when-let [button (get-in key-code->button
+                            [(if (.-shiftKey ev) :shifted :normal)
+                             (.-keyCode ev)])]
+    (.preventDefault ev)
+    (button-press! button)))
+
+(defn setup-key-down-listener! []
+  (event/listen (.-body js/document) "keydown" key-listener))
+
+(defn ^:export start [id]
+  (let [el (dom/get-element id)]
+    (setup-key-down-listener!)
+    (reagent/render-component [main-component] el)))
+
+(defn ^:export stop [id]
+  (let [el (dom/get-element id)]
+    (event/unlisten (.-body js/document) "keydown" key-listener)
+    (reagent/unmount-component-at-node el)))
+
 (defn main []
-  (set! (.-onkeydown js/document)
-        #(when-let [button (get-in key-code->button
-                                   [(if (.-shiftKey %) :shifted :normal) (.-keyCode %)])]
-           (.preventDefault %)
-           (button-press! button)))
-  (reagent/render-component [main-component] (.getElementById js/document "app")))
+  (start "app"))
