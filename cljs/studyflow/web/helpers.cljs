@@ -198,3 +198,51 @@
                   (dom/div #js {:className (str "tool " tool)}
                            (dom/div #js {:className "m-tooltip"} (get tool-names tool) )))
                 tools))))
+
+(defn input-builders
+  [cursor chapter-id question-id question-data current-answers enabled]
+  (-> {}
+      (into (for [mc (:multiple-choice-input-fields question-data)]
+              (let [input-name (:name mc)]
+                [input-name
+                 ;; WARNING using dom/ul & dom/li here breaks
+                 (apply dom/span #js {:className "mc-list"}
+                        (for [choice (map :value (:choices mc))]
+                          (let [id (str input-name "-" choice)]
+                            (dom/span #js {:className "mc-choice"}
+                                      (dom/input #js {:id id
+                                                      :react-key (str question-id "-" input-name "-" choice)
+                                                      :type "radio"
+                                                      :checked (= choice (get current-answers (keyword input-name)))
+                                                      :disabled (not enabled)
+                                                      :onChange (when enabled (fn [event]
+                                                                                (om/update!
+                                                                                 cursor
+                                                                                 [:view :chapter-quiz chapter-id :test :questions question-id :answer input-name]
+                                                                                 choice)))}
+                                                 (dom/label #js {:htmlFor id}
+                                                            (raw-html choice)))))))])))
+      (into (for [[li ref] (map list
+                                (:line-input-fields question-data)
+                                (if enabled
+                                  (into ["FOCUSED_INPUT"]
+                                        (rest (map :name (:line-input-fields question-data)))
+                                        )
+                                  (map :name (:line-input-fields question-data))))]
+              (let [input-name (:name li)]
+                [input-name
+                 (dom/span nil
+                           (when-let [prefix (:prefix li)]
+                             (str prefix " "))
+                           (dom/input
+                            #js {:value (get current-answers (keyword input-name) "")
+                                 :react-key (str question-id "-" ref)
+                                 :ref ref
+                                 :disabled (not enabled)
+                                 :onChange (when enabled (fn [event]
+                                                           (om/update!
+                                                            cursor
+                                                            [:view :chapter-quiz chapter-id :test :questions question-id :answer input-name]
+                                                            (.. event -target -value))))})
+                           (when-let [suffix (:suffix li)]
+                             (str " " suffix)))])))))
