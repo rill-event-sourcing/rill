@@ -22,8 +22,8 @@
              :port 3449}
 
   :cljsbuild {:builds {:app {:source-paths ["src"]
-                             :compiler {:output-to "target/js/app.js"
-                                        :output-dir "target/js/app"
+                             :compiler {:preamble ["reagent/react.min.js"]
+                                        :output-to "target/js/app.js"
                                         :optimizations :advanced}}
                        :dev {:source-paths ["dev" "src" "test"]
                              :compiler {:output-to "resources/public/js/app.js"
