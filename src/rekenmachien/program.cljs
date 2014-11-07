@@ -106,30 +106,18 @@
 
    :else (throw :syntax-error)))
 
-(def precision 10)
-(def max-digits (+ precision 2))
-
-(defn- take-exp [s]
-  (js/parseInt (or (last (re-find #"e(.*)" s)) "0")))
-
-(defn render-result [val]
-  (if (math/fraction? val)
-    (str val)
-    (let [val (js/parseFloat (.toPrecision val precision))
-          exp (js/parseInt (or (last (re-find #"e(.*)" (.toExponential val 10))) "0"))
-          res (if (< -0.01 val 0.01) (.toExponential val 10) (str val))
-          res (if (< -9 exp 1) (.replace (.toFixed val precision) #"\.?0*$" "") res)
-          res (if (> exp 9) (.toExponential val 10) res)
-          res (.replace res "." ",")
-          res (.replace res #",?0*e\+?" "×10^")]
-      res)))
-
 (defn run [{:keys [tokens]}]
   (try
     (let [val (calc (parser/parse tokens))]
       (when-not (or (math/finite? val) (math/fraction? val))
         (throw :math-error))
       (reset! previous-result-atom val)
-      (render-result val))
+      val)
     (catch js/Object ex
       (if (= :math-error ex) "MATH ERROR" "SYNTAX ERROR"))))
+
+(defn ans [decimal?]
+  (let [previous-result (or @previous-result-atom 0)]
+    (if decimal?
+      (math/decimal previous-result)
+      previous-result)))

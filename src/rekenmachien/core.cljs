@@ -2,6 +2,7 @@
   (:require [clojure.string :as s]
             [clojure.browser.dom :as dom]
             [clojure.browser.event :as event]
+            [rekenmachien.math :as math]
             [rekenmachien.program :as program]
             [reagent.core :as reagent :refer [atom]]))
 
@@ -12,6 +13,7 @@
 (defonce light-mode-atom (atom false))
 (defonce cursor-location-atom (atom 0))
 (defonce result-atom (atom nil))
+(defonce frac-decimal-toggle-atom (atom false))
 
 (def button-labels
   {:inv "INV", :dec "f↔d"
@@ -35,12 +37,19 @@
     :right (swap! program-atom program/right)
     :del (swap! program-atom program/del)
     :clear (do (reset! program-atom program/empty)
+               (reset! frac-decimal-toggle-atom false)
                (reset! result-atom nil))
 
     :show (when-not (program/empty? @program-atom)
             (let [result (program/run @program-atom)]
               (swap! program-atom program/do-clear-on-insert)
+              (reset! frac-decimal-toggle-atom false)
               (reset! result-atom result)))
+
+    :dec (do
+           (reset! inv-mode-atom false)
+           (swap! frac-decimal-toggle-atom not)
+           (reset! result-atom (program/ans @frac-decimal-toggle-atom)))
 
     ;; otherwise
     (do (reset! inv-mode-atom false)
@@ -64,9 +73,26 @@
        (when (>= cursor (count tokens)) {:class "with-cursor"}))
       " "]]))
 
-(defn result-component []
-  (let [result @result-atom]
-    [:div.result (str @result-atom)]))
+
+(def precision 10)
+
+(defn decimal->str [val]
+  (let [val (js/parseFloat (.toPrecision val precision))
+        exp (js/parseInt (or (last (re-find #"e(.*)" (.toExponential val 10))) "0"))
+        res (if (< -0.01 val 0.01) (.toExponential val 10) (str val))
+        res (if (< -9 exp 1) (.replace (.toFixed val precision) #"\.?0*$" "") res)
+        res (if (> exp 9) (.toExponential val 10) res)
+        res (.replace res "." ",")
+        res (.replace res #",?0*e\+?" "×10^")]
+    res))
+
+(defn result-component [val]
+  (let [val @result-atom]
+    [:div.result
+     (cond
+      (math/fraction? val) (str val)
+      (number? val) (decimal->str val)
+      :else (str val))]))
 
 (defn main-component []
   [:div.rekenmachien
