@@ -97,7 +97,9 @@
 
 (defmethod handle-event :studyflow.learning.entry-quiz.events/Passed
   [model {:keys [student-id course-id]}]
-  (update-in model [:students student-id :course-entry-quiz-passed] (fnil conj #{}) course-id))
+  (-> model
+      (update-in [:students student-id :course-entry-quiz-passed] (fnil conj #{}) course-id)
+      (m/set-remedial-chapters-finished student-id)))
 
 ;; student time spent tracking
 (defn end-time-spent [model {:keys [student-id] :as event}]
@@ -139,7 +141,7 @@
 
 (defmethod handle-event :studyflow.learning.chapter-quiz.events/Passed
   [model {:keys [chapter-id student-id]}]
-  (update-in model [:students student-id :chapter-status] assoc chapter-id :finished))
+  (m/set-chapter-status model chapter-id student-id :finished))
 
 (defmethod handle-event :studyflow.learning.entry-quiz.events/Started
   [model event]

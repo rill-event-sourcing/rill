@@ -10,6 +10,7 @@
             [studyflow.learning.course.events :as course]
             [studyflow.learning.entry-quiz.events :as entry-quiz]
             [studyflow.learning.section-test.events :as section-test]
+            [studyflow.learning.chapter-quiz.events :as chapter-quiz]
             [studyflow.learning.tracking.events :as tracking]
             [studyflow.school-administration.department.events :as department]
             [studyflow.school-administration.student.events :as student]
@@ -181,28 +182,25 @@
   (let [model model-with-fred-barney-and-course
         teacher (first (vals (:teachers model)))
         class (first (classes model teacher))
-        chapters-with-finishing-data (fn [model] (get-in (chapter-list model class nil nil)
-                                                         [:chapters-with-finishing-data]))
+        students [{:id "fred"} {:id "barney"}]
         chapter-completion (fn [model] (get-in (chapter-list model class nil nil)
                                                [:chapters-completion]))
         section-total-status (fn [model] (get-in (chapter-list model class "chapter-1" "section-1")
                                                  [:sections-total-status "chapter-1" "section-1"]))]
-    (testing "number of students"
-      (is (= 2 (get-in (chapter-list model class nil nil)
-                       [:total-number-of-students]))))
     (testing "no practising done"
       (is (= 2 (:unstarted (section-total-status model))))
       (is (and (= {:total 4, :stuck 0, :finished 0} (get (chapter-completion model) "chapter-1"))
                (= {:total 2, :stuck 0, :finished 0} (get (chapter-completion model) "chapter-2"))))
-      (is (and (= 0 (get (chapters-with-finishing-data model) "chapter-1"))
-               (= 0 (get (chapters-with-finishing-data model) "chapter-2"))))
       (is (= ["Barney Rubble" "Fred Flintstone"]
              (map :full-name (get-in (section-total-status model) [:student-list :unstarted])))))
     (testing "fred passes the entry quiz"
       (let [model (load-model model-with-fred-barney-and-course
-                              (entry-quiz/passed "course" "fred"))]
-        (is (and (= 1 (get (chapters-with-finishing-data model) "chapter-1"))
-                 (= 0 (get (chapters-with-finishing-data model) "chapter-2"))))))
+                              (entry-quiz/passed "course" "fred"))
+            average-completions (average-students-completion model students (:chapters course))]
+        (and (is (= 100 (student-percentage-progress-in-chapter model "fred" (first (:chapters course)))))
+             (is (= 0 (student-percentage-progress-in-chapter model "fred" (second (:chapters course))))))
+        (and (is (= 50 (get average-completions "chapter-1")))
+             (is (= 0 (get average-completions "chapter-2"))))))
     (testing "fred starts a test on section 1, chapter 1"
       (let [model (load-model model (section-test/created "section-1" "fred" "course"))]
         (is (= 1 (:in-progress (section-total-status model))))
@@ -221,12 +219,21 @@
             (is (= 1 (:in-progress (section-total-status model))))
             (is (= ["Fred Flintstone"]
                    (map :full-name (get-in (section-total-status model) [:student-list :in-progress]))))))))
+    (testing "fred passes the first chapter quiz"
+      (let [model (load-model model (chapter-quiz/passed "course" "chapter-1" "fred"))
+            average-completions (average-students-completion model students (:chapters course))]
+        (and (is (= 100 (student-percentage-progress-in-chapter model "fred" (first (:chapters course)))))
+             (is (= 0 (student-percentage-progress-in-chapter model "fred" (second (:chapters course))))))
+        (and (is (= 50 (get average-completions "chapter-1")))
+             (is (= 0 (get average-completions "chapter-2"))))))
     (testing "fred finishes section 1, chapter 1"
-      (let [model (load-model model (section-test/finished "section-1" "fred" "chapter-1" 1))]
-        (is (and (= 0 (get (chapters-with-finishing-data model) "chapter-1"))
-                 (= 0 (get (chapters-with-finishing-data model) "chapter-2"))))
+      (let [model (load-model model (section-test/finished "section-1" "fred" "chapter-1" 1))
+            average-completions (average-students-completion model students (:chapters course))]
         (is (= {:total 4, :stuck 0, :finished 1} (get (chapter-completion model) "chapter-1")))
         (is (= 1 (:finished (section-total-status model))))
+        (is (= 33 (student-percentage-progress-in-chapter model "fred" (first (:chapters course)))))
+        (and (is (= 17 (get average-completions "chapter-1")))
+             (is (= 0 (get average-completions "chapter-2"))))
         (is (= ["Fred Flintstone"]
                (map :full-name (get-in (section-total-status model) [:student-list :finished]))))))))
 

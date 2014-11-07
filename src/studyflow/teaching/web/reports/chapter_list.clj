@@ -35,10 +35,8 @@
                                                                        " struikelblokken"))}
                    [:span {:class "stuck_sign"} (str total-students-stuck-in-chapter)]
                    [:span {:class "warning_sign"} "&#9888;"]]))
-              (let [students-who-completed-this-chapter (get-in chapter-list [:chapters-with-finishing-data chapter-id] 0)
-                    total-students (get-in chapter-list [:total-number-of-students])]
-                [:span (str (Math/round (float (/ (* 100 students-who-completed-this-chapter) total-students)))
-                            "%")])]
+              (let [average-students-completion (get-in chapter-list [:average-students-completion chapter-id] 0)]
+                [:span (str average-students-completion "%")])]
 
              (when (= selected-chapter-id chapter-id)
                [:ol.section-list
@@ -53,8 +51,8 @@
                       (let [students-stuck-in-section (get section-counts :stuck)]
                         (when students-stuck-in-section
                           [:div {:title (str students-stuck-in-section (if (= 1 students-stuck-in-section)
-                                                                       " struikelblok"
-                                                                       " struikelblokken"))}
+                                                                         " struikelblok"
+                                                                         " struikelblokken"))}
                            [:span {:class "stuck_sign"} students-stuck-in-section]
                            [:span {:class "warning_sign"} "&#9888;"]]))
                       (let [finished-students (get section-counts :finished 0)
@@ -67,6 +65,14 @@
                                             (Math/round (float (/ (* 100 finished-students) total-students)))
                                             "%;")}
                           [:span (str finished-students "/" total-students)]]])])])])])]]
+
+        (when (and selected-chapter-id (not selected-section-id))
+          (let[chapter-status-list (get-in chapter-list [:chapter-status-list])]
+
+            [:div.teacher_chapter_list_main
+             (for [status [:unfinished :finished]]
+               (for [student (sort-by :full-name (get chapter-status-list status))]
+                 [:div.student {:class (name status)} (:full-name student)]))]))
 
         (when-let [section-counts (get-in chapter-list [:sections-total-status selected-chapter-id selected-section-id])]
           [:div.teacher_chapter_list_main
