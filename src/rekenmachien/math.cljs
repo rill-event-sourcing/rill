@@ -55,10 +55,10 @@
     (Frac. (* -1 n) d))
 
   (gcf [_]
-    (let [n (abs n) d (abs d)]
-      (last
-       (filter #(and (integer? (/ n %)) (integer? (/ d %)))
-               (range 1 (inc (if (< n d) n d)))))))
+    (loop [n (abs n) d (abs d)]
+      (let [r (rem n d)]
+        (when-not (finite? r) (throw :math-error))
+        (if (= r 0) d (recur d r)))))
 
   (toString [this]
     (let [s (if (or (< n 0) (< d 0)) "-")
