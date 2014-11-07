@@ -138,9 +138,14 @@
       :department department
       :version (aggregate-version model (:id teacher)))))
 
-(defn list-teachers [model]
-  (map (partial decorate-teacher model)
-       (sort-by :full-name (vals (:teachers model)))))
+(defn list-teachers
+  ([model department-ids]
+     (map (partial decorate-teacher model)
+          (sort-by :full-name (filter #(get department-ids (:department-id %))
+                                      (vals (:teachers model))))))
+  ([model]
+     (map (partial decorate-teacher model)
+          (sort-by :full-name (vals (:teachers model))))))
 
 (defn get-teacher [model id]
   (decorate-teacher model (get-in model [:teachers id])))

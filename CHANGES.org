@@ -2,6 +2,7 @@
 ** NEXT RELEASE:
 *** New: Updated computation of percentage for chapters in chapter list (now more closely reflect the status of the class)
 *** New: When opening a chapter in the chapter-list report, you see which student have and have not finished the chapter
+*** New: Show students & teachers in department and school editing screens
 *** New: Updated favicon in all applications to reflect the new login
 ** release-2014-11-05.1
 *** New: Chapter quizzes!

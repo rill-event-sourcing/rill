@@ -1,5 +1,6 @@
 (ns studyflow.school-administration.web.schools.query
   (:require [compojure.core :refer [GET defroutes]]
+            [clojure.string :as string]
             [hiccup.core :refer [h]]
             [hiccup.form :as form]
             [rill.uuid :refer [uuid]]
@@ -59,6 +60,21 @@
       [:button.primary {:type "submit"} "Add school"]
       (cancel-button)]])))
 
+(defn teachers-table
+  [teachers]
+  [:table
+   [:caption "Teachers"]
+   [:thead
+    [:tr [:th.name "Name"] [:th.email "E-mail"] [:th.department "Department"] [:th.department "Classes"] [:th.actions]]]
+   (into [:tbody] (map (fn [{:keys [full-name email department class-names id]}]
+                         [:tr
+                          [:td (h full-name)]
+                          [:td (h email)]
+                          [:td (h (:name department))]
+                          [:td (h (string/join #", " class-names))]
+                          [:td.actions
+                           [:a.button.edit {:href (str "/edit-teacher/" id)} "Edit"]]])
+                       teachers))])
 (defn students-table
   [students]
   [:table
@@ -75,7 +91,7 @@
                            [:a.button.edit {:href (str "/edit-student/" id)} "Edit"]]])
                        students))])
 
-(defn render-edit [school students post-params {:keys [errors] :as options}]
+(defn render-edit [school teachers students post-params {:keys [errors] :as options}]
   (let [{:keys [id version name brin]} (merge school post-params)
         departments (:departments school)
         {original-name :name} school]
@@ -127,6 +143,7 @@
                departments)]]
         [:div.no-records "No departments added yet."])]
 
+     (teachers-table teachers)
      (students-table students))))
 
 
@@ -138,8 +155,12 @@
   (GET "/edit-school/:id" {:keys [read-model]
                            {:keys [id]} :params
                            {:keys [post-params errors warning] :as flash} :flash}
-       (let [school (read-model/get-school read-model (uuid id))]
-         (render-edit school (read-model/list-students read-model (set (map :id (:departments school)))) post-params flash))))
+       (let [school (read-model/get-school read-model (uuid id))
+             department-ids  (set (map :id (:departments school)))]
+         (render-edit school
+                      (read-model/list-teachers read-model department-ids)
+                      (read-model/list-students read-model department-ids)
+                      post-params flash))))
 
 (def queries
   (fn [req]
