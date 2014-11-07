@@ -47,3 +47,25 @@
 
 .block-input
   display: block
+
+.has-prefix
+  +border-left-radius(0)
+
+.has-suffix
+  +border-right-radius(0)
+
+.prefix, .suffix
+  background: #fafafa
+  border: 1px solid #d7dbe7
+  text-align: center
+  padding: 10px 15px
+  height: 40px
+  line-height: 40px
+
+.prefix
+  border-right: 0
+  +border-left-radius(6px)
+
+.suffix
+  border-left: 0
+  +border-right-radius(6px)

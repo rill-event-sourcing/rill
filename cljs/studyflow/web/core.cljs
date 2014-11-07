@@ -183,8 +183,7 @@
               answer-revealed (get-in cursor [:view :section section-id :input field-name :answer-revealed])
               input-classes (str ""
                                  (when (:prefix field) "has-prefix ")
-                                 (when (:suffix field) "has-suffix"))
-              ]
+                                 (when (:suffix field) "has-suffix"))]
           (dom/span nil
                     (when-let [prefix (:prefix field)]
                       (dom/span #js {:className "prefix"} prefix))
