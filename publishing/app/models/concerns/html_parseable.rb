@@ -15,7 +15,9 @@ module HtmlParseable
     [
      [/allowfullscreen/, "allowfullscreen=\"\""],
      ["\r", ""],
-     [/<math>(.*?)<\/math>/m, "<math></math>"]
+     [/<math>(.*?)<\/math>/m, "<math></math>"],
+     [" < ", " &gt; "],
+     [" > ", " &lt; "]
     ]
   end
 
