@@ -29,7 +29,6 @@ namespace :html do
   desc "fix html question classes"
   task :question => :environment  do
     [Question, Subsection].each do |html_type|
-      p 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
       p html_type.to_s
       html_type.where([
                        "text LIKE ? OR text LIKE ?",
