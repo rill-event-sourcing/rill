@@ -1,5 +1,8 @@
 * Release Changelog
 ** NEXT RELEASE:
+*** New: Various fixes for inputs and new styling of content!
+*** New: Redesign of the sidebar: now the "Explanation" and "Questions" toggling is in the header
+*** Fix: Now reavealing an answer correctly triggers the stumbling block
 *** Fix: Login form on iOS 8 position problems
 *** New: Progress bar in chapter quiz window!
 *** New: Updated computation of percentage for chapters in chapter list (now more closely reflect the status of the class)
