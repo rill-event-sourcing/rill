@@ -200,7 +200,7 @@
                 tools))))
 
 (defn input-builders
-  [cursor chapter-id question-id question-data current-answers enabled cursor-path]
+  [cursor question-id question-data current-answers enabled cursor-path]
   (-> {}
       (into (for [mc (:multiple-choice-input-fields question-data)]
               (let [input-name (:name mc)]
