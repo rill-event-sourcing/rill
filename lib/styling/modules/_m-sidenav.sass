@@ -4,7 +4,7 @@
 #m-sidenav
   +single-transition(transform, ease, 1s)
   position: fixed
-  width: 336px
+  width: 280px
   top: 66px
   bottom: 0
   left: 0
@@ -50,15 +50,19 @@
   .section_list_item
     +box-sizing(border-box)
     position: relative
+    margin-top: 1px
+    &:nth-last-child(2)
+      &:before
+        display: none
 
     &.finished
       &:after
-        background: url(/images/icon-section-finished-yellow.png) no-repeat 5px 6px #fceac7
-        border-color: #ebd8af
+        background: url(/images/check-white.svg) no-repeat center #d4d9df
+        border-color: #a9b4bf
 
     &.in_progress
       &:after
-        //background: black
+        background: #d4d9df
 
     &:after
       display: block
@@ -70,30 +74,34 @@
       top: 50%
       margin-top: -15px
       content: ''
-      background: #f8f7f2
-      border: 2px solid #e6e4e1
+      background: white
+      border: 2px solid #a9b4bf
+      z-index: 60
+
+    &:before
+      position: absolute
+      content: ''
+      width: 3px
+      height: 70px
+      top: 50%
+      left: 31px
+      background: #a9b4bf
+      z-index: 50
 
     &.open
-      background: #efeeea
-      border-bottom: 2px solid #e4e2df
-      border-top: 2px solid #e4e2df
-      margin: -1px -2px 0 0
-      padding: 15px 0 5px 0
+      +background-image(linear-gradient(to right, #fcfbf7 20%, white 40%))
+      margin: 1px -2px 0 0
       &:after
-        top: 12px
-        margin-top: 0
         border-color: #f3b339
         background: #ffcd69
+      &.finished
+        &:after
+          background: url(/images/check-white.svg) no-repeat center #ffcd69
       .section_link
-        border: 0
         font-weight: 500
         color: #434d56 !important
-        padding-top: 0
-        padding-bottom: 0
-        +text-shadow(none)
-        margin-bottom: 12px
         &:after
-          display: none
+          right: 0
 
     .section_link
       display: block
@@ -108,46 +116,14 @@
         color: #515b62
       &:after
         height: 2px
-        width: 263px
+        width: 210px
         background: #e4e2df
         display: block
         content: ''
         bottom: -1px
-        right: 0
+        right: -2px
         position: absolute
-
-    .section_tab
-      display: block
-      margin: 0 0 2px 76px
-      font-size: 14px
-      font-weight: 500
-      line-height: 40px
-      padding-left: 45px
-      border: 2px solid transparent
-      color: #888d91
-      text-shadow: 0 1px rgba(255,255,255,0.4)
-      letter-spacing: -0.2px
-      &:hover
-        color: #515b62
-      &.selected
-        background: white
-        +border-left-radius(6px)
-        color: #434d56
-        border: 2px solid #dddcd9
-        border-right: 0
-
-      &.explanation
-        background: url(/images/icon-explanation-inactive.png) no-repeat 7px 5px
-        background-size: 30px
-        &.selected
-          background: url(/images/icon-explanation.png) no-repeat 7px 5px white
-          background-size: 30px
-      &.questions
-        background: url(/images/icon-questions-inactive.png) no-repeat 11px 8px
-        background-size: 25px
-        &.selected
-          background: url(/images/icon-questions.png) no-repeat 9px 6px white
-          background-size: 30px
+        z-index: 999
 
 #meta_content
   position: fixed

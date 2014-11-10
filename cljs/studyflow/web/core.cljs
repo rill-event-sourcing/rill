@@ -834,7 +834,7 @@
                                            history-link)})
                     (dom/ul #js {:className "section-toggle"}
                             (dom/li nil
-                                    (dom/a #js {:className (str "section-toggle"
+                                    (dom/a #js {:className (str "section-toggle-link explanation-link"
                                                                 (when (= section-tab :explanation)
                                                                   " selected"))
                                                 :href (-> (get-in cursor [:view :selected-path])
@@ -842,7 +842,7 @@
                                                           history-link)}
                                            "Uitleg"))
                             (dom/li nil
-                                    (dom/a #js {:className (str "section-toggle"
+                                    (dom/a #js {:className (str "section-toggle-link questions-link"
                                                                 (when (= section-tab :questions)
                                                                   " selected"))
                                                 :href (-> (get-in cursor [:view :selected-path])

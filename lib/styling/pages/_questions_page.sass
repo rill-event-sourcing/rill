@@ -3,10 +3,12 @@
 .questions_page
   #m-top_header
     background: rgba(155, 226, 255, 0.95)
-    border-top: 4px solid #348fb4
+    border-top: 4px solid #7bb4cd
     border-bottom: 2px solid #8ed6f3
     #home
       background: url(/images/icon-home-blue.png) no-repeat 4px 7px
+    .section-toggle-link
+      border-color: #7bb4cd
   #m-sidenav
     background: #eff5fc
     border-color: #d2d8de
@@ -15,25 +17,19 @@
     .section_link
       color: #888f95
       &:after
-        background: #e4eaf1
+        background: #d2d8de
     .section_list_item
       &.open
-        background: #d3dfe9
-        border-color: #c0cfdb
+        +background-image(linear-gradient(to right, #eff5fc 20%, #ffffff 40%))
         &:after
           background: #59caf8 !important
           border-color: #40a3cb
-      &:after
-        border-color: #ccd2d8
-        background: #eff3f8
+        &.finished
+          &:after
+            background: url(/images/check-white.svg) no-repeat center #59caf8 !important
       &.finished
         &:after
-          background: url(/images/icon-section-finished-blue.png) no-repeat 5px 6px #d3d9df
-    .section_tab
-      color: #8b969f
-      &.selected
-        border-color: #a4b8ca
-        color: #434d56
+          background: url(/images/check-white.svg) no-repeat center #d3d9df
     #meta_content
       background: #d3dfe9
       border-color: #c0cfdb
