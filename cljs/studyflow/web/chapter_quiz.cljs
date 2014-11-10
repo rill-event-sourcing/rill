@@ -461,21 +461,23 @@
                              (when chapter-quiz-agg
                                (om/build hearts-bar cursor))
                              (when (= chapter-quiz-status :running)
-                               (dom/p #js {:id "quiz_counter"}
-                                      (str "Vraag " question-index  " van " question-total))))
+                               (dom/div #js {:className "progress" :id "quiz_counter"}
+                                        (dom/div #js {:className "progress_bar"
+                                                      :style #js {:width
+                                                                  (str (Math/round (float (/ (* 100 question-index) question-total))) "%")}}
+                                                 (dom/span nil (str "Vraag " question-index  " van " question-total))))))
 
                  (dom/section #js {:id "main"}
-                              (do (prn [:chapter-quis==== chapter-quiz-agg])
-                                  (cond
-                                   (or (nil? chapter-quiz-agg)
-                                       (= (:locked chapter-quiz-agg) false))
-                                   (om/build chapter-quiz-loading cursor)
-                                   (= chapter-quiz-status :passed)
-                                   (om/build chapter-quiz-passed cursor)
-                                   (= chapter-quiz-status :failed)
-                                   (om/build chapter-quiz-failed cursor)
-                                   :else
-                                   (om/build chapter-quiz-question cursor)))))))
+                              (cond
+                               (or (nil? chapter-quiz-agg)
+                                   (= (:locked chapter-quiz-agg) false))
+                               (om/build chapter-quiz-loading cursor)
+                               (= chapter-quiz-status :passed)
+                               (om/build chapter-quiz-passed cursor)
+                               (= chapter-quiz-status :failed)
+                               (om/build chapter-quiz-failed cursor)
+                               :else
+                               (om/build chapter-quiz-question cursor))))))
     om/IWillMount
     (will-mount [_]
       (helpers/ipad-fix-scroll-after-switching))))
