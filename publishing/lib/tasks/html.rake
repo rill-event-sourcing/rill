@@ -38,11 +38,13 @@ namespace :html do
         p item.id
         text = item.text.chomp
         p text
-        text.gsub!(/<div class="question">(.*?)<\/div>/im, "")
-        text.gsub!(/<div class="m-question">(.*?)<\/div>/im, "")
+        text.gsub!(/<div class="question">(.*?)<\/div>/im, "\\1")
+        text.gsub!(/<div class="m-question">(.*?)<\/div>/im, "\\1")
         text.gsub!(%(<div class="question">), "")
         text.gsub!(%(<div class="m-question">), "")
-        item.update_attribute(:text, text.strip.chomp.strip.chomp)
+        text = text.strip.chomp.strip.chomp
+        p text
+        item.update_attribute(:text, text)
       end
     end
   end
