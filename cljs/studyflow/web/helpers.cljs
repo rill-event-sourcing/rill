@@ -229,22 +229,32 @@
                                         (rest (map :name (:line-input-fields question-data)))
                                         )
                                   (map :name (:line-input-fields question-data))))]
-              (let [input-name (:name li)]
-                [input-name
-                 (dom/span nil
-                           (when-let [prefix (:prefix li)]
-                             (str prefix " "))
-                           (dom/input
-                            #js {:value (get current-answers input-name "")
-                                 :react-key (str question-id "-" ref)
-                                 :ref ref
-                                 :disabled (not enabled)
-                                 :onChange (when enabled (fn [event]
-                                                           (om/update!
-                                                            cursor
-                                                            (conj cursor-path input-name)
-                                                            (.. event -target -value))))})
-                           (when-let [suffix (:suffix li)]
-                             (str " " suffix)))])))))
-
-;;[:view :chapter-quiz chapter-id :test :questions question-id :answer input-name]
+              (let [input-name (:name li)
+                    input-style (:style li)
+                    input-classes (str (cond
+                                        (= input-style "big") "big-input"
+                                        (= input-style "exponent") "exponent-input"
+                                        :else "small-input")
+                                       " block-input")
+                    input-length (cond
+                                  (= input-style "big") 14
+                                  (= input-style "exponent") 2
+                                  :else 5)]
+                    [input-name
+                     (dom/span nil
+                               (when-let [prefix (:prefix li)]
+                                 (str prefix " "))
+                               (dom/input
+                                #js {:className input-classes
+                                     :maxLength input-length
+                                     :value (get current-answers input-name "")
+                                     :react-key (str question-id "-" ref)
+                                     :ref ref
+                                     :disabled (not enabled)
+                                     :onChange (when enabled (fn [event]
+                                                               (om/update!
+                                                                cursor
+                                                                (conj cursor-path input-name)
+                                                                (.. event -target -value))))})
+                               (when-let [suffix (:suffix li)]
+                                 (str " " suffix)))])))))
