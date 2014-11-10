@@ -200,7 +200,7 @@
                 tools))))
 
 (defn input-builders
-  [cursor chapter-id question-id question-data current-answers enabled react-hash]
+  [cursor chapter-id question-id question-data current-answers enabled cursor-path]
   (-> {}
       (into (for [mc (:multiple-choice-input-fields question-data)]
               (let [input-name (:name mc)]
@@ -213,12 +213,12 @@
                                       (dom/input #js {:id id
                                                       :react-key (str question-id "-" input-name "-" choice)
                                                       :type "radio"
-                                                      :checked (= choice (get current-answers (keyword input-name)))
+                                                      :checked (= choice (get current-answers input-name))
                                                       :disabled (not enabled)
                                                       :onChange (when enabled (fn [event]
                                                                                 (om/update!
                                                                                  cursor
-                                                                                 (cons react-hash input-name)
+                                                                                 (conj cursor-path input-name)
                                                                                  choice)))}
                                                  (dom/label #js {:htmlFor id}
                                                             (raw-html choice)))))))])))
@@ -235,14 +235,16 @@
                            (when-let [prefix (:prefix li)]
                              (str prefix " "))
                            (dom/input
-                            #js {:value (get current-answers (keyword input-name) "")
+                            #js {:value (get current-answers input-name "")
                                  :react-key (str question-id "-" ref)
                                  :ref ref
                                  :disabled (not enabled)
                                  :onChange (when enabled (fn [event]
                                                            (om/update!
                                                             cursor
-                                                            [:view :chapter-quiz chapter-id :test :questions question-id :answer input-name]
+                                                            (conj cursor-path input-name)
                                                             (.. event -target -value))))})
                            (when-let [suffix (:suffix li)]
                              (str " " suffix)))])))))
+
+;;[:view :chapter-quiz chapter-id :test :questions question-id :answer input-name]

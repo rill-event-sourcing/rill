@@ -193,8 +193,8 @@
             question-data (chapter-quiz-question-by-id cursor data-channel chapter-id question-id)
             course-id (get-in cursor [:static :course-id])
             chapter-quiz-aggregate-version (:aggregate-version chapter-quiz)
-            answers (om/value (:inputs question))
-            inputs (input-builders cursor chapter-id question-id question-data answers false
+            current-answers (om/value (get-in cursor [:view :chapter-quiz chapter-id :test :questions question-id :answer] {}))
+            inputs (input-builders cursor chapter-id question-id question-data current-answers false
                                    [:view :chapter-quiz chapter-id :test :questions question-id :answer])
             question-total (get-in cursor [:view :course-material :chapters-by-id chapter-id :chapter-quiz :number-of-questions])
             last-question (= question-total (count questions))
