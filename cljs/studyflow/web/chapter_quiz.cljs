@@ -141,7 +141,8 @@
             course-id (get-in cursor [:static :course-id])
             chapter-quiz-aggregate-version (:aggregate-version chapter-quiz)
             current-answers (om/value (get-in cursor [:view :chapter-quiz chapter-id :test :questions question-id :answer] {}))
-            inputs (input-builders cursor chapter-id question-id question-data current-answers true)
+            inputs (input-builders cursor chapter-id question-id question-data current-answers true
+                                   [:view :chapter-quiz chapter-id :test :questions question-id :answer])
             answering-allowed (every? (fn [input-name]
                                         (seq (get current-answers input-name)))
                                       (keys inputs))]
@@ -193,7 +194,8 @@
             course-id (get-in cursor [:static :course-id])
             chapter-quiz-aggregate-version (:aggregate-version chapter-quiz)
             answers (om/value (:inputs question))
-            inputs (input-builders cursor chapter-id question-id question-data answers false)
+            inputs (input-builders cursor chapter-id question-id question-data answers false
+                                   [:view :chapter-quiz chapter-id :test :questions question-id :answer])
             question-total (get-in cursor [:view :course-material :chapters-by-id chapter-id :chapter-quiz :number-of-questions])
             last-question (= question-total (count questions))
             failed-quiz (let [wrong-count (get-in cursor [:aggregates chapter-id :questions-wrong-count])]

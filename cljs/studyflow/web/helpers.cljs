@@ -200,7 +200,7 @@
                 tools))))
 
 (defn input-builders
-  [cursor chapter-id question-id question-data current-answers enabled]
+  [cursor chapter-id question-id question-data current-answers enabled react-hash]
   (-> {}
       (into (for [mc (:multiple-choice-input-fields question-data)]
               (let [input-name (:name mc)]
@@ -218,7 +218,7 @@
                                                       :onChange (when enabled (fn [event]
                                                                                 (om/update!
                                                                                  cursor
-                                                                                 [:view :chapter-quiz chapter-id :test :questions question-id :answer input-name]
+                                                                                 (cons react-hash input-name)
                                                                                  choice)))}
                                                  (dom/label #js {:htmlFor id}
                                                             (raw-html choice)))))))])))
