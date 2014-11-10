@@ -1,4 +1,18 @@
 namespace :html do
+
+  desc "fix html sum classes"
+  task :sum => :environment  do
+    connection = ActiveRecord::Base.connection
+    {
+      %(<p class="m-sum">) => "<p>"
+    }.each do |old, new|
+      connection.execute "UPDATE questions   SET text  = replace(text,  '#{old}', '#{new}')"
+      connection.execute "UPDATE subsections SET text  = replace(text,  '#{old}', '#{new}')"
+      connection.execute "UPDATE choices     SET value = replace(value, '#{old}', '#{new}')"
+      connection.execute "UPDATE questions   SET worked_out_answer = replace(worked_out_answer, '#{old}', '#{new}')"
+    end
+  end
+
   desc "fix html br"
   task :br => :environment  do
     connection = ActiveRecord::Base.connection
