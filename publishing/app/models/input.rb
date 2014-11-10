@@ -30,6 +30,10 @@ class Input < ActiveRecord::Base
     is_a?(MultipleChoiceInput)
   end
 
+  def inline?
+    inputable_type == 'Subsection'
+  end
+
 private
 
   def set_position

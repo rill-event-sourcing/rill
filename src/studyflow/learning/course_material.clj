@@ -23,6 +23,7 @@
 
 (def LineInputField
   {:name FieldName
+   :style s/Str
    (s/optional-key :prefix) s/Str
    (s/optional-key :suffix) s/Str
    (s/optional-key :width) s/Int

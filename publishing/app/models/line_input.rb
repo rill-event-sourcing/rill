@@ -12,7 +12,8 @@ class LineInput < Input
   def to_publishing_format
     hash = {
       name: "_INPUT_#{position}_",
-      correct_answers: answers.map(&:value)
+      correct_answers: answers.map(&:value),
+      style: style
     }
     hash[:prefix] = prefix unless prefix.blank?
     hash[:suffix] = suffix unless suffix.blank?
