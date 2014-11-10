@@ -35,7 +35,7 @@ module ApplicationHelper
     htmlClass = 'small-input'
     htmlClass = 'big-input'      if input.style == 'big'
     htmlClass = 'exponent-input' if input.style == 'exponent'
-    htmlClass += ' block-input'  if input.inline?
+    htmlClass += ' block-input'  unless input.inline?
 
     htmlLength = '5'
     htmlLength = '14' if input.style == 'big'
