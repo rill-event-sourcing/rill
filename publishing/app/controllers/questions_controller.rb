@@ -78,8 +78,6 @@ class QuestionsController < ApplicationController
     @question = @section.questions.find_by_uuid(params[:id], false) if params[:id]
   end
 
-
-
   def set_breadcrumb
     @crumbs = [{name: @course.name, url: root_path}]
     @crumbs << {name: @chapter.title, url: chapter_sections_path(@chapter)}

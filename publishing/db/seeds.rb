@@ -7,7 +7,7 @@ english = Course.create(name: 'English')
 entry_quiz_counting = EntryQuiz.create(instructions: "Do this and that", feedback: "Great, you're done with the entry quiz", threshold: 1, course: counting)
 # With two questions
 eq_1 = Question.create(text: "2+2= _INPUT_1_ Which one is highest? _INPUT_2_", active: true, worked_out_answer: "4 and 42", quizzable: entry_quiz_counting)
-eq_1_1 = LineInput.create(inputable: eq_1, prefix: "", suffix: "")
+eq_1_1 = LineInput.create(inputable: eq_1, prefix: "", suffix: "", style: "big")
 eq_1_1_answer = Answer.create(value: "4", line_input: eq_1_1)
 eq_1_2 = MultipleChoiceInput.create(inputable: eq_1)
 eq_1_2_1 = Choice.create(multiple_choice_input: eq_1_2, value: "1", correct: false)
@@ -15,7 +15,7 @@ eq_1_2_2 = Choice.create(multiple_choice_input: eq_1_2, value: "16", correct: fa
 eq_1_2_3 = Choice.create(multiple_choice_input: eq_1_2, value: "42", correct: true)
 
 eq_2 = Question.create(text: "One banana plus two bananas? _INPUT_2_ What is the lowest natural number? _INPUT_1_", active: true, worked_out_answer: "three bananas! 0", quizzable: entry_quiz_counting)
-eq_2_1 = LineInput.create(inputable: eq_2, suffix: "bananas", width: 200)
+eq_2_1 = LineInput.create(inputable: eq_2, suffix: "bananas", width: 200, style: "exponent")
 eq_2_1_answer = Answer.create(value: "3", line_input: eq_2_1)
 eq_2_1_answer_2  = Answer.create(value: "three", line_input: eq_2_1)
 

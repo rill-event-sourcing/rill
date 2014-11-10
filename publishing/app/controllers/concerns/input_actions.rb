@@ -10,9 +10,10 @@ module InputActions
     line_inputs_hash.each do |id, values|
       line_input = question.line_inputs.where(id: id).first
       line_input.update_attributes(
+        style: values[:style],
+        width: values[:width],
         prefix: values[:prefix],
-        suffix: values[:suffix],
-        width: values[:width]
+        suffix: values[:suffix]
       )
       (values[:answers] || {}).each do |id,values|
         answer = line_input.answers.where(id: id).first

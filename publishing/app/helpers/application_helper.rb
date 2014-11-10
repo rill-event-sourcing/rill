@@ -32,9 +32,18 @@ module ApplicationHelper
   end
 
   def line_input_to_html(input)
+    htmlClass = 'small-input'
+    htmlClass = 'big-input'      if input.style == 'big'
+    htmlClass = 'exponent-input' if input.style == 'exponent'
+    htmlClass += ' block-input'  unless input.inline?
+
+    htmlLength = '5'
+    htmlLength = '14' if input.style == 'big'
+    htmlLength = '2'  if input.style == 'exponent'
+
     content_tag(:span) do
       content_tag(:span, input.prefix) +
-      content_tag(:input, nil) +
+      content_tag(:input, nil, class: htmlClass, maxlength: htmlLength) +
       content_tag(:span, input.suffix)
     end
   end
