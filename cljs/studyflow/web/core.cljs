@@ -89,35 +89,20 @@
                                 :as section} (:sections chapter)]
                            (let [open-section (= section-id
                                                  (get-in cursor [:view :selected-path :section-id]))]
-                             (apply dom/li #js {:className
-                                                (str "section_list_item "
-                                                     (when open-section
-                                                       "open ")
-                                                     (get
-                                                      {:finished "finished"
-                                                       :stuck "stumbling_block"
-                                                       :in-progress "in_progress"}
-                                                      (aggregates/section-test-progress
-                                                       (get-in cursor [:aggregates section-id]))
-                                                      ""))}
-                                    (dom/a #js {:href (section-explanation-link cursor chapter section)
-                                                :className "section_link"}
-                                           title)
-                                    (when open-section
-                                      [(dom/a #js {:className (str "section_tab explanation"
-                                                                   (when (= section-tab :explanation)
-                                                                     " selected"))
-                                                   :href (-> (get-in cursor [:view :selected-path])
-                                                             (assoc :section-tab :explanation)
-                                                             history-link)}
-                                              "Uitleg")
-                                       (dom/a #js {:className (str "section_tab questions"
-                                                                   (when (= section-tab :questions)
-                                                                     " selected"))
-                                                   :href (-> (get-in cursor [:view :selected-path])
-                                                             (assoc :section-tab :questions)
-                                                             history-link)}
-                                              "Vragen")]))))
+                             (dom/li #js {:className
+                                          (str "section_list_item "
+                                               (when open-section
+                                                 "open ")
+                                               (get
+                                                {:finished "finished"
+                                                 :stuck "stumbling_block"
+                                                 :in-progress "in_progress"}
+                                                (aggregates/section-test-progress
+                                                 (get-in cursor [:aggregates section-id]))
+                                                ""))}
+                                     (dom/a #js {:href (section-explanation-link cursor chapter section)
+                                                 :className "section_link"}
+                                            title))))
                          [(chapter-quiz/chapter-quiz-navigation-button cursor (:chapter-quiz chapter) chapter-id)]))
                  (dom/div #js {:id "meta_content"}
                           (om/build show-sidebar cursor)))))))
@@ -855,5 +840,20 @@
                                 :href  (-> (get-in cursor [:view :selected-path])
                                            (assoc :main :dashboard)
                                            history-link)})
-                    (dom/h1 #js {:id "page_heading"}
-                            (:title section)))))))
+                    (dom/ul #js {:className "section-toggle"}
+                            (dom/li nil
+                                    (dom/a #js {:className (str "section-toggle-link explanation-link"
+                                                                (when (= section-tab :explanation)
+                                                                  " selected"))
+                                                :href (-> (get-in cursor [:view :selected-path])
+                                                          (assoc :section-tab :explanation)
+                                                          history-link)}
+                                           "Uitleg"))
+                            (dom/li nil
+                                    (dom/a #js {:className (str "section-toggle-link questions-link"
+                                                                (when (= section-tab :questions)
+                                                                  " selected"))
+                                                :href (-> (get-in cursor [:view :selected-path])
+                                                          (assoc :section-tab :questions)
+                                                          history-link)}
+                                           "Vragen"))))))))

@@ -8,8 +8,8 @@
   position: fixed
   z-index: 800
   background: rgba(255, 194, 77, 0.95)
-  border-top: 4px solid #e69b0c
-  border-bottom: 2px solid #e69b0c
+  border-top: 4px solid #e7ae3b
+  border-bottom: 2px solid #e7ae3b
 
   #logo
     color: #717e92
@@ -30,6 +30,27 @@
     top: 10px
     content: ''
     background: url(/images/icon-home.png) no-repeat 4px 7px
+
+  .section-toggle
+    text-align: center
+    margin: 23px 0 0 200px
+    li
+      display: inline-block
+      width: 134px
+    .section-toggle-link
+      color: #455158
+      font-size: 16px
+      padding: 12px 40px
+      border: 2px solid #c48f15
+      font-weight: 500
+      letter-spacing: -0.3px
+      &.selected
+        background: white
+    .explanation-link
+      +border-left-radius(6px)
+    .questions-link
+      +border-right-radius(6px)
+      border-left: 0
 
   #page_heading
     color: #434d56
@@ -63,7 +84,6 @@
       cursor: pointer
       &:hover
         color: #B9C7DD
-
 
   .questions
     float: right
