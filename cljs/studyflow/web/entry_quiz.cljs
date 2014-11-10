@@ -38,13 +38,17 @@
                                 (:line-input-fields question)
                                 (into ["FOCUSED_INPUT"]
                                       (rest (map :name (:line-input-fields question)))))]
-              (let [input-name (:name li)]
+              (let [input-name (:name li)
+                    input-classes (str ""
+                                       (when (:prefix li) "has-prefix ")
+                                       (when (:suffix li) "has-suffix"))]
                 [input-name
                  (dom/span nil
                            (when-let [prefix (:prefix li)]
-                             (str prefix " "))
+                             (dom/span #js {:className "prefix"} prefix))
                            (dom/input
-                            #js {:value (get current-answers input-name "")
+                            #js {:className input-classes
+                                 :value (get current-answers input-name "")
                                  :react-key (str index "-" ref)
                                  :ref ref
                                  :onChange (fn [event]
@@ -53,7 +57,7 @@
                                               [:view :entry-quiz index :answer input-name]
                                               (.. event -target -value)))})
                            (when-let [suffix (:suffix li)]
-                             (str " " suffix)))])))))
+                             (dom/span #js {:className "suffix"} suffix)))])))))
 
 (defn instructions-panel [cursor owner]
   (reify
