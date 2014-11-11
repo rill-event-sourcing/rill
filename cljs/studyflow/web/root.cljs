@@ -17,7 +17,7 @@
   (let [material (get-in cursor [:view :course-material])]
     (first (filter (fn [c]
                      (let [aggregate (get-in cursor [:aggregates (:id c)])]
-                       (and (= (-> c :chapter-quiz :status) "started")
+                       (and (#{"running" "running-fast-track"} (-> c :chapter-quiz :status))
                             (if aggregate
                               (= :running (:status aggregate))
                               true))))

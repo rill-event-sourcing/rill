@@ -14,7 +14,7 @@
           button-class (str "btn chapter-quiz-btn yellow "
                             (case chapter-quiz-status
                               nil "fast-track-btn"
-                              "un-locked" ""
+                              "running-fast-track" "fast-track-btn"
                               "passed" "passed"
                               nil))]
       (prn [:status chapter-quiz-status])

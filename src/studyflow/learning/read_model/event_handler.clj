@@ -69,29 +69,29 @@
 
 (defmethod handle-event ::chapter-quiz/Started
   [model {:keys [chapter-id student-id]}]
-  (m/set-student-chapter-quiz-status model chapter-id student-id :started))
+  (m/update-student-chapter-quiz-status model chapter-id student-id :started))
 
 (defmethod handle-event ::chapter-quiz/Locked
   [model {:keys [chapter-id student-id]}]
-  (m/set-student-chapter-quiz-status model chapter-id student-id :locked))
+  (m/update-student-chapter-quiz-status model chapter-id student-id :locked))
 
 (defmethod handle-event ::chapter-quiz/UnLocked
   [model {:keys [chapter-id student-id]}]
-  (m/set-student-chapter-quiz-status model chapter-id student-id :un-locked))
+  (m/update-student-chapter-quiz-status model chapter-id student-id :un-locked))
 
 (defmethod handle-event ::chapter-quiz/Stopped
   [model {:keys [chapter-id student-id]}]
-  (m/set-student-chapter-quiz-status model chapter-id student-id :failed))
+  (m/update-student-chapter-quiz-status model chapter-id student-id :stopped))
 
 (defmethod handle-event ::chapter-quiz/Failed
   [model {:keys [chapter-id student-id]}]
-  (m/set-student-chapter-quiz-status model chapter-id student-id :failed))
+  (m/update-student-chapter-quiz-status model chapter-id student-id :failed))
 
 (defmethod handle-event ::chapter-quiz/Passed
   [model {:keys [chapter-id student-id]}]
   (-> model
       (m/set-chapter-status chapter-id student-id :finished)
-      (m/set-student-chapter-quiz-status chapter-id student-id :passed)))
+      (m/update-student-chapter-quiz-status chapter-id student-id :passed)))
 
 (defmethod handle-event :studyflow.school-administration.teacher.events/Created
   [model {:keys [teacher-id full-name]}]

@@ -1,8 +1,17 @@
 (ns user
-  (:require [clojure.tools.logging :as log]
-            [studyflow.super-system :as super-system]
+  (:require [cheshire.core :as json]
+            [clojure.java.io :as io]
+            [clojure.string :as string]
+            [clojure.tools.logging :as log]
+            [clojure.tools.namespace.repl :refer [refresh]]
             [com.stuartsierra.component :as component]
-            [clojure.tools.namespace.repl :refer [refresh]])
+            [ring.mock.request :refer [request]]
+            [studyflow.json-tools :refer [key-from-json]]
+            [studyflow.super-system :as super-system]
+            [rill.handler :refer [try-command]]
+            [studyflow.learning.course.commands :as course]
+            [studyflow.learning.course]
+            [rhizome.viz :as viz])
   (:import [org.apache.log4j Logger]))
 
 
@@ -45,7 +54,19 @@
   (refresh :after 'user/go))
 
 
+(defn update-material!
+  [path]
+  (let [material (json/parse-string (slurp (io/file path)) key-from-json)
+        store (:store (:event-store system))]
+    (try-command store (course/publish! (:id material) material))))
 
 
 
+(defn view-transitions
+  [transitions]
+  (viz/view-graph (distinct (apply concat (keys transitions) (map vals (vals transitions))))
+                  #(distinct (vals (transitions %)))
+                  :node->descriptor (fn [n] {:label n})
+                  :edge->descriptor (fn [s d]
+                                      {:label (string/join ", " (filter #(= d (get-in transitions [s %])) (keys (transitions s))))})))
 

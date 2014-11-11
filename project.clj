@@ -52,7 +52,8 @@
                                                     [om "0.7.3"]
                                                     [com.facebook/react "0.9.0.1"]
                                                     [cljs-ajax "0.2.3"]
-                                                    [cljs-uuid "0.0.4"]]
+                                                    [cljs-uuid "0.0.4"]
+                                                    [rhizome "0.2.1"]]
                                      :plugins [[lein-cljsbuild "1.0.4-SNAPSHOT"]
                                                [com.cemerick/clojurescript.test "0.3.0"]]}}
   :cljsbuild {:builds {:dev {:source-paths ["cljs"]
