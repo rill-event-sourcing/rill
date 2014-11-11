@@ -166,18 +166,10 @@
               answer-submitted? (get-in cursor [:view :section section-id :input field-name :answer-submitted?])
               answered-correctly? (get-in cursor [:view :section section-id :input field-name :answered-correctly?])
               answer-revealed (get-in cursor [:view :section section-id :input field-name :answer-revealed])
-              input-style (:style field)
-              input-classes (str
-                             (cond
-                              (= input-style "big") "big-input"
-                              (= input-style "exponent") "exponent-input"
-                              :else "small-input")
-                             (when (:prefix field) " has-prefix")
-                             (when (:suffix field) " has-suffix"))
-              input-length (cond
-                            (= input-style "big") 14
-                            (= input-style "exponent") 2
-                            :else 5)]
+              input-options (case (:style field)
+                              "big" {:class "big-input" :length 14}
+                              "exponent" {:class "exponent-input" :length 2}
+                              {:class "small-input" :length 5})]
           (dom/span nil
                     (when-let [prefix (:prefix field)]
                       (dom/span #js {:className "prefix"} prefix))
@@ -201,8 +193,8 @@
                                       (submit)
                                       false)}
                      (dom/input
-                      #js {:className (str "inline_input " input-classes)
-                           :maxLength input-length
+                      #js {:className (str "inline_input " (:class input-options))
+                           :maxLength (:length input-options)
                            :placeholder "................."
                            :react-key (:name field)
                            :ref (:name field)

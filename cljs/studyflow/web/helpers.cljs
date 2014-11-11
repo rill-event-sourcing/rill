@@ -201,6 +201,9 @@
 
 (defn input-builders
   [cursor question-id question-data current-answers enabled cursor-path]
+  (println :ok (:line-input-fields question-data))
+  (println :ok (:multiple-choice-input-fields question-data))
+
   (-> {}
       (into (for [mc (:multiple-choice-input-fields question-data)]
               (let [input-name (:name mc)]
@@ -222,39 +225,33 @@
                                                                                  choice)))}
                                                  (dom/label #js {:htmlFor id}
                                                             (raw-html choice)))))))])))
-      (into (for [[li ref] (map list
+      (into (for [[field ref] (map list
                                 (:line-input-fields question-data)
                                 (if enabled
                                   (into ["FOCUSED_INPUT"]
                                         (rest (map :name (:line-input-fields question-data)))
                                         )
                                   (map :name (:line-input-fields question-data))))]
-              (let [input-name (:name li)
-                    input-style (:style li)
-                    input-classes (str (cond
-                                        (= input-style "big") "big-input"
-                                        (= input-style "exponent") "exponent-input"
-                                        :else "small-input")
-                                       " block-input")
-                    input-length (cond
-                                  (= input-style "big") 14
-                                  (= input-style "exponent") 2
-                                  :else 5)]
-                    [input-name
-                     (dom/span nil
-                               (when-let [prefix (:prefix li)]
-                                 (str prefix " "))
-                               (dom/input
-                                #js {:className input-classes
-                                     :maxLength input-length
-                                     :value (get current-answers input-name "")
-                                     :react-key (str question-id "-" ref)
-                                     :ref ref
-                                     :disabled (not enabled)
-                                     :onChange (when enabled (fn [event]
-                                                               (om/update!
-                                                                cursor
-                                                                (conj cursor-path input-name)
-                                                                (.. event -target -value))))})
-                               (when-let [suffix (:suffix li)]
-                                 (str " " suffix)))])))))
+              (let [input-name (:name field)
+                    input-options (case (:style field)
+                              "big" {:class "big-input" :length 14}
+                              "exponent" {:class "exponent-input" :length 2}
+                              {:class "small-input" :length 5})]
+                [input-name
+                 (dom/span nil
+                           (when-let [prefix (:prefix field)]
+                             (str prefix " "))
+                           (dom/input
+                            #js {:className (:class input-options)
+                                 :maxLength (:length input-options)
+                                 :value (get current-answers input-name "")
+                                 :react-key (str question-id "-" ref)
+                                 :ref ref
+                                 :disabled (not enabled)
+                                 :onChange (when enabled (fn [event]
+                                                           (om/update!
+                                                            cursor
+                                                            (conj cursor-path input-name)
+                                                            (.. event -target -value))))})
+                           (when-let [suffix (:suffix field)]
+                             (str " " suffix)))])))))
