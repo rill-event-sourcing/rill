@@ -3,31 +3,39 @@ class CheckingController < ApplicationController
   before_action :set_breadcrumb
 
   def index
-    @parse_errors = {}
-    @image_errors = {}
-
-    Subsection.find_in_batches.each do |items|
-      items.each do |item|
-        perr = item.parse_errors(:text)
-        ierr = item.image_errors(:text)
-        ref = %(<a href="/chapters/#{item.section.chapter.to_param}/sections/#{item.section.to_param}/subsections">#{item.reference}</a>).html_safe
-        @parse_errors[ref] = perr if ref && perr.any?
-        @image_errors[ref] = ierr if ref && ierr.any?
-      end
+    unless Course.current
+      redirect_to root_path
+      return
     end
-    Question.find_in_batches.each do |items|
-      items.each do |item|
-        perr = item.parse_errors(:text)
-        ierr = item.image_errors(:text)
-        if item.quizzable.is_a?(EntryQuiz)
-          ref = %(<a href="/entry_quiz/entry_quiz_questions/#{item.to_param}/edit">#{item.reference}</a>).html_safe
-        elsif item.quizzable.is_a?(Section)
-          ref = %(<a href="/chapters/#{item.quizzable.chapter.to_param}/sections/#{item.quizzable.to_param}/questions/#{item.to_param}/edit">#{item.reference}</a>).html_safe
-        elsif item.quizzable.is_a?(ChapterQuestionsSet)
-          ref = %(<a href="/chapters/#{item.quizzable.chapter_quiz.chapter.to_param}/chapter_quiz/chapter_questions_sets/#{item.quizzable.to_param}/chapter_quiz_questions/#{item.to_param}/edit">#{item.reference}</a>).html_safe
+    course = Course.current
+    @errors = {}
+    course.chapters.each do |chapter|
+      @errors[chapter.title] ||= {}
+      @errors[chapter.title][:html] ||= {}
+      @errors[chapter.title][:images] ||= {}
+
+      chapter.sections.each do |section|
+        section.subsections.each do |subsection|
+          perr = subsection.parse_errors(:text)
+          ierr = subsection.image_errors(:text)
+          ref = %(<a href="/chapters/#{subsection.section.chapter.to_param}/sections/#{subsection.section.to_param}/subsections">#{subsection.reference}</a>).html_safe
+          @errors[chapter.title][:html][ref]   = perr if ref && perr.any?
+          @errors[chapter.title][:images][ref] = ierr if ref && ierr.any?
         end
-        @parse_errors[ref] = perr if ref && perr.any?
-        @image_errors[ref] = ierr if ref && ierr.any?
+
+        section.questions.each do |question|
+          perr = question.parse_errors(:text)
+          ierr = question.image_errors(:text)
+          if question.quizzable.is_a?(EntryQuiz)
+            ref = %(<a href="/entry_quiz/entry_quiz_questions/#{question.to_param}/edit">#{question.reference}</a>).html_safe
+          elsif question.quizzable.is_a?(Section)
+            ref = %(<a href="/chapters/#{question.quizzable.chapter.to_param}/sections/#{question.quizzable.to_param}/questions/#{question.to_param}/edit">#{question.reference}</a>).html_safe
+          elsif question.quizzable.is_a?(ChapterQuestionsSet)
+            ref = %(<a href="/chapters/#{question.quizzable.chapter_quiz.chapter.to_param}/chapter_quiz/chapter_questions_sets/#{question.quizzable.to_param}/chapter_quiz_questions/#{item.to_param}/edit">#{question.reference}</a>).html_safe
+          end
+          @errors[chapter.title][:html][ref]   = perr if ref && perr.any?
+          @errors[chapter.title][:images][ref] = ierr if ref && ierr.any?
+        end
       end
     end
   end
