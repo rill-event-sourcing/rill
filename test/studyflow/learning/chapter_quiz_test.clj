@@ -176,6 +176,7 @@
                                      (section-test-events/finished (second section-ids) student-id chapter-id course-id)
                                      (events/section-finished course-id chapter-id student-id (second section-ids) (set section-ids))
                                      (events/un-locked course-id chapter-id student-id)]))))
+    
     (testing "failing the fast-route, unlocking and starting the chapter-quiz"
       (is (command-result= [:ok [(events/started course-id chapter-id student-id false)
                                  (events/question-assigned course-id chapter-id student-id question-set-1-id question-id)]]

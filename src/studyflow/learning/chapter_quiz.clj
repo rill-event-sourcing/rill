@@ -18,9 +18,34 @@
      current-question-id
      current-question-set-index
      current-question-set-id
-     fast-route?
+     state
      previously-seen-questions ;; {question-set-id => [ first-seen-question-id second-seen-question-id ... ]}
      number-of-errors])
+
+(def transitions
+  "current-state -> event -> new-state || nil
+
+  use user/view-transitions to generate diagram"
+  {nil                 {:started   :running-fast-track
+                        :un-locked :un-locked}
+   :running-fast-track {:passed    :passed
+                        :stopped   :locked
+                        :failed    :locked
+                        ;; This should never happen
+                        ;; but if it does, better to break off the running test
+                        ;; otherwise we'll never unlock the chapter
+                        :un-locked :un-locked}
+   :locked             {:un-locked :un-locked}
+   :un-locked          {:started   :running}
+   :running            {:passed    :passed
+                        :stopped   :un-locked
+                        :failed    :un-locked}})
+
+(defn transition
+  [chapter-quiz event]
+  (update-in chapter-quiz [:state]
+             (fn [old-state]
+               (get-in transitions [old-state event] old-state))))
 
 (defcommand Start!
   :course-id m/Id
@@ -47,26 +72,25 @@
     (*rand-nth* (vec available-questions))))
 
 (defmethod handle-command ::Start!
-  [{:keys [locked? running? previously-seen-questions fast-route?] :as chapter-quiz} {:keys [student-id course-id chapter-id]} course]
-  (if (or locked? running?)
-    [:rejected]
-    (let [question-set (first (course/question-sets-for-chapter-quiz course chapter-id))
-          fast-route? (if (nil? fast-route?) true fast-route?)]
-      [:ok [(events/started course-id chapter-id student-id fast-route?)
-            (events/question-assigned course-id chapter-id student-id (:id question-set) (:id (select-random-question question-set previously-seen-questions)))]])))
+  [{:keys [previously-seen-questions state] :as chapter-quiz} {:keys [student-id course-id chapter-id]} course]
+  (if (or (nil? state)
+          (= :un-locked state))
+    (let [question-set (first (course/question-sets-for-chapter-quiz course chapter-id))]
+      [:ok [(events/started course-id chapter-id student-id (nil? state))
+            (events/question-assigned course-id chapter-id student-id (:id question-set) (:id (select-random-question question-set previously-seen-questions)))]])
+    [:rejected]))
 
 (defmethod handle-event ::events/Started
-  [chapter-quiz {:keys [course-id student-id chapter-id]}]
+  [{:keys [state] :as chapter-quiz} {:keys [course-id student-id chapter-id]}]
   (if chapter-quiz
     ;; restarted
-    (assoc chapter-quiz
-      :number-of-errors 0
-      :current-question-set-index -1
-      :current-question-set-id nil
-      :current-question-id nil
-      :fast-route? false
-      :running? true)
-    (->ChapterQuiz course-id chapter-id student-id nil -1 nil true {} 0)))
+    (-> chapter-quiz
+        (assoc :number-of-errors 0
+               :current-question-set-index -1
+               :current-question-set-id nil
+               :current-question-id nil)
+        (transition :started))
+    (->ChapterQuiz course-id chapter-id student-id nil -1 nil :running-fast-track {} 0)))
 
 (defcommand SubmitAnswer!
   :course-id m/Id
@@ -82,7 +106,7 @@
   [course-id])
 
 (defmethod handle-command ::SubmitAnswer!
-  [{:keys [current-question-id current-question-set-index course-id chapter-id number-of-errors student-id fast-route? previously-seen-questions] :as chapter-quiz} {:keys [inputs question-id] :as command} course]
+  [{:keys [current-question-id current-question-set-index course-id chapter-id number-of-errors student-id previously-seen-questions] :as chapter-quiz} {:keys [inputs question-id] :as command} course]
   {:pre [(= current-question-id question-id)]}
   (if (course/answer-correct? (course/question-for-chapter-quiz course chapter-id current-question-id) inputs)
     (let [correct-answer-event (events/question-answered-correctly course-id chapter-id student-id question-id inputs)]
@@ -116,11 +140,11 @@
 
 (defmethod handle-event ::events/Passed
   [chapter-quiz _]
-  (assoc chapter-quiz :running? false))
+  (transition chapter-quiz :passed))
 
 (defmethod handle-event ::events/Failed
   [chapter-quiz _]
-  (assoc chapter-quiz :running? false))
+  (transition chapter-quiz :failed))
 
 (defcommand DismissErrorScreen!
   :course-id m/Id
@@ -133,9 +157,9 @@
   [course-id])
 
 (defmethod handle-command ::DismissErrorScreen!
-  [{:keys [fast-route? number-of-errors previously-seen-questions current-question-set-index]} {:keys [chapter-id course-id student-id]} course]
+  [{:keys [state number-of-errors previously-seen-questions current-question-set-index]} {:keys [chapter-id course-id student-id]} course]
   (cond
-   (and fast-route?
+   (and (= :running-fast-track state)
         (= 2 number-of-errors))
    [:ok [(events/failed course-id chapter-id student-id)
          (events/locked course-id chapter-id student-id)]]
@@ -156,7 +180,7 @@
 
 (defmethod handle-event ::events/Locked
   [chapter-quiz _]
-  (assoc chapter-quiz :locked? true))
+  (transition chapter-quiz :locked))
 
 (defcommand Stop!
   :course-id m/Id
@@ -169,17 +193,15 @@
   [course-id])
 
 (defmethod handle-command ::Stop!
-  [{:keys [fast-route?]} {:keys [student-id course-id chapter-id]} course]
-  (if fast-route?
+  [{:keys [state]} {:keys [student-id course-id chapter-id]} course]
+  (if (= :running-fast-route state)
     [:ok [(events/stopped course-id chapter-id student-id)
           (events/locked course-id chapter-id student-id)]]
     [:ok [(events/stopped course-id chapter-id student-id)]]))
 
 (defmethod handle-event ::events/Stopped
-  [chapter-quiz event]
-  (assoc chapter-quiz
-    :running? false
-    :fast-route? false))
+  [chapter-quiz _]
+  (transition chapter-quiz :stopped))
 
 (defmethod aggregate-ids ::section-test/Finished
   [{:keys [course-id]}]
@@ -193,7 +215,7 @@
 (defmethod handle-event ::events/SectionFinished
   [chapter-quiz {:keys [section-id course-id chapter-id student-id all-sections]}]
   (-> (or chapter-quiz
-          (->ChapterQuiz course-id chapter-id student-id nil -1 nil true {} 0))
+          (->ChapterQuiz course-id chapter-id student-id nil -1 nil nil {} 0))
       (update-in [:finished-sections] (fnil conj #{}) section-id)
       (assoc-in [:all-sections] all-sections)))
 
@@ -206,7 +228,5 @@
   [chapter-quiz {:keys [course-id chapter-id student-id]}]
   (if chapter-quiz
     ;; restarted
-    (assoc chapter-quiz
-      :locked? false
-      :fast-route? false)
-    (->ChapterQuiz course-id chapter-id student-id nil -1 nil false {} 0)))
+    (transition chapter-quiz :un-locked)
+    (->ChapterQuiz course-id chapter-id student-id nil -1 nil :un-locked {} 0)))
