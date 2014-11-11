@@ -167,9 +167,8 @@
               answered-correctly? (get-in cursor [:view :section section-id :input field-name :answered-correctly?])
               answer-revealed (get-in cursor [:view :section section-id :input field-name :answer-revealed])
               input-options (case (:style field)
-                              "small" {:class "small-input"}
-                              "big" {:class "big-input"}
-                              "exponent" {:class "exponent-input"}
+                              "small" {:class "small-input" :length 5}
+                              "exponent" {:class "exponent-input" :length 2}
                               {:class "big-input"})]
           (dom/span nil
                     (when-let [prefix (:prefix field)]
@@ -195,6 +194,7 @@
                                       false)}
                      (dom/input
                       #js {:className (str "inline_input " (:class input-options))
+                           :maxLength (:length input-options)
                            :placeholder "................."
                            :react-key (:name field)
                            :ref (:name field)
