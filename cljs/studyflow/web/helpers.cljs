@@ -234,16 +234,16 @@
                                   (map :name (:line-input-fields question-data))))]
               (let [input-name (:name field)
                     input-options (case (:style field)
-                              "big" {:class "big-input" :length 14}
-                              "exponent" {:class "exponent-input" :length 2}
-                              {:class "small-input" :length 5})]
+                              "small" {:class "small-input"}
+                              "big" {:class "big-input"}
+                              "exponent" {:class "exponent-input"}
+                              {:class "big-input"})]
                 [input-name
                  (dom/span nil
                            (when-let [prefix (:prefix field)]
                              (str prefix " "))
                            (dom/input
                             #js {:className (:class input-options)
-                                 :maxLength (:length input-options)
                                  :value (get current-answers input-name "")
                                  :react-key (str question-id "-" ref)
                                  :ref ref
