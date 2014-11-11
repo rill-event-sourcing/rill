@@ -20,7 +20,7 @@
                 {
                   "name": "_INPUT_1_",
                   "width": 150,
-                  "style": "small",
+                  "style": "big",
                   "correct_answers": [
                     "2"
                   ]
@@ -56,7 +56,7 @@
                 {
                   "name": "_INPUT_1_",
                   "width": 150,
-                  "style": "small",
+                  "style": "big",
                   "correct_answers": [
                     "7",
                     "seven"
@@ -99,7 +99,7 @@
                 {
                   "name": "_INPUT_1_",
                   "width": 150,
-                  "style": "small",
+                  "style": "big",
                   "correct_answers": [
                     "6"
                   ]
@@ -135,7 +135,7 @@
                 {
                   "name": "_INPUT_1_",
                   "width": 150,
-                  "style": "small",
+                  "style": "big",
                   "correct_answers": [
                     "3",
                     "three"
@@ -178,7 +178,7 @@
                 {
                   "name": "_INPUT_1_",
                   "width": 150,
-                  "style": "small",
+                  "style": "big",
                   "correct_answers": [
                     "12"
                   ]
@@ -214,7 +214,7 @@
                 {
                   "name": "_INPUT_1_",
                   "width": 150,
-                  "style": "small",
+                  "style": "big",
                   "correct_answers": [
                     "4",
                     "four"
@@ -257,7 +257,7 @@
                 {
                   "name": "_INPUT_1_",
                   "width": 150,
-                  "style": "small",
+                  "style": "big",
                   "correct_answers": [
                     "42"
                   ]
@@ -293,7 +293,7 @@
                 {
                   "name": "_INPUT_1_",
                   "width": 150,
-                  "style": "small",
+                  "style": "big",
                   "correct_answers": [
                     "321"
                   ]
@@ -377,7 +377,7 @@
                   "prefix": "pre",
                   "suffix": "suf",
                   "width": 150,
-                  "style": "small",
+                  "style": "big",
                   "correct_answers": [
                     "42"
                   ]
@@ -415,7 +415,7 @@
                   "name": "_INPUT_1_",
                   "suffix": "ohlala",
                   "width": 150,
-                  "style": "small",
+                  "style": "big",
                   "correct_answers": [
                     "6",
                     "8"
@@ -450,7 +450,7 @@
               "prefix": "666",
               "suffix": "euros",
               "width": 150,
-              "style": "small",
+              "style": "big",
               "correct_answers": [
                 "123"
               ]
@@ -513,7 +513,7 @@
                   "prefix": "pre",
                   "suffix": "suf",
                   "width": 150,
-                  "style": "small",
+                  "style": "big",
                   "correct_answers": [
                     "2"
                   ]
@@ -548,7 +548,7 @@
           {
             "name": "_INPUT_1_",
             "width": 150,
-            "style": "big",
+            "style": "small",
             "correct_answers": [
               "4"
             ]
