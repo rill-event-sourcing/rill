@@ -10,8 +10,7 @@
             [studyflow.super-system :as super-system]
             [rill.handler :refer [try-command]]
             [studyflow.learning.course.commands :as course]
-            [studyflow.learning.course]
-            [rhizome.viz :as viz])
+            [studyflow.learning.course])
   (:import [org.apache.log4j Logger]))
 
 
@@ -60,13 +59,22 @@
         store (:store (:event-store system))]
     (try-command store (course/publish! (:id material) material))))
 
+;;;;
+;;;; We can only load rhizome when a graphics environment is available
+;;;;
 
+(def headless?
+  (java.awt.GraphicsEnvironment/getLocalGraphicsEnvironment/isHeadless))
+
+(when-not headless?
+  (require 'rhizome.viz))
 
 (defn view-transitions
   [transitions]
-  (viz/view-graph (distinct (apply concat (keys transitions) (map vals (vals transitions))))
-                  #(distinct (vals (transitions %)))
-                  :node->descriptor (fn [n] {:label n})
-                  :edge->descriptor (fn [s d]
-                                      {:label (string/join ", " (filter #(= d (get-in transitions [s %])) (keys (transitions s))))})))
+  ((find-var 'rhizome.viz/view-graph) (distinct (apply concat (keys transitions) (map vals (vals transitions))))
+   #(distinct (vals (transitions %)))
+   :node->descriptor (fn [n] {:label n})
+   :edge->descriptor (fn [s d]
+                       {:label (string/join ", " (filter #(= d (get-in transitions [s %])) (keys (transitions s))))})))
+
 
