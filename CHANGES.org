@@ -1,5 +1,6 @@
 * Release Changelog
-** NEXT RELEASE:
+** NEXT RELEASE
+** release-2014-11-11.1:
 *** New: Various fixes for inputs and new styling of content!
 *** New: Redesign of the sidebar: now the "Explanation" and "Questions" toggling is in the header
 *** Fix: Now reavealing an answer correctly triggers the stumbling block
