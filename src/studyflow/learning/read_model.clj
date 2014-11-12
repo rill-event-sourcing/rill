@@ -1,4 +1,5 @@
-(ns studyflow.learning.read-model)
+(ns studyflow.learning.read-model
+  (:require [studyflow.learning.chapter-quiz :as chapter-quiz]))
 
 (def empty-model {})
 
@@ -41,26 +42,11 @@
       (select-keys [:id :title])
       (assoc :status (get-in model [:section-statuses (:id section) student-id]))))
 
-(def chapter-quiz-transitions
-  "current-state -> event -> new-state || nil
-
-  use user/view-transitions to generate diagram"
-  {nil                 {:started   :running-fast-track
-                        :un-locked :un-locked}
-   :running-fast-track {:passed    :passed
-                        :stopped   :locked
-                        :failed    :locked}
-   :locked             {:un-locked :un-locked}
-   :un-locked          {:started   :running}
-   :running            {:passed    :passed
-                        :stopped   :un-locked
-                        :failed    :un-locked}})
-
 (defn update-student-chapter-quiz-status
   [model chapter-id student-id event]
   (update-in model [:chapter-quiz-statuses chapter-id student-id]
              (fn [old-state]
-               (get-in chapter-quiz-transitions [old-state event] old-state))))
+               (get-in chapter-quiz/transitions [old-state event] old-state))))
 
 (defn get-chapter-status [model chapter-id student-id]
   (get-in model [:chapter-statuses chapter-id student-id]))
