@@ -69,9 +69,11 @@
     "/reports/completion"))
 
 (defn build-url [& {:keys [report-name class meijerink chapter-id section-id]}]
-  (condp = report-name
+  (case report-name
+    "manuals" "/handleidingen"
     "chapter-list" (chapter-list-url class chapter-id section-id)
-    "completion" (completion-url class meijerink)))
+    "completion" (completion-url class meijerink)
+    "/"))
 
 (defn drop-list-classes [classes current-meijerink report-name selected-class-name]
   [:div {:class "m-select-box class-select" :id "dropdown-classes"}
@@ -117,8 +119,8 @@
       [:input {:type "hidden" :name "_method" :value "DELETE"}]
       [:button {:type "submit" :id "logout-form"}])]
     [:nav#m-main-sidenav
-     [:a {:href "/handleidingen"} "Handleidingen"]
      [:ul#main-container-nav
+      [:li.main-container-nav-list-item]
       (map (fn [[report-name label]]
              [:li.main-container-nav-list-item
               [:a.main-container-nav-tab
@@ -126,7 +128,8 @@
                                           " selected"))
                 :href (build-url :report-name report-name :class class)}
                label]])
-           [["completion" "Overzicht"]
+           [["manuals" "Handleidingen"]
+            ["completion" "Overzicht"]
             ["chapter-list" "Hoofdstukken"]])]]
     [:section#main_teaching body]
     [:footer]

@@ -13,6 +13,7 @@
    options
    nil
    nil
+
    [:h1#page-title "Handleidingen"]
    [:div.m-teacher-manuals
     [:table.manuals
