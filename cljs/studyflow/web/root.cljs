@@ -41,11 +41,11 @@
                                    "questions_page"
                                    "")}
                  (when (get-in cursor [:aggregates :failed])
-                   (modal
-                    (dom/h1 nil "Je bent niet meer up-to-date met de server. Herlaad de pagina.")
-                    (dom/button #js {:onClick (fn [e]
-                                                (.reload js/location true))}
-                                "Herlaad de pagina")))
+                   (modal (dom/h1 nil "Je bent niet meer up-to-date met de server. Herlaad de pagina.")
+                          "Herlaad de pagina"
+                          (fn [e]
+                            (.reload js/location true))))
+                 
                  (when-not (= :entry-quiz
                               (get-in cursor [:view :selected-path :main]))
                    (entry-quiz/entry-quiz-modal cursor owner))

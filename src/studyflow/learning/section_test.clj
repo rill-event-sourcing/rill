@@ -126,7 +126,7 @@
   [{:keys [streak-length current-question-status finished?]}]
   (and (not finished?)
        (nil? current-question-status)
-       (= streak-length (dec streak-length-to-finish-test))))
+       (>= streak-length (dec streak-length-to-finish-test))))
 
 (defn correct-answer-will-complete-streak?
   "Given that the next answer will be correct, check if it should trigger a StreakCompleted event"

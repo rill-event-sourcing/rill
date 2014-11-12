@@ -59,16 +59,17 @@
                                   (dom/li nil "Je kunt de test zo vaak proberen als je wilt")
                                   (dom/li nil "Duurt ongeveer 10-30 minuten")
                                   (dom/li nil "Als je stopt moet je opnieuw"))))
-               (dom/button #js {:onClick (fn []
-                                           (dismiss-modal)
-                                           (async/put! (om/get-shared owner :command-channel)
-                                                       ["chapter-quiz-commands/start"
-                                                        chapter-id student-id])
-                                           (set! (.-location js/window)
-                                                 (history-link {:main :chapter-quiz
-                                                                :chapter-id chapter-id})))}
-                           "Start Hoofdstuktest")
+               "Start Hoofdstuktest"
+               (fn []
+                 (dismiss-modal)
+                 (async/put! (om/get-shared owner :command-channel)
+                             ["chapter-quiz-commands/start"
+                              chapter-id student-id])
+                 (set! (.-location js/window)
+                       (history-link {:main :chapter-quiz
+                                      :chapter-id chapter-id})))
                (dom/a #js {:href ""
+                           :className "btn big gray"
                            :onClick (fn []
                                       (dismiss-modal)
                                       false)}
@@ -346,25 +347,26 @@
             fast-route? (:fast-route? chapter-quiz-agg)]
         (dom/div #js {:id "quiz-page"}
                  (when show-exit-modal
-                   (modal  (if fast-route?
-                             (dom/div nil
-                                      (dom/h1 nil "Hoofdstuktest")
-                                      (dom/p nil "Weet je zeker dat je de Hoofdstuktest wil stoppen? Als je de test nu stopt, kun je hem pas weer maken wanneer je alle paragrafen in dit hoofdstuk hebt afgerond."))
-                             (dom/div nil
-                                      (dom/h1 nil "Hoofdstuktest")
-                                      (dom/p nil "Weet je zeker dat je de Hoofdstuktest wil stoppen?")
-                                      (dom/p nil "Als je de test stopt moet je hem opnieuw maken.")))
-                           (dom/button #js {:onClick (fn []
-                                                       (dismiss-modal)
-                                                       (async/put! (om/get-shared owner :command-channel)
-                                                                   ["chapter-quiz-commands/stop"
-                                                                    chapter-id student-id]))}
-                                       "Stop Hoofdstuktest")
-                           (dom/a #js {:href ""
-                                       :onClick (fn []
-                                                  (dismiss-modal)
-                                                  false)}
-                                  "Doorgaan")))
+                   (modal (if fast-route?
+                            (dom/div nil
+                                     (dom/h1 nil "Hoofdstuktest")
+                                     (dom/p nil "Weet je zeker dat je de Hoofdstuktest wil stoppen? Als je de test nu stopt, kun je hem pas weer maken wanneer je alle paragrafen in dit hoofdstuk hebt afgerond."))
+                            (dom/div nil
+                                     (dom/h1 nil "Hoofdstuktest")
+                                     (dom/p nil "Weet je zeker dat je de Hoofdstuktest wil stoppen?")
+                                     (dom/p nil "Als je de test stopt moet je hem opnieuw maken.")))
+                          "Stop Hoofdstuktest"
+                          (fn []
+                            (dismiss-modal)
+                            (async/put! (om/get-shared owner :command-channel)
+                                        ["chapter-quiz-commands/stop"
+                                         chapter-id student-id]))
+                          (dom/a #js {:href ""
+                                      :className "btn big gray"
+                                      :onClick (fn []
+                                                 (dismiss-modal)
+                                                 false)}
+                                 "Doorgaan")))
                  (dom/header #js {:id "m-top_header"}
                              (if (= :running chapter-quiz-status)
                                ;; only need to confirm leaving when

@@ -177,15 +177,16 @@
                                     (dom/li #js {:className "m-icon_row_item time"} "Duurt ongeveer 30 minuten")
                                     (dom/li #js {:className "m-icon_row_item onlyonce"} "Kun je maar " (dom/br nil) "1 keer" (dom/br nil) "doen")
                                     (dom/li #js {:className "m-icon_row_item stopgo"} "Stoppen en later weer verder gaan")))
-                   (dom/button #js {:onClick (fn []
-                                               (dismiss-modal)
-                                               (set! (.-location js/window)
-                                                     (history-link {:main :entry-quiz})))}
-                               "Instaptoets starten")
+                   "Instaptoets starten"
+                   (fn []
+                     (dismiss-modal)
+                     (set! (.-location js/window)
+                           (history-link {:main :entry-quiz})))
                    (dom/a #js {:href ""
                                :onClick (fn []
                                           (dismiss-modal)
-                                          false)}
+                                          false)
+                               :className "btn big gray"}
                           "Later maken"))
         :dismissed
         nil ;; show link at the dashboard in a deeper nesting

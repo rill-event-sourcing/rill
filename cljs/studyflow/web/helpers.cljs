@@ -11,25 +11,43 @@
   [raw]
   (dom/span #js {:dangerouslySetInnerHTML #js {:__html raw}} nil))
 
-(defn update-js [js-obj key f]
-  (let [key (if (keyword? key)
-              (name key)
-              key)
-        p (.-props js-obj)]
-    (aset p key (f (get p key)))
-    js-obj))
+(defn on-enter
+  "Execute f and prevent default actions when enter key event is passed"
+  [f]
+  (fn [e]
+    (if (= (.-keyCode e) 13) ;; ENTER key
+      (do (.stopPropagation e)
+          (.preventDefault e)
+          (f)
+          false)
+      true)))
 
-(defn modal [content primary-button & [secondary-button]]
-  (dom/div #js {:id "m-modal"
-                :className "show"}
-           (dom/div #js {:className "modal_inner"}
-                    content
-                    (dom/div #js {:className "modal_footer"}
-                             (when secondary-button
-                               (update-js secondary-button
-                                          :className (fnil (partial str "btn big gray") "")))
-                             (update-js primary-button
-                                        :className (partial str "btn big yellow pull-right"))))))
+(defn- modal-fn
+  [cursor owner]
+  (reify
+    om/IRender
+    (render [_]
+      (dom/div #js {:id "m-modal"
+                    :className "show"
+                    :onKeyPress (on-enter (:submit-fn cursor))}
+               (dom/div #js {:className "modal_inner"}
+                        (:content cursor)
+                        (dom/div #js {:className "modal_footer"}
+                                 (:secondary-button cursor)
+                                 (dom/button #js {:className  "btn big yellow pull-right"
+                                                  :onClick (:submit-fn cursor)
+                                                  :ref "PRIMARY_BUTTON"}
+                                             (:submit-text cursor))))))
+    om/IDidMount
+    (did-mount [_]
+      (when-let [focusing (om/get-node owner "PRIMARY_BUTTON")]
+        (.focus focusing)))))
+
+(defn modal [content submit-text submit-fn & [secondary-button]]
+  (om/build modal-fn {:content content
+                      :submit-fn submit-fn
+                      :submit-text submit-text
+                      :secondary-button secondary-button}))
 
 (def html->om
   {"a" dom/a, "b" dom/b, "big" dom/big, "br" dom/br, "dd" dom/dd, "div" dom/div,

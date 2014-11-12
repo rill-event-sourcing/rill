@@ -11,7 +11,7 @@
             [studyflow.web.chapter-quiz :as chapter-quiz]
             [studyflow.web.service :as service]
             [studyflow.web.history :refer [history-link]]
-            [studyflow.web.helpers :refer [input-builders tool-box modal raw-html tag-tree-to-om focus-input-box section-explanation-link] :as helpers]
+            [studyflow.web.helpers :refer [input-builders tool-box modal raw-html tag-tree-to-om focus-input-box section-explanation-link on-enter] :as helpers]
             [studyflow.web.recommended-action :refer [recommended-action]]
             [clojure.walk :as walk]
             [cljs.core.async :as async])
@@ -360,8 +360,6 @@
                       "Toon antwoord")
           (dom/span nil nil))))))
 
-(def key-listener (atom nil)) ;; should go into either cursor or local state
-
 (defn watch-notifications!
   [notification-channel cursor]
   (go (loop []
@@ -409,6 +407,81 @@
             nil)
           (recur)))))
 
+(defn finish-modal
+  [cursor owner student-id course-id chapter-id section-id section-test-aggregate-version]
+  (let [finish-section-gif (rand-nth ["https://assets.studyflow.nl/learning/206.gif"
+                                      "https://assets.studyflow.nl/learning/haters.gif"
+                                      "https://assets.studyflow.nl/learning/helping-dogs.gif"
+                                      "https://assets.studyflow.nl/learning/sewing.gif"
+                                      "https://assets.studyflow.nl/learning/milk.gif"])
+        submit (fn []
+                 ;; TODO: this should set the window.location, not change the selected-path directly
+                 (om/update! cursor
+                             [:view :selected-path]
+                             (let [cursor @cursor]
+                               (-> (get-in cursor [:view :selected-path])
+                                   (merge (get-in cursor [:view :course-material :forward-section-links
+                                                          {:chapter-id chapter-id :section-id section-id}])))))
+                 (om/update! cursor
+                             [:view :progress-modal]
+                             :dismissed))]
+    (modal (dom/span nil
+                     (dom/h1 nil "Yes! Je hebt 5 vragen achter elkaar goed!")
+                     (dom/img #js {:src finish-section-gif})
+                     (dom/p nil "Deze paragraaf is nu klaar. Ga verder naar de volgende paragraaf (of blijf nog even oefenen)." ))
+           "Volgende paragraaf" submit
+           (dom/a #js {:href ""
+                       :className "btn big gray"
+                       :onClick (fn [e]
+                                  (om/update! cursor
+                                              [:view :progress-modal]
+                                              :dismissed)
+                                  (async/put! (om/get-shared owner :command-channel)
+                                              ["section-test-commands/next-question"
+                                               section-id
+                                               student-id
+                                               section-test-aggregate-version
+                                               course-id])
+                                  false)}
+                  "Blijven oefenen"))))
+
+(defn stuck-modal
+  [cursor owner]
+  (let [explanation-link (-> (get-in cursor [:view :selected-path])
+                             (assoc :section-tab :explanation)
+                             history-link)
+        stumbling-gif "https://assets.studyflow.nl/learning/187.gif"
+        submit (fn []
+                 (om/update! cursor
+                             [:view :progress-modal]
+                             :dismissed)
+                 (js/window.location.assign explanation-link))]
+    (modal (dom/span nil
+                     (dom/h1 #js {:className "stumbling_block"} "Oeps! deze is moeilijk")
+                     (dom/img #js {:src stumbling-gif})
+                     (dom/p nil "We raden je aan om de uitleg nog een keer te lezen." (dom/br nil) "Dan worden de vragen makkelijker!"))
+           "Uitleg lezen" submit)))
+
+(defn completed-modal
+  [cursor owner chapter-id section-id]
+  (let [complete-again-section-gif "https://assets.studyflow.nl/learning/184.gif"
+        submit (fn []
+                 ;; TODO assign to location instead
+                 (om/update! cursor
+                             [:view :selected-path]
+                             (let [cursor @cursor]
+                               (-> (get-in cursor [:view :selected-path])
+                                   (merge (get-in cursor [:view :course-material :forward-section-links
+                                                          {:chapter-id chapter-id :section-id section-id}])))))
+                 (om/update! cursor
+                             [:view :progress-modal]
+                             :dismissed))]
+    (modal (dom/span nil
+                     (dom/h1 nil "Hoppa! Weer goed!")
+                     (dom/img #js {:src complete-again-section-gif})
+                     (dom/p nil "Je hebt deze paragraaf nog een keer voltooid." (dom/br nil) "We denken dat je hem nu wel snapt :)."))
+           "Volgende paragraaf" submit)))
+
 (defn question-panel [cursor owner]
   (reify
     om/IWillMount
@@ -430,16 +503,7 @@
             answer-correct (when (contains? question :correct)
                              (:correct question))
             progress-modal (get-in cursor [:view :progress-modal])
-            complete-again-section-gif "https://assets.studyflow.nl/learning/184.gif"
-            stumbling-gif "https://assets.studyflow.nl/learning/187.gif"
-            finish-section-gif (rand-nth ["https://assets.studyflow.nl/learning/206.gif"
-                                          "https://assets.studyflow.nl/learning/haters.gif"
-                                          "https://assets.studyflow.nl/learning/helping-dogs.gif"
-                                          "https://assets.studyflow.nl/learning/sewing.gif"
-                                          "https://assets.studyflow.nl/learning/milk.gif"])
-            explanation-link (-> (get-in cursor [:view :selected-path])
-                                 (assoc :section-tab :explanation)
-                                 history-link)
+
             course-id (get-in cursor [:static :course-id])
             section-test-aggregate-version (:aggregate-version section-test)
             submitted-answers (:inputs question)
@@ -453,94 +517,37 @@
                                    (every? (fn [input-name]
                                              (seq (get current-answers input-name)))
                                            (keys inputs)))
-            _ (om/set-state-nr! owner :submit
-                                (fn []
-                                  (when answering-allowed
-                                    (async/put!
-                                     (om/get-shared owner :command-channel)
-                                     ["section-test-commands/check-answer"
+            revealed-answer (get question :worked-out-answer)
+            submit (if answer-correct
+                     (fn []
+                       (if (= progress-modal :launchable)
+                         (let [notification-channel (om/get-shared owner :notification-channel)]
+                           (async/put! notification-channel {:type "studyflow.web.ui/FinishedModal"}))
+                         ;; not= progress-modal :launchable
+                         (async/put! (om/get-shared owner :command-channel)
+                                     ["section-test-commands/next-question"
                                       section-id
                                       student-id
                                       section-test-aggregate-version
-                                      course-id
-                                      question-id
-                                      current-answers]))
-                                  (let [progress-modal (get-in @cursor [:view :progress-modal])]
-                                    (when answer-correct
-                                      (if (= progress-modal :launchable)
-                                        (let [notification-channel (om/get-shared owner :notification-channel)]
-                                          (async/put! notification-channel {:type "studyflow.web.ui/FinishedModal"}))
-                                        ;; not= progress-modal :launchable
-                                        (async/put! (om/get-shared owner :command-channel)
-                                                    ["section-test-commands/next-question"
-                                                     section-id
-                                                     student-id
-                                                     section-test-aggregate-version
-                                                     course-id]))))
-                                  (when (or (= progress-modal :show-finish-modal)
-                                            (= progress-modal :show-streak-completed-modal))
-                                    (do
-                                      (om/update! cursor
-                                                  [:view :selected-path]
-                                                  (let [cursor @cursor]
-                                                    (-> (get-in cursor [:view :selected-path])
-                                                        (merge (get-in cursor [:view :course-material :forward-section-links
-                                                                               {:chapter-id chapter-id :section-id section-id}])))))
-                                      (om/update! cursor
-                                                  [:view :progress-modal]
-                                                  :dismissed)))
-                                  (om/set-state-nr! owner :submit nil)))
-            submit (fn []
-                     (when-let [f (om/get-state owner :submit)]
-                       (f)))
-            revealed-answer (get question :worked-out-answer)]
+                                      course-id])))
+                     (fn []
+                       (when answering-allowed
+                         (async/put!
+                          (om/get-shared owner :command-channel)
+                          ["section-test-commands/check-answer"
+                           section-id
+                           student-id
+                           section-test-aggregate-version
+                           course-id
+                           question-id
+                           current-answers]))))]
 
-        (dom/div nil (condp = progress-modal
-                       :show-finish-modal
-                       (modal (dom/span nil
-                                        (dom/h1 nil "Yes! Je hebt 5 vragen achter elkaar goed!")
-                                        (dom/img #js {:src finish-section-gif})
-                                        (dom/p nil "Deze paragraaf is nu klaar. Ga verder naar de volgende paragraaf (of blijf nog even oefenen)." ))
-                              (dom/button #js {:onClick (fn [e]
-                                                          (submit))}
-                                          "Volgende paragraaf")
-                              (dom/a #js {:href ""
-                                          :onClick (fn [e]
-                                                     (om/update! cursor
-                                                                 [:view :progress-modal]
-                                                                 :dismissed)
-                                                     (async/put! (om/get-shared owner :command-channel)
-                                                                 ["section-test-commands/next-question"
-                                                                  section-id
-                                                                  student-id
-                                                                  section-test-aggregate-version
-                                                                  course-id])
-                                                     false)}
-                                     "Blijven oefenen"))
-                       :show-stuck-modal
-                       (modal (dom/span nil
-                                        (dom/h1 #js {:className "stumbling_block"} "Oeps! deze is moeilijk")
-                                        (dom/img #js {:src stumbling-gif})
-                                        (dom/p nil "We raden je aan om de uitleg nog een keer te lezen." (dom/br nil) "Dan worden de vragen makkelijker!"))
-
-                              (dom/button #js {:onClick
-                                               (fn [e]
-                                                 (om/update! cursor
-                                                             [:view :progress-modal]
-                                                             :dismissed)
-                                                 (js/window.location.assign explanation-link))}
-                                          "Uitleg lezen")
-                              nil)
-
-                       :show-streak-completed-modal
-                       (modal (dom/span nil
-                                        (dom/h1 nil "Hoppa! Weer goed!")
-                                        (dom/img #js {:src complete-again-section-gif})
-                                        (dom/p nil "Je hebt deze paragraaf nog een keer voltooid." (dom/br nil) "We denken dat je hem nu wel snapt :)."))
-                              (dom/button #js {:onClick (fn [e]
-                                                          (submit))}
-                                          "Volgende paragraaf"))
-                       nil)
+        (dom/div #js {:onKeyPress (on-enter submit)}
+                 (case progress-modal
+                   :show-finish-modal (finish-modal cursor owner student-id course-id chapter-id section-id section-test-aggregate-version)
+                   :show-stuck-modal (stuck-modal cursor owner)
+                   :show-streak-completed-modal (completed-modal cursor owner chapter-id section-id)
+                   nil)
 
                  (dom/article #js {:id "m-section"}
                               (tag-tree-to-om (:tag-tree question-data) inputs)
@@ -555,15 +562,12 @@
                             ;; we need the ref for set-focus
                             (dom/button #js {:className "btn blue pull-right"
                                              :ref "FOCUSED_BUTTON"
-                                             :onClick
-                                             (fn []
-                                               (submit))}
+                                             :onClick submit}
                                         (if (= progress-modal :launchable)
                                           "Goed! Voltooi paragraaf"
                                           "Goed! Volgende vraag"))
                             (om/build (click-once-button "Nakijken"
-                                                         (fn []
-                                                           (submit))
+                                                         submit
                                                          :enabled answering-allowed
                                                          :className (get-in cursor [:view :shake-class]))
                                       cursor))
@@ -582,17 +586,7 @@
     om/IDidMount
     (did-mount [_]
       (focus-input-box owner)
-      (helpers/ipad-fix-scroll-after-switching)
-      (let [key-handler (goog.events.KeyHandler. js/document)]
-        (when-let [key @key-listener]
-          (goog.events/unlistenByKey key))
-        (->> (goog.events/listen key-handler
-                                 goog.events.KeyHandler.EventType.KEY
-                                 (fn [e]
-                                   (when (= (.-keyCode e) 13) ;;enter
-                                     (when-let [f (om/get-state owner :submit)]
-                                       (f)))))
-             (reset! key-listener))))))
+      (helpers/ipad-fix-scroll-after-switching))))
 
 (defn section-test-loading [cursor owner]
   (reify
@@ -655,12 +649,6 @@
                                         "Maak een keuze uit het menu"))
                          (om/build section-test cursor))
                        (om/build path-panel cursor)))))))
-
-
-
-
-
-
 
 (defn page-header [cursor owner]
   (reify
