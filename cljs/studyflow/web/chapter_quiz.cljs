@@ -10,7 +10,6 @@
 (defn chapter-quiz-navigation-button [cursor chapter-quiz chapter-id]
   (when (not (zero? (:number-of-questions chapter-quiz)))
     (let [chapter-quiz-status (:status chapter-quiz)
-          chapter-test-agg (get-in cursor [:aggregates chapter-id])
           button-class (str "btn chapter-quiz-btn yellow "
                             (case chapter-quiz-status
                               nil "fast-track-btn"
@@ -156,8 +155,8 @@
                                       (rest (map :name (:line-input-fields question-data)))))]
               (let [input-name (:name li)
                     input-classes (str ""
-                                 (when (:prefix li) "has-prefix ")
-                                 (when (:suffix li) "has-suffix"))]
+                                       (when (:prefix li) "has-prefix ")
+                                       (when (:suffix li) "has-suffix"))]
                 [input-name
                  (dom/span nil
                            (when-let [prefix (:prefix li)]
@@ -250,8 +249,8 @@
                                 (map :name (:line-input-fields question-data)))]
               (let [input-name (:name li)
                     input-classes (str ""
-                                 (when (:prefix li) "has-prefix ")
-                                 (when (:suffix li) "has-suffix"))]
+                                       (when (:prefix li) "has-prefix ")
+                                       (when (:suffix li) "has-suffix"))]
                 [input-name
                  (dom/span nil
                            (when-let [prefix (:prefix li)]
@@ -425,7 +424,8 @@
             dismiss-modal (fn [] (om/update! cursor [:view :chapter-quiz-exit-modal] nil))
             chapter-quiz-agg (get-in cursor [:aggregates chapter-id])
             question-index (inc (:question-index (peek (:questions chapter-quiz-agg))))
-            question-total (get-in cursor [:view :course-material :chapters-by-id chapter-id :chapter-quiz :number-of-questions])
+            chapter (get-in cursor [:view :course-material :chapters-by-id chapter-id])
+            question-total (get-in chapter [:chapter-quiz :number-of-questions])
             chapter-quiz-status (:status chapter-quiz-agg)
             fast-route? (:fast-route? chapter-quiz-agg)]
         (dom/div #js {:id "quiz-page"}
@@ -462,10 +462,7 @@
                                            :href (history-link {:main :dashboard
                                                                 :chapter-id chapter-id})}))
                              (dom/h1 #js {:id "page_heading"}
-                                     (case chapter-quiz-status
-                                       :passed "Einde test"
-                                       :failed "Einde test"
-                                       "Hoofdstuktest"))
+                                     (:title chapter))
                              (when chapter-quiz-agg
                                (om/build hearts-bar cursor))
                              (when (= chapter-quiz-status :running)
