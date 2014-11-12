@@ -1,4 +1,5 @@
-(ns studyflow.learning.read-model)
+(ns studyflow.learning.read-model
+  (:require [studyflow.learning.chapter-quiz :as chapter-quiz]))
 
 (def empty-model {})
 
@@ -41,11 +42,11 @@
       (select-keys [:id :title])
       (assoc :status (get-in model [:section-statuses (:id section) student-id]))))
 
-(defn set-student-chapter-quiz-status [model chapter-id student-id status]
-  ;; A passed chapter-quiz is left always as passed
-  (if (= :passed (get-in model [:chapter-quiz-statuses chapter-id student-id]))
-    model
-    (assoc-in model [:chapter-quiz-statuses chapter-id student-id] status)))
+(defn update-student-chapter-quiz-status
+  [model chapter-id student-id event]
+  (update-in model [:chapter-quiz-statuses chapter-id student-id]
+             (fn [old-state]
+               (get-in chapter-quiz/transitions [old-state event] old-state))))
 
 (defn get-chapter-status [model chapter-id student-id]
   (get-in model [:chapter-statuses chapter-id student-id]))
