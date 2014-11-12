@@ -14,6 +14,22 @@
     {:cursor (or (:insert_order r)
                  (:stream_order r))}))
 
+(defn wrap-auto-retry
+  [f pause-seconds]
+  (fn [& args]
+    (loop [args args]
+      (let [r (try
+                (apply f args)
+                (catch Exception e
+                  (log/error e (str "Exception, will retry in " pause-seconds" seconds."))
+                  ::retry))]
+        (if (= r ::retry)
+          (do (Thread/sleep (* 1000 pause-seconds))
+              (recur args))
+          r)))))
+
+(def retrying-query (wrap-auto-retry sql/query 30))
+
 (defn select-stream-fn
   [spec stream-id]
   (fn [cursor page-size]
@@ -24,8 +40,8 @@
 (defn select-all-fn
   [spec]
   (fn [cursor page-size]
-    (sql/query spec ["SELECT payload, stream_order, insert_order FROM rill_events WHERE insert_order > ? ORDER BY insert_order ASC LIMIT ?"
-                     cursor page-size])))
+    (retrying-query spec ["SELECT payload, stream_order, insert_order FROM rill_events WHERE insert_order > ? ORDER BY insert_order ASC LIMIT ?"
+                          cursor page-size])))
 
 (defn messages
   [cursor page-size selector]
@@ -48,12 +64,12 @@
     (thread
       (log/info "[db] Check which insert_order the database is at (and count events)")
       (let [{watermark :max_insert_order
-             row-count :row_count} (first (sql/query spec ["SELECT MAX(insert_order) as max_insert_order, COUNT(*) as row_count FROM rill_events"]))]
+             row-count :row_count} (first (retrying-query spec ["SELECT MAX(insert_order) as max_insert_order, COUNT(*) as row_count FROM rill_events"]))]
         (log/info "[db] Event-store max :insert_order " watermark " and row-count: " row-count)
         (loop [cursor -1]
-          (let [rows (sql/query spec ["SELECT payload, stream_order, insert_order FROM rill_events WHERE insert_order > ? ORDER BY insert_order ASC LIMIT ?"
-                                      cursor page-size]
-                                :result-set-fn vec)
+          (let [rows (retrying-query spec ["SELECT payload, stream_order, insert_order FROM rill_events WHERE insert_order > ? ORDER BY insert_order ASC LIMIT ?"
+                                           cursor page-size]
+                                     :result-set-fn vec)
                 highest-insert-order (:insert_order (peek rows))]
             (>!! in rows)
             (log/info "[db] Passed along upto :insert_order" highest-insert-order " cursor: " cursor)
@@ -61,7 +77,7 @@
               (log/info "[db] Got a batch with less than page-size events, done with reading db [watermark old-cursor highest-insert-order]" [watermark cursor highest-insert-order])
               (recur highest-insert-order))))
         (log/info "[db] Caught up now, double check the watermarks")
-        (let [new-watermark (:max_insert_order (first (sql/query spec ["SELECT MAX(insert_order) as max_insert_order FROM rill_events"])))]
+        (let [new-watermark (:max_insert_order (first (retrying-query spec ["SELECT MAX(insert_order) as max_insert_order FROM rill_events"])))]
           (log/info "[db] new watermark: " new-watermark " number of events since starting catch-up: " (- new-watermark watermark))))
       (log/info "[db] Finished catching up from db")
       (close! in))
