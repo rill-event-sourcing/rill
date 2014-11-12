@@ -1,5 +1,9 @@
 * Release Changelog
 ** NEXT RELEASE
+** release-2014-11-12.1:
+*** Fix: Rewrote code related to input fields such that it's more mantainable and all in one place
+*** New: Chapter quiz pages now show the title of the chapter they are related to
+*** Fix: Fixed an issue with incorrect unlocking of chapter quiz + flow for chapter quizzes written more clearly in code
 ** release-2014-11-11.1:
 *** New: Various fixes for inputs and new styling of content!
 *** New: Redesign of the sidebar: now the "Explanation" and "Questions" toggling is in the header
