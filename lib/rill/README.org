@@ -2,6 +2,7 @@
 
 * Changelog
 
+  0.1.4 - Auto-retry queries when streaming all events in psql event store
   0.1.2 - Add process managers
   0.1.1 - ???
   0.1.0 - First beta release
