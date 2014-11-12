@@ -4,60 +4,12 @@
             [om.dom :as dom :include-macros true]
             [studyflow.web.aggregates :as aggregates]
             [studyflow.web.core :as core]
-            [studyflow.web.helpers :refer [tool-box raw-html modal tag-tree-to-om focus-input-box]]
+            [studyflow.web.helpers :refer [input-builders tool-box raw-html modal tag-tree-to-om focus-input-box]]
             [studyflow.web.history :refer [history-link]]
             [studyflow.web.service :as service]
             [studyflow.web.recommended-action :refer [first-recommendable-chapter]]
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go]]))
-
-(defn input-builders
-  "mapping from input-name to create react dom element for input type"
-  [cursor index question current-answers]
-  (-> {}
-      (into (for [mc (:multiple-choice-input-fields question)]
-              (let [input-name (:name mc)]
-                [input-name
-                 ;; WARNING using dom/ul & dom/li here breaks
-                 (apply dom/span #js {:className "mc-list"}
-                        (for [choice (map :value (:choices mc))]
-                          (let [id (str input-name "-" choice)]
-                            (dom/span #js {:className "mc-choice"}
-                                      (dom/input #js {:id id
-                                                      :type "radio"
-                                                      :react-key (str index "-" input-name "-" choice)
-                                                      :checked (= choice (get current-answers input-name))
-                                                      :onChange (fn [event]
-                                                                  (om/update!
-                                                                   cursor
-                                                                   [:view :entry-quiz index :answer input-name]
-                                                                   choice))}
-                                                 (dom/label #js {:htmlFor id}
-                                                            (raw-html choice)))))))])))
-      (into (for [[li ref] (map list
-                                (:line-input-fields question)
-                                (into ["FOCUSED_INPUT"]
-                                      (rest (map :name (:line-input-fields question)))))]
-              (let [input-name (:name li)
-                    input-classes (str ""
-                                       (when (:prefix li) "has-prefix ")
-                                       (when (:suffix li) "has-suffix"))]
-                [input-name
-                 (dom/span nil
-                           (when-let [prefix (:prefix li)]
-                             (dom/span #js {:className "prefix"} prefix))
-                           (dom/input
-                            #js {:className input-classes
-                                 :value (get current-answers input-name "")
-                                 :react-key (str index "-" ref)
-                                 :ref ref
-                                 :onChange (fn [event]
-                                             (om/update!
-                                              cursor
-                                              [:view :entry-quiz index :answer input-name]
-                                              (.. event -target -value)))})
-                           (when-let [suffix (:suffix li)]
-                             (dom/span #js {:className "suffix"} suffix)))])))))
 
 (defn instructions-panel [cursor owner]
   (reify
@@ -155,10 +107,10 @@
                                                      entry-quiz-aggregate-version (:aggregate-version entry-quiz)
                                                      student-id (get-in cursor [:static :student :id])
                                                      index  (:question-index entry-quiz)
-                                                     question (get-in material [:questions index])
-                                                     question-text (:text question)
+                                                     question-data (get-in material [:questions index])
+                                                     question-text (:text question-data)
                                                      current-answers (om/value (get-in cursor [:view :entry-quiz index :answer] {}))
-                                                     inputs (input-builders cursor index question current-answers)
+                                                     inputs (input-builders cursor (:id question-data) question-data current-answers true [:view :entry-quiz index :answer])
                                                      answering-allowed
                                                      (every? (fn [input-name]
                                                                (seq (get current-answers input-name)))
@@ -176,9 +128,9 @@
                                                            {:onSubmit (fn []
                                                                         (submit)
                                                                         false)}
-                                                           (tag-tree-to-om (:tag-tree question) inputs)
+                                                           (tag-tree-to-om (:tag-tree question-data) inputs)
                                                            (dom/div #js {:id "m-question_bar"}
-                                                                    (tool-box (:tools question))
+                                                                    (tool-box (:tools question-data))
                                                                     (om/build (core/click-once-button (str "Klaar"
                                                                                                            (when (< (inc index) (count (:questions material)))
                                                                                                              " & volgende vraag"))

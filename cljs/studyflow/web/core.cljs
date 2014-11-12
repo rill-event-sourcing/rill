@@ -11,7 +11,7 @@
             [studyflow.web.chapter-quiz :as chapter-quiz]
             [studyflow.web.service :as service]
             [studyflow.web.history :refer [history-link]]
-            [studyflow.web.helpers :refer [tool-box modal raw-html tag-tree-to-om focus-input-box section-explanation-link] :as helpers]
+            [studyflow.web.helpers :refer [input-builders tool-box modal raw-html tag-tree-to-om focus-input-box section-explanation-link] :as helpers]
             [studyflow.web.recommended-action :refer [recommended-action]]
             [clojure.walk :as walk]
             [cljs.core.async :as async])
@@ -166,9 +166,10 @@
               answer-submitted? (get-in cursor [:view :section section-id :input field-name :answer-submitted?])
               answered-correctly? (get-in cursor [:view :section section-id :input field-name :answered-correctly?])
               answer-revealed (get-in cursor [:view :section section-id :input field-name :answer-revealed])
-              input-classes (str ""
-                                 (when (:prefix field) "has-prefix ")
-                                 (when (:suffix field) "has-suffix"))]
+              input-options (case (:style field)
+                              "small" {:class "small-input" :length 5}
+                              "exponent" {:class "exponent-input" :length 2}
+                              {:class "big-input"})]
           (dom/span nil
                     (when-let [prefix (:prefix field)]
                       (dom/span #js {:className "prefix"} prefix))
@@ -192,7 +193,8 @@
                                       (submit)
                                       false)}
                      (dom/input
-                      #js {:className (str "inline_input " input-classes)
+                      #js {:className (str "inline_input " (:class input-options))
+                           :maxLength (:length input-options)
                            :placeholder "................."
                            :react-key (:name field)
                            :ref (:name field)
@@ -332,62 +334,6 @@
                                                :inactive "inactive"))}))
                 streak))))))
 
-(defn input-builders
-  "mapping from input-name to create react dom element for input type"
-  [cursor section-id question-id question-index question-data current-answers submitted-answers answer-correct]
-  (let [disabled answer-correct
-        current-answers (if disabled
-                          (zipmap (map name (keys submitted-answers))
-                                  (vals submitted-answers))
-                          current-answers)]
-    (-> {}
-        (into (for [mc (:multiple-choice-input-fields question-data)]
-                (let [input-name (:name mc)]
-                  [input-name
-                   ;; WARNING using dom/ul & dom/li here breaks
-                   (apply dom/span #js {:className "mc-list"}
-                          (for [choice (map :value (:choices mc))]
-                            (let [id (str input-name "-" choice)]
-                              (dom/span #js {:className "mc-choice"}
-                                        (dom/input #js {:id id
-                                                        :react-key (str question-id "-" question-index "-" input-name "-" choice)
-                                                        :type "radio"
-                                                        :checked (= choice (get current-answers input-name))
-                                                        :disabled disabled
-                                                        :onChange (fn [event]
-                                                                    (om/update!
-                                                                     cursor
-                                                                     [:view :section section-id :test :questions [question-id question-index] :answer input-name]
-                                                                     choice))}
-                                                   (dom/label #js {:htmlFor id}
-                                                              (raw-html choice)))))))])))
-        (into (for [[li ref] (map list
-                                  (:line-input-fields question-data)
-                                  (into ["FOCUSED_INPUT"]
-                                        (rest (map :name (:line-input-fields question-data)))))]
-                (let [input-name (:name li)
-                      input-classes (str ""
-                                        (when (:prefix li) "has-prefix ")
-                                        (when (:suffix li) "has-suffix"))]
-                  [input-name
-                   (dom/span nil
-                             (when-let [prefix (:prefix li)]
-                               (dom/span #js {:className "prefix"} prefix))
-                             (dom/input
-                              #js {:className input-classes
-                                   :value (get current-answers input-name "")
-                                   :react-key (str question-id "-" question-index "-" ref)
-                                   :ref ref
-                                   :disabled disabled
-                                   :onChange (fn [event]
-                                               (om/update!
-                                                cursor
-                                                [:view :section section-id :test :questions [question-id question-index] :answer input-name]
-                                                (.. event -target -value)))})
-                             (when-let [suffix (:suffix li)]
-                               (dom/span #js {:className "suffix"} suffix)))]))))))
-
-
 (defn reveal-answer-button [cursor owner]
   (reify
     om/IRender
@@ -493,7 +439,13 @@
                                  history-link)
             course-id (get-in cursor [:static :course-id])
             section-test-aggregate-version (:aggregate-version section-test)
-            inputs (input-builders cursor section-id question-id question-index question-data current-answers (:inputs question) answer-correct)
+            submitted-answers (:inputs question)
+            current-answers (if answer-correct
+                              (zipmap (map name (keys submitted-answers))
+                                      (vals submitted-answers))
+                              current-answers)
+            inputs (input-builders cursor question-id question-data current-answers (not answer-correct)
+                                   [:view :section section-id :test :questions [question-id question-index] :answer])
             answering-allowed (and (not answer-correct)
                                    (every? (fn [input-name]
                                              (seq (get current-answers input-name)))

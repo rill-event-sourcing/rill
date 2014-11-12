@@ -3,7 +3,7 @@
             [goog.events :as gevents]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [studyflow.web.helpers :refer [tool-box modal raw-html tag-tree-to-om focus-input-box] :as helpers]
+            [studyflow.web.helpers :refer [input-builders tool-box modal raw-html tag-tree-to-om focus-input-box] :as helpers]
             [studyflow.web.recommended-action :refer [recommended-action]]
             [studyflow.web.history :refer [history-link]]))
 
@@ -126,54 +126,6 @@
                                    (f)))))
          (om/set-state-nr! owner :key-listener))))
 
-(defn input-builders-enabled
-  "mapping from input-name to create react dom element for input type"
-  [cursor chapter-id question-id question-data current-answers]
-  (-> {}
-      (into (for [mc (:multiple-choice-input-fields question-data)]
-              (let [input-name (:name mc)]
-                [input-name
-                 ;; WARNING using dom/ul & dom/li here breaks
-                 (apply dom/span #js {:className "mc-list"}
-                        (for [choice (map :value (:choices mc))]
-                          (let [id (str input-name "-" choice)]
-                            (dom/span #js {:className "mc-choice"}
-                                      (dom/input #js {:id id
-                                                      :react-key (str question-id "-" input-name "-" choice)
-                                                      :type "radio"
-                                                      :checked (= choice (get current-answers input-name))
-                                                      :onChange (fn [event]
-                                                                  (om/update!
-                                                                   cursor
-                                                                   [:view :chapter-quiz chapter-id :test :questions question-id :answer input-name]
-                                                                   choice))}
-                                                 (dom/label #js {:htmlFor id}
-                                                            (raw-html choice)))))))])))
-      (into (for [[li ref] (map list
-                                (:line-input-fields question-data)
-                                (into ["FOCUSED_INPUT"]
-                                      (rest (map :name (:line-input-fields question-data)))))]
-              (let [input-name (:name li)
-                    input-classes (str ""
-                                       (when (:prefix li) "has-prefix ")
-                                       (when (:suffix li) "has-suffix"))]
-                [input-name
-                 (dom/span nil
-                           (when-let [prefix (:prefix li)]
-                             (dom/span #js {:className "prefix"} prefix))
-                           (dom/input
-                            #js {:className input-classes
-                                 :value (get current-answers input-name "")
-                                 :react-key (str question-id "-" ref)
-                                 :ref ref
-                                 :onChange (fn [event]
-                                             (om/update!
-                                              cursor
-                                              [:view :chapter-quiz chapter-id :test :questions question-id :answer input-name]
-                                              (.. event -target -value)))})
-                           (when-let [suffix (:suffix li)]
-                             (dom/span #js {:className "suffix"} suffix)))])))))
-
 (defn chapter-quiz-question-open [cursor owner]
   (reify
     om/IRender
@@ -189,7 +141,8 @@
             course-id (get-in cursor [:static :course-id])
             chapter-quiz-aggregate-version (:aggregate-version chapter-quiz)
             current-answers (om/value (get-in cursor [:view :chapter-quiz chapter-id :test :questions question-id :answer] {}))
-            inputs (input-builders-enabled cursor chapter-id question-id question-data current-answers)
+            inputs (input-builders cursor question-id question-data current-answers true
+                                   [:view :chapter-quiz chapter-id :test :questions question-id :answer])
             answering-allowed (every? (fn [input-name]
                                         (seq (get current-answers input-name)))
                                       (keys inputs))]
@@ -225,44 +178,6 @@
       (focus-input-box owner)
       (set-key-handler owner))))
 
-(defn input-builders-disabled
-  "mapping from input-name to create react dom element for input type"
-  [cursor chapter-id question-id question-data answers]
-  (-> {}
-      (into (for [mc (:multiple-choice-input-fields question-data)]
-              (let [input-name (:name mc)]
-                [input-name
-                 ;; WARNING using dom/ul & dom/li here breaks
-                 (apply dom/span #js {:className "mc-list"}
-                        (for [choice (map :value (:choices mc))]
-                          (let [id (str input-name "-" choice)]
-                            (dom/span #js {:className "mc-choice"}
-                                      (dom/input #js {:id id
-                                                      :react-key (str question-id "-" input-name "-" choice)
-                                                      :type "radio"
-                                                      :checked (= choice (get answers (keyword input-name)))
-                                                      :disabled true}
-                                                 (dom/label #js {:htmlFor id}
-                                                            (raw-html choice)))))))])))
-      (into (for [[li ref] (map list
-                                (:line-input-fields question-data)
-                                (map :name (:line-input-fields question-data)))]
-              (let [input-name (:name li)
-                    input-classes (str ""
-                                       (when (:prefix li) "has-prefix ")
-                                       (when (:suffix li) "has-suffix"))]
-                [input-name
-                 (dom/span nil
-                           (when-let [prefix (:prefix li)]
-                             (dom/span #js {:className "prefix"} prefix))
-                           (dom/input
-                            #js {:className input-classes
-                                 :value (get answers (keyword input-name) "")
-                                 :react-key (str question-id "-" ref)
-                                 :disabled true})
-                           (when-let [suffix (:suffix li)]
-                             (dom/span #js {:className "suffix"} suffix)))])))))
-
 (defn chapter-quiz-question-wrong [cursor owner]
   (reify
     om/IRender
@@ -278,8 +193,9 @@
             question-data (chapter-quiz-question-by-id cursor data-channel chapter-id question-id)
             course-id (get-in cursor [:static :course-id])
             chapter-quiz-aggregate-version (:aggregate-version chapter-quiz)
-            answers (om/value (:inputs question))
-            inputs (input-builders-disabled cursor chapter-id question-id question-data answers)
+            current-answers (om/value (get-in cursor [:view :chapter-quiz chapter-id :test :questions question-id :answer] {}))
+            inputs (input-builders cursor question-id question-data current-answers false
+                                   [:view :chapter-quiz chapter-id :test :questions question-id :answer])
             question-total (get-in cursor [:view :course-material :chapters-by-id chapter-id :chapter-quiz :number-of-questions])
             last-question (= question-total (count questions))
             failed-quiz (let [wrong-count (get-in cursor [:aggregates chapter-id :questions-wrong-count])]
