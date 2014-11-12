@@ -17,7 +17,7 @@
    [:div.m-teacher-manuals
     [:table.manuals
      [:thead
-      [:th "Title"]]
+      [:th "Downloaden als PDF"]]
      [:tbody
       [:tr [:td [:a {:href "#"} "Docent omgeving"]]]
       [:tr [:td [:a {:href "#"} "Leerling omgeving"]]]
