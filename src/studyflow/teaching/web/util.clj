@@ -50,7 +50,7 @@
       (str/replace #"[^a-z ]" "")
       (str/replace #"\s+" "-")))
 
-(def ^:dynamic *current-report-name* nil)
+(def ^:dynamic *current-page-name* nil)
 
 (defn chapter-list-url [class chapter-id section-id]
   (if class
@@ -68,14 +68,14 @@
       (str "/reports/" (url-encode (:id class)) "/completion"))
     "/reports/completion"))
 
-(defn build-url [& {:keys [report-name class meijerink chapter-id section-id]}]
-  (case report-name
+(defn build-url [& {:keys [page-name class meijerink chapter-id section-id]}]
+  (case page-name
     "manuals" "/handleidingen"
     "chapter-list" (chapter-list-url class chapter-id section-id)
     "completion" (completion-url class meijerink)
     "/"))
 
-(defn drop-list-classes [classes current-meijerink report-name selected-class-name]
+(defn drop-list-classes [classes current-meijerink page-name selected-class-name]
   [:div {:class "m-select-box class-select" :id "dropdown-classes"}
    [:span (if selected-class-name
             selected-class-name
@@ -84,11 +84,11 @@
     [:ul
      (map (fn [class]
             [:li.dropdown-list-item
-             [:a.dropdown-link {:href (build-url :report-name report-name :class class :meijerink current-meijerink)}
+             [:a.dropdown-link {:href (build-url :page-name page-name :class class :meijerink current-meijerink)}
               (:class-name class)]])
           (sort-by :class-name classes))]]])
 
-(defn drop-list-meijerink [class meijerink-criteria report-name selected-meijerink]
+(defn drop-list-meijerink [class meijerink-criteria page-name selected-meijerink]
   [:div {:class "m-select-box" :id "dropdown-meijerink"}
    [:span (if selected-meijerink
             selected-meijerink
@@ -97,7 +97,7 @@
     [:ul
      (map (fn [meijerink]
             [:li.dropdown-list-item
-             [:a.dropdown-link {:href (build-url :report-name report-name :class class :meijerink meijerink)}
+             [:a.dropdown-link {:href (build-url :page-name page-name :class class :meijerink meijerink)}
               meijerink]])
           meijerink-criteria)]]])
 
@@ -121,12 +121,12 @@
     [:nav#m-main-sidenav
      [:ul#main-container-nav
       [:li.main-container-nav-list-item]
-      (map (fn [[report-name label]]
+      (map (fn [[page-name label]]
              [:li.main-container-nav-list-item
               [:a.main-container-nav-tab
-               {:class (str report-name (when (= report-name *current-report-name*)
+               {:class (str page-name (when (= page-name *current-page-name*)
                                           " selected"))
-                :href (build-url :report-name report-name :class class)}
+                :href (build-url :page-name page-name :class class)}
                label]])
            [["manuals" "Handleidingen"]
             ["completion" "Overzicht"]

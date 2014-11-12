@@ -92,7 +92,7 @@
                  :title (if class
                           (str "Hoofdstukken voor \"" (:class-name class) "\"")
                           "Hoofdstukken")}]
-    (binding [*current-report-name* "chapter-list"]
+    (binding [*current-page-name* "chapter-list"]
       (render-chapter-list class classes chapter-list params options))))
 
 (defroutes chapter-list-routes
