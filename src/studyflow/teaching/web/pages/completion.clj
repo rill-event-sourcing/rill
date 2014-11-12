@@ -1,11 +1,11 @@
-(ns studyflow.teaching.web.reports.completion
+(ns studyflow.teaching.web.pages.completion
   (:require [clojure.string :as str]
             [clojure.tools.logging :as log]
             [compojure.core :refer [GET defroutes]]
             [hiccup.core :refer [h]]
             [ring.util.codec :refer [url-encode]]
             [studyflow.teaching.read-model :as read-model]
-            [studyflow.teaching.web.reports.export :refer [render-export]]
+            [studyflow.teaching.web.pages.export :refer [render-export]]
             [studyflow.teaching.web.util :refer :all]
             [ring.util.response :refer [redirect-after-post]]))
 

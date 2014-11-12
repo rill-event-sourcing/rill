@@ -1,4 +1,4 @@
-(ns studyflow.teaching.web.manuals
+(ns studyflow.teaching.web.pages.manuals
   (:require [clojure.string :as str]
             [clojure.tools.logging :as log]
             [compojure.core :refer [GET defroutes]]
