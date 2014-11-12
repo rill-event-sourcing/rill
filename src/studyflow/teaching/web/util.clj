@@ -117,6 +117,7 @@
       [:input {:type "hidden" :name "_method" :value "DELETE"}]
       [:button {:type "submit" :id "logout-form"}])]
     [:nav#m-main-sidenav
+     [:a {:href "/handleidingen"} "Handleidingen"]
      [:ul#main-container-nav
       (map (fn [[report-name label]]
              [:li.main-container-nav-list-item
