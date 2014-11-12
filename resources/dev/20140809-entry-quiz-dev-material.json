@@ -1,120 +1,116 @@
 {
-    "id": "ef77ef68-0157-4e9d-afe9-46ecf65cc4ab",
-    "course-id": "3106b2db-7243-4dbe-9c97-441d79827f65",
-    "name": "Instaptoets voor Rekenen",
-    "description": "Dit is een instap toets, je kan hem maar een keer doen!",
-    "questions": [
+  "id": "ef77ef68-0157-4e9d-afe9-46ecf65cc4ab",
+  "course-id": "3106b2db-7243-4dbe-9c97-441d79827f65",
+  "name": "Instaptoets voor Rekenen",
+  "description": "Dit is een instap toets, je kan hem maar een keer doen!",
+  "questions": [
+    {
+      "id": "1441b3e0-1a1e-4d2f-aa82-1622ec81433a",
+      "text": "some prefix <p class=\"some-class\">Multiple choice B: _INPUT_1_ </p> text <p>123 into _INPUT_2_ </p>\r\n\r\n<p> 456 into _INPUT_4_ </p> some stuff after",
+      "line_input_fields": [
         {
-            "id":  "1441b3e0-1a1e-4d2f-aa82-1622ec81433a",
-            "text": "some prefix <p class=\"some-class\">Multiple choice B: _INPUT_1_ </p> text <p>123 into _INPUT_2_ </p>\r\n\r\n<p> 456 into _INPUT_4_ </p> some stuff after",
-            "line_input_fields": [
-                {
-                    "name": "_INPUT_2_",
-                    "prefix": "pre",
-                    "suffix": "suf",
-                    "width": 150,
-                    "correct_answers": [
-                        "123"
-                    ]
-                },
-                {
-                      "name": "_INPUT_4_",
-                      "prefix": "pre",
-                      "suffix": "suf",
-                      "width": 150,
-                      "correct_answers": [
-                          "456"
-                      ]
-                  }
-              ],
-              "multiple_choice_input_fields": [
-                  {
-                  "name": "_INPUT_1_",
-                  "choices": [
-                    {
-                      "value": "answer A",
-                      "correct": false
-                    },
-                    {
-                      "value": "answer B",
-                      "correct": true
-                    },
-                    {
-                      "value": "answer C",
-                      "correct": false
-                    }
-                  ]
-                }
-              ]
+          "name": "_INPUT_2_",
+          "prefix": "pre",
+          "suffix": "suf",
+          "width": 150,
+          "correct_answers": [
+            "123"
+          ]
+        },
+        {
+          "name": "_INPUT_4_",
+          "prefix": "pre",
+          "suffix": "suf",
+          "width": 150,
+          "correct_answers": [
+            "456"
+          ]
+        }
+      ],
+      "multiple_choice_input_fields": [
+        {
+          "name": "_INPUT_1_",
+          "choices": [
+            {
+              "value": "answer A",
+              "correct": false
+            },
+            {
+              "value": "answer B",
+              "correct": true
+            },
+            {
+              "value": "answer C",
+              "correct": false
             }
-        ,
-        {
-            "id":  "d0d7f437-d024-42ed-8405-7057b8a907af",
-            "text": "some prefix <p class=\"some-class\">Multiple choice A: _INPUT_5_ </p> some stuff after has no worked out answer",
-            "line_input_fields": [
-            ],
-            "multiple_choice_input_fields": [
-                {
-                    "name": "_INPUT_5_",
-                    "choices": [
-                        {
-                            "value": "answer A",
-                            "correct": true
-                        },
-                        {
-                            "value": "answer B",
-                            "correct": false
-                        },
-                        {
-                            "value": "answer C",
-                            "correct": false
-                        }
-                    ]
-                }
-            ]
+          ]
         }
-        ,
+      ]
+    },
+    {
+      "id": "d0d7f437-d024-42ed-8405-7057b8a907af",
+      "text": "some prefix <p class=\"some-class\">Multiple choice A: _INPUT_5_ </p> some stuff after has no worked out answer",
+      "line_input_fields": [],
+      "multiple_choice_input_fields": [
         {
-            "id":  "b29daede-0f00-470a-b044-88549cef67e7",
-            "text": "some prefix <p class=\"some-class\">Multiple choice A: _INPUT_1_ </p> text <p>Multiple choice C:  into _INPUT_2_ </p> some stuff after",
-            "line_input_fields": [
-            ],
-            "multiple_choice_input_fields": [
-                {
-                    "name": "_INPUT_1_",
-                    "choices": [
-                        {
-                            "value": "answer A",
-                            "correct": true
-                        },
-                        {
-                            "value": "answer B",
-                            "correct": false
-                        },
-                        {
-                            "value": "answer C",
-                            "correct": false
-                        }
-                    ]
-                },
-                {
-                    "name": "_INPUT_2_",
-                    "choices": [
-                        {
-                            "value": "answer A",
-                            "correct": false
-                        },
-                        {
-                            "value": "answer B",
-                            "correct": false
-                    },
-                        {
-                            "value": "answer C",
-                            "correct": true
-                        }
-                    ]
-                }
-            ]
+          "name": "_INPUT_5_",
+          "choices": [
+            {
+              "value": "answer A",
+              "correct": true
+            },
+            {
+              "value": "answer B",
+              "correct": false
+            },
+            {
+              "value": "answer C",
+              "correct": false
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "b29daede-0f00-470a-b044-88549cef67e7",
+      "text": "some prefix <p class=\"some-class\">Multiple choice A: _INPUT_1_ </p> text <p>Multiple choice C:  into _INPUT_2_ </p> some stuff after",
+      "line_input_fields": [],
+      "multiple_choice_input_fields": [
+        {
+          "name": "_INPUT_1_",
+          "choices": [
+            {
+              "value": "answer A",
+              "correct": true
+            },
+            {
+              "value": "answer B",
+              "correct": false
+            },
+            {
+              "value": "answer C",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "name": "_INPUT_2_",
+          "choices": [
+            {
+              "value": "answer A",
+              "correct": false
+            },
+            {
+              "value": "answer B",
+              "correct": false
+            },
+            {
+              "value": "answer C",
+              "correct": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

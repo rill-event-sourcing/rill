@@ -6,9 +6,10 @@
       "id": "1e8d8c4b-0581-4400-bd7d-a66d0500621e",
       "title": "1 Het positie stelsel",
       "sections": [
-          {"id": "98b3997f-63db-4f1d-b89e-5378e5f19514",
-           "title": "TESTABLE QUESTIONS",
-           "subsections": [
+        {
+          "id": "98b3997f-63db-4f1d-b89e-5378e5f19514",
+          "title": "TESTABLE QUESTIONS",
+          "subsections": [
             {
               "id": "deb7e42c-30d6-4ee5-9cd7-7a36e3e9d20a",
               "title": "Volgorde van optellen",
@@ -27,10 +28,12 @@
           ],
           "questions": [
             {
-              "id":  "1441b3e0-1a1e-4d2f-aa82-1622ec81433a",
+              "id": "1441b3e0-1a1e-4d2f-aa82-1622ec81433a",
               "text": "some prefix <p class=\"some-class\">Multiple choice B: _INPUT_1_ </p> text <p>123 into _INPUT_2_ </p>\r\n\r\n<p> 456 into _INPUT_4_ </p> some stuff after",
-                "tools": ["pen_and_paper"],
-                "worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_2_",
@@ -41,18 +44,18 @@
                     "123"
                   ]
                 },
-                  {
-                      "name": "_INPUT_4_",
-                      "prefix": "pre",
-                      "suffix": "suf",
-                      "width": 150,
-                      "correct_answers": [
-                          "456"
-                      ]
-                  }
+                {
+                  "name": "_INPUT_4_",
+                  "prefix": "pre",
+                  "suffix": "suf",
+                  "width": 150,
+                  "correct_answers": [
+                    "456"
+                  ]
+                }
               ],
               "multiple_choice_input_fields": [
-                  {
+                {
                   "name": "_INPUT_1_",
                   "choices": [
                     {
@@ -71,7 +74,8 @@
                 }
               ]
             }
-          ]},
+          ]
+        },
         {
           "id": "f9f70918-0e8c-4cee-9fa5-0bdeadc1cf02",
           "title": "Groeperen per 10",
@@ -126,7 +130,9 @@
             {
               "id": "57472eb7-cbba-462d-b1e6-4c5cdd11990d",
               "text": "<p>Meintje heeft € 75,- in haar portemonnee. Ze heeft € 5,- in muntgeld.</p>\r\n\r\n<p class=”question_title”>Hoeveel briefjes van € 10,- kan Meintje maximaal in haar portemonnee hebben?</p>\r\n\r\n_INPUT_1_\r\n<math>\\frac{\\begin{alignat}\r\n330&,4\\\\\r\n97&,773 -\r\n\\end{alignat}}{}</math>",
-              "tools": ["pen_and_paper"],
+              "tools": [
+                "pen_and_paper"
+              ],
               "worked_out_answer": "",
               "line_input_fields": [
                 {
@@ -139,14 +145,14 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "c2efc1bc-5504-4121-b0c1-40453ff86f83",
               "text": "<p>Juf Lenny heeft voor haar klas 23 balpennen nodig. De balpennen zijn verpakt in doosjes van 10. Ze pakt drie balpennen die los in de kast liggen.</p>\r\n\r\n<p class=”question_title”>Hoeveel doosjes van 10 pennen heeft Juf Lenny nog nodig?</p> \r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
+              "tools": [
+                "pen_and_paper"
+              ],
               "worked_out_answer": "",
               "line_input_fields": [
                 {
@@ -159,14 +165,14 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "9c7c946c-6616-4cc0-a380-f5ce5fd4efc2",
               "text": "<p>Kippenboer Harm heeft 64 eieren in zijn kippenhok. Hij legt vier eieren apart voor zijn gezin en de rest verpakt hij in doosjes van 10 om te kunnen verkopen.</p>\r\n\r\n<p class=”question_title”>Hoeveel doosjes van 10 eieren kan Harm vullen?</p> \r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
+              "tools": [
+                "pen_and_paper"
+              ],
               "worked_out_answer": "",
               "line_input_fields": [
                 {
@@ -179,14 +185,14 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "781d1dec-c309-45a1-b2f2-0f9d88b3de1a",
               "text": "<p>Carolien heeft 85 snoepjes waarmee ze snoepzakjes wilt vullen. In een zakje kunnen 10 snoepjes.</p>\r\n\r\n<p class=”question_title”>Hoeveel volle snoepzakjes kan Carolien maken?</p>\r\n \r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
+              "tools": [
+                "pen_and_paper"
+              ],
               "worked_out_answer": "",
               "line_input_fields": [
                 {
@@ -199,14 +205,14 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "51d249b6-8fcd-4846-968c-cfe131e52ab3",
               "text": "<p>Anneloes heeft 46 boeken die ze graag in haar kast wilt zetten. Op een boekenplank kunnen 10 boeken staan.</p>\r\n\r\n<p class=”question_title”>Hoeveel volle boekenplanken kan Anneloes maken?</p> \r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
+              "tools": [
+                "pen_and_paper"
+              ],
               "worked_out_answer": "",
               "line_input_fields": [
                 {
@@ -219,14 +225,14 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "a7b784fc-92fb-44d9-9493-55d9731ab192",
               "text": "<p>Op een plank staan 3 volle dozen. In iedere doos zitten 10 schriften.<br>\r\nEr liggen ook nog 6 losse schriften.</p>\r\n\r\n<p class=”question_title”>Hoeveel schriften zijn dat samen?</p>\r\n \r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
+              "tools": [
+                "pen_and_paper"
+              ],
               "worked_out_answer": "",
               "line_input_fields": [
                 {
@@ -239,14 +245,14 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "299c950e-c4f9-4803-9f7a-402cffcdbebe",
               "text": "<p>Flora gaat met haar vriendinnen naar de bioscoop. Een kaartje kost € 10,-.<br>\r\nZe heeft € 35,-.</p>\r\n\r\n<p class=”question_title”>Hoeveel kaartjes kan Flora maximaal kopen?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
+              "tools": [
+                "pen_and_paper"
+              ],
               "worked_out_answer": "",
               "line_input_fields": [
                 {
@@ -259,14 +265,14 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-                
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "5b23c46f-febd-4dc7-b097-bf8c0bb69f00",
               "text": "<p>Henk heeft 84 tomaten. Hij wil de tomaten gaan verkopen in doosjes van 10 tomaten.</p>\r\n\r\n<p class=”question_title”>Hoeveel volle doosjes kan Henk verkopen?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
+              "tools": [
+                "pen_and_paper"
+              ],
               "worked_out_answer": "",
               "line_input_fields": [
                 {
@@ -279,14 +285,14 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "8b1ac37c-b97f-44ca-a1c2-b9ac2706b896",
               "text": "<p>Bram heeft 78 blokken.</p>\r\n\r\n<p class=”question_title”>Hoeveel torens van 10 blokken kan Bram bouwen?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
+              "tools": [
+                "pen_and_paper"
+              ],
               "worked_out_answer": "",
               "line_input_fields": [
                 {
@@ -299,15 +305,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "5f69ea58-4f0b-41da-8e3d-b0b32c0fe821",
               "text": "<p>Karel heeft 68 cent.</p>\r\n\r\n<p class=”question_title”>Hoeveel munten van 10 cent zou hij maximaal kunnen hebben?</p>\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -319,15 +325,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "5e08c1ce-f19f-4fa0-8efc-72fda6d8b4b1",
               "text": "<p>Hanneke heeft 72 cent.</p>\r\n\r\n<p class=”question_title”>Hoeveel munten van 10 cent zou zij maximaal kunnen hebben?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -339,15 +345,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "9d69ae49-ac3c-448c-81f8-f92c0d683851",
               "text": "<p>Rens heeft voor zijn verjaardag € 50,- gekregen. Hij wil graag samen met zijn vrienden gaan karten. Een half uur karten kost € 10,- per persoon.</p>\r\n\r\n<p class=”question_title”>Met hoeveel vrienden kan Rens gaan karten?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -359,15 +365,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "ab4d419c-d1a1-4fe0-9923-64914b08343d",
               "text": "<p>Elise heeft 92 cent.</p>\r\n\r\n<p class=”question_title”>Hoeveel munten van 10 cent zou Elise maximaal kunnen hebben?</p>\r\n\r\n_INPUT_1_\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -379,15 +385,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "f34ef995-0541-4212-b132-95261169f8b0",
               "text": "<p>Jeroen heeft vier dozen met potloden. In iedere doos zitten 10 potloden.</p>\r\n\r\n<p class=”question_title”>Hoeveel potloden heeft Jeroen?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -399,15 +405,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "16c88ad8-b01a-45c2-9f40-58679978fdc3",
               "text": "<p>Jelmer heeft 1 blik met 10 koekjes en 4 blikken met 5 koekjes.</p>\r\n\r\n<p class=”question_title”>Hoeveel koekjes heeft Jelmer?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -419,15 +425,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "6095d7da-8014-4f3c-a308-e930889b0632",
               "text": "<p>Roos deelt m&m's uit aan haar vriendinnen. Ze heeft in totaal 75 m&m's. Ze hoeft zelf geen m&m's. Ze geeft elke vriendin 10 m&m's.</p>\r\n\r\n<p class=”question_title”>Aan hoeveel vriendinnen kan ze maximaal uitdelen?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -439,15 +445,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "adc7f44d-b1b8-4d87-a564-dcdd35f3741d",
               "text": "<p>Remy ziet in Venetië 4 boten. Op 3 boten staan 10 mensen. Op 1 boot staan 4 mensen.</p>\r\n\r\n<p class=”question_title”>Hoeveel mensen staan er in totaal op de boten die Remy ziet?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -459,15 +465,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "503722e6-eb12-494b-bc34-a36b90d30d0b",
               "text": "<p>Esmee moet 5 stapels van 10 schriften maken.</p>\r\n\r\n<p class=”question_title”>Hoeveel schriften zijn dat?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -479,15 +485,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "4a62fab8-aca9-40d9-b87b-9e43be16f779",
               "text": "<p>Iskander koopt voor elk team 4 nieuwe voetballen. Er zijn 10 teams.</p>\r\n\r\n<p class=”question_title”>Hoeveel voetballen heeft Iskander gekocht?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -499,15 +505,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "5df2937a-09d3-4d64-9b3c-ff1270b9b910",
               "text": "<p>In de supermarkt verkopen ze voordeelbakjes met 10 kiwi's erin. Lonneke koopt 3 bakjes en 5 losse kiwi's.</p>\r\n\r\n<p class=”question_title”>Hoeveel kiwi's heeft Lonneke gekocht?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -519,15 +525,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "1de856fb-bc88-4af9-82ce-42f88d5c8f0e",
               "text": "<p>Paul heeft 37 studieboeken. In zijn kast passen 10 boeken op een boekenplank.</p>\r\n\r\n<p class=”question_title”>Hoeveel volle boekenplanken kan Paul maken?</p>\r\n\r\n_INPUT_1_\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -539,15 +545,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "1cad8de1-8662-4759-a7b0-b137446d4af6",
               "text": "<p>Het Griftland College gaat op schoolreisje naar Barcelona. In totaal gaan er 94 leerlingen mee. De leerlingen worden ingedeeld in groepen van 10.</p>\r\n\r\n<p class=”question_title”>Hoeveel groepen van 10 leerlingen kunnen er maximaal gemaakt worden?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -559,15 +565,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "674a87dd-404c-4edf-95a5-986ae36aa23e",
               "text": "<p>Op een middelbare school in Amsterdam wordt een musical voorbereid. Er doen 2 dansgroepen van 10 leerlingen en 3 solo-dansers mee.</p>\r\n\r\n<p class=”question_title”>Hoeveel dansers doen er in totaal mee?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -579,15 +585,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "5a2ea1b0-effd-4ef9-aa62-07e87ed2f8ee",
               "text": "<p>In een fietsenhok op een middelbare school in Sittard kunnen maximaal 10 fietsen in elk fietsenrek. Er zijn 5 rekken helemaal gevuld en er staan 6 fietsen naast het fietsenrek.</p>\r\n\r\n<p class=”question_title”>Hoeveel fietsen zijn dit in totaal?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -599,15 +605,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "a0a24e77-c4bd-462b-a205-827bce69f553",
               "text": "<p>Tijdens het fitnessen heeft Robin al 40 keer opgedrukt. Hij doet elke keer een setje van 10 keer opdrukken.</p>\r\n\r\n<p class=”question_title”>Hoeveel setjes heeft hij al gedaan?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -619,15 +625,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "d684bae5-6a64-4787-a938-0a29409f6d48",
               "text": "<p>Tijdens een sportles op de sportschool heeft Karren al 30 keer opgedrukt. Ze doet elke keer een setje van 10 keer opdrukken.</p>\r\n\r\n<p class=”question_title”>Hoeveel setjes heeft ze al gedaan?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -639,15 +645,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "d0ef1960-5f54-4821-b891-5daa0a3a1372",
               "text": "<p>In de supermarkt verkopen ze voordeelzakken met 10 peren erin. Gert koopt 3 zakken en 3 losse peren.</p>\r\n\r\n<p class=”question_title”>Hoeveel peren heeft Gert gekocht?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -659,15 +665,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "9b7d228d-9573-413a-ad73-c452adf60422",
               "text": "<p>In een fietsenhok op een middelbare school in Breukelen passen maximaal 10 fietsen in elk fietsenrek. Er zijn 7 rekken helemaal gevuld en er staan 2 fietsen naast het fietsenrek.</p>\r\n\r\n<p class=”question_title”>Hoeveel fietsen zijn dit in totaal?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -679,15 +685,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "715bb608-840f-48ac-ae4e-dacfa1a08c40",
               "text": "<p>Pipa heeft € 58,- in haar portemonnee. Ze heeft € 7,- in muntgeld.</p>\r\n\r\n<p class=”question_title”>Hoeveel briefjes van € 10,- kan Pipa maximaal in haar portemonnee hebben?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -699,15 +705,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "6fa2b034-f35d-4f4d-ab4c-fd476b95c1e7",
               "text": "<p>Steve heeft € 69,- in zijn portemonnee. Hij heeft € 6,- in muntgeld.</p>\r\n\r\n<p class=”question_title”>Hoeveel briefjes van € 10,- kan Steve maximaal in zijn portemonnee hebben?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -719,27 +725,23 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             }
           ]
         },
         {
           "id": "a85453a5-39ca-484c-b564-adb704f65b0f",
           "title": "Positie en de 0",
-          "subsections": [
-
-          ],
+          "subsections": [],
           "questions": [
             {
               "id": "d47128ab-a394-4c3e-a52e-e1ab5f9576d5",
               "text": "<p class=”question_title”>Waar staat de 1 voor in het getal 1 384?</p>\r\n\r\n_INPUT_1_\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -767,11 +769,11 @@
             {
               "id": "4e654128-d6b9-4802-bf14-5204120cece4",
               "text": "<p class=”question_title”>Waar staat de 2 voor in het getal 3 203?</p>\r\n\r\n_INPUT_5_\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_5_",
@@ -799,11 +801,11 @@
             {
               "id": "b892d710-5066-4a2f-bb06-5d265f3d8a3c",
               "text": "<p class=”question_title”>Waar staat de 3 voor in het getal 5 943?</p>\r\n\r\n_INPUT_1_\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -831,11 +833,11 @@
             {
               "id": "bd33d79f-b0a6-49ee-9ea4-cc26068ea802",
               "text": "<p class=”question_title”>Waar staat de 9 voor in het getal 9 487?</p>\r\n\r\n_INPUT_2_\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_2_",
@@ -863,11 +865,11 @@
             {
               "id": "80ead3d6-ea12-49c8-b474-a99046cb4900",
               "text": "<p class=”question_title”>Waar staat de 4 voor in het getal 2 340?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -895,11 +897,11 @@
             {
               "id": "0e96c8d0-8f08-4781-b50f-b2e4396c7d63",
               "text": "<p class=”question_title”>Waar staat de 7 voor in het getal 8 907?</p>\r\n\r\n_INPUT_1_\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -927,11 +929,11 @@
             {
               "id": "d3d79b6f-59bc-42f3-ba6d-01760c0147f8",
               "text": "<p class=”question_title”>Waar staat de 8 voor in het getal 3 489?</p>\r\n\r\n_INPUT_1_\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -959,11 +961,11 @@
             {
               "id": "57a3f897-2868-4423-bc4b-652fa073525f",
               "text": "<p class=”question_title”>Waar staat de 1 voor in het getal 2 301?</p>\r\n\r\n_INPUT_2_\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_2_",
@@ -991,8 +993,10 @@
             {
               "id": "e6dfeb07-ec8f-4927-8fcc-cd5d378e144c",
               "text": "<p class=”question_title”>Welk getal is 1 meer dan 2 388?</p>\r\n\r\n_INPUT_1_\r\n\r\n\r\n\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1005,15 +1009,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "45ec908d-2a6c-43c1-82d3-72a275f935c5",
               "text": "<p class=”question_title”>Welk getal is 10 meer dan 8 740?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1026,15 +1030,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "e7045293-3711-4fbc-9570-66e2468a2cfc",
               "text": "<p class=”question_title”>Welk getal is 100 meer dan 4 527?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1047,15 +1051,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "d24deb0d-68b2-4846-9034-47cc38ec5c54",
               "text": "<p class=”question_title”>Welk getal is 10 minder dan 5 911?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1068,15 +1072,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "b9462175-733f-447f-a70e-c99849e698ad",
               "text": "<p class=”question_title”>Welk getal is 1 000 minder dan 1 498?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1088,18 +1092,16 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "2b4a25cc-d6f2-46a8-a8c4-97318e17cf2b",
               "text": "<p class=”question_title”>Waar staat de 5 voor in het getal 9 853?</p>\r\n\r\n_INPUT_1_\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1127,11 +1129,11 @@
             {
               "id": "f1c1327e-02ee-4213-9599-e2cb50cc2a04",
               "text": "<p class=”question_title”>Waar staat de 6 voor in het getal 6 912?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1159,8 +1161,10 @@
             {
               "id": "9a424493-4528-4cb0-9d5d-c47a1d7c8b28",
               "text": "<p class=”question_title”>Welk getal is 1 000 meer dan 7 428?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1173,15 +1177,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "bbb479ea-c4e1-4ad7-b717-0de2de9ea32f",
               "text": "<p class=”question_title”>Welk getal is 1 minder dan 4 284?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1194,15 +1198,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "e97c6b03-8cbb-4ffb-b35c-24f5208bdceb",
               "text": "<p class=”question_title”>Welk getal is 100 minder dan 7 239?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1215,15 +1219,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "3e935a23-232e-4e46-a1f3-15787303967d",
               "text": "<p class=”question_title”>Welk getal is 5 000 meer dan 2 798?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1236,15 +1240,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "cc332b50-089d-4665-bb87-f3502eb08f17",
               "text": "<p class=”question_title”>Welk getal is 4 000 minder dan 9 812?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1257,15 +1261,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "77c5adfa-e255-4e7a-9499-d2a46aafac7a",
               "text": "<p class=”question_title”>Welk getal is 2 000 minder dan 5 461?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1278,15 +1282,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "d28f77ed-6e81-4538-9156-842f96b8cf7c",
               "text": "<p class=”question_title”>Welk getal is 3 000 meer dan 2 300?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1299,15 +1303,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "256a55be-102f-437a-9447-fc645289f799",
               "text": "<p class=”question_title”>Welk getal is 400 meer dan 3 151?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1320,15 +1324,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "d971e58c-7bfb-48e9-a58b-c7b5d7c1e3aa",
               "text": "<p class=”question_title”>Welk getal is 200 minder dan 5 780?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1341,15 +1345,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "b0bb34be-3a24-4f3e-8628-ddef81c35a39",
               "text": "<p class=”question_title”>Welk getal is 500 meer dan 8 232?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1362,15 +1366,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "4f0e947a-e0d9-4f5c-a64f-a277d3ce8498",
               "text": "<p class=”question_title”>Welk getal is 300 minder dan 1 679?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1383,15 +1387,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "1e0348dc-6dab-49d2-9541-d6202ac6b6cc",
               "text": "<p class=”question_title”>Welk getal is 30 meer dan 4 253?</p>\r\n\r\n_INPUT_1_\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1404,15 +1408,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "bb8757c5-b04a-4389-8aa8-a41267364604",
               "text": "<p class=”question_title”>Welk getal is 60 minder dan 7 185?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1425,15 +1429,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "619e730e-c5bf-44a3-af07-e24eb755f536",
               "text": "<p class=”question_title”>Welk getal is 80 minder dan 6 395?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1446,15 +1450,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "e95d5747-7a3d-4d13-bc5f-b7cfc24fd606",
               "text": "<p class=”question_title”>Welk getal is 50 meer dan 3 412?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1467,15 +1471,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "5aae69b3-157b-452f-b559-9051a1ac0791",
               "text": "<p class=”question_title”>Welk getal is 6 minder dan 9 988?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1488,15 +1492,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "5e7b45e2-1569-4d57-9b63-f1b12bfba163",
               "text": "<p class=”question_title”>Welk getal is 20 meer dan 4 316?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1509,15 +1513,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "8bb261ec-db1a-4403-8429-8b7abb4e3c19",
               "text": "<p class=”question_title”>Welk getal is 3 meer dan 5 363?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1530,15 +1534,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "286f9ef4-4750-489d-9a23-634a329c7c39",
               "text": "<p class=”question_title”>Welk getal is 4 minder dan 1 667?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1551,18 +1555,16 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "fde88c5d-351c-4b8b-bc81-2830af234dc1",
               "text": "<p class=”question_title”>Waar staat de 2 voor in het getal 3 820?</p>\r\n\r\n_INPUT_1_\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1590,11 +1592,11 @@
             {
               "id": "8d92f953-d675-4a62-abed-9a251f16bb79",
               "text": "<p class=”question_title”>Waar staat de 3 voor in het getal 4 397?</p>\r\n\r\n_INPUT_1_\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1622,11 +1624,11 @@
             {
               "id": "dbaca042-1a9b-4067-9ff5-47502cfd4ed8",
               "text": "<p class=”question_title”>Waar staat de 4 voor in het getal 4 705?</p>\r\n\r\n_INPUT_2_\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_2_",
@@ -1654,11 +1656,11 @@
             {
               "id": "ec3eaca8-ce8e-4c1b-950f-6281dbca29b0",
               "text": "<p class=”question_title”>Waar staat de 5 voor in het getal 9 005?</p>\r\n\r\n_INPUT_1_\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1686,11 +1688,11 @@
             {
               "id": "5add9f01-f3d9-4c2b-a261-0ceceb0b5d82",
               "text": "<p class=”question_title”>Waar staat de 6 voor in in het getal 7 364?</p>\r\n\r\n_INPUT_5_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_5_",
@@ -1718,11 +1720,11 @@
             {
               "id": "6e13deb1-0859-49cc-a9c0-09664e4490d3",
               "text": "<p class=”question_title”>Waar staat de 7 voor in het getal 7 390?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1752,15 +1754,15 @@
         {
           "id": "12bb6778-89ca-4a4e-a119-1c08946f28b0",
           "title": "Over de 10 heen gaan",
-          "subsections": [
-
-          ],
+          "subsections": [],
           "questions": [
             {
               "id": "dd5b0b44-38b9-4000-9d1e-ed00ae49add7",
               "text": "<p class=”question_title”>7 + 4 =  _INPUT_1_ </p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1772,15 +1774,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "888fcd7c-95b6-467a-a657-66191c7228d1",
               "text": "<p class=”question_title”>4 + 9 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1792,15 +1794,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "ad55c5d0-a471-4323-b223-997f58d86569",
               "text": "<p class=”question_title”>7 + 7 = _INPUT_1_</p> ",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1812,15 +1814,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "cf7bba08-8d16-4d41-a14f-e008288f4ae3",
               "text": "<p class=”question_title”>13 + 9 = _INPUT_1_</p> \r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1832,15 +1834,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "7649aae3-b66e-473a-b9dd-7ad18ad08760",
               "text": "<p class=”question_title”>2 + 10 = _INPUT_1_</p> ",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1852,15 +1854,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "2c81c2b0-7445-4c30-9797-0b5e9ff7ad4c",
               "text": "<p class=”question_title”>8 + 6 = _INPUT_1_</p> \r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1872,15 +1874,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "f1db2bc0-cee1-4995-b56b-09e0ccbd566a",
               "text": "<p class=”question_title”>7 + 8 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1892,15 +1894,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "f834035e-1567-49b9-99bf-25bba527ce6c",
               "text": "<p class=”question_title”>3 + 8 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1912,15 +1914,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "e977349d-009f-43ae-a2ee-ea8da966c54b",
               "text": "<p class=”question_title”>5 + 7 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1932,15 +1934,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "c101af6b-0a8a-422f-976c-be817ea8db45",
               "text": "<p class=”question_title”>8 + 8 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1952,15 +1954,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "4b2e3dac-4247-4b57-8aa3-3cfbb7ddbb5a",
               "text": "<p class=”question_title”>914 + 70 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1972,15 +1974,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "f8d463fb-3e63-4363-9faa-f8921788c47f",
               "text": "<p class=”question_title”>121 + 50 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -1992,15 +1994,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "9285f963-6879-402b-b4c1-a44be8f3f032",
               "text": "<p class=”question_title”>81 + 30 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2012,15 +2014,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "0ffb65b6-3df9-40a9-96d1-90dfa5a63bcc",
               "text": "<p class=”question_title”>245 + 20 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2032,15 +2034,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "4de1149d-8131-4776-a5d9-e4c80fe1ed39",
               "text": "<p class=”question_title”>366 + 60 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2052,15 +2054,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "aa7ae6a5-5f34-4d70-ba93-7dd0f91abf0a",
               "text": "<p class=”question_title”>861 + 50 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2072,15 +2074,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "f5f9c6dc-2a97-417e-848e-303a02448ff3",
               "text": "<p class=”question_title”>793 + 80 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2092,15 +2094,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "ccdc7b03-425d-4e3e-9114-b7e72e8d0aa7",
               "text": "<p class=”question_title”>558 + 60 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2112,15 +2114,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "d80c1261-5098-43b1-b8a4-9f4db6acb78a",
               "text": "<p class=”question_title”>58 + 80 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2132,15 +2134,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "7a72a228-e7f7-47d4-ae7c-4e4ae75412d8",
               "text": "<p class=”question_title”>47 + 90 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2152,15 +2154,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "1f47211a-f3d2-41f1-8823-db19b2674e34",
               "text": "<p class=”question_title”>125 + 100 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2172,15 +2174,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "485f4637-f8fd-492b-98be-072ae2860e36",
               "text": "<p class=”question_title”>247 + 900 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2193,15 +2195,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "6cafe419-50ff-45c2-b975-47a3bf8b09b7",
               "text": "<p class=”question_title”>606 + 700 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2214,15 +2216,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "a7cd0276-28be-4988-b09f-64a64217e07e",
               "text": "<p class=”question_title”>592 + 800 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2235,15 +2237,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "0571cdda-b521-48e7-aebb-48f68b345336",
               "text": "<p class=”question_title”>865 + 600 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2256,15 +2258,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "5c1d0f96-fe5c-4386-a3dd-660c6264a006",
               "text": "<p class=”question_title”>930 + 300 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2277,15 +2279,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "c9af03c4-744c-494a-ab62-96d731729d1c",
               "text": "<p class=”question_title”>67 + 80 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2297,15 +2299,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "7c77cfb9-0a99-41e4-adf6-b9ee5dd12e62",
               "text": "<p class=”question_title”>52 + 90 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2317,15 +2319,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "e5222433-baef-4970-b92f-e6dbec50fcae",
               "text": "<p class=”question_title”>98 + 30 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2337,15 +2339,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "0f5dbc16-c1e5-4344-90a1-acd38574cbef",
               "text": "<p class=”question_title”>88 + 50 = _INPUT_1_</p> ",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2357,15 +2359,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "2a6c796f-4b4b-4bc4-92eb-fffc5ec35372",
               "text": "<p class=”question_title”>750 + 500 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2378,15 +2380,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "5a10c3e9-bfb9-40c9-aeaf-a4748a12d549",
               "text": "<p class=”question_title”>565 + 900 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2399,15 +2401,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "8403d491-dfd8-405b-b09d-6b13c4476c3c",
               "text": "<p class=”question_title”>836 + 400 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2420,15 +2422,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "7a8ad1fd-9046-4fb5-bd89-1f33a4a76183",
               "text": "<p class=”question_title”>978 + 900 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2441,27 +2443,23 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             }
           ]
         },
         {
           "id": "504e5222-1149-4b8f-9537-feb571f818e4",
           "title": "Splitsen van getallen en grote getallen uitspreken \t",
-          "subsections": [
-
-          ],
+          "subsections": [],
           "questions": [
             {
               "id": "f1086a5c-f38c-42f1-a23f-81b26b4f1c52",
               "text": "\r\n<p class=”question_title”>Hoe schrijf je het getal 150 miljoen in cijfers?</p>\r\n\r\n_INPUT_3_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_3_",
@@ -2489,11 +2487,11 @@
             {
               "id": "9224821e-b918-4692-bbbb-39f29e0f49a4",
               "text": "<p>De totale Griekse staatsschuld is ruim 250 miljard euro.</p>\r\n\r\n<p class=”question_title”>Hoe schrijf je het getal 250 miljard in cijfers?</p>\r\n\r\n_INPUT_2_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_2_",
@@ -2521,11 +2519,11 @@
             {
               "id": "f8de9172-3e95-4828-b844-43beacb75e98",
               "text": "<p class=”question_title”>Hoe spreek je het getal 4 081 uit?</p>\r\n\r\n_INPUT_2_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_2_",
@@ -2553,11 +2551,11 @@
             {
               "id": "6e7b2525-b424-4d26-83df-76fb1b7d6f28",
               "text": "<p class=”question_title”>Het getal 1 100 spreek je uit als:</p>\r\n\r\n_INPUT_3_\r\n\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_3_",
@@ -2581,8 +2579,10 @@
             {
               "id": "c16b52f3-24f7-494c-b586-ce7175b3ba73",
               "text": "<p class=”question_title”>2 000 + 80 + 1 + 400 = _INPUT_1_</p>\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2595,18 +2595,16 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "5612e78e-9b09-460a-a0a0-e97c04d35ca8",
               "text": "<p>Nederland heeft ongeveer 17 miljoen inwoners.</p>\r\n\r\n<p class=”question_title”>Hoe schrijf je het getal 17 miljoen in cijfers?</p>\r\n\r\n_INPUT_1_\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2634,11 +2632,11 @@
             {
               "id": "87887572-a2e8-4a25-8742-bea9c083286a",
               "text": "<p class=”question_title”>Hoe spreek je het getal 639 uit?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2666,8 +2664,10 @@
             {
               "id": "935ae7e5-1a69-4421-8577-f1de5a06219d",
               "text": "<p class=”question_title”>3 + 9 000 + 10 + 100 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2680,15 +2680,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "1559bc93-3e9a-4fac-9cef-bbc19e91dc31",
               "text": "<p class=”question_title”>5 000 + 400 + 3 + 70 = _INPUT_1_</p>\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2701,18 +2701,16 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "f1939dfa-2784-46d9-b162-a95a29b962b4",
               "text": "<p>Criminelen stelen 45 miljoen bij een bankoverval.</p>\r\n\r\n<p class=”question_title”>Hoe schrijf je het getal 45 miljoen in cijfers?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2740,11 +2738,11 @@
             {
               "id": "7751c102-d861-4210-a395-20c98dbd036b",
               "text": "<p>Toen de opstand in Syrië begon, zijn zeker honderdduizend mensen in Syrië gedood.</p>\r\n\r\n<p class=”question_title”>Hoe schrijf je het getal honderdduizend in cijfers?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2772,11 +2770,11 @@
             {
               "id": "0b980c8e-4538-4bc5-9ba1-7b3224b0a3e2",
               "text": "<p class=”question_title”>Hoe spreek je het getal 278 uit?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2804,11 +2802,11 @@
             {
               "id": "90173658-1bb9-40c0-a02d-79df1dc25e21",
               "text": "<p class=”question_title”>Hoe schrijf je het getal 2 482 voluit?</p>\r\n\r\n_INPUT_2_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_2_",
@@ -2836,11 +2834,11 @@
             {
               "id": "aa057fc7-92f6-4658-9bf3-f8dc1b186d3a",
               "text": "<p class=”question_title”>Het getal 2 300 spreek je uit als:</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2864,11 +2862,11 @@
             {
               "id": "643d35ed-3a19-45af-b378-df956838ca32",
               "text": "<p class=”question_title”>Het getal 7 400 spreek je uit als:</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2892,8 +2890,10 @@
             {
               "id": "08df4acf-a8e6-4616-a324-83ed7fd93477",
               "text": "<p class=”question_title”>4 + 70 + 600 + 1 000 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2906,15 +2906,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "f8e9236c-7c87-434c-b537-7806ec640318",
               "text": "<p class=”question_title”>40 + 8 000 + 300 + 3 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2927,15 +2927,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "66b20e3a-c9f3-412b-abf0-ff066efa7f39",
               "text": "<p class=”question_title”>3 000 + 200 + 8 + 20 = _INPUT_1_</p>",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -2948,18 +2948,16 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "ca47f348-2bd1-486b-a085-cee03d1e6a43",
               "text": "<p>De dochter van Heineken is volgens de Quote 500 in 2013 met 7,2 miljard euro de rijkste Nederlander.</p>\r\n\r\n<p class=”question_title”>Hoe schrijf je 7,2 miljard in cijfers?</p>\r\n\r\n_INPUT_3_\r\n\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_3_",
@@ -2987,11 +2985,11 @@
             {
               "id": "e5c818a2-f0df-46b4-bb8b-5d0aa36e1679",
               "text": "<p>Het totale bedrag waarvoor in het jaar 2013 is gefraudeerd in Nederland is op zijn minst 11 miljard euro blijkt uit een onderzoek van PWC.</p>\r\n\r\n<p class=”question_title”>Hoe schrijf je het getal 11 miljard in cijfers?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3019,11 +3017,11 @@
             {
               "id": "0174bc9d-cbe8-470c-b24d-b4f777235727",
               "text": "<p>In 2012 stierven bijna vijftienduizend mensen aan een longziekte.</p>\r\n\r\n<p class=”question_title”>Hoe schrijf je vijftienduizend in cijfers?</p>\r\n\r\n_INPUT_4_\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_4_",
@@ -3051,11 +3049,11 @@
             {
               "id": "261ad594-e5a8-4d87-8281-05fbe857922d",
               "text": "<p>De tussenstand van de collecte-actie voor de stichting Jarige Job is 18 duizend euro.</p>\r\n\r\n<p class=”question_title”>Hoe schrijf je 18 duizend in cijfers?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3083,11 +3081,11 @@
             {
               "id": "08ce13c2-a289-41a2-91d6-1ecd05342b1d",
               "text": "<p>De VS heeft in 2013 zo veel geleend dat de totale staatsschuld voor het eerst in de geschiedenis boven de 17 biljoen dollar is uitgekomen.</p>\r\n\r\n<p class=”question_title”>Hoe schrijf je 17 biljoen in cijfers?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3117,18 +3115,16 @@
         {
           "id": "1687e489-497c-4f3e-8ff2-96d2f7e88f26",
           "title": "Ordenen en de getallenlijn",
-          "subsections": [
-
-          ],
+          "subsections": [],
           "questions": [
             {
               "id": "8b130501-50f3-47a9-a065-42dd0142db11",
               "text": "<p class=”question_title”>Rangschik de onderstaande getallen van groot naar klein.</p>\r\n\r\n<p>1, 17, 3, 77, 41, 43</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3156,11 +3152,11 @@
             {
               "id": "c46317dd-0fd5-45d0-968f-27c0f780f3c5",
               "text": "<p>Vier vrienden raden hoeveel ballonnen er aan het huis zijn vastgebonden.</p>\r\n\r\n<img src=\"https://s3.amazonaws.com/studyflow/rekenen/Ordenen-en-de-getallenlijn/Ordenen_en_de_getallenlijn_vraag8.jpg\">\r\n\r\n<ul>\r\n<li> Alice: 78</li>\r\n<li> Lisa: 112</li>\r\n<li> John: 101</li>\r\n<li> Joop: 105</li>\r\n</ul>\r\n\r\n<p>Er zijn 108 ballonnen vastgebonden aan het huis.</p>\r\n\r\n<p class=”question_title”>Wie zat er het dichtst bij?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3188,8 +3184,10 @@
             {
               "id": "1bf2e758-6594-4831-b258-3bb335db5dfa",
               "text": "<img src=\"https://docs.google.com/drawings/d/1K_bUN9vRCyHXuhNyUgtirQtb4kHAgA2PV-KBLCNmbDk/pub?w=776&h=100\">\r\n\r\n<p class=”question_title”>Welk getal ligt precies tussen 550 en 650 in?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3201,15 +3199,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "6428a3a5-ad71-401e-a0d7-a762ed516809",
               "text": "<img src=\"https://docs.google.com/drawings/d/1rcaCIwLDiqCpBsPMl7Ag22BVwnPd7K9_Madt0taTOwI/pub?w=776&h=100\">\r\n\r\n<p class=”question_title”>Welk getal ligt precies tussen 280 en 320 in?</p>\r\n\r\n_INPUT_1_\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3221,18 +3219,16 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "a2ed65f4-5594-4b90-91a2-cb9c99d402f4",
               "text": "<p class=”question_title”>Rangschik de onderstaande getallen van groot naar klein. </p>\r\n\r\n<p>45, 2, 34, 89, 10, 9</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3260,11 +3256,11 @@
             {
               "id": "18ab53b8-4bc4-4bf9-bf9f-0bfcb4b12a7f",
               "text": "<p class=”question_title”>Rangschik de onderstaande getallen van klein naar groot.</p>\r\n\r\n<p>55, 87, 63, 44, 31, 90</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3292,11 +3288,11 @@
             {
               "id": "75a2cd10-ffce-47cd-abb0-37ed1547fcbd",
               "text": "<p class=”question_title”>Rangschik de onderstaande getallen van klein naar groot.</p>\r\n\r\n<p>11, 45, 29, 30, 66, 59</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3324,11 +3320,11 @@
             {
               "id": "a3fa0334-d358-4443-897e-48cdb41d737b",
               "text": "<p>Vier vrienden raden hoeveel tennisballen er in de mand zitten.</p>\r\n\r\n<img src=\"https://s3.amazonaws.com/studyflow/rekenen/Ordenen-en-de-getallenlijn/Ordenen_en_de_getallenlijn_vraag10.jpg\">\r\n\r\n<ul>\r\n<li> Anne: 49</li>\r\n<li> Jeffrey: 50</li>\r\n<li> Jeroen: 59</li>\r\n<li> Nadia: 51</li>\r\n</ul>\r\n\r\n<p>In de mand zitten 56 tennisballen.</p>\r\n\r\n<p class=”question_title”>Wie zat er het dichtst bij?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3356,11 +3352,11 @@
             {
               "id": "41547b11-8f97-4a67-ab21-35cfd41bb499",
               "text": "<img src=\"https://docs.google.com/drawings/d/1LsHVBGq3Ge_oWoj9fSCQ83AxKFEmCTRLzxUJVn_K380/pub?w=776&h=100\">\r\n\r\n<p>De pijl wijst de plaats van een getal op de getallenlijn aan.</p>\r\n\r\n<p class=”question_title”>Welk getal is dat? Kies uit:</p>\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3388,11 +3384,11 @@
             {
               "id": "d5b559c1-be4c-463a-979e-5b45bb3b1e47",
               "text": "<p class=”question_title”>Rangschik de onderstaande getallen van klein naar groot.</p>\r\n\r\n<p>77, 3, 95, 22, 62, 99</p>\r\n\r\n_INPUT_1_\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3420,11 +3416,11 @@
             {
               "id": "a7c0ad68-324c-4712-8d81-fd3bec06b082",
               "text": "\r\n<p>Vier vrienden raden hoeveel flesdopjes er op de stoel zitten.</p>\r\n\r\n<img src=\"https://s3.amazonaws.com/studyflow/rekenen/Ordenen-en-de-getallenlijn/Ordenen_en_de_getallenlijn_vraag6.jpg\">\r\n\r\n<ul>\r\n<li> Harm: 483</li>\r\n<li> Max: 485</li>\r\n<li> Tessa: 490</li>\r\n<li> Anke: 448</li>\r\n</ul>\r\n\r\n<p>Op de stoel zitten 464 flesdopjes.</p>\r\n\r\n<p class=”question_title”>Wie zat er het dichtst bij?</p>\r\n\r\n_INPUT_1_\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3452,11 +3448,11 @@
             {
               "id": "bedc33f6-6463-4bb0-b222-f67b80ab04e8",
               "text": "<p>Vier vrienden raden hoeveel pepernoten er in de pot zitten.</p>\r\n\r\n<img src=\"https://s3.amazonaws.com/studyflow/rekenen/Ordenen-en-de-getallenlijn/Ordenen_en_de_getallenlijn_vraag7.jpg\">\r\n\r\n<ul>\r\n<li> Koen: 121</li>\r\n<li> Anouk: 129</li>\r\n<li> Judith: 123</li>\r\n<li> Pieter: 122</li>\r\n</ul>\r\n\r\n<p>In de pot zitten 127 pepernoten.</p>\r\n\r\n<p class=”question_title”>Wie zat er het dichtst bij?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3484,11 +3480,11 @@
             {
               "id": "9ca2240d-ab4e-4062-a6c8-c954314edf84",
               "text": "<p>Vier vrienden raden hoeveel m&m's er op de taart liggen.</p>\r\n\r\n<img src=\"https://s3.amazonaws.com/studyflow/rekenen/Ordenen-en-de-getallenlijn/Ordenen_en_de_getallenlijn_vraag9.jpg\">\r\n\r\n<ul>\r\n<li> Maeike: 139</li>\r\n<li> Bas: 141</li>\r\n<li> Lian: 150</li>\r\n<li> Maarten 145</li>\r\n</ul>\r\n\r\n<p>Er liggen 148 m&m’s op de taart.</p>\r\n\r\n<p class=”question_title”>Wie zat er het dichtst bij?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3516,11 +3512,11 @@
             {
               "id": "117eefdc-a256-40e6-a726-5b73be721e56",
               "text": "<img src=\"https://docs.google.com/drawings/d/1o2cg85uj6Bq9_6dCpvZkTIDOGM5E4O4RbddcrnipZqY/pub?w=776&h=100\">\r\n\r\n<p>De pijl wijst de plaats van een getal op de getallenlijn aan.</p>\r\n\r\n<p class=”question_title”>Welk getal is dat? Kies uit:</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3548,11 +3544,11 @@
             {
               "id": "1516942d-fa84-4331-ae40-471996584183",
               "text": "<img src=\"https://docs.google.com/drawings/d/1by7gt2hD_BrXKacHWzIJ2qeQ4PcArh9RTs_CDzTIyFA/pub?w=776&h=100\">\r\n\r\n<p>De pijl wijst de plaats van een getal op de getallenlijn aan.</p>\r\n\r\n<p class=”question_title”>Welk getal is dat? Kies uit:</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3580,8 +3576,10 @@
             {
               "id": "6ccfe0bf-5639-478f-812d-6184e47e8a2b",
               "text": "<img src=\"https://docs.google.com/drawings/d/1dnFD1dzKpSdzHWoW_oqZrBfjtig5fhY56-d4DrRlSnA/pub?w=776&h=100\">\r\n\r\n<p class=”question_title”>Welk getal ligt precies tussen 125 en 175 in?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3593,18 +3591,16 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "e4f59b93-0e24-493f-b8ad-c23b0598f6bd",
               "text": "<p class=”question_title”>Rangschik de onderstaande getallen van groot naar klein.</p>\r\n\r\n<img\r\nsrc=\"https://docs.google.com/drawings/d/1_fvsz1Z2PQAzqZS0s6tTY9l21n9OFNC8fsVX6zj6xew/pub?w=790&h=178\">\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3632,11 +3628,11 @@
             {
               "id": "a497d77d-72a1-4d19-a1aa-817a16977ff5",
               "text": "<p class=”question_title”>Rangschik de onderstaande getallen van groot naar klein.</p>\r\n\r\n<img src=\"https://docs.google.com/drawings/d/1L5p5I7DRoe8a2iqfZvKRF5AgMuENwlI4jL3ONwvT4Y8/pub?w=790&h=178\">\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3664,11 +3660,11 @@
             {
               "id": "61590df9-d9be-4ca1-b7f0-229480cfcb15",
               "text": "<p class=”question_title”>Rangschik de onderstaande getallen van klein naar groot.</p>\r\n\r\n<img src=\"https://docs.google.com/drawings/d/1J7R5XX3wPZcMFyadsD1l4eX2st166AU0ykT5zG9X8pY/pub?w=790&h=178\">\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3696,11 +3692,11 @@
             {
               "id": "e3ec7956-5c6f-49b9-ac39-a51d4053b238",
               "text": "<p class=”question_title”>Rangschik de onderstaande getallen van klein naar groot.</p>\r\n\r\n<img src=\"https://docs.google.com/drawings/d/1mpDJ7R7U-0epO3-zYIP8hw9ALfTPX_neTBAk_0BLVIE/pub?w=790&h=178\">\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3728,11 +3724,11 @@
             {
               "id": "6cd2158c-8c19-425a-9fb2-6aae962fcba1",
               "text": "<p class=”question_title”>Rangschik de onderstaande getallen van groot naar klein.</p>\r\n\r\n<img src=\"https://docs.google.com/drawings/d/16lOMN2O41wHuA9YX2e2_eOz2JWf54iFbd5nEa6OvuFY/pub?w=790&h=178\">\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3760,11 +3756,11 @@
             {
               "id": "1a18aa61-6aea-4f12-8e59-cd7ef4c2816e",
               "text": "<img src=\"https://docs.google.com/drawings/d/1SqxNXEf_w9TjTb7dum9h3UXIDw6vLxuOsybpagSiKZM/pub?w=767&h=100\">\r\n\r\n<p>De pijl wijst de plaats van een getal op de getallenlijn aan.</p>\r\n\r\n<p class=”question_title”>Welke getal is dat? Kies uit:</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3792,11 +3788,11 @@
             {
               "id": "e860f7c2-984d-4026-930b-60b5390b3876",
               "text": "<img src=\"https://docs.google.com/drawings/d/1X-GX7fa3IfLmrVKsre4TRbcli1wJYAchMJFcr_-Nkc4/pub?w=772&h=100\">\r\n\r\n<p>De pijl wijst de plaats van een getal op de getallenlijn aan.</p>\r\n\r\n<p class=”question_title”>Welke getal is dat? Kies uit:</p>\r\n\r\n_INPUT_1_\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3824,11 +3820,11 @@
             {
               "id": "61f42d76-d97b-4060-89e1-5bbedaaa19ba",
               "text": "<img src=\"https://docs.google.com/drawings/d/1iocbeo5tAEYagaf8u8kcnXDfuaQj0yPjwRcFX-AxkJc/pub?w=772&h=100\">\r\n\r\n<p>De pijl wijst de plaats van een getal op de getallenlijn aan.</p>\r\n\r\n<p class=”question_title”>Welke getal is dat? Kies uit:</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
-              "line_input_fields": [
-
+              "tools": [
+                "pen_and_paper"
               ],
+              "worked_out_answer": "",
+              "line_input_fields": [],
               "multiple_choice_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3856,8 +3852,10 @@
             {
               "id": "c02518de-d5fa-4661-995b-16adc62327dc",
               "text": "<img src=\"https://docs.google.com/drawings/d/1umXs6erC96dbNstO52MN3Jp4HZlEsLWpKgGq3iOZmu0/pub?w=746&h=100\">\r\n\r\n<p class=”question_title”>Welk getal ligt precies tussen 900 en 1 300 in?</p>\r\n\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3870,15 +3868,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "984299dd-ca6e-4331-bbe2-be708c0ea1b2",
               "text": "<img src=\"https://docs.google.com/drawings/d/1SkKd6RrHvhaziYFrKa2mKWVcCCbom4ahGDPVs54_5TI/pub?w=746&h=100\">\r\n\r\n<p class=”question_title”>Welk getal ligt precies tussen 990 en 1 010 in?</p>\r\n\r\n_INPUT_1_\r\n",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3891,15 +3889,15 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "59d020ef-1e6c-4917-81bb-1fd5a743286c",
               "text": "<img src=\"https://docs.google.com/drawings/d/1d8LmL89uNtIoh5Qn1yx0csvZEtLVGrTHnDSOQ5KLE54/pub?w=746&h=100\">\r\n\r\n<p class=”question_title”>Welk getal ligt precies tussen 325 en 375 in?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
-"worked_out_answer": "",
+              "tools": [
+                "pen_and_paper"
+              ],
+              "worked_out_answer": "",
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
@@ -3911,14 +3909,14 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             },
             {
               "id": "384f2f51-3192-4321-97e7-685e97889983",
               "text": "<img src=\"https://docs.google.com/drawings/d/1KvQNeQs_MML6q2eulbdyLvsDLVHrjHx46U0aajheIMQ/pub?w=746&h=100\">\r\n\r\n<p class=”question_title”>Welk getal ligt precies tussen 750 en 850 in?</p>\r\n\r\n_INPUT_1_",
-              "tools": ["pen_and_paper"],
+              "tools": [
+                "pen_and_paper"
+              ],
               "worked_out_answer": "",
               "line_input_fields": [
                 {
@@ -3931,15 +3929,13 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ]
+              "multiple_choice_input_fields": []
             }
           ]
         }
       ]
     },
-      {
+    {
       "id": "3bcbdb8e-5e00-45df-a998-7731962f0fe3",
       "title": "3 Handig rekenen & rekenregels",
       "sections": [
@@ -3963,9 +3959,7 @@
               "text": "<h1>Delen door 10</h1>\r\n\r\n<p>Als je een getal door 10 deelt dan gebeurt er precies het tegenovergestelde. Je haalt dan de 0 aan het einde weg. Tientallen worden dan eenheden, de honderdtallen worden tientallen enzovoort.<br>\r\n<span class='inline_math'>2 800 ÷ 10 = </span><br>\r\ndat zijn 28 honderdtallen gedeeld door 10, <br>\r\ndus 28 tientallen = 280</p>\r\n\r\n<p>Je haalt dus de 0 aan het einde weg.</p>\r\n\r\n<p>Je kunt deze regel ook gebruiken voor het delen of vermenigvuldigen met andere tientallen.<br>\r\n<span class='inline_math'>15 × 20 =</span><br>\r\ndat zijn 15 × 2 tientallen,<br> \r\ndus 30 tientallen = 300</p>\r\n\r\n<p><span class='inline_math'>50 × 30 =</span><br>\r\nHier kun je twee keer gebruik maken van het rekenen met nullen:<br>\r\n<span class='inline_math'>5 × 3 = 15</span><br>\r\n<span class='inline_math'>5 × 30 = 150</span><br>\r\n<span class='inline_math'>50 × 30 = 1 500</span></p>\r\n\r\n<p><span class='inline_math'>780 ÷ 20 =</span><br>\r\n<span class='inline_math'>780 ÷ 20 = 78 ÷ 2 = 39</span></p>\r\n"
             }
           ],
-          "questions": [
-
-          ]
+          "questions": []
         },
         {
           "id": "d875261b-8296-4832-b7d8-5c41304e728f",
@@ -3992,9 +3986,7 @@
               "text": "<h1>Uit je hoofd rekenen</h1>\r\n<p>Als je uit je hoofd rekent kan je dat gebruiken. \r\n<span class='inline_math'>25 + 300 + 50 + 150 + 75 = </span></p>\r\n\r\n<h2>Manier 1: van links naar rechts</h2>\r\n<table class=\"mod-table invisible\">\r\n<tr>\r\n<td>25 + 300</td>\r\n<td>=</td>\r\n<td><% Topic.inlineOpen(325) %></td>   \r\n</tr>\r\n<tr>\r\n<td>(vul het vorige antwoord in) <% Topic.inlineOpen(325) %> + 50</td>\r\n<td>=</td>\r\n<td><% Topic.inlineOpen(375) %></td>   \r\n</tr>\r\n<tr>\r\n<td>(vul het vorige antwoord in) <% Topic.inlineOpen(375) %> + 150</td>\r\n<td>=</td>\r\n<td><% Topic.inlineOpen(525) %></td>   \r\n</tr>\r\n<tr>\r\n<td>(vul het vorige antwoord in) <% Topic.inlineOpen(525) %> + 75</td>\r\n<td>=</td>\r\n<td><% Topic.inlineOpen(600) %></td>   \r\n</tr>\r\n</table>\r\n\r\n<h2>Manier 2: handig samennemen</h2>\r\n\r\n<p>Eerst doe je 25 + 75 =\r\n<% Topic.inlineOpen(100) %><br>\r\nDaarna doe je 50 + 150 =\r\n<% Topic.inlineOpen(200) %><br>\r\nJe telt nu alles bij elkaar op: 100 + 200 + 300 = \r\n<% Topic.inlineOpen(600) %></p>\r\n\r\n<p>De tweede manier van uitrekenen is makkelijker en sneller dan de eerste manier!</p>\r\n"
             }
           ],
-          "questions": [
-
-          ]
+          "questions": []
         },
         {
           "id": "603dfa69-ee05-4430-8ff4-34dfb254e319",
@@ -4011,9 +4003,7 @@
               "text": "<h1>vermenigvuldigen en delen</h1>\r\n<span class='inline_math'>6 × 5</span></p>\r\n\r\n<img src=\"https://docs.google.com/drawings/d/1gA6w8dAHR0OjQhtb3S5lABaP0BV9sBAtHO1dMjJM2O4/pub?w=628&h=251\">\r\n\r\n<p>Wanneer je de bovenstaande rechthoek van 6 bij 5 in twee stukken knipt, dan krijg je twee stukken van 3 bij 5.</br>\r\nAls je die weer aan elkaar plakt krijg je een rechthoek van 3 bij 10.</p>\r\n\t\r\n<p>Dus: <span class='inline_math'>6 × 5 =  3 × 5 + 3 × 5 = 3 × 10</span>.</p>\r\n\r\n<p>Je mag dus de 6 halveren. </br>\r\nDat compenseer je door de 5 te verdubbelen.</br>\r\nHet antwoord van de som blijft dan hetzelfde.</p>\r\n"
             }
           ],
-          "questions": [
-
-          ]
+          "questions": []
         },
         {
           "id": "e9a8bc83-f1f0-43b1-ae09-bdd6b9ce3645",
@@ -4030,9 +4020,7 @@
               "text": "<h1>2. Voorbeeld <span class='inline_math'>3 × 28</span></h1>\r\n\r\n<img src=\"https://docs.google.com/drawings/d/1zkjkjhatgWt1826__TVhWeGE5_HaiWnXg0B3T1vEdA0/pub?w=991&h=100\">\r\n\r\n<p>Als je eerst <span class='inline_math'>3 × 30 =</span> uitrekent dan heb je <span class='inline_math'>3 × 2 =</span> teveel gerekend:<br>\r\n<table class=\"mod-table invisible\">\r\n<tr>\r\n<td><span class='inline_math'>3 × 30 =</span></td>   \r\n<td><% Topic.inlineOpen(90) %></td>   \r\n</tr>\r\n<tr>\r\n<td><span class='inline_math'>3 × 2 =</span></td>   \r\n<td><% Topic.inlineOpen(6) %></td>   \r\n</tr>\r\n<tr>\r\n<td><span class='inline_math'>3 × 28 =</span></td>   \r\n<td><% Topic.inlineOpen(84) %></td>   \r\n</tr>\r\n</table></p>"
             }
           ],
-          "questions": [
-
-          ]
+          "questions": []
         }
       ]
     },
@@ -4070,9 +4058,7 @@
               "text": "<h1>Vaste verhouding tussen grootheden</h1>\r\n<p>De snelheid waarmee je loopt is de verhouding tussen de afstand en de tijd die je daarvoor nodig hebt. Ren je met een snelheid van 10 km/uur dan heb je voor 20 km twee uur nodig (20 km ÷ 2 uur = 10 km/uur), en voor 7,5 km heb je drie kwartier nodig (7,5 km ÷ <math>\\frac{3}{4} \\text{uur} = 10</math> km/uur).</p>\r\n\r\n<p>Hoe de twee grootheden afstand en tijd samenhangen met de snelheid zie je ook terug in de eenheden (km, uur &eacute;n km/u):</p>\r\n\r\n<table class=\"mod-table invisible\">\r\n<tr>\r\n<td>afstand ÷ tijd = snelheid </td>   \r\n<td>km ÷ uur = km/uur</td>   \r\n</tr>\r\n<tr>\r\n<td>afstand ÷ snelheid = tijd</td>   \r\n<td>km ÷ km/uur = uur</td>   \r\n</tr>\r\n<tr>\r\n<td>tijd × snelheid = afstand</td>   \r\n<td>uur × km/uur = km</td>   \r\n</tr>\r\n</table>\r\n\r\n<p>Je snelheid is binnen hetzelfde als buiten.</p>\r\n\r\n<img src=\"https://docs.google.com/drawings/d/1qV7TOxmBZJ4_TWxRcA_OMbdueh9Fbt6A7w8ynHJUYWo/pub?w=724&amp;h=178\">\r\n\r\n<p>Terug naar de binnen- en buitenbaan: over 400 meter doe je 75 seconden. Je snelheid is 400 m ÷ 75 s = 5 <math>\\frac{1}{3}</math> m/s.De snelheid is dus de factor tussen tijd en afstand: afstand = tijd x snelheid</p>\r\n\r\n<p>Je rekent de rondetijd voor de binnenbaan uit met<br />\r\nTijd = afstand ÷ snelheid<br />\r\n160 m ÷ 5 <math>\\frac{1}{3}</math> m/s = 30 seconde.</p>\r\n\r\n<p>Bij de eerste twee manieren, via een tussenstap en deel-geheel, gebruikte je factoren in ‘horizontale richting’. Je gebruikt dan de verhoudingen binnen de grootheid: wordt de afstand 2 keer zo groot dan wordt de tijd ook 2 keer zo groot. Bij de derde manier, vaste verhouding tussen grootheden, maakte je gebruik van de factor in ‘verticale richting’: de snelheid bleef hetzelfde.</p>\r\n"
             }
           ],
-          "questions": [
-
-          ]
+          "questions": []
         },
         {
           "id": "1d9bdbf4-e4e1-4f39-8a71-99984c327938",
@@ -4099,9 +4085,7 @@
               "text": "<h1>Verhoudingen - Verticale factor</h1>\r\n<img src=\"https://docs.google.com/drawings/d/13CAgv9mgejb1OW6MeCfBJFP_d6YwvH67pDkRuuVrn6g/pub?w=726&amp;h=108\">\r\n\r\n<p>De verticale factor, de factor tussen de grootheden is ook constant.</p>\r\n\r\n<p>De snelheid (m/s) is constant:<br />\r\n<math>\\frac{160 \\text{}}{32 \\text{s}} = \\frac{200 \\text{}}{40 \\text{s}} = 5 \\text{m/s}</math></p>\r\n\r\n<p>De factor tussen het deel en de afstand is 200:<br />\r\n200 ÷ 1 = 160 ÷ 0,8 = 200</p>\r\n\r\n<p>Je kan dit bijvoorbeeld zo gebruiken:</p>\r\n\r\n<p><strong>70% van de leerlingen krijgt zakgeld. Dat zijn 140. Hoeveel leerlingen zijn er in totaal?</strong></p>\r\n\r\n<p>Bij 70% hoort het kommagetal 0,7.<br />\r\nDe verticale factor is 140 ÷ 0,7 = 200.<br />\r\nIn totaal zijn er 200 leerlingen.</p>\r\n\r\n<p><strong>0,75 kilo kost 225 cent. Hoeveel kost 1 kilo?</strong></p>\r\n\r\n<p>Daarbij hoort de som 225 ÷ 0,75 = 300<br />\r\nE&eacute;n kilo kost 3 euro</p>"
             }
           ],
-          "questions": [
-
-          ]
+          "questions": []
         },
         {
           "id": "6665617d-ed39-4cb7-b268-2dc87397860e",
@@ -4123,9 +4107,7 @@
               "text": "<h1>Vullen van een wasbak</h1>\r\n<img src=\"https://s3.amazonaws.com/studyflow/rekenen/Hints/Verhoudingen+2/A3-3.png\">\r\n\r\n<p>Hoe lang duurt het voor de lekkende kraan de wasbak gevuld heeft?</p>\r\n\r\n<p>Om dit vraagstuk op te lossen heb de volgende informatie:</p>\r\n\r\n<ul>\r\n\t<li>De kraan drupt met 5 druppen per 10,14 seconden.</span></li>\r\n\t<li>Na precies 10 minuten is de wasbak voor 85 ml gevuld.</span></li>\r\n\t<li>In totaal past er 11,37 liter in de wasbak.</span></li>\r\n</ul>\r\n\r\n<p>Als je wilt weten hoe lang de lekkende kraan erover doet om de wasbak te vullen, dan wil je weten welke tijd hoort bij het volume van de wasbak. We stellen daarom een nieuwe grootheid samen uit volume en tijd: we kiezen hier voor ml/min. Je zou deze grootheid de vulsnelheid kunnen noemen.</p>\r\n\r\n<p>De grootheden (en eenheden) hangen dan als volgt samen:</p>\r\n\r\n<table class=\"mod-table invisible\">\r\n<tr>\r\n<td>vulsnelheid = volume ÷ tijd</td>   \r\n<td></td>\r\n<td>ml/min = ml ÷ min</td>\r\n</tr>\r\n<tr>\r\n<td>volume = tijd × vulsnelheid</td>   \r\n<td></td>\r\n<td>ml = min × ml/min</td>\r\n</tr>\r\n<tr>\r\n<td>tijd = volume ÷ vulsnelheid</td>   \r\n<td></td>\r\n<td>min = ml ÷ ml/min</td>\r\n</tr>\r\n</table>\r\n\r\n<p>De vulsnelheid kan je uitrekenen. Er is immers gegeven dat er in 10 minuten 85 ml water uit de kraan komt.</p>\r\n\r\n<p>85 ml &divide; 10 min = 8,5 ml/min</p>\r\n\r\n<p>De &lsquo;vulsnelheid&rsquo; waarmee de gootsteen zich vult is dus 8,5 ml/min.</p>\r\n\r\n<p>De inhoud van de gootsteen is 11,37 l = 11370 ml. Dus:<br />\r\nTijd = 11370 ml &divide; 8,5 ml/min = 1338 minuten = 22 uur en 18 minuten</p>\r\n\r\n<p>Nota bene: De aanwijzing over de 5 druppels in 10,14 seconden heb je dus helemaal niet nodig.</p>\r\n\r\n<p>Je hebt in de twee voorbeelden gezien hoe je verhoudingsopgaven kan oplossen door gebruik te maken van de vaste verhouding tussen twee grootheden. Je maakte daarvoor een nieuwe samengestelde grootheid.</p>\r\n\r\n<p>Je kan zelf kiezen welke manier je het fijnste vindt om een opgave op te lossen. Met een tekening, met een getallenstrook of een verhoudingstabel kan je de tussenstappen beter zien, maar het is wel meer werk. Je kan er ook voor kiezen om met de samengestelde eenheden te rekenen.</p>"
             }
           ],
-          "questions": [
-
-          ]
+          "questions": []
         }
       ]
     }

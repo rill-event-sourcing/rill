@@ -9,12 +9,8 @@
         {
           "id": "1f4e4be1-b8f0-4624-90e7-a00f61e48bc3",
           "title": "Over het tiental heengaan\t",
-          "subsections": [
-
-          ],
-          "questions": [
-
-          ]
+          "subsections": [],
+          "questions": []
         },
         {
           "id": "bac7d0f4-abc1-4589-aadb-d7cfba81a063",
@@ -36,9 +32,7 @@
               "text": "<h1>Handig optellen - Splitsen</h1>\r\n\r\n<p><span class='inline_math'>47 + 38</span> kan je ook uitrekenen door beide getallen te splitsen in tientallen en eenheden.</p>\r\n\r\n<p><span class='inline_math'>40 + 30 = 70</span> en <span class='inline_math'>7 + 8 = 15</span> samen <span class='inline_math'>70 + 15 =  85</span>.</p>\r\n\r\n<img src=\"https://docs.google.com/drawings/d/1nqRrK5FkAZzH2_fJkI-tbCVZ9-rCjaDmPlypbBs-uiE/pub?w=676&h=253\">\r\n\r\n<p class='small'><span class='inline_math'>469 + 218</span> kan je uitrekenen door eerst de honderdtallen, dan de tientallen, dan de eenheden op te tellen.</p>\r\n\r\n<p><span class='inline_math'>400 + 200 = 600</span> en <span class='inline_math'>60 + 10 = 70</span> en <span class='inline_math'>9 + 8 = 17</span><br>\r\nsamen <span class='inline_math'>600 + 70 + 17 = 600 + 70 + 10 + 7 = 687</span></p>\r\n"
             }
           ],
-          "questions": [
-
-          ]
+          "questions": []
         },
         {
           "id": "6d274271-73aa-4a97-bf23-59e9fa9511c1",
@@ -70,9 +64,7 @@
               "text": "<h1>Handig rekenen - Aanvullen</h1>\r\n\r\n<p>Je hebt gezien hoe je <span class='inline_math'>46 - 25</span> uit kan rekenen door te rijgen. Je begint dan bij 46 en haalt er 25 in gedeeltes van af.</p>\r\n\r\n<p>In plaats van aftrekken te zien als ‘er af’ is het ook het ‘verschil’.</br>\r\nIn plaats van te beginnen bij 46 en daar 25 in gedeelten af te trekken, kan je dus ook kiezen om aan te vullen. In stapjes bepaal je dan hoe je van 25 bij 46 zou kunnen komen.</br>\r\nJe rekent dan uit hoe je van 25 naar 46 kan springen.</p>\r\n\r\n<img src=\"https://docs.google.com/drawings/d/1PyJfbVV5WcvUx2qPWU1jl-miCFaxi9gbTnjwIhzCdgE/pub?w=747&h=134\">\r\n\r\n<p>Je ziet dat optellen en aftrekken verwant zijn.</p>"
             }
           ],
-          "questions": [
-
-          ]
+          "questions": []
         },
         {
           "id": "6edb283a-15d3-4907-b6ba-3f46771165ca",
@@ -89,9 +81,7 @@
               "text": "<h1>Herhaald optellen en oppervlakte</h1>\r\n\r\n<img src=\"https://docs.google.com/drawings/d/1ZzYQm75tAtxUUHTBfbC-hwg2GW7exxIquPrtU9LoG0M/pub?w=782&h=100\">\r\n\r\n<p><span class='inline_math'>3 + 3 + 3 + 3 + 3 + 3 + 3 + 3 + 3 + 3 + 3 = 11 × 3</span><br>\r\nJe hebt 11 keer 3 knikkers.</p>\r\n\r\n<p>Je kan de knikkers ook in een schema tekenen:</p>\r\n<img src=\"https://docs.google.com/drawings/d/1PciZwcI58lGXk42v8ot1ZfsMKUGma98HaUndfu2zo2g/pub?w=475&h=163\">\r\n\r\n<p>Vermenigvuldigen hoort dus bij herhaald optellen én bij oppervlakte.\r\nJe ziet in totaal:</p>\r\n<ul> \r\n<li>11 kolommen met elk 3 knikkers:</br>\r\n<span class='inline_math'>11 × 3 = 3 + 3 + 3 + 3 + 3 + 3 + 3 + 3 + 3 + 3 + 3</span> \r\n</li>\r\n</ul>\r\n\r\n<p>of</p>\r\n\r\n<ul> \r\n<li>3 kolommen met elk 11 knikkers:</br>\r\n<span class='inline_math'>3 × 11 = 11 + 11 + 11</span> \r\n</li>\r\n</ul>\r\n\r\n<p>Bij vermenigvuldigen maakt de volgorde van de getallen dus niet uit:</br>\r\n<span class='inline_math'>3 × 11 = 11 × 3</span></p>\r\n\r\n<% Topic.think(\"Hoe zie je bij de tafels dat de volgorde niet uitmaakt bij vermenigvuldigen?\", \"Je ziet dat de antwoorden telkens op twee plekken staan. Bijvoorbeeld 1 × 10 = 10 = 10 x 1 staat linksonder én rechtsboven. </br></br> <img src='https://docs.google.com/drawings/d/15zUrLouB3U4ZXNR8H5RDKFn6UNUGGHVHlw74JGtVUlM/pub?w=576&h=576'> \") %>\r\n\r\n<p>Het is handig als je de tafels uit je hoofd kent. Dat helpt je bij het rekenen.</p>\r\n"
             }
           ],
-          "questions": [
-
-          ]
+          "questions": []
         },
         {
           "id": "259df400-505a-4d87-9ece-da991ff03d33",
@@ -108,9 +98,7 @@
               "text": "<h1>Delen en vermenigvuldigen</h1>\r\n<p>Delen en vermenigvuldigen zijn tegengestelde bewerkingen.</br> \r\nVermenigvuldig je iets eerst met 5 en deel je daarna door 5, dan kom je weer bij hetzelfde uit.</p>\r\n\r\n<p>Bij elk keersom horen dus twee deelsommen.\r\n<span class='inline_math'>5 × 7 = 35</span>\r\n<span class='inline_math'>35 ÷ 7 = 5</span>\r\n<span class='inline_math'>35 ÷ 5 = 7</span></p>\r\n\r\n<p>Dus als 5 stukjes van 7 meter samen 35 meter zijn…</p>\r\n<img src=\"https://docs.google.com/drawings/d/1mSSkYhmESlEC6Byk5Z1EKGqIcqU6AbnSo-ZORp4izXs/pub?w=898&h=100\">\r\n\r\n<p>dan past 7 meter 5 keer in 35 meter</p>\r\n<img src=\"https://docs.google.com/drawings/d/1VjIMkSm-KornqnjvrAJuU-Vva6DTV1WexIeZc8skoNw/pub?w=897&h=148\">\r\n\r\n<p>…en is elk stuk 7 meter als je 35 meter in 5 gelijke stukken zaagt.</p>\r\n<img src=\"https://docs.google.com/drawings/d/1BSHcB47YouKMUghYBGS4rMBdBGv_n4_IEaoHQeHFndU/pub?w=898&h=109\">\r\n"
             }
           ],
-          "questions": [
-
-          ]
+          "questions": []
         },
         {
           "id": "cdc8d400-46fa-47da-9c7d-f10a2b0b5275",
@@ -127,9 +115,7 @@
               "text": "<p>Kijk maar eens naar het volgende voorbeeld:</p>\r\n<img src=\"https://docs.google.com/drawings/d/17dI_2xibREsXQAvTBWCyQLZmYZvGIX4QxAdyvPnm73A/pub?w=748&h=480\">\r\n\r\n<p>De rekenmachine die je op de middelbare school gebruikt rekent volgens deze volgorde-regels. Soms zijn er nog rekenmachines die niet deze regels gebruiken. Daar moet je dus op letten voor je de rekenmachine gaat gebruiken.</p>"
             }
           ],
-          "questions": [
-
-          ]
+          "questions": []
         }
       ]
     },
@@ -157,9 +143,7 @@
               "text": "<h1>Delen door 10</h1>\r\n\r\n<p>Als je een getal door 10 deelt dan gebeurt er precies het tegenovergestelde. Je haalt dan de 0 aan het einde weg. Tientallen worden dan eenheden, de honderdtallen worden tientallen enzovoort.<br>\r\n<span class='inline_math'>2 800 ÷ 10 = </span><br>\r\ndat zijn 28 honderdtallen gedeeld door 10, <br>\r\ndus 28 tientallen = 280</p>\r\n\r\n<p>Je haalt dus de 0 aan het einde weg.</p>\r\n\r\n<p>Je kunt deze regel ook gebruiken voor het delen of vermenigvuldigen met andere tientallen.<br>\r\n<span class='inline_math'>15 × 20 =</span><br>\r\ndat zijn 15 × 2 tientallen,<br> \r\ndus 30 tientallen = 300</p>\r\n\r\n<p><span class='inline_math'>50 × 30 =</span><br>\r\nHier kun je twee keer gebruik maken van het rekenen met nullen:<br>\r\n<span class='inline_math'>5 × 3 = 15</span><br>\r\n<span class='inline_math'>5 × 30 = 150</span><br>\r\n<span class='inline_math'>50 × 30 = 1 500</span></p>\r\n\r\n<p><span class='inline_math'>780 ÷ 20 =</span><br>\r\n<span class='inline_math'>780 ÷ 20 = 78 ÷ 2 = 39</span></p>\r\n"
             }
           ],
-          "questions": [
-
-          ]
+          "questions": []
         },
         {
           "id": "d875261b-8296-4832-b7d8-5c41304e728f",
@@ -186,9 +170,7 @@
               "text": "<h1>Uit je hoofd rekenen</h1>\r\n<p>Als je uit je hoofd rekent kan je dat gebruiken. \r\n<span class='inline_math'>25 + 300 + 50 + 150 + 75 = </span></p>\r\n\r\n<h2>Manier 1: van links naar rechts</h2>\r\n<table class=\"mod-table invisible\">\r\n<tr>\r\n<td>25 + 300</td>\r\n<td>=</td>\r\n<td><% Topic.inlineOpen(325) %></td>   \r\n</tr>\r\n<tr>\r\n<td>(vul het vorige antwoord in) <% Topic.inlineOpen(325) %> + 50</td>\r\n<td>=</td>\r\n<td><% Topic.inlineOpen(375) %></td>   \r\n</tr>\r\n<tr>\r\n<td>(vul het vorige antwoord in) <% Topic.inlineOpen(375) %> + 150</td>\r\n<td>=</td>\r\n<td><% Topic.inlineOpen(525) %></td>   \r\n</tr>\r\n<tr>\r\n<td>(vul het vorige antwoord in) <% Topic.inlineOpen(525) %> + 75</td>\r\n<td>=</td>\r\n<td><% Topic.inlineOpen(600) %></td>   \r\n</tr>\r\n</table>\r\n\r\n<h2>Manier 2: handig samennemen</h2>\r\n\r\n<p>Eerst doe je 25 + 75 =\r\n<% Topic.inlineOpen(100) %><br>\r\nDaarna doe je 50 + 150 =\r\n<% Topic.inlineOpen(200) %><br>\r\nJe telt nu alles bij elkaar op: 100 + 200 + 300 = \r\n<% Topic.inlineOpen(600) %></p>\r\n\r\n<p>De tweede manier van uitrekenen is makkelijker en sneller dan de eerste manier!</p>\r\n"
             }
           ],
-          "questions": [
-
-          ]
+          "questions": []
         },
         {
           "id": "603dfa69-ee05-4430-8ff4-34dfb254e319",
@@ -205,9 +187,7 @@
               "text": "<h1>vermenigvuldigen en delen</h1>\r\n<span class='inline_math'>6 × 5</span></p>\r\n\r\n<img src=\"https://docs.google.com/drawings/d/1gA6w8dAHR0OjQhtb3S5lABaP0BV9sBAtHO1dMjJM2O4/pub?w=628&h=251\">\r\n\r\n<p>Wanneer je de bovenstaande rechthoek van 6 bij 5 in twee stukken knipt, dan krijg je twee stukken van 3 bij 5.</br>\r\nAls je die weer aan elkaar plakt krijg je een rechthoek van 3 bij 10.</p>\r\n\t\r\n<p>Dus: <span class='inline_math'>6 × 5 =  3 × 5 + 3 × 5 = 3 × 10</span>.</p>\r\n\r\n<p>Je mag dus de 6 halveren. </br>\r\nDat compenseer je door de 5 te verdubbelen.</br>\r\nHet antwoord van de som blijft dan hetzelfde.</p>\r\n"
             }
           ],
-          "questions": [
-
-          ]
+          "questions": []
         },
         {
           "id": "e9a8bc83-f1f0-43b1-ae09-bdd6b9ce3645",
@@ -224,9 +204,7 @@
               "text": "<h1>2. Voorbeeld <span class='inline_math'>3 × 28</span></h1>\r\n\r\n<img src=\"https://docs.google.com/drawings/d/1zkjkjhatgWt1826__TVhWeGE5_HaiWnXg0B3T1vEdA0/pub?w=991&h=100\">\r\n\r\n<p>Als je eerst <span class='inline_math'>3 × 30 =</span> uitrekent dan heb je <span class='inline_math'>3 × 2 =</span> teveel gerekend:<br>\r\n<table class=\"mod-table invisible\">\r\n<tr>\r\n<td><span class='inline_math'>3 × 30 =</span></td>   \r\n<td><% Topic.inlineOpen(90) %></td>   \r\n</tr>\r\n<tr>\r\n<td><span class='inline_math'>3 × 2 =</span></td>   \r\n<td><% Topic.inlineOpen(6) %></td>   \r\n</tr>\r\n<tr>\r\n<td><span class='inline_math'>3 × 28 =</span></td>   \r\n<td><% Topic.inlineOpen(84) %></td>   \r\n</tr>\r\n</table></p>"
             }
           ],
-          "questions": [
-
-          ]
+          "questions": []
         }
       ]
     },
@@ -264,9 +242,7 @@
               "text": "<h1>Vaste verhouding tussen grootheden</h1>\r\n<p>De snelheid waarmee je loopt is de verhouding tussen de afstand en de tijd die je daarvoor nodig hebt. Ren je met een snelheid van 10 km/uur dan heb je voor 20 km twee uur nodig (20 km ÷ 2 uur = 10 km/uur), en voor 7,5 km heb je drie kwartier nodig (7,5 km ÷ <math>\\frac{3}{4} \\text{uur} = 10</math> km/uur).</p>\r\n\r\n<p>Hoe de twee grootheden afstand en tijd samenhangen met de snelheid zie je ook terug in de eenheden (km, uur &eacute;n km/u):</p>\r\n\r\n<table class=\"mod-table invisible\">\r\n<tr>\r\n<td>afstand ÷ tijd = snelheid </td>   \r\n<td>km ÷ uur = km/uur</td>   \r\n</tr>\r\n<tr>\r\n<td>afstand ÷ snelheid = tijd</td>   \r\n<td>km ÷ km/uur = uur</td>   \r\n</tr>\r\n<tr>\r\n<td>tijd × snelheid = afstand</td>   \r\n<td>uur × km/uur = km</td>   \r\n</tr>\r\n</table>\r\n\r\n<p>Je snelheid is binnen hetzelfde als buiten.</p>\r\n\r\n<img src=\"https://docs.google.com/drawings/d/1qV7TOxmBZJ4_TWxRcA_OMbdueh9Fbt6A7w8ynHJUYWo/pub?w=724&amp;h=178\">\r\n\r\n<p>Terug naar de binnen- en buitenbaan: over 400 meter doe je 75 seconden. Je snelheid is 400 m ÷ 75 s = 5 <math>\\frac{1}{3}</math> m/s.De snelheid is dus de factor tussen tijd en afstand: afstand = tijd x snelheid</p>\r\n\r\n<p>Je rekent de rondetijd voor de binnenbaan uit met<br />\r\nTijd = afstand ÷ snelheid<br />\r\n160 m ÷ 5 <math>\\frac{1}{3}</math> m/s = 30 seconde.</p>\r\n\r\n<p>Bij de eerste twee manieren, via een tussenstap en deel-geheel, gebruikte je factoren in ‘horizontale richting’. Je gebruikt dan de verhoudingen binnen de grootheid: wordt de afstand 2 keer zo groot dan wordt de tijd ook 2 keer zo groot. Bij de derde manier, vaste verhouding tussen grootheden, maakte je gebruik van de factor in ‘verticale richting’: de snelheid bleef hetzelfde.</p>\r\n"
             }
           ],
-          "questions": [
-
-          ]
+          "questions": []
         },
         {
           "id": "1d9bdbf4-e4e1-4f39-8a71-99984c327938",
@@ -293,9 +269,7 @@
               "text": "<h1>Verhoudingen - Verticale factor</h1>\r\n<img src=\"https://docs.google.com/drawings/d/13CAgv9mgejb1OW6MeCfBJFP_d6YwvH67pDkRuuVrn6g/pub?w=726&amp;h=108\">\r\n\r\n<p>De verticale factor, de factor tussen de grootheden is ook constant.</p>\r\n\r\n<p>De snelheid (m/s) is constant:<br />\r\n<math>\\frac{160 \\text{}}{32 \\text{s}} = \\frac{200 \\text{}}{40 \\text{s}} = 5 \\text{m/s}</math></p>\r\n\r\n<p>De factor tussen het deel en de afstand is 200:<br />\r\n200 ÷ 1 = 160 ÷ 0,8 = 200</p>\r\n\r\n<p>Je kan dit bijvoorbeeld zo gebruiken:</p>\r\n\r\n<p><strong>70% van de leerlingen krijgt zakgeld. Dat zijn 140. Hoeveel leerlingen zijn er in totaal?</strong></p>\r\n\r\n<p>Bij 70% hoort het kommagetal 0,7.<br />\r\nDe verticale factor is 140 ÷ 0,7 = 200.<br />\r\nIn totaal zijn er 200 leerlingen.</p>\r\n\r\n<p><strong>0,75 kilo kost 225 cent. Hoeveel kost 1 kilo?</strong></p>\r\n\r\n<p>Daarbij hoort de som 225 ÷ 0,75 = 300<br />\r\nE&eacute;n kilo kost 3 euro</p>"
             }
           ],
-          "questions": [
-
-          ]
+          "questions": []
         },
         {
           "id": "6665617d-ed39-4cb7-b268-2dc87397860e",
@@ -317,9 +291,7 @@
               "text": "<h1>Vullen van een wasbak</h1>\r\n<img src=\"https://s3.amazonaws.com/studyflow/rekenen/Hints/Verhoudingen+2/A3-3.png\">\r\n\r\n<p>Hoe lang duurt het voor de lekkende kraan de wasbak gevuld heeft?</p>\r\n\r\n<p>Om dit vraagstuk op te lossen heb de volgende informatie:</p>\r\n\r\n<ul>\r\n\t<li>De kraan drupt met 5 druppen per 10,14 seconden.</span></li>\r\n\t<li>Na precies 10 minuten is de wasbak voor 85 ml gevuld.</span></li>\r\n\t<li>In totaal past er 11,37 liter in de wasbak.</span></li>\r\n</ul>\r\n\r\n<p>Als je wilt weten hoe lang de lekkende kraan erover doet om de wasbak te vullen, dan wil je weten welke tijd hoort bij het volume van de wasbak. We stellen daarom een nieuwe grootheid samen uit volume en tijd: we kiezen hier voor ml/min. Je zou deze grootheid de vulsnelheid kunnen noemen.</p>\r\n\r\n<p>De grootheden (en eenheden) hangen dan als volgt samen:</p>\r\n\r\n<table class=\"mod-table invisible\">\r\n<tr>\r\n<td>vulsnelheid = volume ÷ tijd</td>   \r\n<td></td>\r\n<td>ml/min = ml ÷ min</td>\r\n</tr>\r\n<tr>\r\n<td>volume = tijd × vulsnelheid</td>   \r\n<td></td>\r\n<td>ml = min × ml/min</td>\r\n</tr>\r\n<tr>\r\n<td>tijd = volume ÷ vulsnelheid</td>   \r\n<td></td>\r\n<td>min = ml ÷ ml/min</td>\r\n</tr>\r\n</table>\r\n\r\n<p>De vulsnelheid kan je uitrekenen. Er is immers gegeven dat er in 10 minuten 85 ml water uit de kraan komt.</p>\r\n\r\n<p>85 ml &divide; 10 min = 8,5 ml/min</p>\r\n\r\n<p>De &lsquo;vulsnelheid&rsquo; waarmee de gootsteen zich vult is dus 8,5 ml/min.</p>\r\n\r\n<p>De inhoud van de gootsteen is 11,37 l = 11370 ml. Dus:<br />\r\nTijd = 11370 ml &divide; 8,5 ml/min = 1338 minuten = 22 uur en 18 minuten</p>\r\n\r\n<p>Nota bene: De aanwijzing over de 5 druppels in 10,14 seconden heb je dus helemaal niet nodig.</p>\r\n\r\n<p>Je hebt in de twee voorbeelden gezien hoe je verhoudingsopgaven kan oplossen door gebruik te maken van de vaste verhouding tussen twee grootheden. Je maakte daarvoor een nieuwe samengestelde grootheid.</p>\r\n\r\n<p>Je kan zelf kiezen welke manier je het fijnste vindt om een opgave op te lossen. Met een tekening, met een getallenstrook of een verhoudingstabel kan je de tussenstappen beter zien, maar het is wel meer werk. Je kan er ook voor kiezen om met de samengestelde eenheden te rekenen.</p>"
             }
           ],
-          "questions": [
-
-          ]
+          "questions": []
         }
       ]
     }

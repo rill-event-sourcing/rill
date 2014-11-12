@@ -519,15 +519,11 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ],
+              "multiple_choice_input_fields": [],
               "worked_out_answer": "2"
             }
           ],
-          "line_input_fields": [
-
-          ]
+          "line_input_fields": []
         }
       ],
       "remedial": false

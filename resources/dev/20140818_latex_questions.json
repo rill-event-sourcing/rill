@@ -54,9 +54,7 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ],
+              "multiple_choice_input_fields": [],
               "worked_out_answer": "Het juiste antwoord is: 5"
             },
             {
@@ -76,9 +74,7 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ],
+              "multiple_choice_input_fields": [],
               "worked_out_answer": "Het juiste antwoord is: 6"
             },
             {
@@ -98,9 +94,7 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ],
+              "multiple_choice_input_fields": [],
               "worked_out_answer": "Het juiste antwoord is: 7"
             },
             {
@@ -120,9 +114,7 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ],
+              "multiple_choice_input_fields": [],
               "worked_out_answer": "Het juiste antwoord is: 3"
             },
             {
@@ -143,9 +135,7 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ],
+              "multiple_choice_input_fields": [],
               "worked_out_answer": "Het juiste antwoord is: noemer"
             },
             {
@@ -166,9 +156,7 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ],
+              "multiple_choice_input_fields": [],
               "worked_out_answer": "Het juiste antwoord is: de teller"
             },
             {
@@ -193,9 +181,7 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ],
+              "multiple_choice_input_fields": [],
               "worked_out_answer": "Het juiste antwoord is: drie vierden"
             },
             {
@@ -222,9 +208,7 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ],
+              "multiple_choice_input_fields": [],
               "worked_out_answer": "Het juiste antwoord is: kwart"
             },
             {
@@ -254,9 +238,7 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ],
+              "multiple_choice_input_fields": [],
               "worked_out_answer": "Het juiste antwoord is: halve"
             },
             {
@@ -279,9 +261,7 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ],
+              "multiple_choice_input_fields": [],
               "worked_out_answer": "Het juiste antwoord is: twee negenden"
             },
             {
@@ -310,9 +290,7 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ],
+              "multiple_choice_input_fields": [],
               "worked_out_answer": "Het juiste antwoord is: een achtste"
             },
             {
@@ -335,9 +313,7 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ],
+              "multiple_choice_input_fields": [],
               "worked_out_answer": "Het juiste antwoord is: drie zevenden"
             },
             {
@@ -360,9 +336,7 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ],
+              "multiple_choice_input_fields": [],
               "worked_out_answer": "Het juiste antwoord is: vierzesde"
             },
             {
@@ -385,9 +359,7 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ],
+              "multiple_choice_input_fields": [],
               "worked_out_answer": "Het juiste antwoord is: drievijfden"
             },
             {
@@ -410,15 +382,11 @@
                   ]
                 }
               ],
-              "multiple_choice_input_fields": [
-
-              ],
+              "multiple_choice_input_fields": [],
               "worked_out_answer": "Het juiste antwoord is: twee derden"
             }
           ],
-          "line_input_fields": [
-
-          ]
+          "line_input_fields": []
         }
       ],
       "remedial": false
@@ -435,9 +403,7 @@
         "tools": [
           "pen_and_paper"
         ],
-        "line_input_fields": [
-
-        ],
+        "line_input_fields": [],
         "multiple_choice_input_fields": [
           {
             "name": "_INPUT_2_",
@@ -484,9 +450,7 @@
             ]
           }
         ],
-        "multiple_choice_input_fields": [
-
-        ]
+        "multiple_choice_input_fields": []
       },
       {
         "id": "5d5ebdda-a749-4a4e-8c88-11c8762a1cd0",
@@ -506,9 +470,7 @@
             ]
           }
         ],
-        "multiple_choice_input_fields": [
-
-        ]
+        "multiple_choice_input_fields": []
       },
       {
         "id": "7d1515cd-0a83-41c9-9d7e-e7371a493228",
@@ -527,9 +489,7 @@
             ]
           }
         ],
-        "multiple_choice_input_fields": [
-
-        ]
+        "multiple_choice_input_fields": []
       },
       {
         "id": "5a8df043-367a-4ce0-84fb-3d84c11ebb48",
@@ -548,9 +508,7 @@
             ]
           }
         ],
-        "multiple_choice_input_fields": [
-
-        ]
+        "multiple_choice_input_fields": []
       },
       {
         "id": "da4a64bc-944c-4d63-aeb2-de380a196c1d",
@@ -558,9 +516,7 @@
         "tools": [
           "pen_and_paper"
         ],
-        "line_input_fields": [
-
-        ],
+        "line_input_fields": [],
         "multiple_choice_input_fields": [
           {
             "name": "_INPUT_1_",
@@ -611,9 +567,7 @@
             ]
           }
         ],
-        "multiple_choice_input_fields": [
-
-        ]
+        "multiple_choice_input_fields": []
       },
       {
         "id": "7c853144-4421-4dd9-b7f9-b732060d597e",
@@ -633,9 +587,7 @@
             ]
           }
         ],
-        "multiple_choice_input_fields": [
-
-        ]
+        "multiple_choice_input_fields": []
       },
       {
         "id": "952baf1b-1121-4253-a230-fe36ca0cd874",
@@ -643,9 +595,7 @@
         "tools": [
           "pen_and_paper"
         ],
-        "line_input_fields": [
-
-        ],
+        "line_input_fields": [],
         "multiple_choice_input_fields": [
           {
             "name": "_INPUT_1_",
@@ -691,9 +641,7 @@
             ]
           }
         ],
-        "multiple_choice_input_fields": [
-
-        ]
+        "multiple_choice_input_fields": []
       },
       {
         "id": "cd539542-5e92-49ff-ae8e-87d4ec44b0e6",
@@ -712,9 +660,7 @@
             ]
           }
         ],
-        "multiple_choice_input_fields": [
-
-        ]
+        "multiple_choice_input_fields": []
       },
       {
         "id": "71ee2659-3f16-4131-8ad1-1f57a85e487a",
@@ -733,9 +679,7 @@
             ]
           }
         ],
-        "multiple_choice_input_fields": [
-
-        ]
+        "multiple_choice_input_fields": []
       }
     ]
   }
