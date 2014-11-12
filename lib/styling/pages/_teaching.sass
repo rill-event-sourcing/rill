@@ -38,6 +38,12 @@
       &.selected
         background: url(/images/book.svg) no-repeat 60px 18px white
         background-size: 45px
+    &.manuals
+      background: url(/images/manual.svg) no-repeat 60px 18px
+      background-size: 45px
+      &.selected
+        background: url(/images/manual.svg) no-repeat 60px 18px white
+        background-size: 45px
     &.selected
       cursor: default
       border: 1px solid #c6ced3
@@ -70,8 +76,7 @@ table
     border-right: 1px solid #ddd
     border-top: 1px solid #ddd
     padding: 15px 20px
-    &.number
-      //text-align: center
+
   th
     border-right: 1px solid #ddd
     border-left: 1px solid white
@@ -230,7 +235,7 @@ textarea.tab-delimited-data
 
 .manuals
   width: 400px
-  margin: 0 0 30px 0
+  margin: 20px 0 30px 0
   td
     padding: 0
   a
