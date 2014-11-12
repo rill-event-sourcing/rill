@@ -125,12 +125,12 @@
              [:li.main-container-nav-list-item
               [:a.main-container-nav-tab
                {:class (str page-name (when (= page-name *current-page-name*)
-                                          " selected"))
+                                        " selected"))
                 :href (build-url :page-name page-name :class class)}
                label]])
-           [["manuals" "Handleidingen"]
-            ["completion" "Overzicht"]
-            ["chapter-list" "Hoofdstukken"]])]]
+           [["completion" "Overzicht"]
+            ["chapter-list" "Hoofdstukken"]
+            ["manuals" "Handleidingen"]])]]
     [:section#main_teaching body]
     [:footer]
     (include-js "//code.jquery.com/jquery-2.1.1.min.js")
