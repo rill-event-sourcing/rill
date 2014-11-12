@@ -5,6 +5,7 @@
             [om.dom :as dom]
             [om.core :as om]
             [goog.dom :as gdom]
+            [studyflow.web.dashboard :refer [dashboard]]
             [studyflow.web.history :as url-history]
             [studyflow.web.helpers :refer [modal] :as helpers]
             [studyflow.web.tracking :as tracking]
@@ -61,7 +62,7 @@
                             (om/build core/navigation-panel cursor)
                             (om/build core/section-panel cursor))
                    ;; default
-                   (om/build core/dashboard cursor)))))))
+                   (om/build dashboard cursor)))))))
 
 (defn ^:export course-page []
   (let [command-channel (async/chan)]
