@@ -1,6 +1,6 @@
 default: test
 
-.PHONY: test build deploy install clean  publishing rill components css js prepare
+.PHONY: test build deploy install clean publishing rill components css js prepare
 
 clean: rill
 	lein do clean, cljsbuild clean
@@ -8,12 +8,12 @@ clean: rill
 rill:
 	make -C lib/rill clean install
 
-prepare: rill css js-dev
+prepare: rill css js-dev calc-dev
 
 publishing: css
 	make -C publishing build
 
-uberjars: css js-prod rill
+uberjars: css js-prod calc-prod rill
 	lein with-profile "login:learning:school-administration:teaching:reporting" uberjar
 
 build: publishing uberjars
@@ -35,3 +35,9 @@ js-dev:
 
 js-prod:
 	lein cljsbuild once prod
+
+calc-dev:
+	make -C lib/calculator clean js-dev
+
+calc-prod:
+	make -C lib/calculator clean js-prod

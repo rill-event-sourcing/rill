@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Studyflow rekenmachine</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="css/calculator.css">
+  </head>
+  <body onFocus="document.body.className='calculator-active'"
+        onBlur="document.body.className=''">
+    <div id="app"></div>
+    <script type="text/javascript" src="js/calculator.js"></script>
+    <script type="text/javascript">
+      //if (top == self) {
+      //  window.location = 'about:blank';
+      //} else {
+        rekenmachien.core.start("app");
+      //}
+      window.reset = function() {
+        rekenmachien.core.reset();
+      }
+      window.chgMode = function() {
+        rekenmachien.core.chgMode();
+      }
+    </script>
+</body>
+</html>

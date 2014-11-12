@@ -3,7 +3,7 @@
             [goog.events :as gevents]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [studyflow.web.helpers :refer [input-builders tool-box modal raw-html tag-tree-to-om focus-input-box] :as helpers]
+            [studyflow.web.helpers :refer [reset-calculator draggable-calculator input-builders tool-box modal raw-html tag-tree-to-om focus-input-box] :as helpers]
             [studyflow.web.recommended-action :refer [recommended-action]]
             [studyflow.web.history :refer [path-url navigate-to-path]])
   (:import (goog.events KeyHandler)))
@@ -78,9 +78,9 @@
 (defn footer-bar
   ([]
      (dom/div #js {:id "m-question_bar"}))
-  ([text on-click enabled color tools]
+  ([cursor text on-click enabled color tools]
      (dom/div #js {:id "m-question_bar"}
-              (tool-box tools)
+              (tool-box cursor (set tools))
               (dom/button #js {:className (str "btn small pull-right " color)
                                :ref "MAIN_BUTTON"
                                :disabled (not enabled)
@@ -160,10 +160,12 @@
                                 question-id
                                 current-answers])
                               (om/set-state-nr! owner :submit nil))))
+        (when-not (contains? (set (:tools question-data)) "calculator")
+          (om/update! cursor [:view :show-calculator] false))
         (dom/div nil
                  (dom/article #js {:id "m-section"}
                               (tag-tree-to-om (:tag-tree question-data) inputs nil nil))
-                 (footer-bar "Nakijken" ;; TODO should be "Voltooi
+                 (footer-bar cursor "Nakijken" ;; TODO should be "Voltooi
                              ;; test" for final question but that's
                              ;; only the case if we know you can't
                              ;; fail the quiz with this question,
@@ -205,6 +207,7 @@
                             (= 3 wrong-count)))]
         (om/set-state-nr! owner :submit
                           (fn []
+                            (reset-calculator)
                             (async/put!
                              (om/get-shared owner :command-channel)
                              ;; TODO
@@ -214,15 +217,17 @@
                               chapter-quiz-aggregate-version
                               course-id])
                             (om/set-state-nr! owner :submit nil)))
+        (when-not (contains? (set (:tools question-data)) "calculator")
+          (om/update! cursor [:view :show-calculator] false))
         (dom/div nil
                  (dom/article #js {:id "m-section"}
                               (tag-tree-to-om (:tag-tree question-data) inputs nil nil))
-                 (footer-bar (str "Fout! "
-                                  (if failed-quiz
-                                    " Stop test"
-                                    (if last-question
-                                      " Voltooi test"
-                                      " Volgende vraag")))
+                 (footer-bar cursor (str "Fout! "
+                                         (if failed-quiz
+                                           " Stop test"
+                                           (if last-question
+                                             " Voltooi test"
+                                             " Volgende vraag")))
                              (fn []
                                (when-let [f (om/get-state owner :submit)]
                                  (f)))
@@ -249,18 +254,20 @@
             question-data (chapter-quiz-question-by-id cursor data-channel chapter-id question-id)
             answer-correct (when (contains? question :correct)
                              (:correct question))]
-        (condp = answer-correct
-          nil
-          (if question-data
-            (om/build chapter-quiz-question-open cursor)
-            (dom/div nil "Vraag laden"))
-          true ;; QuestionAssigned will render the next one, this case
-          ;; can be skipped?
-          (dom/div nil "Vraag laden")
-          false
-          (if question-data
-            (om/build chapter-quiz-question-wrong cursor)
-            (dom/div nil "Vraag laden")))))))
+        (dom/div nil
+                 (om/build draggable-calculator cursor)
+                 (condp = answer-correct
+                   nil
+                   (if question-data
+                     (om/build chapter-quiz-question-open cursor)
+                     (dom/div nil "Vraag laden"))
+                   true ;; QuestionAssigned will render the next one, this case
+                   ;; can be skipped?
+                   (dom/div nil "Vraag laden")
+                   false
+                   (if question-data
+                     (om/build chapter-quiz-question-wrong cursor)
+                     (dom/div nil "Vraag laden"))))))))
 
 (defn chapter-quiz-passed [cursor owner]
   (reify
@@ -278,7 +285,7 @@
                                      (dom/b nil chapter-title)
                                      " afgerond"))
                  (let [{:keys [title link]} (recommended-action cursor)]
-                   (footer-bar (str "Ga verder met " title)
+                   (footer-bar cursor (str "Ga verder met " title)
                                (fn []
                                  (js/window.location.assign link))
                                true
@@ -302,7 +309,7 @@
                                          (dom/p nil "Je kunt de test pas weer maken wanneer je alle paragrafen in dit hoofdstuk hebt afgerond."))
                                 (dom/div nil
                                          (dom/p nil "Oops! Je hebt 3 hartjes verloren. We raden je aan om eerst je kennis van dit hoofdstuk op te frissen, en het daarna nog een keer te proberen"))))
-                 (footer-bar "Ga verder met het hoofdstuk"
+                 (footer-bar cursor "Ga verder met het hoofdstuk"
                              (fn []
                                (navigate-to-path {:main :dashboard
                                                   :chapter-id chapter-id}))

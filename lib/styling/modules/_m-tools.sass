@@ -27,7 +27,49 @@
 
   &.calculator
     background: url(/images/icon-calculator-inactive.png) no-repeat 3px 3px
-    &:hover
+    cursor: pointer
+    &:hover, &.active
       background: url(/images/icon-calculator.png) no-repeat 3px 3px
     .m-tooltip
-      left: 10px
+      left: -50px
+
+
+// Calculator top header
+
+#calculator-iframe
+  +user-select(none)
+
+.calculator-div
+  width: 325px
+  height: 491px
+  &.light
+    height: 393px
+
+.non-clickable
+  +user-select(none)
+
+.dragging
+  #calculator-iframe
+    pointer-events: none
+
+.calculator-top-header
+  height: 40px
+  position: absolute
+  width: 325px
+  padding: 8px 15px
+  +box-sizing(border-box)
+  &:hover
+    cursor: move
+  .close-calculator
+    float: right
+  button
+    width: 4em
+    height: 3em
+    margin: .25em
+    padding: 0
+    display: inline-block
+    color: #000
+    background: #ddd
+    font-weight: bold
+    border-radius: .5em
+    border: solid #aaa 2px

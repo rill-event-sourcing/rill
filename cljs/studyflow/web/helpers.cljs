@@ -6,6 +6,59 @@
             [goog.string :as gstring]
             [clojure.string :as string]
             [studyflow.web.history :refer [path-url]]))
+            [studyflow.web.draggable :refer [draggable-item]]))
+
+
+(defn focus-calculator []
+  (let [iframe (gdom/getElement "calculator-iframe")]
+    (when iframe
+      (js/setTimeout (fn []
+                       (-> iframe
+                           .-contentWindow
+                           (.focus)))
+                     10)
+      (js/setTimeout (fn []
+                       (-> iframe
+                           .-contentWindow
+                           (.focus)))
+                     100))))
+
+(defn reset-calculator []
+  (let [iframe (gdom/getElement "calculator-iframe")]
+    (when iframe (-> iframe
+                     .-contentWindow
+                     (.reset)))))
+
+(defn change-mode-calculator [cursor]
+  (let [iframe (gdom/getElement "calculator-iframe")
+        calculator-mode (get-in @cursor [:view :calculator-light-mode?])]
+    (om/update! cursor [:view :calculator-light-mode?] (not calculator-mode))
+    (when iframe (-> iframe
+                     .-contentWindow
+                     (.chgMode)))))
+
+(defn calculator [cursor owner]
+  (reify
+    om/IRender
+    (render [_]
+      (let [calculator-light-mode? (get-in cursor [:view :calculator-light-mode?])]
+        (dom/div #js {:id "calculator-div"
+                      :className (str "calculator-div" (when calculator-light-mode? " light"))
+                      :style #js {:display (if (get-in cursor [:view :show-calculator]) "block" "none")}}
+                 (dom/div #js {:className "calculator-top-header"
+                               :onMouseUp (fn [] (focus-calculator))}
+                          (dom/button #js {:className "toggle-light-mode"
+                                           :onClick (fn []
+                                                      (change-mode-calculator cursor))}
+                                      (if calculator-light-mode? "▲" "▼"))
+                          (dom/button #js {:className "close-calculator"
+                                           :onClick (fn []
+                                                      (om/update! cursor [:view :show-calculator] false))} "X"))
+                 (dom/iframe #js {:id "calculator-iframe" :name "calculator-iframe" :src "/calculator.html" :width "100%" :height "100%" :frameborder "0" :scrolling "no" :seamless "seamless"}))))))
+
+(def draggable-calculator
+  (draggable-item calculator [:view :calculator-position]))
+>>>>>>> initial setup for calculator
 
 
 (defn raw-html
@@ -187,14 +240,23 @@
     (js/document.body.scrollIntoViewIfNeeded)))
 
 (defn tool-box
-  [tools]
-  (let [tool-names {"pen_and_paper" "Pen & Papier"
-                    "calculator" "Rekenmachine"}]
-    (apply dom/div #js {:id "toolbox"}
-           (map (fn [tool]
-                  (dom/div #js {:className (str "tool " tool)}
-                           (dom/div #js {:className "m-tooltip"} (get tool-names tool) )))
-                tools))))
+  [cursor tools]
+  (when (not-empty tools)
+    (dom/div #js {:id "toolbox"}
+             (when (contains? tools "pen_and_paper")
+               (dom/div #js {:className "tool pen_and_paper"}
+                        (dom/div #js {:className "m-tooltip"} "Pen & Papier")))
+
+             (when (contains? tools "calculator")
+               (let [calculator-shown? (get-in cursor [:view :show-calculator])]
+                 (dom/div #js {:className (str "tool calculator" (when calculator-shown?" active"))
+                               :onClick (fn [event]
+                                          (om/update!
+                                           cursor
+                                           [:view :show-calculator]
+                                           (not calculator-shown?))
+                                          (when-not calculator-shown? (focus-calculator)))}
+                          (dom/div #js {:className "m-tooltip"} "Rekenmachine")))))))
 
 (defn input-builders
   [cursor question-id question-data current-answers enabled cursor-path]
@@ -252,6 +314,7 @@
                            (when-let [suffix (:suffix field)]
                              (dom/span #js {:className "suffix"} suffix)))])))))
 
+<<<<<<< HEAD
 (defn click-once-button [value onclick & {:keys [enabled className]
                                           :or {enabled true}}]
   (fn [cursor owner]
@@ -269,3 +332,19 @@
                            (om/set-state-nr! owner :enabled false))
                          :disabled (not (om/get-state owner :enabled))}
                     value)))))
+=======
+(defn calculator [cursor owner]
+  (reify
+    om/IRender
+    (render [_]
+      (dom/div #js {:id "calculator-div" :className "calculator-div" :style #js {:display (if (get-in cursor [:view :show-calculator]) "block" "none")}}
+               (dom/iframe #js {:id "calculator-iframe" :name "calculator-iframe" :src "/calculator.html" :width "100%" :height "100%" :frameborder "0" :scrolling "no" :seamless "seamless"})))
+    om/IDidUpdate
+    (did-update [_ prev-props prev-state]
+      (when (get-in cursor [:view :show-calculator])
+        (js/setTimeout (fn [] (-> "calculator-iframe"
+                                  (gdom/getElement)
+                                  .-contentWindow
+                                  (.focus)))
+                       1)))))
+>>>>>>> initial setup for calculator
