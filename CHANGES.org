@@ -1,5 +1,6 @@
 * Release Changelog
 ** NEXT RELEASE
+*** Fix: Fix for styling of prefix and suffix for a line-input-field that were not visualized correctly
 ** release-2014-11-12.1:
 *** Fix: Rewrote code related to input fields such that it's more mantainable and all in one place
 *** New: Chapter quiz pages now show the title of the chapter they are related to
