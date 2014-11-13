@@ -152,6 +152,41 @@ refreshPreview = ->
   $('#preview_content').css('height', height)
   updateErrors()
 
+bindMoveUpButtons = ->
+  $('.move-up-choice').unbind()
+  $('.move-up-choice').bind 'click', (event) ->
+    sortItem = $(event.currentTarget).data('item')
+    url = $(event.currentTarget).data('url')
+    $.ajax url,
+      type: 'POST'
+      dataType: 'json'
+      error: (jqXHR, textStatus, errorThrown) ->
+        console.log "AJAX Error: #{ textStatus }"
+      success: (data, textStatus, jqXHR) ->
+        thisItem = $('#' + sortItem)
+        prevItem = thisItem.prev()
+        if prevItem.length != 0
+          thisItem.insertBefore(prevItem)
+          refreshPreview()
+
+bindMoveDownButtons = ->
+  $('.move-down-choice').unbind()
+  $('.move-down-choice').bind 'click', (event) ->
+    sortItem = $(event.currentTarget).data('item')
+    url = $(event.currentTarget).data('url')
+    $.ajax url,
+      type: 'POST'
+      dataType: 'json'
+      error: (jqXHR, textStatus, errorThrown) ->
+        console.log "AJAX Error: #{ textStatus }"
+      success: (data, textStatus, jqXHR) ->
+        thisItem = $('#' + sortItem)
+        nextItem = thisItem.next()
+        if nextItem.length != 0
+          thisItem.insertAfter(nextItem)
+          refreshPreview()
+
+
 ################################################################################
 
 # on load run:
@@ -165,6 +200,8 @@ $ ->
   bindCorrectChoiceButtons()
   bindCopyToClipboardButton()
   bindSaveButton()
+  bindMoveUpButtons()
+  bindMoveDownButtons()
   initializeAutoSave()
 
 ################################################################################
