@@ -1,5 +1,6 @@
 * Release Changelog
 ** NEXT RELEASE
+** release-2014-11-13.1
 *** Fix: Fix for the heart bar in chapter quiz, which on IE9 looked "cut"
 *** Fix: Fixed an alignment bug in "Inloggen mislukt" in login application for IE9 users
 *** Fix: Fix for an issue in publishing where you could not see prefix and suffix for inline inputs
