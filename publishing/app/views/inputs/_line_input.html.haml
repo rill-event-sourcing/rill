@@ -1,23 +1,22 @@
 %div.row
   %div.col-md-10
-    - if @question
-      %div.row
-        %div.col-md-5
-          %label Style
-          %div.input-group
-            = select_tag "line_inputs[#{input.id}][style]", options_for_select(["small", "big", "exponent"], input.style), class: "form-control"
-        %div.col-md-5
-          %label Width
-          %div.input-group
-            = text_field_tag "line_inputs[#{input.id}][width]", input.width, class: "form-control"
-            %div.input-group-addon px
-      %div.row
-        %div.col-md-5
-          %label Prefix
-          = text_field_tag "line_inputs[#{input.id}][prefix]", input.prefix, class: "form-control"
-        %div.col-md-5
-          %label Suffix
-          = text_field_tag "line_inputs[#{input.id}][suffix]", input.suffix, class: "form-control"
+    %div.row
+      %div.col-md-5
+        %label Style
+        %div.input-group
+          = select_tag "line_inputs[#{input.id}][style]", options_for_select(["small", "big", "exponent"], input.style), class: "form-control"
+      %div.col-md-5
+        %label Width
+        %div.input-group
+          = text_field_tag "line_inputs[#{input.id}][width]", input.width, class: "form-control"
+          %div.input-group-addon px
+    %div.row
+      %div.col-md-5
+        %label Prefix
+        = text_field_tag "line_inputs[#{input.id}][prefix]", input.prefix, class: "form-control"
+      %div.col-md-5
+        %label Suffix
+        = text_field_tag "line_inputs[#{input.id}][suffix]", input.suffix, class: "form-control"
   %div.col-md-2
     - if @question
       %span.pull-right.btn.btn-default.glyphicon.glyphicon-plus.add-answer{data: { item: "input-#{ input.id }", url: input_answers_path(input, question_id: @question.to_param) } }
