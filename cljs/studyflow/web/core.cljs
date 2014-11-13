@@ -166,10 +166,13 @@
               answer-submitted? (get-in cursor [:view :section section-id :input field-name :answer-submitted?])
               answered-correctly? (get-in cursor [:view :section section-id :input field-name :answered-correctly?])
               answer-revealed (get-in cursor [:view :section section-id :input field-name :answer-revealed])
+              input-classes (str ""
+                                 (when (:prefix field) "has-prefix ")
+                                 (when (:suffix field) "has-suffix "))
               input-options (case (:style field)
-                              "small" {:class "small-input" :length 5}
-                              "exponent" {:class "exponent-input" :length 2}
-                              {:class "big-input"})]
+                              "small" {:class (str input-classes "small-input") :length 5}
+                              "exponent" {:class (str input-classes "exponent-input") :length 2}
+                              {:class (str input-classes "big-input")})]
           (dom/span nil
                     (when-let [prefix (:prefix field)]
                       (dom/span #js {:className "prefix"} prefix))

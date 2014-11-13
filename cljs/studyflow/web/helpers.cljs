@@ -201,9 +201,6 @@
 
 (defn input-builders
   [cursor question-id question-data current-answers enabled cursor-path]
-  (println :ok (:line-input-fields question-data))
-  (println :ok (:multiple-choice-input-fields question-data))
-
   (-> {}
       (into (for [mc (:multiple-choice-input-fields question-data)]
               (let [input-name (:name mc)]
@@ -226,21 +223,23 @@
                                                  (dom/label #js {:htmlFor id}
                                                             (raw-html choice)))))))])))
       (into (for [[field ref] (map list
-                                (:line-input-fields question-data)
-                                (if enabled
-                                  (into ["FOCUSED_INPUT"]
-                                        (rest (map :name (:line-input-fields question-data)))
-                                        )
-                                  (map :name (:line-input-fields question-data))))]
+                                   (:line-input-fields question-data)
+                                   (if enabled
+                                     (into ["FOCUSED_INPUT"]
+                                           (rest (map :name (:line-input-fields question-data))))
+                                     (map :name (:line-input-fields question-data))))]
               (let [input-name (:name field)
+                    input-classes (str ""
+                                       (when (:prefix field) "has-prefix ")
+                                       (when (:suffix field) "has-suffix "))
                     input-options (case (:style field)
-                              "small" {:class "small-input" :length 5}
-                              "exponent" {:class "exponent-input" :length 2}
-                              {:class "big-input"})]
+                                    "small" {:class (str input-classes "small-input") :length 5}
+                                    "exponent" {:class (str input-classes "exponent-input") :length 2}
+                                    {:class (str input-classes "big-input")})]
                 [input-name
                  (dom/span nil
                            (when-let [prefix (:prefix field)]
-                             (str prefix " "))
+                             (dom/span #js {:className "prefix"} prefix))
                            (dom/input
                             #js {:className (:class input-options)
                                  :maxLength (:length input-options)
@@ -254,4 +253,4 @@
                                                             (conj cursor-path input-name)
                                                             (.. event -target -value))))})
                            (when-let [suffix (:suffix field)]
-                             (str " " suffix)))])))))
+                             (dom/span #js {:className "suffix"} suffix)))])))))
