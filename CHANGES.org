@@ -1,6 +1,7 @@
 * Release Changelog
 ** NEXT RELEASE
 *** New: Installed a library that makes the UX for touch devices much more reactive
+*** New: Choices for MC questions are not random anymore (their order is predetermined by editors)
 ** release-2014-11-14.1
 *** Fix: Fixed an issue for which multiple choice questions were not displayed correctly sometimes
 *** Fix: Fixed the styling of inputs that are exponents, and increased the maximum characters to 3

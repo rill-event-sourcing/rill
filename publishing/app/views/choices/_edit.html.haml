@@ -1,7 +1,11 @@
 %div.row{id: "choice-#{choice.id}"}
-  %div.col-md-8
+  %div.col-md-7
     = text_area_tag "multiple_choice_inputs[#{input.id}][choices][#{choice.id}][value]", choice.value, cols: 50, rows: 2, class: "form-control choice-row auto-resize rich-text"
-  %div.col-md-2
-    = check_box_tag "multiple_choice_inputs[#{input.id}][choices][#{choice.id}][correct]", 1, choice.correct, class: "toggle_choice pull-right choice-row", data: {input: input.id}, style:"margin-top:50px;"
+  %div.col-md-1
+    = check_box_tag "multiple_choice_inputs[#{input.id}][choices][#{choice.id}][correct]", 1, choice.correct, class: "toggle_choice choice-row", data: {input: input.id}, style:"margin-top: 30px;"
+  %div.col-md-2.move-buttons
+    %span.glyphicon.glyphicon-arrow-down.move-down-choice.btn.btn-default{data: { item: "choice-#{ choice.id }", url: movedown_input_choice_path(input, choice, question_id: @question.to_param) }}
+    %span.glyphicon.glyphicon-arrow-up.move-up-choice.btn.btn-default{data: { item: "choice-#{ choice.id }", url: moveup_input_choice_path(input, choice, question_id: @question.to_param) }}
+
   %div.col-md-2
     %span.btn.pull-right.btn-default.glyphicon.glyphicon-minus.delete-choice.choice-row{data: { item: "choice-#{ choice.id }", url: input_choice_path(input, choice, question_id: @question.to_param) } }
