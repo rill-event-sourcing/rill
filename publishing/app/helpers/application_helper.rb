@@ -39,7 +39,7 @@ module ApplicationHelper
 
     htmlLength = ''
     htmlLength = '5' if input.style == 'small'
-    htmlLength = '2' if input.style == 'exponent'
+    htmlLength = '3' if input.style == 'exponent'
 
     content_tag(:span) do
       content_tag(:span, input.prefix) +
