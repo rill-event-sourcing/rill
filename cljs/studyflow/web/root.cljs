@@ -10,6 +10,7 @@
             [studyflow.web.helpers :refer [modal] :as helpers]
             [studyflow.web.tracking :as tracking]
             [studyflow.web.service :as service]
+            [studyflow.web.section :as section]
             [studyflow.web.history :refer [history-link]]
             [cljs.core.async :as async]))
 
@@ -58,9 +59,9 @@
                    (om/build chapter-quiz/chapter-quiz-panel cursor)
                    :learning
                    (dom/div nil
-                            (om/build core/page-header cursor)
-                            (om/build core/navigation-panel cursor)
-                            (om/build core/section-panel cursor))
+                            (om/build section/page-header cursor)
+                            (om/build section/navigation-panel cursor)
+                            (om/build section/section-panel cursor))
                    ;; default
                    (om/build dashboard cursor)))))))
 
