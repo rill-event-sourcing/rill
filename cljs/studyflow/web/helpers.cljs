@@ -219,9 +219,9 @@
                                                                                 (om/update!
                                                                                  cursor
                                                                                  (conj cursor-path input-name)
-                                                                                 choice)))}
-                                                 (dom/label #js {:htmlFor id}
-                                                            (raw-html choice)))))))])))
+                                                                                 choice)))})
+                                      (dom/label #js {:htmlFor id}
+                                                 (raw-html choice))))))])))
       (into (for [[field ref] (map list
                                    (:line-input-fields question-data)
                                    (if enabled
