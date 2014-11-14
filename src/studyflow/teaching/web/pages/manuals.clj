@@ -19,11 +19,12 @@
     [:table.manuals
      [:thead
       [:th "Downloaden als PDF"]]
-     [:tbody
-      [:tr [:td [:a {:href "#"} "Docent omgeving"]]]
-      [:tr [:td [:a {:href "#"} "Leerling omgeving"]]]
-      [:tr [:td [:a {:href "#"} "Starttoetsen rekenen"]]]
-      [:tr [:td [:a {:href "#"} "Leerlingen"]]]]]]))
+     (let [assets-url "https://assets.studyflow.nl/teaching/"]
+       [:tbody
+        [:tr [:td [:a {:href (str assets-url "studyflow_gebruikershandleiding_docenten.pdf")} "Gebruikershandleiding voor docenten"]]]
+        [:tr [:td [:a {:href (str assets-url "studyflow_gebruikershandleiding_leerlingen.pdf")} "Gebruikershandleiding voor leerlingen"]]]
+        [:tr [:td [:a {:href (str assets-url "studyflow_gebruikershandleiding_toetsen.pdf")} "Gebruikershandleiding voor de toetsen"]]]
+        [:tr [:td [:a {:href (str assets-url "studyflow_weekplanning.pdf")} "Weekplanning voor hoofdstukken en paragrafen"]]]])]]))
 
 (defroutes manuals-routes
   (GET "/handleidingen"
