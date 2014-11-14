@@ -131,4 +131,6 @@
     [:footer]
     (include-js "//code.jquery.com/jquery-2.1.1.min.js")
     (include-js "/js/dropdown.js")
+    (include-js "/js/fastclick.js")
+    (include-js "/js/fastclick-start.js")
     (include-js "/js/usersnap.js")]))

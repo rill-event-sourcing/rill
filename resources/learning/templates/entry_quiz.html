@@ -18,7 +18,13 @@
     <div id="app">
     </div> <!-- /app -->
     <script src="/js/studyflow.js" type="text/javascript"></script>
+    <script src="/js/fastclick.js" type="text/javascript"></script>
     <script type="text/javascript">studyflow.web.entry_quiz.entry_quiz_page();</script>
+    <script type="text/javascript">
+      window.addEventListener('load', function() {
+      FastClick.attach(document.body);
+      }, false);
+    </script>
     <script type="text/javascript">
       var _usersnapconfig = {
       valign: 'bottom',
