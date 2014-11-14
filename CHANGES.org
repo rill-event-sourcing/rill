@@ -1,5 +1,7 @@
 * Release Changelog
 ** NEXT RELEASE
+*** Fix: Fixed an issue for which multiple choice questions were not displayed correctly sometimes
+*** Fix: Fixed the styling of inputs that are exponents, and increased the maximum characters to 3
 ** release-2014-11-13.1
 *** Fix: Fix for the heart bar in chapter quiz, which on IE9 looked "cut"
 *** Fix: Fixed an alignment bug in "Inloggen mislukt" in login application for IE9 users
