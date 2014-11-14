@@ -171,7 +171,7 @@
                                  (when (:suffix field) "has-suffix "))
               input-options (case (:style field)
                               "small" {:class (str input-classes "small-input") :length 5}
-                              "exponent" {:class (str input-classes "exponent-input") :length 2}
+                              "exponent" {:class (str input-classes "exponent-input") :length 3}
                               {:class (str input-classes "big-input")})]
           (dom/span nil
                     (when-let [prefix (:prefix field)]
