@@ -27,6 +27,8 @@
                [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
                (include-css "css/login.css")
                (include-css "//cloud.typography.com/6865512/722124/css/fonts.css")
+               (include-js "js/fastclick.js")
+               (include-js "js/fastclick-start.js")
                (include-js "js/usersnap.js")
                [:link {:href "/favicon.ico" :rel "shortcut icon" :type "image/vnd.microsoft.icon"}]
                "<!-- [if lt IE 9>]"
