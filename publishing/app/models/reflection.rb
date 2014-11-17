@@ -1,4 +1,6 @@
 class Reflection < ActiveRecord::Base
+  include HtmlParseable
+
   belongs_to :section, touch: true
 
   validates :section, presence: true

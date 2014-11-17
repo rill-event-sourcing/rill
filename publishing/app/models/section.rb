@@ -70,6 +70,12 @@ class Section < ActiveRecord::Base
         errors["Subsection '#{subs}':"] = subs_err
       end
     end
+    reflections.map do |refl|
+      refl_err = refl.parse_errors(:content) + refl.parse_errors(:answer)
+      if refl_err.any?
+        errors["Reflection '#{refl.name}':"] = refl_err
+      end
+    end
     errors
   end
 
@@ -79,6 +85,12 @@ class Section < ActiveRecord::Base
       subs_err = subs.image_errors(attr)
       if subs_err.any?
         errors["Subsection '#{subs}':"] = subs_err
+      end
+    end
+    reflections.map do |refl|
+      refl_err = refl.image_errors(:content) + refl.image_errors(:answer)
+      if refl_err.any?
+        errors["Reflection '#{refl.name}':"] = refl_err
       end
     end
     errors
