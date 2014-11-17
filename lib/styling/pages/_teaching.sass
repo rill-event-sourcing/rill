@@ -38,6 +38,12 @@
       &.selected
         background: url(/images/book.svg) no-repeat 60px 18px white
         background-size: 45px
+    &.manuals
+      background: url(/images/manual.svg) no-repeat 60px 18px
+      background-size: 45px
+      &.selected
+        background: url(/images/manual.svg) no-repeat 60px 18px white
+        background-size: 45px
     &.selected
       cursor: default
       border: 1px solid #c6ced3
@@ -70,8 +76,7 @@ table
     border-right: 1px solid #ddd
     border-top: 1px solid #ddd
     padding: 15px 20px
-    &.number
-      //text-align: center
+
   th
     border-right: 1px solid #ddd
     border-left: 1px solid white
@@ -227,6 +232,23 @@ textarea.tab-delimited-data
   min-width: 75em
   min-height: 10em
   white-space: pre
+
+.m-teacher-manuals
+  padding-top: 30px
+
+table.manuals
+  width: 500px
+  margin: 20px 0 30px 0
+  td
+    padding: 0
+  a
+    background: url(/images/pdf_logo.svg) no-repeat 10px 10px
+    background-size: 35px
+    padding: 20px 54px
+    display: block
+    width: 100%
+    height: 100%
+    color: #333
 
 #teacher_chapter_list_sidenav
   width: 400px

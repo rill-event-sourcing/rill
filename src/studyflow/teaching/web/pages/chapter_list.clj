@@ -1,4 +1,4 @@
-(ns studyflow.teaching.web.reports.chapter-list
+(ns studyflow.teaching.web.pages.chapter-list
   (:require [clojure.string :as str]
             [clojure.tools.logging :as log]
             [compojure.core :refer [GET defroutes]]
@@ -92,7 +92,7 @@
                  :title (if class
                           (str "Hoofdstukken voor \"" (:class-name class) "\"")
                           "Hoofdstukken")}]
-    (binding [*current-report-name* "chapter-list"]
+    (binding [*current-page-name* "chapter-list"]
       (render-chapter-list class classes chapter-list params options))))
 
 (defroutes chapter-list-routes

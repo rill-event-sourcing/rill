@@ -1,26 +1,26 @@
-(ns studyflow.teaching.web.reports.completion
+(ns studyflow.teaching.web.pages.completion
   (:require [clojure.string :as str]
             [clojure.tools.logging :as log]
             [compojure.core :refer [GET defroutes]]
             [hiccup.core :refer [h]]
             [ring.util.codec :refer [url-encode]]
             [studyflow.teaching.read-model :as read-model]
-            [studyflow.teaching.web.reports.export :refer [render-export]]
+            [studyflow.teaching.web.pages.export :refer [render-export]]
             [studyflow.teaching.web.util :refer :all]
             [ring.util.response :refer [redirect-after-post]]))
 
 (defn render-completion [class scope students classes meijerink-criteria domains params options]
-  (let [report-name "completion"
+  (let [page-name "completion"
         scope (if (str/blank? scope) nil scope)]
     (layout
      options
-     (drop-list-classes classes scope report-name (:class-name class))
+     (drop-list-classes classes scope page-name (:class-name class))
      class
 
      [:h1#page-title "Klas Overzicht"]
      (when class
        [:div
-        (drop-list-meijerink class meijerink-criteria report-name scope)
+        (drop-list-meijerink class meijerink-criteria page-name scope)
         [:span#clarification (condp = scope
                                "1F-RT" "Dit rapport gaat alleen over de 1F-RT hoofdstukken (hoofdstuk 1 t/m 6)"
                                "2F" "Dit rapport gaat alleen over de 2F hoofdstukken (7 t/m 26). Werk aan 1F-RT hoofdstukken wordt hier niet getoond."
@@ -79,7 +79,7 @@
                  :title (if class
                           (str "Overzicht voor \"" (:class-name class) "\"")
                           "Overzicht")}]
-    (binding [*current-report-name* "completion"]
+    (binding [*current-page-name* "completion"]
       (render-completion class selected-meijerink students classes meijerink-criteria domains params options))))
 
 (defroutes completion-routes

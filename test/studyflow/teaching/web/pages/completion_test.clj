@@ -1,8 +1,8 @@
-(ns studyflow.teaching.web.reports.completion-test
+(ns studyflow.teaching.web.pages.completion-test
   (:require [clojure.test :refer [deftest is testing]]
             [net.cgrand.enlive-html :as enlive]
             [ring.mock.request :refer [request]]
-            [studyflow.teaching.web.reports.completion :as t]))
+            [studyflow.teaching.web.pages.completion :as t]))
 
 ;; TODO move to common place
 (defn query-html [data pattern]

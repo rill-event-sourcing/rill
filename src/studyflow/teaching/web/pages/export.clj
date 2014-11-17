@@ -1,4 +1,4 @@
-(ns studyflow.teaching.web.reports.export
+(ns studyflow.teaching.web.pages.export
   (:require [clojure.string :as str]
             [clojure.tools.logging :as log]
             [clj-time.local :as time]
