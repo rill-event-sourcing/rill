@@ -24,15 +24,24 @@ class Reflection < ActiveRecord::Base
     "_REFLECTION_#{ position }_"
   end
 
- def to_publishing_format
+  def errors_when_publishing
+    errors = []
+    errors << "No content for #{name} in #{section.name}" if content.empty?
+    errors << "No answer for #{name} in #{section.name}" if answer.empty?
+    errors
+  end
+
+  def to_publishing_format
     {
       id: id,
+      name: name,
       content: content,
       answer: answer
     }
   end
 
-private
+
+  private
 
   def set_position
     update_attribute(:position, section.increase_reflection_counter)
