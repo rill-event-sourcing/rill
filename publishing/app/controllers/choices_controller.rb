@@ -2,9 +2,7 @@ class ChoicesController < ApplicationController
   before_action :set_param_objects
 
   def create
-    @choice = @input.choices.build(
-      value: ''
-    )
+    @choice = @input.choices.build(value: '')
     if @choice.save
       render partial: 'edit', locals: {input: @input, choice: @choice}
     else
@@ -17,7 +15,17 @@ class ChoicesController < ApplicationController
     render json: { status: :ok }
   end
 
-private
+  def moveup
+    @choice.move_higher
+    render json: { status: :ok }
+  end
+
+  def movedown
+    @choice.move_lower
+    render json: { status: :ok }
+  end
+
+  private
 
   def set_param_objects
     @question = Question.find_by_uuid(params[:question_id])

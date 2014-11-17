@@ -2,27 +2,20 @@ require 'rails_helper'
 
 RSpec.describe ChoicesController, :type => :controller do
 
-  def set_choices
-    @choice1 = create(:choice, multiple_choice_input: @input1)
-    @choice2 = create(:choice, multiple_choice_input: @input1)
-    @choice3 = create(:choice, multiple_choice_input: @input1)
-  end
-
   before do
     @course = create(:course)
     @chapter = create(:chapter, course: @course)
     @section1 = create(:section, chapter: @chapter)
     @question1 = create(:question, quizzable: @section1)
     @input1 = create(:multiple_choice_input, inputable: @question1)
+    @choice1 = create(:choice, multiple_choice_input: @input1, position: 1)
+    @choice2 = create(:choice, multiple_choice_input: @input1, position: 2)
+    @choice3 = create(:choice, multiple_choice_input: @input1, position: 3)
   end
 
 
   describe "POST create" do
-    before do
-      set_choices
-    end
-
-    it "should create a new subsection" do
+    it "should create a new choice" do
       post :create,  question_id: @question1.to_param, input_id: @input1.to_param
       @input = assigns(:input)
       expect(@input).not_to eq nil
@@ -31,11 +24,28 @@ RSpec.describe ChoicesController, :type => :controller do
     end
   end
 
+  describe "POST moveup" do
+    it "should moveup the choices" do
+      expect(@choice2.position).to eq 2
+      post :moveup, input_id: @input1.to_param, id: @choice2.to_param, question_id: @question1
+      expect(assigns(:choice)).to eq @choice2
+      @choice2.reload
+      expect(@choice2.position).to eq 1
+    end
+  end
+
+  describe "POST movedown" do
+    it "should movedown the choices" do
+      expect(@choice2.position).to eq 2
+      post :movedown, input_id: @input1.to_param, id: @choice2.to_param, question_id: @question1
+      expect(assigns(:choice)).to eq @choice2
+      @choice2.reload
+      expect(@choice2.position).to eq 3
+    end
+  end
+
 
   describe "POST destroy" do
-    before do
-      set_choices
-    end
 
     it "should destroy the choice" do
       post :destroy,  question_id: @question1.to_param, input_id: @input1.to_param, id: @choice1.to_param

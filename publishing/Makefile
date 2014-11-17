@@ -27,6 +27,7 @@ prepare:
 	bundle exec rake db:drop db:create db:migrate db:seed
 
 build:
+	rm -Rf public/stylesheets && \
 	rm -Rf public/assets && \
 	rm -Rf log/* && \
 	cp ../generated/learning/public/css/learning.css app/assets/stylesheets/ && \

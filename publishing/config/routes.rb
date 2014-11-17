@@ -85,7 +85,12 @@ Rails.application.routes.draw do
 
   resources :inputs do
     resources :answers
-    resources :choices
+    resources :choices do
+      member do
+        post 'moveup'
+        post 'movedown'
+      end
+    end
   end
 
   match '/health-check', to: 'home#health_check', via: :get
