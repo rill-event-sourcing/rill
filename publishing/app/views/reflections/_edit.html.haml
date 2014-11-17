@@ -1,0 +1,20 @@
+%div.panel.panel-default{id: "reflection-#{ reflection.id }"}
+  %div.panel-heading.clearfix
+    %div.row
+      %div.col-md-4
+        Reflection
+      %div.col-md-4
+        %div.input-group
+          %input.form-control{id: "reflection-title-#{reflection.id}", value: reflection.name, disabled: true, style:"font-family: monospace;"}
+          %span.input-group-addon.copy-button{"data-clipboard-target" => "reflection-title-#{reflection.id}"}
+            %span.glyphicon.glyphicon-share
+      %div.col-md-4
+        %span.pull-right.btn.btn-default.glyphicon.glyphicon-minus.delete-input{data: {item: "reflection-#{ reflection.id }", url: reflection_path(reflection, section_id: @section.to_param) } }
+
+  -# %div.panel-body
+  -#   - if input.line_input?
+  -#     = render partial: 'inputs/line_input', locals: {input: input}
+  -#   - elsif input.multiple_choice_input?
+  -#     = render partial: 'inputs/multiple_choice_input', locals: {input: input}
+  -#   - else
+  -#     unknown input type

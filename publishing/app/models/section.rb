@@ -108,6 +108,11 @@ class Section < ActiveRecord::Base
     max_inputs if increment!(:max_inputs)
   end
 
+  def increase_reflection_counter
+    reflection_counter if increment!(:reflection_counter)
+  end
+
+
   def inputs_referenced_exactly_once?
     full_text = subsections.map(&:text).join
     inputs.find_all{|input| full_text.scan(input.name).length != 1}.empty?

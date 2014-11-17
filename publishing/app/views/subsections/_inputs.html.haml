@@ -1,6 +1,8 @@
 %div.panel.panel-default
   %div.panel-heading
     %button.btn.btn-default{type: :button, data: {toggle: :collapse, target: "#inputs-collapse"}} Toggle inputs
+    %button.btn.btn-default{type: :button, data: {toggle: :collapse, target: "#reflections-collapse"}} Toggle reflections
+
 %div.collapse.panel.panel-default#inputs-collapse
   %div.panel-heading
     %div.col-md-4
@@ -11,3 +13,12 @@
   %div.panel-body#inputs-list
     - @section.inputs.each do |input|
       = render partial: 'inputs/edit', locals: {input: input}
+
+%div.collapse.panel.panel-default#reflections-collapse
+  %div.panel-heading
+    Reflection
+    %span.btn.btn-default#add-input{data: { url: inputs_path(section_id: @section.to_param)}} Add
+
+  %div.panel-body#reflections-list
+    - @section.reflections.each do |reflection|
+      - #render partial: 'reflections/edit', locals: {reflection: reflection}

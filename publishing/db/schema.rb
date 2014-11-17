@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141113074652) do
+ActiveRecord::Schema.define(version: 20141117110907) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -123,6 +123,15 @@ ActiveRecord::Schema.define(version: 20141113074652) do
     t.integer  "position",          limit: 2
   end
 
+  create_table "reflections", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
+    t.uuid     "section_id"
+    t.integer  "position",   limit: 2
+    t.text     "content"
+    t.text     "answer"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "sections", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
     t.uuid     "chapter_id"
     t.string   "title"
@@ -135,6 +144,7 @@ ActiveRecord::Schema.define(version: 20141113074652) do
     t.integer  "max_inputs",         limit: 2
     t.string   "meijerink_criteria"
     t.string   "domains"
+    t.integer  "reflection_counter", limit: 2
   end
 
   create_table "subsections", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
