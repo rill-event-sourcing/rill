@@ -17,8 +17,8 @@
 %div.collapse.panel.panel-default#reflections-collapse
   %div.panel-heading
     Reflection
-    %span.btn.btn-default#add-input{data: { url: inputs_path(section_id: @section.to_param)}} Add
+    %span.btn.btn-default#add-reflection{data: { url: reflections_path(section_id: @section.to_param)}} Add
 
   %div.panel-body#reflections-list
     - @section.reflections.each do |reflection|
-      - #render partial: 'reflections/edit', locals: {reflection: reflection}
+      = render partial: 'reflections/edit', locals: {reflection: reflection}

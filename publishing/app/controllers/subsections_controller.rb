@@ -1,5 +1,5 @@
 class SubsectionsController < ApplicationController
-  include InputActions
+  include InputActions, ReflectionActions
 
   before_action :set_param_objects
   before_action :set_redirect_cookie, only: [:index]
@@ -13,11 +13,9 @@ class SubsectionsController < ApplicationController
   end
 
   def create
-    @subsection = @section.subsections.build(
-                                             title: '',
+    @subsection = @section.subsections.build(title: '',
                                              text: '',
-                                             position: params[:position]
-                                             )
+                                             position: params[:position])
     if @subsection.save
       @section.subsections.where(["id <> ? AND position >= ?", @subsection.id, @subsection.position]).update_all("position=position+1")
       @index = @subsection.id
@@ -30,6 +28,7 @@ class SubsectionsController < ApplicationController
   def save
     set_line_inputs(@section, params[:line_inputs]) if params[:line_inputs]
     set_multiple_choice_inputs(@section, params[:multiple_choice_inputs]) if params[:multiple_choice_inputs]
+    set_reflections(@section, params[:reflections]) if params[:reflections]
 
     respond_to do |format|
       subsections(params[:subsections]) if params[:subsections]

@@ -9,6 +9,7 @@ class Section < ActiveRecord::Base
 
   has_many :inputs, as: :inputable
   has_many :line_inputs, as: :inputable
+  has_many :reflection_questions, foreign_key: :section_id, class_name: "Reflection"
 
   validates :chapter, presence: true
   validates :title, presence: true
@@ -30,6 +31,10 @@ class Section < ActiveRecord::Base
 
   def meijerink_criteria_hash=(input)
     self.meijerink_criteria = input.select{|k,v| v == "1"}.keys
+  end
+
+  def reflections
+    self.reflection_questions
   end
 
   def meijerink_criteria_hash

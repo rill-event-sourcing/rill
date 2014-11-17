@@ -1,0 +1,8 @@
+%div.row
+  %div.col-md-10
+    %div.row
+      %label Content
+      = text_area_tag "reflections[#{reflection.id}][content]", reflection.content, style: 'width: 100%; min-height: 100px;', class: "form-control auto-resize rich-text"
+    %div.row
+      %label Answer
+      = text_area_tag "reflections[#{reflection.id}][answer]", reflection.answer, style: 'width: 100%; min-height: 100px;', class: "form-control auto-resize rich-text"

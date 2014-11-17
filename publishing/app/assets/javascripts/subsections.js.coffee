@@ -141,6 +141,39 @@ bindDeleteAnswerButtons = ->
           $('#' + deleteItem).remove()
           refreshPreview()
 
+############################
+# Reflections
+
+bindAddReflectionButton = ->
+  $('#add-reflection').unbind()
+  $('#add-reflection').bind 'click', (event) ->
+    url = $(event.currentTarget).data('url')
+    $.ajax url,
+        type: 'POST'
+        dataType: 'html'
+        error: (jqXHR, textStatus, errorThrown) ->
+          console.log "AJAX Error: #{ textStatus }"
+        success: (data, textStatus, jqXHR) ->
+          $('#reflections-list').append(data)
+          bindDeleteReflectionButtons()
+          bindCopyToClipboardButton()
+          refreshPreview()
+
+bindDeleteReflectionButtons = ->
+  $('.delete-reflection').unbind()
+  $('.delete-reflection').bind 'click', (event) ->
+    if confirm('Are you sure you want to delete this?')
+      deleteItem = $(event.currentTarget).data('item')
+      url = $(event.currentTarget).data('url')
+      $.ajax url,
+        type: 'DELETE'
+        dataType: 'json'
+        error: (jqXHR, textStatus, errorThrown) ->
+          console.log "AJAX Error: #{ textStatus }"
+        success: (data, textStatus, jqXHR) ->
+          $('#' + deleteItem).remove()
+          refreshPreview()
+
 bindCopyToClipboardButton = ->
   new ZeroClipboard($(".copy-button"))
 
@@ -155,6 +188,10 @@ $ ->
   bindDeleteInputButtons()
   bindAddAnswerButton()
   bindDeleteAnswerButtons()
+
+  bindAddReflectionButton()
+  bindDeleteReflectionButtons()
+
   bindCopyToClipboardButton()
 
   bindSaveButton()

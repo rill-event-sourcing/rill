@@ -2,7 +2,7 @@ class ReflectionsController < ApplicationController
   before_action :set_param_objects
 
   def create
-    @reflection = @section.reflection.build
+    @reflection = @section.reflections.build
     if @reflection.save
       render partial: 'edit', locals: {reflection: @reflection}
     else

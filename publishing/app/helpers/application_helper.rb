@@ -9,14 +9,23 @@ module ApplicationHelper
     html.html_safe
   end
 
-  def text_to_html(inputs, text)
+  def text_to_html(inputs, text, reflections = [])
     text = render_latex_for_editing(text)
     html = text.html_safe
+
     inputs.each do |input|
       input_html = input_to_html(input)
       html.gsub!(input.name, input_html)
     end
+
+    reflections.each do |reflection|
+      reflection_html = reflection_to_html(reflection)
+      pretty_debug reflection_html
+      html.gsub!(reflection.name, reflection_html)
+    end
+
     html.gsub!(/(_INPUT_[0-9]+_)/, content_tag(:div, 'Please remove \1 from the source!', class: "alert alert-danger"))
+    html.gsub!(/(_REFLECTION_[0-9]+_)/, content_tag(:div, 'Please remove \1 from the source!', class: "alert alert-danger"))
     html.html_safe
   end
 
@@ -48,13 +57,22 @@ module ApplicationHelper
     end
   end
 
+  def reflection_to_html(reflection)
+    content_tag(:div, class: 'm-reflection') do
+      reflection.content.to_s.html_safe +
+      content_tag(:div, class: 'reflection-answer') do
+        reflection.answer.to_s.html_safe
+      end
+    end
+  end
+
   def multiple_choice_input_to_html(input)
     content_tag(:span, class: "mc-list") do
       input.choices.map do |ch|
         content_tag(:span, class: "mc-choice") do
           content_tag(:label) do
             radio_button_tag("#{ch.multiple_choice_input.id}", nil, ch.correct?) +
-            content_tag(:span, render_latex_for_editing(ch.value).html_safe)
+              content_tag(:span, render_latex_for_editing(ch.value).html_safe)
           end
         end
       end.join('').html_safe

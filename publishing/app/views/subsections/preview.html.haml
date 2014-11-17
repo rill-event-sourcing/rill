@@ -1,7 +1,7 @@
 - @section.subsections.each do |subsection|
   %div.panel.panel-default
     %div.panel-body
-      = text_to_html(@section.inputs, subsection.text)
+      = text_to_html(@section.inputs, subsection.text, @section.reflections)
 
 - if @section.parse_errors(:text).any?
   %div.panel.panel-danger
