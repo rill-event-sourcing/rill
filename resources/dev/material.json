@@ -334,6 +334,11 @@
           ],
           "subsections": [
             {
+              "id": "e23a0f3f-340b-44fd-a571-ad063e4967a1",
+              "title": "Reflecting",
+              "text": "reflections _REFLECTION_1_ <br> _REFLECTION_2_"
+            },
+            {
               "id": "2aa9de44-e7c9-4b4a-aad7-cd1bb304d0e5",
               "title": "Counting to 10",
               "text": "1+1+1+... = 10"
@@ -455,6 +460,18 @@
                 "123"
               ]
             }
+          ],
+          "reflections": [
+            {
+              "id": "482d2157-1f55-4ca0-8dff-3c35a1fcc7cf",
+              "content": "1+1=",
+              "answer": "2"
+            },
+            {
+              "id": "4ac1882b-59c8-43ab-b3ef-1dba886ad3de",
+              "content": "2+2=",
+              "answer": "4"
+            }
           ]
         },
         {
@@ -523,7 +540,8 @@
               "worked_out_answer": "2"
             }
           ],
-          "line_input_fields": []
+          "line_input_fields": [],
+          "reflections": []
         }
       ],
       "remedial": false

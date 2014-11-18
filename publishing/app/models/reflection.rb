@@ -24,6 +24,14 @@ class Reflection < ActiveRecord::Base
     "_REFLECTION_#{ position }_"
   end
 
+ def to_publishing_format
+    {
+      id: id,
+      content: content,
+      answer: answer
+    }
+  end
+
 private
 
   def set_position

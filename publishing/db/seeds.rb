@@ -46,7 +46,8 @@ subtraction = Section.create(title: 'Subtraction', description: 'Too many things
 ## We have some reflections
 
 reflection1 = Reflection.create(content: '1+1=', answer: '2', section: grouping_by_10)
-reflection1 = Reflection.create(content: '2+2=', answer: '4', section: grouping_by_10)
+reflection2 = Reflection.create(content: '2+2=', answer: '4', section: grouping_by_10)
+reflecting = Subsection.create(title: 'Reflecting', text: 'reflections _REFLECTION_1_ <br> _REFLECTION_2_', section: grouping_by_10)
 
 
 ## For each section, we put three subsections

@@ -92,7 +92,8 @@ class Section < ActiveRecord::Base
       domains: domains,
       subsections: subsections.map(&:to_publishing_format),
       questions: questions.active.map(&:to_publishing_format_for_section),
-      line_input_fields: line_inputs.map(&:to_publishing_format)
+      line_input_fields: line_inputs.map(&:to_publishing_format),
+      reflections: reflections.map(&:to_publishing_format)
     }
   end
 
@@ -117,7 +118,6 @@ class Section < ActiveRecord::Base
     reflection_counter if increment!(:reflection_counter)
   end
 
-
   def inputs_referenced_exactly_once?
     full_text = subsections.map(&:text).join
     inputs.find_all{|input| full_text.scan(input.name).length != 1}.empty?
@@ -129,17 +129,25 @@ class Section < ActiveRecord::Base
     full_text.scan(/_INPUT_.*?_/).find_all{|match| !input_names.include? match}.any?
   end
 
+  def nonexisting_reflections_referenced?
+    reflection_names = reflections.map(&:name)
+    full_text = subsections.map(&:text).join
+    full_text.scan(/_REFLECTION_.*?_/).find_all{|match| !reflection_names.include? match}.any?
+  end
+
   def errors_when_publishing
     errors = []
     errors << "No Meijerink criteria selected for section '#{name}'" if meijerink_criteria.empty?
     errors << "No domains selected for section '#{name}'" if domains.empty?
     errors << "Error in input referencing in section '#{name}', in '#{parent}'" unless inputs_referenced_exactly_once?
     errors << "Nonexisting inputs referenced in section '#{name}', in '#{parent}'" if nonexisting_inputs_referenced?
+    errors << "Nonexisting reflections referenced in section '#{name}', in '#{parent}'" if nonexisting_reflections_referenced?
     errors << "No questions in section '#{name}', in '#{parent}'" if questions.active.empty?
     errors << "No subsections in section '#{name}', in '#{parent}'" if subsections.empty?
     errors << inputs.map(&:errors_when_publishing)
     errors << questions.active.map(&:errors_when_publishing)
     errors << subsections.map(&:errors_when_publishing)
+    errors << reflections.map(&:errors_when_publishing)
     errors.flatten
   end
 
