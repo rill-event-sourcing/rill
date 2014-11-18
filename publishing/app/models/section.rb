@@ -143,9 +143,9 @@ class Section < ActiveRecord::Base
   end
 
   def nonexisting_reflections_referenced?
-    reflection_names = reflections.map(&:name)
-    full_text = subsections.map(&:text).join
-    full_text.scan(/_REFLECTION_.*?_/).find_all{|match| !reflection_names.include? match}.any?
+    #reflection_names = reflections.map(&:name)
+    #full_text = subsections.map(&:text).join
+    #full_text.scan(/_REFLECTION_.*?_/).find_all{|match| !reflection_names.include? match}.any?
   end
 
   def errors_when_publishing

@@ -29,6 +29,11 @@
    (s/optional-key :width) s/Int
    :correct-answers  #{s/Str}})
 
+(def Reflection
+  {:name FieldName
+   :content s/Str
+   :answer s/Str})
+
 (def Tool
   (s/enum "pen_and_paper" "calculator"))
 
@@ -53,7 +58,8 @@
    :domains #{s/Str}
    :line-input-fields #{LineInputField}
    :questions (s/both #{SectionQuestion}
-                      (s/pred (fn [s] (seq s)) 'not-empty))})
+                      (s/pred (fn [s] (seq s)) 'not-empty))
+   :reflections [Reflection]})
 
 (def ChapterQuizQuestion
   {:id Id
