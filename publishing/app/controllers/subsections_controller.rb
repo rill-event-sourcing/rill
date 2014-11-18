@@ -12,6 +12,10 @@ class SubsectionsController < ApplicationController
     render layout: 'preview'
   end
 
+  def preview_content
+    render layout: 'preview_html'
+  end
+
   def create
     @subsection = @section.subsections.build(title: '',
                                              text: '',
@@ -38,6 +42,16 @@ class SubsectionsController < ApplicationController
         format.json { render json: @section.errors, status: :unprocessable_entity }
       end
     end
+  end
+
+  def moveup
+    @subsection.move_higher
+    render json: { status: :ok }
+  end
+
+  def movedown
+    @subsection.move_lower
+    render json: { status: :ok }
   end
 
   def destroy

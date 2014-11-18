@@ -15,13 +15,12 @@ module ApplicationHelper
 
     inputs.each do |input|
       input_html = input_to_html(input)
-      html.gsub!(input.name, input_html)
+      html.gsub!(input.name, input_html) if html
     end
 
     reflections.each do |reflection|
       reflection_html = reflection_to_html(reflection)
-      pretty_debug reflection_html
-      html.gsub!(reflection.name, reflection_html)
+      html.gsub!(reflection.name, reflection_html) if html
     end
 
     html.gsub!(/(_INPUT_[0-9]+_)/, content_tag(:div, 'Please remove \1 from the source!', class: "alert alert-danger"))

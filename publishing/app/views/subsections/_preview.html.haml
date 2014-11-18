@@ -1,0 +1,5 @@
+%div.panel.panel-default
+  %div.panel-body{id: "preview-subsection-#{subsection.to_param}"}
+    - url = preview_content_chapter_section_subsection_path(@chapter, @section, subsection)
+    %iframe.fill.col-md-12{class: "preview_content", id: subsection.to_param, data: {url: url}, src: url, style: "min-height: 200px;" }
+

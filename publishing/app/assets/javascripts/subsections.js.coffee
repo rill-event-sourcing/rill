@@ -66,13 +66,50 @@ autoSave = ->
   setTimeout(autoSave, 10000)
 
 refreshPreview = ->
-  $('#preview').attr("src", $('#preview').attr("src"))
-  height = document.getElementById('preview').contentWindow.document.body.scrollHeight
-  $('#preview').css('height', height)
+  $('.preview_content').each (content) ->
+          height = this.contentWindow.document.body.scrollHeight
+          iframe = $("#" + this.id)
+          iframe.attr("src", iframe.attr("src"))
+          iframe.css("height", height)
 
 updateViewPositions = ->
   $(".subsection-position").each (position) ->
     this.value = position
+
+bindMoveUpButtons = ->
+  $('.move-up-subsection').unbind()
+  $('.move-up-subsection').bind 'click', (event) ->
+    sortItem = $(event.currentTarget).data('item')
+    url = $(event.currentTarget).data('url')
+    $.ajax url,
+      type: 'POST'
+      dataType: 'json'
+      error: (jqXHR, textStatus, errorThrown) ->
+        console.log "AJAX Error: #{ textStatus }"
+      success: (data, textStatus, jqXHR) ->
+        thisItem = $('#' + sortItem)
+        prevItem = thisItem.prev()
+        if prevItem.length != 0
+          thisItem.insertBefore(prevItem)
+          refreshPreview()
+
+bindMoveDownButtons = ->
+  $('.move-down-subsection').unbind()
+  $('.move-down-subsection').bind 'click', (event) ->
+    sortItem = $(event.currentTarget).data('item')
+    url = $(event.currentTarget).data('url')
+    $.ajax url,
+      type: 'POST'
+      dataType: 'json'
+      error: (jqXHR, textStatus, errorThrown) ->
+        console.log "AJAX Error: #{ textStatus }"
+      success: (data, textStatus, jqXHR) ->
+        thisItem = $('#' + sortItem)
+        nextItem = thisItem.next()
+        if nextItem.length != 0
+          thisItem.insertAfter(nextItem)
+          refreshPreview()
+
 
 ###########################################
 # Input
@@ -188,6 +225,8 @@ $ ->
   bindDeleteInputButtons()
   bindAddAnswerButton()
   bindDeleteAnswerButtons()
+  bindMoveUpButtons()
+  bindMoveDownButtons()
 
   bindAddReflectionButton()
   bindDeleteReflectionButtons()
