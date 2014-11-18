@@ -2,10 +2,9 @@
   %div.panel.panel-default
     %div.panel-heading
       %div.pull-right{style:"margin-bottom:10px"}
-        %span.glyphicon.glyphicon-arrow-down.move-down-subsection.btn.btn-default{data: {id: @subsection.id, item: "subsection-panel-#{ @subsection.id }", url: movedown_chapter_section_subsection_path(@chapter, @section, @subsection)}}
-        %span.glyphicon.glyphicon-arrow-up.move-up-subsection.btn.btn-default{data: {id: @subsection.id, item: "subsection-panel-#{ @subsection.id }", url: moveup_chapter_section_subsection_path(@chapter, @section, @subsection)}}
+        - #%span.glyphicon.glyphicon-arrow-down.move-down-subsection.btn.btn-default{data: {id: @subsection.id, item: "subsection-panel-#{ @subsection.id }", url: movedown_chapter_section_subsection_path(@chapter, @section, @subsection)}}
+        - #%span.glyphicon.glyphicon-arrow-up.move-up-subsection.btn.btn-default{data: {id: @subsection.id, item: "subsection-panel-#{ @subsection.id }", url: moveup_chapter_section_subsection_path(@chapter, @section, @subsection)}}
         %span.btn.btn-default.glyphicon.glyphicon-minus.delete-subsection{data: {item: "subsection-panel-#{ @subsection.id }", url: chapter_section_subsection_path(@chapter, @section, @subsection) } }
-      = "Pos #{@subsection.position}"
       %h3.panel-title
         = hidden_field_tag   "subsections[#{@subsection.id}][position]", @subsection.position, class: "subsection-position"
         = text_field_tag   "subsections[#{@subsection.id}][title]", @subsection.title, class: "form-control"

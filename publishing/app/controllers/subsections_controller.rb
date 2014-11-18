@@ -44,15 +44,15 @@ class SubsectionsController < ApplicationController
     end
   end
 
-  def moveup
-    @subsection.move_higher
-    render json: { status: :ok }
-  end
+  # def moveup
+  #   @subsection.move_higher
+  #   render json: { status: :ok }
+  # end
 
-  def movedown
-    @subsection.move_lower
-    render json: { status: :ok }
-  end
+  # def movedown
+  #   @subsection.move_lower
+  #   render json: { status: :ok }
+  # end
 
   def destroy
     @subsection.destroy if @subsection

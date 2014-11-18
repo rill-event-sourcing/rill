@@ -64,8 +64,8 @@ Rails.application.routes.draw do
       resources :subsections do
         member do
           get 'preview_content'
-          post 'moveup'
-          post 'movedown'
+          #post 'moveup'
+          #post 'movedown'
         end
         collection do
           post 'save'
