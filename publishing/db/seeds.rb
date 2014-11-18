@@ -43,6 +43,12 @@ addition = Section.create(title: 'Addition', description: '2+2=5 for the majorit
 subtraction = Section.create(title: 'Subtraction', description: 'Too many things, let me get rid of some', chapter: basic_operations, meijerink_criteria: ["1F-RT", "2F", "3F"], domains: ["Getallen", "Verhoudingen", "Meetkunde", "Verbanden"])
 
 
+## We have some reflections
+
+reflection1 = Reflection.create(content: '1+1=', answer: '2', section: grouping_by_10)
+reflection1 = Reflection.create(content: '2+2=', answer: '4', section: grouping_by_10)
+
+
 ## For each section, we put three subsections
 
 counting_to_10 = Subsection.create(title: 'Counting to 10', text: '1+1+1+... = 10', section: grouping_by_10)

@@ -2,5 +2,6 @@
 
 FactoryGirl.define do
   factory :reflection do
+    section { |a| a.association(:section) }
   end
 end
