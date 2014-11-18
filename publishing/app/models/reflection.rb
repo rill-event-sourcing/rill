@@ -35,7 +35,6 @@ class Reflection < ActiveRecord::Base
 
   def to_publishing_format
     {
-      id: id,
       name: name,
       content: content,
       answer: answer

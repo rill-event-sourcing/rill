@@ -463,13 +463,11 @@
           ],
           "reflections": [
             {
-              "id": "482d2157-1f55-4ca0-8dff-3c35a1fcc7cf",
               "name": "_REFLECTION_1_",
               "content": "1+1=",
               "answer": "2"
             },
             {
-              "id": "4ac1882b-59c8-43ab-b3ef-1dba886ad3de",
               "name": "_REFLECTION_2_",
               "content": "2+2=",
               "answer": "4"
