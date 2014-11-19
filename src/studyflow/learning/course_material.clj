@@ -34,7 +34,7 @@
    :content s/Str
    :answer s/Str})
 
-(def ExtarAnswer
+(def ExtraAnswer
   {:name FieldName
    :title s/Str
    :content s/Str})
@@ -64,8 +64,8 @@
    :line-input-fields #{LineInputField}
    :questions (s/both #{SectionQuestion}
                       (s/pred (fn [s] (seq s)) 'not-empty))
-   (s/optional-key :reflections [Reflection])
-   (s/optional-key :extra_answers [ExtraAnswer])})
+   (s/optional-key :reflections) [Reflection]
+   (s/optional-key :extra-examples) [ExtraAnswer]})
 
 (def ChapterQuizQuestion
   {:id Id
