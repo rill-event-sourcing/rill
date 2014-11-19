@@ -50,10 +50,9 @@
                           (dom/button #js {:className "toggle-light-mode"
                                            :onClick (fn []
                                                       (change-mode-calculator cursor))}
-                                      (if calculator-light-mode? "▲" "▼"))
                           (dom/button #js {:className "close-calculator"
                                            :onClick (fn []
-                                                      (om/update! cursor [:view :show-calculator] false))} "X"))
+                                                      (om/update! cursor [:view :show-calculator] false))}))
                  (dom/iframe #js {:id "calculator-iframe" :name "calculator-iframe" :src "/calculator.html" :width "100%" :height "100%" :frameborder "0" :scrolling "no" :seamless "seamless"}))))))
 
 (def draggable-calculator

@@ -52,6 +52,16 @@
   #calculator-iframe
     pointer-events: none
 
+
+.light
+  .toggle-light-mode
+    background: url(/images/icon-arrow-up.svg) no-repeat center #fcfcfc !important
+    background-size: 15px
+
+.toggle-light-mode
+  background: url(/images/icon-arrow-down.svg) no-repeat center #fcfcfc
+  background-size: 15px
+
 .calculator-top-header
   height: 40px
   position: absolute
@@ -62,14 +72,14 @@
     cursor: move
   .close-calculator
     float: right
+    background: url(/images/icon-close.svg) no-repeat center #fcfcfc
+    background-size: 15px
   button
-    width: 4em
-    height: 3em
-    margin: .25em
-    padding: 0
-    display: inline-block
-    color: #000
-    background: #ddd
-    font-weight: bold
-    border-radius: .5em
-    border: solid #aaa 2px
+    padding: 10px 15px
+    outline: 0
+    background: #fcfcfc
+    border: 0
+    +box-shadow(0 1px 2px rgba(0, 0, 0, 0.08), 0 1px 1px rgba(0, 0, 0, 0.19), inset 0 -1px 2px rgba(0, 0, 0, 0.06), inset 0 1px 1px 2px white)
+    +border-radius(6px)
+    color: #aaa !important
+    font-weight: 500 !important
