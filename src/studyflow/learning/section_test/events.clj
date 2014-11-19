@@ -67,3 +67,8 @@
   :section-id m/Id
   :student-id m/Id
   section-test-id)
+
+(defevent ModalDismissed
+  :section-id m/Id
+  :student-id m/Id
+  section-test-id)

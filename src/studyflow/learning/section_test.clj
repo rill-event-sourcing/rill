@@ -4,6 +4,7 @@
             [studyflow.learning.section-test.commands :as commands]
             [studyflow.learning.course :as course]
             [rill.aggregate :refer [handle-event handle-command aggregate-ids]]
+            [rill.message :as message]
             [rill.uuid :refer [new-id]]))
 
 (defrecord SectionTest
@@ -11,13 +12,59 @@
      course-id
      student-id
      current-question-id
-     current-question-status
      streak-length
      stumbling-streak
-     finished?
-     question-finished?
+     test-view
+     question-state
      stuck?
+     test-finished?
      previous-question-ids])
+
+(def test-transitions
+  {nil              {::events/QuestionAssigned :question}
+   :question        {::events/QuestionAnsweredCorrectly :answer-correct
+                     ::events/QuestionAnsweredIncorrectly :question
+                     ::events/Stuck :stuck-modal}
+   :answer-correct  {::events/Finished :finished-modal
+                     ::events/StreakCompleted :completed-modal
+                     ::events/QuestionAssigned :question}
+   :stuck-modal     {::events/ModalDismissed :question}
+   :finished-modal  {::events/QuestionAssigned :question}
+   :completed-modal {::events/QuestionAssigned :question}})
+
+(defn update-test-view
+  [section-test event]
+  (update-in section-test [:test-view] #(get-in test-transitions [% (message/type event)] %)))
+
+(def question-transitions
+  {nil                 {::events/QuestionAssigned :open}
+   :open               {::events/QuestionAnsweredIncorrectly :incorrect
+                        ::events/AnswerRevealed :revealed
+                        ::events/QuestionAnsweredCorrectly :correct}
+   :correct            {::events/QuestionAssigned :open}
+   :incorrect          {::events/QuestionAnsweredCorrectly :finished-incorrect}
+   :revealed           {::events/QuestionAnsweredCorrectly :finished-revealed}
+   :finished-revealed  {::events/QuestionAssigned :open}
+   :finished-incorrect {::events/QuestionAssigned :open}})
+
+(defn update-question-state
+  [section-test event]
+  (update-in section-test [:question-state] #(get-in question-transitions [% (message/type event)] %)))
+
+(defn update-states
+  [section-test event]
+  (-> section-test
+      (update-question-state event)
+      (update-test-view event)))
+
+(defn question-finished?
+  [{:keys [question-state]}]
+  (contains? #{:correct :finished-revealed :finished-incorrect} question-state))
+
+(defn answer-revealed?
+  [{:keys [question-state]}]
+  (prn [:revealed?  question-state])
+  (contains? #{:revealed :finished-revealed} question-state))
 
 (defn select-random-question
   [course section-id previous-question-ids]
@@ -42,65 +89,52 @@
 
 (defmethod handle-event ::events/Created
   [_ {:keys [section-id student-id section-id course-id]}]
-  (->SectionTest section-id course-id student-id nil nil 0 0 false false false nil))
+  (->SectionTest section-id course-id student-id nil 0 0 nil nil false false nil))
 
 (defn set-previous-question-ids
   [question-ids question-id question-total]
   (take (Math/floor (* question-total 0.9)) (cons question-id question-ids)))
 
 (defmethod handle-event ::events/QuestionAssigned
-  [{:keys [previous-question-ids] :as this} {:keys [question-id question-total]}]
-  (assoc this
-    :current-question-id question-id
-    :current-question-status nil
-    :question-finished? nil
-    :answer-revealed? nil
-    :previous-question-ids (set-previous-question-ids previous-question-ids question-id question-total)))
+  [{:keys [previous-question-ids] :as this} {:keys [question-id question-total] :as event}]
+  (-> this
+      (assoc :current-question-id question-id
+             :previous-question-ids (set-previous-question-ids previous-question-ids question-id question-total))
+      (update-states event)))
 
 (defn track-streak-correct
-  [{:keys [streak-length stumbling-streak current-question-status] :as this}]
-  (if (nil? current-question-status)
-    (assoc this
-      :current-question-status :answered-correctly
-      :stumbling-streak 0
-      :streak-length (inc streak-length))
+  [{:keys [streak-length stumbling-streak question-state] :as this}]
+  (if (= :open question-state)
+    (assoc this :stumbling-streak 0
+           :streak-length (inc streak-length))
     this))
 
-(defn track-streak-incorrect
-  [{:keys [stumbling-streak current-question-status] :as this}]
-  (if (nil? current-question-status)
+(defn track-streak-incorrect ;; also called when revealing
+  [{:keys [stumbling-streak question-state] :as this}]
+  (if (= :open question-state)
     (assoc this
-      :current-question-status :answered-incorrectly
       :stumbling-streak (inc stumbling-streak)
       :streak-length 0)
     (assoc this
-      :current-question-status :answered-incorrectly
       :streak-length 0)))
 
 (defmethod handle-event ::events/AnswerRevealed
-  [{:keys [current-question-id current-question-status stumbling-streak streak-length] :as this} {:keys [question-id]}]
-  {:pre [(= current-question-id question-id)]}
+  [{:keys [current-question-id question-state stumbling-streak streak-length] :as this} {:keys [question-id] :as event}]
   (-> this
-      (assoc :answer-revealed? true)
-      (cond->
-       (nil? current-question-status)
-       (-> (assoc :current-question-status :answer-revealed)
-           (assoc :stumbling-streak (inc stumbling-streak))
-           (assoc :streak-length 0)))))
+      track-streak-incorrect
+      (update-states event)))
 
 (defmethod handle-event ::events/QuestionAnsweredCorrectly
-  [{:keys [current-question-id current-question-status streak-length] :as this} {:keys [question-id]}]
-  {:pre [(= current-question-id question-id)]}
+  [{:keys [current-question-id current-question-status streak-length] :as this} {:keys [question-id] :as event}]
   (-> this
-      (assoc :question-finished? true)
-      track-streak-correct))
+      track-streak-correct
+      (update-states event)))
 
 (defmethod handle-event ::events/QuestionAnsweredIncorrectly
-  [{:keys [current-question-id] :as this} {:keys [question-id]}]
-  {:pre [(= current-question-id question-id)]}
+  [{:keys [current-question-id] :as this} {:keys [question-id] :as event}]
   (-> this
-      (assoc :question-finished? false)
-      track-streak-incorrect))
+      track-streak-incorrect
+      (update-states event)))
 
 (defmethod aggregate-ids ::commands/CheckAnswer!
   [{:keys [course-id]}]
@@ -110,48 +144,24 @@
 (def streak-to-stumbling-block 3)
 
 (defn action-will-trigger-stumbling-block?
-  [{:keys [stumbling-streak stuck? finished? current-question-status]}]
+  [{:keys [stumbling-streak stuck? test-finished? question-state]}]
   (and (not stuck?)
-       (not finished?)
-       (nil? current-question-status)
+       (not test-finished?)
+       (= :open question-state)
        (>= stumbling-streak (dec streak-to-stumbling-block))))
 
 (defn correct-answer-will-unstuck?
-  [{:keys [stuck? current-question-status]}]
+  [{:keys [stuck? question-state]}]
   (and stuck?
-       (nil? current-question-status)))
-
-(defn correct-answer-will-finish-test?
-  "Given that the next answer will be correct, check if it should trigger a Finished event"
-  [{:keys [streak-length current-question-status finished?]}]
-  (and (not finished?)
-       (nil? current-question-status)
-       (>= streak-length (dec streak-length-to-finish-test))))
-
-(defn correct-answer-will-complete-streak?
-  "Given that the next answer will be correct, check if it should trigger a StreakCompleted event"
-  [{:keys [finished? streak-length current-question-status]}]
-  (and finished?
-       (nil? current-question-status)
-       (= streak-length (dec streak-length-to-finish-test))))
+       (= :open question-state)))
 
 (defmethod handle-command ::commands/CheckAnswer!
-  [{:keys [course-id current-question-id section-id student-id question-finished? finished?] :as this} {:keys [inputs question-id] :as command} course]
-  {:pre [(= current-question-id question-id)
-         course-id
-         (not question-finished?)]}
+  [{:keys [course-id current-question-id section-id student-id] :as this} {:keys [inputs question-id] :as command} course]
+  {:pre [(= current-question-id question-id) course-id (not (question-finished? this))]}
   (if (course/answer-correct? (course/question-for-section course section-id question-id) inputs)
-    (let [correct-answer-event (events/question-answered-correctly section-id student-id question-id inputs)]
-      (if (correct-answer-will-finish-test? this)
-        [:ok [correct-answer-event
-              (events/finished section-id student-id (:id (course/chapter-for-section course section-id)) course-id)]]
-        (if (correct-answer-will-complete-streak? this)
-          [:ok [correct-answer-event
-                (events/streak-completed section-id student-id)]]
-          (if (correct-answer-will-unstuck? this)
-            [:ok [correct-answer-event
-                  (events/unstuck section-id student-id)]]
-            [:ok [correct-answer-event]]))))
+    (if (correct-answer-will-unstuck? this)
+      [:ok [(events/question-answered-correctly section-id student-id question-id inputs) (events/unstuck section-id student-id)]]
+      [:ok [(events/question-answered-correctly section-id student-id question-id inputs)]])
     (let [incorrect-answer-event (events/question-answered-incorrectly section-id student-id question-id inputs)]
       (if (action-will-trigger-stumbling-block? this)
         [:ok [incorrect-answer-event
@@ -162,48 +172,79 @@
   [{:keys [course-id]}]
   [course-id])
 
-
 (defmethod handle-command ::commands/RevealAnswer!
-  [{:keys [current-question-id section-id student-id question-finished? answer-revealed?] :as this} {:keys [question-id] :as command} course]
-  {:pre [(= current-question-id question-id)
-         (not answer-revealed?)]}
-  (if-let [answer (:worked-out-answer (course/question-for-section course section-id question-id))]
-    (if (action-will-trigger-stumbling-block? this)
-      [:ok [(events/answer-revealed section-id student-id question-id answer)
-            (events/stuck section-id student-id)]]
-      [:ok [(events/answer-revealed section-id student-id question-id answer)]])
+  [{:keys [current-question-id section-id student-id] :as this} {:keys [question-id] :as command} course]
+  (if-not (answer-revealed? this)
+    (if-let [answer (:worked-out-answer (course/question-for-section course section-id question-id))]
+      (if (action-will-trigger-stumbling-block? this)
+        [:ok [(events/answer-revealed section-id student-id question-id answer)
+              (events/stuck section-id student-id)]]
+        [:ok [(events/answer-revealed section-id student-id question-id answer)]])
+      [:rejected])
     [:rejected]))
+
+(defn finish-test?
+  "Will the current test finish just now?"
+  [{:keys [streak-length test-finished?] :as this}]
+  (and (not test-finished?)
+       (>= streak-length streak-length-to-finish-test)))
+
+(defn complete-streak?
+  "Check if we should trigger a StreakCompleted event"
+  [{:keys [test-finished? streak-length]}]
+  (and test-finished?
+       (= streak-length streak-length-to-finish-test)))
 
 (defmethod aggregate-ids ::commands/NextQuestion!
   [{:keys [course-id]}]
   [course-id])
 
 (defmethod handle-command ::commands/NextQuestion!
-  [{:keys [section-id student-id question-finished? previous-question-ids]} command course]
-  {:pre [question-finished?]}
-  [:ok [(events/question-assigned section-id
-                                  student-id
-                                  (:id (select-random-question course section-id previous-question-ids))
-                                  (count (course/questions-for-section course section-id)))]])
+  [{:keys [section-id student-id course-id previous-question-ids] :as section-test} command course]
+  (if (question-finished? section-test)
+    (cond (finish-test? section-test)
+          [:ok [(events/finished section-id student-id (:id (course/chapter-for-section course section-id)) course-id)]]
+          (complete-streak? section-test)
+          [:ok [(events/streak-completed section-id student-id)]]
+          :else
+          [:ok [(events/question-assigned section-id
+                                          student-id
+                                          (:id (select-random-question course section-id previous-question-ids))
+                                          (count (course/questions-for-section course section-id)))]])
+    [:rejected]))
 
 (defmethod handle-event ::events/Finished
   [section-test event]
-  (assoc section-test
-    :finished? true
-    :streak-length 0))
+  (-> section-test
+      (assoc :streak-length 0
+             :test-finished? true)
+      (update-states event)))
 
 (defmethod handle-event ::events/StreakCompleted
   [section-test event]
-  (assoc section-test
-    :streak-length 0))
+  (-> section-test
+      (assoc :streak-length 0)
+      (update-states event)))
 
 (defmethod handle-event ::events/Stuck
   [section-test event]
-  (assoc section-test
-    :stuck? true
-    :stumbling-streak 0))
+  (-> section-test
+      (update-states event)
+      (assoc :stuck? true
+             :stumbling-streak 0)))
 
 (defmethod handle-event ::events/Unstuck
   [section-test event]
-  (assoc section-test
-    :stuck? false))
+  (-> section-test
+      (update-states event)
+      (assoc :stuck? false)))
+
+(defmethod handle-command ::commands/DismissModal!
+  [{:keys [test-view section-id student-id] :as section-test} event]
+  (if (= :stuck-modal test-view)
+    [:ok [(events/modal-dismissed section-id student-id)]]
+    [:rejected]))
+
+(defmethod handle-event ::events/ModalDismissed
+  [this event]
+  (update-states this event))

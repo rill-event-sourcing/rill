@@ -122,27 +122,28 @@
 
       (testing "with an incorrect answer"
         (let [inputs {"_INPUT_1_" "completely incorrect"}]
-          (is (thrown? AssertionError
-                       (execute (commands/next-question! section-id student-id 2 course-id)
-                                [fixture/course-published-event
-                                 (events/created section-id student-id course-id)
-                                 (events/question-assigned section-id student-id question-id question-total)
-                                 (events/question-answered-incorrectly section-id student-id question-id inputs)]))))))))
+          (is (= :rejected
+                 (first (execute (commands/next-question! section-id student-id 2 course-id)
+                                 [fixture/course-published-event
+                                  (events/created section-id student-id course-id)
+                                  (events/question-assigned section-id student-id question-id question-total)
+                                  (events/question-answered-incorrectly section-id student-id question-id inputs)])))))))))
 
 
 (deftest test-continue-practice
   (testing "the first streaks marks a section as finished, afterward you can continue practising and completing streaks"
     (testing "first five in a row correctly mark section as finished"
-      (let [upto-fifth-q-stream
-            (-> [fixture/course-published-event
-                 (events/created section-id student-id course-id)]
-                (into (reduce into []
-                              (repeat 4 [(events/question-assigned section-id student-id question-id question-total)
-                                         (events/question-answered-correctly section-id student-id question-id correct-inputs)])))
-                (conj (events/question-assigned section-id student-id question-id question-total)))
-            [status [correctly-answered-event finished-event :as events]]
+      (let [upto-fifth-q-stream (-> [fixture/course-published-event (events/created section-id student-id course-id)]
+                                    (into (reduce into []
+                                                  (repeat 4 [(events/question-assigned section-id student-id question-id question-total)
+                                                             (events/question-answered-correctly section-id student-id question-id correct-inputs)])))
+                                    (conj (events/question-assigned section-id student-id question-id question-total)))
+            [status [correctly-answered-event]]
             (execute (commands/check-answer! section-id student-id 9 course-id question-id correct-inputs)
-                     upto-fifth-q-stream)]
+                     upto-fifth-q-stream)
+            [status2 [finished-event]]
+            (execute (commands/next-question! section-id student-id 10 course-id)
+                     (into upto-fifth-q-stream [correctly-answered-event]))]
         (is (= :ok status))
         (is (= (message/type correctly-answered-event)
                ::events/QuestionAnsweredCorrectly))
@@ -150,7 +151,7 @@
                ::events/Finished))
         (testing "Finished events include chapter-id so we can relate this event to the chapter quiz"
           (is (= (:chapter-id finished-event) chapter-id)))
-        (let [finished-stream (into upto-fifth-q-stream events)]
+        (let [finished-stream (into upto-fifth-q-stream [correctly-answered-event finished-event])]
           (testing "after a finished section-test you can continue"
             (let [[status [assigned-event :as events]]
                   (execute (commands/next-question! section-id student-id 11 course-id)
@@ -185,50 +186,37 @@
 
           (testing "after finished for another streak a StreakCompleted is generated"
             (let [continue-stream (into finished-stream
-                                        (interpose
-                                         (events/question-answered-correctly section-id student-id question-id correct-inputs)
-                                         (repeat 5 (events/question-assigned section-id student-id question-id question-total))))
-                  [status [answered-correctly-event streak-event :as events]]
-                  (execute (commands/check-answer! section-id student-id 20 course-id question-id correct-inputs)
-                           continue-stream)]
-              (is (= status :ok))
-              (is (= (message/type answered-correctly-event)
-                     ::events/QuestionAnsweredCorrectly))
-              (is (= (message/type streak-event)
-                     ::events/StreakCompleted))))
+                                        (flatten (repeat 5 [(events/question-assigned section-id student-id question-id question-total)
+                                                            (events/question-answered-correctly section-id student-id question-id correct-inputs)])))]
+              (is (command-result= [:ok [(events/streak-completed section-id student-id)]]
+                                   (execute (commands/next-question! section-id student-id 21 course-id)
+                                            continue-stream)))))
+
           (testing "after a StreakCompleted for another streak a StreakCompleted is generated"
             (let [continue-stream (-> finished-stream
                                       (into (interleave
                                              (repeat 5 (events/question-assigned section-id student-id question-id question-total))
                                              (repeat 5 (events/question-answered-correctly section-id student-id question-id correct-inputs))))
                                       (conj (events/streak-completed section-id student-id))
-                                      (into (interpose
-                                             (events/question-answered-correctly section-id student-id question-id correct-inputs)
-                                             (repeat 5 (events/question-assigned section-id student-id question-id question-total)))))
-                  [status [answered-correctly-event streak-event :as events]]
-                  (execute (commands/check-answer! section-id student-id 31 course-id question-id correct-inputs)
-                           continue-stream)]
-              (is (= status :ok))
-              (is (= (message/type answered-correctly-event)
-                     ::events/QuestionAnsweredCorrectly))
-              (is (= (message/type streak-event)
-                     ::events/StreakCompleted))))
+                                      (into (interleave
+                                             (repeat 5 (events/question-assigned section-id student-id question-id question-total))
+                                             (repeat 5 (events/question-answered-correctly section-id student-id question-id correct-inputs)))))]
+              (is (command-result= [:ok [(events/streak-completed section-id student-id)]]
+                                   (execute (commands/next-question! section-id student-id 32 course-id)
+                                            continue-stream)))))
+          
           (testing "after a wrong answer and then another streak a StreakCompleted is generated"
             (let [continue-stream (-> finished-stream
                                       (into [(events/question-assigned section-id student-id question-id question-total)
-                                             (events/question-answered-incorrectly section-id student-id question-id correct-inputs)])
-                                      (into (interpose
-                                             (events/question-answered-correctly section-id student-id question-id correct-inputs)
-                                             (repeat 5 (events/question-assigned section-id student-id question-id question-total)))))
-                  [status [answered-correctly-event streak-event :as events]]
-                  (execute (commands/check-answer! section-id student-id 22 course-id question-id correct-inputs)
-                           continue-stream)]
-              (is (= status :ok))
-              (is (= (message/type answered-correctly-event)
-                     ::events/QuestionAnsweredCorrectly))
-              (is (= (message/type streak-event)
-                     ::events/StreakCompleted))
-              )))))
+                                             (events/question-answered-incorrectly section-id student-id question-id correct-inputs)
+                                             (events/question-answered-correctly section-id student-id question-id correct-inputs)])
+                                      (into (interleave
+                                             (repeat 5 (events/question-assigned section-id student-id question-id question-total))
+                                             (repeat 5 (events/question-answered-correctly section-id student-id question-id correct-inputs)))))]
+              (is (command-result= [:ok [(events/streak-completed section-id student-id)]]
+                                   (execute (commands/next-question! section-id student-id 24 course-id)
+                                            continue-stream))))))))
+    
     (testing "three in a row make you stumble"
       (let [upto-third-q-stream
             (-> [fixture/course-published-event
@@ -294,50 +282,50 @@
                     (is (= (message/type answered-incorrectly-event)
                            ::events/QuestionAnsweredIncorrectly))
                     (is (= (message/type stuck-event)
-                           ::events/Stuck)))))))))))
+                           ::events/Stuck))))))))))))
 
-  (deftest test-reveal-worked-out-answer
-    (let [answers {"_INPUT_1_" "doesn't matter"
-                   "_INPUT_2_" "doesn't matter"}
-          first-question-stream
-          [fixture/course-published-event
-           (events/created section-id student-id course-id)
-           (events/question-assigned section-id student-id question-id question-total)]
-          [status [revealed-event :as events]]
-          (execute (commands/reveal-answer! section-id student-id 1 course-id question-id)
-                   first-question-stream)]
-      (testing "can request answer for assigned question"
-        (is (= :ok status))
-        (is (= (message/type revealed-event)
-               ::events/AnswerRevealed))
-        (is (= (count events) 1)))
-      (let [inputs {"_INPUT_1_" "6"
-                    "_INPUT_2_" "correct"}
-            answered-stream (conj first-question-stream
-                                  (events/question-answered-correctly section-id student-id question-id inputs))]
-        (testing "can ask for answer for answered question"
-          (let [[status [revealed-event :as events]]
-                (execute (commands/reveal-answer! section-id student-id 2 course-id question-id)
-                         answered-stream)]
-            (is (= :ok status))
-            (is (= (message/type revealed-event)
-                   ::events/AnswerRevealed))
-            (is (= (count events) 1)))))
-      (testing "can ask for answer after answering incorrectly"
-        (let [inputs {"_INPUT_1_" "wrong"
-                      "_INPUT_2_" "wrong"}
-              answered-stream (conj first-question-stream
-                                    (events/question-answered-incorrectly section-id student-id question-id inputs))
-              [status [revealed-event :as events]]
+(deftest test-reveal-worked-out-answer
+  (let [answers {"_INPUT_1_" "doesn't matter"
+                 "_INPUT_2_" "doesn't matter"}
+        first-question-stream
+        [fixture/course-published-event
+         (events/created section-id student-id course-id)
+         (events/question-assigned section-id student-id question-id question-total)]
+        [status [revealed-event :as events]]
+        (execute (commands/reveal-answer! section-id student-id 1 course-id question-id)
+                 first-question-stream)]
+    (testing "can request answer for assigned question"
+      (is (= :ok status))
+      (is (= (message/type revealed-event)
+             ::events/AnswerRevealed))
+      (is (= (count events) 1)))
+    (let [inputs {"_INPUT_1_" "6"
+                  "_INPUT_2_" "correct"}
+          answered-stream (conj first-question-stream
+                                (events/question-answered-correctly section-id student-id question-id inputs))]
+      (testing "can ask for answer for answered question"
+        (let [[status [revealed-event :as events]]
               (execute (commands/reveal-answer! section-id student-id 2 course-id question-id)
                        answered-stream)]
           (is (= :ok status))
           (is (= (message/type revealed-event)
                  ::events/AnswerRevealed))
-          (is (= (count events) 1))))
-      (testing "cannot ask for answer after it has been revealed already"
-        (let [revealed-stream (conj first-question-stream
-                                    (events/answer-revealed section-id student-id question-id answers))]
-          (is (thrown? AssertionError
-                       (execute (commands/reveal-answer! section-id student-id 2 course-id question-id)
-                                revealed-stream))))))))
+          (is (= (count events) 1)))))
+    (testing "can ask for answer after answering incorrectly"
+      (let [inputs {"_INPUT_1_" "wrong"
+                    "_INPUT_2_" "wrong"}
+            answered-stream (conj first-question-stream
+                                  (events/question-answered-incorrectly section-id student-id question-id inputs))
+            [status [revealed-event :as events]]
+            (execute (commands/reveal-answer! section-id student-id 2 course-id question-id)
+                     answered-stream)]
+        (is (= :ok status))
+        (is (= (message/type revealed-event)
+               ::events/AnswerRevealed))
+        (is (= (count events) 1))))
+    (testing "cannot ask for answer after it has been revealed already"
+      (let [revealed-stream (conj first-question-stream
+                                  (events/answer-revealed section-id student-id question-id answers))]
+        (is (= [:rejected]
+               (execute (commands/reveal-answer! section-id student-id 2 course-id question-id)
+                        revealed-stream)))))))

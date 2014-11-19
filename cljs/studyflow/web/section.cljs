@@ -336,9 +336,6 @@
            (dom/a #js {:href ""
                        :className "btn big gray"
                        :onClick (fn [e]
-                                  (om/update! cursor
-                                              [:view :progress-modal]
-                                              :dismissed)
                                   (async/put! (om/get-shared owner :command-channel)
                                               ["section-test-commands/next-question"
                                                section-id
@@ -349,15 +346,19 @@
                   "Blijven oefenen"))))
 
 (defn stuck-modal
-  [cursor owner]
+  [cursor owner student-id course-id chapter-id section-id section-test-aggregate-version]
   (let [explanation-link (-> (get-in cursor [:view :selected-path])
                              (assoc :section-tab :explanation)
                              history-link)
         stumbling-gif "https://assets.studyflow.nl/learning/187.gif"
         submit (fn []
-                 (om/update! cursor
-                             [:view :progress-modal]
-                             :dismissed)
+                 ;; make sure modal is gone next time we load this test
+                 (async/put! (om/get-shared owner :command-channel)
+                             ["section-test-commands/dismiss-modal"
+                              section-id
+                              student-id
+                              section-test-aggregate-version
+                              course-id])
                  (js/window.location.assign explanation-link))]
     (modal (dom/span nil
                      (dom/h1 #js {:className "stumbling_block"} "Oeps! deze is moeilijk")
@@ -366,19 +367,23 @@
            "Uitleg lezen" submit)))
 
 (defn completed-modal
-  [cursor owner chapter-id section-id]
+  [cursor owner student-id course-id chapter-id section-id section-test-aggregate-version]
   (let [complete-again-section-gif "https://assets.studyflow.nl/learning/184.gif"
         submit (fn []
+                 ;; make sure modal is gone next time we load this test
+                 (async/put! (om/get-shared owner :command-channel)
+                             ["section-test-commands/next-question"
+                              section-id
+                              student-id
+                              section-test-aggregate-version
+                              course-id])
                  ;; TODO assign to location instead
                  (om/update! cursor
                              [:view :selected-path]
                              (let [cursor @cursor]
                                (-> (get-in cursor [:view :selected-path])
                                    (merge (get-in cursor [:view :course-material :forward-section-links
-                                                          {:chapter-id chapter-id :section-id section-id}])))))
-                 (om/update! cursor
-                             [:view :progress-modal]
-                             :dismissed))]
+                                                          {:chapter-id chapter-id :section-id section-id}]))))))]
     (modal (dom/span nil
                      (dom/h1 nil "Hoppa! Weer goed!")
                      (dom/img #js {:src complete-again-section-gif})
@@ -387,9 +392,6 @@
 
 (defn question-panel [cursor owner]
   (reify
-    om/IWillMount
-    (will-mount [_]
-      )
     om/IRender
     (render [_]
       (let [{:keys [chapter-id section-id]} (get-in cursor [:view :selected-path])
@@ -405,7 +407,6 @@
                                  (into {}))
             answer-correct (when (contains? question :correct)
                              (:correct question))
-            progress-modal (get-in cursor [:view :progress-modal])
 
             course-id (get-in cursor [:static :course-id])
             section-test-aggregate-version (:aggregate-version section-test)
@@ -421,35 +422,37 @@
                                              (seq (get current-answers input-name)))
                                            (keys inputs)))
             revealed-answer (get question :worked-out-answer)
-            submit (if answer-correct
-                     (fn []
-                       (if (= progress-modal :launchable)
-                         (let [notification-channel (om/get-shared owner :notification-channel)]
-                           (async/put! notification-channel {:type "studyflow.web.ui/FinishedModal"}))
-                         ;; not= progress-modal :launchable
-                         (async/put! (om/get-shared owner :command-channel)
-                                     ["section-test-commands/next-question"
-                                      section-id
-                                      student-id
-                                      section-test-aggregate-version
-                                      course-id])))
-                     (fn []
-                       (when answering-allowed
-                         (async/put!
-                          (om/get-shared owner :command-channel)
-                          ["section-test-commands/check-answer"
-                           section-id
-                           student-id
-                           section-test-aggregate-version
-                           course-id
-                           question-id
-                           current-answers]))))]
+            modal (get #{:completed-modal :finished-modal :stuck-modal} (:view section-test))
+            submit (cond modal
+                         (fn [] false)
+
+                         answer-correct
+                         (fn []
+                           (async/put! (om/get-shared owner :command-channel)
+                                       ["section-test-commands/next-question"
+                                        section-id
+                                        student-id
+                                        section-test-aggregate-version
+                                        course-id]))
+
+                         :else
+                         (fn []
+                           (when answering-allowed
+                             (async/put!
+                              (om/get-shared owner :command-channel)
+                              ["section-test-commands/check-answer"
+                               section-id
+                               student-id
+                               section-test-aggregate-version
+                               course-id
+                               question-id
+                               current-answers]))))]
 
         (dom/div #js {:onKeyPress (on-enter submit)}
-                 (case progress-modal
-                   :show-finish-modal (finish-modal cursor owner student-id course-id chapter-id section-id section-test-aggregate-version)
-                   :show-stuck-modal (stuck-modal cursor owner)
-                   :show-streak-completed-modal (completed-modal cursor owner chapter-id section-id)
+                 (case modal
+                   :finished-modal (finish-modal cursor owner student-id course-id chapter-id section-id section-test-aggregate-version)
+                   :stuck-modal (stuck-modal cursor owner student-id course-id chapter-id section-id section-test-aggregate-version)
+                   :completed-modal (completed-modal cursor owner student-id course-id chapter-id section-id section-test-aggregate-version)
                    nil)
 
                  (dom/article #js {:id "m-section"}
@@ -463,12 +466,13 @@
                             ;; this doesn't have the disabled handling
                             ;; as all the click-once-buttons because
                             ;; we need the ref for set-focus
-                            (dom/button #js {:className "btn blue pull-right"
-                                             :ref "FOCUSED_BUTTON"
-                                             :onClick submit}
-                                        (if (= progress-modal :launchable)
-                                          "Goed! Voltooi paragraaf"
-                                          "Goed! Volgende vraag"))
+                            (dom/button (if modal
+                                          #js {:className "btn blue pull-right"
+                                               :disabled :disabled}
+                                          #js {:className "btn blue pull-right"
+                                               :ref "FOCUSED_BUTTON"
+                                               :onClick submit})
+                                        "Goed!")
                             (om/build (click-once-button "Nakijken"
                                                          submit
                                                          :enabled answering-allowed

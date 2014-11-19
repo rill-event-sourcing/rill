@@ -54,26 +54,6 @@
   (go (loop []
         (when-let [event (<! notification-channel)]
           (case (:type event)
-            "studyflow.learning.section-test.events/Finished"
-            (om/update! cursor
-                        [:view :progress-modal]
-                        :launchable)
-
-            "studyflow.web.ui/FinishedModal"
-            (om/update! cursor
-                        [:view :progress-modal]
-                        :show-finish-modal)
-
-            "studyflow.learning.section-test.events/Stuck"
-            (om/update! cursor
-                        [:view :progress-modal]
-                        :show-stuck-modal)
-
-            "studyflow.learning.section-test.events/StreakCompleted"
-            (om/update! cursor
-                        [:view :progress-modal]
-                        :show-streak-completed-modal)
-
             "studyflow.learning.section-test.events/QuestionAnsweredIncorrectly"
             (do (om/update! cursor
                             [:view :shake-class]

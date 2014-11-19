@@ -33,3 +33,10 @@
   :expected-version s/Int
   :course-id m/Id
   section-test-id)
+
+(defcommand DismissModal!
+  :section-id m/Id
+  :student-id m/Id
+  :expected-version s/Int
+  :course-id m/Id
+  section-test-id)

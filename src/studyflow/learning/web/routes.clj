@@ -21,7 +21,7 @@
 (defroute section-test-reveal-worked-out-answer :put "/api/section-test-reveal-worked-out-answer/:section-id/:student-id/:course-id/:question-id")
 (defroute section-test-check-answer :put "/api/section-test-check-answer/:section-id/:student-id/:course-id/:question-id")
 (defroute section-test-next-question :put "/api/section-test-next-question/:section-id/:student-id/:course-id")
-
+(defroute section-test-dismiss-modal :put "/api/section-test-dismiss-modal/:section-id/:student-id/:course-id")
 (defroute section-test-replay :get "/api/section-test-replay/:section-id/:student-id")
 
 (defroute chapter-quiz-start :put "/api/chapter-quiz-start/:course-id/:chapter-id/:student-id")
