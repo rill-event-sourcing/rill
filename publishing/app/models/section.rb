@@ -77,7 +77,7 @@ class Section < ActiveRecord::Base
         errors["Reflection '#{refl.name}':"] = refl_err
       end
     end
-    extra_example.map do |refl|
+    extra_examples.map do |extra|
       extra_err = extra.parse_errors(:content)
       if extra_err.any?
         errors["Extra example '#{extra.name}':"] = extra_err
