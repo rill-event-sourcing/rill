@@ -18,8 +18,10 @@
         = render partial: 'edit'
 
     %div.col-md-6
-      - @section.subsections.each do |subsection|
-        = render partial: "preview", locals: {subsection: subsection}
+      %div{style: "max-height: 700px; overflow: auto"}
+        - @section.subsections.each do |subsection|
+          = render partial: "preview", locals: {subsection: subsection}
+
       - if @section.parse_errors(:text).any?
         %div.panel.panel-danger
           %div.panel-heading Parse errors
@@ -38,7 +40,6 @@
                   %td= p_error.first
                   %td= p_error.last
                   - index += 1
-
 
       - if @section.image_errors(:text).any?
         %div.panel.panel-danger

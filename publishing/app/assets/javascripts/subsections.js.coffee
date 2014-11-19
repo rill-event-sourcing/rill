@@ -67,9 +67,15 @@ autoSave = ->
 
 refreshPreview = ->
   $('.preview_content').each (content) ->
-          height = this.contentWindow.document.body.scrollHeight
           iframe = $("#" + this.id)
           iframe.attr("src", iframe.attr("src"))
+          height = this.contentWindow.document.body.scrollHeight + 10
+          iframe.css("height", height)
+
+setHeightPreview = ->
+  $('.preview_content').each (content) ->
+          iframe = $("#" + this.id)
+          height = this.contentWindow.document.body.scrollHeight + 10
           iframe.css("height", height)
 
 updateViewPositions = ->
@@ -235,5 +241,7 @@ $ ->
 
   bindSaveButton()
   initializeAutoSave()
+
+  setHeightPreview()
 
 ################################################################################
