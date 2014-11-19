@@ -31,8 +31,8 @@
 
 (def Reflection
   {:name FieldName
-   :content s/Str
-   :answer s/Str})
+   :content RichText
+   :answer RichText})
 
 (def Tool
   (s/enum "pen_and_paper" "calculator"))
@@ -57,9 +57,9 @@
    :meijerink-criteria #{s/Str}
    :domains #{s/Str}
    :line-input-fields #{LineInputField}
+   (s/optional-key :reflections) [Reflection]
    :questions (s/both #{SectionQuestion}
-                      (s/pred (fn [s] (seq s)) 'not-empty))
-   :reflections [Reflection]})
+                      (s/pred (fn [s] (seq s)) 'not-empty))})
 
 (def ChapterQuizQuestion
   {:id Id
@@ -107,7 +107,7 @@
                  :when (and k v)]
              [k v])))
 
-(defn text-with-inputs-to-tree [text input-names]
+(defn text-with-custom-tags-to-tree [text custom-tag-names custom-tag-contents]
   (let [;; make a mapping of _SVG_n_ to svg tags, svg tags have xhtml
         ;; things that enlive eats, will be put back in the final
         ;; structure as a leaf
@@ -127,15 +127,16 @@
                        (assoc replacements match-name match-text))))))
         ;; turn _INPUT_1_ & _SVG_1_ into a html tag
         text (reduce
-              (fn [text input-name]
+              (fn [text tag-name]
                 (string/replace text
-                                (re-pattern input-name)
+                                (re-pattern tag-name)
                                 (fn [match]
-                                  (if (.startsWith match "_INPUT_")
-                                    (str "<input name=\"" input-name "\"/>")
-                                    (str "<svg name=\"" input-name "\"/>")))))
+                                  (condp #(.startsWith %2 %1) match
+                                    "_INPUT_" (str "<input name=\"" tag-name "\"/>")
+                                    "_REFLECTION_" (str "<reflection name=\"" tag-name "\"/>")
+                                    (str "<svg name=\"" tag-name "\"/>")))))
               text
-              (into input-names
+              (into custom-tag-names
                     (keys replacements)))
         ;; html-snippet doesn't add html/body, need our own root
         tags {:tag :div
@@ -154,6 +155,18 @@
                    (and (contains? node :tag)
                         (= (:tag node) :svg))
                    (assoc node :content (get replacements (:name (:attrs node))))
+
+                   (and (contains? node :tag)
+                        (= (:tag node) :reflection))
+                   (let [reflection (first (filter (fn [reflection] (= (:name (:attrs node)
+                                                                              (:name reflection))))
+                                                   (:reflections custom-tag-contents)))]
+                     (-> node
+                         (assoc :tag :div)
+                         (update-in [:attrs :class] str "m-reflection")
+                         (assoc :content [{:tag :div, :attrs nil, :content (html/html-snippet (:content reflection))}
+                                          {:tag :div, :attrs {:class "reflection-answer"}, :content (html/html-snippet (:answer reflection))}])))
+
                    (and (contains? node :tag)
                         (= (:tag node) :iframe))
                    (assoc node
@@ -164,19 +177,23 @@
                                                          (str (name k) "=\"" v "\""))))
                                    "></iframe>")
                      :attrs {})
+
                    (and (contains? node :tag)
                         (= (:tag node) :p))
                    (-> node
                        (assoc :tag :div)
                        (update-in [:attrs :class] str " div-p"))
+
                    (and (contains? node :tag)
                         (contains? node :attrs)
                         (contains? (:attrs node) :style))
                    (update-in node [:attrs :style] split-style-string)
+
                    :else node)
                   node))
               tags)]
     tags))
+
 
 (defn transform-explanation-to-tree [material]
   (update-in material [:chapters]
