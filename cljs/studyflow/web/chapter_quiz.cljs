@@ -161,7 +161,7 @@
                               (om/set-state-nr! owner :submit nil))))
         (dom/div nil
                  (dom/article #js {:id "m-section"}
-                              (tag-tree-to-om (:tag-tree question-data) inputs))
+                              (tag-tree-to-om (:tag-tree question-data) inputs nil nil))
                  (footer-bar "Nakijken" ;; TODO should be "Voltooi
                              ;; test" for final question but that's
                              ;; only the case if we know you can't
@@ -215,7 +215,7 @@
                             (om/set-state-nr! owner :submit nil)))
         (dom/div nil
                  (dom/article #js {:id "m-section"}
-                              (tag-tree-to-om (:tag-tree question-data) inputs))
+                              (tag-tree-to-om (:tag-tree question-data) inputs nil nil))
                  (footer-bar (str "Fout! "
                                   (if failed-quiz
                                     " Stop test"

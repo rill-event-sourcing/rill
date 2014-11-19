@@ -226,7 +226,6 @@
       om/IRender
       (render [_]
         (dom/div #js {:className "m-reflection"}
-                 (println [:content (:content reflection)])
                  (dom/div #js {:className "reflection-content"}
                           (raw-html (:content reflection)))
                  (dom/button #js {:className "reflection-btn btn gray"
@@ -240,10 +239,38 @@
                                                (when reflection-open? " show"))}
                           (raw-html (:answer reflection))))))))
 
+(defn section-extra-example
+  [cursor owner {:keys [extra-example section]}]
+  (let [section-id (:id section)
+        example-path [:view :section section-id :extra-example (:name extra-example) :open?]
+        example-open? (get-in cursor example-path)]
+    (reify
+      om/IRender
+      (render [_]
+        (when (nil? example-open?)
+          (om/update! cursor example-path (:default-open extra-example)))
+        (dom/div #js {:className "m-extra-example"}
+                 (dom/div #js {:className "extra-example-title"} (:title extra-example))
+                 (dom/button #js {:className "extra-example-btn btn blue"
+                                  :onClick (fn [event]
+                                             (om/update!
+                                              cursor
+                                              example-path
+                                              (not example-open?)))}
+                             (if example-open? "Verberg Example" "Toon Example"))
+                 (dom/div #js {:className (str "extra-example-content"
+                                               (when example-open? " show"))}
+                          (raw-html (:content extra-example))))))))
+
 (defn reflection-builder [section]
   (-> {}
       (into (for [reflection (:reflections section)]
               [(:name reflection)  (om/build section-reflection section {:opts {:reflection reflection :section section}})]))))
+
+(defn extra-example-builder [section]
+  (-> {}
+      (into (for [extra-example (:extra-examples section)]
+              [(:name extra-example)  (om/build section-extra-example section {:opts {:extra-example extra-example :section section}})]))))
 
 (defn section-explanation [section owner]
   (reify
@@ -251,7 +278,8 @@
     (render [_]
       (let [subsections (get section :subsections)
             inputs (input-builders-subsection section)
-            reflections (reflection-builder section)]
+            reflections (reflection-builder section)
+            extra-examples (extra-example-builder section)]
         (println [:inputs! inputs])
         (apply dom/article #js {:id "m-section"}
                #_(dom/nav #js {:id "m-minimap"}
@@ -261,7 +289,7 @@
                                    (dom/li nil title))))
                (map (fn [{:keys [title tag-tree id] :as subsection}]
                       (dom/section #js {:className "m-subsection"}
-                                   (tag-tree-to-om tag-tree inputs reflections)))
+                                   (tag-tree-to-om tag-tree inputs reflections extra-examples)))
                     subsections))))))
 
 (defn section-explanation-panel [cursor owner]
@@ -459,7 +487,7 @@
                    nil)
 
                  (dom/article #js {:id "m-section"}
-                              (tag-tree-to-om (:tag-tree question-data) inputs)
+                              (tag-tree-to-om (:tag-tree question-data) inputs nil nil)
                               (when revealed-answer
                                 (dom/div #js {:className "wrap-dangerous-html m-worked-out-answer"}
                                          (dom/div #js {:dangerouslySetInnerHTML #js {:__html revealed-answer}} nil))))

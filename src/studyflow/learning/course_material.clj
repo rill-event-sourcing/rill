@@ -37,7 +37,7 @@
 (def ExtraExample
   {:name FieldName
    :title s/Str
-   :default-state s/Bool
+   :default-open s/Bool
    :content RichText})
 
 (def Tool

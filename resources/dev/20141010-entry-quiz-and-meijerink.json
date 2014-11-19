@@ -147,7 +147,6 @@
               "line_input_fields": [
                 {
                   "name": "_INPUT_1_",
-                  "prefix": "",
                   "width": 150,
                   "style": "small",
                   "correct_answers": [
@@ -570,6 +569,11 @@
               "text": "<p>some text before <b>with <u>HTML</u></b>Met inline inputs <svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"width: 1.714ex; height: 3.143ex; vertical-align: -1.143ex; margin-top: 1px; margin-right: 0px; margin-bottom: 1px; margin-left: 0px; position: static; \" viewBox=\"0 -934.4385140278929 717.0889244992065 1376.6552026488378\" xmlns=\"http://www.w3.org/2000/svg\"><defs id=\"MathJax_SVG_glyphs\"><path id=\"MJMAIN-34\" stroke-width=\"10\" d=\"M462 0Q444 3 333 3Q217 3 199 0H190V46H221Q241 46 248 46T265 48T279 53T286 61Q287 63 287 115V165H28V211L179 442Q332 674 334 675Q336 677 355 677H373L379 671V211H471V165H379V114Q379 73 379 66T385 54Q393 47 442 46H471V0H462ZM293 211V545L74 212L183 211H293Z\"></path><path id=\"MJMAIN-36\" stroke-width=\"10\" d=\"M42 313Q42 476 123 571T303 666Q372 666 402 630T432 550Q432 525 418 510T379 495Q356 495 341 509T326 548Q326 592 373 601Q351 623 311 626Q240 626 194 566Q147 500 147 364L148 360Q153 366 156 373Q197 433 263 433H267Q313 433 348 414Q372 400 396 374T435 317Q456 268 456 210V192Q456 169 451 149Q440 90 387 34T253 -22Q225 -22 199 -14T143 16T92 75T56 172T42 313ZM257 397Q227 397 205 380T171 335T154 278T148 216Q148 133 160 97T198 39Q222 21 251 21Q302 21 329 59Q342 77 347 104T352 209Q352 289 347 316T329 361Q302 397 257 397Z\"></path></defs><g stroke=\"black\" fill=\"black\" stroke-width=\"0\" transform=\"matrix(1 0 0 -1 0 0)\"><g transform=\"translate(120,0)\"><rect stroke=\"none\" width=\"477\" height=\"60\" x=\"0\" y=\"220\"></rect><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-34\" x=\"84\" y=\"611\" xlink:href=\"#MJMAIN-34\"></use><use transform=\"scale(0.7071067811865476)\" href=\"#MJMAIN-36\" x=\"84\" y=\"-571\" xlink:href=\"#MJMAIN-36\"></use></g></g></svg>  </p>  <table class=\"m-table\"><tbody><tr><td> en </td><td><i> text _INPUT_2_ text</i></td></tr></tbody></table> <p>some text _INPUT_1_</p>                      <img src=\"https://docs.google.com/drawings/d/1cP-5PnZA-jvGTDL9D9C6eZt-wxuTLNbKPJRpfU6kxxc/pub?w=735&h=260\" style=\"width: 60%\">\r\n\r\n<p class=\"small\">Als je aantallen bij elkaar neemt noem je dat <b>optellen</b>. <br>\r\nHet teken <b>+</b> noem je <b>plus</b> of het plusteken.<br>\r\nMet ‘<b>de som</b>’ wordt de uitkomst na het optellen bedoeld.</p>\r\n\r\n<h1>Volgorde van optellen</h1>\r\n\r\n<p>Wanneer je twee getallen optelt maakt de volgorde niet uit:<br>\r\n<span class='inline_math'>5 + 7  =  7 + 5  =  12</span></p>\r\n\r\n<img src=\"https://docs.google.com/drawings/d/1xYdvVdENGvcrt2fTT8jJT5z1uCdF2awrxmVxP0IDqnc/pub?w=611&h=112\">\r\n\r\n  Some <i>more</i> <u>text</u> with <b>HTML</b> <sup>a</sup>  <iframe width=\"560\" height=\"315\" src=\"//www.youtube-nocookie.com/embed/Lm4oiLzJs2g?rel=0\" frameborder=\"0\" allowfullscreen></iframe>  <h1>Uit je hoofd rekenen</h1> <p>Als je uit je hoofd rekent kan je dat gebruiken.  25 + 300 + 50 + 150 + 75 =</p>  <h2>Manier 1: van links naar rechts</h2> <table class=\"m-table invisible\"> <tr> <td>25 + 300</td> <td>=</td> <td>_INPUT_3_</td>    </tr> <tr> <td>(vul het vorige antwoord in) _INPUT_4_ + 50</td> <td>=</td> <td>_INPUT_5_</td>    </tr> <tr> <td>(vul het vorige antwoord in) _INPUT_6_ + 150</td> <td>=</td> <td>_INPUT_7_</td>    </tr> <tr> <td>(vul het vorige antwoord in) _INPUT_8_ + 75</td> <td>=</td> <td>_INPUT_9_</td>    </tr> </table>  <h2>Manier 2: handig samennemen</h2>  <p>Eerst doe je 25 + 75 =  _INPUT_10_</p> <p>Daarna doe je 50 + 150 =  _INPUT_11_</p> <p>Je telt nu alles bij elkaar op: 100 + 200 + 300 =  _INPUT_12_ </p> <p>De tweede manier van uitrekenen is makkelijker en sneller dan de eerste manier!</p> "
             },
             {
+              "id": "523a0f3f-340b-44fd-a571-ad063e4967c1",
+              "title": "Extra examples",
+              "text": "extra examples _EXTRA_EXAMPLE_1_ <br> _EXTRA_EXAMPLE_2_"
+            },
+            {
               "id": "e23a0f3f-340b-44fd-a571-ad063e4967a1",
               "title": "Reflecting",
               "text": "reflections _REFLECTION_1_ <br> _REFLECTION_2_"
@@ -756,6 +760,20 @@
                   ]
                 }
               ]
+            }
+          ],
+          "extra_examples": [
+            {
+              "name": "_EXTRA_EXAMPLE_1_",
+              "title": "extra example",
+              "default-open": true,
+              "content": "some extra exampling"
+            },
+            {
+              "name": "_EXTRA_EXAMPLE_2_",
+              "title": "extra example too",
+              "default-open": false,
+              "content": "a lot of extra exampling"
             }
           ],
           "reflections": [
@@ -4643,7 +4661,6 @@
                 {
                   "name": "_INPUT_2_",
                   "prefix": "pre",
-                  "suffix": "suf",
                   "width": 150,
                   "style": "small",
                   "correct_answers": [
@@ -4652,8 +4669,6 @@
                 },
                 {
                   "name": "_INPUT_4_",
-                  "prefix": "pre",
-                  "suffix": "suf",
                   "width": 150,
                   "style": "small",
                   "correct_answers": [
@@ -4802,8 +4817,6 @@
               "line_input_fields": [
                 {
                   "name": "_INPUT_2_",
-                  "prefix": "pre",
-                  "suffix": "suf",
                   "width": 150,
                   "style": "small",
                   "correct_answers": [
