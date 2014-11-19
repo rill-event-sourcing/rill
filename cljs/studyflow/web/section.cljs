@@ -325,8 +325,9 @@
 
 (defn stuck-modal
   [cursor owner student-id course-id chapter-id section-id section-test-aggregate-version]
-  (let [explanation-path (-> (get-in cursor [:view :selected-path])
-                             (assoc :section-tab :explanation))
+  (let [explanation-path (into {} ;; BLACK MAGIC
+                               (-> (get-in cursor [:view :selected-path])
+                                      (assoc :section-tab :explanation)))
         stumbling-gif "https://assets.studyflow.nl/learning/187.gif"
         submit (fn []
                  ;; make sure modal is gone next time we load this test
