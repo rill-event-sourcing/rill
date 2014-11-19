@@ -19,7 +19,7 @@ def pretty_debug(value = '', type = 'debug', debug_start = false)
 end
 
 
-def render_latex_for_editing(text)
+def render_latex_for_editing(text = "")
   matches = text.scan(/<math>(.*?)<\/math>/m)
   new_text = text
   matches.each do |array_of_matches|
@@ -51,7 +51,7 @@ def render_latex_for_editing(text)
   new_text
 end
 
-def render_latex_for_publishing(text, origin = "unknown")
+def render_latex_for_publishing(text = "", origin = "unknown")
   matches = text.scan(/<math>(.*?)<\/math>/m)
   new_text = text
   matches.each do |array_of_matches|

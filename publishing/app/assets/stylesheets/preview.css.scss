@@ -1,0 +1,15 @@
+// Place all the styles related to the extra_examples controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+.alert {
+  border-radius: 6px;
+  padding: 20px;
+  margin: 10px 0;
+}
+
+.alert-danger {
+  color: #f00;
+  background-color: #fcc;
+  border: 1px solid #f00;
+}

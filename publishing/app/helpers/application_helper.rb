@@ -9,7 +9,7 @@ module ApplicationHelper
     html.html_safe
   end
 
-  def text_to_html(inputs, text, reflections = [])
+  def text_to_html(inputs, text, reflections = [], extra_examples = [])
     text = render_latex_for_editing(text)
     html = text.html_safe
 
@@ -23,8 +23,14 @@ module ApplicationHelper
       html.gsub!(reflection.name, reflection_html) if html
     end
 
+    extra_examples.each do |extra_example|
+      extra_example_html = extra_example_to_html(extra_example)
+      html.gsub!(extra_example.name, extra_example_html) if html
+    end
+
     html.gsub!(/(_INPUT_[0-9]+_)/, content_tag(:div, 'Please remove \1 from the source!', class: "alert alert-danger"))
     html.gsub!(/(_REFLECTION_[0-9]+_)/, content_tag(:div, 'Please remove \1 from the source!', class: "alert alert-danger"))
+    html.gsub!(/(_EXTRA_EXAMPLE_[0-9]+_)/, content_tag(:div, 'Please remove \1 from the source!', class: "alert alert-danger"))
     html.html_safe
   end
 
@@ -56,15 +62,6 @@ module ApplicationHelper
     end
   end
 
-  def reflection_to_html(reflection)
-    content_tag(:div, class: 'm-reflection') do
-      reflection.content.to_s.html_safe +
-      content_tag(:div, class: 'reflection-answer') do
-        reflection.answer.to_s.html_safe
-      end
-    end
-  end
-
   def multiple_choice_input_to_html(input)
     content_tag(:span, class: "mc-list") do
       input.choices.map do |ch|
@@ -78,5 +75,24 @@ module ApplicationHelper
     end
   end
 
+  def reflection_to_html(reflection)
+    content_tag(:div, class: 'm-reflection') do
+      reflection.content.to_s.html_safe +
+      content_tag(:div, class: 'reflection-answer') do
+        reflection.answer.to_s.html_safe
+      end
+    end
+  end
+
+  def extra_example_to_html(extra_example)
+    content_tag(:div, class: 'm-extra-example') do
+      content_tag(:div, class: 'extra-example-title') do
+        extra_example.title.to_s.html_safe
+      end +
+      content_tag(:div, class: 'extra-example-content') do
+        extra_example.content.to_s.html_safe
+      end
+    end
+  end
 
 end

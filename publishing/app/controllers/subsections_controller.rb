@@ -1,5 +1,5 @@
 class SubsectionsController < ApplicationController
-  include InputActions, ReflectionActions
+  include InputActions, ReflectionActions, ExtraExampleActions
 
   before_action :set_param_objects
   before_action :set_redirect_cookie, only: [:index]
@@ -9,10 +9,12 @@ class SubsectionsController < ApplicationController
   end
 
   def preview
+    @subsection ||= Subsection.new
     render layout: 'preview'
   end
 
   def preview_content
+    @subsection ||= Subsection.new
     render layout: 'preview_html'
   end
 
@@ -33,6 +35,7 @@ class SubsectionsController < ApplicationController
     set_line_inputs(@section, params[:line_inputs]) if params[:line_inputs]
     set_multiple_choice_inputs(@section, params[:multiple_choice_inputs]) if params[:multiple_choice_inputs]
     set_reflections(@section, params[:reflections]) if params[:reflections]
+    set_extra_examples(@section, params[:extra_examples]) if params[:extra_examples]
 
     respond_to do |format|
       subsections(params[:subsections]) if params[:subsections]
