@@ -88,6 +88,7 @@ Rails.application.routes.draw do
   end
 
   resources :reflections
+  resources :extra_examples
 
   resources :inputs do
     resources :answers

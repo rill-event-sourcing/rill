@@ -1,0 +1,8 @@
+%div.row
+  %div.col-md-10
+    %div.row
+      %label Title
+      = text_field_tag "extra_examples[#{extra_example.id}][title]", extra_example.title, class: "form-control"
+    %div.row
+      %label Content
+      = text_area_tag "extra_examples[#{extra_example.id}][content]", extra_example.content, style: 'width: 100%; min-height: 100px;', class: "form-control auto-resize rich-text"

@@ -34,6 +34,11 @@
    :content RichText
    :answer RichText})
 
+(def ExtraExample
+  {:name FieldName
+   :title s/Str
+   :content RichText})
+
 (def Tool
   (s/enum "pen_and_paper" "calculator"))
 
@@ -58,6 +63,7 @@
    :domains #{s/Str}
    :line-input-fields #{LineInputField}
    (s/optional-key :reflections) [Reflection]
+   (s/optional-key :extra-examples) [ExtraExample]
    :questions (s/both #{SectionQuestion}
                       (s/pred (fn [s] (seq s)) 'not-empty))})
 

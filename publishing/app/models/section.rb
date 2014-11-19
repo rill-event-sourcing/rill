@@ -9,7 +9,9 @@ class Section < ActiveRecord::Base
 
   has_many :inputs, as: :inputable
   has_many :line_inputs, as: :inputable
+
   has_many :reflection_questions, foreign_key: :section_id, class_name: "Reflection"
+  has_many :extra_examples
 
   validates :chapter, presence: true
   validates :title, presence: true
@@ -49,7 +51,6 @@ class Section < ActiveRecord::Base
     self.domains.map{|k| {k => "1"}}.reduce(&:merge)
   end
 
-
   def to_s
     "#{title}"
   end
@@ -76,6 +77,12 @@ class Section < ActiveRecord::Base
         errors["Reflection '#{refl.name}':"] = refl_err
       end
     end
+    extra_examples.map do |extra|
+      extra_err = extra.parse_errors(:content)
+      if extra_err.any?
+        errors["Extra example '#{extra.name}':"] = extra_err
+      end
+    end
     errors
   end
 
@@ -93,6 +100,12 @@ class Section < ActiveRecord::Base
         errors["Reflection '#{refl.name}':"] = refl_err
       end
     end
+    extra_examples.map do |extra|
+      extra_err = extra.image_errors(:content)
+      if extra_err.any?
+        errors["Extra example '#{extra.name}':"] = extra_err
+      end
+    end
     errors
   end
 
@@ -106,7 +119,8 @@ class Section < ActiveRecord::Base
       reflections: reflections.map(&:to_publishing_format),
       questions: questions.active.map(&:to_publishing_format_for_section),
       line_input_fields: line_inputs.map(&:to_publishing_format),
-      reflections: reflections.map(&:to_publishing_format)
+      reflections: reflections.map(&:to_publishing_format),
+      extra_examples: extra_examples.map(&:to_publishing_format)
     }
   end
 
@@ -123,6 +137,8 @@ class Section < ActiveRecord::Base
     "#{id[0,8]}"
   end
 
+  ##############################
+
   def increase_max_position
     max_inputs if increment!(:max_inputs)
   end
@@ -130,6 +146,12 @@ class Section < ActiveRecord::Base
   def increase_reflection_counter
     reflection_counter if increment!(:reflection_counter)
   end
+
+   def increase_extra_example_counter
+    extra_example_counter if increment!(:extra_example_counter)
+  end
+
+  ##############################
 
   def inputs_referenced_exactly_once?
     full_text = subsections.map(&:text).join
@@ -148,6 +170,14 @@ class Section < ActiveRecord::Base
     full_text.scan(/_REFLECTION_.*?_/).find_all{|match| !reflection_names.include? match}.any?
   end
 
+  def nonexisting_extra_examples_referenced?
+    extra_example_names = extra_examples.map(&:name)
+    full_text = subsections.map(&:text).join
+    full_text.scan(/_EXTRA_EXAMPLE_.*?_/).find_all{|match| !extra_example_names.include? match}.any?
+  end
+
+  ##############################
+
   def errors_when_publishing
     errors = []
     errors << "No Meijerink criteria selected for section '#{name}'" if meijerink_criteria.empty?
@@ -155,6 +185,7 @@ class Section < ActiveRecord::Base
     errors << "Error in input referencing in section '#{name}', in '#{parent}'" unless inputs_referenced_exactly_once?
     errors << "Nonexisting inputs referenced in section '#{name}', in '#{parent}'" if nonexisting_inputs_referenced?
     errors << "Nonexisting reflections referenced in section '#{name}', in '#{parent}'" if nonexisting_reflections_referenced?
+    errors << "Nonexisting extra example referenced in section '#{name}', in '#{parent}'" if nonexisting_extra_examples_referenced?
     errors << "No questions in section '#{name}', in '#{parent}'" if questions.active.empty?
     errors << "No subsections in section '#{name}', in '#{parent}'" if subsections.empty?
     errors << inputs.map(&:errors_when_publishing)

@@ -217,6 +217,43 @@ bindDeleteReflectionButtons = ->
           $('#' + deleteItem).remove()
           refreshPreview()
 
+
+############################
+# Extra Examples
+
+bindAddExtraExampleButton = ->
+  $('#add-extra-example').unbind()
+  $('#add-extra-example').bind 'click', (event) ->
+    url = $(event.currentTarget).data('url')
+    $.ajax url,
+        type: 'POST'
+        dataType: 'html'
+        error: (jqXHR, textStatus, errorThrown) ->
+          console.log "AJAX Error: #{ textStatus }"
+        success: (data, textStatus, jqXHR) ->
+          $('#extra-examples-list').append(data)
+          bindDeleteExtraExampleButtons()
+          bindCopyToClipboardButton()
+          refreshPreview()
+
+bindDeleteExtraExampleButtons = ->
+  $('.delete-extra-example').unbind()
+  $('.delete-extra-example').bind 'click', (event) ->
+    if confirm('Are you sure you want to delete this?')
+      deleteItem = $(event.currentTarget).data('item')
+      url = $(event.currentTarget).data('url')
+      $.ajax url,
+        type: 'DELETE'
+        dataType: 'json'
+        error: (jqXHR, textStatus, errorThrown) ->
+          console.log "AJAX Error: #{ textStatus }"
+        success: (data, textStatus, jqXHR) ->
+          $('#' + deleteItem).remove()
+          refreshPreview()
+
+
+############################
+
 bindCopyToClipboardButton = ->
   new ZeroClipboard($(".copy-button"))
 
@@ -229,13 +266,18 @@ $ ->
 
   bindAddInputButton()
   bindDeleteInputButtons()
+
   bindAddAnswerButton()
   bindDeleteAnswerButtons()
+
   bindMoveUpButtons()
   bindMoveDownButtons()
 
   bindAddReflectionButton()
   bindDeleteReflectionButtons()
+
+  bindAddExtraExampleButton()
+  bindDeleteExtraExampleButtons()
 
   bindCopyToClipboardButton()
 

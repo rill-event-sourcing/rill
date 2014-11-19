@@ -7,7 +7,7 @@ class PublishingController < ApplicationController
   def check
     @errors = []
     begin
-      response = HTTParty.post("http://localhost:16000/", body: "2+2=4")
+      response = HTTParty.post("#{ StudyflowPublishing::Application.config.latex_server }/", body: "2+2=4")
     rescue
       @errors << "Error with the connection to the Latex rendering engine"
     end

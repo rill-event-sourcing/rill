@@ -339,6 +339,11 @@
               "text": "reflections _REFLECTION_1_ <br> _REFLECTION_2_"
             },
             {
+              "id": "523a0f3f-340b-44fd-a571-ad063e4967c1",
+              "title": "Extra examples",
+              "text": "extra examples _EXTRA_EXAMPLE_1_ <br> _EXTRA_EXAMPLE_2_"
+            },
+            {
               "id": "2aa9de44-e7c9-4b4a-aad7-cd1bb304d0e5",
               "title": "Counting to 10",
               "text": "1+1+1+... = 10"
@@ -472,6 +477,18 @@
               "content": "2+2=",
               "answer": "4"
             }
+          ],
+          "extra_examples": [
+            {
+              "name": "_EXTRA_EXAMPLE_1_",
+              "title": "extra example",
+              "content": "some extra exampling"
+            },
+            {
+              "name": "_EXTRA_EXAMPLE_2_",
+              "title": "extra example too",
+              "content": "a lot of extra exampling"
+            }
           ]
         },
         {
@@ -541,7 +558,8 @@
             }
           ],
           "line_input_fields": [],
-          "reflections": []
+          "reflections": [],
+          "extra_examples": []
         }
       ],
       "remedial": false
