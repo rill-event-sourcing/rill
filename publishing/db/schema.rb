@@ -114,7 +114,7 @@ ActiveRecord::Schema.define(version: 20141119102121) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "inputable_type"
-    t.string   "style",                    default: "small"
+    t.string   "style",                    default: "big"
   end
 
   create_table "questions", id: :uuid, default: "uuid_generate_v4()", force: true do |t|

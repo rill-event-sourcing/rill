@@ -51,7 +51,6 @@ class Section < ActiveRecord::Base
     self.domains.map{|k| {k => "1"}}.reduce(&:merge)
   end
 
-
   def to_s
     "#{title}"
   end
@@ -78,6 +77,12 @@ class Section < ActiveRecord::Base
         errors["Reflection '#{refl.name}':"] = refl_err
       end
     end
+    extra_example.map do |refl|
+      extra_err = extra.parse_errors(:content)
+      if extra_err.any?
+        errors["Extra example '#{extra.name}':"] = extra_err
+      end
+    end
     errors
   end
 
@@ -95,6 +100,12 @@ class Section < ActiveRecord::Base
         errors["Reflection '#{refl.name}':"] = refl_err
       end
     end
+    extra_examples.map do |extra|
+      extra_err = extra.image_errors(:content)
+      if extra_err.any?
+        errors["Extra example '#{extra.name}':"] = extra_err
+      end
+    end
     errors
   end
 
@@ -108,7 +119,8 @@ class Section < ActiveRecord::Base
       reflections: reflections.map(&:to_publishing_format),
       questions: questions.active.map(&:to_publishing_format_for_section),
       line_input_fields: line_inputs.map(&:to_publishing_format),
-      reflections: reflections.map(&:to_publishing_format)
+      reflections: reflections.map(&:to_publishing_format),
+      extra_examples: extra_examples.map(&:to_publishing_format)
     }
   end
 
