@@ -27,9 +27,10 @@
 <table><tr><td>_INPUT_1_ en </td><td><i> text _INPUT_2_ text</i></td></tr></table></p>
 
                      <img src=\"https://docs.google.com/drawings/d/1cP-5PnZA-jvGTDL9D9C6eZt-wxuTLNbKPJRpfU6kxxc/pub?w=735&h=260\">\r\n\r\n<p class=\"small\">Als je aantallen bij elkaar neemt noem je dat <b>optellen</b>. <br>\r\nHet teken <b>+</b> noem je <b>plus</b> of het plusteken.<br>\r\nMet ‘<b>de som</b>’ wordt de uitkomst na het optellen bedoeld.</p>\r\n\r\n<h1>Volgorde van optellen</h1>\r\n\r\n<p>Wanneer je twee getallen optelt maakt de volgorde niet uit:<br>\r\n<span class='inline_math'>5 + 7  =  7 + 5  =  12</span></p>\r\n\r\n<img src=\"https://docs.google.com/drawings/d/1xYdvVdENGvcrt2fTT8jJT5z1uCdF2awrxmVxP0IDqnc/pub?w=611&h=112\">\r\n\r\n"
-        reflection-tag " _REFLECTION_1_"
-        text (str pre svg0 svg1 reflection-tag post)
-        custom-tag-names #{"_INPUT_1_" "_INPUT_2_" "_REFLECTION_1_"}]
+        reflection-tag "_REFLECTION_1_"
+        extra-example-tag "_EXTRA_EXAMPLE_1_"
+        text (str pre svg0 svg1 reflection-tag extra-example-tag post)
+        custom-tag-names #{"_INPUT_1_" "_INPUT_2_" "_REFLECTION_1_" "_EXTRA_EXAMPLE_1_"}]
     (is (not= svg0 svg1))
     (is (= (material/text-with-custom-tags-to-tree text custom-tag-names)
            {:tag :div,
@@ -43,9 +44,11 @@
                "Met inline inputs"
                {:tag :svg, :attrs {:name "_SVG_0_"}, :content svg0}
                {:tag :svg, :attrs {:name "_SVG_1_"}, :content svg1}
-               " "
                {:tag :reflection,
                 :attrs {:name "_REFLECTION_1_"},
+                :content nil}
+               {:tag :extra-example,
+                :attrs {:name "_EXTRA_EXAMPLE_1_"},
                 :content nil}
                "\n"
                {:tag :table,

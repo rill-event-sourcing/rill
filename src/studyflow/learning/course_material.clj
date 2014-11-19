@@ -140,6 +140,7 @@
                                   (condp #(.startsWith %2 %1) match
                                     "_INPUT_" (str "<input name=\"" tag-name "\"/>")
                                     "_REFLECTION_" (str "<reflection name=\"" tag-name "\"/>")
+                                    "_EXTRA_EXAMPLE_" (str "<extra-example name=\"" tag-name "\"/>")
                                     (str "<svg name=\"" tag-name "\"/>")))))
               text
               (into custom-tag-names
@@ -198,7 +199,8 @@
                                   (fn [sections]
                                     (mapv (fn [section]
                                             (let [line-input-fields (:line-input-fields section)
-                                                  reflections (:reflections section)]
+                                                  reflections (:reflections section)
+                                                  extra-examples (:extra-examples section)]
                                               (update-in section [:subsections]
                                                          (fn [subsections]
                                                            (mapv
@@ -210,7 +212,8 @@
                                                                    (:text subsection)
                                                                    (-> #{}
                                                                        (into (map :name line-input-fields))
-                                                                       (into (map :name reflections))))
+                                                                       (into (map :name reflections))
+                                                                       (into (map :name extra-examples))))
                                                                   (catch Exception e
                                                                     (throw (ex-info (str "Material tag-tree failure" (:title subsection))
                                                                                     {:material (:name material)
