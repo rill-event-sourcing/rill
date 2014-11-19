@@ -25,7 +25,7 @@ def render_latex_for_editing(text = "")
   matches.each do |array_of_matches|
     match = array_of_matches.first
     begin
-      response = HTTParty.post("http://localhost:16000/", body: "#{match}")
+      response = HTTParty.post("#{ StudyflowPublishing::Application.config.latex_server }/", body: "#{match}")
     rescue Errno::ECONNREFUSED
       error = "Connection to LaTeX renderer refused"
     rescue Net::ReadTimeout
@@ -57,7 +57,7 @@ def render_latex_for_publishing(text = "", origin = "unknown")
   matches.each do |array_of_matches|
     match = array_of_matches.first
     begin
-      response = HTTParty.post("http://localhost:16000/", body: "#{match}")
+      response = HTTParty.post("#{ StudyflowPublishing::Application.config.latex_server }/", body: "#{match}")
     rescue Errno::ECONNREFUSED
       error = "Connection to LaTeX renderer refused"
     rescue Net::ReadTimeout

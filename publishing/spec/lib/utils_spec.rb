@@ -22,15 +22,14 @@ end
 
 describe "render_latex" do
   before do
-    @url = "http://localhost:16000/"
+    @url = "#{ StudyflowPublishing::Application.config.latex_server }/"
   end
 
   def content_tag(tag,something,something_else)
     "#{something}"
   end
 
-
-
+  
   describe "for editing" do
 
   it "should render a latex formula in svg" do
