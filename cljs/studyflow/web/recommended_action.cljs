@@ -1,6 +1,6 @@
 (ns studyflow.web.recommended-action
-  (:require [studyflow.web.history :refer [history-link]]
-            [studyflow.web.helpers :refer [section-explanation-link]]))
+  (:require [studyflow.web.history :refer [path-url]]
+            [studyflow.web.helpers :refer [section-explanation-url]]))
 
 (defn not-finished? [element]
   (when-not (= (:status element) "finished")
@@ -27,11 +27,11 @@
         entry-quiz (:entry-quiz course)]
     (if (not (contains? #{"passed" "failed"} (:status entry-quiz)))
       {:title "Instaptoets"
-       :link (history-link {:main :entry-quiz})
+       :link (path-url {:main :entry-quiz})
        :id (:id entry-quiz)}
       (let [chapter (first-recommendable-chapter course)
             section (first-recommendable-section chapter)]
         {:title (:title section)
          :id (:id section)
-         :link (section-explanation-link cursor chapter section)} ))))
+         :link (section-explanation-url cursor chapter section)} ))))
 

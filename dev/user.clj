@@ -69,12 +69,19 @@
 (when-not headless?
   (require 'rhizome.viz))
 
+(defn event-short-name
+  [k]
+  (name k)
+  #_(if (keyword? k)
+      (string/replace (str k) #".+\.(.+)\.events" "$1")
+      k))
+
 (defn view-transitions
   [transitions]
   ((find-var 'rhizome.viz/view-graph) (distinct (apply concat (keys transitions) (map vals (vals transitions))))
    #(distinct (vals (transitions %)))
    :node->descriptor (fn [n] {:label n})
    :edge->descriptor (fn [s d]
-                       {:label (string/join ", " (filter #(= d (get-in transitions [s %])) (keys (transitions s))))})))
+                       {:label (string/join ", " (map event-short-name (filter #(= d (get-in transitions [s %])) (keys (transitions s)))))})))
 
 

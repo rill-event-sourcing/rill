@@ -118,6 +118,14 @@
               :handler (command-aggregate-handler cursor notification-channel section-id)
               :error-handler (command-error-handler cursor)}))
 
+      "section-test-commands/dismiss-modal"
+      (let [[section-id student-id section-test-aggregate-version course-id] args]
+        (PUT (str "/api/section-test-dismiss-modal/" section-id "/" student-id "/" course-id)
+             {:params {:expected-version section-test-aggregate-version}
+              :format :json
+              :handler (command-aggregate-handler cursor notification-channel section-id)
+              :error-handler (command-error-handler cursor)}))
+
       "entry-quiz-commands/dismiss-nag-screen"
       (let [[course-id student-id] args]
         (PUT (str "/api/entry-quiz-dismiss-nag-screen/" course-id "/" student-id)

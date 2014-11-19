@@ -5,11 +5,13 @@
             [om.dom :as dom]
             [om.core :as om]
             [goog.dom :as gdom]
+            [studyflow.web.dashboard :refer [dashboard]]
             [studyflow.web.history :as url-history]
             [studyflow.web.helpers :refer [modal] :as helpers]
             [studyflow.web.tracking :as tracking]
             [studyflow.web.service :as service]
-            [studyflow.web.history :refer [history-link]]
+            [studyflow.web.section :as section]
+            [studyflow.web.history :refer [navigate-to-path]]
             [cljs.core.async :as async]))
 
 (defn running-chapter-quiz
@@ -32,19 +34,18 @@
     (render [_]
       (let [{:keys [main section-tab]} (get-in cursor [:view :selected-path])]
         (when-let [quiz (running-chapter-quiz cursor)]
-          (set! (.-location js/window)
-                (history-link {:main :chapter-quiz
-                               :chapter-id (:id quiz)})))
+          (navigate-to-path {:main :chapter-quiz
+                             :chapter-id (:id quiz)}))
         (dom/div #js {:className (if (and (= main :learning)
                                           (= section-tab :questions))
                                    "questions_page"
                                    "")}
                  (when (get-in cursor [:aggregates :failed])
-                   (modal
-                    (dom/h1 nil "Je bent niet meer up-to-date met de server. Herlaad de pagina.")
-                    (dom/button #js {:onClick (fn [e]
-                                                (.reload js/location true))}
-                                "Herlaad de pagina")))
+                   (modal (dom/h1 nil "Je bent niet meer up-to-date met de server. Herlaad de pagina.")
+                          "Herlaad de pagina"
+                          (fn [e]
+                            (.reload js/location true))))
+                 
                  (when-not (= :entry-quiz
                               (get-in cursor [:view :selected-path :main]))
                    (entry-quiz/entry-quiz-modal cursor owner))
@@ -57,11 +58,11 @@
                    (om/build chapter-quiz/chapter-quiz-panel cursor)
                    :learning
                    (dom/div nil
-                            (om/build core/page-header cursor)
-                            (om/build core/navigation-panel cursor)
-                            (om/build core/section-panel cursor))
+                            (om/build section/page-header cursor)
+                            (om/build section/navigation-panel cursor)
+                            (om/build section/section-panel cursor))
                    ;; default
-                   (om/build core/dashboard cursor)))))))
+                   (om/build dashboard cursor)))))))
 
 (defn ^:export course-page []
   (let [command-channel (async/chan)]

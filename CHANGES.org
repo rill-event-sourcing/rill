@@ -3,6 +3,7 @@
 *** New: Installed a library that makes the UX for touch devices much more reactive
 *** New: Choices for MC questions are not random anymore (their order is predetermined by editors)
 *** New: Manuals for teachers (as provided by sales)
+*** Fix: Modal of section tests have been rewritten, should fix "finishing" modal not showing up
 ** release-2014-11-14.1
 *** Fix: Fixed an issue for which multiple choice questions were not displayed correctly sometimes
 *** Fix: Fixed the styling of inputs that are exponents, and increased the maximum characters to 3

@@ -137,11 +137,10 @@
 (deftest test-unlocking
   (testing "unlocking the chapter-quiz"
     (is (command-result= [:ok
-                          [(section-test-events/question-answered-correctly (second section-ids) student-id (:id section-question) section-question-input)
-                           (section-test-events/finished (second section-ids) student-id chapter-id course-id)]
+                          [(section-test-events/finished (second section-ids) student-id chapter-id course-id)]
                           [(events/section-finished course-id chapter-id student-id (second section-ids) (set section-ids))
                            (events/un-locked course-id chapter-id student-id)]]
-                         (execute (section-test/check-answer! (second section-ids) student-id 9 course-id (:id section-question) section-question-input)
+                         (execute (section-test/next-question! (second section-ids) student-id 10 course-id)
                                   [fixture/course-published-event
                                    (events/section-finished course-id chapter-id student-id (first section-ids) (set section-ids))
                                    (section-test-events/created (second section-ids) student-id course-id)
@@ -153,7 +152,8 @@
                                    (section-test-events/question-answered-correctly (second section-ids) student-id 3 {:foo :bar})
                                    (section-test-events/question-assigned (second section-ids) student-id 4 10)
                                    (section-test-events/question-answered-correctly (second section-ids) student-id 4 {:foo :bar})
-                                   (section-test-events/question-assigned (second section-ids) student-id (:id section-question) 10)]))))
+                                   (section-test-events/question-assigned (second section-ids) student-id (:id section-question) 10)
+                                   (section-test-events/question-answered-correctly (second section-ids) student-id (:id section-question) section-question-input)]))))
 
   (binding [*rand-nth* (constantly (course/question-for-chapter-quiz course chapter-id question-id))]
     (testing "starting the chapter-quiz after being unlocked without being locked"

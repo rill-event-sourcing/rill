@@ -5,7 +5,7 @@
             [om.dom :as dom :include-macros true]
             [studyflow.web.helpers :refer [input-builders tool-box modal raw-html tag-tree-to-om focus-input-box] :as helpers]
             [studyflow.web.recommended-action :refer [recommended-action]]
-            [studyflow.web.history :refer [history-link]]))
+            [studyflow.web.history :refer [path-url navigate-to-path]]))
 
 (defn chapter-quiz-navigation-button [cursor chapter-quiz chapter-id]
   (when (not (zero? (:number-of-questions chapter-quiz)))
@@ -59,16 +59,16 @@
                                   (dom/li nil "Je kunt de test zo vaak proberen als je wilt")
                                   (dom/li nil "Duurt ongeveer 10-30 minuten")
                                   (dom/li nil "Als je stopt moet je opnieuw"))))
-               (dom/button #js {:onClick (fn []
-                                           (dismiss-modal)
-                                           (async/put! (om/get-shared owner :command-channel)
-                                                       ["chapter-quiz-commands/start"
-                                                        chapter-id student-id])
-                                           (set! (.-location js/window)
-                                                 (history-link {:main :chapter-quiz
-                                                                :chapter-id chapter-id})))}
-                           "Start Hoofdstuktest")
+               "Start Hoofdstuktest"
+               (fn []
+                 (dismiss-modal)
+                 (async/put! (om/get-shared owner :command-channel)
+                             ["chapter-quiz-commands/start"
+                              chapter-id student-id])
+                 (navigate-to-path {:main :chapter-quiz
+                                    :chapter-id chapter-id}))
                (dom/a #js {:href ""
+                           :className "btn big gray"
                            :onClick (fn []
                                       (dismiss-modal)
                                       false)}
@@ -303,9 +303,8 @@
                                          (dom/p nil "Oops! Je hebt 3 hartjes verloren. We raden je aan om eerst je kennis van dit hoofdstuk op te frissen, en het daarna nog een keer te proberen"))))
                  (footer-bar "Ga verder met het hoofdstuk"
                              (fn []
-                               (js/window.location.assign
-                                (history-link {:main :dashboard
-                                               :chapter-id chapter-id})))
+                               (navigate-to-path {:main :dashboard
+                                                  :chapter-id chapter-id}))
                              true
                              "blue"
                              []))))))
@@ -346,25 +345,26 @@
             fast-route? (:fast-route? chapter-quiz-agg)]
         (dom/div #js {:id "quiz-page"}
                  (when show-exit-modal
-                   (modal  (if fast-route?
-                             (dom/div nil
-                                      (dom/h1 nil "Hoofdstuktest")
-                                      (dom/p nil "Weet je zeker dat je de Hoofdstuktest wil stoppen? Als je de test nu stopt, kun je hem pas weer maken wanneer je alle paragrafen in dit hoofdstuk hebt afgerond."))
-                             (dom/div nil
-                                      (dom/h1 nil "Hoofdstuktest")
-                                      (dom/p nil "Weet je zeker dat je de Hoofdstuktest wil stoppen?")
-                                      (dom/p nil "Als je de test stopt moet je hem opnieuw maken.")))
-                           (dom/button #js {:onClick (fn []
-                                                       (dismiss-modal)
-                                                       (async/put! (om/get-shared owner :command-channel)
-                                                                   ["chapter-quiz-commands/stop"
-                                                                    chapter-id student-id]))}
-                                       "Stop Hoofdstuktest")
-                           (dom/a #js {:href ""
-                                       :onClick (fn []
-                                                  (dismiss-modal)
-                                                  false)}
-                                  "Doorgaan")))
+                   (modal (if fast-route?
+                            (dom/div nil
+                                     (dom/h1 nil "Hoofdstuktest")
+                                     (dom/p nil "Weet je zeker dat je de Hoofdstuktest wil stoppen? Als je de test nu stopt, kun je hem pas weer maken wanneer je alle paragrafen in dit hoofdstuk hebt afgerond."))
+                            (dom/div nil
+                                     (dom/h1 nil "Hoofdstuktest")
+                                     (dom/p nil "Weet je zeker dat je de Hoofdstuktest wil stoppen?")
+                                     (dom/p nil "Als je de test stopt moet je hem opnieuw maken.")))
+                          "Stop Hoofdstuktest"
+                          (fn []
+                            (dismiss-modal)
+                            (async/put! (om/get-shared owner :command-channel)
+                                        ["chapter-quiz-commands/stop"
+                                         chapter-id student-id]))
+                          (dom/a #js {:href ""
+                                      :className "btn big gray"
+                                      :onClick (fn []
+                                                 (dismiss-modal)
+                                                 false)}
+                                 "Doorgaan")))
                  (dom/header #js {:id "m-top_header"}
                              (if (= :running chapter-quiz-status)
                                ;; only need to confirm leaving when
@@ -375,8 +375,8 @@
                                                       (om/update! cursor [:view :chapter-quiz-exit-modal] true)
                                                       (.preventDefault e))})
                                (dom/a #js {:id "home"
-                                           :href (history-link {:main :dashboard
-                                                                :chapter-id chapter-id})}))
+                                           :href (path-url {:main :dashboard
+                                                            :chapter-id chapter-id})}))
                              (dom/h1 #js {:id "page_heading"}
                                      (:title chapter))
                              (when chapter-quiz-agg

@@ -39,7 +39,8 @@
           (update-in [:questions] conj {:question-id question-id
                                         :question-index (count (:questions agg))})
           (update-in [:streak]
-                     conj [question-id :open])))
+                     conj [question-id :open])
+          (assoc :view :question)))
 
     "studyflow.learning.section-test.events/AnswerRevealed"
     (let [question-id (:question-id event)
@@ -53,7 +54,8 @@
                               (if (= question-id (:question-id q))
                                 (assoc q
                                   :worked-out-answer answer)
-                                q)))))))
+                                q)))))
+          (assoc :view :question)))
 
     "studyflow.learning.section-test.events/QuestionAnsweredCorrectly"
     (let [question-id (:question-id event)
@@ -68,7 +70,8 @@
                                 (assoc q
                                   :correct true
                                   :inputs inputs)
-                                q)))))))
+                                q)))))
+          (assoc :view :question)))
 
     "studyflow.learning.section-test.events/QuestionAnsweredIncorrectly"
     (let [question-id (:question-id event)
@@ -83,20 +86,32 @@
                                 (assoc q
                                   :correct false
                                   :inputs inputs)
-                                q)))))))
+                                q)))))
+          (assoc :view :question)))
 
     "studyflow.learning.section-test.events/Stuck"
     (assoc agg
-      :stuck true)
+      :stuck true
+      :view :stuck-modal)
 
     "studyflow.learning.section-test.events/Unstuck"
     (assoc agg
       :stuck false)
 
+    "studyflow.learning.section-test.events/ModalDismissed"
+    (assoc agg
+      :view :question)
+
+    "studyflow.learning.section-test.events/StreakCompleted"
+    (assoc agg
+      :stuck true
+      :view :completed-modal)
+
     "studyflow.learning.section-test.events/Finished"
     (assoc agg
       :finished true
-      :finished-at (count (:questions agg)))
+      :finished-at (count (:questions agg))
+      :view :finished-modal)
 
     "studyflow.learning.entry-quiz.events/NagScreenDismissed"
     (let [aggr-id (:course-id event)]

@@ -49,12 +49,23 @@
                                      (uuid course-id)
                                      (uuid question-id)
                                      inputs)))))
+
    (clout/handle
     routes/section-test-next-question
     (authorization/wrap-student-authorization
      (fn [{{:keys [section-id student-id course-id]} :params
            {:keys [expected-version] :as body} :body}]
        (section-test/next-question! (uuid section-id)
+                                    (uuid student-id)
+                                    expected-version
+                                    (uuid course-id)))))
+
+   (clout/handle
+    routes/section-test-dismiss-modal
+    (authorization/wrap-student-authorization
+     (fn [{{:keys [section-id student-id course-id]} :params
+           {:keys [expected-version] :as body} :body}]
+       (section-test/dismiss-modal! (uuid section-id)
                                     (uuid student-id)
                                     expected-version
                                     (uuid course-id)))))

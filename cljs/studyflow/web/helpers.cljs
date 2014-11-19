@@ -5,31 +5,50 @@
             [goog.events :as gevents]
             [goog.string :as gstring]
             [clojure.string :as string]
-            [studyflow.web.history :refer [history-link]]))
+            [studyflow.web.history :refer [path-url]]))
+
 
 (defn raw-html
   [raw]
   (dom/span #js {:dangerouslySetInnerHTML #js {:__html raw}} nil))
 
-(defn update-js [js-obj key f]
-  (let [key (if (keyword? key)
-              (name key)
-              key)
-        p (.-props js-obj)]
-    (aset p key (f (get p key)))
-    js-obj))
+(defn on-enter
+  "Execute f and prevent default actions when enter key event is passed"
+  [f]
+  (fn [e]
+    (if (= (.-keyCode e) 13) ;; ENTER key
+      (do (.stopPropagation e)
+          (.preventDefault e)
+          (f)
+          false)
+      true)))
 
-(defn modal [content primary-button & [secondary-button]]
-  (dom/div #js {:id "m-modal"
-                :className "show"}
-           (dom/div #js {:className "modal_inner"}
-                    content
-                    (dom/div #js {:className "modal_footer"}
-                             (when secondary-button
-                               (update-js secondary-button
-                                          :className (fnil (partial str "btn big gray") "")))
-                             (update-js primary-button
-                                        :className (partial str "btn big yellow pull-right"))))))
+(defn- modal-fn
+  [cursor owner]
+  (reify
+    om/IRender
+    (render [_]
+      (dom/div #js {:id "m-modal"
+                    :className "show"
+                    :onKeyPress (on-enter (:submit-fn cursor))}
+               (dom/div #js {:className "modal_inner"}
+                        (:content cursor)
+                        (dom/div #js {:className "modal_footer"}
+                                 (:secondary-button cursor)
+                                 (dom/button #js {:className  "btn big yellow pull-right"
+                                                  :onClick (:submit-fn cursor)
+                                                  :ref "PRIMARY_BUTTON"}
+                                             (:submit-text cursor))))))
+    om/IDidMount
+    (did-mount [_]
+      (when-let [focusing (om/get-node owner "PRIMARY_BUTTON")]
+        (.focus focusing)))))
+
+(defn modal [content submit-text submit-fn & [secondary-button]]
+  (om/build modal-fn {:content content
+                      :submit-fn submit-fn
+                      :submit-text submit-text
+                      :secondary-button secondary-button}))
 
 (def html->om
   {"a" dom/a, "b" dom/b, "big" dom/big, "br" dom/br, "dd" dom/dd, "div" dom/div,
@@ -151,13 +170,13 @@
                      (not (some-input-in-question-selected refs)))
             (.focus input-field)))))))
 
-(defn section-explanation-link [cursor chapter section]
+(defn section-explanation-url [cursor chapter section]
   (-> (get-in cursor [:view :selected-path])
       (assoc :chapter-id (:id chapter)
              :section-id (:id section)
              :section-tab :explanation
              :main :learning)
-      history-link))
+      path-url))
 
 (def ipad? (js/navigator.userAgent.match #"iPhone|iPad|iPod"))
 
@@ -254,3 +273,21 @@
                                                             (.. event -target -value))))})
                            (when-let [suffix (:suffix field)]
                              (dom/span #js {:className "suffix"} suffix)))])))))
+
+(defn click-once-button [value onclick & {:keys [enabled className]
+                                          :or {enabled true}}]
+  (fn [cursor owner]
+    (reify
+      om/IInitState
+      (init-state [_]
+        {:enabled enabled})
+      om/IRender
+      (render [_]
+        (dom/button #js {:className (str "btn blue pull-right" (when className (str " " className)))
+                         :onClick
+                         (fn [_]
+                           (ipad-reset-header)
+                           (onclick)
+                           (om/set-state-nr! owner :enabled false))
+                         :disabled (not (om/get-state owner :enabled))}
+                    value)))))
