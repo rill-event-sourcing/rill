@@ -212,17 +212,38 @@
 
 (defn input-builders-subsection
   "mapping from input-name to create react dom element for input type"
-  [cursor section]
+  [section]
   (-> {}
       (into (for [li (:line-input-fields section)]
-              [(:name li) (om/build section-input-field cursor {:opts {:field li :section section}})]))))
+              [(:name li) (om/build section-input-field section {:opts {:field li :section section}})]))))
+
+(defn section-reflection
+  [cursor owner {:keys [reflection section]}]
+  (let [reflection-name (:name reflection)
+        section-id (:id section)]
+    (reify
+      om/IRender
+      (render [_]
+        (dom/div #js {:className "m-reflection"}
+                 (println [:content (:content reflection)])
+                 (dom/div #js {:className "reflection-content"}
+                          (raw-html (:content reflection)))
+                 (dom/button #js {:className "reflection-btn btn"} "Toon Antwoord")
+                 (dom/div #js {:className "reflection-answer"}
+                          (raw-html (:answer reflection))))))))
+
+(defn reflection-builder [section]
+  (-> {}
+      (into (for [reflection (:reflections section)]
+              [(:name reflection)  (om/build section-reflection section {:opts {:reflection reflection :section section}})]))))
 
 (defn section-explanation [section owner]
   (reify
     om/IRender
     (render [_]
       (let [subsections (get section :subsections)
-            inputs (input-builders-subsection section section)]
+            inputs (input-builders-subsection section)
+            reflections (reflection-builder section)]
         (println [:inputs! inputs])
         (apply dom/article #js {:id "m-section"}
                #_(dom/nav #js {:id "m-minimap"}
@@ -232,7 +253,7 @@
                                    (dom/li nil title))))
                (map (fn [{:keys [title tag-tree id] :as subsection}]
                       (dom/section #js {:className "m-subsection"}
-                                   (tag-tree-to-om tag-tree inputs)))
+                                   (tag-tree-to-om tag-tree inputs reflections)))
                     subsections))))))
 
 (defn section-explanation-panel [cursor owner]

@@ -29,12 +29,9 @@
                      <img src=\"https://docs.google.com/drawings/d/1cP-5PnZA-jvGTDL9D9C6eZt-wxuTLNbKPJRpfU6kxxc/pub?w=735&h=260\">\r\n\r\n<p class=\"small\">Als je aantallen bij elkaar neemt noem je dat <b>optellen</b>. <br>\r\nHet teken <b>+</b> noem je <b>plus</b> of het plusteken.<br>\r\nMet ‘<b>de som</b>’ wordt de uitkomst na het optellen bedoeld.</p>\r\n\r\n<h1>Volgorde van optellen</h1>\r\n\r\n<p>Wanneer je twee getallen optelt maakt de volgorde niet uit:<br>\r\n<span class='inline_math'>5 + 7  =  7 + 5  =  12</span></p>\r\n\r\n<img src=\"https://docs.google.com/drawings/d/1xYdvVdENGvcrt2fTT8jJT5z1uCdF2awrxmVxP0IDqnc/pub?w=611&h=112\">\r\n\r\n"
         reflection-tag " _REFLECTION_1_"
         text (str pre svg0 svg1 reflection-tag post)
-        custom-tag-contents {:reflections [{:name "_REFLECTION_1_"
-                                            :content "<p>2+2</p>"
-                                            :answer "<p>4</p>"}]}
         custom-tag-names #{"_INPUT_1_" "_INPUT_2_" "_REFLECTION_1_"}]
     (is (not= svg0 svg1))
-    (is (= (material/text-with-custom-tags-to-tree text custom-tag-names custom-tag-contents)
+    (is (= (material/text-with-custom-tags-to-tree text custom-tag-names)
            {:tag :div,
             :attrs nil,
             :content
@@ -47,11 +44,9 @@
                {:tag :svg, :attrs {:name "_SVG_0_"}, :content svg0}
                {:tag :svg, :attrs {:name "_SVG_1_"}, :content svg1}
                " "
-               {:tag :div,
-                :attrs {:class "m-reflection" :name "_REFLECTION_1_"},
-                :content
-                [{:tag :div, :attrs {:class "reflection-content"} :content [{:tag :div, :attrs {:class " div-p"}, :content ["2+2"]}]}
-                 {:tag :div, :attrs {:class "reflection-answer"}, :content [{:tag :div, :attrs {:class " div-p"}, :content ["4"]}]}]}
+               {:tag :reflection,
+                :attrs {:name "_REFLECTION_1_"},
+                :content nil}
                "\n"
                {:tag :table,
                 :attrs nil,
@@ -107,7 +102,7 @@
 <iframe width=\"560\" height=\"315\" src=\"//www.youtube-nocookie.com/embed/Lm4oiLzJs2g?rel=0\" frameborder=\"0\" allowfullscreen></iframe>
                              </td><td>_INPUT_1_</td></tr>
                              <tr><td>456</td><td>_INPUT_2_</td></tr></table>"]
-      (is (= (material/text-with-custom-tags-to-tree table-text custom-tag-names nil)
+      (is (= (material/text-with-custom-tags-to-tree table-text custom-tag-names)
              '{:tag :div,
               :attrs nil,
               :content

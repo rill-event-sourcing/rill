@@ -76,7 +76,7 @@
       (aset jo (name :height) height))
     jo))
 
-(defn tag-tree-to-om [tag-tree inputs]
+(defn tag-tree-to-om [tag-tree inputs reflections]
   (let [tag-tree (om/value tag-tree)
         descent (fn descent [tag-tree]
                   (cond
@@ -136,6 +136,8 @@
                                            (cond
                                             (= tag "input")
                                             (get inputs (:name attrs))
+                                            (= tag "reflection")
+                                            (get reflections (:name attrs))
                                             (= tag "svg")
                                             (raw-html content)
                                             (= tag "iframe")

@@ -107,7 +107,7 @@
                  :when (and k v)]
              [k v])))
 
-(defn text-with-custom-tags-to-tree [text custom-tag-names custom-tag-contents]
+(defn text-with-custom-tags-to-tree [text custom-tag-names]
   (let [;; make a mapping of _SVG_n_ to svg tags, svg tags have xhtml
         ;; things that enlive eats, will be put back in the final
         ;; structure as a leaf
@@ -157,17 +157,6 @@
                    (assoc node :content (get replacements (:name (:attrs node))))
 
                    (and (contains? node :tag)
-                        (= (:tag node) :reflection))
-                   (let [reflection (first (filter (fn [reflection] (= (:name (:attrs node)
-                                                                              (:name reflection))))
-                                                   (:reflections custom-tag-contents)))]
-                     (-> node
-                         (assoc :tag :div)
-                         (update-in [:attrs :class] str "m-reflection")
-                         (assoc :content [{:tag :div, :attrs {:class "reflection-content"}, :content (html/html-snippet (:content reflection))}
-                                          {:tag :div, :attrs {:class "reflection-answer"}, :content (html/html-snippet (:answer reflection))}])))
-
-                   (and (contains? node :tag)
                         (= (:tag node) :iframe))
                    (assoc node
                      :content (str "<iframe "
@@ -203,8 +192,7 @@
                                   (fn [sections]
                                     (mapv (fn [section]
                                             (let [line-input-fields (:line-input-fields section)
-                                                  reflections (:reflections section)
-                                                  custom-tag-contents {:reflections reflections}]
+                                                  reflections (:reflections section)]
                                               (update-in section [:subsections]
                                                          (fn [subsections]
                                                            (mapv
@@ -216,8 +204,7 @@
                                                                    (:text subsection)
                                                                    (-> #{}
                                                                        (into (map :name line-input-fields))
-                                                                       (into (map :name reflections)))
-                                                                   custom-tag-contents)
+                                                                       (into (map :name reflections))))
                                                                   (catch Exception e
                                                                     (throw (ex-info (str "Material tag-tree failure" (:title subsection))
                                                                                     {:material (:name material)
@@ -249,8 +236,7 @@
                                         (:text question)
                                         (-> #{}
                                             (into (map :name (:line-input-fields question)))
-                                            (into (map :name (:multiple-choice-input-fields question))))
-                                        {}))) qs)))
+                                            (into (map :name (:multiple-choice-input-fields question))))))) qs)))
            node)
          node)
        node))

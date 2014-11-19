@@ -761,13 +761,13 @@
           "reflections": [
             {
               "name": "_REFLECTION_1_",
-              "content": "1+1=",
-              "answer": "2"
+              "content": "<p>1+1=</p>",
+              "answer": "<p>2</p>"
             },
             {
               "name": "_REFLECTION_2_",
-              "content": "2+2=",
-              "answer": "4"
+              "content": "<p>2+2=</p>",
+              "answer": "<p>4</p>"
             }
           ]
         },
