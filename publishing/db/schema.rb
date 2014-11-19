@@ -97,8 +97,9 @@ ActiveRecord::Schema.define(version: 20141119102121) do
 
   create_table "extra_examples", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
     t.uuid     "section_id"
-    t.integer  "position",   limit: 2
+    t.integer  "position",     limit: 2
     t.string   "title"
+    t.boolean  "default_open",           default: false
     t.text     "content"
     t.datetime "created_at"
     t.datetime "updated_at"
