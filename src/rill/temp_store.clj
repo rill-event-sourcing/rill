@@ -55,10 +55,12 @@
      (map comparable-message actual-events)))
 
 (defn command-result=
-  [[expected-status expected-events expected-triggers]
-   [actual-status actual-events _ actual-triggers]]
-  (and (= expected-status actual-status)
-       (messages= expected-events actual-events)
-       (if expected-triggers
-         (messages= expected-triggers actual-triggers)
-         true)))
+  [[expected-status & expected-rest] [actual-status & actual-rest]]
+  (if (= :ok expected-status actual-status)
+    (let [[expected-events expected-triggers] expected-rest
+          [actual-events _ actual-triggers] actual-rest]
+      (and (messages= expected-events actual-events)
+           (if expected-triggers
+             (messages= expected-triggers actual-triggers)
+             true)))
+    (= expected-status actual-status)))
