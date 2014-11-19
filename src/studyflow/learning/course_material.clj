@@ -34,6 +34,11 @@
    :content s/Str
    :answer s/Str})
 
+(def ExtarAnswer
+  {:name FieldName
+   :title s/Str
+   :content s/Str})
+
 (def Tool
   (s/enum "pen_and_paper" "calculator"))
 
@@ -59,7 +64,8 @@
    :line-input-fields #{LineInputField}
    :questions (s/both #{SectionQuestion}
                       (s/pred (fn [s] (seq s)) 'not-empty))
-   :reflections [Reflection]})
+   (s/optional-key :reflections [Reflection])
+   (s/optional-key :extra_answers [ExtraAnswer])})
 
 (def ChapterQuizQuestion
   {:id Id

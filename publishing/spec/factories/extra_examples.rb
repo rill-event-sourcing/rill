@@ -2,5 +2,6 @@
 
 FactoryGirl.define do
   factory :extra_example do
+    section { |a| a.association(:section) }
   end
 end
