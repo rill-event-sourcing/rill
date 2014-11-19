@@ -4,7 +4,7 @@
             [om.dom :as dom :include-macros true]
             [studyflow.web.aggregates :as aggregates]
             [studyflow.web.core :as core]
-            [studyflow.web.helpers :refer [input-builders tool-box raw-html modal tag-tree-to-om focus-input-box]]
+            [studyflow.web.helpers :refer [input-builders tool-box raw-html modal tag-tree-to-om focus-input-box click-once-button]]
             [studyflow.web.history :refer [path-url navigate-to-path]]
             [studyflow.web.service :as service]
             [studyflow.web.recommended-action :refer [first-recommendable-chapter]]
@@ -27,7 +27,7 @@
         (dom/div nil
                  (raw-html (:instructions entry-quiz))
                  (dom/div #js {:id "m-question_bar"}
-                          (om/build (core/click-once-button
+                          (om/build (click-once-button
                                      "Naar de eerste vraag"
                                      (fn []
                                        (submit))) cursor)))))))
@@ -39,7 +39,7 @@
            (dom/button #js {:className "btn blue small pull-right"
                             :onClick (fn []
                                        (navigate-to-path {:main :dashboard
-                                                            :chapter-id chapter-id}))}
+                                                          :chapter-id chapter-id}))}
                        (if (or (= status :failed) (= status :passed))
                          "Let's Go!"
                          "Naar je Dashboard"))))
@@ -130,13 +130,13 @@
                                                            (tag-tree-to-om (:tag-tree question-data) inputs)
                                                            (dom/div #js {:id "m-question_bar"}
                                                                     (tool-box (:tools question-data))
-                                                                    (om/build (core/click-once-button (str "Klaar"
-                                                                                                           (when (< (inc index) (count (:questions material)))
-                                                                                                             " & volgende vraag"))
-                                                                                                      (fn []
-                                                                                                        ;; form handles submit
-                                                                                                        nil)
-                                                                                                      :enabled answering-allowed)
+                                                                    (om/build (click-once-button (str "Klaar"
+                                                                                                      (when (< (inc index) (count (:questions material)))
+                                                                                                        " & volgende vraag"))
+                                                                                                 (fn []
+                                                                                                   ;; form handles submit
+                                                                                                   nil)
+                                                                                                 :enabled answering-allowed)
                                                                               cursor))))
                                                :passed
                                                (dom/div nil (entry-quiz-result :passed student-name correct-answers-number (count (:questions material)) first-non-finished-chapter-id))

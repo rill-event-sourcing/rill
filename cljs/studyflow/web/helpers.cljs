@@ -7,6 +7,7 @@
             [clojure.string :as string]
             [studyflow.web.history :refer [path-url]]))
 
+
 (defn raw-html
   [raw]
   (dom/span #js {:dangerouslySetInnerHTML #js {:__html raw}} nil))
@@ -272,3 +273,21 @@
                                                             (.. event -target -value))))})
                            (when-let [suffix (:suffix field)]
                              (dom/span #js {:className "suffix"} suffix)))])))))
+
+(defn click-once-button [value onclick & {:keys [enabled className]
+                                          :or {enabled true}}]
+  (fn [cursor owner]
+    (reify
+      om/IInitState
+      (init-state [_]
+        {:enabled enabled})
+      om/IRender
+      (render [_]
+        (dom/button #js {:className (str "btn blue pull-right" (when className (str " " className)))
+                         :onClick
+                         (fn [_]
+                           (ipad-reset-header)
+                           (onclick)
+                           (om/set-state-nr! owner :enabled false))
+                         :disabled (not (om/get-state owner :enabled))}
+                    value)))))

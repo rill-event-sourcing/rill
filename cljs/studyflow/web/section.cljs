@@ -2,7 +2,7 @@
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [studyflow.web.history :refer [path-url navigate-to-path]]
-            [studyflow.web.helpers :refer [input-builders tool-box modal raw-html tag-tree-to-om focus-input-box section-explanation-url on-enter] :as helpers]
+            [studyflow.web.helpers :refer [input-builders tool-box modal raw-html tag-tree-to-om focus-input-box section-explanation-url on-enter click-once-button] :as helpers]
             [cljs.core.async :as async]
             [studyflow.web.aggregates :as aggregates]
             [studyflow.web.chapter-quiz :as chapter-quiz]))
@@ -84,23 +84,7 @@
     (do (om/update! cursor [:view :section section-id :test question-id] nil)
         nil)))
 
-(defn click-once-button [value onclick & {:keys [enabled className]
-                                          :or {enabled true}}]
-  (fn [cursor owner]
-    (reify
-      om/IInitState
-      (init-state [_]
-        {:enabled enabled})
-      om/IRender
-      (render [_]
-        (dom/button #js {:className (str "btn blue pull-right" (when className (str " " className)))
-                         :onClick
-                         (fn [_]
-                           (helpers/ipad-reset-header)
-                           (onclick)
-                           (om/set-state-nr! owner :enabled false))
-                         :disabled (not (om/get-state owner :enabled))}
-                    value)))))
+
 
 (defn section-input-field
   [cursor owner {:keys [field section]}]
