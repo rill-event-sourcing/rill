@@ -23,7 +23,7 @@
                  [org.clojure/tools.logging "0.3.0"]
                  [org.slf4j/slf4j-log4j12 "1.7.5"]
                  [prismatic/schema "0.2.2"]
-                 [rill/rill "0.1.4"]
+                 [rill/rill "0.1.5"]
                  [ring-mock/ring-mock "0.1.5"]
                  [ring.middleware.logger "0.5.0"]
                  [ring/ring-defaults "0.1.0"]
