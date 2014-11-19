@@ -56,11 +56,11 @@
 .light
   .toggle-light-mode
     background: url(/images/icon-arrow-up.svg) no-repeat center #fcfcfc !important
-    background-size: 15px
+    background-size: 15px !important
 
 .toggle-light-mode
-  background: url(/images/icon-arrow-down.svg) no-repeat center #fcfcfc
-  background-size: 15px
+  background: url(/images/icon-arrow-down.svg) no-repeat center #fcfcfc !important
+  background-size: 15px !important
 
 .calculator-top-header
   height: 40px
@@ -73,7 +73,7 @@
   .close-calculator
     float: right
     background: url(/images/icon-close.svg) no-repeat center #fcfcfc
-    background-size: 15px
+    background-size: 12px !important
   button
     padding: 10px 15px
     outline: 0
@@ -83,3 +83,6 @@
     +border-radius(6px)
     color: #aaa !important
     font-weight: 500 !important
+    &:active
+      +box-shadow(inset 0 1px 2px rgba(0, 0, 0, 0.08), inset 0 1px 1px rgba(0, 0, 0, 0.19))
+  
