@@ -75,10 +75,10 @@ RSpec.describe SubsectionsController, :type => :controller do
     end
 
     it "should render a preview of the section" do
-      get :preview, chapter_id: @chapter.to_param, section_id: @section1.to_param
+      get :preview_content, chapter_id: @chapter.to_param, section_id: @section1.to_param, id: @subsection1.id
       expect(assigns(:section)).to eq @section1
       expect(@section1.subsections).to eq [@subsection2, @subsection3, @subsection1]
-      expect(response).to render_template('preview')
+      expect(response).to render_template('preview_content')
     end
   end
 
