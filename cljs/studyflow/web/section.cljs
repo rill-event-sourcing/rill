@@ -219,8 +219,9 @@
 
 (defn section-reflection
   [cursor owner {:keys [reflection section]}]
-  (let [reflection-name (:name reflection)
-        section-id (:id section)]
+  (let [section-id (:id section)
+        reflection-path [:view :section section-id :reflection (:name reflection) :open?]
+        reflection-open? (get-in cursor reflection-path)]
     (reify
       om/IRender
       (render [_]
@@ -228,8 +229,15 @@
                  (println [:content (:content reflection)])
                  (dom/div #js {:className "reflection-content"}
                           (raw-html (:content reflection)))
-                 (dom/button #js {:className "reflection-btn btn"} "Toon Antwoord")
-                 (dom/div #js {:className "reflection-answer"}
+                 (dom/button #js {:className "reflection-btn btn gray"
+                                  :onClick (fn [event]
+                                             (om/update!
+                                              cursor
+                                              reflection-path
+                                              (not reflection-open?)))}
+                             (if reflection-open? "Verberg antwoord" "Toon antwoord"))
+                 (dom/div #js {:className (str "reflection-answer"
+                                               (when reflection-open? " show"))}
                           (raw-html (:answer reflection))))))))
 
 (defn reflection-builder [section]
