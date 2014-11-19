@@ -11,7 +11,7 @@
             [studyflow.web.tracking :as tracking]
             [studyflow.web.service :as service]
             [studyflow.web.section :as section]
-            [studyflow.web.history :refer [history-link]]
+            [studyflow.web.history :refer [navigate-to-path]]
             [cljs.core.async :as async]))
 
 (defn running-chapter-quiz
@@ -34,9 +34,8 @@
     (render [_]
       (let [{:keys [main section-tab]} (get-in cursor [:view :selected-path])]
         (when-let [quiz (running-chapter-quiz cursor)]
-          (set! (.-location js/window)
-                (history-link {:main :chapter-quiz
-                               :chapter-id (:id quiz)})))
+          (navigate-to-path {:main :chapter-quiz
+                             :chapter-id (:id quiz)}))
         (dom/div #js {:className (if (and (= main :learning)
                                           (= section-tab :questions))
                                    "questions_page"

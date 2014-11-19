@@ -5,7 +5,7 @@
             [goog.events :as gevents]
             [goog.string :as gstring]
             [clojure.string :as string]
-            [studyflow.web.history :refer [history-link]]))
+            [studyflow.web.history :refer [path-url]]))
 
 (defn raw-html
   [raw]
@@ -169,13 +169,13 @@
                      (not (some-input-in-question-selected refs)))
             (.focus input-field)))))))
 
-(defn section-explanation-link [cursor chapter section]
+(defn section-explanation-url [cursor chapter section]
   (-> (get-in cursor [:view :selected-path])
       (assoc :chapter-id (:id chapter)
              :section-id (:id section)
              :section-tab :explanation
              :main :learning)
-      history-link))
+      path-url))
 
 (def ipad? (js/navigator.userAgent.match #"iPhone|iPad|iPod"))
 

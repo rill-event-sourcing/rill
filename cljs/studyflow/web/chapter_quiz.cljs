@@ -5,7 +5,7 @@
             [om.dom :as dom :include-macros true]
             [studyflow.web.helpers :refer [input-builders tool-box modal raw-html tag-tree-to-om focus-input-box] :as helpers]
             [studyflow.web.recommended-action :refer [recommended-action]]
-            [studyflow.web.history :refer [history-link]]))
+            [studyflow.web.history :refer [path-url navigate-to-path]]))
 
 (defn chapter-quiz-navigation-button [cursor chapter-quiz chapter-id]
   (when (not (zero? (:number-of-questions chapter-quiz)))
@@ -65,9 +65,8 @@
                  (async/put! (om/get-shared owner :command-channel)
                              ["chapter-quiz-commands/start"
                               chapter-id student-id])
-                 (set! (.-location js/window)
-                       (history-link {:main :chapter-quiz
-                                      :chapter-id chapter-id})))
+                 (navigate-to-path {:main :chapter-quiz
+                                    :chapter-id chapter-id}))
                (dom/a #js {:href ""
                            :className "btn big gray"
                            :onClick (fn []
@@ -304,9 +303,8 @@
                                          (dom/p nil "Oops! Je hebt 3 hartjes verloren. We raden je aan om eerst je kennis van dit hoofdstuk op te frissen, en het daarna nog een keer te proberen"))))
                  (footer-bar "Ga verder met het hoofdstuk"
                              (fn []
-                               (js/window.location.assign
-                                (history-link {:main :dashboard
-                                               :chapter-id chapter-id})))
+                               (navigate-to-path {:main :dashboard
+                                                  :chapter-id chapter-id}))
                              true
                              "blue"
                              []))))))
@@ -377,8 +375,8 @@
                                                       (om/update! cursor [:view :chapter-quiz-exit-modal] true)
                                                       (.preventDefault e))})
                                (dom/a #js {:id "home"
-                                           :href (history-link {:main :dashboard
-                                                                :chapter-id chapter-id})}))
+                                           :href (path-url {:main :dashboard
+                                                            :chapter-id chapter-id})}))
                              (dom/h1 #js {:id "page_heading"}
                                      (:title chapter))
                              (when chapter-quiz-agg

@@ -1,10 +1,10 @@
 (ns studyflow.web.dashboard
   (:require [om.dom :as dom]
             [om.core :as om]
-            [studyflow.web.history :refer [history-link]]
+            [studyflow.web.history :refer [path-url]]
             [studyflow.web.recommended-action :refer [recommended-action]]
             [studyflow.web.chapter-quiz :as chapter-quiz]
-            [studyflow.web.helpers :refer [input-builders tool-box modal raw-html tag-tree-to-om focus-input-box section-explanation-link] :as helpers]
+            [studyflow.web.helpers :refer [input-builders tool-box modal raw-html tag-tree-to-om focus-input-box section-explanation-url] :as helpers]
             [cljs.core.async :as async]))
 
 (defn sections-navigation [cursor chapter]
@@ -19,7 +19,7 @@
               (let [section-status (get {"finished" "finished"
                                          "stuck" "stumbling_block"
                                          "in-progress" "in_progress"} status "")
-                    section-link (section-explanation-link cursor chapter section)]
+                    section-link (section-explanation-url cursor chapter section)]
                 (dom/li #js {:data-id section-id
                              :className (str "section_list_item " section-status
                                              (when (= recommended-id section-id) " recommended")) }
@@ -42,7 +42,7 @@
                                   (assoc :chapter-id (:id chapter)
                                          :section-id nil
                                          :main :dashboard)
-                                  history-link)}
+                                  path-url)}
                    (:title chapter))
             (when selected?
               (sections-navigation cursor chapter)))))
@@ -109,7 +109,7 @@
                                      (when (not (#{:passed :failed} status))
                                        (dom/li #js {:className "chapter_list_item"}
                                                (dom/a #js {:className "chapter_title"
-                                                           :href (history-link {:main :entry-quiz})}
+                                                           :href (path-url {:main :entry-quiz})}
                                                       "Instaptoets"))))
                                    (map (partial chapter-navigation cursor chapter-id course)
                                         (:chapters course))))

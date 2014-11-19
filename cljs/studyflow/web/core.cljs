@@ -5,7 +5,7 @@
             [goog.events :as gevents]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [studyflow.web.history :refer [history-link]]
+            [studyflow.web.history :refer [navigate-to-path]]
             [goog.Timer :as gtimer]
             [studyflow.web.service :as service]
             [studyflow.web.recommended-action :refer [recommended-action]]
@@ -69,10 +69,9 @@
             (om/update! cursor [:view :chapter-quiz (:chapter-id event) :test :questions] {})
 
             "studyflow.learning.chapter-quiz.events/Stopped"
-            (set! (.-location js/window)
-                  (history-link {:main :dashboard
-                                 :chapter-id (:chapter-id event)
-                                 :section-id nil}))
+            (navigate-to-path {:main :dashboard
+                               :chapter-id (:chapter-id event)
+                               :section-id nil})
             nil)
           (recur)))))
 

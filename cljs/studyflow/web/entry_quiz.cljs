@@ -5,7 +5,7 @@
             [studyflow.web.aggregates :as aggregates]
             [studyflow.web.core :as core]
             [studyflow.web.helpers :refer [input-builders tool-box raw-html modal tag-tree-to-om focus-input-box]]
-            [studyflow.web.history :refer [history-link]]
+            [studyflow.web.history :refer [path-url navigate-to-path]]
             [studyflow.web.service :as service]
             [studyflow.web.recommended-action :refer [first-recommendable-chapter]]
             [cljs.core.async :as async])
@@ -38,9 +38,8 @@
   (dom/div #js {:id "m-question_bar"}
            (dom/button #js {:className "btn blue small pull-right"
                             :onClick (fn []
-                                       (set! (.-location js/window)
-                                             (history-link {:main :dashboard
-                                                            :chapter-id chapter-id})))}
+                                       (navigate-to-path {:main :dashboard
+                                                            :chapter-id chapter-id}))}
                        (if (or (= status :failed) (= status :passed))
                          "Let's Go!"
                          "Naar je Dashboard"))))
@@ -86,7 +85,7 @@
         (dom/div #js {:id "quiz-page"}
                  (dom/header #js {:id "m-top_header"}
                              (dom/a #js {:id "home"
-                                         :href (history-link {:main :dashboard})})
+                                         :href (path-url {:main :dashboard})})
                              (dom/h1 #js {:id "page_heading"}
                                      (entry-quiz-title status)) ;; TODO title is not in aggregate
                              (when-let [index (:question-index entry-quiz)]
@@ -180,8 +179,7 @@
                    "Instaptoets starten"
                    (fn []
                      (dismiss-modal)
-                     (set! (.-location js/window)
-                           (history-link {:main :entry-quiz})))
+                     (navigate-to-path {:main :entry-quiz}))
                    (dom/a #js {:href ""
                                :onClick (fn []
                                           (dismiss-modal)

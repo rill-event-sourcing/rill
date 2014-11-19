@@ -1,8 +1,8 @@
 (ns studyflow.web.section
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [studyflow.web.history :refer [history-link]]
-            [studyflow.web.helpers :refer [input-builders tool-box modal raw-html tag-tree-to-om focus-input-box section-explanation-link on-enter] :as helpers]
+            [studyflow.web.history :refer [path-url navigate-to-path]]
+            [studyflow.web.helpers :refer [input-builders tool-box modal raw-html tag-tree-to-om focus-input-box section-explanation-url on-enter] :as helpers]
             [cljs.core.async :as async]
             [studyflow.web.aggregates :as aggregates]
             [studyflow.web.chapter-quiz :as chapter-quiz]))
@@ -53,7 +53,7 @@
                                                 (aggregates/section-test-progress
                                                  (get-in cursor [:aggregates section-id]))
                                                 ""))}
-                                     (dom/a #js {:href (section-explanation-link cursor chapter section)
+                                     (dom/a #js {:href (section-explanation-url cursor chapter section)
                                                  :className "section_link"}
                                             title))))
                          [(chapter-quiz/chapter-quiz-navigation-button cursor (:chapter-quiz chapter) chapter-id)]))
@@ -318,16 +318,10 @@
                                       "https://assets.studyflow.nl/learning/sewing.gif"
                                       "https://assets.studyflow.nl/learning/milk.gif"])
         submit (fn []
-                 ;; TODO: this should set the window.location, not change the selected-path directly
-                 (om/update! cursor
-                             [:view :selected-path]
-                             (let [cursor @cursor]
-                               (-> (get-in cursor [:view :selected-path])
-                                   (merge (get-in cursor [:view :course-material :forward-section-links
-                                                          {:chapter-id chapter-id :section-id section-id}])))))
-                 (om/update! cursor
-                             [:view :progress-modal]
-                             :dismissed))]
+                 (navigate-to-path (let [cursor @cursor]
+                                     (-> (get-in cursor [:view :selected-path])
+                                         (merge (get-in cursor [:view :course-material :forward-section-links
+                                                                {:chapter-id chapter-id :section-id section-id}]))))))]
     (modal (dom/span nil
                      (dom/h1 nil "Yes! Je hebt 5 vragen achter elkaar goed!")
                      (dom/img #js {:src finish-section-gif})
@@ -347,9 +341,8 @@
 
 (defn stuck-modal
   [cursor owner student-id course-id chapter-id section-id section-test-aggregate-version]
-  (let [explanation-link (-> (get-in cursor [:view :selected-path])
-                             (assoc :section-tab :explanation)
-                             history-link)
+  (let [explanation-path (-> (get-in cursor [:view :selected-path])
+                             (assoc :section-tab :explanation))
         stumbling-gif "https://assets.studyflow.nl/learning/187.gif"
         submit (fn []
                  ;; make sure modal is gone next time we load this test
@@ -359,7 +352,7 @@
                               student-id
                               section-test-aggregate-version
                               course-id])
-                 (js/window.location.assign explanation-link))]
+                 (navigate-to-path explanation-path))]
     (modal (dom/span nil
                      (dom/h1 #js {:className "stumbling_block"} "Oeps! deze is moeilijk")
                      (dom/img #js {:src stumbling-gif})
@@ -377,13 +370,10 @@
                               student-id
                               section-test-aggregate-version
                               course-id])
-                 ;; TODO assign to location instead
-                 (om/update! cursor
-                             [:view :selected-path]
-                             (let [cursor @cursor]
-                               (-> (get-in cursor [:view :selected-path])
-                                   (merge (get-in cursor [:view :course-material :forward-section-links
-                                                          {:chapter-id chapter-id :section-id section-id}]))))))]
+                 (navigate-to-path (let [cursor @cursor]
+                                     (-> (get-in cursor [:view :selected-path])
+                                         (merge (get-in cursor [:view :course-material :forward-section-links
+                                                                {:chapter-id chapter-id :section-id section-id}]))))))]
     (modal (dom/span nil
                      (dom/h1 nil "Hoppa! Weer goed!")
                      (dom/img #js {:src complete-again-section-gif})
@@ -573,7 +563,7 @@
                     (dom/a #js {:id "home"
                                 :href  (-> (get-in cursor [:view :selected-path])
                                            (assoc :main :dashboard)
-                                           history-link)})
+                                           path-url)})
                     (dom/ul #js {:className "section-toggle"}
                             (dom/li nil
                                     (dom/a #js {:className (str "section-toggle-link explanation-link"
@@ -581,7 +571,7 @@
                                                                   " selected"))
                                                 :href (-> (get-in cursor [:view :selected-path])
                                                           (assoc :section-tab :explanation)
-                                                          history-link)}
+                                                          path-url)}
                                            "Uitleg"))
                             (dom/li nil
                                     (dom/a #js {:className (str "section-toggle-link questions-link"
@@ -589,5 +579,5 @@
                                                                   " selected"))
                                                 :href (-> (get-in cursor [:view :selected-path])
                                                           (assoc :section-tab :questions)
-                                                          history-link)}
+                                                          path-url)}
                                            "Vragen"))))))))

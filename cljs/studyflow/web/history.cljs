@@ -49,11 +49,21 @@
         (.setEnabled history true)
         ))))
 
+;; TODO: we probably do not need this; navigation should
+;; always go through window.location, not the other way around
 (defn listen [tx-report cursor]
   (let [{:keys [path old-state new-state]} tx-report]
     (when (= path [:view :selected-path])
       (when-let [token (path->token (get-in new-state [:view :selected-path]))]
         (.setToken history token)))))
 
-(defn history-link [selected-path]
+(defn path-url [selected-path]
   (str "#" (path->token selected-path)))
+
+(defn link-to-path
+  [selected-path & content]
+  (apply dom/a #js {:href (path-url selected-path)} content))
+
+(defn navigate-to-path
+  [selected-path]
+  (js/window.location.assign (path-url selected-path)))
