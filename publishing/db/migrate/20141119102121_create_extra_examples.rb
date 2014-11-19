@@ -4,6 +4,7 @@ class CreateExtraExamples < ActiveRecord::Migration
       t.uuid :section_id, index: true
       t.integer :position, limit: 2
       t.string :title
+      t.boolean :default_open, default: false
       t.text :content
       t.timestamps
     end

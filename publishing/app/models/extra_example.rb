@@ -36,6 +36,7 @@ class ExtraExample < ActiveRecord::Base
     {
       name: name,
       title: title,
+      default_open: default_open,
       content: content
     }
   end
