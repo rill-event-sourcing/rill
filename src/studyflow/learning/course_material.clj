@@ -202,7 +202,9 @@
                        (update-in chapter [:sections]
                                   (fn [sections]
                                     (mapv (fn [section]
-                                            (let [line-input-field-names (:line-input-fields section)]
+                                            (let [line-input-fields (:line-input-fields section)
+                                                  reflections (:reflections section)
+                                                  custom-tag-contents {:reflections reflections}]
                                               (update-in section [:subsections]
                                                          (fn [subsections]
                                                            (mapv
@@ -210,9 +212,12 @@
                                                               (assoc subsection
                                                                 :tag-tree
                                                                 (try
-                                                                  (text-with-inputs-to-tree
+                                                                  (text-with-custom-tags-to-tree
                                                                    (:text subsection)
-                                                                   (map :name line-input-field-names))
+                                                                   (-> #{}
+                                                                       (into (map :name line-input-fields))
+                                                                       (into (map :name reflections)))
+                                                                   custom-tag-contents)
                                                                   (catch Exception e
                                                                     (throw (ex-info (str "Material tag-tree failure" (:title subsection))
                                                                                     {:material (:name material)
@@ -240,11 +245,12 @@
                       (fn [qs]
                         (mapv (fn [question]
                                 (assoc question :tag-tree
-                                       (text-with-inputs-to-tree
+                                       (text-with-custom-tags-to-tree
                                         (:text question)
                                         (-> #{}
                                             (into (map :name (:line-input-fields question)))
-                                            (into (map :name (:multiple-choice-input-fields question))))))) qs)))
+                                            (into (map :name (:multiple-choice-input-fields question))))
+                                        {}))) qs)))
            node)
          node)
        node))
