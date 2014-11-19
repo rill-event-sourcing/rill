@@ -482,13 +482,13 @@
             {
               "name": "_EXTRA_EXAMPLE_1_",
               "title": "extra example",
-              "default-open": true,
+              "default_open": true,
               "content": "some extra exampling"
             },
             {
               "name": "_EXTRA_EXAMPLE_2_",
               "title": "extra example too",
-              "default-open": false,
+              "default_open": false,
               "content": "a lot of extra exampling"
             }
           ]
