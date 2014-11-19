@@ -50,7 +50,7 @@
                {:tag :div,
                 :attrs {:class "m-reflection" :name "_REFLECTION_1_"},
                 :content
-                [{:tag :div, :attrs nil :content [{:tag :div, :attrs {:class " div-p"}, :content ["2+2"]}]}
+                [{:tag :div, :attrs {:class "reflection-content"} :content [{:tag :div, :attrs {:class " div-p"}, :content ["2+2"]}]}
                  {:tag :div, :attrs {:class "reflection-answer"}, :content [{:tag :div, :attrs {:class " div-p"}, :content ["4"]}]}]}
                "\n"
                {:tag :table,

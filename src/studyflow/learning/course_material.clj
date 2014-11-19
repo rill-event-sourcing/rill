@@ -164,7 +164,7 @@
                      (-> node
                          (assoc :tag :div)
                          (update-in [:attrs :class] str "m-reflection")
-                         (assoc :content [{:tag :div, :attrs nil, :content (html/html-snippet (:content reflection))}
+                         (assoc :content [{:tag :div, :attrs {:class "reflection-content"}, :content (html/html-snippet (:content reflection))}
                                           {:tag :div, :attrs {:class "reflection-answer"}, :content (html/html-snippet (:answer reflection))}])))
 
                    (and (contains? node :tag)
