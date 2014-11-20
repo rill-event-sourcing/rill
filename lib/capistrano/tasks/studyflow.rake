@@ -59,6 +59,7 @@ namespace :deploy do
   desc 'Deploy only to stack A without putting it online'
   task :deploy_a do
     Rake::Task["deploy:stack_a"].execute
+    Rake::Task["deploy:stop_balancer"].execute
     Rake::Task["deploy:check"].execute
     Rake::Task["deploy:update"].execute
     Rake::Task["deploy:update_stack"].execute
@@ -70,6 +71,7 @@ namespace :deploy do
   desc 'Deploy only to stack B without putting it online'
   task :deploy_b do
     Rake::Task["deploy:stack_b"].execute
+    Rake::Task["deploy:stop_balancer"].execute
     Rake::Task["deploy:check"].execute
     Rake::Task["deploy:update"].execute
     Rake::Task["deploy:update_stack"].execute
@@ -81,12 +83,14 @@ namespace :deploy do
   desc 'Hot deploy application from S3'
   task :hot do
     Rake::Task["deploy:stack_a"].execute
+    Rake::Task["deploy:stop_balancer"].execute
     Rake::Task["deploy:check"].execute
     Rake::Task["deploy:update"].execute
     Rake::Task["deploy:update_stack"].execute
     Rake::Task["deploy:start_balancer"].execute
 
     Rake::Task["deploy:stack_b"].execute
+    Rake::Task["deploy:stop_balancer"].execute
     Rake::Task["deploy:check"].execute
     Rake::Task["deploy:update"].execute
     Rake::Task["deploy:update_stack"].execute
@@ -100,11 +104,13 @@ namespace :deploy do
   desc 'Cold deploy application from S3'
   task :cold do
     Rake::Task["deploy:stack_a"].execute
+    Rake::Task["deploy:stop_balancer"].execute
     Rake::Task["deploy:check"].execute
     Rake::Task["deploy:update"].execute
     Rake::Task["deploy:update_stack"].execute
 
     Rake::Task["deploy:stack_b"].execute
+    Rake::Task["deploy:stop_balancer"].execute
     Rake::Task["deploy:check"].execute
     Rake::Task["deploy:update"].execute
     Rake::Task["deploy:update_stack"].execute
