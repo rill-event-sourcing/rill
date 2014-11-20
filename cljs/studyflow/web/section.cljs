@@ -7,17 +7,6 @@
             [studyflow.web.aggregates :as aggregates]
             [studyflow.web.chapter-quiz :as chapter-quiz]))
 
-(defn show-sidebar [cursor owner]
-  (reify
-    om/IRender
-    (render [_]
-      (dom/button #js {:id "nav_toggle"
-                       :onClick (fn [event]
-                                  (om/update!
-                                   cursor
-                                   [:view :side-navigation :shown]
-                                   (not (get-in @cursor [:view :side-navigation :shown]))))}))))
-
 (defn navigation [cursor owner]
   (reify
     om/IWillMount
@@ -56,9 +45,7 @@
                                      (dom/a #js {:href (section-explanation-url cursor chapter section)
                                                  :className "section_link"}
                                             title))))
-                         [(chapter-quiz/chapter-quiz-navigation-button cursor (:chapter-quiz chapter) chapter-id)]))
-                 (dom/div #js {:id "meta_content"}
-                          (om/build show-sidebar cursor)))))))
+                         [(chapter-quiz/chapter-quiz-navigation-button cursor (:chapter-quiz chapter) chapter-id)])))))))
 
 (defn navigation-panel [cursor owner]
   (reify
