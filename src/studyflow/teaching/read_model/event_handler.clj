@@ -243,6 +243,10 @@
   [model {:keys [teacher-id full-name department-id]}]
   (assoc-in model [:teachers teacher-id] {:department-id department-id :full-name full-name :teacher-id teacher-id}))
 
+(defmethod handle-event :studyflow.school-administration.teacher.events/NameChanged
+  [model {:keys [teacher-id full-name]}]
+  (assoc-in model [:teachers teacher-id :full-name] full-name))
+
 (defmethod handle-event :studyflow.school-administration.teacher.events/DepartmentChanged
   [model {:keys [teacher-id department-id]}]
   (-> model
