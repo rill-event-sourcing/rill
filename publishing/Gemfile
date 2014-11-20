@@ -13,10 +13,8 @@ gem 'bootstrap-sass'
 gem 'haml-rails'
 gem 'pg'
 gem 'sendgrid'
-
 gem 'zeroclipboard-rails'
 gem 'acts_as_list'
-gem 'appsignal'
 gem 'httparty'
 gem 'redis'
 gem 'newrelic_rpm'
@@ -24,6 +22,10 @@ gem 'delayed_job_active_record'
 gem 'daemons'
 gem 'nokogiri'
 gem 'sanitize'
+gem 'raygun4ruby'
+
+# to be removed:
+gem 'appsignal'
 
 group :development, :test do
   gem 'better_errors'
