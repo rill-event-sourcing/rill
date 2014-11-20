@@ -157,11 +157,22 @@ namespace :deploy do
     timestamp = Time.now.strftime("%Y%m%d%H%M%S")
     set(:release_timestamp, timestamp)
     set(:release_path, releases_path.join(timestamp))
+
+    # get a list of S3 files for this SHA
+    on (roles *fetch(:release_roles), filter: fetch(:stack)).first do |host|
+      output = capture "s3cmd ls  #{ fetch(:s3path) }/#{ fetch(:current_revision) }/"
+      set :s3_files, output.split("\n").map{|line| line.split(" ").last}.sort
+    end
+
     on roles *fetch(:release_roles), filter: fetch(:stack) do |host|
+      s3_file = fetch(:s3_files).find_all{|file| file =~ /#{host.roles.first}/ }.last
+      throw "COULD NOT FIND JAR file on S3 for #{host}!" unless s3_file
+      warn " using S3 file: #{ s3_file } on #{ host } ".center(72, "-")
+
+      execute :rm,   '-Rf', release_path
       execute :mkdir, '-p', release_path
       within release_path do
-        execute "s3cmd get #{ fetch(:s3path) }/#{ fetch(:current_revision) }/*#{ host.roles.first }* #{ release_path }/"
-        execute "cd #{ release_path } && ls -r | sed 1d | while read i ; do echo \" -> deleting older release $i\" ; rm \"\$i\"; done"
+        execute "s3cmd get #{ s3_file } #{ release_path }/"
       end
       role = host.roles.first
       if role == :publish
