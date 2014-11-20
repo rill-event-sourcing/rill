@@ -545,7 +545,7 @@
                  (dom/article #js {:id "m-section"}
                               (tag-tree-to-om (:tag-tree question-data) inputs)
                               (when revealed-answer
-                                (dom/div #js {:className "wrap-dangerous-html m-worked-out-answer"}
+                                (dom/div #js {:className "wrap-dangerous-html"}
                                          (dom/div #js {:dangerouslySetInnerHTML #js {:__html revealed-answer}} nil))))
                  (dom/div #js {:id "m-question_bar"}
                           (tool-box (:tools question-data))
