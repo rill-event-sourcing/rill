@@ -64,9 +64,9 @@
                        :prod {:source-paths ["cljs"]
                               :jar true
                               :compiler {:output-to "generated/learning/public/js/studyflow.js"
-                                         :optimizations :advanced
-                                         :elide-asserts true
-                                         :pretty-print false
+                                         :optimizations :whitespace
+                                         ;;:elide-asserts true
+                                         ;;:pretty-print false
                                          ;;;; handy debug options:
                                          ;; :pretty-print true
                                          ;; :print-input-delimiter true
