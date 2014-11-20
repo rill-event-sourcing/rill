@@ -5,7 +5,8 @@
             [om.dom :as dom :include-macros true]
             [studyflow.web.helpers :refer [input-builders tool-box modal raw-html tag-tree-to-om focus-input-box] :as helpers]
             [studyflow.web.recommended-action :refer [recommended-action]]
-            [studyflow.web.history :refer [path-url navigate-to-path]]))
+            [studyflow.web.history :refer [path-url navigate-to-path]])
+  (:import (goog.events KeyHandler)))
 
 (defn chapter-quiz-navigation-button [cursor chapter-quiz chapter-id]
   (when (not (zero? (:number-of-questions chapter-quiz)))
