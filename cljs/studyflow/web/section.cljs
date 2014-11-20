@@ -288,11 +288,18 @@
                                       "https://assets.studyflow.nl/learning/helping-dogs.gif"
                                       "https://assets.studyflow.nl/learning/sewing.gif"
                                       "https://assets.studyflow.nl/learning/milk.gif"])
+        next-section-path (-> (get-in cursor [:view :selected-path])
+                              om/value
+                              (merge (om/value (get-in cursor [:view :course-material :forward-section-links
+                                                               {:chapter-id chapter-id :section-id section-id}]))))
         submit (fn []
-                 (navigate-to-path (let [cursor @cursor]
-                                     (-> (get-in cursor [:view :selected-path])
-                                         (merge (get-in cursor [:view :course-material :forward-section-links
-                                                                {:chapter-id chapter-id :section-id section-id}]))))))]
+                 (async/put! (om/get-shared owner :command-channel)
+                             ["section-test-commands/next-question"
+                              section-id
+                              student-id
+                              section-test-aggregate-version
+                              course-id])
+                 (navigate-to-path next-section-path))]
     (modal (dom/span nil
                      (dom/h1 nil "Yes! Je hebt 5 vragen achter elkaar goed!")
                      (dom/img #js {:src finish-section-gif})
@@ -312,9 +319,10 @@
 
 (defn stuck-modal
   [cursor owner student-id course-id chapter-id section-id section-test-aggregate-version]
-  (let [explanation-path (into {} ;; BLACK MAGIC
-                               (-> (get-in cursor [:view :selected-path])
-                                      (assoc :section-tab :explanation)))
+  (let [explanation-path (-> cursor
+                             (get-in [:view :selected-path])
+                             om/value
+                             (assoc :section-tab :explanation))
         stumbling-gif "https://assets.studyflow.nl/learning/187.gif"
         submit (fn []
                  ;; make sure modal is gone next time we load this test
@@ -334,6 +342,10 @@
 (defn completed-modal
   [cursor owner student-id course-id chapter-id section-id section-test-aggregate-version]
   (let [complete-again-section-gif "https://assets.studyflow.nl/learning/184.gif"
+        next-section-path (-> (get-in cursor [:view :selected-path])
+                              om/value
+                              (merge (om/value (get-in cursor [:view :course-material :forward-section-links
+                                                               {:chapter-id chapter-id :section-id section-id}]))))
         submit (fn []
                  ;; make sure modal is gone next time we load this test
                  (async/put! (om/get-shared owner :command-channel)
@@ -342,10 +354,7 @@
                               student-id
                               section-test-aggregate-version
                               course-id])
-                 (navigate-to-path (let [cursor @cursor]
-                                     (-> (get-in cursor [:view :selected-path])
-                                         (merge (get-in cursor [:view :course-material :forward-section-links
-                                                                {:chapter-id chapter-id :section-id section-id}]))))))]
+                 (navigate-to-path next-section-path))]
     (modal (dom/span nil
                      (dom/h1 nil "Hoppa! Weer goed!")
                      (dom/img #js {:src complete-again-section-gif})
