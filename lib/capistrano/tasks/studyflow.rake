@@ -167,7 +167,7 @@ namespace :deploy do
     on roles *fetch(:release_roles), filter: fetch(:stack) do |host|
       s3_file = fetch(:s3_files).find_all{|file| file =~ /#{host.roles.first}/ }.last
       throw "COULD NOT FIND JAR file on S3 for #{host}!" unless s3_file
-      warn " using S3 file: #{ s3_file } on #{ host } ".center(72, "-")
+      # warn " using S3 file: #{ s3_file } on #{ host } ".center(72, "-")
 
       execute :rm,   '-Rf', release_path
       execute :mkdir, '-p', release_path
