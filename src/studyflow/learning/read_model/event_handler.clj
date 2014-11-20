@@ -97,7 +97,15 @@
   [model {:keys [teacher-id full-name]}]
   (m/set-student model teacher-id {:full-name full-name}))
 
+(defmethod handle-event :studyflow.school-administration.teacher.events/NameChanged
+  [model {:keys [teacher-id full-name]}]
+  (m/set-student model teacher-id {:full-name full-name}))
+
 (defmethod handle-event :studyflow.school-administration.student.events/Created
+  [model {:keys [student-id full-name]}]
+  (m/set-student model student-id {:full-name full-name}))
+
+(defmethod handle-event :studyflow.school-administration.student.events/NameChanged
   [model {:keys [student-id full-name]}]
   (m/set-student model student-id {:full-name full-name}))
 
