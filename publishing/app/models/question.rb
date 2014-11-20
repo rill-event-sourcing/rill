@@ -85,7 +85,7 @@ class Question < ActiveRecord::Base
     elsif input.is_a?(MultipleChoiceInput)
       value = render_latex_for_publishing(input.choices.where(correct: true).first.value, "woa of question '#{name}', in '#{parent}'")
     end
-    "Het juiste antwoord is: #{ value }"
+    %(<div class="m-answer">Het juiste antwoord is: #{ value }</div>).html_safe
   end
 
   def worked_out_answer_with_default
