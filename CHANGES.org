@@ -1,5 +1,6 @@
 * Release Changelog
 ** NEXT RELEASE
+*** Fix: Fixed a bug in which teaching and learning would not detect a name change in the students and teachers
 *** New: Installed a library that makes the UX for touch devices much more reactive
 *** New: Choices for MC questions are not random anymore (their order is predetermined by editors)
 *** New: Manuals for teachers (as provided by sales)
