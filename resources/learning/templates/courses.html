@@ -35,7 +35,14 @@
       emailBox: true,
       emailRequired: true,
       commentBox: true,
-      commentRequired: true
+      commentRequired: true,
+      beforeSend: function(obj) {
+      obj.addInfo = {
+        name: document.getElementById("student-full-name").value,
+        course_id: document.getElementById("course-id").value,
+        user_id: document.getElementById("student-id").value
+      };
+      }
       };
       (function() {
       var s = document.createElement("script");
