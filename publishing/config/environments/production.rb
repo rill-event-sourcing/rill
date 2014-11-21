@@ -104,6 +104,8 @@ Rails.application.configure do
 
   Raygun.setup do |config|
     config.api_key = "8dQGJpG+l5HZXYKMvjrS9A=="
+    config.filter_parameters = Rails.application.config.filter_parameters
+    config.enable_reporting = true
   end
 
 end
