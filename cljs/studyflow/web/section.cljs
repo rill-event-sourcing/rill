@@ -479,7 +479,7 @@
                    :stuck-modal (stuck-modal cursor owner student-id course-id chapter-id section-id section-test-aggregate-version)
                    :completed-modal (completed-modal cursor owner student-id course-id chapter-id section-id section-test-aggregate-version)
                    nil)
-
+                 
                  (dom/article #js {:id "m-section"}
                               (tag-tree-to-om (:tag-tree question-data) inputs nil nil)
                               (when revealed-answer
@@ -492,12 +492,12 @@
                             ;; as all the click-once-buttons because
                             ;; we need the ref for set-focus
                             (dom/button (if modal
-                                          #js {:className "btn blue pull-right"
+                                          #js {:className "btn green pull-right"
                                                :disabled :disabled}
-                                          #js {:className "btn blue pull-right"
+                                          #js {:className "btn green pull-right"
                                                :ref "FOCUSED_BUTTON"
                                                :onClick submit})
-                                        "Goed!")
+                                        "Goed! Ga verder")
                             (om/build (click-once-button "Nakijken"
                                                          submit
                                                          :enabled answering-allowed
