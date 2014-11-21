@@ -89,6 +89,25 @@
       &:active
         border-bottom: 3px solid #259ed0
 
+
+  &.green
+    background-color: #6FDA7C
+    color: white
+    +text-shadow(0px 1px 1.5px rgba(0, 0, 0, 0.5))
+    border: 1px solid #3DA049
+    border-bottom: 3px solid #3DA049
+    &:hover, &:focus
+      background-color: #71E57F
+    &:active
+      background-color: #6FDA7C
+      border-bottom: 1px solid #3DA049
+    &[disabled]
+      &:hover, &:focus
+        background-color: #6FDA7C
+        border-bottom: 3px solid #3DA049
+      &:active
+        border-bottom: 3px solid #3DA049
+
   &.red
     background-color: #D84A4A
     border-color: #D32323
