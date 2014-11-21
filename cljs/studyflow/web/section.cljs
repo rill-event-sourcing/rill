@@ -1,6 +1,7 @@
 (ns studyflow.web.section
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
+            [studyflow.web.calculator :as calculator]
             [studyflow.web.history :refer [path-url navigate-to-path]]
             [studyflow.web.helpers :refer [input-builders tool-box modal raw-html tag-tree-to-om focus-input-box section-explanation-url on-enter click-once-button] :as helpers]
             [studyflow.web.ipad :as ipad]
@@ -487,7 +488,7 @@
                                 (dom/div #js {:className "wrap-dangerous-html"}
                                          (dom/div #js {:dangerouslySetInnerHTML #js {:__html revealed-answer}} nil))))
                  (dom/div #js {:id "m-question_bar"}
-                          (tool-box (:tools question-data))
+                          (tool-box cursor (:tools question-data))
                           (if answer-correct
                             ;; this doesn't have the disabled handling
                             ;; as all the click-once-buttons because
@@ -542,14 +543,16 @@
     (render [_]
       (let [{:keys [chapter-id section-id]} (get-in cursor [:view :selected-path])
             student-id (get-in cursor [:static :student :id])]
-        (if-let [section-test (get-in cursor [:aggregates section-id])]
-          (let [questions (:questions section-test)
-                question (peek questions)
-                question-id (:question-id question)]
-            (if-let [question-data (question-by-id cursor section-id question-id)]
-              (om/build question-panel cursor)
-              (dom/article #js {:id "m-section"} "Vraag laden")))
-          (om/build section-test-loading cursor))))))
+        (dom/div nil
+                 (om/build calculator/draggable-calculator cursor)
+                 (if-let [section-test (get-in cursor [:aggregates section-id])]
+                   (let [questions (:questions section-test)
+                         question (peek questions)
+                         question-id (:question-id question)]
+                     (if-let [question-data (question-by-id cursor section-id question-id)]
+                       (om/build question-panel cursor)
+                       (dom/article #js {:id "m-section"} "Vraag laden")))
+                   (om/build section-test-loading cursor)))))))
 
 (defn path-panel [cursor owner]
   (reify

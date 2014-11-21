@@ -6,7 +6,8 @@
             [goog.string :as gstring]
             [clojure.string :as string]
             [studyflow.web.calculator :as calculator]
-            [studyflow.web.history :refer [path-url]]))
+            [studyflow.web.history :refer [path-url]]
+            [studyflow.web.ipad :as ipad]))
 
 (defn raw-html
   [raw]
@@ -158,22 +159,23 @@
 
 (defn tool-box
   [cursor tools]
-  (when (not-empty tools)
-    (dom/div #js {:id "toolbox"}
-             (when (contains? tools "pen_and_paper")
-               (dom/div #js {:className "tool pen_and_paper"}
-                        (dom/div #js {:className "m-tooltip"} "Pen & Papier")))
+  (let [tools (set tools)]
+    (when (not-empty tools)
+      (dom/div #js {:id "toolbox"}
+               (when (contains? tools "pen_and_paper")
+                 (dom/div #js {:className "tool pen_and_paper"}
+                          (dom/div #js {:className "m-tooltip"} "Pen & Papier")))
 
-             (when (contains? tools "calculator")
-               (let [calculator-shown? (get-in cursor [:view :show-calculator])]
-                 (dom/div #js {:className (str "tool calculator" (when calculator-shown?" active"))
-                               :onClick (fn [event]
-                                          (om/update!
-                                           cursor
-                                           [:view :show-calculator]
-                                           (not calculator-shown?))
-                                          (when-not calculator-shown? (calculator/focus-calculator)))}
-                          (dom/div #js {:className "m-tooltip"} "Rekenmachine")))))))
+               (when (contains? tools "calculator")
+                 (let [calculator-shown? (get-in cursor [:view :show-calculator])]
+                   (dom/div #js {:className (str "tool calculator" (when calculator-shown?" active"))
+                                 :onClick (fn [event]
+                                            (om/update!
+                                             cursor
+                                             [:view :show-calculator]
+                                             (not calculator-shown?))
+                                            (when-not calculator-shown? (calculator/focus-calculator)))}
+                            (dom/div #js {:className "m-tooltip"} "Rekenmachine"))))))))
 
 (defn input-builders
   [cursor question-id question-data current-answers enabled cursor-path]
@@ -244,7 +246,7 @@
         (dom/button #js {:className (str "btn blue pull-right" (when className (str " " className)))
                          :onClick
                          (fn [_]
-                           (ipad-reset-header)
+                           (ipad/ipad-reset-header)
                            (onclick)
                            (om/set-state-nr! owner :enabled false))
                          :disabled (not (om/get-state owner :enabled))}
