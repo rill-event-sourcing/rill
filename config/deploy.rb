@@ -10,4 +10,4 @@ set :rvm_roles, "publish"
 set :log_level, :info
 set :linked_dirs, ['log', 'tmp']
 
-after 'deploy:finished', 'appsignal:deploy'
+after 'deploy:finished', 'slack_notify:deploy'
