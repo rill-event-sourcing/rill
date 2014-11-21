@@ -12,6 +12,11 @@ class HomeController < ApplicationController
     end
   end
 
+  def error_check
+    # Raygun.track_exception()
+    throw "error check form home_controller"
+  end
+
   def index
   end
 
