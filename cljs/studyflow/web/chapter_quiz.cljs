@@ -3,7 +3,8 @@
             [goog.events :as gevents]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [studyflow.web.helpers :refer [reset-calculator draggable-calculator input-builders tool-box modal raw-html tag-tree-to-om focus-input-box] :as helpers]
+            [studyflow.web.calculator :as calculator]
+            [studyflow.web.helpers :refer [input-builders tool-box modal raw-html tag-tree-to-om focus-input-box] :as helpers]
             [studyflow.web.ipad :as ipad]
             [studyflow.web.recommended-action :refer [recommended-action]]
             [studyflow.web.history :refer [path-url navigate-to-path]])
@@ -208,7 +209,7 @@
                             (= 3 wrong-count)))]
         (om/set-state-nr! owner :submit
                           (fn []
-                            (reset-calculator)
+                            (calculator/reset-calculator)
                             (async/put!
                              (om/get-shared owner :command-channel)
                              ;; TODO
@@ -256,7 +257,7 @@
             answer-correct (when (contains? question :correct)
                              (:correct question))]
         (dom/div nil
-                 (om/build draggable-calculator cursor)
+                 (om/build calculator/draggable-calculator cursor)
                  (condp = answer-correct
                    nil
                    (if question-data

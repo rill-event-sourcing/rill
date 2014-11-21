@@ -5,6 +5,7 @@
             [goog.events :as gevents]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
+            [studyflow.web.calculator :as calculator]
             [studyflow.web.history :refer [navigate-to-path]]
             [goog.Timer :as gtimer]
             [studyflow.web.service :as service]
@@ -58,7 +59,7 @@
         (when-let [event (<! notification-channel)]
           (case (:type event)
             "studyflow.learning.section-test.events/QuestionAssigned"
-            (helpers/reset-calculator)
+            (calculator/reset-calculator)
             "studyflow.learning.section-test.events/QuestionAnsweredIncorrectly"
             (do (om/update! cursor
                             [:view :shake-class]

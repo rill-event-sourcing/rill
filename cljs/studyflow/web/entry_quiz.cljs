@@ -3,6 +3,7 @@
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [studyflow.web.aggregates :as aggregates]
+            [studyflow.web.calculator :as calculator]
             [studyflow.web.core :as core]
             [studyflow.web.helpers :refer [input-builders tool-box raw-html modal tag-tree-to-om focus-input-box click-once-button]]
             [studyflow.web.history :refer [path-url navigate-to-path]]
@@ -83,7 +84,7 @@
             correct-answers-number (:correct-answers-number entry-quiz)
             student-name (get-in cursor [:static :student :full-name])]
         (dom/div #js {:id "quiz-page"}
-                 (om/build draggable-calculator cursor)
+                 (om/build calculator/draggable-calculator cursor)
                  (dom/header #js {:id "m-top_header"}
                              (dom/a #js {:id "home"
                                          :href (path-url {:main :dashboard})})
@@ -117,7 +118,7 @@
                                                              (keys inputs))
                                                      submit (fn []
                                                               (when answering-allowed
-                                                                (reset-calculator)
+                                                                (calculator/reset-calculator)
                                                                 (async/put!
                                                                  (om/get-shared owner :command-channel)
                                                                  ["entry-quiz-commands/submit-answer"

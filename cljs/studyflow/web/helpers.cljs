@@ -5,6 +5,7 @@
             [goog.events :as gevents]
             [goog.string :as gstring]
             [clojure.string :as string]
+            [studyflow.web.calculator :as calculator]
             [studyflow.web.history :refer [path-url]]))
 
 (defn raw-html
@@ -171,7 +172,7 @@
                                            cursor
                                            [:view :show-calculator]
                                            (not calculator-shown?))
-                                          (when-not calculator-shown? (focus-calculator)))}
+                                          (when-not calculator-shown? (calculator/focus-calculator)))}
                           (dom/div #js {:className "m-tooltip"} "Rekenmachine")))))))
 
 (defn input-builders
