@@ -62,17 +62,6 @@ RSpec.describe PublishingController, :type => :controller do
       worker.work_off
       expect(DelayedJob.count).to eq 0
     end
-
-    it "should warn when the course material cannot be published" do
-      DelayedJob.delete_all
-      post :publish
-      worker = Delayed::Worker.new
-      worker.work_off
-      expect(DelayedJob.count).to eq 1
-      delayed_job = DelayedJob.first
-      expect(delayed_job.attempts).to eq 1
-      expect(delayed_job.last_error).to match(/Connection refused/)
-    end
   end
 
 end
