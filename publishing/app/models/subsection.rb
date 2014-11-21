@@ -5,6 +5,7 @@ class Subsection < ActiveRecord::Base
 
   validates :section, presence: true
 
+  #acts_as_list scope: :section
   default_scope { order(:position) }
 
   scope :for_short_uuid, ->(id) { where(["SUBSTRING(CAST(id AS VARCHAR), 1, 8) = ?", id]) }

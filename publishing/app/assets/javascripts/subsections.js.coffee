@@ -66,13 +66,56 @@ autoSave = ->
   setTimeout(autoSave, 10000)
 
 refreshPreview = ->
-  $('#preview').attr("src", $('#preview').attr("src"))
-  height = document.getElementById('preview').contentWindow.document.body.scrollHeight
-  $('#preview').css('height', height)
+  $('.preview_content').each (content) ->
+          iframe = $("#" + this.id)
+          iframe.attr("src", iframe.attr("src"))
+          height = this.contentWindow.document.body.scrollHeight + 10
+          iframe.css("height", height)
+
+setHeightPreview = ->
+  $('.preview_content').each (content) ->
+          iframe = $("#" + this.id)
+          height = this.contentWindow.document.body.scrollHeight + 10
+          iframe.css("height", height)
 
 updateViewPositions = ->
   $(".subsection-position").each (position) ->
     this.value = position
+
+bindMoveUpButtons = ->
+  $('.move-up-subsection').unbind()
+  $('.move-up-subsection').bind 'click', (event) ->
+    sortItem = $(event.currentTarget).data('item')
+    url = $(event.currentTarget).data('url')
+    $.ajax url,
+      type: 'POST'
+      dataType: 'json'
+      error: (jqXHR, textStatus, errorThrown) ->
+        console.log "AJAX Error: #{ textStatus }"
+      success: (data, textStatus, jqXHR) ->
+        thisItem = $('#' + sortItem)
+        prevItem = thisItem.prev()
+        if prevItem.length != 0
+          thisItem.insertBefore(prevItem)
+          refreshPreview()
+
+bindMoveDownButtons = ->
+  $('.move-down-subsection').unbind()
+  $('.move-down-subsection').bind 'click', (event) ->
+    sortItem = $(event.currentTarget).data('item')
+    url = $(event.currentTarget).data('url')
+    $.ajax url,
+      type: 'POST'
+      dataType: 'json'
+      error: (jqXHR, textStatus, errorThrown) ->
+        console.log "AJAX Error: #{ textStatus }"
+      success: (data, textStatus, jqXHR) ->
+        thisItem = $('#' + sortItem)
+        nextItem = thisItem.next()
+        if nextItem.length != 0
+          thisItem.insertAfter(nextItem)
+          refreshPreview()
+
 
 ###########################################
 # Input
@@ -141,6 +184,76 @@ bindDeleteAnswerButtons = ->
           $('#' + deleteItem).remove()
           refreshPreview()
 
+############################
+# Reflections
+
+bindAddReflectionButton = ->
+  $('#add-reflection').unbind()
+  $('#add-reflection').bind 'click', (event) ->
+    url = $(event.currentTarget).data('url')
+    $.ajax url,
+        type: 'POST'
+        dataType: 'html'
+        error: (jqXHR, textStatus, errorThrown) ->
+          console.log "AJAX Error: #{ textStatus }"
+        success: (data, textStatus, jqXHR) ->
+          $('#reflections-list').append(data)
+          bindDeleteReflectionButtons()
+          bindCopyToClipboardButton()
+          refreshPreview()
+
+bindDeleteReflectionButtons = ->
+  $('.delete-reflection').unbind()
+  $('.delete-reflection').bind 'click', (event) ->
+    if confirm('Are you sure you want to delete this?')
+      deleteItem = $(event.currentTarget).data('item')
+      url = $(event.currentTarget).data('url')
+      $.ajax url,
+        type: 'DELETE'
+        dataType: 'json'
+        error: (jqXHR, textStatus, errorThrown) ->
+          console.log "AJAX Error: #{ textStatus }"
+        success: (data, textStatus, jqXHR) ->
+          $('#' + deleteItem).remove()
+          refreshPreview()
+
+
+############################
+# Extra Examples
+
+bindAddExtraExampleButton = ->
+  $('#add-extra-example').unbind()
+  $('#add-extra-example').bind 'click', (event) ->
+    url = $(event.currentTarget).data('url')
+    $.ajax url,
+        type: 'POST'
+        dataType: 'html'
+        error: (jqXHR, textStatus, errorThrown) ->
+          console.log "AJAX Error: #{ textStatus }"
+        success: (data, textStatus, jqXHR) ->
+          $('#extra-examples-list').append(data)
+          bindDeleteExtraExampleButtons()
+          bindCopyToClipboardButton()
+          refreshPreview()
+
+bindDeleteExtraExampleButtons = ->
+  $('.delete-extra-example').unbind()
+  $('.delete-extra-example').bind 'click', (event) ->
+    if confirm('Are you sure you want to delete this?')
+      deleteItem = $(event.currentTarget).data('item')
+      url = $(event.currentTarget).data('url')
+      $.ajax url,
+        type: 'DELETE'
+        dataType: 'json'
+        error: (jqXHR, textStatus, errorThrown) ->
+          console.log "AJAX Error: #{ textStatus }"
+        success: (data, textStatus, jqXHR) ->
+          $('#' + deleteItem).remove()
+          refreshPreview()
+
+
+############################
+
 bindCopyToClipboardButton = ->
   new ZeroClipboard($(".copy-button"))
 
@@ -153,11 +266,24 @@ $ ->
 
   bindAddInputButton()
   bindDeleteInputButtons()
+
   bindAddAnswerButton()
   bindDeleteAnswerButtons()
+
+  bindMoveUpButtons()
+  bindMoveDownButtons()
+
+  bindAddReflectionButton()
+  bindDeleteReflectionButtons()
+
+  bindAddExtraExampleButton()
+  bindDeleteExtraExampleButtons()
+
   bindCopyToClipboardButton()
 
   bindSaveButton()
   initializeAutoSave()
+
+  setHeightPreview()
 
 ################################################################################

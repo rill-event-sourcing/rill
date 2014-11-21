@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141113074652) do
+ActiveRecord::Schema.define(version: 20141119102121) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -95,6 +95,16 @@ ActiveRecord::Schema.define(version: 20141113074652) do
     t.datetime "updated_at"
   end
 
+  create_table "extra_examples", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
+    t.uuid     "section_id"
+    t.integer  "position",     limit: 2
+    t.string   "title"
+    t.boolean  "default_open",           default: false
+    t.text     "content"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "inputs", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
     t.uuid     "inputable_id"
     t.string   "type"
@@ -123,18 +133,29 @@ ActiveRecord::Schema.define(version: 20141113074652) do
     t.integer  "position",          limit: 2
   end
 
+  create_table "reflections", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
+    t.uuid     "section_id"
+    t.integer  "position",   limit: 2
+    t.text     "content"
+    t.text     "answer"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "sections", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
     t.uuid     "chapter_id"
     t.string   "title"
     t.text     "description"
     t.datetime "deleted_at"
-    t.boolean  "active",                       default: false
+    t.boolean  "active",                          default: false
     t.integer  "position"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "max_inputs",         limit: 2
+    t.integer  "max_inputs",            limit: 2
     t.string   "meijerink_criteria"
     t.string   "domains"
+    t.integer  "reflection_counter",    limit: 2
+    t.integer  "extra_example_counter", limit: 2
   end
 
   create_table "subsections", id: :uuid, default: "uuid_generate_v4()", force: true do |t|

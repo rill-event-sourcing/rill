@@ -11,7 +11,8 @@ RSpec.describe PublishingController, :type => :controller do
     @answer1 = create(:answer, line_input: @input1, value: 'correct')
     controller.send :set_my_course
 
-    @url = "#{StudyflowPublishing::Application.config.learning_server}/api/internal/course/#{ @course.id }"
+    @url = "#{ StudyflowPublishing::Application.config.learning_server }/api/internal/course/#{ @course.id }"
+    @latex_server = "#{ StudyflowPublishing::Application.config.latex_server }/"
     @headers = { 'Content-Type' => 'application/json' }
     @body = JSON.pretty_generate(@course.to_publishing_format)
   end
@@ -43,7 +44,7 @@ RSpec.describe PublishingController, :type => :controller do
       mocked_response = HTTParty::Response.new({},response_object,{})
       post :check
       expect(assigns(:errors)).to include "Error with the connection to the Latex rendering engine"
-      expect(HTTParty).to receive(:post).with("http://localhost:16000/", body: "2+2=4").and_return(mocked_response)
+      expect(HTTParty).to receive(:post).with(@latex_server, body: "2+2=4").and_return(mocked_response)
       post :check
       expect(assigns(:errors)).not_to include "Error with the connection to the Latex rendering engine"
     end

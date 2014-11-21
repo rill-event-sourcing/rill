@@ -1,6 +1,9 @@
 %div.panel.panel-default
   %div.panel-heading
     %button.btn.btn-default{type: :button, data: {toggle: :collapse, target: "#inputs-collapse"}} Toggle inputs
+    %button.btn.btn-default{type: :button, data: {toggle: :collapse, target: "#reflections-collapse"}} Toggle reflections
+    %button.btn.btn-default{type: :button, data: {toggle: :collapse, target: "#extra-examples-collapse"}} Toggle extra examples
+
 %div.collapse.panel.panel-default#inputs-collapse
   %div.panel-heading
     %div.col-md-4
@@ -11,3 +14,21 @@
   %div.panel-body#inputs-list
     - @section.inputs.each do |input|
       = render partial: 'inputs/edit', locals: {input: input}
+
+%div.collapse.panel.panel-default#reflections-collapse
+  %div.panel-heading
+    Reflection
+    %span.btn.btn-default#add-reflection{data: { url: reflections_path(section_id: @section.to_param)}} Add
+
+  %div.panel-body#reflections-list
+    - @section.reflections.each do |reflection|
+      = render partial: 'reflections/edit', locals: {reflection: reflection}
+
+%div.collapse.panel.panel-default#extra-examples-collapse
+  %div.panel-heading
+    Extra example
+    %span.btn.btn-default#add-extra-example{data: { url: extra_examples_path(section_id: @section.to_param)}} Add
+
+  %div.panel-body#extra-examples-list
+    - @section.extra_examples.each do |extra_example|
+      = render partial: 'extra_examples/edit', locals: {extra_example: extra_example}

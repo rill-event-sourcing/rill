@@ -127,7 +127,7 @@
                                                            {:onSubmit (fn []
                                                                         (submit)
                                                                         false)}
-                                                           (tag-tree-to-om (:tag-tree question-data) inputs)
+                                                           (tag-tree-to-om (:tag-tree question-data) inputs nil nil)
                                                            (dom/div #js {:id "m-question_bar"}
                                                                     (tool-box (:tools question-data))
                                                                     (om/build (click-once-button (str "Klaar"

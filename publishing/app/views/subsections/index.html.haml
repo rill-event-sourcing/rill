@@ -1,5 +1,4 @@
 %form#section-form{ action: save_chapter_section_subsections_path(@chapter, @section) }
-
   %div.row
     %div.col-md-9
       %h2= @section.title
@@ -19,5 +18,35 @@
         = render partial: 'edit'
 
     %div.col-md-6
-      - url = preview_chapter_section_subsections_path(@chapter, @section)
-      %iframe.fill.col-md-12#preview{ data: {url: url}, src: url, style: "min-height: 800px;" }
+      %div{style: "max-height: 700px; overflow: auto"}
+        - @section.subsections.each do |subsection|
+          = render partial: "preview", locals: {subsection: subsection}
+
+      - if @section.parse_errors(:text).any?
+        %div.panel.panel-danger
+          %div.panel-heading Parse errors
+          %table.table.table-bordered
+            %tr
+              %th #
+              %th item
+              %th.danger current
+              %th.success suggestion
+            - index = 1
+            - @section.parse_errors(:text).each do |item_id, p_errors|
+              - p_errors.each do |p_error|
+                %tr
+                  %td= index
+                  %td= item_id
+                  %td= p_error.first
+                  %td= p_error.last
+                  - index += 1
+
+      - if @section.image_errors(:text).any?
+        %div.panel.panel-danger
+          %div.panel-heading Image errors
+          %div.panel-body
+            - @section.image_errors(:text).each do |subs, i_errors|
+              %p.text-danger= subs
+              %ul
+                - i_errors.each do |i_error|
+                  %li.text-danger= i_error

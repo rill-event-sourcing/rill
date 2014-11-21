@@ -1,0 +1,14 @@
+%div.panel.panel-default{id: "extra_example-#{ extra_example.id }"}
+  %div.panel-heading.clearfix
+    %div.row
+      %div.col-md-4
+        Extra_example
+      %div.col-md-4
+        %div.input-group
+          %input.form-control{id: "extra_example-title-#{extra_example.id}", value: extra_example.name, disabled: true, style:"font-family: monospace;"}
+          %span.input-group-addon.copy-button{"data-clipboard-target" => "extra_example-title-#{extra_example.id}"}
+            %span.glyphicon.glyphicon-share
+      %div.col-md-4
+        %span.pull-right.btn.btn-default.glyphicon.glyphicon-minus.delete-extra-example{data: {item: "extra_example-#{ extra_example.id }", url: extra_example_path(extra_example, section_id: @section.to_param) } }
+  %div.panel-body
+    = render partial: 'extra_examples/show', locals: {extra_example: extra_example}

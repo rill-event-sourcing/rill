@@ -76,7 +76,7 @@
       (aset jo (name :height) height))
     jo))
 
-(defn tag-tree-to-om [tag-tree inputs]
+(defn tag-tree-to-om [tag-tree inputs reflections extra-examples]
   (let [tag-tree (om/value tag-tree)
         descent (fn descent [tag-tree]
                   (cond
@@ -85,64 +85,42 @@
                         (contains? tag-tree :attrs)
                         (contains? tag-tree :content))
                    (let [{:keys [tag attrs content] :as node} tag-tree]
-                     (if (= tag "img")
-                       (dom/img (if-let [style (:style attrs)]
-                                  #js {:src (:src attrs)
-                                       :style (apply js-obj (mapcat (fn [[k v]] [(name k) v]) style))}
-                                  (if (and (:width attrs)
-                                           (:height attrs))
-                                    #js {:src (:src attrs)
-                                         :width (:width attrs)
-                                         :height (:height attrs)}
-                                    (if-let [width (:width attrs)]
-                                      #js {:src (:src attrs)
-                                           :width width}
-                                      (if-let [height (:height attrs)]
+                     (case tag
+                       "img" (dom/img (if-let [style (:style attrs)]
                                         #js {:src (:src attrs)
-                                             :height height}
-                                        #js {:src (:src attrs)})))))
-                       (if (= tag "div")
-                         (apply dom/div #js {:className (:class attrs)}
-                                (map descent content))
-                         (if (= tag "span")
-                           (apply dom/span #js {:className (:class attrs)}
-                                  (map descent content))
-                           (if (= tag "ul")
-                             (apply dom/ul #js {:className (:class attrs)}
+                                             :style (apply js-obj (mapcat (fn [[k v]] [(name k) v]) style))}
+                                        (clj->js (into {} (filter (comp not nil? val) (select-keys attrs [:width :height :src]))))))
+                       "div" (apply dom/div #js {:className (:class attrs)}
                                     (map descent content))
-                             (if (= tag "li")
-                               (apply dom/li #js {:className (:class attrs)}
+                       "span" (apply dom/span #js {:className (:class attrs)}
+                                     (map descent content))
+                       "ul" (apply dom/ul #js {:className (:class attrs)}
+                                   (map descent content))
+                       "li" (apply dom/li #js {:className (:class attrs)}
+                                   (map descent content))
+                       "u" (apply dom/u nil
+                                  (map descent content))
+                       "br" (dom/br nil)
+                       "table" (apply dom/table #js {:className (:class attrs)}
                                       (map descent content))
-                               (if (= tag "u")
-                                 (apply dom/u nil
-                                        (map descent content))
-                                 (if (= tag "br")
-                                   (dom/br nil)
-                                   (if (= tag "table")
-                                     (apply dom/table #js {:className (:class attrs)}
-                                            (map descent content))
-                                     (if (= tag "tr")
-                                       (apply dom/tr #js {:className (:class attrs)}
-                                              (map descent content))
-                                       (if (= tag "td")
-                                         (apply dom/td #js {:className (:class attrs)}
-                                                (map descent content))
-                                         (if-let [build-fn (get html->om tag)]
-                                           (apply build-fn
-                                                  ;;(attrs->js-obj
-                                                  ;;attrs)
-                                                  #js {:className (get attrs :class "")}
-                                                  (map descent content))
-                                           (cond
-                                            (= tag "input")
-                                            (get inputs (:name attrs))
-                                            (= tag "svg")
-                                            (raw-html content)
-                                            (= tag "iframe")
-                                            (raw-html content)
-                                            :else
-                                            (apply dom/span #js {:className "default-html-to-om"}
-                                                   (map descent content)))))))))))))))
+                       "tr" (apply dom/tr #js {:className (:class attrs)}
+                                   (map descent content))
+                       "td" (apply dom/td #js {:className (:class attrs)}
+                                   (map descent content))
+                       (if-let [build-fn (get html->om tag)]
+                         (apply build-fn
+                                ;;(attrs->js-obj
+                                ;;attrs)
+                                #js {:className (get attrs :class "")}
+                                (map descent content))
+                         (case tag
+                           "input" (get inputs (:name attrs))
+                           "reflection" (get reflections (:name attrs))
+                           "extra-example" (get extra-examples (:name attrs))
+                           "svg" (raw-html content)
+                           "iframe" (raw-html content)
+                           (apply dom/span #js {:className "default-html-to-om"}
+                                  (map descent content))))))
                    (string? tag-tree)
                    tag-tree))]
     (descent tag-tree)))

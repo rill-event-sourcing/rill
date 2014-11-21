@@ -1,5 +1,5 @@
 class SubsectionsController < ApplicationController
-  include InputActions
+  include InputActions, ReflectionActions, ExtraExampleActions
 
   before_action :set_param_objects
   before_action :set_redirect_cookie, only: [:index]
@@ -9,15 +9,19 @@ class SubsectionsController < ApplicationController
   end
 
   def preview
+    @subsection ||= Subsection.new
     render layout: 'preview'
   end
 
+  def preview_content
+    @subsection ||= Subsection.new
+    render layout: 'preview_html'
+  end
+
   def create
-    @subsection = @section.subsections.build(
-                                             title: '',
+    @subsection = @section.subsections.build(title: '',
                                              text: '',
-                                             position: params[:position]
-                                             )
+                                             position: params[:position])
     if @subsection.save
       @section.subsections.where(["id <> ? AND position >= ?", @subsection.id, @subsection.position]).update_all("position=position+1")
       @index = @subsection.id
@@ -30,6 +34,8 @@ class SubsectionsController < ApplicationController
   def save
     set_line_inputs(@section, params[:line_inputs]) if params[:line_inputs]
     set_multiple_choice_inputs(@section, params[:multiple_choice_inputs]) if params[:multiple_choice_inputs]
+    set_reflections(@section, params[:reflections]) if params[:reflections]
+    set_extra_examples(@section, params[:extra_examples]) if params[:extra_examples]
 
     respond_to do |format|
       subsections(params[:subsections]) if params[:subsections]
@@ -40,6 +46,16 @@ class SubsectionsController < ApplicationController
       end
     end
   end
+
+  # def moveup
+  #   @subsection.move_higher
+  #   render json: { status: :ok }
+  # end
+
+  # def movedown
+  #   @subsection.move_lower
+  #   render json: { status: :ok }
+  # end
 
   def destroy
     @subsection.destroy if @subsection

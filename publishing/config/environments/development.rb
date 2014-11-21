@@ -52,6 +52,7 @@ Rails.application.configure do
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
+  config.latex_server = "http://localhost:16000"
   config.auth_server = "http://localhost:4000"
   config.redis_server = "localhost"
   # config.learning_server = "http://sfstagelearning.studyflow.nl:3001"

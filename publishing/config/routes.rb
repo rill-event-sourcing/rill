@@ -62,8 +62,12 @@ Rails.application.routes.draw do
         post 'toggle_activation'
       end
       resources :subsections do
+        member do
+          get 'preview_content'
+          #post 'moveup'
+          #post 'movedown'
+        end
         collection do
-          get 'preview'
           post 'save'
         end
       end
@@ -82,6 +86,9 @@ Rails.application.routes.draw do
       end
     end
   end
+
+  resources :reflections
+  resources :extra_examples
 
   resources :inputs do
     resources :answers

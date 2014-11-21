@@ -334,6 +334,16 @@
           ],
           "subsections": [
             {
+              "id": "e23a0f3f-340b-44fd-a571-ad063e4967a1",
+              "title": "Reflecting",
+              "text": "reflections _REFLECTION_1_ <br> _REFLECTION_2_"
+            },
+            {
+              "id": "523a0f3f-340b-44fd-a571-ad063e4967c1",
+              "title": "Extra examples",
+              "text": "extra examples _EXTRA_EXAMPLE_1_ <br> _EXTRA_EXAMPLE_2_"
+            },
+            {
               "id": "2aa9de44-e7c9-4b4a-aad7-cd1bb304d0e5",
               "title": "Counting to 10",
               "text": "1+1+1+... = 10"
@@ -455,6 +465,32 @@
                 "123"
               ]
             }
+          ],
+          "reflections": [
+            {
+              "name": "_REFLECTION_1_",
+              "content": "1+1=",
+              "answer": "2"
+            },
+            {
+              "name": "_REFLECTION_2_",
+              "content": "2+2=",
+              "answer": "4"
+            }
+          ],
+          "extra_examples": [
+            {
+              "name": "_EXTRA_EXAMPLE_1_",
+              "title": "extra example",
+              "default_open": true,
+              "content": "some extra exampling"
+            },
+            {
+              "name": "_EXTRA_EXAMPLE_2_",
+              "title": "extra example too",
+              "default_open": false,
+              "content": "a lot of extra exampling"
+            }
           ]
         },
         {
@@ -523,7 +559,9 @@
               "worked_out_answer": "2"
             }
           ],
-          "line_input_fields": []
+          "line_input_fields": [],
+          "reflections": [],
+          "extra_examples": []
         }
       ],
       "remedial": false

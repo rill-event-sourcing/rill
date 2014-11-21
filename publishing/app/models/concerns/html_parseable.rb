@@ -23,7 +23,7 @@ module HtmlParseable
 
   def parse_page(attr)
     html = send(attr)
-    fix_parsing_page.inject(html){|val, repl| val = val.gsub(repl.first, repl.last) }
+    fix_parsing_page.inject(html){|val, repl| val = val.to_s.gsub(repl.first, repl.last)}
   end
 
   def validation_hash

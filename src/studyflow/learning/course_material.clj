@@ -29,6 +29,17 @@
    (s/optional-key :width) s/Int
    :correct-answers  #{s/Str}})
 
+(def Reflection
+  {:name FieldName
+   :content RichText
+   :answer RichText})
+
+(def ExtraExample
+  {:name FieldName
+   :title s/Str
+   :default-open s/Bool
+   :content RichText})
+
 (def Tool
   (s/enum "pen_and_paper" "calculator"))
 
@@ -52,6 +63,8 @@
    :meijerink-criteria #{s/Str}
    :domains #{s/Str}
    :line-input-fields #{LineInputField}
+   (s/optional-key :reflections) [Reflection]
+   (s/optional-key :extra-examples) [ExtraExample]
    :questions (s/both #{SectionQuestion}
                       (s/pred (fn [s] (seq s)) 'not-empty))})
 
@@ -101,7 +114,7 @@
                  :when (and k v)]
              [k v])))
 
-(defn text-with-inputs-to-tree [text input-names]
+(defn text-with-custom-tags-to-tree [text custom-tag-names]
   (let [;; make a mapping of _SVG_n_ to svg tags, svg tags have xhtml
         ;; things that enlive eats, will be put back in the final
         ;; structure as a leaf
@@ -121,15 +134,17 @@
                        (assoc replacements match-name match-text))))))
         ;; turn _INPUT_1_ & _SVG_1_ into a html tag
         text (reduce
-              (fn [text input-name]
+              (fn [text tag-name]
                 (string/replace text
-                                (re-pattern input-name)
+                                (re-pattern tag-name)
                                 (fn [match]
-                                  (if (.startsWith match "_INPUT_")
-                                    (str "<input name=\"" input-name "\"/>")
-                                    (str "<svg name=\"" input-name "\"/>")))))
+                                  (condp #(.startsWith %2 %1) match
+                                    "_INPUT_" (str "<input name=\"" tag-name "\"/>")
+                                    "_REFLECTION_" (str "<reflection name=\"" tag-name "\"/>")
+                                    "_EXTRA_EXAMPLE_" (str "<extra-example name=\"" tag-name "\"/>")
+                                    (str "<svg name=\"" tag-name "\"/>")))))
               text
-              (into input-names
+              (into custom-tag-names
                     (keys replacements)))
         ;; html-snippet doesn't add html/body, need our own root
         tags {:tag :div
@@ -148,6 +163,7 @@
                    (and (contains? node :tag)
                         (= (:tag node) :svg))
                    (assoc node :content (get replacements (:name (:attrs node))))
+
                    (and (contains? node :tag)
                         (= (:tag node) :iframe))
                    (assoc node
@@ -158,19 +174,23 @@
                                                          (str (name k) "=\"" v "\""))))
                                    "></iframe>")
                      :attrs {})
+
                    (and (contains? node :tag)
                         (= (:tag node) :p))
                    (-> node
                        (assoc :tag :div)
                        (update-in [:attrs :class] str " div-p"))
+
                    (and (contains? node :tag)
                         (contains? node :attrs)
                         (contains? (:attrs node) :style))
                    (update-in node [:attrs :style] split-style-string)
+
                    :else node)
                   node))
               tags)]
     tags))
+
 
 (defn transform-explanation-to-tree [material]
   (update-in material [:chapters]
@@ -179,7 +199,9 @@
                        (update-in chapter [:sections]
                                   (fn [sections]
                                     (mapv (fn [section]
-                                            (let [line-input-field-names (:line-input-fields section)]
+                                            (let [line-input-fields (:line-input-fields section)
+                                                  reflections (:reflections section)
+                                                  extra-examples (:extra-examples section)]
                                               (update-in section [:subsections]
                                                          (fn [subsections]
                                                            (mapv
@@ -187,9 +209,12 @@
                                                               (assoc subsection
                                                                 :tag-tree
                                                                 (try
-                                                                  (text-with-inputs-to-tree
+                                                                  (text-with-custom-tags-to-tree
                                                                    (:text subsection)
-                                                                   (map :name line-input-field-names))
+                                                                   (-> #{}
+                                                                       (into (map :name line-input-fields))
+                                                                       (into (map :name reflections))
+                                                                       (into (map :name extra-examples))))
                                                                   (catch Exception e
                                                                     (throw (ex-info (str "Material tag-tree failure" (:title subsection))
                                                                                     {:material (:name material)
@@ -217,7 +242,7 @@
                       (fn [qs]
                         (mapv (fn [question]
                                 (assoc question :tag-tree
-                                       (text-with-inputs-to-tree
+                                       (text-with-custom-tags-to-tree
                                         (:text question)
                                         (-> #{}
                                             (into (map :name (:line-input-fields question)))

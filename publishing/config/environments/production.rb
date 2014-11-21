@@ -97,6 +97,7 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
+  config.latex_server = "http://localhost:16000"
   config.auth_server = "https://login.studyflow.nl"
   config.redis_server = "login.studyflow.nl"
   config.learning_server = "http://10.129.223.11:3001"
