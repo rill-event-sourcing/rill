@@ -2,7 +2,7 @@
 require 'net/http'
 require 'net/https'
 require 'uri'
-require 'yajl'
+require 'json'
 
 module Slack
 
@@ -33,7 +33,7 @@ module Slack
       http.ssl_version = :TLSv1 # SSLv3 => FIX FOR Slack error on dropping SSL3
       http.verify_mode = OpenSSL::SSL::VERIFY_PEER
       req = Net::HTTP::Post.new(uri.request_uri)
-      req.body = Yajl::Encoder.encode(pkt)
+      req.body = JSON.generate(pkt)
       req["Content-Type"] = 'application/json'
       resp = http.request(req)
       case resp
