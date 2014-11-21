@@ -59,6 +59,7 @@ namespace :deploy do
   desc 'Deploy only to stack A without putting it online'
   task :deploy_a do
     Rake::Task["deploy:stack_a"].execute
+    Rake::Task["deploy:stop_balancer"].execute
     Rake::Task["deploy:check"].execute
     Rake::Task["deploy:update"].execute
     Rake::Task["deploy:update_stack"].execute
@@ -70,6 +71,7 @@ namespace :deploy do
   desc 'Deploy only to stack B without putting it online'
   task :deploy_b do
     Rake::Task["deploy:stack_b"].execute
+    Rake::Task["deploy:stop_balancer"].execute
     Rake::Task["deploy:check"].execute
     Rake::Task["deploy:update"].execute
     Rake::Task["deploy:update_stack"].execute
@@ -81,12 +83,14 @@ namespace :deploy do
   desc 'Hot deploy application from S3'
   task :hot do
     Rake::Task["deploy:stack_a"].execute
+    Rake::Task["deploy:stop_balancer"].execute
     Rake::Task["deploy:check"].execute
     Rake::Task["deploy:update"].execute
     Rake::Task["deploy:update_stack"].execute
     Rake::Task["deploy:start_balancer"].execute
 
     Rake::Task["deploy:stack_b"].execute
+    Rake::Task["deploy:stop_balancer"].execute
     Rake::Task["deploy:check"].execute
     Rake::Task["deploy:update"].execute
     Rake::Task["deploy:update_stack"].execute
@@ -100,11 +104,13 @@ namespace :deploy do
   desc 'Cold deploy application from S3'
   task :cold do
     Rake::Task["deploy:stack_a"].execute
+    Rake::Task["deploy:stop_balancer"].execute
     Rake::Task["deploy:check"].execute
     Rake::Task["deploy:update"].execute
     Rake::Task["deploy:update_stack"].execute
 
     Rake::Task["deploy:stack_b"].execute
+    Rake::Task["deploy:stop_balancer"].execute
     Rake::Task["deploy:check"].execute
     Rake::Task["deploy:update"].execute
     Rake::Task["deploy:update_stack"].execute
@@ -151,11 +157,22 @@ namespace :deploy do
     timestamp = Time.now.strftime("%Y%m%d%H%M%S")
     set(:release_timestamp, timestamp)
     set(:release_path, releases_path.join(timestamp))
+
+    # get a list of S3 files for this SHA
+    on (roles *fetch(:release_roles), filter: fetch(:stack)).first do |host|
+      output = capture "s3cmd ls  #{ fetch(:s3path) }/#{ fetch(:current_revision) }/"
+      set :s3_files, output.split("\n").map{|line| line.split(" ").last}.sort
+    end
+
     on roles *fetch(:release_roles), filter: fetch(:stack) do |host|
+      s3_file = fetch(:s3_files).find_all{|file| file =~ /#{host.roles.first}/ }.last
+      throw "COULD NOT FIND JAR file on S3 for #{host}!" unless s3_file
+      # warn " using S3 file: #{ s3_file } on #{ host } ".center(72, "-")
+
+      execute :rm,   '-Rf', release_path
       execute :mkdir, '-p', release_path
       within release_path do
-        execute "s3cmd get #{ fetch(:s3path) }/#{ fetch(:current_revision) }/*#{ host.roles.first }* #{ release_path }/"
-        execute "cd #{ release_path } && ls -r | sed 1d | while read i ; do echo \" -> deleting older release $i\" ; rm \"\$i\"; done"
+        execute "s3cmd get #{ s3_file } #{ release_path }/"
       end
       role = host.roles.first
       if role == :publish

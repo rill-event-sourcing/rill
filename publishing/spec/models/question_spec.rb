@@ -36,7 +36,7 @@ RSpec.describe Question, :type => :model do
       input1 = create(:line_input, inputable: question)
       answer1 = create(:answer, line_input: input1, value: 'correct')
       published_format = question.to_publishing_format_for_section
-      expect(published_format[:worked_out_answer]).to eq "Het juiste antwoord is: correct"
+      expect(published_format[:worked_out_answer]).to eq "<div class=\"m-answer\">Het juiste antwoord is: correct</div>"
     end
 
     it "with a single multiple choice input" do
@@ -45,7 +45,7 @@ RSpec.describe Question, :type => :model do
       choice1 = create(:choice, value: "correct", multiple_choice_input: input1, correct: true)
       choice1 = create(:choice, value: "not correct", multiple_choice_input: input1, correct: false)
       published_format = question.to_publishing_format_for_section
-      expect(published_format[:worked_out_answer]).to eq "Het juiste antwoord is: correct"
+      expect(published_format[:worked_out_answer]).to eq "<div class=\"m-answer\">Het juiste antwoord is: correct</div>"
     end
 
   end
