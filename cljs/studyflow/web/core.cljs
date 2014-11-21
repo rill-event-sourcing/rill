@@ -3,7 +3,7 @@
             [goog.dom.classes :as gclasses]
             [goog.string :as gstring]
             [goog.events :as gevents]
-            [om.coreom.core :as om :include-macros true]
+            [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [studyflow.web.history :refer [navigate-to-path]]
             [goog.Timer :as gtimer]
