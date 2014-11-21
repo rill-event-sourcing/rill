@@ -319,6 +319,12 @@
                              (assoc :section-tab :explanation))
         stumbling-gif "https://assets.studyflow.nl/learning/187.gif"
         submit (fn []
+                 (async/put! (om/get-shared owner :command-channel)
+                                              ["section-test-commands/dismiss-modal"
+                                               section-id
+                                               student-id
+                                               section-test-aggregate-version
+                                               course-id])
                  (navigate-to-path explanation-path))]
     (modal (dom/span nil
                      (dom/h1 #js {:className "stumbling_block"} "Oeps! deze is moeilijk")
