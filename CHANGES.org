@@ -1,5 +1,6 @@
 * Release Changelog
 ** NEXT RELEASE
+*** New: Appsignal integration removed
 *** Fix: Fixed a bug in which teaching and learning would not detect a name change in the students and teachers
 *** Fix: Improved styling for worked out answers and chapter quiz
 *** New: Installed a library that makes the UX for touch devices much more reactive

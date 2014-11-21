@@ -76,36 +76,6 @@ module Slack
         acc
       end
     end
-
-  end
-
-
-  class Notifier
-    class << self
-
-      def slack_text(build)
-        "<" +
-          Rails.application.routes.url_helpers.project_build_url(
-                                                                 build.project, build,
-                                                                 host: "gitlab-ci.studyflow.nl", protocol: 'https'
-                                                                 ) +
-          "|Build> of #{build.ref} <https://gitlab.studyflow.nl/studyflow/gibbon/commit/#{build.sha}|#{build.sha}> by #{build.git_author_name}"
-      end
-
-      def build_fail_slack_post(build)
-        post("#{slack_text(build)} failed :poop:")
-      end
-
-      def build_success_slack_post(build)
-        post("#{slack_text(build)} passed :banana:")
-      end
-
-      def post(str)
-        Slack::Post.configure( subdomain: 'studyflow', token: 'QhbTT3kNGySH28UpOkF8oc40', username: 'HAL 9001' )
-        Slack::Post.post str, "#notifications"
-      end
-
-    end
   end
 end
 
@@ -123,7 +93,7 @@ namespace :slack_notify do
       msg += "version #{ revision } deployed by #{ user }"
 
       Slack::Post.configure( subdomain: 'studyflow', token: 'QhbTT3kNGySH28UpOkF8oc40', username: 'Capistrano' )
-      Slack::Post.post msg, "#notifications"
+      Slack::Post.post msg, "#deploy"
     rescue Exception => ex
       p "Error on Slack notification: #{ ex }"
     end
