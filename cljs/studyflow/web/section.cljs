@@ -330,18 +330,7 @@
                      (dom/h1 #js {:className "stumbling_block"} "Oeps! deze is moeilijk")
                      (dom/img #js {:src stumbling-gif})
                      (dom/p nil "We raden je aan om de uitleg nog een keer te lezen." (dom/br nil) "Dan worden de vragen makkelijker!"))
-           "Uitleg lezen" submit
-           (dom/a #js {:href ""
-                       :className "btn big gray"
-                       :onClick (fn [e]
-                                  (async/put! (om/get-shared owner :command-channel)
-                                              ["section-test-commands/dismiss-modal"
-                                               section-id
-                                               student-id
-                                               section-test-aggregate-version
-                                               course-id])
-                                  false)}
-                  "Blijven oefenen"))))
+           "Uitleg lezen" submit)))
 
 (defn completed-modal
   [cursor owner student-id course-id chapter-id section-id section-test-aggregate-version]
