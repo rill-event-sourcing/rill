@@ -30,10 +30,6 @@ GEM
     acts_as_list (0.4.0)
       activerecord (>= 3.0)
     addressable (2.3.6)
-    appsignal (0.8.14)
-      activesupport (>= 3.0)
-      rack
-      thread_safe
     arel (5.0.1.20140414130214)
     better_errors (1.1.0)
       coderay (>= 1.0.0)
@@ -278,7 +274,6 @@ PLATFORMS
 
 DEPENDENCIES
   acts_as_list
-  appsignal
   better_errors
   binding_of_caller
   bootstrap-sass

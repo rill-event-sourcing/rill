@@ -24,9 +24,6 @@ gem 'nokogiri'
 gem 'sanitize'
 gem 'raygun4ruby'
 
-# to be removed:
-gem 'appsignal'
-
 group :development, :test do
   gem 'better_errors'
   gem 'binding_of_caller', :platforms=>[:mri_21]
