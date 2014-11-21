@@ -293,12 +293,6 @@
                               (merge (om/value (get-in cursor [:view :course-material :forward-section-links
                                                                {:chapter-id chapter-id :section-id section-id}]))))
         submit (fn []
-                 (async/put! (om/get-shared owner :command-channel)
-                             ["section-test-commands/next-question"
-                              section-id
-                              student-id
-                              section-test-aggregate-version
-                              course-id])
                  (navigate-to-path next-section-path))]
     (modal (dom/span nil
                      (dom/h1 nil "Yes! Je hebt 5 vragen achter elkaar goed!")
@@ -325,19 +319,23 @@
                              (assoc :section-tab :explanation))
         stumbling-gif "https://assets.studyflow.nl/learning/187.gif"
         submit (fn []
-                 ;; make sure modal is gone next time we load this test
-                 (async/put! (om/get-shared owner :command-channel)
-                             ["section-test-commands/dismiss-modal"
-                              section-id
-                              student-id
-                              section-test-aggregate-version
-                              course-id])
                  (navigate-to-path explanation-path))]
     (modal (dom/span nil
                      (dom/h1 #js {:className "stumbling_block"} "Oeps! deze is moeilijk")
                      (dom/img #js {:src stumbling-gif})
                      (dom/p nil "We raden je aan om de uitleg nog een keer te lezen." (dom/br nil) "Dan worden de vragen makkelijker!"))
-           "Uitleg lezen" submit)))
+           "Uitleg lezen" submit
+           (dom/a #js {:href ""
+                       :className "btn big gray"
+                       :onClick (fn [e]
+                                  (async/put! (om/get-shared owner :command-channel)
+                                              ["section-test-commands/dismiss-modal"
+                                               section-id
+                                               student-id
+                                               section-test-aggregate-version
+                                               course-id])
+                                  false)}
+                  "Blijven oefenen"))))
 
 (defn completed-modal
   [cursor owner student-id course-id chapter-id section-id section-test-aggregate-version]
@@ -347,19 +345,23 @@
                               (merge (om/value (get-in cursor [:view :course-material :forward-section-links
                                                                {:chapter-id chapter-id :section-id section-id}]))))
         submit (fn []
-                 ;; make sure modal is gone next time we load this test
-                 (async/put! (om/get-shared owner :command-channel)
-                             ["section-test-commands/next-question"
-                              section-id
-                              student-id
-                              section-test-aggregate-version
-                              course-id])
                  (navigate-to-path next-section-path))]
     (modal (dom/span nil
                      (dom/h1 nil "Hoppa! Weer goed!")
                      (dom/img #js {:src complete-again-section-gif})
                      (dom/p nil "Je hebt deze paragraaf nog een keer voltooid." (dom/br nil) "We denken dat je hem nu wel snapt :)."))
-           "Volgende paragraaf" submit)))
+           "Volgende paragraaf" submit
+           (dom/a #js {:href ""
+                       :className "btn big gray"
+                       :onClick (fn [e]
+                                  (async/put! (om/get-shared owner :command-channel)
+                                              ["section-test-commands/next-question"
+                                               section-id
+                                               student-id
+                                               section-test-aggregate-version
+                                               course-id])
+                                  false)}
+                  "Blijven oefenen"))))
 
 (defn question-panel [cursor owner]
   (reify
