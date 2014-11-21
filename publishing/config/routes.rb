@@ -100,6 +100,7 @@ Rails.application.routes.draw do
     end
   end
 
+  match '/error-check',  to: 'home#error_check', via: :get
   match '/health-check', to: 'home#health_check', via: :get
 
   root to: 'home#index'

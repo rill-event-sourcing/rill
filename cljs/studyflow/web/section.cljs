@@ -7,17 +7,6 @@
             [studyflow.web.aggregates :as aggregates]
             [studyflow.web.chapter-quiz :as chapter-quiz]))
 
-(defn show-sidebar [cursor owner]
-  (reify
-    om/IRender
-    (render [_]
-      (dom/button #js {:id "nav_toggle"
-                       :onClick (fn [event]
-                                  (om/update!
-                                   cursor
-                                   [:view :side-navigation :shown]
-                                   (not (get-in @cursor [:view :side-navigation :shown]))))}))))
-
 (defn navigation [cursor owner]
   (reify
     om/IWillMount
@@ -56,9 +45,7 @@
                                      (dom/a #js {:href (section-explanation-url cursor chapter section)
                                                  :className "section_link"}
                                             title))))
-                         [(chapter-quiz/chapter-quiz-navigation-button cursor (:chapter-quiz chapter) chapter-id)]))
-                 (dom/div #js {:id "meta_content"}
-                          (om/build show-sidebar cursor)))))))
+                         [(chapter-quiz/chapter-quiz-navigation-button cursor (:chapter-quiz chapter) chapter-id)])))))))
 
 (defn navigation-panel [cursor owner]
   (reify
@@ -358,11 +345,12 @@
                                       "https://assets.studyflow.nl/learning/helping-dogs.gif"
                                       "https://assets.studyflow.nl/learning/sewing.gif"
                                       "https://assets.studyflow.nl/learning/milk.gif"])
+        next-section-path (-> (get-in cursor [:view :selected-path])
+                              om/value
+                              (merge (om/value (get-in cursor [:view :course-material :forward-section-links
+                                                               {:chapter-id chapter-id :section-id section-id}]))))
         submit (fn []
-                 (navigate-to-path (let [cursor @cursor]
-                                     (-> (get-in cursor [:view :selected-path])
-                                         (merge (get-in cursor [:view :course-material :forward-section-links
-                                                                {:chapter-id chapter-id :section-id section-id}]))))))]
+                 (navigate-to-path next-section-path))]
     (modal (dom/span nil
                      (dom/h1 nil "Yes! Je hebt 5 vragen achter elkaar goed!")
                      (dom/img #js {:src finish-section-gif})
@@ -382,17 +370,18 @@
 
 (defn stuck-modal
   [cursor owner student-id course-id chapter-id section-id section-test-aggregate-version]
-  (let [explanation-path (-> (get-in cursor [:view :selected-path])
+  (let [explanation-path (-> cursor
+                             (get-in [:view :selected-path])
+                             om/value
                              (assoc :section-tab :explanation))
         stumbling-gif "https://assets.studyflow.nl/learning/187.gif"
         submit (fn []
-                 ;; make sure modal is gone next time we load this test
                  (async/put! (om/get-shared owner :command-channel)
-                             ["section-test-commands/dismiss-modal"
-                              section-id
-                              student-id
-                              section-test-aggregate-version
-                              course-id])
+                                              ["section-test-commands/dismiss-modal"
+                                               section-id
+                                               student-id
+                                               section-test-aggregate-version
+                                               course-id])
                  (navigate-to-path explanation-path))]
     (modal (dom/span nil
                      (dom/h1 #js {:className "stumbling_block"} "Oeps! deze is moeilijk")
@@ -403,23 +392,28 @@
 (defn completed-modal
   [cursor owner student-id course-id chapter-id section-id section-test-aggregate-version]
   (let [complete-again-section-gif "https://assets.studyflow.nl/learning/184.gif"
+        next-section-path (-> (get-in cursor [:view :selected-path])
+                              om/value
+                              (merge (om/value (get-in cursor [:view :course-material :forward-section-links
+                                                               {:chapter-id chapter-id :section-id section-id}]))))
         submit (fn []
-                 ;; make sure modal is gone next time we load this test
-                 (async/put! (om/get-shared owner :command-channel)
-                             ["section-test-commands/next-question"
-                              section-id
-                              student-id
-                              section-test-aggregate-version
-                              course-id])
-                 (navigate-to-path (let [cursor @cursor]
-                                     (-> (get-in cursor [:view :selected-path])
-                                         (merge (get-in cursor [:view :course-material :forward-section-links
-                                                                {:chapter-id chapter-id :section-id section-id}]))))))]
+                 (navigate-to-path next-section-path))]
     (modal (dom/span nil
                      (dom/h1 nil "Hoppa! Weer goed!")
                      (dom/img #js {:src complete-again-section-gif})
                      (dom/p nil "Je hebt deze paragraaf nog een keer voltooid." (dom/br nil) "We denken dat je hem nu wel snapt :)."))
-           "Volgende paragraaf" submit)))
+           "Volgende paragraaf" submit
+           (dom/a #js {:href ""
+                       :className "btn big gray"
+                       :onClick (fn [e]
+                                  (async/put! (om/get-shared owner :command-channel)
+                                              ["section-test-commands/next-question"
+                                               section-id
+                                               student-id
+                                               section-test-aggregate-version
+                                               course-id])
+                                  false)}
+                  "Blijven oefenen"))))
 
 (defn question-panel [cursor owner]
   (reify
@@ -489,7 +483,7 @@
                  (dom/article #js {:id "m-section"}
                               (tag-tree-to-om (:tag-tree question-data) inputs nil nil)
                               (when revealed-answer
-                                (dom/div #js {:className "wrap-dangerous-html m-worked-out-answer"}
+                                (dom/div #js {:className "wrap-dangerous-html"}
                                          (dom/div #js {:dangerouslySetInnerHTML #js {:__html revealed-answer}} nil))))
                  (dom/div #js {:id "m-question_bar"}
                           (tool-box (:tools question-data))

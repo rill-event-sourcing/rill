@@ -5,7 +5,8 @@
             [om.dom :as dom :include-macros true]
             [studyflow.web.helpers :refer [input-builders tool-box modal raw-html tag-tree-to-om focus-input-box] :as helpers]
             [studyflow.web.recommended-action :refer [recommended-action]]
-            [studyflow.web.history :refer [path-url navigate-to-path]]))
+            [studyflow.web.history :refer [path-url navigate-to-path]])
+  (:import (goog.events KeyHandler)))
 
 (defn chapter-quiz-navigation-button [cursor chapter-quiz chapter-id]
   (when (not (zero? (:number-of-questions chapter-quiz)))
@@ -193,7 +194,7 @@
             question-data (chapter-quiz-question-by-id cursor data-channel chapter-id question-id)
             course-id (get-in cursor [:static :course-id])
             chapter-quiz-aggregate-version (:aggregate-version chapter-quiz)
-            current-answers (om/value (get-in cursor [:view :chapter-quiz chapter-id :test :questions question-id :answer] {}))
+            current-answers (into {} (map (fn [[k v]] [(name k) v]) (:inputs question)))
             inputs (input-builders cursor question-id question-data current-answers false
                                    [:view :chapter-quiz chapter-id :test :questions question-id :answer])
             question-total (get-in cursor [:view :course-material :chapters-by-id chapter-id :chapter-quiz :number-of-questions])

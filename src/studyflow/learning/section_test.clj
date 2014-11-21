@@ -63,7 +63,6 @@
 
 (defn answer-revealed?
   [{:keys [question-state]}]
-  (prn [:revealed?  question-state])
   (contains? #{:revealed :finished-revealed} question-state))
 
 (defn select-random-question

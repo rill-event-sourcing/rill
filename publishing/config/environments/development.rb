@@ -58,4 +58,5 @@ Rails.application.configure do
   # config.learning_server = "http://sfstagelearning.studyflow.nl:3001"
   config.learning_server = "http://localhost:3001"
   config.cookie_domain = "localhost"
+
 end

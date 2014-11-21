@@ -66,4 +66,4 @@
 
 (defn navigate-to-path
   [selected-path]
-  (js/window.location.assign (path-url selected-path)))
+  (set! js/window.location.href (path-url selected-path)))
