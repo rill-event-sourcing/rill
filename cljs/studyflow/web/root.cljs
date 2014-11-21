@@ -8,6 +8,7 @@
             [studyflow.web.dashboard :refer [dashboard]]
             [studyflow.web.history :as url-history]
             [studyflow.web.helpers :refer [modal] :as helpers]
+            [studyflow.web.ipad :as ipad]
             [studyflow.web.tracking :as tracking]
             [studyflow.web.service :as service]
             [studyflow.web.section :as section]
@@ -80,4 +81,4 @@
                :data-channel (async/chan)
                :notification-channel (async/chan)}})))
 
-(helpers/ipad-scroll-on-inputs-blur-fix)
+(ipad/ipad-scroll-on-inputs-blur-fix)

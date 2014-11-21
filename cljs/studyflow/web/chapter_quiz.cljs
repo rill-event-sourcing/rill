@@ -4,6 +4,7 @@
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [studyflow.web.helpers :refer [reset-calculator draggable-calculator input-builders tool-box modal raw-html tag-tree-to-om focus-input-box] :as helpers]
+            [studyflow.web.ipad :as ipad]
             [studyflow.web.recommended-action :refer [recommended-action]]
             [studyflow.web.history :refer [path-url navigate-to-path]])
   (:import (goog.events KeyHandler)))
@@ -85,7 +86,7 @@
                                :ref "MAIN_BUTTON"
                                :disabled (not enabled)
                                :onClick (fn []
-                                          (helpers/ipad-reset-header)
+                                          (ipad/ipad-reset-header)
                                           (on-click))}
                           text))))
 
@@ -409,4 +410,4 @@
                                (om/build chapter-quiz-question cursor))))))
     om/IWillMount
     (will-mount [_]
-      (helpers/ipad-fix-scroll-after-switching))))
+      (ipad/ipad-fix-scroll-after-switching))))

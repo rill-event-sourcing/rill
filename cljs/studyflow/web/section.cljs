@@ -3,6 +3,7 @@
             [om.dom :as dom :include-macros true]
             [studyflow.web.history :refer [path-url navigate-to-path]]
             [studyflow.web.helpers :refer [input-builders tool-box modal raw-html tag-tree-to-om focus-input-box section-explanation-url on-enter click-once-button] :as helpers]
+            [studyflow.web.ipad :as ipad]
             [cljs.core.async :as async]
             [studyflow.web.aggregates :as aggregates]
             [studyflow.web.chapter-quiz :as chapter-quiz]))
@@ -327,7 +328,7 @@
                            (boolean revealed-answer)
                            :onClick
                            (fn [e]
-                             (helpers/ipad-reset-header)
+                             (ipad/ipad-reset-header)
                              (async/put! (om/get-shared owner :command-channel)
                                          ["section-test-commands/reveal-worked-out-answer"
                                           section-id
@@ -518,13 +519,13 @@
     om/IDidMount
     (did-mount [_]
       (focus-input-box owner)
-      (helpers/ipad-fix-scroll-after-switching))))
+      (ipad/ipad-fix-scroll-after-switching))))
 
 (defn section-test-loading [cursor owner]
   (reify
     om/IDidMount
     (did-mount [_]
-      (helpers/ipad-fix-scroll-after-switching)
+      (ipad/ipad-fix-scroll-after-switching)
       (let [{:keys [section-id]} (get-in cursor [:view :selected-path])
             student-id (get-in cursor [:static :student :id])]
         (async/put! (om/get-shared owner :command-channel)
