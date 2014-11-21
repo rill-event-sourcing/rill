@@ -15,5 +15,13 @@
                  (om/build view item)))
       om/IDidMount
       (did-mount [_]
-        (let [el (om/get-node owner)]
-          (goog.fx.Dragger. el))))))
+        (let [el (om/get-node owner)
+              dragger (goog.fx.Dragger. el)]
+          (events/listen dragger
+                         fxdrag/EventType.START
+                         (fn [event]
+                           (om/update! item :dragging true)))
+          (events/listen dragger
+                         fxdrag/EventType.END
+                         (fn [event]
+                           (om/update! item :dragging false))))))))
