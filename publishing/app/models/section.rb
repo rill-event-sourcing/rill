@@ -155,25 +155,25 @@ class Section < ActiveRecord::Base
 
   def inputs_referenced_exactly_once?
     full_text = subsections.map(&:text).join
-    inputs.find_all{|input| full_text.scan(input.name).length != 1}.empty?
+    inputs.find_all{|input| full_text.to_s.scan(input.name).length != 1}.empty?
   end
 
   def nonexisting_inputs_referenced?
     input_names = inputs.map(&:name)
     full_text = subsections.map(&:text).join
-    full_text.scan(/_INPUT_.*?_/).find_all{|match| !input_names.include? match}.any?
+    full_text.to_s.scan(/_INPUT_.*?_/).find_all{|match| !input_names.include? match}.any?
   end
 
   def nonexisting_reflections_referenced?
     reflection_names = reflections.map(&:name)
     full_text = subsections.map(&:text).join
-    full_text.scan(/_REFLECTION_.*?_/).find_all{|match| !reflection_names.include? match}.any?
+    full_text.to_s.scan(/_REFLECTION_.*?_/).find_all{|match| !reflection_names.include? match}.any?
   end
 
   def nonexisting_extra_examples_referenced?
     extra_example_names = extra_examples.map(&:name)
     full_text = subsections.map(&:text).join
-    full_text.scan(/_EXTRA_EXAMPLE_.*?_/).find_all{|match| !extra_example_names.include? match}.any?
+    full_text.to_s.scan(/_EXTRA_EXAMPLE_.*?_/).find_all{|match| !extra_example_names.include? match}.any?
   end
 
   ##############################

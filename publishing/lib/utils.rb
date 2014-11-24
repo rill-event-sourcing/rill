@@ -20,7 +20,7 @@ end
 
 
 def render_latex_for_editing(text = "")
-  matches = text.scan(/<math>(.*?)<\/math>/m)
+  matches = text.to_s.scan(/<math>(.*?)<\/math>/m)
   new_text = text
   matches.each do |array_of_matches|
     match = array_of_matches.first
@@ -52,7 +52,7 @@ def render_latex_for_editing(text = "")
 end
 
 def render_latex_for_publishing(text = "", origin = "unknown")
-  matches = text.scan(/<math>(.*?)<\/math>/m)
+  matches = text.to_s.scan(/<math>(.*?)<\/math>/m)
   new_text = text
   matches.each do |array_of_matches|
     match = array_of_matches.first

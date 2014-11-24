@@ -93,12 +93,12 @@ class Question < ActiveRecord::Base
   end
 
   def inputs_referenced_exactly_once?
-    inputs.find_all{|input| text.scan(input.name).length != 1}.empty?
+    inputs.find_all{|input| text.to_s.scan(input.name).length != 1}.empty?
   end
 
   def nonexisting_inputs_referenced?
     input_names = inputs.map(&:name)
-    text.scan(/_INPUT_.*?_/).find_all{|match| !input_names.include? match}.any?
+    text.to_s.scan(/_INPUT_.*?_/).find_all{|match| !input_names.include? match}.any?
   end
 
   def errors_when_publishing_for_entry_quiz
