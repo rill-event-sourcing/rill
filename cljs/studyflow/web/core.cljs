@@ -5,9 +5,11 @@
             [goog.events :as gevents]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
+            [studyflow.web.calculator :as calculator]
             [studyflow.web.history :refer [navigate-to-path]]
             [goog.Timer :as gtimer]
             [studyflow.web.service :as service]
+            [studyflow.web.helpers :as helpers]
             [studyflow.web.recommended-action :refer [recommended-action]]
             [clojure.walk :as walk])
   (:require-macros [cljs.core.async.macros :refer [go]]))
@@ -46,7 +48,9 @@
          :view {:selected-path {:chapter-id nil
                                 :section-id nil
                                 :main :dashboard
-                                :section-tab nil}}
+                                :section-tab nil}
+                :calculator-position {:left 100 :top 100}
+                :calculator-light-mode? false}
          :aggregates {}}))
 
 (defn watch-notifications!
@@ -54,6 +58,8 @@
   (go (loop []
         (when-let [event (<! notification-channel)]
           (case (:type event)
+            "studyflow.learning.section-test.events/QuestionAssigned"
+            (calculator/reset-calculator)
             "studyflow.learning.section-test.events/QuestionAnsweredIncorrectly"
             (do (om/update! cursor
                             [:view :shake-class]
@@ -74,4 +80,3 @@
                                :section-id nil})
             nil)
           (recur)))))
-

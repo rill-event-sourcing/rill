@@ -5,8 +5,9 @@
             [goog.events :as gevents]
             [goog.string :as gstring]
             [clojure.string :as string]
-            [studyflow.web.history :refer [path-url]]))
-
+            [studyflow.web.calculator :as calculator]
+            [studyflow.web.history :refer [path-url]]
+            [studyflow.web.ipad :as ipad]))
 
 (defn raw-html
   [raw]
@@ -156,45 +157,25 @@
              :main :learning)
       path-url))
 
-(def ipad? (js/navigator.userAgent.match #"iPhone|iPad|iPod"))
-
-(defn ipad-scroll-on-inputs-blur-fix []
-  ;; fixed header and side-nav move around in ipad upon focusing an
-  ;; input box (and showing the keyboard), this unfocuses the input
-  ;; when touching outside it, and that makes the ipad reset its layout
-  (when ipad?
-    (let [app (gdom/getElement "app")]
-      (gevents/listen app
-                      "touchstart"
-                      (fn [e]
-                        ;; without this you can't onclick the button
-                        ;; in the tooltip anymore
-                        (when (let [node-name (.. e -target -nodeName)]
-                                (and (not= node-name "INPUT")
-                                     (not= node-name "BUTTON")))
-                          (.blur js/document.activeElement))
-                        true)))))
-
-(defn ipad-reset-header []
-  (when ipad?
-    (js/window.scrollTo js/document.body.-scrollLeft js/document.body.-scrollTop)))
-
-(defn ipad-fix-scroll-after-switching []
-  ;; when switching between explantion and questions, if you are
-  ;; scrolled down a lot in explanation the question will be scrolled
-  ;; of screen whn switching to questions
-  (when ipad?
-    (js/document.body.scrollIntoViewIfNeeded)))
-
 (defn tool-box
-  [tools]
-  (let [tool-names {"pen_and_paper" "Pen & Papier"
-                    "calculator" "Rekenmachine"}]
-    (apply dom/div #js {:id "toolbox"}
-           (map (fn [tool]
-                  (dom/div #js {:className (str "tool " tool)}
-                           (dom/div #js {:className "m-tooltip"} (get tool-names tool) )))
-                tools))))
+  [cursor tools]
+  (let [tools (set tools)]
+    (when (not-empty tools)
+      (dom/div #js {:id "toolbox"}
+               (when (contains? tools "pen_and_paper")
+                 (dom/div #js {:className "tool pen_and_paper"}
+                          (dom/div #js {:className "m-tooltip"} "Pen & Papier")))
+
+               (when (contains? tools "calculator")
+                 (let [calculator-shown? (get-in cursor [:view :show-calculator])]
+                   (dom/div #js {:className (str "tool calculator" (when calculator-shown?" active"))
+                                 :onClick (fn [event]
+                                            (om/update!
+                                             cursor
+                                             [:view :show-calculator]
+                                             (not calculator-shown?))
+                                            (when-not calculator-shown? (calculator/focus-calculator)))}
+                            (dom/div #js {:className "m-tooltip"} "Rekenmachine"))))))))
 
 (defn input-builders
   [cursor question-id question-data current-answers enabled cursor-path]
@@ -252,6 +233,7 @@
                            (when-let [suffix (:suffix field)]
                              (dom/span #js {:className "suffix"} suffix)))])))))
 
+
 (defn click-once-button [value onclick & {:keys [enabled className]
                                           :or {enabled true}}]
   (fn [cursor owner]
@@ -264,7 +246,7 @@
         (dom/button #js {:className (str "btn blue pull-right" (when className (str " " className)))
                          :onClick
                          (fn [_]
-                           (ipad-reset-header)
+                           (ipad/ipad-reset-header)
                            (onclick)
                            (om/set-state-nr! owner :enabled false))
                          :disabled (not (om/get-state owner :enabled))}

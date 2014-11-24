@@ -1,0 +1,154 @@
+@import compass/reset
+@import compass
+
+body
+  +user-select(none)
+
+/* Rekenmachien original styling
+.rekenmachien
+  width: 322px
+
+.rekenmachien, .rekenmachien *
+  box-sizing: border-box
+  font-size: 13px
+  font-family: sans-serif
+
+
+.rekenmachien .display .program
+  padding: .5em .5em .25em .5em
+  background: #ab5
+
+.rekenmachien sup, .rekenmachien sub
+  font-size: 66%
+
+.rekenmachien .display .program small
+  font-size: 75%
+
+.rekenmachien .display .program span
+  display: inline-block
+  text-align: center
+
+.rekenmachien .display .program span.placeholder
+  width: 2em
+
+.rekenmachien .display .program .with-cursor
+  border-left: 1px solid #000
+
+.rekenmachien .display .result
+  font-size: 150%
+  position: absolute
+  bottom: 10px
+  right: 14px
+
+.rekenmachien button, .rekenmachien .button-placeholder, .rekenmachien section.inv label
+  width: 4em
+  height: 3em
+  margin: .25em
+  padding: 0
+  display: inline-block
+
+.rekenmachien button .label
+  font-size: 125%
+  display: inline-block
+
+.rekenmachien button.digit .label
+  font-size: 150%
+
+.rekenmachien section.inv span
+  text-align: center
+  vertical-align: bottom
+  color: #fc0
+  height: 1em
+
+.rekenmachien .keyboard section
+  display: inline-block
+  vertical-align: top
+  margin: 0
+
+/* END OF Rekenmachien original styling
+
+.rekenmachien
+  padding: 50px 13px 13px 13px
+  +border-radius(6px)
+  background: #f2f2f2 !important
+  +box-shadow(0 1px 2px rgba(0, 0, 0, 0.08), inset 0 0 15px 0px rgba(0, 0, 0, 0.1))
+  border: 1px solid #E2E2E2
+
+  .inv span
+    +text-shadow(0 1px white)
+
+  button
+    outline: 0
+    background: #fcfcfc
+    border: 0
+    +box-shadow(0 1px 2px rgba(0, 0, 0, 0.08), 0 1px 1px rgba(0, 0, 0, 0.19), inset 0 -1px 2px rgba(0, 0, 0, 0.06), inset 0 1px 1px 2px white)
+    +border-radius(6px)
+    color: #aaa !important
+    font-weight: 500 !important
+    &:active
+      +box-shadow(inset 0 1px 2px rgba(0, 0, 0, 0.08), inset 0 1px 1px rgba(0, 0, 0, 0.19))
+    &.digit
+      background: #5CB5F5
+      +box-shadow(0 1px 2px rgba(0, 0, 0, 0.08), 0 1px 1px rgba(0, 0, 0, 0.19), inset 0 -1px 2px rgba(0, 0, 0, 0.25), inset 0 2px 1px rgba(255, 255, 255, 0.23))
+      color: #f3f3f3 !important
+      &:active
+        +box-shadow(inset 0 1px 2px rgba(0, 0, 0, 0.08), inset 0 1px 1px rgba(0, 0, 0, 0.19))
+    &.del, &.clear
+      background: #FF5858 !important
+      color: #fff !important
+      +box-shadow(0 1px 2px rgba(0, 0, 0, 0.08), 0 1px 1px rgba(0, 0, 0, 0.19), inset 0 -1px 2px rgba(0, 0, 0, 0.3), inset 0 1px 1px 2px rgba(255,255,255,0.2))
+      &:active
+        +box-shadow(inset 0 1px 2px rgba(0, 0, 0, 0.2))
+    &.inv
+      +box-shadow(0 1px 2px rgba(0, 0, 0, 0.08), 0 1px 1px rgba(0, 0, 0, 0.25), inset 0 -1px 2px 0px rgba(0, 0, 0, 0.08), inset 0 2px 1px 1px rgba(255, 255, 255, 0.27))
+      background: #fc0 !important
+      color: white !important
+      &:active
+        +box-shadow(inset 0 1px 2px rgba(0, 0, 0, 0.2))
+    &.left
+      background: url(/images/icon-arrow-left.svg) no-repeat center #fcfcfc
+    &.right
+      background: url(/images/icon-arrow-right.svg) no-repeat center #fcfcfc
+
+    &.show
+      background: #6FDA7C
+      +box-shadow(0 1px 2px rgba(0, 0, 0, 0.08), 0 1px 1px rgba(0, 0, 0, 0.19), inset 0 -1px 2px rgba(0, 0, 0, 0.23), inset 0 1px 1px 2px rgba(255, 255, 255, 0.22))
+      color: white !important
+      &:active
+        +box-shadow(inset 0 1px 2px rgba(0, 0, 0, 0.2))
+
+  .display
+    background: #d8eef4 !important
+    color: #1A819D
+    padding: 5px
+    +box-shadow(0 2px 1px white, inset 0px 0px 1px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(0,0,0,0.1))
+    font-family: monospace !important
+    position: relative
+    width: 287px
+    margin: 0.25em
+    height: 5em
+    border-radius: .5em
+    overflow: hidden
+    .program
+      background: transparent !important
+
+  .keyboard
+    margin-top: 10px
+    .inv
+      margin-bottom: 5px
+
+.calc-logo
+  display: inline-block
+  background: url(/images/logo-mark-gray.svg) no-repeat center
+  background-size: 75px
+  position: absolute
+  right: 50%
+  margin-right: -15px
+  top: 10px
+  width: 35px
+  height: 35px
+
+.calculator-active
+  .calc-logo
+    background: url(/images/logo-mark.svg) no-repeat center !important
+    background-size: 75px !important

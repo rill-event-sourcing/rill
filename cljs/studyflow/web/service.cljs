@@ -51,6 +51,7 @@
                        (comp #{"studyflow.learning.section-test.events/Finished"
                                "studyflow.learning.section-test.events/StreakCompleted"
                                "studyflow.learning.section-test.events/Stuck"
+                               "studyflow.learning.section-test.events/QuestionAssigned"
                                "studyflow.learning.section-test.events/QuestionAnsweredIncorrectly"
                                "studyflow.learning.chapter-quiz.events/QuestionAssigned"
                                "studyflow.learning.chapter-quiz.events/Stopped"} :type)

@@ -1,5 +1,6 @@
 * Release Changelog
 ** NEXT RELEASE
+*** New: Calculator
 ** release-2014-11-24.1
 *** New: Appsignal integration removed
 *** New: New content elements (reflections and extra examples)

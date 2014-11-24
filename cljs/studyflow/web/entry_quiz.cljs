@@ -3,6 +3,7 @@
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [studyflow.web.aggregates :as aggregates]
+            [studyflow.web.calculator :as calculator]
             [studyflow.web.core :as core]
             [studyflow.web.helpers :refer [input-builders tool-box raw-html modal tag-tree-to-om focus-input-box click-once-button]]
             [studyflow.web.history :refer [path-url navigate-to-path]]
@@ -83,6 +84,7 @@
             correct-answers-number (:correct-answers-number entry-quiz)
             student-name (get-in cursor [:static :student :full-name])]
         (dom/div #js {:id "quiz-page"}
+                 (om/build calculator/draggable-calculator cursor)
                  (dom/header #js {:id "m-top_header"}
                              (dom/a #js {:id "home"
                                          :href (path-url {:main :dashboard})})
@@ -116,6 +118,7 @@
                                                              (keys inputs))
                                                      submit (fn []
                                                               (when answering-allowed
+                                                                (calculator/reset-calculator)
                                                                 (async/put!
                                                                  (om/get-shared owner :command-channel)
                                                                  ["entry-quiz-commands/submit-answer"
@@ -123,13 +126,15 @@
                                                                   student-id
                                                                   entry-quiz-aggregate-version
                                                                   current-answers])))]
+                                                 _ (when-not (contains? (set (:tools question-data)) "calculator")
+                                                     (om/update! cursor [:view :show-calculator] false))
                                                  (dom/form #js
                                                            {:onSubmit (fn []
                                                                         (submit)
                                                                         false)}
                                                            (tag-tree-to-om (:tag-tree question-data) inputs nil nil)
                                                            (dom/div #js {:id "m-question_bar"}
-                                                                    (tool-box (:tools question-data))
+                                                                    (tool-box cursor (set (:tools question-data)))
                                                                     (om/build (click-once-button (str "Klaar"
                                                                                                       (when (< (inc index) (count (:questions material)))
                                                                                                         " & volgende vraag"))
