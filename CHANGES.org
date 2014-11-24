@@ -1,5 +1,6 @@
 * Release Changelog
 ** NEXT RELEASE
+** release-2014-11-24.1
 *** New: Appsignal integration removed
 *** New: New content elements (reflections and extra examples)
 *** Fix: Fixed a bug in which teaching and learning would not detect a name change in the students and teachers
