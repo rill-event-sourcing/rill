@@ -77,9 +77,9 @@ module ApplicationHelper
 
   def reflection_to_html(reflection)
     content_tag(:div, class: 'm-reflection') do
-      reflection.content.to_s.html_safe +
-      content_tag(:div, class: 'reflection-answer') do
-        reflection.answer.to_s.html_safe
+      render_latex_for_editing(reflection.content.to_s).html_safe +
+      content_tag(:div, class: 'reflection-answer show') do
+        render_latex_for_editing(reflection.answer.to_s).html_safe
       end
     end
   end
@@ -89,8 +89,8 @@ module ApplicationHelper
       content_tag(:div, class: 'extra-example-title') do
         extra_example.title.to_s.html_safe
       end +
-      content_tag(:div, class: 'extra-example-content') do
-        extra_example.content.to_s.html_safe
+      content_tag(:div, class: 'extra-example-content show') do
+        render_latex_for_editing(extra_example.content.to_s).html_safe
       end
     end
   end

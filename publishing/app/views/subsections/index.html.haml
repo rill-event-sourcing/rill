@@ -18,7 +18,7 @@
         = render partial: 'edit'
 
     %div.col-md-6
-      %div{style: "max-height: 700px; overflow: auto"}
+      %div{style: "max-height: 1200px; overflow: auto"}
         - @section.subsections.each do |subsection|
           = render partial: "preview", locals: {subsection: subsection}
 
