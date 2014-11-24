@@ -37,7 +37,7 @@ class ExtraExample < ActiveRecord::Base
       name: name,
       title: title,
       default_open: default_open,
-      content: content
+      content: render_latex_for_publishing(content, "extra_example '#{name}', in '#{section.name}'")
     }
   end
 
