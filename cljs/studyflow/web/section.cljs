@@ -261,7 +261,9 @@
       (into (for [extra-example (:extra-examples section)]
               [(:name extra-example)  (om/build section-extra-example section {:opts {:extra-example extra-example :section section}})]))))
 
-(defn section-explanation [section owner]
+
+
+(defn section-explanation [{:keys [section subsection-index]} owner]
   (reify
     om/IRender
     (render [_]
@@ -271,11 +273,18 @@
             extra-examples (extra-example-builder section)]
         (println [:inputs! inputs])
         (apply dom/article #js {:id "m-section"}
-               #_(dom/nav #js {:id "m-minimap"}
-                          (apply dom/ul nil
-                                 (for [{:keys [title id]
-                                        :as subsection} subsections]
-                                   (dom/li nil title))))
+               (dom/nav #js {:id "m-right-nav"}
+                        (apply dom/div #js {:id "minimap"
+                                            :onMouseOver (fn []
+                                                           (om/set-state! owner :minimap-open true))}
+                               (map-indexed (fn [i {:keys [title id]
+                                                    :as subsection}]
+                                              (dom/a #js {:href ""
+                                                          :className (if (<= i subsection-index)
+                                                                       "minimap-item above-cursor"
+                                                                       "minimap-item")}
+                                                     "Text"))
+                                            subsections)))
                (map (fn [{:keys [title tag-tree id] :as subsection}]
                       (dom/section #js {:className "m-subsection"}
                                    (tag-tree-to-om tag-tree inputs reflections extra-examples)))
@@ -289,7 +298,8 @@
             student-id (get-in cursor [:static :student :id])
             section (get-in cursor [:view :section section-id :data])]
         (if section
-          (om/build section-explanation section)
+          (om/build section-explanation {:section section
+                                         :subsection-index (get-in cursor [:view :selected-path :subsection-index])})
           (dom/article #js {:id "m-section"}
                        "Uitleg laden..."))))))
 

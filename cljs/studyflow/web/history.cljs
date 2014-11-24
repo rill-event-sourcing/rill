@@ -9,7 +9,7 @@
 (def history (History.))
 
 (defn token->path [token]
-  (let [[main-token chapter-id section-id question-token] (string/split token #"/")]
+  (let [[main-token chapter-id section-id question-token subsection-index] (string/split token #"/")]
     {:main (keyword main-token)
      :chapter-id (when (seq chapter-id)
                    chapter-id)
@@ -17,17 +17,19 @@
                    section-id)
      :section-tab (if (= question-token "questions")
                     :questions
-                    :explanation)}))
+                    :explanation)
+     :subsection-index (.parseInt js/window subsection-index)}))
 
 (defn path->token [path]
-  (let [{:keys [main chapter-id section-id section-tab]} path]
+  (let [{:keys [main chapter-id section-id section-tab subsection-index]} path]
     (string/join "/" [(if main
                         (name main)
                         "dashboard")
                       chapter-id section-id
                       (if (= section-tab :questions)
                         "questions"
-                        "text")])))
+                        "text")
+                      subsection-index])))
 
 (defn wrap-history [widgets]
   (fn [cursor owner]

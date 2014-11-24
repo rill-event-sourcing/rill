@@ -1,0 +1,95 @@
+@import compass
+@import compass/css3/user-interface
+
+#m-right-nav
+  position: fixed
+  width: 45px
+  top: 66px
+  bottom: 0
+  right: 0
+  background-color: #fcfbf7
+  border-right: 2px solid #e8e7e2
+  z-index: 400
+  +user-select(none)
+
+  #minimap
+    margin-top: 20px
+
+  .minimap-item
+    +box-sizing(border-box)
+    position: relative
+    margin: 0 0 32px 0
+    display: block
+
+    &:first-child
+      &:before
+        display: none
+
+    &.finished
+      &:after
+        background: url(/images/check-white.svg) no-repeat center #d4d9df
+        border-color: #a9b4bf
+
+    &.in_progress
+      &:after
+        background: #d4d9df
+
+    &:after
+      display: block
+      position: absolute
+      +border-radius(50%)
+      width: 27px
+      height: 27px
+      left: 0px
+      top: 50%
+      margin-top: -15px
+      content: ''
+      background: white
+      border: 2px solid #a9b4bf
+      z-index: 60
+      pointer-events: none
+
+    &:before
+      position: absolute
+      content: ''
+      width: 3px
+      height: 60px
+      bottom: 60%
+      left: 14px
+      background: #a9b4bf
+      z-index: 50
+      pointer-events: none
+
+    &.above-cursor
+      +background-image(linear-gradient(left, #fcfbf7 20%, white 40%))
+      margin: 1px -2px 0 0
+      &:after
+        border-color: #f3b339
+        background: #ffcd69
+      .minimap-link
+        font-weight: 500
+        color: #434d56 !important
+        &:after
+          right: 0
+
+    .minimap-link
+      display: block
+      padding: 14px 25px 13px 70px
+      line-height: 23px
+      font-size: 14px
+      font-weight: 400
+      color: #9a978d
+      +text-shadow(0 1px rgba(255,255,255,0.6))
+      letter-spacing: -0.2px
+      &:hover
+        color: #515b62
+      &:after
+        height: 2px
+        width: 210px
+        background: #e4e2df
+        display: block
+        content: ''
+        bottom: -1px
+        right: -2px
+        position: absolute
+        z-index: 999
