@@ -221,7 +221,7 @@
                                               cursor
                                               reflection-path
                                               (not reflection-open?)))}
-                             (if reflection-open? "Verberg antwoord" "Toon antwoord"))
+                             (str (if reflection-open? "Verberg" "Toon") " antwoord"))
                  (dom/div #js {:className (str "reflection-answer"
                                                (when reflection-open? " show"))}
                           (raw-html (:answer reflection))))))))
@@ -244,7 +244,7 @@
                                               cursor
                                               example-path
                                               (not example-open?)))}
-                             (if example-open? "Verberg Example" "Toon Example"))
+                             (str (if example-open? "Verberg" "Toon") " voorbeeld"))
                  (dom/div #js {:className (str "extra-example-content"
                                                (when example-open? " show"))}
                           (raw-html (:content extra-example))))))))
@@ -377,11 +377,11 @@
         stumbling-gif "https://assets.studyflow.nl/learning/187.gif"
         submit (fn []
                  (async/put! (om/get-shared owner :command-channel)
-                                              ["section-test-commands/dismiss-modal"
-                                               section-id
-                                               student-id
-                                               section-test-aggregate-version
-                                               course-id])
+                             ["section-test-commands/dismiss-modal"
+                              section-id
+                              student-id
+                              section-test-aggregate-version
+                              course-id])
                  (navigate-to-path explanation-path))]
     (modal (dom/span nil
                      (dom/h1 #js {:className "stumbling_block"} "Oeps! deze is moeilijk")
@@ -479,7 +479,7 @@
                    :stuck-modal (stuck-modal cursor owner student-id course-id chapter-id section-id section-test-aggregate-version)
                    :completed-modal (completed-modal cursor owner student-id course-id chapter-id section-id section-test-aggregate-version)
                    nil)
-                 
+
                  (dom/article #js {:id "m-section"}
                               (tag-tree-to-om (:tag-tree question-data) inputs nil nil)
                               (when revealed-answer
