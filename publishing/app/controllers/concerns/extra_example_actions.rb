@@ -10,7 +10,7 @@ module ExtraExampleActions
     extra_examples_hash.each do |id, values|
       extra_example = section.extra_examples.where(id: id).first
       extra_example.update_attributes(title: values[:title],
-                                      default_open: values[:default_open],
+                                      default_open: values[:default_open].to_i,
                                       content: values[:content])
     end
   end
