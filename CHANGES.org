@@ -1,6 +1,9 @@
 * Release Changelog
 ** NEXT RELEASE
+** release-2014-11-25.1
 *** New: Calculator
+*** New: Styling of explanation content
+*** New: Styling of worked out answer
 ** release-2014-11-24.1
 *** New: Appsignal integration removed
 *** New: New content elements (reflections and extra examples)
