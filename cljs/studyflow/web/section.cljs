@@ -290,7 +290,16 @@
                (map-indexed (fn [i {:keys [title tag-tree id] :as subsection}]
                               (dom/section #js {:className "m-subsection" :id (str "subsection-" i)}
                                            (tag-tree-to-om tag-tree inputs reflections extra-examples)))
-                            subsections))))))
+                            subsections))))
+    om/IWillUpdate
+    (will-update [_ next-props _]
+      (let [old-props (om/get-props owner)]
+        (when-not (= (:path old-props)
+                     (:path next-props))
+          (if (> (- (.getTime (js/Date.))
+                    @(om/get-shared owner :last-scroll))
+                 500)
+            (.scrollIntoView (gdom/getElement (str "subsection-" (:subsection-index next-props))))))))))
 
 (defn section-explanation-panel [cursor owner]
   (reify
@@ -304,19 +313,7 @@
                                          :subsection-index (get-in cursor [:view :selected-path :subsection-index])
                                          :path (get-in cursor [:view :selected-path])})
           (dom/article #js {:id "m-section"}
-                       "Uitleg laden..."))))
-    om/IDidMount
-    (did-mount [_]
-      (when (get-in cursor [:view :selected-path :subsection-index])
-        (.scrollIntoView (gdom/getElement (str "subsection-" (get-in cursor [:view :selected-path :subsection-index]))))))
-    om/IWillUpdate
-    (will-update [_ next-props _]
-      (let [old-props (om/get-props owner)]
-        (when-not (= (get-in old-props [:view :selected-path])
-                     (get-in next-props [:view :selected-path]))
-          (if (> (- (.getTime (js/Date.)) @(om/get-shared owner :last-scroll)) 500)
-            (.scrollIntoView (gdom/getElement (str "subsection-" (get-in next-props [:view :selected-path :subsection-index]))))
-            (println "Still scrolling")))))))
+                       "Uitleg laden..."))))))
 
 (defn streak-box [streak owner]
   (reify
