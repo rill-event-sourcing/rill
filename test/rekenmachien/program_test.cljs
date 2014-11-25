@@ -12,6 +12,7 @@
        [1 :add 2 :mul 3]           , 7
        [2 :sub 3 :add 4]           , 3
        [3 :div 3 :mul 3]           , 3
+       [3 :add 3 :div 3 :mul 3]    , 6
        [1 :frac 2]                 , (Frac. 1 2)
        [1 :frac 2 :mul 3]          , (Frac. 3 2)
        [1 :frac 2 :div 3]          , (Frac. 1 6)
