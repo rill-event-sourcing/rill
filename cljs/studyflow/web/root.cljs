@@ -75,7 +75,8 @@
       top)))
 
 (defn ^:export course-page []
-  (let [command-channel (async/chan)]
+  (let [command-channel (async/chan)
+        last-scroll (atom 0)]
     (om/root
      (-> widgets
          service/wrap-service
@@ -88,12 +89,14 @@
                    (tracking/listen tx-report cursor command-channel))
       :shared {:command-channel command-channel
                :data-channel (async/chan)
-               :notification-channel (async/chan)}})
+               :notification-channel (async/chan)
+               :last-scroll last-scroll}})
 
 
     (let [scrolling-channel  (async/chan (async/sliding-buffer 1))]
       (set! (.-onscroll js/document)
             (fn [e]
+              (swap! last-scroll (fn [_] (.getTime (js/Date.))))
               (async/put! scrolling-channel {:pos (.-scrollY js/window)})))
       (go-loop []
         (let [{:keys [pos]} (<! scrolling-channel)
