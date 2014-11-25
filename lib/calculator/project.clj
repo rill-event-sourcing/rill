@@ -16,7 +16,9 @@
 
   :plugins [[lein-cljsbuild "1.0.3"]
             [lein-environ "1.0.0"]
-            [lein-figwheel "0.1.4-SNAPSHOT"]]
+            [lein-figwheel "0.1.4-SNAPSHOT"]
+            [lein-cljsbuild "0.3.3"]
+            [com.cemerick/clojurescript.test "0.3.1"]]
 
   :figwheel {:http-server-root "public"
              :port 3449}
@@ -32,4 +34,13 @@
                                          :optimizations :advanced
                                          :pretty-print false
                                          :preamble ["reagent/react.min.js"]
-                                         :externs ["react/externs/react.js"]}}}})
+                                         :externs ["react/externs/react.js"]}}
+                       :test  {:source-paths ["src" "test"]
+                               :compiler {:output-to "target/testable.js"
+                                          :optimizations :whitespace
+                                          :pretty-print true
+                                          :preamble ["reagent/react.min.js"]
+                                          :externs ["react/externs/react.js"]}}}
+
+              :test-commands { "unit-tests"
+                               ["phantomjs" :runner "phantomjs-shims.js" "target/testable.js"]}})

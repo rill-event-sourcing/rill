@@ -20,6 +20,7 @@ build: publishing uberjars
 
 test:
 	make -C lib/rill test
+	make -C lib/calculator test
 	make -C publishing test
 	lein test
 
