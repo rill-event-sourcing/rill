@@ -1,0 +1,33 @@
+* Rekenmachien
+
+  Like calculator-cito.
+
+** Development mode
+
+   First time run:
+
+#+BEGIN_SRC sh
+$ lein cljsbuild once
+#+END_SRC
+
+   Then start a repl:
+
+#+BEGIN_SRC sh
+$ lein repl
+#+END_SRC
+
+
+   Start your application.
+
+#+BEGIN_SRC clj
+(run)
+#+END_SRC
+
+   Start figwheel:
+
+#+BEGIN_SRC clj
+(start-figwheel)
+#+END_SRC
+
+   Open a browser and go to http://localhost:10555 for the calculator
+   and http://localhost:10555/test of the tests.

@@ -1,0 +1,5 @@
+/.lein-env
+/.lein-repl-history
+/.nrepl-port
+/resources/public/
+/target/
