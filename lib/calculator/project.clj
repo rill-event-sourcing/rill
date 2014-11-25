@@ -12,21 +12,36 @@
                  [leiningen "2.5.0"]
                  [reagent "0.4.2"]]
 
-  :min-lein-version "2.5.0"
+  :min-lein-version "2.4.2"
 
   :plugins [[lein-cljsbuild "1.0.3"]
             [lein-environ "1.0.0"]
-            [lein-figwheel "0.1.4-SNAPSHOT"]]
+            [lein-figwheel "0.1.4-SNAPSHOT"]
+            [lein-cljsbuild "0.3.3"]
+            [com.cemerick/clojurescript.test "0.3.1"]]
 
   :figwheel {:http-server-root "public"
              :port 3449}
 
-  :cljsbuild {:builds {:app {:source-paths ["src"]
-                             :compiler {:preamble ["reagent/react.min.js"]
-                                        :output-to "target/js/app.js"
-                                        :optimizations :advanced}}
-                       :dev {:source-paths ["dev" "src" "test"]
-                             :compiler {:output-to "resources/public/js/app.js"
-                                        :output-dir "resources/public/js/out"
-                                        :source-map "resources/public/js/out.js.map"
-                                        :optimizations :none}}}})
+  :cljsbuild {:builds {:dev {:source-paths ["dev" "src" "test"]
+                             :compiler {:output-to "../../generated/learning/public/js/calculator-dev.js"
+                                        :output-dir "../../generated/learning/public/js/out"
+                                        :source-map "../../generated/learning/public/js/calculator-dev.sourcemap"
+                                        :optimizations :whitespace}}
+                       :prod {:source-paths ["src"]
+                              :jar true
+                              :compiler {:output-to "../../generated/learning/public/js/calculator.js"
+                                         :optimizations :advanced
+                                         :pretty-print false
+                                         :preamble ["reagent/react.min.js"]
+                                         :externs ["react/externs/react.js"]}}
+                       :test  {:source-paths ["src" "test"]
+                               :notify-command ["phantomjs" :cljs.test/runner "phantomjs-shims.js" "target/testable.js"]
+                               :compiler {:output-to "target/testable.js"
+                                          :optimizations :whitespace
+                                          :pretty-print true
+                                          :preamble ["reagent/react.min.js"]
+                                          :externs ["react/externs/react.js"]}}}
+
+              :test-commands { "unit-tests"
+                               ["phantomjs" :runner "phantomjs-shims.js" "target/testable.js"]}})
