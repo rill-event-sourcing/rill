@@ -23,7 +23,7 @@
    :atan [:span "tan" [:sup "-1"]],
    :frac [:span "a" [:sup "b"] "/" [:sub "c"]],
    :x10y [:span "x10" [:sup "y"]], :sqrt "√", :x2 "x²", :pow "^", :x1 "x⁻¹",
-   :left "⇐", :right "⇒", :del "DEL", :clear "C",
+   :left "", :right "", :del "DEL", :clear "C",
    :pi "π", :dot ",", :neg "(-)", :ans "ANS",
    :mul "×", :div "÷", :add "+", :sub "−",
    :open "(", :close ")", :show "="})
@@ -96,7 +96,8 @@
 
 (defn main-component []
   [:div.rekenmachien
-   [:h1
+   [:h1.calc-logo]
+   #_[:h1
     [:a.toggle-light-mode {:on-click #(button-press! :light)}
      [:span (if @light-mode-atom "▼" "▲")]
      " "
@@ -132,7 +133,7 @@
                         :class (if (keyword? button) (name button) "digit")}
                [:span.label (get button-labels button (str button))]]
               [:span.button-placeholder]))])])]
-   [:style {:type "text/css"}
+   #_[:style {:type "text/css"}
     (str
      ".rekenmachien { background: #888; padding: 1em; width: calc((4.5em * 5) + 2em); border-radius: .5em; }"
      ".rekenmachien, .rekenmachien * { box-sizing: border-box; font-size: 14px; font-family: sans-serif; }"
@@ -176,6 +177,7 @@
             84 :tan   ; T
             86 :x10y  ; V
             87 :sqrt  ; W
+            96 0, 97 1, 98 2, 99 3, 100 4, 101 5, 102 6, 103 7, 104 8, 105 9 ; numpad 0 .. 9
             106 :mul  ; *
             107 :add  ; +
             109 :sub  ; -
@@ -215,6 +217,12 @@
   (let [el (dom/get-element id)]
     (event/unlisten (.-body js/document) "keydown" key-listener)
     (reagent/unmount-component-at-node el)))
+
+(defn ^:export reset []
+  (button-press! :clear))
+
+(defn ^:export chgMode []
+  (button-press! :light))
 
 (defn main []
   (start "app"))
