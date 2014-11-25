@@ -36,6 +36,7 @@
                                          :preamble ["reagent/react.min.js"]
                                          :externs ["react/externs/react.js"]}}
                        :test  {:source-paths ["src" "test"]
+                               :notify-command ["phantomjs" :cljs.test/runner "phantomjs-shims.js" "target/testable.js"]
                                :compiler {:output-to "target/testable.js"
                                           :optimizations :whitespace
                                           :pretty-print true
