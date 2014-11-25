@@ -28,13 +28,13 @@
               (blocks (next (drop pos (next tokens))))))
       (into [(first tokens)] (blocks (next tokens))))))
 
-(defn infix-walker [tokens oper]
+(defn infix-walker [tokens oper?]
   (when (seq tokens)
-    (if (= (second tokens) oper)
+    (if (oper? (second tokens))
       (if (= :neg (nth tokens 2))
-        (infix-walker (into [[oper (first tokens) (nth tokens 2) (nth tokens 3)]] (drop 4 tokens)) oper)
-        (infix-walker (into [[oper (first tokens) (nth tokens 2)]] (drop 3 tokens)) oper))
-      (into [(first tokens)] (infix-walker (next tokens) oper)))))
+        (infix-walker (into [[(second tokens) (first tokens) (nth tokens 2) (nth tokens 3)]] (drop 4 tokens)) oper?)
+        (infix-walker (into [[(second tokens) (first tokens) (nth tokens 2)]] (drop 3 tokens)) oper?))
+      (into [(first tokens)] (infix-walker (next tokens) oper?)))))
 
 (def powers {:x1 [:pow -1] :x2 [:pow 2]})
 
@@ -104,9 +104,9 @@
                  squash-negs
                  blocks
                  special-powers
-                 (infix [:frac :pow])
+                 (infix [#{:frac} #{:pow}])
                  negs
-                 (infix [:x10y :mul :div :add :sub])
+                 (infix [#{:x10y} #{:mul :div} #{:add :sub}])
                  strip-helper-zero)]
     (when (> (count ast) 1) (throw :syntax-error))
     (first ast)))
