@@ -282,10 +282,12 @@
                                               (dom/a #js {:href (-> path
                                                                     (assoc :subsection-index i)
                                                                     path-url)
-                                                          :className (if (<= i subsection-index)
+                                                          :className (if (= i subsection-index)
                                                                        "minimap-item above-cursor"
                                                                        "minimap-item")}
-                                                     "Text"))
+                                                     (dom/span #js {:className "minimap-item-text"}
+                                                               (if (om/get-state owner :minimap-open)
+                                                                 title "x"))))
                                             subsections)))
                (map-indexed (fn [i {:keys [title tag-tree id] :as subsection}]
                               (dom/section #js {:className "m-subsection" :id (str "subsection-" i)}
