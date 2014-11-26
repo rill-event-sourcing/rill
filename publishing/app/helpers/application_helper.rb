@@ -52,7 +52,7 @@ module ApplicationHelper
     htmlClass += ' block-input'  unless input.inline?
 
     htmlLength = ''
-    htmlLength = '5' if input.style == 'small'
+    htmlLength = '6' if input.style == 'small'
     htmlLength = '3' if input.style == 'exponent'
 
     content_tag(:span) do

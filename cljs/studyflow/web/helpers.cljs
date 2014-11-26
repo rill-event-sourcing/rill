@@ -211,7 +211,7 @@
                                        (when (:prefix field) "has-prefix ")
                                        (when (:suffix field) "has-suffix "))
                     input-options (case (:style field)
-                                    "small" {:class (str input-classes "small-input") :length 5}
+                                    "small" {:class (str input-classes "small-input") :length 6}
                                     "exponent" {:class (str input-classes "exponent-input") :length 3}
                                     {:class (str input-classes "big-input")})]
                 [input-name

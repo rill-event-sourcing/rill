@@ -93,7 +93,7 @@
               answered-correctly? (get-in cursor [:view :section section-id :input field-name :answered-correctly?])
               answer-revealed (get-in cursor [:view :section section-id :input field-name :answer-revealed])
               input-options (case (:style field)
-                              "small" {:class "small-input" :length 5}
+                              "small" {:class "small-input" :length 6}
                               "exponent" {:class "exponent-input" :length 3}
                               {:class "big-input"})]
           (dom/span nil
