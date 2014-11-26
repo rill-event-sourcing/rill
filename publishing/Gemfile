@@ -23,6 +23,7 @@ gem 'daemons'
 gem 'nokogiri'
 gem 'sanitize'
 gem 'raygun4ruby'
+gem "mini_magick"
 
 group :development, :test do
   gem 'better_errors'

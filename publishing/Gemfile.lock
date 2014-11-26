@@ -131,6 +131,7 @@ GEM
       treetop (~> 1.4.8)
     method_source (0.8.2)
     mime-types (1.25.1)
+    mini_magick (4.0.1)
     mini_portile (0.6.0)
     minitest (5.3.4)
     multi_json (1.10.1)
@@ -294,6 +295,7 @@ DEPENDENCIES
   jbuilder (~> 2.0)
   jquery-rails
   launchy
+  mini_magick
   newrelic_rpm
   nokogiri
   pg

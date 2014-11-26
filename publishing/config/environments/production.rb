@@ -103,6 +103,8 @@ Rails.application.configure do
   config.learning_server = "http://10.129.223.11:3001"
   config.cookie_domain = "studyflow.nl"
 
+  config.bucket_dir = "#{ Rails.root }/bucket"
+
   Raygun.setup do |config|
     config.api_key = "8dQGJpG+l5HZXYKMvjrS9A=="
     config.filter_parameters = Rails.application.config.filter_parameters

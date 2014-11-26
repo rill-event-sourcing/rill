@@ -80,7 +80,11 @@ module HtmlParseable
     html_images(attr).each do |el|
       src = el["src"]
       if src
-        errors << "`#{ src }` is not a valid image src. It must be on #{asset_host}/" unless src =~ /^#{ asset_host }\//
+        if src =~ /^#{ asset_host }\//
+          Image.create(url: src)
+        else
+          errors << "`#{ src }` is not a valid image src. It must be on #{asset_host}/"
+        end
       else
         errors << "no 'src' given for image"
       end

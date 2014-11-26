@@ -10,6 +10,9 @@
 # http://github.com/RailsApps/rails-composer/issues
 #----------------------------------------------------------------------------
 
+# s3 bucket
+/bucket
+
 # bundler state
 /.bundle
 /vendor/bundle/
