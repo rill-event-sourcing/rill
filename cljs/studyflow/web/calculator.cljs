@@ -22,17 +22,30 @@
 
 (defn reset-calculator []
   (let [iframe (gdom/getElement "calculator-iframe")]
-    (when iframe (-> iframe
-                     .-contentWindow
-                     (.reset)))))
+    (when (and iframe
+               (-> iframe
+                   .-contentWindow
+                   .-reset))
+      (-> iframe
+          .-contentWindow
+          (.reset)))))
 
-(defn change-mode-calculator [cursor]
+(def ^:export frame_calculator_mode false)
+(defn toggle-mode-calculator [cursor]
+  (let [next-mode (not (get-in @cursor [:view :calculator-light-mode?] false))]
+    (set! frame_calculator_mode next-mode)
+    (om/update! cursor [:view :calculator-light-mode?] next-mode)))
+
+(defn propagate-mode-calculator [cursor]
   (let [iframe (gdom/getElement "calculator-iframe")
-        calculator-mode (get-in @cursor [:view :calculator-light-mode?])]
-    (om/update! cursor [:view :calculator-light-mode?] (not calculator-mode))
-    (when iframe (-> iframe
-                     .-contentWindow
-                     (.chgMode)))))
+        calculator-mode (get-in cursor [:view :calculator-light-mode?] false)]
+    (when (and iframe
+               (-> iframe
+                   .-contentWindow
+                   .-setMode))
+      (-> iframe
+          .-contentWindow
+          (.setMode calculator-mode)))))
 
 (defn calculator [cursor owner]
   (reify
@@ -46,11 +59,17 @@
                                :onMouseUp (fn [] (focus-calculator))}
                           (dom/button #js {:className "toggle-light-mode"
                                            :onClick (fn []
-                                                      (change-mode-calculator cursor))})
+                                                      (toggle-mode-calculator cursor))})
                           (dom/button #js {:className "close-calculator"
                                            :onClick (fn []
                                                       (om/update! cursor [:view :show-calculator] false))}))
-                 (dom/iframe #js {:id "calculator-iframe" :name "calculator-iframe" :src "/calculator.html" :width "100%" :height "100%" :frameborder "0" :scrolling "no" :seamless "seamless"}))))))
+                 (dom/iframe #js {:id "calculator-iframe" :name "calculator-iframe" :src "/calculator.html" :width "100%" :height "100%" :frameborder "0" :scrolling "no" :seamless "seamless"}))))
+    om/IDidMount
+    (did-mount [_]
+      (propagate-mode-calculator cursor))
+    om/IDidUpdate
+    (did-update [_ _ _]
+      (propagate-mode-calculator cursor))))
 
 
 ;; will keep the location between switching calculator on/off
