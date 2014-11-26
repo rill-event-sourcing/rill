@@ -11,7 +11,7 @@ module ApplicationHelper
 
   def text_to_html(inputs, text, reflections = [], extra_examples = [])
     text = render_latex_for_editing(text)
-    html = text.html_safe
+    html = text.to_s.html_safe
 
     inputs.each do |input|
       input_html = input_to_html(input)
