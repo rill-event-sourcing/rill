@@ -1,5 +1,7 @@
 * Release Changelog
 ** NEXT RELEASE
+** release-2014-11-26.1
+*** Fix: Fixed an issue when calculations on sums with brackets gave syntax errors
 ** release-2014-11-25.1
 *** New: Calculator
 *** New: Styling of explanation content
