@@ -290,6 +290,11 @@
                               (dom/section #js {:className "m-subsection" :id (str "subsection-" i)}
                                            (tag-tree-to-om tag-tree inputs reflections extra-examples)))
                             subsections))))
+    om/IDidMount
+    (did-mount [_]
+      (when subsection-index
+        (js/window.scrollTo 0 (- (element-top (gdom/getElement (str "subsection-" subsection-index)))
+                                 70))))
     om/IWillUpdate
     (will-update [_ next-props _]
       (let [old-props (om/get-props owner)]
