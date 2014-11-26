@@ -23,7 +23,10 @@
        [2 :frac 3 :pow -1]         , (Frac. 3 2)
        [2 :frac 3 :pow :neg 1]     , (Frac. 3 2)
        [2 :frac 3 :x1]             , (Frac. 3 2)
+       [:sub 2 :frac 3 :x1]        , (Frac. 3 -2)
+       [2 :frac :sub 3 :x1]        , (Frac. -3 2)
        [5 :pow 2 :pow :sub 3]      , 0.000064
+       [1 :x10y :sub 2]            , 0.01
        [2 :pow :neg 2]             , 0.25
        [2 :sub :sub 2]             , 4
        [:sin 0]                    , 0
@@ -36,6 +39,13 @@
        [:cos :neg 9 0]             , 0
        [:cos 4 5 0]                , 0
        [:tan 0]                    , 0
+       [5 :add
+        :open 3 :mul 8 :close
+        :add 2]                    , 31
+       [5 :add
+        :open 3 :mul 8 :close
+        :sub 2]                    , 27
+       [:ans :sub 2]               , 25
        [1 :div 0]                  , "MATH ERROR"
        [:tan 90]                   , "MATH ERROR"
        [:sqrt]                     , "SYNTAX ERROR"
