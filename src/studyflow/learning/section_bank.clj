@@ -7,12 +7,12 @@
 (def max-coins-per-section 60)
 
 (defmethod notify ::section-test/QuestionAnsweredCorrectly
-  [{:keys [total-coins-earned]} {:keys [section-id student-id]} {:keys [question-state test-finished?]}]
+  [{:keys [total-coins-earned]} {:keys [section-id student-id]} {:keys [question-state test-finished? course-id]}]
   (let [total-coins-earned (or total-coins-earned 0)]
     (if (and (= question-state :correct)
              (not test-finished?)
              (< total-coins-earned max-coins-per-section))
-      [(events/coins-earned section-id student-id (min 3 (- max-coins-per-section total-coins-earned)))])))
+      [(events/coins-earned section-id student-id course-id (min 3 (- max-coins-per-section total-coins-earned)))])))
 
 (defmethod handle-event ::events/CoinsEarned
   [section-bank {:keys [amount]}]

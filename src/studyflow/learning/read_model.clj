@@ -134,6 +134,15 @@
   [model course-name]
   (get (:course-ids model) course-name))
 
+;; Coins Coins Coins!
+
+(defn add-coins
+  [model course-id student-id amount]
+  (update-in model [:total-coins course-id student-id] (fnil + 0) amount))
+
+(defn total-coins
+  [model course-id student-id]
+  (get-in model [:total-coins course-id student-id] 0))
 
 ;; catchup
 

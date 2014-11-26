@@ -36,7 +36,8 @@
 (defn course-material
   [m course-id student-id]
   (-> (model/course-tree m course-id student-id)
-      (update-in [:entry-quiz :questions] #(map remove-answers %))))
+      (update-in [:entry-quiz :questions] #(map remove-answers %))
+      (assoc :total-coins (model/total-coins m course-id student-id))))
 
 (defn section
   [m course-id section-id]

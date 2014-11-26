@@ -10,5 +10,6 @@
 (defevent CoinsEarned
   :section-id m/Id
   :student-id m/Id
+  :course-id m/Id
   :amount s/Int
   section-bank-id)

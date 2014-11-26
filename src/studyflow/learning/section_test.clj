@@ -2,6 +2,7 @@
   (:require [clojure.tools.logging :as log]
             [studyflow.learning.section-test.events :as events]
             [studyflow.learning.section-test.commands :as commands]
+            [studyflow.learning.section-bank]
             [studyflow.learning.course :as course]
             [rill.aggregate :refer [handle-event handle-command aggregate-ids]]
             [rill.message :as message]

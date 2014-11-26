@@ -5,6 +5,7 @@
             [studyflow.learning.entry-quiz.events :as entry-quiz]
             [studyflow.learning.section-test.events :as section-test]
             [studyflow.learning.chapter-quiz.events :as chapter-quiz]
+            [studyflow.learning.section-bank.events :as section-bank]
             [rill.event-channel :as event-channel]
             [rill.message :as message]))
 
@@ -112,6 +113,13 @@
 (defmethod handle-event :studyflow.school-administration.student.events/Imported
   [model {:keys [student-id full-name]}]
   (m/set-student model student-id {:full-name full-name}))
+
+;; Coins
+
+(defmethod handle-event ::section-bank/CoinsEarned
+  [model {:keys [course-id section-id student-id amount]}]
+  (m/add-coins model course-id student-id amount))
+
 
 (defmethod handle-event :default
   [model event]
