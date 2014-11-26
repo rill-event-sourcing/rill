@@ -74,6 +74,38 @@
              (.-offsetParent el))
       top)))
 
+(defn start-scrolling-listener [last-scroll-time]
+  (let [scrolling-channel  (async/chan (async/sliding-buffer 1))]
+    (set! (.-onscroll js/document)
+          (fn [e]
+            (swap! last-scroll-time (fn [_] (.getTime (js/Date.))))
+            (async/put! scrolling-channel {:pos (.-scrollY js/window)})))
+    (go-loop []
+      (let [{:keys [pos]} (<! scrolling-channel)
+            section (.getElementById js/document "m-section")]
+        (when section
+          (let [offsets (map-indexed (fn [i el]
+                                       [i (element-top el)])
+                                     (filter #(= (.-className %) "m-subsection")
+                                             (array-seq (gdom/getChildren section) 0)))
+                subsection-index (if (>= (+ pos
+                                            200
+                                            (.-innerHeight js/window))
+                                         (.-scrollHeight js/document.body))
+                                   (first (last offsets))
+                                   (first (last (filter (fn [[i offset]]
+                                                          (< offset (+ 300 pos)))
+                                                        offsets))))]
+            (when subsection-index
+              (let [current-location (.-href (.-location js/document))
+                    [before hash] (.split current-location "#")
+                    new-location (apply str before "#"
+                                        (interpose "/" (concat (take 4 (.split hash "/"))
+                                                               [subsection-index])))]
+                (when-not (= new-location current-location)
+                  (.replace (.-location js/document) new-location))))))
+        (recur)))))
+
 (defn ^:export course-page []
   (let [command-channel (async/chan)
         last-scroll (atom 0)]
@@ -91,32 +123,6 @@
                :data-channel (async/chan)
                :notification-channel (async/chan)
                :last-scroll last-scroll}})
-
-
-    (let [scrolling-channel  (async/chan (async/sliding-buffer 1))]
-      (set! (.-onscroll js/document)
-            (fn [e]
-              (swap! last-scroll (fn [_] (.getTime (js/Date.))))
-              (async/put! scrolling-channel {:pos (.-scrollY js/window)})))
-      (go-loop []
-        (let [{:keys [pos]} (<! scrolling-channel)
-              section (.getElementById js/document "m-section")]
-          (when section
-            (let [offsets (map-indexed (fn [i el]
-                                         [i (element-top el)])
-                                       (filter #(= (.-className %) "m-subsection")
-                                               (array-seq (gdom/getChildren section) 0)))
-                  subsection-index (first (last (filter (fn [[i offset]]
-                                                          (< offset (+ 300 pos)))
-                                                        offsets)))]
-              (when subsection-index
-                (let [current-location (.-href (.-location js/document))
-                      [before hash] (.split current-location "#")
-                      new-location (apply str before "#"
-                                          (interpose "/" (concat (take 4 (.split hash "/"))
-                                                                 [subsection-index])))]
-                  (when-not (= new-location current-location)
-                    (.replace (.-location js/document) new-location))))))
-          (recur))))))
+    (start-scrolling-listener last-scroll)))
 
 (ipad/ipad-scroll-on-inputs-blur-fix)
