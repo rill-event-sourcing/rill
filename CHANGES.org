@@ -1,6 +1,7 @@
 * Release Changelog
 ** NEXT RELEASE
 *** Fix: Disable scrollbars in calculator on FF
+*** Fix: Make calculator size toggle persistent
 *** Fix: Length of small inputs raised from 5 to 6
 ** release-2014-11-26.1
 *** Fix: Fixed an issue when calculations on sums with brackets gave syntax errors
