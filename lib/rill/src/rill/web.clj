@@ -3,7 +3,7 @@
             [rill.handler :as rill-handler]
             [rill.message :as message]))
 
-(defn command-result-to-ring-response [command [status events new-version]]
+(defn command-result-to-ring-response [command [status events new-version triggered]]
   (case status
     :rejected
     {:status 422 :body {:status :command-rejected}} ; HTTP 422 Unprocessable Entity
@@ -18,6 +18,7 @@
     {:status 200 :body {:status :command-accepted
                         :events events
                         :aggregate-version new-version
+                        :triggered triggered
                         :aggregate-id (message/primary-aggregate-id command)}}
 
     ;; else
