@@ -1,6 +1,7 @@
 (ns rekenmachien.parser
   (:require [clojure.walk :refer [postwalk]]))
 
+(def oper? #{:x10y :add :sub :mul :div :neg :pow :frac})
 (def block-oper? #{:open :sin :cos :tan :asin :acos :atan :sqrt})
 
 (defn- find-closing [tokens n]
@@ -52,7 +53,7 @@
 
 (defn dangling-subs [tokens]
   (when (seq tokens)
-    (if (and (not (number? (first tokens)))
+    (if (and (oper? (first tokens))
              (= :sub (second tokens)))
       (dangling-subs (into [(first tokens) :neg] (drop 2 tokens)))
       (into [(first tokens)] (dangling-subs (next tokens))))))
