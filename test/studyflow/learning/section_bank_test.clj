@@ -30,7 +30,7 @@
 
   (is (command-result= [:ok
                         [(section-test/question-answered-correctly section-id student-id question-id correct-inputs)]
-                        [(events/coins-earned section-id student-id 3)]]
+                        [(events/coins-earned section-id student-id course-id 3)]]
                        (execute (check-answer! section-id student-id 1 course-id question-id correct-inputs)
                                 [fixture/course-published-event
                                  (section-test/created section-id student-id course-id)
@@ -59,10 +59,10 @@
 
   (is (command-result= [:ok
                         [(section-test/question-answered-correctly section-id student-id question-id correct-inputs)]
-                        [(events/coins-earned section-id student-id 2)]]
+                        [(events/coins-earned section-id student-id course-id 2)]]
                        (execute (check-answer! section-id student-id 1 course-id question-id correct-inputs)
                                 [fixture/course-published-event
-                                 (events/coins-earned section-id student-id 58)
+                                 (events/coins-earned section-id student-id course-id 58)
                                  (section-test/created section-id student-id course-id)
                                  (section-test/question-assigned section-id student-id question-id 2)]))
       "get up to 60 coins out of a section test")
@@ -72,7 +72,7 @@
                         []]
                        (execute (check-answer! section-id student-id 1 course-id question-id correct-inputs)
                                 [fixture/course-published-event
-                                 (events/coins-earned section-id student-id 60)
+                                 (events/coins-earned section-id student-id course-id 60)
                                  (section-test/created section-id student-id course-id)
                                  (section-test/question-assigned section-id student-id question-id 2)]))
       "don't get more coins after the limit"))
