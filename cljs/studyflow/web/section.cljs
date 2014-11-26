@@ -4,7 +4,7 @@
             [goog.dom :as gdom]
             [studyflow.web.calculator :as calculator]
             [studyflow.web.history :refer [path-url navigate-to-path]]
-            [studyflow.web.helpers :refer [input-builders tool-box modal raw-html tag-tree-to-om focus-input-box section-explanation-url on-enter click-once-button] :as helpers]
+            [studyflow.web.helpers :refer [input-builders tool-box modal raw-html tag-tree-to-om focus-input-box section-explanation-url on-enter click-once-button element-top] :as helpers]
             [studyflow.web.ipad :as ipad]
             [cljs.core.async :as async]
             [studyflow.web.aggregates :as aggregates]
@@ -298,7 +298,9 @@
           (if (> (- (.getTime (js/Date.))
                     @(om/get-shared owner :last-scroll))
                  500)
-            (.scrollIntoView (gdom/getElement (str "subsection-" (:subsection-index next-props))))))))))
+            (js/window.scrollTo 0 (- (element-top (gdom/getElement (str "subsection-"
+                                                                        (:subsection-index next-props))))
+                                     70))))))))
 
 (defn section-explanation-panel [cursor owner]
   (reify

@@ -8,7 +8,7 @@
             [goog.dom :as gdom]
             [studyflow.web.dashboard :refer [dashboard]]
             [studyflow.web.history :as url-history]
-            [studyflow.web.helpers :refer [modal] :as helpers]
+            [studyflow.web.helpers :refer [modal element-top] :as helpers]
             [studyflow.web.ipad :as ipad]
             [studyflow.web.tracking :as tracking]
             [studyflow.web.service :as service]
@@ -65,14 +65,7 @@
                             (om/build section/section-panel cursor))
                    ;; default
                    (om/build dashboard cursor)))))))
-(defn element-top
-  [element]
-  (loop [top 0
-         el element]
-    (if el
-      (recur (+ top (.-offsetTop el))
-             (.-offsetParent el))
-      top)))
+
 
 (defn start-scrolling-listener [last-scroll-time]
   (let [scrolling-channel  (async/chan (async/sliding-buffer 1))]

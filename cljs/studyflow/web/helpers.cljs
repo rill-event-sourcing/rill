@@ -251,3 +251,12 @@
                            (om/set-state-nr! owner :enabled false))
                          :disabled (not (om/get-state owner :enabled))}
                     value)))))
+
+(defn element-top
+  [element]
+  (loop [top 0
+         el element]
+    (if el
+      (recur (+ top (.-offsetTop el))
+             (.-offsetParent el))
+      top)))
