@@ -1,6 +1,9 @@
 (ns studyflow.learning.section-test.events
-  (:require [rill.message :refer [defevent process-manager-id]]
+  (:require [rill.message :refer [defevent observers]]
+            [studyflow.learning.chapter-quiz.notifications :as chapter-quiz]
+            [studyflow.learning.section-bank.notifications :as section-bank]
             [studyflow.learning.chapter-quiz.events :refer [chapter-quiz-id]]
+            [studyflow.learning.section-bank.events :refer [section-bank-id]]
             [studyflow.learning.course-material :as m]
             [schema.core :as s]))
 
@@ -35,6 +38,10 @@
   :inputs {m/FieldName s/Str}
   section-test-id)
 
+(defmethod observers ::QuestionAnsweredCorrectly
+  [event]
+  [[(section-bank-id event) section-bank/notify]])
+
 (defevent QuestionAnsweredIncorrectly
   :section-id m/Id
   :student-id m/Id
@@ -49,9 +56,9 @@
   :course-id m/Id
   section-test-id)
 
-(defmethod process-manager-id ::Finished
+(defmethod observers ::Finished
   [event]
-  (chapter-quiz-id event))
+  [[(chapter-quiz-id event) chapter-quiz/notify]])
 
 (defevent StreakCompleted
   :section-id m/Id

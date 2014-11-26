@@ -2,13 +2,14 @@
   (:require [clojure.tools.logging :as log]
             [clojure.set :as set]
             [studyflow.learning.chapter-quiz.events :as events :refer [chapter-quiz-id]]
+            [studyflow.learning.chapter-quiz.notifications :refer [notify]]
             [studyflow.learning.section-test.events :as section-test]
             [rill.message :refer [defcommand]]
             [studyflow.learning.course-material :as m]
             [studyflow.learning.course :as course]
             [studyflow.rand :refer [*rand-nth*]]
             [schema.core :as s]
-            [rill.aggregate :refer [handle-event handle-command handle-notification aggregate-ids]]
+            [rill.aggregate :refer [handle-event handle-command aggregate-ids]]
             [rill.uuid :refer [new-id]]))
 
 (defrecord ChapterQuiz
@@ -207,7 +208,7 @@
   [{:keys [course-id]}]
   [course-id])
 
-(defmethod handle-notification ::section-test/Finished
+(defmethod notify ::section-test/Finished
   [chapter-quiz {:keys [section-id course-id chapter-id student-id]} section-test course]
   (let [all-sections (set (map :id (:sections (course/chapter course chapter-id))))]
     [(events/section-finished course-id chapter-id student-id section-id all-sections)]))
@@ -219,7 +220,7 @@
       (update-in [:finished-sections] (fnil conj #{}) section-id)
       (assoc-in [:all-sections] all-sections)))
 
-(defmethod handle-notification ::events/SectionFinished
+(defmethod notify ::events/SectionFinished
   [{:keys [finished-sections all-sections]} {:keys [student-id course-id chapter-id]} _]
   (when (= (set/intersection finished-sections all-sections) all-sections)
     [(events/un-locked course-id chapter-id student-id)]))

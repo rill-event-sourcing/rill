@@ -1,6 +1,7 @@
 (ns studyflow.learning.chapter-quiz.events
-  (:require [rill.message :refer [defevent process-manager-id]]
+  (:require [rill.message :refer [defevent observers]]
             [studyflow.learning.course-material :as m]
+            [studyflow.learning.chapter-quiz.notifications :as chapter-quiz]
             [schema.core :as s]))
 
 (defn chapter-quiz-id
@@ -76,7 +77,6 @@
   :all-sections #{m/Id}
   chapter-quiz-id)
 
-(defmethod process-manager-id ::SectionFinished
+(defmethod observers ::SectionFinished
   [event]
-  (chapter-quiz-id event))
-
+  [[(chapter-quiz-id event) chapter-quiz/notify]])
