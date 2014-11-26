@@ -3,6 +3,7 @@
             [om.dom :as dom :include-macros true]
             [studyflow.web.calculator :as calculator]
             [studyflow.web.history :refer [path-url navigate-to-path]]
+            [studyflow.web.coins :refer [coins-header]]
             [studyflow.web.helpers :refer [input-builders tool-box modal raw-html tag-tree-to-om focus-input-box section-explanation-url on-enter click-once-button] :as helpers]
             [studyflow.web.ipad :as ipad]
             [cljs.core.async :as async]
@@ -605,6 +606,7 @@
                                 :href  (-> (get-in cursor [:view :selected-path])
                                            (assoc :main :dashboard)
                                            path-url)})
+                    (om/build coins-header cursor)
                     (dom/ul #js {:className "section-toggle"}
                             (dom/li nil
                                     (dom/a #js {:className (str "section-toggle-link explanation-link"
