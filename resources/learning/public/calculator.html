@@ -14,13 +14,14 @@
       //if (top == self) {
       //  window.location = 'about:blank';
       //} else {
+        rekenmachien.core.setMode(parent.studyflow.web.calculator.frame_calculator_mode);
         rekenmachien.core.start("app");
       //}
       window.reset = function() {
         rekenmachien.core.reset();
       }
-      window.chgMode = function() {
-        rekenmachien.core.chgMode();
+      window.setMode = function(light) {
+        rekenmachien.core.setMode(light);
       }
     </script>
 </body>

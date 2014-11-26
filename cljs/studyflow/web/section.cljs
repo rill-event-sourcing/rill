@@ -450,6 +450,8 @@
                                            (keys inputs)))
             revealed-answer (get question :worked-out-answer)
             modal (get #{:completed-modal :finished-modal :stuck-modal} (:view section-test))
+            _ (when-not (contains? (set (:tools question-data)) "calculator")
+                (om/update! cursor [:view :show-calculator] false))
             submit (cond modal
                          (fn [] false)
 
