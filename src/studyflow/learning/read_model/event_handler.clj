@@ -105,7 +105,9 @@
 
 (defmethod handle-event :studyflow.school-administration.student.events/Created
   [model {:keys [student-id full-name]}]
-  (m/set-student model student-id {:full-name full-name}))
+  (-> model
+      (m/set-student student-id {:full-name full-name})
+      (update-in [:students-by-department nil] (fnil conj #{}) student-id)))
 
 (defmethod handle-event :studyflow.school-administration.student.events/NameChanged
   [model {:keys [student-id full-name]}]
@@ -115,10 +117,9 @@
   [model {:keys [student-id full-name department-id]}]
   (-> model
       (m/set-student student-id {:full-name full-name :department-id department-id})
-      (assoc-in [:students-by-department department-id] student-id)))
+      (update-in [:students-by-department department-id] (fnil conj #{}) student-id)))
 
 ;; Schools & departments
-;;                       studyflow.school-administration.department.events
 (defmethod handle-event :studyflow.school-administration.department.events/Created
   [model {:keys [department-id school-id]}]
   (-> model

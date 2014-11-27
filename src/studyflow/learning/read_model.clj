@@ -164,9 +164,11 @@
 
 (defn students-for-school
   [model school-id]
-  (mapcat (fn [department-id]
-            (get-in model [:students-by-department department-id]))
-          (get-in model [:departments-by-school school-id])))
+  (if school-id
+    (mapcat (fn [department-id]
+              (get-in model [:students-by-department department-id]))
+            (get-in model [:departments-by-school school-id]))
+    (get-in model [:students-by-department nil])))
 
 (defn school-for-student
   [model student-id]
@@ -186,10 +188,12 @@
 
 (defn personalized-leaderboard
   [leaderboard student-id]
-  (let [top-10 (take 10 leaderboard)]
+  (if-let [top-10 (seq (take 10 leaderboard))]
     (if (contains? (set (map second top-10)) student-id)
       top-10 ; 1-10
-      (concat top-10 [(first (filter #(= (second %) student-id) leaderboard))]))))
+      (if-let [my-line (first (filter #(= (second %) student-id) leaderboard))]
+        (concat top-10 [my-line])
+        top-10))))
 
 ;; catchup
 
