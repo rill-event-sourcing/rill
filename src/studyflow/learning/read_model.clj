@@ -162,17 +162,27 @@
   (get-in model [:total-coins course-id student-id] 0))
 
 
-;; TODO: restrict to school
+(defn students-for-school
+  [model school-id]
+  (mapcat (fn [department-id]
+            (get-in model [:students-by-department department-id]))
+          (get-in model [:departments-by-school school-id])))
+
+(defn school-for-student
+  [model student-id]
+  (get-in model [:departments (get-in model [:students student-id :department-id])]))
 
 (defn leaderboard
-  [model course-id date]
-  (map-indexed cons (sort-by second (comp - compare)
-                             (map (fn [id]
-                                    [id
-                                     (coins-earned-lately model course-id id date)
-                                     (first (string/split (get-in model [:students id :full-name])
-                                                          #" "))])
-                                  (keys (:students model))))))
+  [model course-id date school-id]
+  (map-indexed (fn [index row]
+                 (cons (inc index) row))
+               (sort-by second (comp - compare)
+                        (map (fn [id]
+                               [id
+                                (coins-earned-lately model course-id id date)
+                                (first (string/split (get-in model [:students id :full-name])
+                                                     #" "))])
+                             (students-for-school model school-id)))))
 
 (defn personalized-leaderboard
   [leaderboard student-id]
