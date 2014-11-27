@@ -34,7 +34,6 @@ module ApplicationHelper
     html.html_safe
   end
 
-
   def input_to_html(input)
     if input.line_input?
       line_input_to_html(input)

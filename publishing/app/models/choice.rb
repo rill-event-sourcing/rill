@@ -16,7 +16,7 @@ class Choice < ActiveRecord::Base
 
   def to_publishing_format
     {
-      value: render_latex_for_publishing(value, "choice in #{multiple_choice_input} #{multiple_choice_input.inputable.name}, in #{multiple_choice_input.inputable.quizzable}"),
+      value: preparse_text_for_publishing(value, "choice in #{multiple_choice_input} #{multiple_choice_input.inputable.name}, in #{multiple_choice_input.inputable.quizzable}"),
       correct: correct
     }
   end

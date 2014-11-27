@@ -1,9 +1,12 @@
 class Image < ActiveRecord::Base
   require "digest"
 
-  validate :url, presence: true, unique: true
+  validates :url, presence: true, uniqueness: true
 
-  scope :outdated, -> (time) { where(["checked_at IS NULL OR checked_at > ?", time]) }
+  scope :checked,  -> { where(status: "checked") }
+  scope :outdated, -> (time) { where(["checked_at IS NULL OR checked_at < ?", time]) }
+
+  attr_accessor :file_sha
 
   def to_s
     "#{ url }"
@@ -21,28 +24,33 @@ class Image < ActiveRecord::Base
     "#{ bucket }#{ path }"
   end
 
-  def not_checked?
-    status != "checked"
+  def needs_update?
+    # new image or no dimensions or changed file
+    !sha || !width || !height || sha != file_sha
+  end
+
+  def file_sha
+    @file_sha ||= Digest::MD5.hexdigest(File.read(filename))
   end
 
   def check
     begin
-      file = File.read(filename)
-      file_sha = Digest::MD5.hexdigest(file)
-      if not_checked? || file_sha != sha
-        p "checking: #{ path }"
+      if needs_update?
+        p "checking dimensions of: #{ path }"
         image = MiniMagick::Image.open(filename)
         dimension = image.dimensions
         update_attributes sha: file_sha,
                           width: dimension.first,
-                          height: dimension.last,
-                          status: :checked,
-                          checked_at: DateTime.now
+                          height: dimension.last
+      else
+        # p "no difference of file: #{ path }"
       end
-    rescue Exception => ex
-      p ex
-      update_attributes status: :not_checked,
+      update_attributes status: :checked,
                         checked_at: DateTime.now
+    rescue Exception => ex
+      p "ERROR checking image: #{ path } => #{ex}"
+      update_attributes status: :not_checked,
+                        checked_at: nil
     end
   end
 

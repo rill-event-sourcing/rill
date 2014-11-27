@@ -36,8 +36,8 @@ class Reflection < ActiveRecord::Base
   def to_publishing_format
     {
       name: name,
-      content: render_latex_for_publishing(content, "reflection '#{name}', in '#{section.name}'"),
-      answer: render_latex_for_publishing(answer, "reflection '#{name}', in '#{section.name}'")
+      content: preparse_text_for_publishing(content, "reflection '#{name}', in '#{section.name}'"),
+      answer:  preparse_text_for_publishing(answer, "reflection '#{name}', in '#{section.name}'")
     }
   end
 

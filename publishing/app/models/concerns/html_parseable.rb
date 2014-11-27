@@ -13,11 +13,11 @@ module HtmlParseable
 
   def fix_parsing_page
     [
-     [/allowfullscreen/, "allowfullscreen=\"\""],
-     ["\r", ""],
-     [/<math>(.*?)<\/math>/m, "<math></math>"],
-     [" < ", " &gt; "],
-     [" > ", " &lt; "]
+      [/allowfullscreen/, "allowfullscreen=\"\""],
+      ["\r", ""],
+      [/<math>(.*?)<\/math>/m, "<math></math>"],
+      [" < ", " &gt; "],
+      [" > ", " &lt; "]
     ]
   end
 
@@ -81,9 +81,33 @@ module HtmlParseable
       src = el["src"]
       if src
         if src =~ /^#{ asset_host }\//
+          p "creating Image for #{ src }"
           Image.create(url: src)
         else
-          errors << "`#{ src }` is not a valid image src. It must be on #{asset_host}/"
+          errors << "`#{ src }` is not a valid image src. It must be on #{ asset_host }"
+        end
+      else
+        errors << "no 'src' given for image"
+      end
+    end
+    errors
+  end
+
+  def image_errors_when_publishing(attr)
+    asset_host = "https://assets.studyflow.nl"
+    errors = []
+    html_images(attr).each do |el|
+      src = el["src"]
+      if src
+        if src =~ /^#{ asset_host }\//
+          image = Image.checked.where(url: src).first
+          if image
+            errors << "`#{ src }` is not found on S3." unless image.checked?
+          else
+            errors << "`#{ src }` is not found in the image db."
+          end
+        else
+          errors << "`#{ src }` is not a valid image src. It must be on #{ asset_host }"
         end
       else
         errors << "no 'src' given for image"
