@@ -66,9 +66,8 @@
       (let [[status events :as response] (apply aggregate/handle-command primary-aggregate command rest-aggregates)]
         (case status
           :ok (if (commit-events event-store id version events)
-                ;; TODO: Ensure observers see primary aggregate as it was before/after triggering event
                 (let [new-primary (update-aggregate primary-aggregate (filter #(= (message/primary-aggregate-id %) id) events))
-                      triggered (mapcat (partial notify-observers event-store new-primary) events)]
+                      triggered (mapcat #(notify-observers event-store % new-primary) events)]
                   [:ok events (+ version (count events)) triggered])
                 [:conflict])
           :rejected response)))))
