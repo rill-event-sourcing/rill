@@ -126,6 +126,8 @@ class Question < ActiveRecord::Base
   def errors_when_publishing
     errors = errors_when_publishing_for_entry_quiz
     errors << "No Worked-out-answer given for question '#{name}', in '#{parent}'" if inputs.count > 1 && worked_out_answer.blank?
+    errors += image_errors(:text)
+    errors += image_errors(:worked_out_answer)
     errors.flatten
   end
 

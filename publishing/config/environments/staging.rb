@@ -102,8 +102,7 @@ Rails.application.configure do
   config.redis_server = "login-beta.studyflow.nl"
   config.learning_server = "http://10.129.180.107:3001"
   config.cookie_domain = "studyflow.nl"
-
-  config.bucket_dir = "#{ Rails.root }/bucket"
+  config.bucket_dir = "/home/studyflow/app/shared/bucket"
 
   Raygun.setup do |config|
     config.api_key = "OSRdDu9Sfnk3KQndjEtJcg=="

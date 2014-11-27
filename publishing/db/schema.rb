@@ -106,7 +106,7 @@ ActiveRecord::Schema.define(version: 20141126112215) do
   end
 
   create_table "images", force: true do |t|
-    t.string   "url"
+    t.string   "path"
     t.string   "sha"
     t.string   "status"
     t.datetime "checked_at"

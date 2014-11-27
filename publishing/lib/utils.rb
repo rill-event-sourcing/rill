@@ -56,24 +56,24 @@ end
 
 
 def preparse_text_for_publishing(text = "", origin = "unknown")
-  # text = preparse_images(text, origin)
+  text = preparse_images(text, origin)
   render_latex_for_publishing(text, origin)
 end
 
 def preparse_images(text = "", origin = "")
-  parsed_page = Nokogiri::HTML(text)
+  parsed_page = Nokogiri::HTML::DocumentFragment.parse(text)
   images = parsed_page.css('img')
   images.each do |html_image|
-    image = Image.checked.where(url: html_image["src"]).first
+    image = Image.checked.find_by_url(html_image["src"])
     if image
       html_image['data-width']  = image.width
       html_image['data-height'] = image.height
     else
-      # throw "asset for #{ html_image["src"] } not found in #{ origin }!"
+      throw "asset for #{ html_image["src"] } not found in #{ origin }!"
       pretty_debug "asset for #{ html_image["src"] } not found in #{ origin }!"
     end
   end
-  parsed_page.css('body').inner_html
+  parsed_page.inner_html
 end
 
 def render_latex_for_publishing(text = "", origin = "unknown")

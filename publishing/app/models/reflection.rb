@@ -30,6 +30,8 @@ class Reflection < ActiveRecord::Base
     errors = []
     errors << "No content for #{name} in #{section.name}" if content.empty?
     errors << "No answer for #{name} in #{section.name}" if answer.empty?
+    errors += image_errors(:content)
+    errors += image_errors(:answer)
     errors
   end
 

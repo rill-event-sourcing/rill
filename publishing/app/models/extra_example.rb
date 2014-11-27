@@ -29,6 +29,7 @@ class ExtraExample < ActiveRecord::Base
   def errors_when_publishing
     errors = []
     errors << "No content for #{name} in #{section.name}" if content.empty?
+    errors += image_errors(:content)
     errors
   end
 

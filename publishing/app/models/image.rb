@@ -1,27 +1,50 @@
 class Image < ActiveRecord::Base
   require "digest"
-
-  validates :url, presence: true, uniqueness: true
+ 
+  validates :path, presence: true, uniqueness: true
+  validate :validate_extension, on: :create
 
   scope :checked,  -> { where(status: "checked") }
   scope :outdated, -> (time) { where(["checked_at IS NULL OR checked_at < ?", time]) }
 
   attr_accessor :file_sha
 
-  def to_s
-    "#{ url }"
+  def self.find_by_url(url)
+    images = Image.where(path: path_of_url(url))
+    images.first
   end
 
-  def bucket
+  def validate_extension
+    errors.add(:path, "is not an image") unless ['png', 'jpg', 'gif'].include?(extension)
+  end
+
+  def to_s
+    "#{ path }"
+  end
+
+  def extension
+    return unless path
+    path.to_s.split('.').last
+  end
+
+  def self.bucket_dir
     StudyflowPublishing::Application.config.bucket_dir
   end
 
-  def path
-    URI.parse(url).path
+  def self.path_of_url(url)
+    begin
+      URI.unescape(URI.parse(url).path).gsub("\+", " ")
+    rescue URI::InvalidURIError
+      p "invalid URI: #{ url }"
+    end
   end
 
   def filename
-    "#{ bucket }#{ path }"
+    URI.unescape("#{ Image.bucket_dir }#{ path }").gsub("\+", " ")
+  end
+
+  def checked?
+    status == "checked"
   end
 
   def needs_update?
@@ -36,19 +59,16 @@ class Image < ActiveRecord::Base
   def check
     begin
       if needs_update?
-        p "checking dimensions of: #{ path }"
         image = MiniMagick::Image.open(filename)
         dimension = image.dimensions
         update_attributes sha: file_sha,
                           width: dimension.first,
                           height: dimension.last
-      else
-        # p "no difference of file: #{ path }"
       end
       update_attributes status: :checked,
                         checked_at: DateTime.now
     rescue Exception => ex
-      p "ERROR checking image: #{ path } => #{ex}"
+      p "ERROR checking image: #{ path }, file: #{ path }"
       update_attributes status: :not_checked,
                         checked_at: nil
     end

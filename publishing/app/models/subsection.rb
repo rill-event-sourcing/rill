@@ -49,7 +49,7 @@ class Subsection < ActiveRecord::Base
       errors << "Errors in LaTeX rendering in section '#{section.name}', in '#{section.parent}'"
     end
     errors << "No content in subsection of section '#{section.name}', in '#{section.parent}'" if text.blank?
-    errors += image_errors_when_publishing(:text)
+    errors += image_errors(:text)
     errors
   end
 
