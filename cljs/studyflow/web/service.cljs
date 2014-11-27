@@ -211,7 +211,7 @@
 
   (let [[command-type & args] command]
     (condp = command-type
-      "data/dashboard"
+      "data/course-material"
       (let [[course-id student-id] args]
         (GET (str "/api/course-material/"
                   course-id

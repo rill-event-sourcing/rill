@@ -8,23 +8,29 @@
 
 (def history (History.))
 
+(def text-url-mapping (atom nil))
+
 (defn token->path [token]
-  (let [[main-token chapter-id section-id question-token] (string/split token #"/")]
+  (let [[main-token chapter-text section-text question-token] (string/split token #"/")
+        chapter-id (when (seq chapter-text)
+                     (get-in @text-url-mapping [:title->id (keyword chapter-text)]))
+        section-id (when (seq section-text)
+                     (get-in @text-url-mapping [:title->id (keyword section-text)]))]
     {:main (keyword main-token)
-     :chapter-id (when (seq chapter-id)
-                   chapter-id)
-     :section-id (when (seq section-id)
-                   section-id)
+     :chapter-id chapter-id
+     :section-id section-id
      :section-tab (if (= question-token "questions")
                     :questions
                     :explanation)}))
 
 (defn path->token [path]
-  (let [{:keys [main chapter-id section-id section-tab]} path]
+  (let [{:keys [main chapter-id section-id section-tab]} path
+        chapter-text (get-in @text-url-mapping [:id->title (keyword chapter-id)])
+        section-text (get-in @text-url-mapping [:id->title (keyword section-id)])]
     (string/join "/" [(if main
                         (name main)
                         "dashboard")
-                      chapter-id section-id
+                      chapter-text section-text
                       (if (= section-tab :questions)
                         "questions"
                         "text")])))
@@ -49,10 +55,12 @@
         (.setEnabled history true)
         ))))
 
-;; TODO: we probably do not need this; navigation should
-;; always go through window.location, not the other way around
 (defn listen [tx-report cursor]
   (let [{:keys [path old-state new-state]} tx-report]
+    (when (= path [:view :course-material])
+      (reset! text-url-mapping (get-in new-state [:view :course-material :text-url-mapping])))
+    ;; TODO: we probably do not need this; navigation should
+    ;; always go through window.location, not the other way around
     (when (= path [:view :selected-path])
       (when-let [token (path->token (get-in new-state [:view :selected-path]))]
         (.setToken history token)))))

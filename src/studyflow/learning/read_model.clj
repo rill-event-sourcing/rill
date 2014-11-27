@@ -1,5 +1,6 @@
 (ns studyflow.learning.read-model
-  (:require [studyflow.learning.chapter-quiz :as chapter-quiz]))
+  (:require [studyflow.learning.chapter-quiz :as chapter-quiz]
+            [ring.util.codec :as ring-codec]))
 
 (def empty-model {})
 
@@ -7,6 +8,23 @@
   [course]
   (assoc course :sections-by-id
          (into {} (map #(vector (:id %) %) (mapcat :sections (:chapters course))))))
+
+(defn index-title-id
+  [course]
+  (let [id->title (into {}
+                        (mapcat
+                         (fn [chapter]
+                           (apply vector [(:id chapter)
+                                          (ring-codec/url-encode (:title chapter))]
+                                  (for [section (:sections chapter)]
+                                    [(:id section)
+                                     (ring-codec/url-encode (:title section))])))
+                         (:chapters course)))
+        title->id (zipmap (vals id->title)
+                          (keys id->title))]
+    (assoc course
+      :text-url-mapping {:title->id title->id
+                         :id->title id->title})))
 
 (defn update-student-section-status
   [model section-id student-id current-status new-status]
@@ -25,7 +43,9 @@
 (defn set-course
   [model id material]
   (-> model
-      (assoc-in [:courses id] (index-course material))
+      (assoc-in [:courses id] (-> material
+                                  index-course
+                                  index-title-id))
       (assoc-in [:course-ids (:name material)] id)))
 
 (defn remove-course
@@ -90,6 +110,7 @@
         remedial-chapters-status (get-in model [:remedial-chapters-status course-id student-id])]
     {:name (:name course)
      :id (:id course)
+     :text-url-mapping (:text-url-mapping course)
      :chapters (mapv #(chapter-tree model % student-id remedial-chapters-status) (:chapters course))
      :entry-quiz (entry-quiz model (:id course) student-id)}))
 
