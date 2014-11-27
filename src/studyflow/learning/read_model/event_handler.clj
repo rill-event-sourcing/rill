@@ -7,7 +7,8 @@
             [studyflow.learning.chapter-quiz.events :as chapter-quiz]
             [studyflow.learning.section-bank.events :as section-bank]
             [rill.event-channel :as event-channel]
-            [rill.message :as message]))
+            [rill.message :as message]
+            [clj-time.coerce :refer [to-local-date]]))
 
 (defmulti handle-event
   "Update the read model with the given event"
@@ -117,8 +118,8 @@
 ;; Coins
 
 (defmethod handle-event ::section-bank/CoinsEarned
-  [model {:keys [course-id section-id student-id amount]}]
-  (m/add-coins model course-id student-id amount))
+  [model {:keys [course-id section-id student-id amount] :as event}]
+  (m/add-coins model course-id student-id (to-local-date (message/timestamp event)) amount))
 
 
 (defmethod handle-event :default

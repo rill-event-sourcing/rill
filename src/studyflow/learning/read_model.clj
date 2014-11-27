@@ -1,5 +1,8 @@
 (ns studyflow.learning.read-model
-  (:require [studyflow.learning.chapter-quiz :as chapter-quiz]))
+  (:require [studyflow.learning.chapter-quiz :as chapter-quiz]
+            [clj-time.coerce :refer [to-local-date]]
+            [clj-time.core :as time])
+  (:import (org.joda.time LocalDate)))
 
 (def empty-model {})
 
@@ -137,12 +140,42 @@
 ;; Coins Coins Coins!
 
 (defn add-coins
-  [model course-id student-id amount]
-  (update-in model [:total-coins course-id student-id] (fnil + 0) amount))
+  [model course-id student-id ^LocalDate date amount]
+  (-> model
+      (update-in [:total-coins course-id student-id] (fnil + 0) amount)
+      (update-in [:total-coins-by-day course-id date student-id] (fnil + 0) amount)))
+
+(defn recent-dates
+  "given a LocalDate end-date, return the num-days LocalDates up to and including end-date"
+  [num-days end-date]
+  (take num-days (iterate #(.minusDays % 1) (to-local-date end-date))))
+
+(defn coins-earned-lately
+  [model course-id student-id ^LocalDate today]
+  (reduce + 0
+          (map (fn [date] (get-in model [:total-coins-by-day course-id date student-id] 0))
+               (recent-dates 7 today))))
 
 (defn total-coins
   [model course-id student-id]
   (get-in model [:total-coins course-id student-id] 0))
+
+
+;; TODO: restrict to school
+
+(defn leaderboard
+  [model course-id date]
+  (map-indexed cons (sort-by second (comp - compare)
+                            (map (fn [id]
+                                   [id (coins-earned-lately model course-id id date) (get-in model [:students id :full-name])])
+                                 (keys (:students model))))))
+
+(defn personalized-leaderboard
+  [leaderboard student-id]
+  (let [top-10 (take 10 leaderboard)]
+    (if (contains? (set (map second top-10)) student-id)
+      top-10 ; 1-10
+      (concat top-10 [(first (filter #(= (second %) student-id) leaderboard))]))))
 
 ;; catchup
 

@@ -3,8 +3,11 @@
             [clout-link.route :as clout]
             [rill.uuid :refer [uuid]]
             [studyflow.learning.read-model.queries :as queries]
+            [studyflow.learning.read-model :as read-model]
             [studyflow.web.handler-tools :refer [combine-ring-handlers]]
-            [studyflow.learning.web.routes :as routes]))
+            [studyflow.learning.web.routes :as routes]
+            [clj-time.coerce :refer [to-local-date]]
+            [clj-time.core :refer [now]]))
 
 (def handler
   "This handler returns data for the json api (or nil)"
@@ -33,4 +36,10 @@
                    (debug "Query handler for " course-id ", " chapter-id " and " question-id "with model")
                    (if-let [question (queries/chapter-quiz-question model (uuid course-id) (uuid chapter-id) (uuid question-id))]
                      {:status 200 :body question}
-                     {:status 400})))))
+                     {:status 400})))
+
+   (clout/handle routes/query-leaderboard
+                 (fn [{model :read-model {:keys [course-id student-id]} :params}]
+                   {:status 200 :body (-> (read-model/leaderboard model (uuid course-id) (to-local-date (now)))
+                                          (read-model/personalized-leaderboard (uuid student-id)))}))))
+
