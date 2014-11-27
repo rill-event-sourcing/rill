@@ -96,8 +96,12 @@
       (m/update-student-chapter-quiz-status chapter-id student-id :passed)))
 
 (defmethod handle-event :studyflow.school-administration.teacher.events/Created
-  [model {:keys [teacher-id full-name]}]
-  (m/set-student model teacher-id {:full-name full-name}))
+  [model {:keys [teacher-id full-name department-id]}]
+  (m/set-student model teacher-id {:full-name full-name :department-id department-id}))
+
+(defmethod handle-event :studyflow.school-administration.teacher.events/DepartmentChanged
+  [model {:keys [teacher-id department-id]}]
+  (assoc-in model [:students teacher-id :department-id] department-id))
 
 (defmethod handle-event :studyflow.school-administration.teacher.events/NameChanged
   [model {:keys [teacher-id full-name]}]
