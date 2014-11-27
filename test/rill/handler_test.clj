@@ -1,6 +1,6 @@
 (ns rill.handler-test
   (:require [rill.handler :as handler :refer [try-command]]
-            [rill.aggregate :refer [handle-command aggregate-ids]]
+            [rill.aggregate :refer [handle-command aggregate-ids handle-event]]
             [rill.message :as message :refer [defcommand defevent primary-aggregate-id]]
             [clojure.test :refer [deftest testing is]]
             [rill.uuid :refer [new-id]]
@@ -19,6 +19,10 @@
 (defmethod handle-command ::HandlerCommand
   [my-aggregate command]
   [:ok [(handler-test-event (:agg-id command) my-aggregate)]])
+
+(defmethod handle-event ::HandlerTestEvent
+  [agg event]
+  agg)
 
 (def my-aggregate-id 2798)
 
