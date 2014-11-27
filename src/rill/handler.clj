@@ -1,6 +1,6 @@
 (ns rill.handler
   (:require [clojure.tools.logging :as log]
-            [rill.aggregate :as aggregate]
+            [rill.aggregate :as aggregate :refer [update-aggregate]]
             [rill.event-store :as store]
             [rill.repository :refer [retrieve-aggregate-and-version retrieve-aggregate]]
             [rill.event-stream :as stream :refer [any-stream-version]]
@@ -42,19 +42,19 @@
 (declare notify-observers)
 
 (defn notify-observer
-  [event-store event observer-id handler-fn]
+  [event-store event observer-id handler-fn primary]
   (let [observer (retrieve-aggregate event-store observer-id)
-        primary (retrieve-aggregate event-store (message/primary-aggregate-id event))
         rest-aggregates (map #(retrieve-aggregate event-store %) (aggregate/aggregate-ids event))
         triggered-events (seq (apply handler-fn observer event primary rest-aggregates))]
     (when (and triggered-events
                (commit-events event-store observer-id any-stream-version triggered-events))
-      (concat triggered-events (mapcat (partial notify-observers event-store) triggered-events)))))
+      (let [new-observer (update-aggregate observer (filter #(= observer-id (message/primary-aggregate-id %)) triggered-events))]
+        (concat triggered-events (mapcat (partial notify-observers event-store new-observer) triggered-events))))))
 
 (defn notify-observers
-  [event-store event]
+  [event-store event primary]
   (mapcat (fn [[observer-id handler-fn]]
-            (notify-observer event-store event observer-id handler-fn))
+            (notify-observer event-store event observer-id handler-fn primary))
           (message/observers event)))
 
 (defn try-command
@@ -66,7 +66,9 @@
       (let [[status events :as response] (apply aggregate/handle-command primary-aggregate command rest-aggregates)]
         (case status
           :ok (if (commit-events event-store id version events)
-                (let [triggered (mapcat (partial notify-observers event-store) events)]
+                ;; TODO: Ensure observers see primary aggregate as it was before/after triggering event
+                (let [new-primary (update-aggregate primary-aggregate (filter #(= (message/primary-aggregate-id %) id) events))
+                      triggered (mapcat (partial notify-observers event-store new-primary) events)]
                   [:ok events (+ version (count events)) triggered])
                 [:conflict])
           :rejected response)))))
