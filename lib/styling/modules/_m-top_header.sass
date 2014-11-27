@@ -90,14 +90,31 @@
 
 
   #coins_heading
+    width: 200px
     position: absolute
     top: 20px
     right: 150px
     height: 20px
     font-size: 14px
-    color: black
-    background: white
-    border: 1px solid black
-    
-    
-    
+
+    button:
+      position: absolute
+      right: 0px
+
+    #leaderboard
+      width: 100%
+      border: 2px solid black
+
+      td, caption
+        background-color: white
+        color: black
+
+      td
+        padding: 5px
+        &.coins, &.position
+          text-align: right
+
+      .me td
+        color: lime
+        background-color: black
+

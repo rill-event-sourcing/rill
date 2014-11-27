@@ -281,6 +281,15 @@
                              (handle-replay-events cursor course-id events aggregate-version))))
               :error-handler basic-error-handler}))
 
+      "data/leaderboard"
+      (let [[course-id student-id] args]
+        (GET (str "/api/leaderboard/" course-id "/" student-id)
+             {:params {}
+              :handler (fn [res]
+                         (om/update! cursor [:view :leaderboard :data]
+                                     (:leaderboard (json-edn/json->edn res))))
+              :error-handler basic-error-handler}))
+
       "data/chapter-quiz-question"
       (let [[chapter-id question-id] args
             course-id (get-in @cursor [:static :course-id])]

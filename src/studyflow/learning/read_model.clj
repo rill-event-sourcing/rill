@@ -1,7 +1,8 @@
 (ns studyflow.learning.read-model
   (:require [studyflow.learning.chapter-quiz :as chapter-quiz]
             [clj-time.coerce :refer [to-local-date]]
-            [clj-time.core :as time])
+            [clj-time.core :as time]
+            [clojure.string :as string])
   (:import (org.joda.time LocalDate)))
 
 (def empty-model {})
@@ -166,9 +167,12 @@
 (defn leaderboard
   [model course-id date]
   (map-indexed cons (sort-by second (comp - compare)
-                            (map (fn [id]
-                                   [id (coins-earned-lately model course-id id date) (get-in model [:students id :full-name])])
-                                 (keys (:students model))))))
+                             (map (fn [id]
+                                    [id
+                                     (coins-earned-lately model course-id id date)
+                                     (first (string/split (get-in model [:students id :full-name])
+                                                          #" "))])
+                                  (keys (:students model))))))
 
 (defn personalized-leaderboard
   [leaderboard student-id]

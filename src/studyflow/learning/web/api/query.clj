@@ -40,6 +40,7 @@
 
    (clout/handle routes/query-leaderboard
                  (fn [{model :read-model {:keys [course-id student-id]} :params}]
-                   {:status 200 :body (-> (read-model/leaderboard model (uuid course-id) (to-local-date (now)))
-                                          (read-model/personalized-leaderboard (uuid student-id)))}))))
+                   {:status 200 :body {:leaderboard
+                                       (-> (read-model/leaderboard model (uuid course-id) (to-local-date (now)))
+                                           (read-model/personalized-leaderboard (uuid student-id)))}}))))
 
