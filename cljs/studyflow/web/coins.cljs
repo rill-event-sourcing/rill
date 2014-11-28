@@ -25,11 +25,11 @@
                                 (dom/caption nil "Meeste $ de afgelopen 7 dagen")
                                 (apply dom/tbody nil
                                        (map (fn [[pos id coins full-name]]
-                                              (dom/tr (when (= id student-id)
-                                                        #js {:className "me"})
+                                              (dom/tr #js {:className (str "leaderboard-row" (when (= id student-id)
+                                                                                               " me"))}
+
                                                       (dom/td #js {:className "position"} pos ".")
                                                       (dom/td nil full-name)
                                                       (dom/td #js {:className "coins"} coins " $")))
                                             data)))
                      "loading....")))))))
-
