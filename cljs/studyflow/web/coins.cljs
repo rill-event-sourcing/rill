@@ -15,7 +15,8 @@
                                                (om/set-state! owner :open? (not open?))
                                                (when-not open?
                                                  (-> (om/get-shared owner [:data-channel])
-                                                     (async/put! ["data/leaderboard" course-id student-id])))))}
+                                                     (async/put! ["data/leaderboard" course-id student-id])))))
+                                  :className "btn yellow"}
                              (get-in cursor [:view :course-material :total-coins])
                              " $")
                  (when (om/get-state owner :open?)
@@ -31,3 +32,4 @@
                                                       (dom/td #js {:className "coins"} coins " $")))
                                             data)))
                      "loading....")))))))
+
