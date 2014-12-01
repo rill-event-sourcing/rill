@@ -262,6 +262,9 @@
       (into (for [extra-example (:extra-examples section)]
               [(:name extra-example)  (om/build section-extra-example section {:opts {:extra-example extra-example :section section}})]))))
 
+(defn scroll-to-subsection [index]
+  (js/window.scrollTo 0 (- (element-top (gdom/getElement (str "subsection-" index)))
+                           70)))
 
 
 (defn section-explanation [{:keys [section subsection-index path]} owner]
@@ -293,8 +296,10 @@
     om/IDidMount
     (did-mount [_]
       (when subsection-index
-        (js/window.scrollTo 0 (- (element-top (gdom/getElement (str "subsection-" subsection-index)))
-                                 70))))
+        (let [max-index-subsection (- (count (get section :subsections)) 1)]
+          (if (> subsection-index max-index-subsection)
+            (scroll-to-subsection max-index-subsection)
+            (scroll-to-subsection subsection-index)))))
     om/IWillUpdate
     (will-update [_ next-props _]
       (let [old-props (om/get-props owner)]
@@ -303,9 +308,11 @@
           (if (> (- (.getTime (js/Date.))
                     @(om/get-shared owner :last-scroll))
                  500)
-            (js/window.scrollTo 0 (- (element-top (gdom/getElement (str "subsection-"
-                                                                        (:subsection-index next-props))))
-                                     70))))))))
+            (let [subsection-index (:subsection-index next-props)
+                  max-index-subsection (- (count (get (:section next-props) :subsections)) 1)]
+              (if (> subsection-index max-index-subsection)
+                (scroll-to-subsection max-index-subsection)
+                (scroll-to-subsection subsection-index)))))))))
 
 (defn section-explanation-panel [cursor owner]
   (reify

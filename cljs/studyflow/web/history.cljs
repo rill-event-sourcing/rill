@@ -10,15 +10,18 @@
 
 (defn token->path [token]
   (let [[main-token chapter-id section-id question-token subsection-index] (string/split token #"/")]
-    {:main (keyword main-token)
-     :chapter-id (when (seq chapter-id)
-                   chapter-id)
-     :section-id (when (seq section-id)
-                   section-id)
-     :section-tab (if (= question-token "questions")
-                    :questions
-                    :explanation)
-     :subsection-index (.parseInt js/window subsection-index)}))
+    (let [parsed-subsection (.parseInt js/window subsection-index)]
+      {:main (keyword main-token)
+       :chapter-id (when (seq chapter-id)
+                     chapter-id)
+       :section-id (when (seq section-id)
+                     section-id)
+       :section-tab (if (= question-token "questions")
+                      :questions
+                      :explanation)
+       :subsection-index (if (js/isNaN parsed-subsection)
+                           0
+                           parsed-subsection)})))
 
 (defn path->token [path]
   (let [{:keys [main chapter-id section-id section-tab subsection-index]} path]
