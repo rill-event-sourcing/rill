@@ -49,7 +49,7 @@
     (when (and triggered-events
                (commit-events event-store observer-id any-stream-version triggered-events))
       (let [new-observer (update-aggregate observer (filter #(= observer-id (message/primary-aggregate-id %)) triggered-events))]
-        (concat triggered-events (mapcat (partial notify-observers event-store new-observer) triggered-events))))))
+        (concat triggered-events (mapcat #(notify-observers event-store % new-observer) triggered-events))))))
 
 (defn notify-observers
   [event-store event primary]
