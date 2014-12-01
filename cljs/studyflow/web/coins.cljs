@@ -32,4 +32,4 @@
                                                       (dom/td nil full-name)
                                                       (dom/td #js {:className "coins"} coins " $")))
                                             data)))
-                     "loading....")))))))
+                     "laden....")))))))
