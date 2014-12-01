@@ -29,7 +29,6 @@ describe "render_latex" do
     "#{something}"
   end
 
-  
   describe "for editing" do
 
   it "should render a latex formula in svg" do
@@ -129,6 +128,26 @@ describe "render_latex" do
       expect{render_latex_for_publishing(text_with_wrong_formula,"test")}.to raise_error(ArgumentError, /Connection to LaTeX renderer had a timeout/)
     end
 
+
+  end
+
+
+  describe "preparse_images" do
+    it "should not alter text" do
+      parsed = preparse_images("test")
+      expect(parsed).to eq "test"
+    end
+
+    it "should throw an exception on missing image dimensions" do
+      src = %(<img src="https://assets.studyflow.nl/bg.jpg">)
+      expect{preparse_images(src, "question")}.to raise_error(ArgumentError, /not found in question!/)
+    end
+
+    it "should replace html tag with image + dimensions" do
+      Image.create(path: "/bg.jpg", status: "checked", width: 100, height: 200)
+      parsed = preparse_images(%(<img src="https://assets.studyflow.nl/bg.jpg">))
+      expect(parsed).to eq %(<img src="https://assets.studyflow.nl/bg.jpg" data-width="100" data-height="200">)
+    end
 
   end
 

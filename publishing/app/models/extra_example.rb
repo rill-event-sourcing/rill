@@ -29,6 +29,7 @@ class ExtraExample < ActiveRecord::Base
   def errors_when_publishing
     errors = []
     errors << "No content for #{name} in #{section.name}" if content.empty?
+    errors += image_errors(:content)
     errors
   end
 
@@ -37,7 +38,7 @@ class ExtraExample < ActiveRecord::Base
       name: name,
       title: title,
       default_open: default_open,
-      content: render_latex_for_publishing(content, "extra_example '#{name}', in '#{section.name}'")
+      content: preparse_text_for_publishing(content, "extra_example '#{name}', in '#{section.name}'")
     }
   end
 

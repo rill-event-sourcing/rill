@@ -30,14 +30,16 @@ class Reflection < ActiveRecord::Base
     errors = []
     errors << "No content for #{name} in #{section.name}" if content.empty?
     errors << "No answer for #{name} in #{section.name}" if answer.empty?
+    errors += image_errors(:content)
+    errors += image_errors(:answer)
     errors
   end
 
   def to_publishing_format
     {
       name: name,
-      content: render_latex_for_publishing(content, "reflection '#{name}', in '#{section.name}'"),
-      answer: render_latex_for_publishing(answer, "reflection '#{name}', in '#{section.name}'")
+      content: preparse_text_for_publishing(content, "reflection '#{name}', in '#{section.name}'"),
+      answer:  preparse_text_for_publishing(answer, "reflection '#{name}', in '#{section.name}'")
     }
   end
 

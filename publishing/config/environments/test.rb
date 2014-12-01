@@ -42,4 +42,6 @@ Rails.application.configure do
   config.redis_server = "localhost"
   config.learning_server = "http://localhost:3001"
   config.cookie_domain = "localhost"
+
+  config.bucket_dir = "#{ Rails.root }/bucket"
 end

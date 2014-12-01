@@ -13,11 +13,11 @@ module HtmlParseable
 
   def fix_parsing_page
     [
-     [/allowfullscreen/, "allowfullscreen=\"\""],
-     ["\r", ""],
-     [/<math>(.*?)<\/math>/m, "<math></math>"],
-     [" < ", " &gt; "],
-     [" > ", " &lt; "]
+      [/allowfullscreen/, "allowfullscreen=\"\""],
+      ["\r", ""],
+      [/<math>(.*?)<\/math>/m, "<math></math>"],
+      [" < ", " &gt; "],
+      [" > ", " &lt; "]
     ]
   end
 
@@ -80,9 +80,18 @@ module HtmlParseable
     html_images(attr).each do |el|
       src = el["src"]
       if src
-        errors << "`#{ src }` is not a valid image src. It must be on #{asset_host}/" unless src =~ /^#{ asset_host }\//
+        if src =~ /^#{ asset_host }\//
+          image = Image.find_by_url(src)
+          if image
+            errors << "`#{ src }` is not checked for dimensions." unless image.checked?
+          else
+            errors << "`#{ src }` is not found in our assets database."
+          end
+        else
+          errors << "`#{ src }` is not a valid image source. It must be on #{ asset_host }"
+        end
       else
-        errors << "no 'src' given for image"
+        errors << "no 'src' value given for image"
       end
     end
     errors
