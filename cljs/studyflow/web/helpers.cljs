@@ -87,10 +87,19 @@
                         (contains? tag-tree :content))
                    (let [{:keys [tag attrs content] :as node} tag-tree]
                      (case tag
-                       "img" (dom/img (if-let [style (:style attrs)]
-                                        #js {:src (:src attrs)
-                                             :style (apply js-obj (mapcat (fn [[k v]] [(name k) v]) style))}
-                                        (clj->js (into {} (filter (comp not nil? val) (select-keys attrs [:width :height :src]))))))
+                       "img" (let [width (js/parseInt (:data-width attrs))
+                                   height (js/parseInt (:data-height attrs))
+                                   style (:style attrs)
+                                   style-width (js/parseFloat (:width style))
+                                   ratio (float (* (/ height width)
+                                                   (if (js/isNaN style-width)
+                                                     1
+                                                     (/ style-width 100))))]
+                               (dom/div #js {:className "container-img"
+                                             :style (clj->js (merge {:padding-top (str " " (.toFixed (* 100  ratio) 2) "%")}
+                                                                    (map (fn [[k v]] [(name k) v]) style)))}
+
+                                        (dom/img #js {:src (:src attrs)})))
                        "div" (apply dom/div #js {:className (:class attrs)}
                                     (map descent content))
                        "span" (apply dom/span #js {:className (:class attrs)}
