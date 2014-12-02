@@ -72,7 +72,7 @@
     (set! (.-onscroll js/document)
           (fn [e]
             (swap! last-scroll-time (fn [_] (.getTime (js/Date.))))
-            (async/put! scrolling-channel {:pos (.-scrollY js/window)})))
+            (async/put! scrolling-channel {:pos (.-pageYOffset js/window)})))
     (go-loop []
       (let [{:keys [pos]} (<! scrolling-channel)
             section (.getElementById js/document "m-section")]
