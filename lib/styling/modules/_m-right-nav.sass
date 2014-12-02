@@ -8,24 +8,56 @@
   bottom: 0
   right: 0
   background-color: #fcfbf7
-  border-right: 2px solid #e8e7e2
+  border-left: 2px solid #e8e7e2
   z-index: 400
   +user-select(none)
 
   #minimap
-    margin-top: 20px
+    margin-top: 10px
+    padding-top: 30px
+    right: 0px
+    position: fixed
+    background-color: transparent
+    +border-left-radius(8px)
+    width: 47px
+    +single-transition(background-color, 200ms, linear)
+    &:hover
+      background-color: white
+      +box-shadow(0px 1px 3px rgba(0,0,0,0.3))
+      width: 260px
+      .minimap-item-text
+        opacity: 1
+        +translateX(0)
+        +single-transition(none)
 
   .minimap-item
     +box-sizing(border-box)
     position: relative
-    margin: 0 0 32px 0
+    margin-bottom: 25px
     display: block
+    outline: 0
+    text-align: right
+    &:active
+      &:after
+        +scale(0.8)
 
     .minimap-item-text
-      position: relative
-      left: -150px
-      display: block
-      width: 150px
+      right: 55px
+      top: 7px
+      position: absolute
+      pointer-events: none
+      text-align: right
+      font-size: 13px
+      font-weight: 400
+      width: 210px
+      font-family: "Gotham SSm A", "Gotham SSm B", Helvetica
+      color: #434d56
+      +text-shadow(-1px -1px 1px #FFF, 1px -1px 1px #fff, -1px 1px 1px #fff, 1px 1px 1px #fff)
+      +single-transition(all, 200ms, ease-out)
+      opacity: 0
+      +translateX(-20px)
+      &:hover
+        font-weight: 500
 
     &:first-child
       &:before
@@ -41,60 +73,41 @@
         background: #d4d9df
 
     &:after
-      display: block
-      position: absolute
+      display: inline-block
+      position: relative
       +border-radius(50%)
-      width: 27px
-      height: 27px
-      left: 0px
+      width: 21px
+      height: 21px
+      right: 10px
       top: 50%
-      margin-top: -15px
       content: ''
       background: white
-      border: 2px solid #a9b4bf
+      border: 2px solid #c9cace
       z-index: 60
       pointer-events: none
+      +single-transition(all, 200ms, ease-out)
 
     &:before
       position: absolute
       content: ''
       width: 3px
-      height: 60px
-      bottom: 60%
-      left: 14px
-      background: #a9b4bf
+      height: 50px
+      bottom: 25%
+      right: 21px
+      background: #e5e5e5
       z-index: 50
       pointer-events: none
 
-    &.above-cursor
-      +background-image(linear-gradient(left, #fcfbf7 20%, white 40%))
+    &.above-cursor, &:hover
       &:after
-        border-color: #f3b339
-        background: #ffcd69
-      .minimap-link
+        border-color: #7ab300
+        background: #9ad22c
+        opacity: 1
+      .minimap-item-text
         font-weight: 500
-        color: #434d56 !important
-        &:after
-          right: 0
-
-    .minimap-link
-      display: block
-      padding: 14px 25px 13px 70px
-      line-height: 23px
-      font-size: 14px
-      font-weight: 400
-      color: #9a978d
-      +text-shadow(0 1px rgba(255,255,255,0.6))
-      letter-spacing: -0.2px
-      &:hover
-        color: #515b62
-      &:after
-        height: 2px
-        width: 210px
-        background: #e4e2df
-        display: block
-        content: ''
-        bottom: -1px
-        right: -2px
-        position: absolute
-        z-index: 999
+        opacity: 1
+        +translateX(0)
+      &.rm
+        .minimap-item-text
+          opacity: 0
+          +translateX(-20px)
