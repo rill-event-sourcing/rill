@@ -14,7 +14,7 @@
 
   #minimap
     margin-top: 10px
-    padding-top: 30px
+    padding: 20px 0
     right: 0px
     position: fixed
     background-color: transparent
@@ -33,7 +33,7 @@
   .minimap-item
     +box-sizing(border-box)
     position: relative
-    margin-bottom: 25px
+    padding: 12px 0
     display: block
     outline: 0
     text-align: right
@@ -43,7 +43,7 @@
 
     .minimap-item-text
       right: 55px
-      top: 7px
+      top: 18px
       position: absolute
       pointer-events: none
       text-align: right
@@ -52,7 +52,7 @@
       width: 210px
       font-family: "Gotham SSm A", "Gotham SSm B", Helvetica
       color: #434d56
-      +text-shadow(-1px -1px 1px #FFF, 1px -1px 1px #fff, -1px 1px 1px #fff, 1px 1px 1px #fff)
+      +text-shadow(-1px -1px 0.5px #FFF, 1px -1px 0.5px #fff, -1px 1px 0.5px #fff, 1px 1px 0.5px #fff)
       +single-transition(all, 200ms, ease-out)
       opacity: 0
       +translateX(-20px)
@@ -92,7 +92,7 @@
       content: ''
       width: 3px
       height: 50px
-      bottom: 25%
+      bottom: 40%
       right: 21px
       background: #e5e5e5
       z-index: 50
