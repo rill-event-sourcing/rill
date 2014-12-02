@@ -1,5 +1,6 @@
 (ns studyflow.learning.read-model
   (:require [studyflow.learning.chapter-quiz :as chapter-quiz]
+            [clojure.string :as string]
             [ring.util.codec :as ring-codec]))
 
 (def empty-model {})
@@ -11,14 +12,18 @@
 
 (defn index-title-id
   [course]
-  (let [id->title (into {}
+  (let [slugify-url-title (fn [title]
+                            (-> title
+                                (string/replace #"[ ,()&]" "-")
+                                ring-codec/url-encode))
+        id->title (into {}
                         (mapcat
                          (fn [chapter]
                            (apply vector [(:id chapter)
-                                          (ring-codec/url-encode (:title chapter))]
+                                          (slugify-url-title (:title chapter))]
                                   (for [section (:sections chapter)]
                                     [(:id section)
-                                     (ring-codec/url-encode (:title section))])))
+                                     (slugify-url-title (:title section))])))
                          (:chapters course)))
         title->id (zipmap (vals id->title)
                           (keys id->title))]
