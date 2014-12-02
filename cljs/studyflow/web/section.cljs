@@ -2,6 +2,7 @@
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [goog.dom :as gdom]
+            [goog.Timer :as gtimer]
             [studyflow.web.calculator :as calculator]
             [studyflow.web.history :refer [path-url navigate-to-path]]
             [studyflow.web.helpers :refer [input-builders tool-box modal raw-html tag-tree-to-om focus-input-box section-explanation-url on-enter click-once-button element-top] :as helpers]
@@ -284,7 +285,9 @@
                                                                     (assoc :subsection-index i)
                                                                     path-url)
                                                           :className (if (= i subsection-index)
-                                                                       "minimap-item above-cursor"
+                                                                       (str "minimap-item above-cursor"
+                                                                            (when-not (om/get-state owner :timer-ticking)
+                                                                              " rm"))
                                                                        "minimap-item")}
                                                      (dom/span #js {:className "minimap-item-text"}
                                                                title)))
@@ -305,6 +308,14 @@
       (let [old-props (om/get-props owner)]
         (when-not (= (:path old-props)
                      (:path next-props))
+          (when-let [timer-id (om/get-state owner :timer-id)]
+            (gtimer/clear timer-id))
+          (om/set-state! owner :timer-ticking true)
+          (let [timer-id-new (gtimer/callOnce (fn []
+                                                (om/set-state! owner :timer-ticking false))
+                                              1000)]
+            (om/set-state! owner :timer-id timer-id-new))
+
           (if (> (- (.getTime (js/Date.))
                     @(om/get-shared owner :last-scroll))
                  500)
