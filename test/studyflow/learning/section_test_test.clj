@@ -129,6 +129,16 @@
                                   (events/question-assigned section-id student-id question-id question-total)
                                   (events/question-answered-incorrectly section-id student-id question-id inputs)])))))))))
 
+(deftest test-disappearing-questions
+  (testing "if you try to answer a question that doesn't exist anymore, just count as correct and move on"
+    (let [inputs {"_INPUT_1_" "who cares"}
+          removed-id (new-id)]
+      (is (command-result= [:ok [(events/question-answered-correctly section-id student-id removed-id inputs)]]
+                           (execute (commands/check-answer! section-id student-id 1 course-id removed-id inputs)
+                                    [fixture/course-published-event
+                                     (events/created section-id student-id course-id)
+                                     (events/question-assigned section-id student-id removed-id question-total)]))))))
+
 
 (deftest test-continue-practice
   (testing "the first streaks marks a section as finished, afterward you can continue practising and completing streaks"
@@ -216,7 +226,7 @@
               (is (command-result= [:ok [(events/streak-completed section-id student-id)]]
                                    (execute (commands/next-question! section-id student-id 24 course-id)
                                             continue-stream))))))))
-    
+
     (testing "three in a row make you stumble"
       (let [upto-third-q-stream
             (-> [fixture/course-published-event

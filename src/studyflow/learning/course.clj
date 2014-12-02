@@ -36,8 +36,8 @@
   [course section-id question-id]
   {:pre [course section-id question-id]
    "post" [%]}
-  (find-by-id (questions-for-section course section-id)
-              question-id))
+  (or (find-by-id (questions-for-section course section-id) question-id)
+      :no-question))
 
 (defn question-for-entry-quiz
   [course question-index]
@@ -48,7 +48,7 @@
 (defn chapter
   [course chapter-id]
   (find-by-id (:chapters course)
-      chapter-id))
+              chapter-id))
 
 (defn question-sets-for-chapter-quiz
   [course chapter-id]
@@ -59,9 +59,9 @@
 
 (defn question-for-chapter-quiz
   [course chapter-id question-id]
-  {:pre [course chapter-id question-id]
-   :post [%]}
-  (find-by-id (mapcat :questions (question-sets-for-chapter-quiz course chapter-id)) question-id))
+  {:pre [course chapter-id question-id]}
+  (or (find-by-id (mapcat :questions (question-sets-for-chapter-quiz course chapter-id)) question-id)
+      :no-question))
 
 (defn line-input-fields-answers-correct?
   [input-fields input-values]
@@ -87,8 +87,9 @@
 (defn answer-correct?
   [{:keys [line-input-fields multiple-choice-input-fields] :as question} input-values]
   {:pre [question]}
-  (and (line-input-fields-answers-correct? line-input-fields input-values)
-       (multiple-choice-input-fields-answers-correct? multiple-choice-input-fields input-values)))
+  (or (= :no-question question)
+      (and (line-input-fields-answers-correct? line-input-fields input-values)
+           (multiple-choice-input-fields-answers-correct? multiple-choice-input-fields input-values))))
 
 (defmethod handle-event ::events/Published
   [_ event]

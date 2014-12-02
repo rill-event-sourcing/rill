@@ -10,7 +10,11 @@
             [studyflow.super-system :as super-system]
             [rill.handler :refer [try-command]]
             [studyflow.learning.course.commands :as course]
-            [studyflow.learning.course])
+            [studyflow.learning.course]
+            [rill.event-store :refer [append-events retrieve-events]]
+            [rill.repository :refer [retrieve-aggregate]]
+            [rill.event-stream :refer [all-events-stream-id]]
+            [rill.message :refer [primary-aggregate-id]])
   (:import [org.apache.log4j Logger]))
 
 
@@ -85,3 +89,6 @@
                        {:label (string/join ", " (map event-short-name (filter #(= d (get-in transitions [s %])) (keys (transitions s)))))})))
 
 
+(defn repo
+  []
+  (:store (:event-store system)))

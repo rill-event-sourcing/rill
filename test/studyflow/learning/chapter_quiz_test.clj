@@ -131,6 +131,18 @@
 ])))))))
 
 
+(deftest test-disappearing-questions
+  (testing "if you try to answer a question that doesn't exist anymore, just count as correct and move on"
+    (binding [*rand-nth* (constantly (course/question-for-chapter-quiz course chapter-id question-2-id))]
+      (let [inputs {"_INPUT_1_" "who cares"}
+            removed-id (new-id)]
+        (is (command-result= [:ok [(events/question-answered-correctly course-id chapter-id student-id removed-id inputs)
+                                   (events/question-assigned course-id chapter-id student-id question-set-2-id question-2-id)]]
+                             (execute (chapter-quiz/submit-answer! course-id chapter-id student-id removed-id 1 inputs)
+                                      [fixture/course-published-event
+                                       (events/started course-id chapter-id student-id true)
+                                       (events/question-assigned course-id chapter-id student-id question-set-1-id removed-id)])))))))
+
 (def section-question (first (:questions (second (:sections (course/chapter fixture/course-edn chapter-id))))))
 (def section-question-input  {"_INPUT_1_" (-> section-question :line-input-fields first :correct-answers first)})
 
@@ -204,3 +216,5 @@
                                      (section-test-events/finished (second section-ids) student-id chapter-id course-id)
                                      (events/section-finished course-id chapter-id student-id (second section-ids) (set section-ids))
                                      (events/un-locked course-id chapter-id student-id)]))))))
+
+
