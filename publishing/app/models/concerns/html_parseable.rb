@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 module HtmlParseable
   require 'nokogiri'
+  require 'nokogiri-styles'
   require 'sanitize'
 
   extend ActiveSupport::Concern
@@ -25,6 +26,14 @@ module HtmlParseable
   end
 
   def validation_hash
+    transformer = lambda do |env|
+      return unless env[:node_name] == 'img'
+      node = env[:node]
+      width = node.styles['width']
+      return unless width
+      node.unlink unless width =~ /^[0-9]+%$/
+    end
+
     {
       :allow_doctype => true,
 
@@ -45,7 +54,9 @@ module HtmlParseable
 
       :css => {
         :properties => %w[width margin-left]
-      }
+      },
+
+      :transformers => transformer
     }
   end
 
