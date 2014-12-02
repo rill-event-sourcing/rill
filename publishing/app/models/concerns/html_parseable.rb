@@ -15,9 +15,7 @@ module HtmlParseable
     [
       [/allowfullscreen/, "allowfullscreen=\"\""],
       ["\r", ""],
-      [/<math>(.*?)<\/math>/m, "<math></math>"],
-      [" < ", " &gt; "],
-      [" > ", " &lt; "]
+      [/<math>(.*?)<\/math>/m, "<math></math>"]
     ]
   end
 
@@ -30,19 +28,19 @@ module HtmlParseable
     {
       :allow_doctype => true,
 
-      :elements => %w[html body a br b p span math h1 h2 h3 h4 h5 ul ol li u div img iframe i table tr th td sup sub],
+      :elements => %w[a b body br div h1 h2 h3 h4 h5 hr html i iframe img li math ol p span sub sup table td th tr u ul ],
 
       :attributes => {
         :all     => %w[class style],
         'a'      => %w[href],
-        'iframe' => %w[src height width frameborder allowfullscreen],
+        'iframe' => %w[allowfullscreen frameborder height src width],
         'img'    => %w[src]
       },
 
       :protocols => {
         'a'      => {'href' => ['https']},
-        'img'    => {'src' => ['https']},
-        'iframe' => {'href' => ['https']}
+        'iframe' => {'href' => ['https']},
+        'img'    => {'src'  => ['https']}
       },
 
       :css => {
