@@ -47,16 +47,16 @@
 
 (defn question
   [m course-id section-id question-id]
-  (-> m
-      (model/get-course course-id)
-      (model/get-section section-id)
-      (model/get-question question-id)
-      remove-answers))
+  (some-> m
+          (model/get-course course-id)
+          (model/get-section section-id)
+          (model/get-question question-id)
+          remove-answers))
 
 (defn chapter-quiz-question
   [m course-id chapter-id question-id]
-  (-> m
-      (model/get-course course-id)
-      (model/get-chapter chapter-id)
-      (model/get-chapter-quiz-question question-id)
-      remove-answers-from-chapter-quiz-question))
+  (some-> m
+          (model/get-course course-id)
+          (model/get-chapter chapter-id)
+          (model/get-chapter-quiz-question question-id)
+          remove-answers-from-chapter-quiz-question))

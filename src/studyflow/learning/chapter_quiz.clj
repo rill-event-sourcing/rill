@@ -110,8 +110,8 @@
   {:pre [(= current-question-id question-id)]}
   (if (course/answer-correct? (course/question-for-chapter-quiz course chapter-id current-question-id) inputs)
     (let [correct-answer-event (events/question-answered-correctly course-id chapter-id student-id question-id inputs)]
-      (if (= (inc current-question-set-index)
-             (count (course/question-sets-for-chapter-quiz course chapter-id)))
+      (if (>= (inc current-question-set-index)
+              (count (course/question-sets-for-chapter-quiz course chapter-id)))
 
         [:ok [correct-answer-event
               (events/passed course-id chapter-id student-id)]]
@@ -167,8 +167,8 @@
    (= 3 number-of-errors)
    [:ok [(events/failed course-id chapter-id student-id)]]
 
-   (= (inc current-question-set-index)
-      (count (course/question-sets-for-chapter-quiz course chapter-id)))
+   (>= (inc current-question-set-index)
+       (count (course/question-sets-for-chapter-quiz course chapter-id)))
    [:ok [(events/passed course-id chapter-id student-id)]]
    :else (let [next-question-set (get (course/question-sets-for-chapter-quiz course chapter-id) (inc current-question-set-index))]
            [:ok [(events/question-assigned course-id
