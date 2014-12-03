@@ -14,12 +14,12 @@
 
   #minimap
     margin-top: 10px
-    padding: 20px 0
+    padding: 15px 0 15px 15px
     right: 0px
     position: fixed
     background-color: transparent
     +border-left-radius(8px)
-    width: 47px
+    width: 32px
     +single-transition(background-color, 200ms, linear)
     &:hover
       background-color: white
@@ -30,6 +30,9 @@
         opacity: 1
         +translateX(0)
         +single-transition(none)
+        height: 40px
+        display: table-cell
+        vertical-align: middle
 
   .minimap-item
     +box-sizing(border-box)
@@ -46,7 +49,6 @@
       right: 55px
       top: 18px
       position: absolute
-      pointer-events: none
       text-align: right
       font-size: 14px
       font-weight: 400
@@ -57,6 +59,7 @@
       +single-transition(all, 200ms, ease-out)
       opacity: 0
       +translateX(-20px)
+      display: none
 
     &:first-child
       &:before
@@ -83,7 +86,6 @@
       background: white
       border: 2px solid #c9cace
       z-index: 60
-      pointer-events: none
       +single-transition(-webkit-transform, 200ms, ease-out)
 
     &:before
@@ -95,7 +97,6 @@
       right: 21px
       background: #e5e5e5
       z-index: 50
-      pointer-events: none
 
     &.selected-subsection, &:hover
       &:after
@@ -103,12 +104,14 @@
         background: #9ad22c
         opacity: 1
       .minimap-item-text
-        opacity: 1
         +translateX(0)
+        font-weight: 500
       &.rm
         .minimap-item-text
           opacity: 0
           +translateX(-20px)
-    &.selected-subsection, &:hover
+          pointer-events: none
+    &.selected-subsection
       .minimap-item-text
-        font-weight: 500
+        display: block
+        opacity: 1
