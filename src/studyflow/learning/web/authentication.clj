@@ -1,6 +1,5 @@
 (ns studyflow.learning.web.authentication
   (:require [clojure.tools.logging :as log]
-            [ring.middleware.cookies :as cookies]
             [studyflow.web.authentication :refer [redirect-login wrap-check-cookie]]
             [studyflow.learning.read-model :as read-model]))
 
