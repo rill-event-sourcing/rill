@@ -285,7 +285,7 @@
                                                                     (assoc :subsection-index i)
                                                                     path-url)
                                                           :className (if (= i subsection-index)
-                                                                       (str "minimap-item above-cursor"
+                                                                       (str "minimap-item selected-subsection"
                                                                             (when-not (om/get-state owner :timer-ticking)
                                                                               " rm"))
                                                                        "minimap-item")}
@@ -311,10 +311,9 @@
           (when-let [timer-id (om/get-state owner :timer-id)]
             (gtimer/clear timer-id))
           (om/set-state! owner :timer-ticking true)
-          (let [timer-id-new (gtimer/callOnce (fn []
-                                                (om/set-state! owner :timer-ticking false))
-                                              1000)]
-            (om/set-state! owner :timer-id timer-id-new))
+          (om/set-state! owner :timer-id (gtimer/callOnce (fn []
+                                            (om/set-state! owner :timer-ticking false))
+                                          1000))
 
           (if (> (- (.getTime (js/Date.))
                     @(om/get-shared owner :last-scroll))

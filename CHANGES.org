@@ -1,5 +1,6 @@
 * Release Changelog
 ** NEXT RELEASE
+*** New: Minimap!
 ** release 2014-12-04.1
 *** Fix: Strip trailing whitespace off titles in prepraration of nicer URLs
 *** Fix: Disable scrollbars in calculator on FF
