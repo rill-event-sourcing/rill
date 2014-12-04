@@ -1,5 +1,6 @@
 * Release Changelog
 ** NEXT RELEASE
+*** New: Urls in learning are now much more readable
 ** release 2014-12-05.1
 *** Fix: HTML encoding bugs in publishing
 ** release 2014-12-04.1

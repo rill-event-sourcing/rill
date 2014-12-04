@@ -16,10 +16,13 @@
                      (get-in @text-url-mapping [:chapter-title->id (keyword chapter-text)]))
         section-id (when (seq section-text)
                      (get-in @text-url-mapping [:chapter-id->section-title->id (keyword chapter-id) (keyword section-text)]))]
-    {:main (keyword main-token)
+    {:main ({"Leerroute" :dashboard
+             "Instaptoets" :entry-quiz
+             "Paragraaf" :learning
+             "Hoofdstuktoets" :chapter-quiz} main-token)
      :chapter-id chapter-id
      :section-id section-id
-     :section-tab (if (= question-token "questions")
+     :section-tab (if (= question-token "Vragen")
                     :questions
                     :explanation)}))
 
@@ -27,13 +30,19 @@
   (let [{:keys [main chapter-id section-id section-tab]} path
         chapter-text (get-in @text-url-mapping [:id->title (keyword chapter-id)])
         section-text (get-in @text-url-mapping [:id->title (keyword section-id)])]
-    (string/join "/" [(if main
-                        (name main)
-                        "dashboard")
-                      chapter-text section-text
-                      (if (= section-tab :questions)
-                        "questions"
-                        "text")])))
+
+    (if (or (nil? main)
+            (= :dashboard main))
+      (if chapter-text
+        (str "Leerroute/" chapter-text)
+        "Leerroute")
+      (case main
+        :entry-quiz
+        "Instaptoets"
+        :chapter-quiz
+        (str "Hoofdstuktoets/" chapter-text)
+        :learning
+        (str "Paragraaf/" chapter-text "/" section-text "/" (if (= section-tab :questions) "Vragen" "Uitleg"))))))
 
 (defn wrap-history [widgets]
   (fn [cursor owner]
