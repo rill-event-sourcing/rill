@@ -36,7 +36,7 @@ class ExtraExample < ActiveRecord::Base
   def to_publishing_format
     {
       name: name,
-      title: title,
+      title: title.to_s.strip,
       default_open: default_open,
       content: preparse_text_for_publishing(content, "extra_example '#{name}', in '#{section.name}'")
     }

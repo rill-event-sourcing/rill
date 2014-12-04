@@ -104,7 +104,6 @@ RSpec.describe Section, type: :model do
       expect(section2.errors_when_publishing).not_to include "No domains selected for section '#{section2.name}'"
     end
 
-
     it "should make sure all inputs are referenced" do
       @input = create(:line_input, inputable: @section1)
       expect(@section1.errors_when_publishing).to include("Error in input referencing in section '#{@section1.name}', in '#{@section1.parent}'")
@@ -140,6 +139,13 @@ RSpec.describe Section, type: :model do
     it "should make sure there is at least one subsection" do
       expect(@section1.errors_when_publishing).not_to include("No subsections in section '#{ @section1.name }', in '#{ @section1.parent }'")
       expect(@section2.errors_when_publishing).to include("No subsections in section '#{ @section2.name }', in '#{ @section2.parent }'")
+    end
+  end
+
+  describe "stripping tabs and newlines from titles" do
+    it "should not include newlines or tabs in the title" do
+      @section = build(:section, title: "\t\n\ttest\n\t\n")
+      expect(@section.to_publishing_format[:title]).to eq "test"
     end
   end
 

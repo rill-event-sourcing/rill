@@ -29,7 +29,7 @@ class Chapter < ActiveRecord::Base
   def to_publishing_format
     hash = {
       id: id,
-      title: title,
+      title: title.to_s.strip,
       sections: sections.active.map(&:to_publishing_format),
       remedial: remedial?
     }

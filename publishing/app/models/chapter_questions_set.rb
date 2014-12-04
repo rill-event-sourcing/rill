@@ -21,7 +21,7 @@ class ChapterQuestionsSet < ActiveRecord::Base
   def to_publishing_format
     {
       id: id,
-      title: title,
+      title: title.to_s.strip,
       questions: questions.map(&:to_publishing_format_for_chapter_quiz)
     }
   end
