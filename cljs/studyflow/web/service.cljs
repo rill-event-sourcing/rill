@@ -190,7 +190,7 @@
               :handler (command-aggregate-handler cursor notification-channel chapter-id)
               :error-handler (command-error-handler cursor)}))
 
-      "chapter-quiz-commands/next-question"
+      "chapter-quiz-commands/dismiss-error-screen"
       (let [[chapter-id student-id chapter-quiz-aggregate-version course-id] args]
         (PUT (str "/api/chapter-quiz-dismiss-error-screen/" course-id "/" chapter-id "/" student-id)
              {:params {:expected-version chapter-quiz-aggregate-version}
