@@ -1,3 +1,5 @@
+@import compass
+
 .btn.shake
   background-color: #F85959
   border-color: #D32323
@@ -7,7 +9,13 @@
   &:active
     background-color: #F85959
     border-bottom: 1px solid #259ed0
+
+.minimap-item-text
+  display: none
+
 .selected-subsection
+  .minimap-item-text
+    display: block
   &.rm
     .minimap-item-text
-      display: none
+      display: none !important
