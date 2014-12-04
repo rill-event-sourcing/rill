@@ -56,8 +56,9 @@ end
 
 
 def preparse_text_for_publishing(text = "", origin = "unknown")
+  text = render_latex_for_publishing(text, origin)
   text = preparse_images(text, origin)
-  render_latex_for_publishing(text, origin)
+  text
 end
 
 def preparse_images(text = "", origin = "")
