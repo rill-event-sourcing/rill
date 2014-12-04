@@ -194,7 +194,7 @@
 
 (defmethod handle-command ::Stop!
   [{:keys [state]} {:keys [student-id course-id chapter-id]} course]
-  (if (= :running-fast-route state)
+  (if (= :running-fast-track state)
     [:ok [(events/stopped course-id chapter-id student-id)
           (events/locked course-id chapter-id student-id)]]
     [:ok [(events/stopped course-id chapter-id student-id)]]))
