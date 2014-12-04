@@ -16,19 +16,26 @@
                             (-> title
                                 (string/replace #"[ ,()&]" "-")
                                 ring-codec/url-encode))
-        id->title (into {}
-                        (mapcat
-                         (fn [chapter]
-                           (apply vector [(:id chapter)
-                                          (slugify-url-title (:title chapter))]
-                                  (for [section (:sections chapter)]
-                                    [(:id section)
-                                     (slugify-url-title (:title section))])))
-                         (:chapters course)))
-        title->id (zipmap (vals id->title)
-                          (keys id->title))]
+        chapter-title->id (into {}
+                                (for [chapter (:chapters course)]
+                                  [(slugify-url-title (:title chapter))
+                                   (:id chapter)]))
+        chapter-id->section-title->id (into {}
+                                            (for [chapter (:chapters course)]
+                                              [(:id chapter)
+                                               (into {}
+                                                     (for [section (:sections chapter)]
+                                                       [(slugify-url-title (:title section))
+                                                        (:id section)]))]))
+        id->title (-> {}
+                      (into (for [[chapter-title id] chapter-title->id]
+                              [id chapter-title]))
+                      (into (for [[chapter-id si] chapter-id->section-title->id
+                                  [section-title id] si]
+                              [id section-title])))]
     (assoc course
-      :text-url-mapping {:title->id title->id
+      :text-url-mapping {:chapter-title->id chapter-title->id
+                         :chapter-id->section-title->id chapter-id->section-title->id
                          :id->title id->title})))
 
 (defn update-student-section-status

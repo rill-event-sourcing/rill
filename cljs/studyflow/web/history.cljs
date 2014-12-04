@@ -13,9 +13,9 @@
 (defn token->path [token]
   (let [[main-token chapter-text section-text question-token] (string/split token #"/")
         chapter-id (when (seq chapter-text)
-                     (get-in @text-url-mapping [:title->id (keyword chapter-text)]))
+                     (get-in @text-url-mapping [:chapter-title->id (keyword chapter-text)]))
         section-id (when (seq section-text)
-                     (get-in @text-url-mapping [:title->id (keyword section-text)]))]
+                     (get-in @text-url-mapping [:chapter-id->section-title->id (keyword chapter-id) (keyword section-text)]))]
     {:main (keyword main-token)
      :chapter-id chapter-id
      :section-id section-id
