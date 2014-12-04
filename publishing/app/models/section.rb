@@ -112,7 +112,7 @@ class Section < ActiveRecord::Base
   def to_publishing_format
     {
       id: id,
-      title: title,
+      title: title.to_s.strip,
       meijerink_criteria: meijerink_criteria,
       domains: domains,
       subsections: subsections.map(&:to_publishing_format),

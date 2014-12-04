@@ -74,4 +74,11 @@ RSpec.describe Subsection, type: :model do
 
   end
 
+  describe "stripping tabs and newlines from titles" do
+    it "should not include newlines or tabs in the title" do
+      @subsection = build(:subsection, title: "\t\n\ttest\n\t\n")
+      expect(@subsection.to_publishing_format[:title]).to eq "test"
+    end
+  end
+
 end

@@ -23,7 +23,7 @@ class Subsection < ActiveRecord::Base
   def to_publishing_format
     {
       id: id,
-      title: title,
+      title: title.to_s.strip,
       text: preparse_text_for_publishing(text, "section '#{section.name}', in '#{section.parent}'")
     }
   end
