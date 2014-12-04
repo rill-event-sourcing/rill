@@ -1,5 +1,6 @@
 * Release Changelog
 ** NEXT RELEASE
+*** Fix: Strip trailing whitespace off titles in prepraration of nicer URLs
 *** Fix: Disable scrollbars in calculator on FF
 *** Fix: Make calculator size toggle persistent
 *** Fix: Length of small inputs raised from 5 to 6
