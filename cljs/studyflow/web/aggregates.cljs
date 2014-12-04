@@ -176,8 +176,11 @@
           (update-in [:questions]
                      (fn [qs]
                        (conj (pop qs)
-                             (assoc (peek qs)
-                               :correct true))))))
+                             (let [current-question (peek qs)]
+                               (if (= (:question-id current-question) question-id)
+                                 (assoc current-question
+                                   :correct true)
+                                 current-question)))))))
 
     "studyflow.learning.chapter-quiz.events/QuestionAnsweredIncorrectly"
     (let [question-id (:question-id event)
@@ -187,9 +190,12 @@
           (update-in [:questions]
                      (fn [qs]
                        (conj (pop qs)
-                             (assoc (peek qs)
-                               :correct false
-                               :inputs inputs))))))
+                             (let [current-question (peek qs)]
+                               (if (= (:question-id current-question) question-id)
+                                 (assoc current-question
+                                   :correct false
+                                   :inputs inputs)
+                                 current-question)))))))
 
     "studyflow.learning.chapter-quiz.events/Locked"
     (-> agg
