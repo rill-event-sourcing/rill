@@ -163,7 +163,8 @@
       (assoc :chapter-id (:id chapter)
              :section-id (:id section)
              :section-tab :explanation
-             :main :learning)
+             :main :learning
+             :subsection-index 0)
       path-url))
 
 (defn tool-box
