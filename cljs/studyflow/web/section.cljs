@@ -264,8 +264,10 @@
               [(:name extra-example)  (om/build section-extra-example section {:opts {:extra-example extra-example :section section}})]))))
 
 (defn scroll-to-subsection [index]
-  (js/window.scrollTo 0 (- (element-top (gdom/getElement (str "subsection-" index)))
-                           70)))
+  (let [section-position (element-top (gdom/getElement (str "subsection-" index)))]
+    (js/window.scrollTo 0 (if (= index 0)
+                            0
+                            (- section-position 80)))))
 
 
 (defn section-explanation [{:keys [section subsection-index path]} owner]
@@ -312,8 +314,8 @@
             (gtimer/clear timer-id))
           (om/set-state! owner :timer-ticking true)
           (om/set-state! owner :timer-id (gtimer/callOnce (fn []
-                                            (om/set-state! owner :timer-ticking false))
-                                          1000))
+                                                            (om/set-state! owner :timer-ticking false))
+                                                          1000))
 
           (if (> (- (.getTime (js/Date.))
                     @(om/get-shared owner :last-scroll))
