@@ -212,8 +212,7 @@
                             (calculator/reset-calculator)
                             (async/put!
                              (om/get-shared owner :command-channel)
-                             ;; TODO
-                             ["chapter-quiz-commands/next-question"
+                             ["chapter-quiz-commands/dismiss-error-screen"
                               chapter-id
                               student-id
                               chapter-quiz-aggregate-version
