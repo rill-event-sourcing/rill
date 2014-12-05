@@ -66,6 +66,5 @@
 
 (defn leaderboard
   [m course-id student-id]
-  (-> (model/leaderboard m course-id (to-local-date (now))
-                         (:school-id (model/school-for-student m student-id)))
+  (-> (model/leaderboard m course-id (to-local-date (now)) (:department-id (model/get-student m student-id)))
       (model/personalized-leaderboard student-id)))

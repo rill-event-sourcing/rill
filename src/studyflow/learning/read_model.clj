@@ -202,12 +202,16 @@
             (get-in model [:departments-by-school school-id]))
     (get-in model [:students-by-department nil])))
 
+(defn students-for-department
+  [model department-id]
+  (get-in model [:students-by-department department-id]))
+
 (defn school-for-student
   [model student-id]
   (get-in model [:departments (get-in model [:students student-id :department-id])]))
 
 (defn leaderboard
-  [model course-id date school-id]
+  [model course-id date department-id]
   (map-indexed (fn [index row]
                  (cons (inc index) row))
                (sort-by second (comp - compare)
@@ -216,7 +220,7 @@
                                 (coins-earned-lately model course-id id date)
                                 (first (string/split (get-in model [:students id :full-name])
                                                      #" "))])
-                             (students-for-school model school-id)))))
+                             (students-for-department model department-id)))))
 
 (defn personalized-leaderboard
   [leaderboard student-id]

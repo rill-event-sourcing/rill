@@ -39,6 +39,7 @@
                      {:status 200 :body question}
                      {:status 200 :body {:id question-id
                                          :tag-tree {:tag "div" :attrs nil :content "Deze vraag is verwijderd door onze redactie. Ga lekker verder, als je hem nog moest beantwoorden keuren we hem goed!"}}})))
+
    (clout/handle routes/query-leaderboard
                  (fn [{model :read-model {:keys [course-id student-id]} :params}]
                    {:status 200 :body {:leaderboard (queries/leaderboard model (uuid course-id) (uuid student-id))}}))))
