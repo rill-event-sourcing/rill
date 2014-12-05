@@ -103,8 +103,10 @@ module HtmlParseable
       else
         error = "no 'src' value given for image"
       end
-      error << "<br><small>(in #{ reference })</small>" if reference != ""
-      errors << error.html_safe if error
+      if error
+        error << "<br><small>(in #{ reference })</small>" if reference != ""
+        errors << error.html_safe
+      end
     end
     errors
   end
