@@ -37,9 +37,9 @@ This means that the directory is both on Gibbon as on Rekenmachien.
 Changes can be pushed to Gibbon and also to the Rekenmachien branch.
 
 To pull from the subtree:
-    git subtree pull --prefix lib/calculator git@gitlab.studyflow.nl:studyflow/rekenmachien.git production_gibbon --squash
+    git subtree pull --prefix lib/calculator git@gitlab.studyflow.nl:studyflow/rekenmachien.git master
 To push the subtree:
-    git subtree push --prefix lib/calculator git@gitlab.studyflow.nl:studyflow/rekenmachien.git production_gibbon --squash
+    git subtree push --prefix lib/calculator git@gitlab.studyflow.nl:studyflow/rekenmachien.git master
 
 The production_gibbon branch has a few tweaks to integrate the
 calculator in Gibbon.

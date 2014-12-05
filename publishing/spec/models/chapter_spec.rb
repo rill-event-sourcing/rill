@@ -78,5 +78,11 @@ RSpec.describe Chapter, type: :model do
     end
   end
 
+  describe "stripping tabs and newlines from titles" do
+    it "should not include newlines or tabs in the title" do
+      @chapter = build(:chapter, title: "\t\n\ttest\n\t\n")
+      expect(@chapter.to_publishing_format[:title]).to eq "test"
+    end
+  end
 
 end

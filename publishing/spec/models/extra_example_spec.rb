@@ -39,4 +39,12 @@ RSpec.describe ExtraExample, :type => :model do
     @extra_example3.send(:set_position)
     expect(@extra_example3.position).to eq (@extra_example2.position+1)
   end
+
+  describe "stripping tabs and newlines from titles" do
+    it "should not include newlines or tabs in the title" do
+      @extra_example = build(:extra_example, title: "\t\n\ttest\n\t\n")
+      expect(@extra_example.to_publishing_format[:title]).to eq "test"
+    end
+  end
+
 end

@@ -59,7 +59,7 @@ class Question < ActiveRecord::Base
   def to_publishing_format_for_quiz
     {
       id: id,
-      text: render_latex_for_publishing(text, "question '#{name}', in '#{parent}'"),
+      text: preparse_text_for_publishing(text, "question '#{name}', in '#{parent}'"),
       tools: tools.keys,
       line_input_fields: line_inputs.map(&:to_publishing_format),
       multiple_choice_input_fields: multiple_choice_inputs.map(&:to_publishing_format)
@@ -69,7 +69,7 @@ class Question < ActiveRecord::Base
   def to_publishing_format_for_section
     hash = {
       id: id,
-      text: render_latex_for_publishing(text, "question '#{name}', in '#{parent}'"),
+      text: preparse_text_for_publishing(text, "question '#{name}', in '#{parent}'"),
       tools: tools.keys,
       line_input_fields: line_inputs.map(&:to_publishing_format),
       multiple_choice_input_fields: multiple_choice_inputs.map(&:to_publishing_format),
@@ -83,13 +83,13 @@ class Question < ActiveRecord::Base
     if input.is_a?(LineInput)
       value = input.answers.first.value
     elsif input.is_a?(MultipleChoiceInput)
-      value = render_latex_for_publishing(input.choices.where(correct: true).first.value, "woa of question '#{name}', in '#{parent}'")
+      value = preparse_text_for_publishing(input.choices.where(correct: true).first.value, "woa of question '#{name}', in '#{parent}'")
     end
     %(<div class="m-answer">Het juiste antwoord is: #{ value }</div>).html_safe
   end
 
   def worked_out_answer_with_default
-    worked_out_answer.blank? ? made_worked_out_answer : render_latex_for_publishing(worked_out_answer, "woa of question '#{name}', in '#{parent}'")
+    worked_out_answer.blank? ? made_worked_out_answer : preparse_text_for_publishing(worked_out_answer, "woa of question '#{name}', in '#{parent}'")
   end
 
   def inputs_referenced_exactly_once?
@@ -126,6 +126,8 @@ class Question < ActiveRecord::Base
   def errors_when_publishing
     errors = errors_when_publishing_for_entry_quiz
     errors << "No Worked-out-answer given for question '#{name}', in '#{parent}'" if inputs.count > 1 && worked_out_answer.blank?
+    errors += image_errors(:text, "'#{name}', in '#{parent}'")
+    errors += image_errors(:worked_out_answer, "WOA of '#{name}', in '#{parent}'")
     errors.flatten
   end
 
@@ -145,9 +147,9 @@ class Question < ActiveRecord::Base
     "question '#{name}', in '#{parent}'"
   end
 
-  def image_errors(attr)
-    errors = super(attr)
-    errors += choices.map{|ch|ch.image_errors(:value)} unless attr == :worked_out_answer
+  def image_errors(attr, reference = "")
+    errors = super(attr, reference)
+    errors += choices.map{|ch|ch.image_errors(:value, "choice of #{reference}")} unless attr == :worked_out_answer
     errors.flatten
   end
 

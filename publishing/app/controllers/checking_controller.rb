@@ -23,6 +23,22 @@ class CheckingController < ApplicationController
           @errors[chapter.title][:images][ref] = ierr if ref && ierr.any?
         end
 
+        section.reflections.each do |subsection|
+          perr = subsection.parse_errors(:content) + subsection.parse_errors(:answer)
+          ierr = subsection.image_errors(:content) + subsection.image_errors(:answer)
+          ref = %(<a href="/chapters/#{subsection.section.chapter.to_param}/sections/#{subsection.section.to_param}/subsections">#{subsection.reference}</a>).html_safe
+          @errors[chapter.title][:html][ref]   = perr if ref && perr.any?
+          @errors[chapter.title][:images][ref] = ierr if ref && ierr.any?
+        end
+
+        section.extra_examples.each do |subsection|
+          perr = subsection.parse_errors(:content)
+          ierr = subsection.image_errors(:content)
+          ref = %(<a href="/chapters/#{subsection.section.chapter.to_param}/sections/#{subsection.section.to_param}/subsections">#{subsection.reference}</a>).html_safe
+          @errors[chapter.title][:html][ref]   = perr if ref && perr.any?
+          @errors[chapter.title][:images][ref] = ierr if ref && ierr.any?
+        end
+
         section.questions.each do |question|
           perr = question.parse_errors(:text)
           ierr = question.image_errors(:text)

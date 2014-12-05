@@ -56,6 +56,29 @@ RSpec.describe Subsection, type: :model do
       expect(@subsection1.errors_when_publishing).to include("No content in subsection of section '#{ @section1.name }', in '#{ @section1.parent }'")
     end
 
+    it "should accept valid width css property of image" do
+      @section1 = create(:section)
+      @subsection1.section = @section1
+      @subsection1.text = %(<img src="https://assets.studyflow.nl/bg.jpg" style="width: 80%">)
+      errors = @subsection1.parse_errors(:text)
+      expect(errors).to eq []
+    end
+
+    it "should reject invalid width css property of image" do
+      @section1 = create(:section)
+      @subsection1.text = %(<img src="https://assets.studyflow.nl/bg.jpg" style="width: 200px">)
+      @subsection1.section = @section1
+      errors = @subsection1.parse_errors(:text)
+      expect(errors).to eq [[%(<img src="https://assets.studyflow.nl/bg.jpg" style="width: 200px">), ""]]
+    end
+
+  end
+
+  describe "stripping tabs and newlines from titles" do
+    it "should not include newlines or tabs in the title" do
+      @subsection = build(:subsection, title: "\t\n\ttest\n\t\n")
+      expect(@subsection.to_publishing_format[:title]).to eq "test"
+    end
   end
 
 end

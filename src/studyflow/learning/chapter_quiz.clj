@@ -111,8 +111,8 @@
   {:pre [(= current-question-id question-id)]}
   (if (course/answer-correct? (course/question-for-chapter-quiz course chapter-id current-question-id) inputs)
     (let [correct-answer-event (events/question-answered-correctly course-id chapter-id student-id question-id inputs)]
-      (if (= (inc current-question-set-index)
-             (count (course/question-sets-for-chapter-quiz course chapter-id)))
+      (if (>= (inc current-question-set-index)
+              (count (course/question-sets-for-chapter-quiz course chapter-id)))
 
         [:ok [correct-answer-event
               (events/passed course-id chapter-id student-id)]]
@@ -132,12 +132,15 @@
       (update-in [:current-question-set-index] inc)))
 
 (defmethod handle-event ::events/QuestionAnsweredCorrectly
-  [chapter-quiz _]
-  chapter-quiz)
+  [chapter-quiz {:keys [question-id]}]
+  (assoc chapter-quiz :last-answered-question-id question-id))
 
 (defmethod handle-event ::events/QuestionAnsweredIncorrectly
-  [{:keys [current-question-set-index] :as chapter-quiz} _]
-  (update-in chapter-quiz [:number-of-errors] inc))
+  [{:keys [current-question-set-index] :as chapter-quiz}
+   {:keys [question-id]}]
+  (-> chapter-quiz
+      (update-in [:number-of-errors] inc)
+      (assoc :last-answered-question-id question-id)))
 
 (defmethod handle-event ::events/Passed
   [chapter-quiz _]
@@ -158,7 +161,9 @@
   [course-id])
 
 (defmethod handle-command ::DismissErrorScreen!
-  [{:keys [state number-of-errors previously-seen-questions current-question-set-index]} {:keys [chapter-id course-id student-id]} course]
+  [{:keys [state number-of-errors previously-seen-questions current-question-set-index current-question-id last-answered-question-id]}
+   {:keys [chapter-id course-id student-id]}
+   course]
   (cond
    (and (= :running-fast-track state)
         (= 2 number-of-errors))
@@ -168,16 +173,19 @@
    (= 3 number-of-errors)
    [:ok [(events/failed course-id chapter-id student-id)]]
 
-   (= (inc current-question-set-index)
-      (count (course/question-sets-for-chapter-quiz course chapter-id)))
+   (>= (inc current-question-set-index)
+       (count (course/question-sets-for-chapter-quiz course chapter-id)))
    [:ok [(events/passed course-id chapter-id student-id)]]
-   :else (let [next-question-set (get (course/question-sets-for-chapter-quiz course chapter-id) (inc current-question-set-index))]
-           [:ok [(events/question-assigned course-id
-                                           chapter-id
-                                           student-id
-                                           (:id next-question-set)
-                                           (:id (select-random-question next-question-set
-                                                                        previously-seen-questions)))]])))
+   :else
+   (if (= current-question-id last-answered-question-id)
+     (let [next-question-set (get (course/question-sets-for-chapter-quiz course chapter-id) (inc current-question-set-index))]
+       [:ok [(events/question-assigned course-id
+                                       chapter-id
+                                       student-id
+                                       (:id next-question-set)
+                                       (:id (select-random-question next-question-set
+                                                                    previously-seen-questions)))]])
+     [:rejected {:message "Can't assign new question when a question is left unanswered"}])))
 
 (defmethod handle-event ::events/Locked
   [chapter-quiz _]
@@ -195,7 +203,7 @@
 
 (defmethod handle-command ::Stop!
   [{:keys [state]} {:keys [student-id course-id chapter-id]} course]
-  (if (= :running-fast-route state)
+  (if (= :running-fast-track state)
     [:ok [(events/stopped course-id chapter-id student-id)
           (events/locked course-id chapter-id student-id)]]
     [:ok [(events/stopped course-id chapter-id student-id)]]))

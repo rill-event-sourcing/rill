@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+
+require 'nokogiri'
+
 def pretty_debug(value = '', type = 'debug', debug_start = false)
   start = Time.now
   logger ||= ::Rails.logger
@@ -49,6 +52,29 @@ def render_latex_for_editing(text = "")
     end
   end
   new_text
+end
+
+
+def preparse_text_for_publishing(text = "", origin = "unknown")
+  text = render_latex_for_publishing(text, origin)
+  text = preparse_images(text, origin)
+  text
+end
+
+def preparse_images(text = "", origin = "")
+  parsed_page = Nokogiri::HTML::DocumentFragment.parse(text)
+  images = parsed_page.css('img')
+  images.each do |html_image|
+    image = Image.checked.find_by_url(html_image["src"])
+    if image
+      html_image['data-width']  = image.width
+      html_image['data-height'] = image.height
+    else
+      throw "asset for #{ html_image["src"] } not found in #{ origin }!"
+      pretty_debug "asset for #{ html_image["src"] } not found in #{ origin }!"
+    end
+  end
+  parsed_page.inner_html
 end
 
 def render_latex_for_publishing(text = "", origin = "unknown")

@@ -21,8 +21,10 @@ gem 'newrelic_rpm'
 gem 'delayed_job_active_record'
 gem 'daemons'
 gem 'nokogiri'
+gem 'nokogiri-styles'
 gem 'sanitize'
 gem 'raygun4ruby'
+gem 'mini_magick'
 
 group :development, :test do
   gem 'better_errors'
@@ -40,6 +42,9 @@ group :development, :test do
   gem 'thin'
   gem 'guard-rails'
   gem 'guard-rspec'
+
+  gem 'konacha'
+  gem 'guard-konacha'
 end
 
 group :test do

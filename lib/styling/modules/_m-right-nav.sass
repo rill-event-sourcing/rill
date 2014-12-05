@@ -1,0 +1,121 @@
+@import compass
+@import compass/css3/user-interface
+
+#m-right-nav
+  position: fixed
+  width: 45px
+  top: 66px
+  bottom: 0
+  right: 0
+  background-color: #fcfbf7
+  border-left: 2px solid #e8e7e2
+  z-index: 400
+  +user-select(none)
+
+  #minimap
+    margin-top: 10px
+    padding: 15px 0 15px 15px
+    right: 0px
+    position: fixed
+    background-color: transparent
+    +border-left-radius(8px)
+    width: 32px
+    border: 2px solid transparent
+    border-right: 0
+    +single-transition(background-color, 200ms, linear)
+    &:hover
+      background-color: white
+      border: 2px solid #e8e7e2
+      border-right: 0
+      width: 260px
+      .minimap-item-text
+        display: block !important
+        opacity: 1
+        +translateX(0)
+        +single-transition(none)
+        height: 40px
+        display: table-cell
+        vertical-align: middle
+        pointer-events: auto
+
+  .minimap-item
+    +box-sizing(border-box)
+    position: relative
+    padding: 12px 0
+    display: block
+    outline: 0
+    text-align: right
+    &:active
+      &:after
+        +scale(0.8)
+
+    .minimap-item-text
+      right: 55px
+      top: 18px
+      position: absolute
+      text-align: right
+      font-size: 14px
+      font-weight: 400
+      width: 210px
+      font-family: "Gotham SSm A", "Gotham SSm B", Helvetica
+      color: #434d56
+      +text-shadow(-1px -1px 0.5px #FFF, 1px -1px 0.5px #fff, -1px 1px 0.5px #fff, 1px 1px 0.5px #fff)
+      +single-transition(all, 200ms, ease-out)
+      opacity: 0
+      +translateX(-20px)
+      pointer-events: none
+
+    &:first-child
+      &:before
+        display: none
+
+    &.finished
+      &:after
+        background: url(/images/check-white.svg) no-repeat center #d4d9df
+        border-color: #a9b4bf
+
+    &.in_progress
+      &:after
+        background: #d4d9df
+
+    &:after
+      display: inline-block
+      position: relative
+      +border-radius(50%)
+      width: 21px
+      height: 21px
+      right: 10px
+      top: 50%
+      content: ''
+      background: white
+      border: 2px solid #c9cace
+      z-index: 60
+      +single-transition(-webkit-transform, 200ms, ease-out)
+
+    &:before
+      position: absolute
+      content: ''
+      width: 3px
+      height: 50px
+      bottom: 40%
+      right: 21px
+      background: #e5e5e5
+      z-index: 50
+
+    &.selected-subsection, &:hover
+      &:after
+        border-color: #7ab300
+        background: #9ad22c
+        opacity: 1
+      .minimap-item-text
+        +translateX(0)
+        font-weight: 500
+      &.rm
+        .minimap-item-text
+          opacity: 0
+          +translateX(-20px)
+          pointer-events: none
+    &.selected-subsection
+      .minimap-item-text
+        display: block
+        opacity: 1

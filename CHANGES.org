@@ -1,8 +1,17 @@
 * Release Changelog
 ** NEXT RELEASE
+*** New: Minimap!
+*** New: replace ampersands on save in html format
+*** New: Urls in learning are now much more readable
+** release 2014-12-05.1
+*** Fix: HTML encoding bugs in publishing
+** release 2014-12-04.1
+*** Fix: Strip trailing whitespace off titles in prepraration of nicer URLs
 *** Fix: Disable scrollbars in calculator on FF
 *** Fix: Make calculator size toggle persistent
 *** Fix: Length of small inputs raised from 5 to 6
+*** Fix: It's now possible to finish questions that were removed by the editors
+*** Fix: Chapter quiz consistency improvements (hopefully fixes some issues)
 ** release-2014-11-26.1
 *** Fix: Fixed an issue when calculations on sums with brackets gave syntax errors
 ** release-2014-11-25.1

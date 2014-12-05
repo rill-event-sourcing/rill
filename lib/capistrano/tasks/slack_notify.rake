@@ -87,10 +87,10 @@ namespace :slack_notify do
     begin
       stage  = fetch(:stage)
       user = ENV['USER'] || ENV['USERNAME']
-      revision = fetch(:current_revision).to_s[0,8]
+      revision = fetch(:current_revision).to_s
 
-      msg = "A new version has been deployed for Gibbon (#{ stage })\n"
-      msg += "version #{ revision } deployed by #{ user }"
+      msg = "A new version has been deployed for <https://login#{ (stage == 'staging') ? "-beta" : "" }.studyflow.nl|Gibbon (#{ stage })>\n"
+      msg += "version <https://gitlab.studyflow.nl/studyflow/gibbon/commit/#{revision}|#{revision[0,8]}> deployed by #{ user }"
 
       Slack::Post.configure( subdomain: 'studyflow', token: 'QhbTT3kNGySH28UpOkF8oc40', username: 'Capistrano' )
       Slack::Post.post msg, "#deploy"
@@ -102,4 +102,3 @@ end
 
 # in deploy do:
 # after 'deploy:finished', 'slack_notify:deploy'
-

@@ -30,17 +30,22 @@ class Reflection < ActiveRecord::Base
     errors = []
     errors << "No content for #{name} in #{section.name}" if content.empty?
     errors << "No answer for #{name} in #{section.name}" if answer.empty?
+    errors += image_errors(:content, "content of #{name} in #{section.name}")
+    errors += image_errors(:answer, "answer of #{name} in #{section.name}")
     errors
   end
 
   def to_publishing_format
     {
       name: name,
-      content: render_latex_for_publishing(content, "reflection '#{name}', in '#{section.name}'"),
-      answer: render_latex_for_publishing(answer, "reflection '#{name}', in '#{section.name}'")
+      content: preparse_text_for_publishing(content, "reflection '#{name}', in '#{section.name}'"),
+      answer:  preparse_text_for_publishing(answer, "reflection '#{name}', in '#{section.name}'")
     }
   end
 
+  def reference
+    "reflection in subsection of section '#{section.name}', in '#{section.parent}'"
+  end
 
   private
 

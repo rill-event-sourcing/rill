@@ -29,18 +29,22 @@ class ExtraExample < ActiveRecord::Base
   def errors_when_publishing
     errors = []
     errors << "No content for #{name} in #{section.name}" if content.empty?
+    errors += image_errors(:content, "#{name} in #{section.name}")
     errors
   end
 
   def to_publishing_format
     {
       name: name,
-      title: title,
+      title: title.to_s.strip,
       default_open: default_open,
-      content: render_latex_for_publishing(content, "extra_example '#{name}', in '#{section.name}'")
+      content: preparse_text_for_publishing(content, "extra_example '#{name}', in '#{section.name}'")
     }
   end
 
+  def reference
+    "extra_example in subsection of section '#{section.name}', in '#{section.parent}'"
+  end
 
   private
 

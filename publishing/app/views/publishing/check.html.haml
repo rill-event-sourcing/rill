@@ -11,10 +11,9 @@
       - else
         %div.row{style: "margin-bottom: 20px;"}
           %div.alert.alert-danger{style:"text-align:center"}
-            %p Oh snap! There are some errors with the course material
-            %p Please fix the following errors before proceeding:
-            %br
-            %ul
+            %h3 Oh snap! There are some errors with the course material
+            %h4 Please fix the following errors before proceeding:
+            %ul{style: "text-align: left"}
               - @errors.each do |error|
                 %li= error
         %div.row

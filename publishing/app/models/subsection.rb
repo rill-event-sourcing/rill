@@ -23,8 +23,8 @@ class Subsection < ActiveRecord::Base
   def to_publishing_format
     {
       id: id,
-      title: title,
-      text: render_latex_for_publishing(text, "section '#{section.name}', in '#{section.parent}'")
+      title: title.to_s.strip,
+      text: preparse_text_for_publishing(text, "section '#{section.name}', in '#{section.parent}'")
     }
   end
 
@@ -49,6 +49,7 @@ class Subsection < ActiveRecord::Base
       errors << "Errors in LaTeX rendering in section '#{section.name}', in '#{section.parent}'"
     end
     errors << "No content in subsection of section '#{section.name}', in '#{section.parent}'" if text.blank?
+    errors += image_errors(:text, "'#{section.name}', in '#{section.parent}'")
     errors
   end
 

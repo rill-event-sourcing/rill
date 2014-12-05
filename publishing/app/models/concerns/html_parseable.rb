@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 module HtmlParseable
   require 'nokogiri'
+  require 'nokogiri-styles'
   require 'sanitize'
 
   extend ActiveSupport::Concern
@@ -13,11 +14,9 @@ module HtmlParseable
 
   def fix_parsing_page
     [
-     [/allowfullscreen/, "allowfullscreen=\"\""],
-     ["\r", ""],
-     [/<math>(.*?)<\/math>/m, "<math></math>"],
-     [" < ", " &gt; "],
-     [" > ", " &lt; "]
+      [/allowfullscreen/, "allowfullscreen=\"\""],
+      ["\r", ""],
+      [/<math>(.*?)<\/math>/m, "<math></math>"]
     ]
   end
 
@@ -27,27 +26,37 @@ module HtmlParseable
   end
 
   def validation_hash
+    transformer = lambda do |env|
+      return unless env[:node_name] == 'img'
+      node = env[:node]
+      width = node.styles['width']
+      return unless width
+      node.unlink unless width =~ /^[0-9]+%$/
+    end
+
     {
       :allow_doctype => true,
 
-      :elements => %w[html body a br b p span math h1 h2 h3 h4 h5 ul ol li u div img iframe i table tr th td sup sub],
+      :elements => %w[a b body br div h1 h2 h3 h4 h5 hr html i iframe img li math ol p span sub sup table td th tr u ul ],
 
       :attributes => {
         :all     => %w[class style],
         'a'      => %w[href],
-        'iframe' => %w[src height width frameborder allowfullscreen],
+        'iframe' => %w[allowfullscreen frameborder height src width],
         'img'    => %w[src]
       },
 
       :protocols => {
         'a'      => {'href' => ['https']},
-        'img'    => {'src' => ['https']},
-        'iframe' => {'href' => ['https']}
+        'iframe' => {'href' => ['https']},
+        'img'    => {'src'  => ['https']}
       },
 
       :css => {
         :properties => %w[width margin-left]
-      }
+      },
+
+      :transformers => transformer
     }
   end
 
@@ -74,15 +83,29 @@ module HtmlParseable
     parsed_page.css('img')
   end
 
-  def image_errors(attr)
+  def image_errors(attr, reference = "")
     asset_host = "https://assets.studyflow.nl"
     errors = []
     html_images(attr).each do |el|
+      error = nil
       src = el["src"]
       if src
-        errors << "`#{ src }` is not a valid image src. It must be on #{asset_host}/" unless src =~ /^#{ asset_host }\//
+        if src =~ /^#{ asset_host }\//
+          image = Image.find_by_url(src)
+          if image
+            error = "`#{ src }` is not checked for dimensions" unless image.checked?
+          else
+            error = "`#{ src }` is not found in our assets database"
+          end
+        else
+          error = "`#{ src }` is not a valid image source"
+        end
       else
-        errors << "no 'src' given for image"
+        error = "no 'src' value given for image"
+      end
+      if error
+        error << "<br><small>(in #{ reference })</small>" if reference != ""
+        errors << error.html_safe
       end
     end
     errors

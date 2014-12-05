@@ -112,7 +112,7 @@ class Section < ActiveRecord::Base
   def to_publishing_format
     {
       id: id,
-      title: title,
+      title: title.to_s.strip,
       meijerink_criteria: meijerink_criteria,
       domains: domains,
       subsections: subsections.map(&:to_publishing_format),
@@ -188,11 +188,11 @@ class Section < ActiveRecord::Base
     errors << "Nonexisting extra example referenced in section '#{name}', in '#{parent}'" if nonexisting_extra_examples_referenced?
     errors << "No questions in section '#{name}', in '#{parent}'" if questions.active.empty?
     errors << "No subsections in section '#{name}', in '#{parent}'" if subsections.empty?
+    errors << extra_examples.map(&:errors_when_publishing)
     errors << inputs.map(&:errors_when_publishing)
-    errors << reflections.map(&:errors_when_publishing)
     errors << questions.active.map(&:errors_when_publishing)
-    errors << subsections.map(&:errors_when_publishing)
     errors << reflections.map(&:errors_when_publishing)
+    errors << subsections.map(&:errors_when_publishing)
     errors.flatten
   end
 
