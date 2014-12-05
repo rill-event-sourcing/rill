@@ -47,7 +47,7 @@ module HtmlParseable
       },
 
       :protocols => {
-        'a'      => {'href' => ['https']},
+        'a'      => {'href' => ['https', :relative]},
         'iframe' => {'href' => ['https']},
         'img'    => {'src'  => ['https']}
       },
