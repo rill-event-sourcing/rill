@@ -1,5 +1,7 @@
 (ns studyflow.learning.read-model
-  (:require [studyflow.learning.chapter-quiz :as chapter-quiz]))
+  (:require [studyflow.learning.chapter-quiz :as chapter-quiz]
+            [clojure.string :as string]
+            [ring.util.codec :as ring-codec]))
 
 (def empty-model {})
 
@@ -7,6 +9,34 @@
   [course]
   (assoc course :sections-by-id
          (into {} (map #(vector (:id %) %) (mapcat :sections (:chapters course))))))
+
+(defn index-title-id
+  [course]
+  (let [slugify-url-title (fn [title]
+                            (-> title
+                                (string/replace #"[ ,()&]" "-")
+                                ring-codec/url-encode))
+        chapter-title->id (into {}
+                                (for [chapter (:chapters course)]
+                                  [(slugify-url-title (:title chapter))
+                                   (:id chapter)]))
+        chapter-id->section-title->id (into {}
+                                            (for [chapter (:chapters course)]
+                                              [(:id chapter)
+                                               (into {}
+                                                     (for [section (:sections chapter)]
+                                                       [(slugify-url-title (:title section))
+                                                        (:id section)]))]))
+        id->title (-> {}
+                      (into (for [[chapter-title id] chapter-title->id]
+                              [id chapter-title]))
+                      (into (for [[chapter-id si] chapter-id->section-title->id
+                                  [section-title id] si]
+                              [id section-title])))]
+    (assoc course
+      :text-url-mapping {:chapter-title->id chapter-title->id
+                         :chapter-id->section-title->id chapter-id->section-title->id
+                         :id->title id->title})))
 
 (defn update-student-section-status
   [model section-id student-id current-status new-status]
@@ -25,7 +55,9 @@
 (defn set-course
   [model id material]
   (-> model
-      (assoc-in [:courses id] (index-course material))
+      (assoc-in [:courses id] (-> material
+                                  index-course
+                                  index-title-id))
       (assoc-in [:course-ids (:name material)] id)))
 
 (defn remove-course
@@ -90,6 +122,7 @@
         remedial-chapters-status (get-in model [:remedial-chapters-status course-id student-id])]
     {:name (:name course)
      :id (:id course)
+     :text-url-mapping (:text-url-mapping course)
      :chapters (mapv #(chapter-tree model % student-id remedial-chapters-status) (:chapters course))
      :entry-quiz (entry-quiz model (:id course) student-id)}))
 

@@ -65,12 +65,28 @@
                    ;; default
                    (om/build dashboard cursor)))))))
 
+(defn load-course-material [widgets]
+  (fn [cursor owner]
+    (reify
+      om/IWillMount
+      (will-mount [_]
+        (async/put! (om/get-shared owner :data-channel)
+                    ["data/course-material" (get-in cursor [:static :course-id]) (get-in cursor  [:static :student :id])]))
+      om/IRender
+      (render [_]
+        (if (get-in cursor [:view :course-material])
+          (om/build widgets cursor)
+          (dom/div #js {:id "dashboard_page"}
+                   (dom/header #js {:id "m-top_header"}
+                               (dom/h1 #js {:id "logo"} "Laden ..."))))))))
+
 (defn ^:export course-page []
   (let [command-channel (async/chan)]
     (om/root
-     (-> widgets
-         service/wrap-service
-         url-history/wrap-history)
+     (service/wrap-service
+      (load-course-material
+       (url-history/wrap-history
+        widgets)))
      (core/init-app-state)
      {:target (gdom/getElement "app")
       :tx-listen (fn [tx-report cursor]
