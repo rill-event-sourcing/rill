@@ -114,11 +114,11 @@ class Question < ActiveRecord::Base
     begin
       render_latex_for_publishing(text)
     rescue
-      errors << "Errors in LaTeX rendering in section in question '#{name} chapterquiz', in '#{parent}'"
+      errors << "Errors in LaTeX rendering in section in question '#{name}', in '#{parent}'"
     end
-    errors << "No Inputs on question '#{name}', in '#{parent}' chapterquiz" if inputs.count == 0
-    errors << "Error in input referencing in question '#{name} chapterquiz', in '#{parent}'" unless inputs_referenced_exactly_once?
-    errors << "Nonexisting inputs referenced in question '#{name} chapterquiz', in '#{parent}'" if nonexisting_inputs_referenced?
+    errors << "No Inputs on question '#{name}', in '#{parent}'" if inputs.count == 0
+    errors << "Error in input referencing in question '#{name}', in '#{parent}'" unless inputs_referenced_exactly_once?
+    errors << "Nonexisting inputs referenced in question '#{name}', in '#{parent}'" if nonexisting_inputs_referenced?
     errors << inputs.map(&:errors_when_publishing)
     errors.flatten
   end
