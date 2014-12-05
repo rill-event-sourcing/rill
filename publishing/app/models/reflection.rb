@@ -30,8 +30,8 @@ class Reflection < ActiveRecord::Base
     errors = []
     errors << "No content for #{name} in #{section.name}" if content.empty?
     errors << "No answer for #{name} in #{section.name}" if answer.empty?
-    errors += image_errors(:content)
-    errors += image_errors(:answer)
+    errors += image_errors(:content, "content of #{name} in #{section.name}")
+    errors += image_errors(:answer, "answer of #{name} in #{section.name}")
     errors
   end
 
@@ -43,6 +43,9 @@ class Reflection < ActiveRecord::Base
     }
   end
 
+  def reference
+    "reflection in subsection of section '#{section.name}', in '#{section.parent}'"
+  end
 
   private
 
