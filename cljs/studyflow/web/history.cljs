@@ -11,11 +11,12 @@
 (def text-url-mapping (atom nil))
 
 (defn token->path [token]
-  (let [[main-token chapter-text section-text question-token] (string/split token #"/")
+  (let [[main-token chapter-text section-text question-token subsection-index] (string/split token #"/")
         chapter-id (when (seq chapter-text)
                      (get-in @text-url-mapping [:chapter-title->id (keyword chapter-text)]))
         section-id (when (seq section-text)
-                     (get-in @text-url-mapping [:chapter-id->section-title->id (keyword chapter-id) (keyword section-text)]))]
+                     (get-in @text-url-mapping [:chapter-id->section-title->id (keyword chapter-id) (keyword section-text)]))
+        parsed-subsection (.parseInt js/window subsection-index)]
     {:main ({"Leerroute" :dashboard
              "Instaptoets" :entry-quiz
              "Paragraaf" :learning
@@ -24,10 +25,13 @@
      :section-id section-id
      :section-tab (if (= question-token "Vragen")
                     :questions
-                    :explanation)}))
+                    :explanation)
+     :subsection-index (if (js/isNaN parsed-subsection)
+                         0
+                         parsed-subsection)}))
 
 (defn path->token [path]
-  (let [{:keys [main chapter-id section-id section-tab]} path
+  (let [{:keys [main chapter-id section-id section-tab subsection-index]} path
         chapter-text (get-in @text-url-mapping [:id->title (keyword chapter-id)])
         section-text (get-in @text-url-mapping [:id->title (keyword section-id)])]
 
@@ -42,7 +46,8 @@
         :chapter-quiz
         (str "Hoofdstuktoets/" chapter-text)
         :learning
-        (str "Paragraaf/" chapter-text "/" section-text "/" (if (= section-tab :questions) "Vragen" "Uitleg"))))))
+        (str "Paragraaf/" chapter-text "/" section-text "/" (if (= section-tab :questions) "Vragen" "Uitleg") "/" subsection-index)))))
+
 
 (defn wrap-history [widgets]
   (fn [cursor owner]

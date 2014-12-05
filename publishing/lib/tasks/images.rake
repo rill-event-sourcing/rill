@@ -17,7 +17,7 @@ namespace :images do
     end
   end
 
-  desc "check asset images dimenstions"
+  desc "check asset images dimensions"
   task :check => :environment do
     ##############################
     recheck = 30.minutes
@@ -29,7 +29,7 @@ namespace :images do
     images.map(&:check)
   end
 
-  desc "check all asset images dimenstions"
+  desc "check all asset images dimensions"
   task :check_all => :environment do
     images = Image.all
     p "#{ images.count } images"

@@ -1,9 +1,11 @@
 (ns studyflow.web.section
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
+            [goog.dom :as gdom]
+            [goog.Timer :as gtimer]
             [studyflow.web.calculator :as calculator]
             [studyflow.web.history :refer [path-url navigate-to-path]]
-            [studyflow.web.helpers :refer [input-builders tool-box modal raw-html tag-tree-to-om focus-input-box section-explanation-url on-enter click-once-button] :as helpers]
+            [studyflow.web.helpers :refer [input-builders tool-box modal raw-html tag-tree-to-om focus-input-box section-explanation-url on-enter click-once-button element-top] :as helpers]
             [studyflow.web.ipad :as ipad]
             [cljs.core.async :as async]
             [studyflow.web.aggregates :as aggregates]
@@ -261,7 +263,14 @@
       (into (for [extra-example (:extra-examples section)]
               [(:name extra-example)  (om/build section-extra-example section {:opts {:extra-example extra-example :section section}})]))))
 
-(defn section-explanation [section owner]
+(defn scroll-to-subsection [index]
+  (let [section-position (element-top (gdom/getElement (str "subsection-" index)))]
+    (js/window.scrollTo 0 (if (= index 0)
+                            0
+                            (- section-position 80)))))
+
+
+(defn section-explanation [{:keys [section subsection-index path]} owner]
   (reify
     om/IRender
     (render [_]
@@ -269,17 +278,53 @@
             inputs (input-builders-subsection section)
             reflections (reflection-builder section)
             extra-examples (extra-example-builder section)]
-        (println [:inputs! inputs])
         (apply dom/article #js {:id "m-section"}
-               #_(dom/nav #js {:id "m-minimap"}
-                          (apply dom/ul nil
-                                 (for [{:keys [title id]
-                                        :as subsection} subsections]
-                                   (dom/li nil title))))
-               (map (fn [{:keys [title tag-tree id] :as subsection}]
-                      (dom/section #js {:className "m-subsection"}
-                                   (tag-tree-to-om tag-tree inputs reflections extra-examples)))
-                    subsections))))))
+               (dom/nav #js {:id "m-right-nav"}
+                        (apply dom/div #js {:id "minimap"}
+                               (map-indexed (fn [i {:keys [title id]
+                                                    :as subsection}]
+                                              (dom/a #js {:href (-> path
+                                                                    (assoc :subsection-index i)
+                                                                    path-url)
+                                                          :className (if (= i subsection-index)
+                                                                       (str "minimap-item selected-subsection"
+                                                                            (when-not (om/get-state owner :timer-ticking)
+                                                                              " rm"))
+                                                                       "minimap-item")}
+                                                     (dom/span #js {:className "minimap-item-text"}
+                                                               title)))
+                                            subsections)))
+               (map-indexed (fn [i {:keys [title tag-tree id] :as subsection}]
+                              (dom/section #js {:className "m-subsection" :id (str "subsection-" i)}
+                                           (tag-tree-to-om tag-tree inputs reflections extra-examples)))
+                            subsections))))
+    om/IDidMount
+    (did-mount [_]
+      (when subsection-index
+        (let [max-index-subsection (- (count (get section :subsections)) 1)]
+          (if (> subsection-index max-index-subsection)
+            (scroll-to-subsection max-index-subsection)
+            (scroll-to-subsection subsection-index)))))
+    om/IWillUpdate
+    (will-update [_ next-props _]
+      (let [old-props (om/get-props owner)]
+        (when-not (= (:path old-props)
+                     (:path next-props))
+          (when-let [timer-id (om/get-state owner :timer-id)]
+            (gtimer/clear timer-id))
+          (om/set-state! owner :timer-ticking true)
+          (om/set-state! owner :timer-id (gtimer/callOnce (fn []
+                                                            (om/set-state! owner :timer-ticking false))
+                                                          1000))
+
+          (if (> (- (.getTime (js/Date.))
+                    @(om/get-shared owner :last-scroll))
+                 500)
+            (let [subsection-index (:subsection-index next-props)
+                  max-index-subsection (- (count (get (:section next-props) :subsections)) 1)]
+              (if (> subsection-index max-index-subsection)
+                (scroll-to-subsection max-index-subsection)
+                (scroll-to-subsection subsection-index)))))))))
 
 (defn section-explanation-panel [cursor owner]
   (reify
@@ -289,7 +334,9 @@
             student-id (get-in cursor [:static :student :id])
             section (get-in cursor [:view :section section-id :data])]
         (if section
-          (om/build section-explanation section)
+          (om/build section-explanation {:section section
+                                         :subsection-index (get-in cursor [:view :selected-path :subsection-index])
+                                         :path (get-in cursor [:view :selected-path])})
           (dom/article #js {:id "m-section"}
                        "Uitleg laden..."))))))
 
