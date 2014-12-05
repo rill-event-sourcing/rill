@@ -14,6 +14,15 @@ class CheckingController < ApplicationController
       @errors[chapter.title][:html] ||= {}
       @errors[chapter.title][:images] ||= {}
 
+      quiz = chapter.chapter_quiz
+      quiz.questions.each do |question|
+        perr = question.parse_errors(:text)
+        ierr = question.image_errors(:text)
+        ref = %(<a href="/chapters/#{chapter.to_param}/chapter_quiz/chapter_questions_sets/#{question.quizzable.to_param}/chapter_quiz_questions/#{question.to_param}/edit">#{question.reference}</a>).html_safe
+        @errors[chapter.title][:html][ref]   = perr if ref && perr.any?
+        @errors[chapter.title][:images][ref] = ierr if ref && ierr.any?
+      end
+
       chapter.sections.each do |section|
         section.subsections.each do |subsection|
           perr = subsection.parse_errors(:text)
