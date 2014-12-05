@@ -83,25 +83,28 @@ module HtmlParseable
     parsed_page.css('img')
   end
 
-  def image_errors(attr)
+  def image_errors(attr, reference = "")
     asset_host = "https://assets.studyflow.nl"
     errors = []
     html_images(attr).each do |el|
+      error = nil
       src = el["src"]
       if src
         if src =~ /^#{ asset_host }\//
           image = Image.find_by_url(src)
           if image
-            errors << "`#{ src }` is not checked for dimensions." unless image.checked?
+            error = "`#{ src }` is not checked for dimensions" unless image.checked?
           else
-            errors << "`#{ src }` is not found in our assets database."
+            error = "`#{ src }` is not found in our assets database"
           end
         else
-          errors << "`#{ src }` is not a valid image source. It must be on #{ asset_host }"
+          error = "`#{ src }` is not a valid image source"
         end
       else
-        errors << "no 'src' value given for image"
+        error = "no 'src' value given for image"
       end
+      error << "<br><small>(in #{ reference })</small>" if reference != ""
+      errors << error.html_safe if error
     end
     errors
   end

@@ -114,11 +114,11 @@ class Question < ActiveRecord::Base
     begin
       render_latex_for_publishing(text)
     rescue
-      errors << "Errors in LaTeX rendering in section in question '#{name}', in '#{parent}'"
+      errors << "Errors in LaTeX rendering in section in question '#{name} chapterquiz', in '#{parent}'"
     end
-    errors << "No Inputs on question '#{name}', in '#{parent}'" if inputs.count == 0
-    errors << "Error in input referencing in question '#{name}', in '#{parent}'" unless inputs_referenced_exactly_once?
-    errors << "Nonexisting inputs referenced in question '#{name}', in '#{parent}'" if nonexisting_inputs_referenced?
+    errors << "No Inputs on question '#{name}', in '#{parent}' chapterquiz" if inputs.count == 0
+    errors << "Error in input referencing in question '#{name} chapterquiz', in '#{parent}'" unless inputs_referenced_exactly_once?
+    errors << "Nonexisting inputs referenced in question '#{name} chapterquiz', in '#{parent}'" if nonexisting_inputs_referenced?
     errors << inputs.map(&:errors_when_publishing)
     errors.flatten
   end
@@ -126,8 +126,8 @@ class Question < ActiveRecord::Base
   def errors_when_publishing
     errors = errors_when_publishing_for_entry_quiz
     errors << "No Worked-out-answer given for question '#{name}', in '#{parent}'" if inputs.count > 1 && worked_out_answer.blank?
-    errors += image_errors(:text)
-    errors += image_errors(:worked_out_answer)
+    errors += image_errors(:text, "'#{name}', in '#{parent}'")
+    errors += image_errors(:worked_out_answer, "WOA of '#{name}', in '#{parent}'")
     errors.flatten
   end
 
@@ -147,9 +147,9 @@ class Question < ActiveRecord::Base
     "question '#{name}', in '#{parent}'"
   end
 
-  def image_errors(attr)
-    errors = super(attr)
-    errors += choices.map{|ch|ch.image_errors(:value)} unless attr == :worked_out_answer
+  def image_errors(attr, reference = "")
+    errors = super(attr, reference)
+    errors += choices.map{|ch|ch.image_errors(:value, "choice of #{reference}")} unless attr == :worked_out_answer
     errors.flatten
   end
 

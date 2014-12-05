@@ -29,7 +29,7 @@ class ExtraExample < ActiveRecord::Base
   def errors_when_publishing
     errors = []
     errors << "No content for #{name} in #{section.name}" if content.empty?
-    errors += image_errors(:content)
+    errors += image_errors(:content, "#{name} in #{section.name}")
     errors
   end
 
@@ -42,6 +42,9 @@ class ExtraExample < ActiveRecord::Base
     }
   end
 
+  def reference
+    "extra_example in subsection of section '#{section.name}', in '#{section.parent}'"
+  end
 
   private
 
