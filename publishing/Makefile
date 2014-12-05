@@ -3,7 +3,7 @@ test:
 	RAILS_ENV=test bundle exec rake db:drop db:create db:migrate db:seed
 	RAILS_ENV=test bundle exec rake exporter:export > /tmp/material.json
 	RAILS_ENV=test bundle exec rake exporter:test_export
-	bundle exec rspec
+	bundle exec rake spec konacha:run
 
 start:
 	@if [ `gem list foreman -i` = true ]; then \
