@@ -19,10 +19,10 @@
                                   :className "btn yellow"}
                              (get-in cursor [:view :course-material :total-coins]))
                  (when (om/get-state owner :open?)
-                   (if-let [data (get-in cursor [:view :leaderboard :data])]
-                     (dom/div #js {:className "leaderboard-dropdown"}
-                              (dom/h2 #js {:className "leaderboard-heading"} "Meeste" (dom/span #js {:className "inline-coin"}) " de afgelopen 7 dagen")
-                              (dom/table #js {:className "leaderboard-table"}
+                   (dom/div #js {:className "leaderboard-dropdown"}
+                            (dom/h2 #js {:className "leaderboard-heading"}  "Meeste" (dom/span #js {:className "inline-coin"}) " de afgelopen 7 dagen")
+                            (dom/table #js {:className "leaderboard-table"}
+                                       (if-let [data (get-in cursor [:view :leaderboard :data])]
                                          (apply dom/tbody nil
                                                 (map (fn [[pos id coins full-name]]
                                                        (dom/tr #js {:className (str "leaderboard-row" (when (= id student-id)
@@ -31,5 +31,7 @@
                                                                (dom/td #js {:className "position"} pos ".")
                                                                (dom/td nil full-name)
                                                                (dom/td #js {:className "coins"} coins)))
-                                                     data))))
-                     "laden....")))))))
+                                                     data))
+                                         (dom/tbody nil
+                                                    (dom/tr #js {:className "leaderboard-row me"}
+                                                            (dom/td nil "Wordt geladen..."))))))))))))
