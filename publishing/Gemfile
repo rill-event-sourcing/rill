@@ -42,6 +42,9 @@ group :development, :test do
   gem 'thin'
   gem 'guard-rails'
   gem 'guard-rspec'
+
+  gem 'konacha'
+  gem 'guard-konacha'
 end
 
 group :test do

@@ -1,6 +1,10 @@
 * Release Changelog
 ** NEXT RELEASE
 *** New: Minimap!
+*** New: replace ampersands on save in html format
+*** New: Urls in learning are now much more readable
+** release 2014-12-05.1
+*** Fix: HTML encoding bugs in publishing
 ** release 2014-12-04.1
 *** Fix: Strip trailing whitespace off titles in prepraration of nicer URLs
 *** Fix: Disable scrollbars in calculator on FF

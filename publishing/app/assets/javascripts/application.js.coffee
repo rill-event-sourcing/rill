@@ -19,14 +19,23 @@ autoResize = ->
   $('.auto-resize').unbind()
   $('.auto-resize').autosize()
 
-@sanitizeRichText = ->
-  $('.rich-text').each (i) ->
-    text = $(this).val()
+@sanitizeQuotes = (text) ->
     text = text.replace(/‘/g, "'") # Alt + ] produces an opening single curly quote ( ‘ )
     text = text.replace(/’/g, "'") # Alt + Shift + ] produces a closing single curly quote ( ’ )
     text = text.replace(/“/g, '"') # Alt + [ produces an opening double curly quote ( “ )
     text = text.replace(/”/g, '"') # Alt + Shift + [ produces a closing double curly quote ( ” )
     text = text.replace(//g, '"')
+    text
+
+@sanitizeAmpersands = (text) ->
+    text = text.replace(/&(?!([A-Z]*;)|#)/gi, "&amp;")
+    text
+
+@sanitizeRichText = ->
+  $('.rich-text').each (i) ->
+    text = $(this).val()
+    text = sanitizeQuotes(text)
+    text = sanitizeAmpersands(text)
     $(this).val text
 
 $ ->
