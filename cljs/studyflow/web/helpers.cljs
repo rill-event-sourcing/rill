@@ -108,6 +108,9 @@
                                    (map descent content))
                        "li" (apply dom/li #js {:className (:class attrs)}
                                    (map descent content))
+                       "a" (apply dom/a #js {:className (:class attrs)
+                                             :href (:href attrs)}
+                                  (map descent content))
                        "u" (apply dom/u nil
                                   (map descent content))
                        "br" (dom/br nil)

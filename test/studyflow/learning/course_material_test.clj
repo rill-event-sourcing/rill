@@ -107,32 +107,58 @@
                              <tr><td>456</td><td>_INPUT_2_</td></tr></table>"]
       (is (= (material/text-with-custom-tags-to-tree table-text custom-tag-names)
              '{:tag :div,
-              :attrs nil,
-              :content
-              ({:tag :table,
-                :attrs {:class "m-table"},
-                :content
-                ("\n                             "
-                 {:tag :tr, :attrs nil, :content ({:tag :td, :attrs nil, :content ("Answer")} {:tag :td, :attrs nil, :content ("Input")})}
-                 "\n                             "
-                 {:tag :tr,
-                  :attrs nil,
-                  :content
-                  ({:tag :td,
-                    :attrs nil,
-                    :content
-                    ("123\n                               "
-                     {:tag :img, :attrs {:style {"width" "60%"}, :height "80", :width "60", :src "//some-file-somewhere/file.png"}, :content nil}
-                     "\n"
-                     {:tag :iframe,
-                      :attrs {},
-                      :content
-                      "<iframe allowfullscreen=\"allowfullscreen\" frameborder=\"0\" src=\"//www.youtube-nocookie.com/embed/Lm4oiLzJs2g?rel=0\" height=\"315\" width=\"560\"></iframe>"}
-                     "\n                             ")}
-                   {:tag :td, :attrs nil, :content ({:tag :input, :attrs {:name "_INPUT_1_"}, :content nil})})}
-                 "\n                             "
-                 {:tag :tr,
-                  :attrs nil,
-                  :content
-                  ({:tag :td, :attrs nil, :content ("456")}
-                   {:tag :td, :attrs nil, :content ({:tag :input, :attrs {:name "_INPUT_2_"}, :content nil})})})})})))))
+               :attrs nil,
+               :content
+               ({:tag :table,
+                 :attrs {:class "m-table"},
+                 :content
+                 ("\n                             "
+                  {:tag :tr, :attrs nil, :content ({:tag :td, :attrs nil, :content ("Answer")} {:tag :td, :attrs nil, :content ("Input")})}
+                  "\n                             "
+                  {:tag :tr,
+                   :attrs nil,
+                   :content
+                   ({:tag :td,
+                     :attrs nil,
+                     :content
+                     ("123\n                               "
+                      {:tag :img, :attrs {:style {"width" "60%"}, :height "80", :width "60", :src "//some-file-somewhere/file.png"}, :content nil}
+                      "\n"
+                      {:tag :iframe,
+                       :attrs {},
+                       :content
+                       "<iframe allowfullscreen=\"allowfullscreen\" frameborder=\"0\" src=\"//www.youtube-nocookie.com/embed/Lm4oiLzJs2g?rel=0\" height=\"315\" width=\"560\"></iframe>"}
+                      "\n                             ")}
+                    {:tag :td, :attrs nil, :content ({:tag :input, :attrs {:name "_INPUT_1_"}, :content nil})})}
+                  "\n                             "
+                  {:tag :tr,
+                   :attrs nil,
+                   :content
+                   ({:tag :td, :attrs nil, :content ("456")}
+                    {:tag :td, :attrs nil, :content ({:tag :input, :attrs {:name "_INPUT_2_"}, :content nil})})})})})))
+    (let [text-with-links "<p>Hello World, <a href=\"http://www.example.org/\">this</a> looks like HTML.</p>"
+          text-with-internal-links "<p>And <a href=\"#this-other\">this other</a> is an internal link.</p>"]
+      (is (= (material/text-with-custom-tags-to-tree text-with-links {})
+             '{:tag :div,
+               :attrs nil,
+               :content
+               ({:tag :div
+                 :attrs {:class " div-p"}
+                 :content
+                 ("Hello World, "
+                  {:tag :a
+                   :attrs {:href "http://www.example.org/"}
+                   :content ["this"]}
+                  " looks like HTML.")})}))
+      (is (= (material/text-with-custom-tags-to-tree text-with-internal-links {})
+             '{:tag :div,
+               :attrs nil,
+               :content
+               ({:tag :div
+                 :attrs {:class " div-p"}
+                 :content
+                 ("And "
+                  {:tag :a
+                   :attrs {:href "#this-other"}
+                   :content ["this other"]}
+                  " is an internal link.")})})))))
