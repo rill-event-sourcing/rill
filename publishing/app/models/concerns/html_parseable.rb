@@ -42,7 +42,7 @@ module HtmlParseable
       :attributes => {
         :all     => %w[class style],
         'a'      => %w[href],
-        'iframe' => %w[allowfullscreen frameborder height src width],
+        'iframe' => %w[src width height scrolling name allowtransparency frameborder allowfullscreen mozallowfullscreen webkitallowfullscreen oallowfullscreen msallowfullscreen],
         'img'    => %w[src]
       },
 
