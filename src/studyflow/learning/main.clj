@@ -1,4 +1,4 @@
-(ns studyflow.main
+(ns studyflow.learning.main
   (:require [clojure.tools.logging :as log]
             [studyflow.learning.system :as system]
             [com.stuartsierra.component :as component]
