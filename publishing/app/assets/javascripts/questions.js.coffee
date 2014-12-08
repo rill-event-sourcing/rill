@@ -78,6 +78,8 @@ bindAddChoiceButton = ->
           list.append(data)
           bindCorrectChoiceButtons()
           bindDeleteChoiceButtons()
+          bindMoveUpButtons()
+          bindMoveDownButtons()
           refreshPreview()
 
 bindDeleteChoiceButtons = ->
