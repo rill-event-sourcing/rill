@@ -1,7 +1,7 @@
-(ns studyflow.system.components.ring-handler
+(ns studyflow.learning.system.components.ring-handler
   (:require [com.stuartsierra.component :refer [Lifecycle]]
             [studyflow.learning.web :as web]
-            [studyflow.system.components.cache-heater :refer [wrap-cache-status]]
+            [studyflow.learning.system.components.cache-heater :refer [wrap-cache-status]]
             [clojure.tools.logging :refer [info debug spy]]))
 
 (defrecord RingHandlerComponent [event-store read-model redirect-urls session-store cookie-domain cache-heater]

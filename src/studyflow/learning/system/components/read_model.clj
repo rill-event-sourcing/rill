@@ -1,4 +1,4 @@
-(ns studyflow.system.components.read-model
+(ns studyflow.learning.system.components.read-model
   (:require [com.stuartsierra.component :refer [Lifecycle]]
             [studyflow.components.event-channel :refer [channel]]
             [studyflow.learning.read-model :refer [empty-model]]
