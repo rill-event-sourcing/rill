@@ -3,6 +3,7 @@
             [om.core :as om]
             [studyflow.web.history :refer [path-url]]
             [studyflow.web.recommended-action :refer [recommended-action]]
+            [studyflow.web.coins :refer [coins-header]]
             [studyflow.web.chapter-quiz :as chapter-quiz]
             [studyflow.web.helpers :refer [input-builders tool-box modal raw-html tag-tree-to-om focus-input-box section-explanation-url] :as helpers]
             [cljs.core.async :as async]))
@@ -76,6 +77,7 @@
                   (dom/a #js {:id "settings" :href "#"})
                   (when-let [url (get-in cursor [:static :teaching-url])]
                     (dom/a #js {:id "teaching" :href url} "Docent omgeving"))
+                  (om/build coins-header cursor)
                   (dom/form #js {:method "POST"
                                  :action (get-in cursor [:static :logout-target])
                                  :id "logout-form"}

@@ -57,6 +57,10 @@
   (refresh :after 'user/go))
 
 
+(defn learning-read-model
+  []
+  @(:read-model (:learning/read-model system)))
+
 (defn update-material!
   [path]
   (let [material (json/parse-string (slurp (io/file path)) key-from-json)

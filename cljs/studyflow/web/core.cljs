@@ -78,5 +78,9 @@
             (navigate-to-path {:main :dashboard
                                :chapter-id (:chapter-id event)
                                :section-id nil})
+
+            "studyflow.learning.section-bank.events/CoinsEarned"
+            (om/transact! cursor [:view :course-material :total-coins] (fn [current]
+                                                                         (+ (or current 0) (:amount event))))
             nil)
           (recur)))))

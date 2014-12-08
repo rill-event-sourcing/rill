@@ -5,8 +5,10 @@
             [studyflow.learning.entry-quiz.events :as entry-quiz]
             [studyflow.learning.section-test.events :as section-test]
             [studyflow.learning.chapter-quiz.events :as chapter-quiz]
+            [studyflow.learning.section-bank.events :as section-bank]
             [rill.event-channel :as event-channel]
-            [rill.message :as message]))
+            [rill.message :as message]
+            [clj-time.coerce :refer [to-local-date]]))
 
 (defmulti handle-event
   "Update the read model with the given event"
@@ -94,8 +96,12 @@
       (m/update-student-chapter-quiz-status chapter-id student-id :passed)))
 
 (defmethod handle-event :studyflow.school-administration.teacher.events/Created
-  [model {:keys [teacher-id full-name]}]
-  (m/set-student model teacher-id {:full-name full-name}))
+  [model {:keys [teacher-id full-name department-id]}]
+  (m/set-student model teacher-id {:full-name full-name :department-id department-id}))
+
+(defmethod handle-event :studyflow.school-administration.teacher.events/DepartmentChanged
+  [model {:keys [teacher-id department-id]}]
+  (assoc-in model [:students teacher-id :department-id] department-id))
 
 (defmethod handle-event :studyflow.school-administration.teacher.events/NameChanged
   [model {:keys [teacher-id full-name]}]
@@ -103,15 +109,41 @@
 
 (defmethod handle-event :studyflow.school-administration.student.events/Created
   [model {:keys [student-id full-name]}]
-  (m/set-student model student-id {:full-name full-name}))
+  (-> model
+      (m/set-student student-id {:full-name full-name})
+      (update-in [:students-by-department nil] (fnil conj #{}) student-id)))
 
 (defmethod handle-event :studyflow.school-administration.student.events/NameChanged
   [model {:keys [student-id full-name]}]
   (m/set-student model student-id {:full-name full-name}))
 
 (defmethod handle-event :studyflow.school-administration.student.events/Imported
-  [model {:keys [student-id full-name]}]
-  (m/set-student model student-id {:full-name full-name}))
+  [model {:keys [student-id full-name department-id]}]
+  (-> model
+      (m/set-student student-id {:full-name full-name :department-id department-id})
+      (update-in [:students-by-department department-id] (fnil conj #{}) student-id)))
+
+;; Schools & departments
+(defmethod handle-event :studyflow.school-administration.department.events/Created
+  [model {:keys [department-id school-id]}]
+  (-> model
+      (update-in [:departments-by-school school-id] (fnil conj #{}) department-id)
+      (assoc-in [:departments department-id] {:school-id school-id})))
+
+(defmethod handle-event :studyflow.school-administration.student.events/DepartmentChanged
+  [model {:keys [student-id department-id]}]
+  (let [old-department (:department-id (m/get-student model student-id))]
+    (-> model
+        (assoc-in [:students student-id :department-id] department-id)
+        (update-in [:students-by-department old-department] (fnil disj #{}) student-id)
+        (update-in [:students-by-department department-id] (fnil conj #{}) student-id))))
+
+;; Coins
+
+(defmethod handle-event ::section-bank/CoinsEarned
+  [model {:keys [course-id section-id student-id amount] :as event}]
+  (m/add-coins model course-id student-id (to-local-date (message/timestamp event)) amount))
+
 
 (defmethod handle-event :default
   [model event]

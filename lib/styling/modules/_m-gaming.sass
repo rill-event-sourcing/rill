@@ -1,0 +1,78 @@
+.m-gaming
+  width: 200px
+  position: absolute
+  top: 8px
+  right: 150px
+  height: 20px
+  font-size: 14px
+
+  button
+    position: absolute
+    right: 0px
+    padding-right: 45px
+    &:before
+      display: block
+      content: ''
+      background: url(/images/icon-coins32.png) no-repeat center
+      width: 32px
+      height: 32px
+      background-size: 25px
+      position: absolute
+      right: 10px
+      top: 5px
+
+  .leaderboard-dropdown
+    background: rgba(0,0,0,0.8)
+    +border-radius(4px)
+    +box-sizing(border-box)
+    padding: 20px
+    width: 300px
+    position: relative
+    left: 0px
+    top: 58px
+    &:after, &:before
+      left: 50%
+      border: solid transparent
+      content: " "
+      height: 0
+      width: 0
+      position: absolute
+      pointer-events: none
+    &:after
+      border-bottom-color: rgba(0,0,0,0.8)
+      border-width: 8px
+      margin-left: -8px
+      top: -16px
+
+  .leaderboard-heading
+    color: white
+    font-weight: 500
+    margin-bottom: 15px
+    .inline-coin
+      background: url(/images/icon-coins32.png) no-repeat right center
+      background-size: 20px
+      width: 20px
+      height: 20px
+      padding: 0 2px
+      margin-bottom: -5px
+      display: inline-block
+
+  .leaderboard-table
+    width: 100%
+
+    td
+      padding: 5px
+      color: white
+      &.coins
+        text-align: right
+        padding-right: 30px
+        background: url(/images/icon-coins32.png) no-repeat right center
+        background-size: 20px
+      &.position
+        width: 15px
+        text-align: right
+        padding-left: 0
+
+    .me td
+      color: #83BE43
+      font-weight: 500

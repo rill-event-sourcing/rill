@@ -28,11 +28,11 @@
   "The id of the aggregate that will handle this message"
   type)
 
-(defmulti process-manager-id
-  "The id of the aggregate (if any) that will receive this message after it is successfully committed."
+(defmulti observers
+  "A collection of [id, handler-fn] pairs for each aggregate that should receive this message after it is successfully committed."
   type)
 
-(defmethod process-manager-id
+(defmethod observers
   :default
   [_]
   nil)

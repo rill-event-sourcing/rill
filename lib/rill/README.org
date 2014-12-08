@@ -2,6 +2,7 @@
 
 * Changelog
 
+  0.1.6 - Generalize process managers into observer/notifications
   0.1.5 - Improved command-result= testing function
   0.1.4 - Auto-retry queries when streaming all events in psql event store
   0.1.2 - Add process managers

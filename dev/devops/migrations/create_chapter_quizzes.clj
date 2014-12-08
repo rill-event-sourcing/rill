@@ -3,7 +3,7 @@
             [rill.event-store :refer [retrieve-events append-events]]
             [rill.event-stream :refer [all-events-stream-id any-stream-version]]
             [rill.message :as message]
-            [rill.handler :refer [notify-process-manager]]
+            [rill.handler :refer [notify-observers]]
             [studyflow.learning.section-test]
             [studyflow.learning.section-test.events :as section-test]
             [studyflow.learning.chapter-quiz]
@@ -32,6 +32,6 @@
                    (filter #(= ::section-test/Finished (message/type %)))
                    (map fixup-event))]
       (println (message/timestamp e))
-      (notify-process-manager repo e))))
+      (notify-observers repo e))))
 
 

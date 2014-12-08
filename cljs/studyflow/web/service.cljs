@@ -41,21 +41,21 @@
 
 (defn command-aggregate-handler [cursor notification-channel aggregate-id]
   (fn [res]
-    (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
+    (let [{:keys [events aggregate-version triggered]} (json-edn/json->edn res)]
       (om/transact! cursor
                     [:aggregates aggregate-id]
                     (fn [agg]
                       (aggregates/apply-events agg aggregate-version events)))
-      (when-let [notification-events
-                 (seq (filter
-                       (comp #{"studyflow.learning.section-test.events/Finished"
-                               "studyflow.learning.section-test.events/StreakCompleted"
-                               "studyflow.learning.section-test.events/Stuck"
-                               "studyflow.learning.section-test.events/QuestionAssigned"
-                               "studyflow.learning.section-test.events/QuestionAnsweredIncorrectly"
-                               "studyflow.learning.chapter-quiz.events/QuestionAssigned"
-                               "studyflow.learning.chapter-quiz.events/Stopped"} :type)
-                       events))]
+      (when-let [notification-events (seq (concat (filter
+                                                   (comp #{"studyflow.learning.section-test.events/Finished"
+                                                           "studyflow.learning.section-test.events/StreakCompleted"
+                                                           "studyflow.learning.section-test.events/Stuck"
+                                                           "studyflow.learning.section-test.events/QuestionAssigned"
+                                                           "studyflow.learning.section-test.events/QuestionAnsweredIncorrectly"
+                                                           "studyflow.learning.chapter-quiz.events/QuestionAssigned"
+                                                           "studyflow.learning.chapter-quiz.events/Stopped"} :type)
+                                                   events)
+                                                  triggered))]
         (doseq [event notification-events]
           (async/put! notification-channel event))))))
 
@@ -279,6 +279,15 @@
                          (let [{:keys [events aggregate-version]} (json-edn/json->edn res)]
                            (when events
                              (handle-replay-events cursor course-id events aggregate-version))))
+              :error-handler basic-error-handler}))
+
+      "data/leaderboard"
+      (let [[course-id student-id] args]
+        (GET (str "/api/leaderboard/" course-id "/" student-id)
+             {:params {}
+              :handler (fn [res]
+                         (om/update! cursor [:view :leaderboard :data]
+                                     (:leaderboard (json-edn/json->edn res))))
               :error-handler basic-error-handler}))
 
       "data/chapter-quiz-question"

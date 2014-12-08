@@ -1,5 +1,7 @@
 (ns studyflow.learning.read-model.queries
-  (:require [studyflow.learning.read-model :as model]))
+  (:require [studyflow.learning.read-model :as model]
+            [clj-time.core :refer [now]]
+            [clj-time.coerce :refer [to-local-date]]))
 
 (defn remove-answers [question]
   (-> question
@@ -36,7 +38,8 @@
 (defn course-material
   [m course-id student-id]
   (-> (model/course-tree m course-id student-id)
-      (update-in [:entry-quiz :questions] #(map remove-answers %))))
+      (update-in [:entry-quiz :questions] #(map remove-answers %))
+      (assoc :total-coins (model/total-coins m course-id student-id))))
 
 (defn section
   [m course-id section-id]
@@ -60,3 +63,8 @@
           (model/get-chapter chapter-id)
           (model/get-chapter-quiz-question question-id)
           remove-answers-from-chapter-quiz-question))
+
+(defn leaderboard
+  [m course-id student-id]
+  (-> (model/leaderboard m course-id (to-local-date (now)) (:department-id (model/get-student m student-id)))
+      (model/personalized-leaderboard student-id)))

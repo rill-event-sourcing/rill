@@ -12,6 +12,8 @@
 (defroute query-question :get "/api/course-material/:course-id/chapter/:chapter-id/section/:section-id/question/:question-id")
 (defroute query-chapter-quiz-question :get "/api/course-material/:course-id/chapter/:chapter-id/question/:question-id")
 
+(defroute query-leaderboard :get "/api/leaderboard/:course-id/:student-id")
+
 (defroute get-status :get "/status")
 (defroute get-start :get "/")
 

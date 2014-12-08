@@ -1,7 +1,10 @@
 (ns studyflow.learning.read-model
   (:require [studyflow.learning.chapter-quiz :as chapter-quiz]
-            [clojure.string :as string]
-            [ring.util.codec :as ring-codec]))
+            [clj-time.coerce :refer [to-local-date]]
+            [clj-time.core :as time]
+            [ring.util.codec :as ring-codec]
+            [clojure.string :as string])
+  (:import (org.joda.time LocalDate)))
 
 (def empty-model {})
 
@@ -167,6 +170,66 @@
   [model course-name]
   (get (:course-ids model) course-name))
 
+;; Coins Coins Coins!
+
+(defn add-coins
+  [model course-id student-id ^LocalDate date amount]
+  (-> model
+      (update-in [:total-coins course-id student-id] (fnil + 0) amount)
+      (update-in [:total-coins-by-day course-id date student-id] (fnil + 0) amount)))
+
+(defn recent-dates
+  "given a LocalDate end-date, return the num-days LocalDates up to and including end-date"
+  [num-days end-date]
+  (take num-days (iterate #(.minusDays % 1) (to-local-date end-date))))
+
+(defn coins-earned-lately
+  [model course-id student-id ^LocalDate today]
+  (reduce + 0
+          (map (fn [date] (get-in model [:total-coins-by-day course-id date student-id] 0))
+               (recent-dates 7 today))))
+
+(defn total-coins
+  [model course-id student-id]
+  (get-in model [:total-coins course-id student-id] 0))
+
+
+(defn students-for-school
+  [model school-id]
+  (if school-id
+    (mapcat (fn [department-id]
+              (get-in model [:students-by-department department-id]))
+            (get-in model [:departments-by-school school-id]))
+    (get-in model [:students-by-department nil])))
+
+(defn students-for-department
+  [model department-id]
+  (get-in model [:students-by-department department-id]))
+
+(defn school-for-student
+  [model student-id]
+  (get-in model [:departments (get-in model [:students student-id :department-id])]))
+
+(defn leaderboard
+  [model course-id date department-id]
+  (map-indexed (fn [index row]
+                 (cons (inc index) row))
+               (sort-by second (comp - compare)
+                        (map (fn [id]
+                               [id
+                                (coins-earned-lately model course-id id date)
+                                (first (string/split (get-in model [:students id :full-name])
+                                                     #" "))])
+                             (students-for-department model department-id)))))
+
+(defn personalized-leaderboard
+  [leaderboard student-id]
+  (if-let [top-10 (seq (take 10 leaderboard))]
+    (if (contains? (set (map second top-10)) student-id)
+      top-10 ; 1-10
+      (if-let [my-line (first (filter #(= (second %) student-id) leaderboard))]
+        (concat top-10 [my-line])
+        top-10))))
 
 ;; catchup
 
