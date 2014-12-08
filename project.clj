@@ -37,7 +37,7 @@
                                      :uberjar-name "learning-standalone.jar"}
              :school-administration {:main studyflow.school-administration.main
                                      :uberjar-name "school-administration-standalone.jar"}
-             :login                 {:main studyflow.login.launcher
+             :login                 {:main studyflow.login.main
                                      :uberjar-name "login-standalone.jar"}
              :teaching              {:main studyflow.teaching.main
                                      :uberjar-name "teaching-standalone.jar"}

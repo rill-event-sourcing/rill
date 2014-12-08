@@ -1,4 +1,4 @@
-(ns studyflow.login.launcher
+(ns studyflow.login.main
   (:gen-class)
   (:require [studyflow.login.system :as system]
             [com.stuartsierra.component :as component]
