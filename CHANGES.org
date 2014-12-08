@@ -1,5 +1,7 @@
 * Release Changelog
 ** NEXT RELEASE
+** release 2014-12-08.1
+*** New: GAMING! (3 points for each correct answer + weekly leaderboard on a school basis)
 *** New: Minimap!
 *** New: replace ampersands on save in html format
 *** New: Urls in learning are now much more readable
