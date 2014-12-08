@@ -67,7 +67,7 @@ module ApplicationHelper
         content_tag(:span, class: "mc-choice") do
           content_tag(:label) do
             radio_button_tag("#{ch.multiple_choice_input.id}", nil, ch.correct?) +
-              content_tag(:span, render_latex_for_editing(ch.value).html_safe)
+              content_tag(:span, render_latex_for_editing(ch.value.to_s).html_safe)
           end
         end
       end.join('').html_safe
