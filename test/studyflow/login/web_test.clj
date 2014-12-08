@@ -1,8 +1,8 @@
-(ns studyflow.login.main-test
+(ns studyflow.login.web-test
   (:require [clojure.test :refer :all]
             [net.cgrand.enlive-html :as enlive]
             [ring.mock.request :refer [request]]
-            [studyflow.login.main :refer :all]))
+            [studyflow.login.web :refer :all]))
 
 ;; TODO move to common place
 (defn query-html [data pattern]

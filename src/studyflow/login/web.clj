@@ -1,4 +1,4 @@
-(ns studyflow.login.main
+(ns studyflow.login.web
   (:require [clojure.tools.logging :as log]
             [clojure.string :as str]
             [compojure.core :refer [DELETE GET POST defroutes]]
