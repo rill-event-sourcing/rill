@@ -31,32 +31,34 @@
     <script src="/js/fastclick-start.js" type="text/javascript"></script>
     <script type="text/javascript">studyflow.web.root.course_page();</script>
     <script type="text/javascript">
-      var _usersnapconfig = {
-      valign: 'bottom',
-      halign: 'left',
-      emailBox: true,
-      emailRequired: true,
-      commentBox: true,
-      commentRequired: true,
-      beforeSend: function(obj) {
-      obj.addInfo = {
-        name: document.getElementById("student-full-name").value,
-        course-id: document.getElementById("course-id").value,
-        chapter-id: document.getElementById("chapter-id").value,
-        section-id: document.getElementById("section-id").value,
-        student-id: document.getElementById("student-id").value
-      };
-      }
-      };
-      (function() {
-      var s = document.createElement("script");
-      s.type = "text/javascript";
-      s.async = true;
-      s.src = '//api.usersnap.com/load/'+
-      '641edbdc-24f7-49b3-837f-49ed15343106.js';
-      var x = document.getElementsByTagName('script')[0];
-      x.parentNode.insertBefore(s, x);
-      })();
+    var question-id-element = document.getElementById("question-id")
+    var _usersnapconfig = {
+        valign: 'bottom',
+        halign: 'left',
+        emailBox: true,
+        emailRequired: true,
+        commentBox: true,
+        commentRequired: true,
+        beforeSend: function(obj) {
+            obj.addInfo = {
+                name: document.getElementById("student-full-name").value,
+                course-id: document.getElementById("course-id").value,
+                chapter-id: document.getElementById("chapter-id").value,
+                section-id: document.getElementById("section-id").value,
+                student-id: document.getElementById("student-id").value,
+                question-id: (question-id-element ? question-id-element.value : "")
+            };
+        }
+    };
+    (function() {
+        var s = document.createElement("script");
+        s.type = "text/javascript";
+        s.async = true;
+        s.src = '//api.usersnap.com/load/'+
+            '641edbdc-24f7-49b3-837f-49ed15343106.js';
+        var x = document.getElementsByTagName('script')[0];
+        x.parentNode.insertBefore(s, x);
+    })();
     </script>
   </body>
 </html>
