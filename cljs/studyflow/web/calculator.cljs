@@ -25,10 +25,10 @@
     (when (and iframe
                (-> iframe
                    .-contentWindow
-                   .-reset))
-      (-> iframe
-          .-contentWindow
-          (.reset)))))
+                   (aget "reset")))
+      ((-> iframe
+           .-contentWindow
+           (aget "reset"))))))
 
 (def ^:export frame_calculator_mode false)
 (defn toggle-mode-calculator [cursor]
@@ -42,10 +42,10 @@
     (when (and iframe
                (-> iframe
                    .-contentWindow
-                   .-setMode))
-      (-> iframe
-          .-contentWindow
-          (.setMode calculator-mode)))))
+                   (aget "setMode")))
+      ((-> iframe
+           .-contentWindow
+           (aget "setMode")) calculator-mode))))
 
 (defn calculator [cursor owner]
   (reify
@@ -76,6 +76,7 @@
 (def position (atom {:top 90
                      :left 90}))
 
+
 (defn draggable-calculator [item owner]
   (reify
     om/IRender
@@ -90,7 +91,7 @@
                                  00
                                  (:left @position))}}
                (when (and (not ipad?)
-                          (om/get-state owner :dragging))
+                          (:dragging item))
                  (dom/div #js {:style #js {:position "absolute"
                                            :top 40
                                            :width 322
@@ -105,7 +106,7 @@
           (events/listen dragger
                          fxdrag/EventType.START
                          (fn [event]
-                           (om/set-state! owner :dragging true)))
+                           (om/update! item :dragging true)))
           (events/listen dragger
                          fxdrag/EventType.DRAG
                          (fn [event]
@@ -114,4 +115,4 @@
           (events/listen dragger
                          fxdrag/EventType.END
                          (fn [event]
-                           (om/set-state! owner :dragging false))))))))
+                           (om/update! item :dragging false))))))))
