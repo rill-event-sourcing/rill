@@ -4,8 +4,10 @@ class InputsController < ApplicationController
   def create
     if params[:input_type] == 'line-input'
       @input = @inputable.line_inputs.build
+      @input.answers.build
     elsif params[:input_type] == 'multiple-choice'
       @input = @inputable.multiple_choice_inputs.build
+      @input.choices.build
     else
       raise "unknown input type"
     end

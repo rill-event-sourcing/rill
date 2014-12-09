@@ -13,7 +13,7 @@ class Answer < ActiveRecord::Base
   end
 
   def strip_whitespace!
-    self.value.strip!
+    self.value.to_s.strip!
   end
 
   def to_param
