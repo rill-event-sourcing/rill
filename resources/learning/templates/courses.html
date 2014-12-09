@@ -20,6 +20,8 @@
     <input id="student-id" type="hidden" value=""/>
     <input id="student-full-name" type="hidden" value=""/>
     <input id="course-id" type="hidden" value=""/>
+    <input id="chapter-id" type="hidden" value=""/>
+    <input id="section-id" type="hidden" value=""/>
     <input id="logout-target" type="hidden" value=""/>
     <input id="teaching-target" type="hidden" value=""/>
     <div id="app">
@@ -39,8 +41,10 @@
       beforeSend: function(obj) {
       obj.addInfo = {
         name: document.getElementById("student-full-name").value,
-        course_id: document.getElementById("course-id").value,
-        user_id: document.getElementById("student-id").value
+        course-id: document.getElementById("course-id").value,
+        chapter-id: document.getElementById("chapter-id").value,
+        section-id: document.getElementById("section-id").value,
+        student-id: document.getElementById("student-id").value
       };
       }
       };

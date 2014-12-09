@@ -126,6 +126,7 @@
       :tx-listen (fn [tx-report cursor]
                    (service/listen tx-report cursor)
                    (url-history/listen tx-report cursor)
+                   (tracking/listen-location tx-report cursor)
                    (tracking/listen tx-report cursor command-channel))
       :shared {:command-channel command-channel
                :data-channel (async/chan)
