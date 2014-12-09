@@ -1,4 +1,4 @@
-(ns studyflow.cli.validate-course-material-json
+(ns studyflow.learning.validate-course-material-json
   (:require [cheshire.core :as json]
             [studyflow.learning.course-material :as material]
             [schema.utils :as utils]
@@ -16,6 +16,3 @@
     (prn err)
     (System/exit 1))
   (println file "ok"))
-
-
-
