@@ -28,18 +28,20 @@ class Reflection < ActiveRecord::Base
 
   def errors_when_publishing
     errors = []
-    errors << "No content for #{name} in #{section.name}" if content.empty?
-    errors << "No answer for #{name} in #{section.name}" if answer.empty?
-    errors += image_errors(:content, "content of #{name} in #{section.name}")
-    errors += image_errors(:answer, "answer of #{name} in #{section.name}")
+    errors << "No content for #{reference}" if content.blank?
+    errors << "No answer for #{reference}"  if answer.blank?
+    errors += parse_errors(:content, "content of #{reference}")
+    errors += image_errors(:content, "content of #{reference}")
+    errors += parse_errors(:answer, "answer of #{reference}")
+    errors += image_errors(:answer, "answer of #{reference}")
     errors
   end
 
   def to_publishing_format
     {
       name: name,
-      content: preparse_text_for_publishing(content, "reflection '#{name}', in '#{section.name}'"),
-      answer:  preparse_text_for_publishing(answer, "reflection '#{name}', in '#{section.name}'")
+      content: preparse_text_for_publishing(content, "content of #{reference}"),
+      answer:  preparse_text_for_publishing(answer, "answer of #{reference}")
     }
   end
 

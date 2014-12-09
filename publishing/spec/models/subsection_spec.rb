@@ -51,9 +51,9 @@ RSpec.describe Subsection, type: :model do
     it "should make sure text is nonempty" do
       @section1 = create(:section)
       @subsection1.section = @section1
-      expect(@subsection1.errors_when_publishing).not_to include("No content in subsection of section '#{ @section1.name }', in '#{ @section1.parent }'")
+      expect(@subsection1.errors_when_publishing).not_to include("No content in #{@subsection1.reference}")
       @subsection1.text = nil
-      expect(@subsection1.errors_when_publishing).to include("No content in subsection of section '#{ @section1.name }', in '#{ @section1.parent }'")
+      expect(@subsection1.errors_when_publishing).to include("No content in #{@subsection1.reference}")
     end
 
     it "should accept valid width css property of image" do
@@ -79,6 +79,24 @@ RSpec.describe Subsection, type: :model do
       @subsection = build(:subsection, title: "\t\n\ttest\n\t\n")
       expect(@subsection.to_publishing_format[:title]).to eq "test"
     end
+  end
+
+  it "should give image errors when publishing" do
+    @subsection1.text = "good"
+    expect(@subsection1.errors_when_publishing).to eq []
+
+    @subsection1.text = %(good<img src="https://www.example.org/test.jpg">)
+    expect(@subsection1.errors_when_publishing.count).to eq 1
+    expect(@subsection1.errors_when_publishing.first).to match %(`https://www.example.org/test.jpg` is not a valid image source)
+  end
+
+  it "should give parse errors when publishing" do
+    @subsection1.text = "<p>good</p>"
+    expect(@subsection1.errors_when_publishing).to eq []
+
+    @subsection1.text = "<p>good"
+    expect(@subsection1.errors_when_publishing.count).to eq 1
+    expect(@subsection1.errors_when_publishing.first).to match "parse error"
   end
 
 end

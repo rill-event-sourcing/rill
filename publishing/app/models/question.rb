@@ -114,20 +114,22 @@ class Question < ActiveRecord::Base
     begin
       render_latex_for_publishing(text)
     rescue
-      errors << "Errors in LaTeX rendering in section in question '#{name}', in '#{parent}'"
+      errors << "Errors in LaTeX rendering in #{reference}"
     end
-    errors << "No Inputs on question '#{name}', in '#{parent}'" if inputs.count == 0
-    errors << "Error in input referencing in question '#{name}', in '#{parent}'" unless inputs_referenced_exactly_once?
-    errors << "Nonexisting inputs referenced in question '#{name}', in '#{parent}'" if nonexisting_inputs_referenced?
+    errors << "No Inputs on #{reference}" if inputs.count == 0
+    errors << "Error in input referencing in #{reference}" unless inputs_referenced_exactly_once?
+    errors << "Nonexisting inputs referenced in #{reference}" if nonexisting_inputs_referenced?
     errors << inputs.map(&:errors_when_publishing)
     errors.flatten
   end
 
   def errors_when_publishing
     errors = errors_when_publishing_for_entry_quiz
-    errors << "No Worked-out-answer given for question '#{name}', in '#{parent}'" if inputs.count > 1 && worked_out_answer.blank?
-    errors += image_errors(:text, "'#{name}', in '#{parent}'")
-    errors += image_errors(:worked_out_answer, "WOA of '#{name}', in '#{parent}'")
+    errors << "No WOA given for #{reference}" if inputs.count > 1 && worked_out_answer.blank?
+    errors += parse_errors(:text, reference)
+    errors += image_errors(:text, reference)
+    errors += parse_errors(:worked_out_answer, "WOA of #{reference}")
+    errors += image_errors(:worked_out_answer, "WOA of #{reference}")
     errors.flatten
   end
 
@@ -144,7 +146,7 @@ class Question < ActiveRecord::Base
   end
 
   def reference
-    "question '#{name}', in '#{parent}'"
+    "question '#{name}', in '#{parent.reference}'"
   end
 
   def image_errors(attr, reference = "")
@@ -153,9 +155,9 @@ class Question < ActiveRecord::Base
     errors.flatten
   end
 
-  def parse_errors(attr)
-    errors = super(attr)
-    choices.map{|ch| errors += ch.parse_errors(:value)} unless attr == :worked_out_answer
+  def parse_errors(attr, reference = "")
+    errors = super(attr, reference)
+    choices.map{|ch| errors += ch.parse_errors(:value, "choice of #{reference}")} unless attr == :worked_out_answer
     errors
   end
 

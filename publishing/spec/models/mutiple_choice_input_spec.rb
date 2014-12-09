@@ -19,21 +19,39 @@ RSpec.describe MultipleChoiceInput, type: :model do
 
   describe "enforcing constraints for publishing" do
 
-  it "should make sure there is at least one choice" do
-    expect(@mc.errors_when_publishing).to include("No choice for #{@mc.name} in #{@mc.inputable_type} '#{@mc.inputable.name}' in '#{@mc.inputable.parent}'")
-    expect(@mc_with_choice.errors_when_publishing).not_to include("No choice for #{@mc_with_choice.name} in #{@mc_with_choice.inputable_type} #{@mc_with_choice.inputable.name} in '#{@mc_with_choice.inputable.parent}'")
+    it "should make sure there is at least one choice" do
+      expect(@mc.errors_when_publishing).to include("No choice for #{@mc.name} in #{@mc.inputable_type} '#{@mc.inputable.name}' in '#{@mc.inputable.parent}'")
+      expect(@mc_with_choice.errors_when_publishing).not_to include("No choice for #{@mc_with_choice.name} in #{@mc_with_choice.inputable_type} #{@mc_with_choice.inputable.name} in '#{@mc_with_choice.inputable.parent}'")
+    end
+
+    it "should make sure at least one choice is marked as correct" do
+      expect(@mc_with_empty_choice.errors_when_publishing).to include("No correct choice for #{@mc.name} in #{@mc.inputable_type} '#{@mc.inputable.name}' in '#{@mc.inputable.parent}'")
+      expect(@mc_with_choice.errors_when_publishing).not_to include("No correct choice for #{@mc_with_choice.name} in #{@mc_with_choice.inputable_type} #{@mc_with_choice.inputable.name} in '#{@mc_with_choice.inputable.parent}'")
+    end
+
+    it "should make sure every choice is non empty" do
+      expect(@mc_with_choice.errors_when_publishing).not_to include("Empty choice for #{@mc_with_choice.name} in #{@mc_with_choice.inputable_type} '#{@mc_with_choice.inputable.name}' in '#{@mc_with_choice.inputable.parent}'")
+      expect(@mc_with_empty_choice.errors_when_publishing).to include("Empty choice for #{@mc_with_empty_choice.name} in #{@mc_with_empty_choice.inputable_type} '#{@mc_with_empty_choice.inputable.name}' in '#{@mc_with_empty_choice.inputable.parent}'")
+    end
+
   end
 
-  it "should make sure at least one choice is marked as correct" do
-    expect(@mc_with_empty_choice.errors_when_publishing).to include("No correct choice for #{@mc.name} in #{@mc.inputable_type} '#{@mc.inputable.name}' in '#{@mc.inputable.parent}'")
-    expect(@mc_with_choice.errors_when_publishing).not_to include("No correct choice for #{@mc_with_choice.name} in #{@mc_with_choice.inputable_type} #{@mc_with_choice.inputable.name} in '#{@mc_with_choice.inputable.parent}'")
+  it "should give image errors when publishing" do
+    @mc_with_choice.choices.first.value = "good"
+    expect(@mc_with_choice.errors_when_publishing).to eq []
+
+    @mc_with_choice.choices.first.value = %(good<img src="https://www.example.org/test.jpg">)
+    expect(@mc_with_choice.errors_when_publishing.count).to eq 1
+    expect(@mc_with_choice.errors_when_publishing.first).to match %(`https://www.example.org/test.jpg` is not a valid image source)
   end
 
-  it "should make sure every choice is non empty" do
-    expect(@mc_with_choice.errors_when_publishing).not_to include("Empty choice for #{@mc_with_choice.name} in #{@mc_with_choice.inputable_type} '#{@mc_with_choice.inputable.name}' in '#{@mc_with_choice.inputable.parent}'")
-    expect(@mc_with_empty_choice.errors_when_publishing).to include("Empty choice for #{@mc_with_empty_choice.name} in #{@mc_with_empty_choice.inputable_type} '#{@mc_with_empty_choice.inputable.name}' in '#{@mc_with_empty_choice.inputable.parent}'")
-  end
+  it "should give parse errors when publishing" do
+    @mc_with_choice.choices.first.value = "<p>good</p>"
+    expect(@mc_with_choice.errors_when_publishing).to eq []
 
+    @mc_with_choice.choices.first.value = "<p>good"
+    expect(@mc_with_choice.errors_when_publishing.count).to eq 1
+    expect(@mc_with_choice.errors_when_publishing.first).to match "parse error"
   end
 
 end

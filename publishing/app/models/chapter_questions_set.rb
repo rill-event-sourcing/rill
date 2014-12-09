@@ -37,4 +37,8 @@ class ChapterQuestionsSet < ActiveRecord::Base
     "#{id[0,8]}"
   end
 
+  def reference
+    "chapter-quiz of #{chapter_quiz.chapter}"
+  end
+
 end

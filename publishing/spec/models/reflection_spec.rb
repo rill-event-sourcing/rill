@@ -39,4 +39,49 @@ RSpec.describe Reflection, :type => :model do
     @reflection3.send(:set_position)
     expect(@reflection3.position).to eq (@reflection2.position+1)
   end
+
+  it "should give image errors when publishing" do
+    @reflection.answer = "answer"
+
+    @reflection.content = "good"
+    expect(@reflection.errors_when_publishing).to eq []
+
+    @reflection.content = %(good<img src="https://www.example.org/test.jpg">)
+    expect(@reflection.errors_when_publishing.count).to eq 1
+    expect(@reflection.errors_when_publishing.first).to match %(`https://www.example.org/test.jpg` is not a valid image source)
+  end
+
+  it "should give image errors when publishing" do
+    @reflection.content = "content"
+
+    @reflection.answer = "good"
+    expect(@reflection.errors_when_publishing).to eq []
+
+    @reflection.answer = %(good<img src="https://www.example.org/test.jpg">)
+    expect(@reflection.errors_when_publishing.count).to eq 1
+    expect(@reflection.errors_when_publishing.first).to match %(`https://www.example.org/test.jpg` is not a valid image source)
+  end
+
+  it "should give parse errors when publishing" do
+    @reflection.answer = "<p>answer</p>"
+
+    @reflection.content = "<p>good</p>"
+    expect(@reflection.errors_when_publishing).to eq []
+
+    @reflection.content = "<p>good"
+    expect(@reflection.errors_when_publishing.count).to eq 1
+    expect(@reflection.errors_when_publishing.first).to match "parse error"
+  end
+
+  it "should give parse errors when publishing" do
+    @reflection.content = "<p>content</p>"
+
+    @reflection.answer = "<p>good</p>"
+    expect(@reflection.errors_when_publishing).to eq []
+
+    @reflection.answer = "<p>good"
+    expect(@reflection.errors_when_publishing.count).to eq 1
+    expect(@reflection.errors_when_publishing.first).to match "parse error"
+  end
+
 end
