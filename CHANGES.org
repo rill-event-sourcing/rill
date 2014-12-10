@@ -1,5 +1,6 @@
 * Release Changelog
 ** NEXT RELEASE
+** release 2014-12-10.1
 *** Fix: Advanced compilation options switched back on - minimized javascript
 *** Fix: <sup> tags in content now work
 *** Fix: Multiple-choice question order is now fixed in publishing
