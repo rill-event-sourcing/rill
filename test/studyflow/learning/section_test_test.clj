@@ -143,7 +143,8 @@
 (deftest test-continue-practice
   (testing "the first streaks marks a section as finished, afterward you can continue practising and completing streaks"
     (testing "first five in a row correctly mark section as finished"
-      (let [upto-fifth-q-stream (-> [fixture/course-published-event (events/created section-id student-id course-id)]
+      (let [upto-fifth-q-stream (-> [fixture/course-published-event
+                                     (events/created section-id student-id course-id)]
                                     (into (reduce into []
                                                   (repeat 4 [(events/question-assigned section-id student-id question-id question-total)
                                                              (events/question-answered-correctly section-id student-id question-id correct-inputs)])))
@@ -161,6 +162,7 @@
                ::events/Finished))
         (testing "Finished events include chapter-id so we can relate this event to the chapter quiz"
           (is (= (:chapter-id finished-event) chapter-id)))
+
         (let [finished-stream (into upto-fifth-q-stream [correctly-answered-event finished-event])]
           (testing "after a finished section-test you can continue"
             (let [[status [assigned-event :as events]]
@@ -214,7 +216,7 @@
               (is (command-result= [:ok [(events/streak-completed section-id student-id)]]
                                    (execute (commands/next-question! section-id student-id 32 course-id)
                                             continue-stream)))))
-          
+
           (testing "after a wrong answer and then another streak a StreakCompleted is generated"
             (let [continue-stream (-> finished-stream
                                       (into [(events/question-assigned section-id student-id question-id question-total)
@@ -226,6 +228,29 @@
               (is (command-result= [:ok [(events/streak-completed section-id student-id)]]
                                    (execute (commands/next-question! section-id student-id 24 course-id)
                                             continue-stream))))))))
+
+    (testing "if you reveal an answer after you already answered correctly, then answer more up to 5, you should finish"
+      (let [revealed-stream (-> [fixture/course-published-event
+                                 (events/created section-id student-id course-id)]
+                                (into (reduce into []
+                                              (repeat 2 [(events/question-assigned section-id student-id question-id question-total)
+                                                         (events/question-answered-correctly section-id student-id question-id correct-inputs)])))
+                                (conj (events/answer-revealed section-id student-id question-id correct-inputs))
+                                (into (reduce into []
+                                              (repeat 2 [(events/question-assigned section-id student-id question-id question-total)
+                                                         (events/question-answered-correctly section-id student-id question-id correct-inputs)])))
+                                (conj (events/question-assigned section-id student-id question-id question-total)))
+            [status [correctly-answered-event]] (execute (commands/check-answer! section-id student-id 10 course-id question-id correct-inputs)
+                                                         revealed-stream)
+            [status2 [finished-event]] (execute (commands/next-question! section-id student-id 11 course-id)
+                                                (into revealed-stream [correctly-answered-event]))]
+        (is (= :ok status))
+        (is (= (message/type correctly-answered-event)
+               ::events/QuestionAnsweredCorrectly))
+        (is (= (message/type finished-event)
+               ::events/Finished))
+        (testing "Finished events include chapter-id so we can relate this event to the chapter quiz"
+          (is (= (:chapter-id finished-event) chapter-id)))))
 
     (testing "three in a row make you stumble"
       (let [upto-third-q-stream

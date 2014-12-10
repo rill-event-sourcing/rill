@@ -93,7 +93,8 @@
 
 (defn set-previous-question-ids
   [question-ids question-id question-total]
-  (take (Math/floor (* question-total 0.9)) (cons question-id question-ids)))
+  (take (Math/floor (* question-total 0.9))
+        (cons question-id question-ids)))
 
 (defmethod handle-event ::events/QuestionAssigned
   [{:keys [previous-question-ids] :as this} {:keys [question-id question-total] :as event}]
@@ -105,8 +106,9 @@
 (defn track-streak-correct
   [{:keys [streak-length stumbling-streak question-state] :as this}]
   (if (= :open question-state)
-    (assoc this :stumbling-streak 0
-           :streak-length (inc streak-length))
+    (assoc this
+      :stumbling-streak 0
+      :streak-length (inc streak-length))
     this))
 
 (defn track-streak-incorrect ;; also called when revealing
@@ -115,8 +117,7 @@
     (assoc this
       :stumbling-streak (inc stumbling-streak)
       :streak-length 0)
-    (assoc this
-      :streak-length 0)))
+    this))
 
 (defmethod handle-event ::events/AnswerRevealed
   [{:keys [current-question-id question-state stumbling-streak streak-length] :as this} {:keys [question-id] :as event}]
