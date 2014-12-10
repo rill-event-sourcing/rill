@@ -1,5 +1,5 @@
-(ns studyflow.cli.validate-course-material-json-test
-  (:require [studyflow.cli.validate-course-material-json :refer [validate-course-material]]
+(ns studyflow.learning.validate-course-material-json-test
+  (:require [studyflow.learning.validate-course-material-json :refer [validate-course-material]]
             [clojure.java.io :as io]
             [clojure.test :refer [deftest is]]))
 

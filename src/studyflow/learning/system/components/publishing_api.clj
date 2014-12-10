@@ -1,4 +1,4 @@
-(ns studyflow.system.components.publishing-api
+(ns studyflow.learning.system.components.publishing-api
   (:require [clojure.tools.logging :as log]
             [com.stuartsierra.component :refer [Lifecycle]]
             [studyflow.learning.web.publishing-api :as publishing-api]))

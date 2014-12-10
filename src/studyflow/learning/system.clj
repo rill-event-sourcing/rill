@@ -1,14 +1,14 @@
-(ns studyflow.system
+(ns studyflow.learning.system
   (:require [com.stuartsierra.component :as component :refer [using]]
             [studyflow.web.durable-session-store :refer [durable-store]]
             [studyflow.components.atom-event-store :refer [atom-event-store-component]]
             [studyflow.components.event-channel :refer [event-channel-component]]
             [studyflow.components.jetty :refer [jetty-component]]
             [studyflow.components.uncaught-exception-handler :refer [uncaught-exception-handler-component]]
-            [studyflow.system.components.cache-heater :refer [cache-heater]]
-            [studyflow.system.components.publishing-api :refer [publishing-api-component]]
-            [studyflow.system.components.read-model :refer [read-model-component]]
-            [studyflow.system.components.ring-handler :refer [ring-handler-component]]
+            [studyflow.learning.system.components.cache-heater :refer [cache-heater]]
+            [studyflow.learning.system.components.publishing-api :refer [publishing-api-component]]
+            [studyflow.learning.system.components.read-model :refer [read-model-component]]
+            [studyflow.learning.system.components.ring-handler :refer [ring-handler-component]]
             [studyflow.components.psql-event-store :refer [psql-event-store-component]]
             [studyflow.web.app-status :refer [app-status-component]]
             [clojure.tools.logging :as log]))

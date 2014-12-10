@@ -4,7 +4,7 @@
             [crypto.password.bcrypt :as bcrypt]
             [com.stuartsierra.component :as component :refer [using]]
             [studyflow.login.credentials :as credentials]
-            [studyflow.login.main :as main]
+            [studyflow.login.web :as web]
             [studyflow.components.jetty :refer [jetty-component]]
             [studyflow.components.event-channel :refer [event-channel-component channel]]
             [studyflow.components.memory-event-store :refer [memory-event-store-component]]
@@ -50,7 +50,7 @@
                        (assoc-in [:session :cookie-attrs :domain] cookie-domain)
                        (assoc-in [:security :anti-forgery] false)
                        (assoc-in [:static :resources] "login/public"))
-          handler (wrap-defaults main/app defaults)]
+          handler (wrap-defaults web/app defaults)]
       (assoc component :handler
              (fn [req]
                (handler (assoc req

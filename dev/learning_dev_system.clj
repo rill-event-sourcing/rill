@@ -1,5 +1,5 @@
 (ns learning-dev-system
-  (:require [studyflow.system :as sys]
+  (:require [studyflow.learning.system :as sys]
             [studyflow.components.memory-event-store :refer [memory-event-store-component]]
             [ring.middleware.session.memory :refer [memory-store]]
             [studyflow.system.components.dev-ring-handler :refer [dev-ring-handler-component]]

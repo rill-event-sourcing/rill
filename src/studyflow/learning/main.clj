@@ -1,6 +1,6 @@
-(ns studyflow.main
+(ns studyflow.learning.main
   (:require [clojure.tools.logging :as log]
-            [studyflow.system :as system]
+            [studyflow.learning.system :as system]
             [com.stuartsierra.component :as component]
             [environ.core :refer [env]])
   (:gen-class))

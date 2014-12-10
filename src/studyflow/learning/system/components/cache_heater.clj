@@ -1,4 +1,4 @@
-(ns studyflow.system.components.cache-heater
+(ns studyflow.learning.system.components.cache-heater
   (:require [com.stuartsierra.component :refer [Lifecycle]]
             [studyflow.components.event-channel :refer [channel]]
             [clojure.tools.logging :refer [info debug spy]]
