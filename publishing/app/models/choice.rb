@@ -16,7 +16,7 @@ class Choice < ActiveRecord::Base
 
   def to_publishing_format
     {
-      value: preparse_text_for_publishing(value, "choice in #{multiple_choice_input} #{multiple_choice_input.inputable.name}, in #{multiple_choice_input.inputable.quizzable}"),
+      value: preparse_text_for_publishing(value, "choice in #{reference}"),
       correct: correct
     }
   end
@@ -24,11 +24,12 @@ class Choice < ActiveRecord::Base
   def errors_when_publishing
     errors = []
     begin
-      render_latex_for_publishing(text)
+      render_latex_for_publishing(value)
     rescue
-      errors << "Errors in LaTeX rendering in choice in #{multiple_choice_input} #{multiple_choice_input.inputable.name}, in #{multiple_choice_input.inputable.quizzable}"
+      errors << "Errors in LaTeX rendering in #{reference}"
     end
-    errors += image_errors(:value)
+    errors += parse_errors(:value, reference)
+    errors += image_errors(:value, reference)
     errors
   end
 

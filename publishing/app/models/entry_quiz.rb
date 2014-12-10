@@ -35,4 +35,8 @@ class EntryQuiz < ActiveRecord::Base
     }
   end
 
+  def reference
+    to_s
+  end
+
 end

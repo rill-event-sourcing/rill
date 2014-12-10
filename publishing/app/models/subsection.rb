@@ -24,7 +24,7 @@ class Subsection < ActiveRecord::Base
     {
       id: id,
       title: title.to_s.strip,
-      text: preparse_text_for_publishing(text, "section '#{section.name}', in '#{section.parent}'")
+      text: preparse_text_for_publishing(text, reference)
     }
   end
 
@@ -46,10 +46,11 @@ class Subsection < ActiveRecord::Base
     begin
       render_latex_for_publishing(text)
     rescue
-      errors << "Errors in LaTeX rendering in section '#{section.name}', in '#{section.parent}'"
+      errors << "Errors in LaTeX rendering in #{reference}"
     end
-    errors << "No content in subsection of section '#{section.name}', in '#{section.parent}'" if text.blank?
-    errors += image_errors(:text, "'#{section.name}', in '#{section.parent}'")
+    errors << "No content in #{reference}" if text.blank?
+    errors += parse_errors(:text, reference)
+    errors += image_errors(:text, reference)
     errors
   end
 

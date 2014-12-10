@@ -28,8 +28,9 @@ class ExtraExample < ActiveRecord::Base
 
   def errors_when_publishing
     errors = []
-    errors << "No content for #{name} in #{section.name}" if content.empty?
-    errors += image_errors(:content, "#{name} in #{section.name}")
+    errors << "No content for #{reference}" if content.empty?
+    errors += parse_errors(:content, reference)
+    errors += image_errors(:content, reference)
     errors
   end
 
@@ -38,7 +39,7 @@ class ExtraExample < ActiveRecord::Base
       name: name,
       title: title.to_s.strip,
       default_open: default_open,
-      content: preparse_text_for_publishing(content, "extra_example '#{name}', in '#{section.name}'")
+      content: preparse_text_for_publishing(content, reference)
     }
   end
 

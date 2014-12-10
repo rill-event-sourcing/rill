@@ -180,20 +180,24 @@ class Section < ActiveRecord::Base
 
   def errors_when_publishing
     errors = []
-    errors << "No Meijerink criteria selected for section '#{name}'" if meijerink_criteria.empty?
-    errors << "No domains selected for section '#{name}'" if domains.empty?
-    errors << "Error in input referencing in section '#{name}', in '#{parent}'" unless inputs_referenced_exactly_once?
-    errors << "Nonexisting inputs referenced in section '#{name}', in '#{parent}'" if nonexisting_inputs_referenced?
-    errors << "Nonexisting reflections referenced in section '#{name}', in '#{parent}'" if nonexisting_reflections_referenced?
-    errors << "Nonexisting extra example referenced in section '#{name}', in '#{parent}'" if nonexisting_extra_examples_referenced?
-    errors << "No questions in section '#{name}', in '#{parent}'" if questions.active.empty?
-    errors << "No subsections in section '#{name}', in '#{parent}'" if subsections.empty?
+    errors << "No Meijerink criteria selected for #{reference}" if meijerink_criteria.empty?
+    errors << "No domains selected for #{reference}" if domains.empty?
+    errors << "Error in input referencing in #{reference}" unless inputs_referenced_exactly_once?
+    errors << "Nonexisting inputs referenced in #{reference}" if nonexisting_inputs_referenced?
+    errors << "Nonexisting reflections referenced in #{reference}" if nonexisting_reflections_referenced?
+    errors << "Nonexisting extra example referenced in #{reference}" if nonexisting_extra_examples_referenced?
+    errors << "No questions in #{reference}" if questions.active.empty?
+    errors << "No subsections in #{reference}" if subsections.empty?
     errors << extra_examples.map(&:errors_when_publishing)
     errors << inputs.map(&:errors_when_publishing)
     errors << questions.active.map(&:errors_when_publishing)
     errors << reflections.map(&:errors_when_publishing)
     errors << subsections.map(&:errors_when_publishing)
     errors.flatten
+  end
+
+  def reference
+    "section '#{name}', in '#{parent}'"
   end
 
 end

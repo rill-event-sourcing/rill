@@ -3,7 +3,8 @@ require 'rails_helper'
 RSpec.describe Question, :type => :model do
 
   before do
-    @question = create(:question)
+    @entry_quiz = create(:entry_quiz)
+    @question = create(:question, quizzable: @entry_quiz)
     @question2 = create(:question)
     @question3 = create(:question)
   end
@@ -91,49 +92,99 @@ RSpec.describe Question, :type => :model do
   describe "enforcing constraints for publishing" do
 
     it "should make sure there is at least one input" do
-      expect(@question.errors_when_publishing).to include("No Inputs on question '#{@question.name}', in '#{@question.quizzable}'")
+      expect(@question.errors_when_publishing).to include("No Inputs on #{@question.reference}")
       create(:line_input, inputable: @question)
-      expect(@question.errors_when_publishing).not_to include("No Inputs on question '#{@question.name}', in '#{@question.quizzable}'")
+      expect(@question.errors_when_publishing).not_to include("No Inputs on #{@question.reference}")
     end
 
     it "should make sure all inputs are referenced" do
       @input = create(:line_input, inputable: @question)
-      expect(@question.errors_when_publishing).to include("Error in input referencing in question '#{@question.name}', in '#{@question.quizzable}'")
+      expect(@question.errors_when_publishing).to include("Error in input referencing in #{@question.reference}")
       @question.text = "#{@input.name}"
-      expect(@question.errors_when_publishing).not_to include("Error in input referencing in question '#{@question.name}', in '#{@question.quizzable}'")
+      expect(@question.errors_when_publishing).not_to include("Error in input referencing in #{@question.reference}")
     end
 
     it "should make sure nonexisisting inputs are not referenced" do
       @input = create(:line_input, inputable: @question)
       @question.text = "_INPUT_#{@input.position+1}_"
-      expect(@question.errors_when_publishing).to include("Nonexisting inputs referenced in question '#{@question.name}', in '#{@question.quizzable}'")
+      expect(@question.errors_when_publishing).to include("Nonexisting inputs referenced in #{@question.reference}")
       @question.text = "_INPUT_#{@input.position}_"
-      expect(@question.errors_when_publishing).not_to include("Nonexisting inputs referenced in question '#{@question.name}', in '#{@question.quizzable}'")
+      expect(@question.errors_when_publishing).not_to include("Nonexisting inputs referenced in #{@question.reference}")
     end
 
     it "should make sure worked out answers are not enforced for an entry quiz" do
       @input1 = create(:line_input, inputable: @question)
       create(:answer, line_input: @input1, value: 'good')
       @question.text = "_INPUT_#{@input1.position}_"
-      expect(@question.errors_when_publishing_for_entry_quiz).not_to include("No Worked-out-answer given for question '#{@question.name}', in '#{@question.quizzable}'")
+      expect(@question.errors_when_publishing_for_entry_quiz).not_to include("No Worked-out-answer given for #{@question.reference}")
     end
 
     it "should make sure that whenever there are multiple inputs, there is a worked out answer" do
       @input1 = create(:line_input, inputable: @question)
       create(:answer, line_input: @input1, value: 'good')
       @question.text = "_INPUT_#{@input1.position}_"
-      expect(@question.errors_when_publishing).not_to include("No Worked-out-answer given for question '#{@question.name}', in '#{@question.quizzable}'")
+      expect(@question.errors_when_publishing).not_to include("No Worked-out-answer given for #{@question.reference}")
 
       @input2 = create(:line_input, inputable: @question)
       create(:answer, line_input: @input2, value: 'better')
       @question.text = "_INPUT_#{@input1.position}_ _INPUT_#{@input2.position}_"
       @question.worked_out_answer = nil
-      expect(@question.errors_when_publishing).to include("No Worked-out-answer given for question '#{@question.name}', in '#{@question.quizzable}'")
+      expect(@question.errors_when_publishing).to include("No WOA given for #{@question.reference}")
 
       @question.worked_out_answer = "Just do it!"
-      expect(@question.errors_when_publishing).not_to include("No Worked-out-answer given for question '#{@question.name}', in '#{@question.quizzable}'")
+      expect(@question.errors_when_publishing).not_to include("No WOA given for #{@question.reference}")
     end
 
+  end
+
+  it "should give image errors when publishing" do
+    @input1 = create(:line_input, inputable: @question)
+    create(:answer, line_input: @input1, value: 'good')
+
+    @question.text = "_INPUT_#{@input1.position}_"
+    expect(@question.errors_when_publishing).to eq []
+
+    @question.text = %(_INPUT_#{@input1.position}_<img src="https://www.example.org/test.jpg">)
+    expect(@question.errors_when_publishing.count).to eq 1
+    expect(@question.errors_when_publishing.first).to match %(`https://www.example.org/test.jpg` is not a valid image source)
+  end
+
+  it "should give image errors when publishing" do
+    @input1 = create(:line_input, inputable: @question)
+    create(:answer, line_input: @input1, value: 'good')
+    @question.text = "_INPUT_#{@input1.position}_"
+
+    @question.worked_out_answer = "OK"
+    expect(@question.errors_when_publishing).to eq []
+
+    @question.worked_out_answer = %(OK <img src="https://www.example.org/test.jpg">)
+    expect(@question.errors_when_publishing.count).to eq 1
+    expect(@question.errors_when_publishing.first).to match %(`https://www.example.org/test.jpg` is not a valid image source)
+  end
+
+  it "should give parse errors when publishing" do
+    @input1 = create(:line_input, inputable: @question)
+    create(:answer, line_input: @input1, value: 'good')
+
+    @question.text = "<p>_INPUT_#{@input1.position}_</p>"
+    expect(@question.errors_when_publishing).to eq []
+
+    @question.text = "<p>_INPUT_#{@input1.position}_"
+    expect(@question.errors_when_publishing.count).to eq 1
+    expect(@question.errors_when_publishing.first).to match "parse error"
+  end
+
+  it "should give parse errors when publishing" do
+    @input1 = create(:line_input, inputable: @question)
+    create(:answer, line_input: @input1, value: 'good')
+    @question.text = "<p>_INPUT_#{@input1.position}_</p>"
+
+    @question.worked_out_answer = "<p>OK</p>"
+    expect(@question.errors_when_publishing).to eq []
+
+    @question.worked_out_answer = "<p>OK"
+    expect(@question.errors_when_publishing.count).to eq 1
+    expect(@question.errors_when_publishing.first).to match "parse error"
   end
 
 end

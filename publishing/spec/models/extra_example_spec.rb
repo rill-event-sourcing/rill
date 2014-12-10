@@ -47,4 +47,21 @@ RSpec.describe ExtraExample, :type => :model do
     end
   end
 
+  it "should give image errors when publishing" do
+    @extra_example.content = "good"
+    expect(@extra_example.errors_when_publishing).to eq []
+
+    @extra_example.content = %(good<img src="https://www.example.org/test.jpg">)
+    expect(@extra_example.errors_when_publishing.count).to eq 1
+    expect(@extra_example.errors_when_publishing.first).to match %(`https://www.example.org/test.jpg` is not a valid image source)
+  end
+
+  it "should give parse errors when publishing" do
+    @extra_example.content = "<p>good</p>"
+    expect(@extra_example.errors_when_publishing).to eq []
+
+    @extra_example.content = "<p>good"
+    expect(@extra_example.errors_when_publishing.count).to eq 1
+    expect(@extra_example.errors_when_publishing.first).to match "parse error"
+  end
 end

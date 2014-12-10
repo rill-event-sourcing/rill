@@ -60,7 +60,7 @@ module HtmlParseable
     }
   end
 
-  def parse_errors(attr)
+  def parse_errors(attr, reference = "")
     page = parse_page(attr)
     parsed = Sanitize.fragment(page, validation_hash)
     lines1 = page.lines
@@ -70,7 +70,13 @@ module HtmlParseable
     [lines1.length, lines2.length].max.times do |nr|
       line1 = lines1[nr].to_s.strip
       line2 = lines2[nr].to_s.strip
-      errors << [line1, line2] unless line1 == line2
+      unless line1 == line2
+        if reference != ""
+          errors << "parse error in #{ reference }"
+        else
+          errors << [line1, line2]
+        end
+      end
     end
     errors
   end

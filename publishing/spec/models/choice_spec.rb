@@ -43,4 +43,22 @@ RSpec.describe Choice, type: :model do
     expect{Choice.find_by_uuid(uuid[0,8])}.to raise_error(StudyflowPublishing::ShortUuidDoubleError)
   end
 
+  it "should give image errors when publishing" do
+    @choice.value = "good"
+    expect(@choice.errors_when_publishing).to eq []
+
+    @choice.value = %(good<img src="https://www.example.org/test.jpg">)
+    expect(@choice.errors_when_publishing.count).to eq 1
+    expect(@choice.errors_when_publishing.first).to match %(`https://www.example.org/test.jpg` is not a valid image source)
+  end
+
+  it "should give parse errors when publishing" do
+    @choice.value = "<p>good</p>"
+    expect(@choice.errors_when_publishing).to eq []
+
+    @choice.value = "<p>good"
+    expect(@choice.errors_when_publishing.count).to eq 1
+    expect(@choice.errors_when_publishing.first).to match "parse error"
+  end
+
 end
