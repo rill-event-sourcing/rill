@@ -58,7 +58,7 @@
    "hr" dom/hr, "i" dom/i, "img" dom/img, "li" dom/li, "ol" dom/ol, "pre" dom/pre,
    "q" dom/q,"s" dom/s,"small" dom/small, "span" dom/span, "strong" dom/strong,
    "sub" dom/sub, "sup" dom/sup, "table" dom/table, "tbody" dom/tbody, "td" dom/td,
-   "tfoot" dom/tfoor, "th" dom/th, "thead" dom/thead, "tr" dom/tr, "u" dom/u,
+   "tfoot" dom/tfoot, "th" dom/th, "thead" dom/thead, "tr" dom/tr, "u" dom/u,
    "ul" dom/ul})
 
 (defn attrs->js-obj [attrs]
