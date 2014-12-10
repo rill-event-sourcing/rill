@@ -134,6 +134,9 @@
                                                                         false)}
                                                            (tag-tree-to-om (:tag-tree question-data) inputs nil nil)
                                                            (dom/div #js {:id "m-question_bar"}
+                                                                    (dom/input #js {:id "question-id"
+                                                                                    :type "hidden"
+                                                                                    :value (:id question-data)})
                                                                     (tool-box cursor (set (:tools question-data)))
                                                                     (om/build (click-once-button (str "Klaar"
                                                                                                       (when (< (inc index) (count (:questions material)))
