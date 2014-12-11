@@ -1,5 +1,6 @@
 * Release Changelog
 ** NEXT RELEASE
+** release 2014-12-11.1
 *** Fix: Revealing an answer after you gave already the correct answer will not reseat your streak
 *** Fix: Using <enter> key in section tests now works again
 *** Fix: Reloading application keeps you on the correct page again
