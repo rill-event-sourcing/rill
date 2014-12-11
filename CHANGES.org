@@ -2,7 +2,7 @@
 ** NEXT RELEASE
 *** Fix: Revealing an answer after you gave already the correct answer will not reseat your streak
 *** Fix: Using <enter> key in section tests now works again
->>>>>>> Update changelog
+*** Fix: Reloading application keeps you on the correct page again
 ** release 2014-12-10.1
 *** Fix: Advanced compilation options switched back on - minimized javascript
 *** Fix: <sup> tags in content now work

@@ -57,17 +57,21 @@
         (gevents/listen history EventType.NAVIGATE
                         (fn [event]
                           (when-let [path (token->path (.-token event))]
-                            (om/update! cursor
-                                        [:view :selected-path]
-                                        path)))))
+                            ;; Removing the timeout breaks initial navigation
+                            ;; on (re)load
+                            (.setTimeout js/window
+                                         (fn []
+                                           (om/update! cursor
+                                                       [:view :selected-path]
+                                                       path))
+                                         10)))))
       om/IRender
       (render [_]
         (om/build widgets cursor))
       om/IDidMount
       (did-mount [_]
         ;; setEnabled fires NAVIGATE event for first load
-        (.setEnabled history true)
-        ))))
+        (.setEnabled history true)))))
 
 (defn listen [tx-report cursor]
   (let [{:keys [path old-state new-state]} tx-report]
