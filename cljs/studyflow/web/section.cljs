@@ -71,12 +71,9 @@
 
 (defn question-by-id [cursor section-id question-id]
   (if-let [question (get-in cursor [:view :section section-id :test question-id])]
-
     question
     (do (om/update! cursor [:view :section section-id :test question-id] nil)
         nil)))
-
-
 
 (defn section-input-field
   [cursor owner {:keys [field section]}]
@@ -526,6 +523,9 @@
                                current-answers]))))]
 
         (dom/div #js {:onKeyPress (on-enter submit)}
+                 (dom/input #js {:id "question-id"
+                                 :type "hidden"
+                                 :value question-id})
                  (case modal
                    :finished-modal (finish-modal cursor owner student-id course-id chapter-id section-id section-test-aggregate-version)
                    :stuck-modal (stuck-modal cursor owner student-id course-id chapter-id section-id section-test-aggregate-version)

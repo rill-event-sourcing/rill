@@ -79,17 +79,17 @@
 
 (defn footer-bar
   ([]
-     (dom/div #js {:id "m-question_bar"}))
+   (dom/div #js {:id "m-question_bar"}))
   ([cursor text on-click enabled color tools]
-     (dom/div #js {:id "m-question_bar"}
-              (tool-box cursor (set tools))
-              (dom/button #js {:className (str "btn small pull-right " color)
-                               :ref "MAIN_BUTTON"
-                               :disabled (not enabled)
-                               :onClick (fn []
-                                          (ipad/ipad-reset-header)
-                                          (on-click))}
-                          text))))
+   (dom/div #js {:id "m-question_bar"}
+            (tool-box cursor (set tools))
+            (dom/button #js {:className (str "btn small pull-right " color)
+                             :ref "MAIN_BUTTON"
+                             :disabled (not enabled)
+                             :onClick (fn []
+                                        (ipad/ipad-reset-header)
+                                        (on-click))}
+                        text))))
 
 
 (defn chapter-quiz-loading [cursor owner]
@@ -162,9 +162,13 @@
                                 question-id
                                 current-answers])
                               (om/set-state-nr! owner :submit nil))))
-        (when-not (contains? (set (:tools question-data)) "calculator")
+        (when-not (contains? (set (:tools question-data))
+                             "calculator")
           (om/update! cursor [:view :show-calculator] false))
         (dom/div nil
+                 (dom/input #js {:id "question-id"
+                                 :type "hidden"
+                                 :value question-id})
                  (dom/article #js {:id "m-section"}
                               (tag-tree-to-om (:tag-tree question-data) inputs nil nil))
                  (footer-bar cursor "Nakijken" ;; TODO should be "Voltooi
