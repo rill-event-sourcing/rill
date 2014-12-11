@@ -522,7 +522,7 @@
                                question-id
                                current-answers]))))]
 
-        (dom/div #js {:onKeyPress (on-enter submit)}
+        (dom/div #js {:onKeyUp (on-enter submit)}
                  (dom/input #js {:id "question-id"
                                  :type "hidden"
                                  :value question-id})
