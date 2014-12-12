@@ -522,7 +522,7 @@
                                question-id
                                current-answers]))))]
 
-        (dom/div #js {:onKeyUp (on-enter submit)}
+        (dom/div #js {:onKeyDown (on-enter submit)}
                  (dom/input #js {:id "question-id"
                                  :type "hidden"
                                  :value question-id})
@@ -671,3 +671,4 @@
                                                           (assoc :section-tab :questions)
                                                           path-url)}
                                            "Vragen"))))))))
+
