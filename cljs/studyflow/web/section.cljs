@@ -507,7 +507,8 @@
                                         section-id
                                         student-id
                                         section-test-aggregate-version
-                                        course-id]))
+                                        course-id])
+                           true)
 
                          :else
                          (fn []
@@ -520,7 +521,8 @@
                                section-test-aggregate-version
                                course-id
                                question-id
-                               current-answers]))))]
+                               current-answers]))
+                           true))]
 
         (dom/div #js {:onKeyDown (on-enter submit)}
                  (dom/input #js {:id "question-id"

@@ -17,10 +17,10 @@
   "Execute f and prevent default actions when enter key event is passed"
   [f]
   (fn [e]
-    (if (= (.-key e) "Enter") ;; Enter key
+    (if (and (= (.-key e) "Enter")
+             (f))
       (do (.stopPropagation e)
           (.preventDefault e)
-          (f)
           false)
       true)))
 
