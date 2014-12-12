@@ -1,10 +1,61 @@
-#+TITLE: Rill Event Sourcing
+#+TITLE: Rill Event Sourcing Toolkit
+
+A Clojure foundation for CQRS/Event Sourcing.
+
+* This is an alpha release.
+
+We are using Rill in production but things are still in flux. Breaking
+changes to the API are likely, though we have every intention of
+making upgrades straightforward.
+
+Documentation is missing for almost everything.
+
+* Rill provides protocols and/or implementations for:
+
+** EventStore
+
+   The *system of record* in an Event Sourcing architecture; a
+   collection of event streams with provisions for appending and
+   retrieving events.
+
+   Rill provides two complete implementations of the EventStore
+   protocol; an ephemeral, in-memory store for testing/development,
+   and a durable implementation using Postgresql as a backing store.
+
+** Repository
+
+   Aggregate storage implemented on top of an EventStore. Aggregates
+   are implemented as reductions of event streams.
+
+** Command handler
+
+   Rill implements a fairly simple command -> repository -> aggregate
+   -> events loop for evaluating commands and storing the resulting
+   events in the event store. Synchronous event triggers are
+   implemented with the provisional *observers* hook.
+
+** Messages; commands and events
+
+   Rill provides mechanisms for defining message schemas and hooks for
+   integrating messages with the command handler, event store and
+   repository.
+
+** Event Channels
+
+   Event channels are core/async channels that provide "real time"
+   views on event streams.
 
 * Changelog
 
-  0.1.6 - Generalize process managers into observer/notifications
-  0.1.5 - Improved command-result= testing function
-  0.1.4 - Auto-retry queries when streaming all events in psql event store
-  0.1.2 - Add process managers
-  0.1.1 - ???
-  0.1.0 - First beta release
+  - 0.1.6
+    Generalize process managers into observer/notifications
+  - 0.1.5
+    Improved command-result= testing function
+  - 0.1.4
+    Auto-retry queries when streaming all events in psql event store
+  - 0.1.2
+    Add process managers
+  - 0.1.1
+    Uknown
+  - 0.1.0
+    First beta release
