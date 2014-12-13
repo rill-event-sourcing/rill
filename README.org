@@ -47,6 +47,8 @@ Documentation is missing for almost everything.
 
 * Changelog
 
+  - 0.1.7-SNAPSHOT
+    Split out durable implementations in their own projects
   - 0.1.6
     Generalize process managers into observer/notifications
   - 0.1.5

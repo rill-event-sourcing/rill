@@ -1,0 +1,8 @@
+This is an unmaintained implementation of the rill event store
+protocol using the geteventstore.com event store.
+
+We could not get it to work reliably in our production environment so
+we abandoned it in favor of postgres.
+
+It's left here for reference and in case someone is interested in
+pickin up development for it.
