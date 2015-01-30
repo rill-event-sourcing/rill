@@ -33,7 +33,7 @@
 (defn select-stream-fn
   [spec stream-id]
   (fn [cursor page-size]
-    (sql/query spec ["SELECT payload, stream_order FROM rill_events WHERE stream_id = ? AND stream_order > ? ORDER BY insert_order ASC LIMIT ?"
+    (sql/query spec ["SELECT payload, stream_order FROM rill_events WHERE stream_id = ? AND stream_order > ? ORDER BY stream_order ASC LIMIT ?"
                      (str stream-id)
                      cursor page-size])))
 

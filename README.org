@@ -18,8 +18,8 @@ A Clojure foundation for CQRS/Event Sourcing.
    from the core, which only includes an in-memory backend.
 
    #+BEGIN_SRC clojure
-  [rill/rill "0.1.7-SNAPSHOT"]
-  [rill/rill-psql "0.1.7-SNAPSHOT"] ; to include postgres store
+  [rill/rill "0.1.7"]
+  [rill/rill-psql "0.1.7"] ; to include postgres store
    #+END_SRC
 
 ** Latest stable release:
@@ -67,8 +67,9 @@ A Clojure foundation for CQRS/Event Sourcing.
 
 * Changelog
 
-  - 0.1.7-SNAPSHOT
+  - 0.1.7
     Split out durable implementations in their own projects
+    Fix performance bug when retrieving long event streams
   - 0.1.6
     Generalize process managers into observer/notifications
   - 0.1.5
