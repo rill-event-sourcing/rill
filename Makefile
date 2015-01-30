@@ -15,4 +15,5 @@ clean:
 
 jar:
 	lein jar
+	lein install
 	cd rill-psql && lein jar
