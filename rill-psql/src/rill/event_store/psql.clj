@@ -4,13 +4,12 @@
             [rill.event-stream :refer [all-events-stream-id]]
             [clojure.java.jdbc :as sql]
             [rill.message :as message]
-            [taoensso.nippy :as nippy]
             [clojure.tools.logging :as log]))
 
 (defn record->message
-  [r]
-  (with-meta (assoc (nippy/thaw (:payload r))
-               ::message/number (:stream_order r))
+  [thaw r]
+  (with-meta (assoc (thaw (:payload r))
+                    ::message/number (:stream_order r))
     {:cursor (or (:insert_order r)
                  (:stream_order r))}))
 
@@ -44,11 +43,11 @@
                           cursor page-size])))
 
 (defn messages
-  [cursor page-size selector]
-  (let [p (map record->message (selector cursor page-size))]
+  [thaw cursor page-size selector]
+  (let [p (map #(record->message thaw %) (selector cursor page-size))]
     (if (< (count p) page-size)
       (seq p) ;; make sure we return nil when no messages are found
-      (concat p (lazy-seq (messages (:cursor (meta (last p))) page-size selector))))))
+      (concat p (lazy-seq (messages thaw (:cursor (meta (last p))) page-size selector))))))
 
 (defn unique-violation?
   "true when the exception was caused by a unique constraint violation"
@@ -104,7 +103,7 @@
       (out-seq))
     ))
 
-(defrecord PsqlEventStore [spec page-size]
+(defrecord PsqlEventStore [spec page-size freeze thaw]
   EventStore
   (retrieve-events-since [this stream-id cursor wait-for-seconds]
     (if (and (= stream-id all-events-stream-id)
@@ -116,7 +115,7 @@
                      cursor
                      (or (message/number cursor)
                          (throw (ex-info (str "Not a valid cursor: " cursor) {:cursor cursor}))))]
-        (or (messages cursor page-size
+        (or (messages thaw cursor page-size
                       (if (= stream-id all-events-stream-id)
                         (select-all-fn spec)
                         (select-stream-fn spec stream-id)))
@@ -131,14 +130,14 @@
                              [(str (message/id e))
                               (str stream-id)
                               (str stream-id)
-                              (nippy/freeze e)])
+                              (freeze e)])
                            events))
       (try (apply sql/db-do-prepared spec "INSERT INTO rill_events (event_id, stream_id, stream_order, payload) VALUES (?, ?, ?, ?)"
                   (map-indexed (fn [i e]
                                  [(str (message/id e))
                                   (str stream-id)
                                   (+ 1 i from-version)
-                                  (nippy/freeze e)])
+                                  (freeze e)])
                                events))
            true
            (catch java.sql.BatchUpdateException e
@@ -146,7 +145,7 @@
                (throw e))
              false))))) ;; conflict - there is already an event with the given stream_order
 
-(defn psql-event-store [spec & [{:keys [page-size] :or {page-size 20}}]]
-  {:pre [(integer? page-size)]}
-  (let [es (->PsqlEventStore spec page-size)]
+(defn psql-event-store [spec {:keys [freeze thaw] :as serializer} & [{:keys [page-size] :or {page-size 20}}]]
+  {:pre [(integer? page-size) serializer freeze thaw]}
+  (let [es (->PsqlEventStore spec page-size freeze thaw)]
     (assoc es :store es)))

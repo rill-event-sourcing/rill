@@ -5,7 +5,8 @@
             [rill.message :as message :refer [defevent]]
             [clojure.test :refer :all]
             [environ.core :refer [env]]
-            [schema.core :as s]))
+            [schema.core :as s]
+            [taoensso.nippy :as nippy]))
 
 (defevent TestEvent2
   :v s/Int)
@@ -14,7 +15,7 @@
 
 (deftest test-psql-event-store
   (when-let [uri (env :psql-event-store-uri)]
-    (let [store (psql-event-store uri)]
+    (let [store (psql-event-store uri {:freeze nippy/freeze :thaw nippy/thaw})]
       (is (= (store/retrieve-events store "foo") stream/empty-stream)
           "retrieving a non-existing stream returns the empty stream")
 

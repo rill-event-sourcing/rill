@@ -8,5 +8,7 @@
                  [rill/rill "0.1.8-SNAPSHOT"]
                  [org.clojure/java.jdbc "0.3.4"]
                  [postgresql "9.1-901.jdbc4"]
-                 [com.taoensso/nippy "2.6.3"]
-                 [com.mchange/c3p0 "0.9.2.1"]])
+                 [com.mchange/c3p0 "0.9.2.1"]]
+  :profiles {:dev {:dependencies [[com.taoensso/nippy "2.6.3"]]}})
+
+
