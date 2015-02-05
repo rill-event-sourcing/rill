@@ -67,18 +67,20 @@ A Clojure foundation for CQRS/Event Sourcing.
 
 * Changelog
 
+  - 0.1.8-SNAPSHOT
+    - Make serializers pluggable in psql backend
   - 0.1.7
-    Split out durable implementations in their own projects
-    Fix performance bug when retrieving long event streams
+    - Split out durable implementations in their own projects
+    - Fix performance bug when retrieving long event streams
   - 0.1.6
-    Generalize process managers into observer/notifications
+    - Generalize process managers into observer/notifications
   - 0.1.5
-    Improved command-result= testing function
+    - Improved command-result= testing function
   - 0.1.4
-    Auto-retry queries when streaming all events in psql event store
+    - Auto-retry queries when streaming all events in psql event store
   - 0.1.2
-    Add process managers
+    - Add process managers
   - 0.1.1
-    Uknown
+    - ??
   - 0.1.0
-    First beta release
+    - First beta release
