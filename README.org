@@ -12,7 +12,7 @@ A Clojure foundation for CQRS/Event Sourcing.
 
 * Dependency specification
 
-** Work-in-progress snapshot
+** Latest stable release:
 
    From version 0.1.7 on, the durable backends for rill are split out
    from the core, which only includes an in-memory backend.
@@ -20,14 +20,6 @@ A Clojure foundation for CQRS/Event Sourcing.
    #+BEGIN_SRC clojure
   [rill/rill "0.1.7"]
   [rill/rill-psql "0.1.7"] ; to include postgres store
-   #+END_SRC
-
-** Latest stable release:
-
-   This version includes the postgres backend in the core.
-
-   #+BEGIN_SRC clojure
-     [rill/rill "0.1.6"]
    #+END_SRC
 
 * Rill provides protocols and/or implementations for:
