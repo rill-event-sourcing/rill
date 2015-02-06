@@ -54,7 +54,7 @@
   [sql-exception]
   (= (.getSQLState sql-exception) "23505"))
 
-(defn catch-up-events [spec]
+(defn catch-up-events [spec thaw]
   (log/info "Catch-up-events")
   (let [page-size 100 ;; arbitrary
         in (chan 3)
@@ -87,7 +87,7 @@
       (loop []
         (when-let [rows (<!! in)]
           (log/info "[deserializer] Deserializing from " (:insert_order (first rows)) " upto " (:insert_order (peek rows)))
-          (let [transformed (mapv record->message rows)]
+          (let [transformed (mapv #(record->message thaw %) rows)]
             (>!! out transformed))
           (recur)))
       (close! out)
@@ -109,7 +109,7 @@
     (if (and (= stream-id all-events-stream-id)
              (= cursor -1))
       ;; catching up case
-      (catch-up-events spec)
+      (catch-up-events spec thaw)
       ;; listening after catching up and aggregate case
       (let [cursor (if (number? cursor)
                      cursor
