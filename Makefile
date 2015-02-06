@@ -1,6 +1,6 @@
 default: test
 
-.PHONY: test default install
+.PHONY: test default install deploy
 
 test:
 	lein test
@@ -17,3 +17,6 @@ jar:
 	lein jar
 	lein install
 	cd rill-psql && lein jar
+
+deploy:
+	./deploy.sh
