@@ -18,8 +18,8 @@ A Clojure foundation for CQRS/Event Sourcing.
    from the core, which only includes an in-memory backend.
 
    #+BEGIN_SRC clojure
-  [rill/rill "0.1.9"]
-  [rill/rill-psql "0.1.9"] ; to include postgres store
+  [rill/rill "0.1.10"]
+  [rill/rill-psql "0.1.10"] ; to include postgres store
    #+END_SRC
 
 * Rill provides protocols and/or implementations for:
@@ -59,6 +59,8 @@ A Clojure foundation for CQRS/Event Sourcing.
 
 * Changelog
 
+  - 0.1.10
+    - Fix regression in event channels & improve testing
   - 0.1.9
     - Fix: ignore cursors when comparing messages in tests
   - 0.1.8
