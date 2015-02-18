@@ -9,10 +9,12 @@
 
 (defn record->message
   [r]
-  (with-meta (assoc (nippy/thaw (:payload r))
-               ::message/number (:stream_order r))
-    {:cursor (or (:insert_order r)
-                 (:stream_order r))}))
+  (-> r
+      :payload
+      nippy/thaw
+      (assoc ::message/number (:stream_order r)
+             ::message/cursor (or (:insert_order r)
+                                  (:stream_order r)))))
 
 (defn wrap-auto-retry
   [f pause-seconds]
@@ -48,7 +50,7 @@
   (let [p (map record->message (selector cursor page-size))]
     (if (< (count p) page-size)
       (seq p) ;; make sure we return nil when no messages are found
-      (concat p (lazy-seq (messages (:cursor (meta (last p))) page-size selector))))))
+      (concat p (lazy-seq (messages (+ page-size cursor) page-size selector))))))
 
 (defn unique-violation?
   "true when the exception was caused by a unique constraint violation"
@@ -114,7 +116,7 @@
       ;; listening after catching up and aggregate case
       (let [cursor (if (number? cursor)
                      cursor
-                     (or (message/number cursor)
+                     (or (message/cursor cursor)
                          (throw (ex-info (str "Not a valid cursor: " cursor) {:cursor cursor}))))]
         (or (messages cursor page-size
                       (if (= stream-id all-events-stream-id)
