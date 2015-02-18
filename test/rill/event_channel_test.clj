@@ -3,7 +3,7 @@
             [clojure.test :refer [is deftest testing]]
             [rill.temp-store :refer [given]]
             [rill.event-store :as store]
-            [rill.event-stream :refer [empty-stream-version]]
+            [rill.event-stream :refer [any-stream-version empty-stream-version]]
             [rill.message :as message]
             [clojure.core.async :as async :refer [<! <!! go close!]]
             [rill.uuid :refer [new-id]]
@@ -18,15 +18,23 @@
 (def events (map-indexed (fn [idx content]
                            (assoc (test-event stream-id content)
                                   message/number idx
-                                  message/cursor idx)) [:a :b :c :d :e :f]))
+                                  message/cursor idx))
+                         (apply concat (repeat 5 [:a :b :c :d :e :f]))))
 
 (deftest event-channel-test
   (let [store (given [])]
-    (let [channel (event-channel store stream-id empty-stream-version 0)]
-      (is (store/append-events store stream-id empty-stream-version events))
+    (let [channel (event-channel store stream-id empty-stream-version 10)]
+      (async/thread
+        (doseq [chunk (partition-all 10 events)]
+          (is (store/append-events store stream-id any-stream-version chunk))
+          (Thread/sleep 50)))
       (is (= (<!! (go
                     (doseq [e events]
-                      (is (= (<! channel) e)))
+                      (let [e' (loop [e' (<! channel)]
+                                 (if (= :rill.event-channel/CaughtUp (message/type e'))
+                                   (recur (<! channel))
+                                   e'))]
+                        (is (= e' e))))
                     (close! channel)
                     :done))
              :done)))))

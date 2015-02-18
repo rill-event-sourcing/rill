@@ -1,7 +1,7 @@
 (ns rill.event-channel
   (:require [clojure.core.async :refer [thread >!! chan]]
             [rill.event-store :as store]
-            [rill.message :refer [defevent]]
+            [rill.message :refer [defevent] :as message]
             [clojure.tools.logging :as log]
             [schema.core :as s])
   (:import (java.util Date)))
@@ -19,7 +19,7 @@
          [event & events] events]
     (if event
       (if (push-event!! ch event)
-        (recur (:cursor (meta event)) events)
+        (recur (message/cursor event) events)
         nil)
       cursor)))
 
