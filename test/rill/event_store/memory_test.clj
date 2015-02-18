@@ -12,7 +12,7 @@
 
 (defn ignore-numbers
   [events]
-  (map #(dissoc % message/number) events))
+  (map #(dissoc % message/number message/cursor) events))
 
 (deftest in-memory-event-store
   (let [store (memory/memory-store)]
@@ -26,25 +26,26 @@
         "needs the current stream to add events to an existing stream")
 
     (let [s (store/retrieve-events store "my-stream")]
-      (is (= (map #(dissoc % message/number) s)
+      (is (= (ignore-numbers s)
              (take 3 events))
           "returns successfully appended events in chronological order")
       (is (store/append-events store "my-stream" (+ stream/empty-stream-version (count s)) (drop 3 events)))
-      (is (= (->> (store/retrieve-events store "my-stream")
-                  (map #(dissoc % message/number))) events)))
+      (is (= (-> (store/retrieve-events store "my-stream")
+                 ignore-numbers)
+             events)))
 
     (let [s (store/retrieve-events store "my-other-stream")]
       (testing "event store handles each stream independently"
         (is (= s stream/empty-stream))
         (is (store/append-events store "my-other-stream" (+ stream/empty-stream-version (count s)) (drop 3 events)))
         (is (= (->> (store/retrieve-events store "my-other-stream")
-                    (map #(dissoc % message/number))) (drop 3 events)))
+                    ignore-numbers) (drop 3 events)))
         (is (= (->> (store/retrieve-events store "my-stream")
-                    (map #(dissoc % message/number))) events))))
+                    ignore-numbers) events))))
 
     (let [e (nth (store/retrieve-events store "my-stream") 3)]
       (is (= (->> (store/retrieve-events-since store "my-stream" e 0)
-                  (map #(dissoc % message/number)))
+                  ignore-numbers)
              (drop 4 events))))
 
     (testing "any-version"

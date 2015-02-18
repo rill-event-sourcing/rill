@@ -17,15 +17,16 @@
 
 (def events (map-indexed (fn [idx content]
                            (assoc (test-event stream-id content)
-                             message/number idx)) [:a :b :c :d :e :f]))
+                                  message/number idx
+                                  message/cursor idx)) [:a :b :c :d :e :f]))
 
 (deftest event-channel-test
   (let [store (given [])]
     (let [channel (event-channel store stream-id empty-stream-version 0)]
       (is (store/append-events store stream-id empty-stream-version events))
       (is (= (<!! (go
-                   (doseq [e events]
-                     (is (= (<! channel) e)))
-                   (close! channel)
-                   :done))
+                    (doseq [e events]
+                      (is (= (<! channel) e)))
+                    (close! channel)
+                    :done))
              :done)))))

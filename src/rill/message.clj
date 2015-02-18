@@ -10,6 +10,7 @@
 (def type ::type)
 (def number ::number)
 (def timestamp ::timestamp)
+(def cursor ::cursor)
 
 (defn data
   [m]
