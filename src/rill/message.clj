@@ -6,11 +6,23 @@
             [rill.timestamp :refer [now]]
             [nl.zeekat.identifiers :refer [lisp-name]]))
 
-(def id ::id)
-(def type ::type)
-(def number ::number)
-(def timestamp ::timestamp)
-(def cursor ::cursor)
+(def id
+  "The unique identifier of a message"
+  ::id)
+(def type
+  "The type of the message"
+  ::type)
+(def number
+  "The ordering number of the event in its original stream"
+  ::number)
+(def cursor
+  "The ordering number of the event in the current stream
+This may differ from message/number if the current stream is the all-event-stream"
+  ::cursor)
+(def timestamp
+  "The creation time of the event"
+  ::timestamp)
+
 
 (defn data
   [m]

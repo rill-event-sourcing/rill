@@ -60,7 +60,7 @@ A Clojure foundation for CQRS/Event Sourcing.
 * Changelog
 
   - 0.1.8-SNAPSHOT
-    - Make serializers pluggable in psql backend
+    - Make cursors explicit in messages
   - 0.1.7
     - Split out durable implementations in their own projects
     - Fix performance bug when retrieving long event streams
