@@ -59,6 +59,11 @@ A Clojure foundation for CQRS/Event Sourcing.
 
 * Changelog
 
+  - 0.1.11-SNAPSHOT
+    - rill.aggregate/aggregate-ids multimethod now
+      takes [primary-aggregate command] as arguments.
+
+      this is a breaking change.
   - 0.1.10
     - Fix regression in event channels & improve testing
   - 0.1.9

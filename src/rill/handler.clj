@@ -34,8 +34,8 @@
   "fetch the primary event stream id and version and aggregates for `command`"
   [event-store command]
   (let [id (message/primary-aggregate-id command)
-        additional-ids (aggregate/aggregate-ids command)
         [aggregate current-version] (retrieve-aggregate-and-version event-store id)
+        additional-ids (aggregate/aggregate-ids aggregate command)
         additional-aggregates (map #(retrieve-aggregate event-store %) additional-ids)]
     (into [id current-version aggregate] additional-aggregates)))
 

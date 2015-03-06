@@ -17,8 +17,8 @@
   :other-thing s/Keyword)
 
 (defmethod aggregate-ids ::HandlerTestCommand2
-  [command]
-  (map command [:id-two]))
+  [agg command]
+  (cons (:foo agg) (map command [:id-two])))
 
 (defcommand HandlerCommand
   :agg-id s/Uuid)
@@ -50,12 +50,12 @@
 (deftest aggregate-ids-test
   (is (= (primary-aggregate-id (handler-test-command1 :a :b :c))
          :a))
-  (is (= (aggregate-ids (handler-test-command1 :a :b :c))
+  (is (= (aggregate-ids {} (handler-test-command1 :a :b :c))
          nil))
   (is (= (primary-aggregate-id (handler-test-command2 :a :b :c :d))
          :a))
-  (is (= (aggregate-ids (handler-test-command2 :a :b :c :d))
-         [:c])))
+  (is (= (aggregate-ids {:foo :bar} (handler-test-command2 :a :b :c :d))
+         [:bar :c])))
 
 (deftest command-handling
   (testing "we get events out of the command"

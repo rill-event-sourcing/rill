@@ -20,13 +20,14 @@
     (message/type command)))
 
 (defmulti aggregate-ids
-  "given a command, return the ids of the additional aggregates that should be
-  fetched before calling handle-command."
-  (fn [command]
+  "given a command and its primary aggregate, return the ids of the
+  additional aggregates that should be fetched before calling
+  handle-command."
+  (fn [primary-aggregate command]
     (message/type command)))
 
 (defmethod aggregate-ids :default
-  [_]
+  [_ _]
   nil)
 
 (defmulti handle-notification
