@@ -44,7 +44,7 @@
 (defn notify-observer
   [event-store event observer-id handler-fn primary]
   (let [observer (retrieve-aggregate event-store observer-id)
-        rest-aggregates (map #(retrieve-aggregate event-store %) (aggregate/aggregate-ids event))
+        rest-aggregates (map #(retrieve-aggregate event-store %) (aggregate/aggregate-ids primary event))
         triggered-events (seq (apply handler-fn observer event primary rest-aggregates))]
     (when (and triggered-events
                (commit-events event-store observer-id any-stream-version triggered-events))

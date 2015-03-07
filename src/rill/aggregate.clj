@@ -19,10 +19,14 @@
   (fn [primary-aggregate command & aggregates]
     (message/type command)))
 
+;; NOTE: there should be a better way to model the relationship
+;; between handlers / oberserver fns and additional aggregates.
+
 (defmulti aggregate-ids
-  "given a command and its primary aggregate, return the ids of the
-  additional aggregates that should be fetched before calling
-  handle-command."
+  "Given a command or event and its primary aggregate, return the ids
+  of the additional aggregates that should be fetched before calling
+  handle-command (for commands) or the notification fn (for observed
+  events)."
   (fn [primary-aggregate command]
     (message/type command)))
 
