@@ -1,0 +1,20 @@
+#+TITLE: Rill Event Sourcing Documentation
+* Introduction
+* Event generation using commands
+** Stages
+   - Create/receive command
+   - Prepare aggregates
+     - Fetch primary aggregate
+     - Fetch secondary aggregates
+   - Check primary aggregate version
+   - Handle command
+     - Generates events or rejection
+   - Commit events
+   - Notify observers
+     - Fetch observer
+     - Fetch secondary aggregates
+     - Handle observation
+     - Commit triggered events
+     - Notify observers of triggered events
+
+* Event Sourcing References
