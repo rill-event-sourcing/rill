@@ -59,6 +59,16 @@ A Clojure foundation for CQRS/Event Sourcing.
 
 * Changelog
 
+  - 0.2.0-SNAPSHOT
+    - Bump version because of breaking schema change
+    - Fix concurrency issues with cursors in all-event-stream
+
+      Run file:rill-psql/migration-0_2_0.sql to upgrade your
+      Postgres event store.
+
+      This will break older versions of rill. You MUST upgrade all
+      clients to 0.2.0 or higher.
+
   - 0.1.11-SNAPSHOT
     - rill.aggregate/aggregate-ids multimethod now
       takes [primary-aggregate command] as arguments.
