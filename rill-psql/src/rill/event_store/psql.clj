@@ -60,55 +60,55 @@
   (= (.getSQLState sql-exception) "23505"))
 
 (defn catch-up-events [spec]
-  (log/info "Catch-up-events")
+  (log/debug "Catch-up-events")
   (let [page-size 100 ;; arbitrary
         in (chan 3)
         out (chan 3)]
     ;; db thread
     (thread
-      (log/info "[db] Check which insert_order the database is at (and count events)")
+      (log/debug "[db] Check which insert_order the database is at (and count events)")
       (let [{watermark :max_insert_order
              row-count :row_count} (first (retrying-query spec ["SELECT MAX(insert_order) as max_insert_order, COUNT(*) as row_count FROM rill_events"]))]
-        (log/info "[db] Event-store max :insert_order " watermark " and row-count: " row-count)
+        (log/debug "[db] Event-store max :insert_order " watermark " and row-count: " row-count)
         (loop [cursor -1]
           (let [rows (retrying-query spec ["SELECT payload, stream_order, insert_order FROM rill_events WHERE insert_order > ? AND insert_order IS NOT NULL ORDER BY insert_order ASC LIMIT ?"
                                            cursor page-size]
                                      :result-set-fn vec)
                 highest-insert-order (:insert_order (peek rows))]
             (>!! in rows)
-            (log/info "[db] Passed along upto :insert_order" highest-insert-order " cursor: " cursor)
+            (log/debug "[db] Passed along upto :insert_order" highest-insert-order " cursor: " cursor)
             (if (< (count rows) page-size)
-              (log/info "[db] Got a batch with less than page-size events, done with reading db [watermark old-cursor highest-insert-order]" [watermark cursor highest-insert-order])
+              (log/debug "[db] Got a batch with less than page-size events, done with reading db [watermark old-cursor highest-insert-order]" [watermark cursor highest-insert-order])
               (recur highest-insert-order))))
-        (log/info "[db] Caught up now, double check the watermarks")
+        (log/debug "[db] Caught up now, double check the watermarks")
         (let [new-watermark (:max_insert_order (first (retrying-query spec ["SELECT MAX(insert_order) as max_insert_order FROM rill_events"])))]
-          (log/info "[db] new watermark: " new-watermark " number of events since starting catch-up: " (- (or new-watermark 0) (or watermark 0)))))
-      (log/info "[db] Finished catching up from db")
+          (log/debug "[db] new watermark: " new-watermark " number of events since starting catch-up: " (- (or new-watermark 0) (or watermark 0)))))
+      (log/debug "[db] Finished catching up from db")
       (close! in))
 
     ;; deserializer thread
     (thread
-      (log/info "[deserializer] Starting deserializer")
+      (log/debug "[deserializer] Starting deserializer")
       (loop []
         (when-let [rows (<!! in)]
-          (log/info "[deserializer] Deserializing from " (:insert_order (first rows)) " upto " (:insert_order (peek rows)))
+          (log/debug "[deserializer] Deserializing from " (:insert_order (first rows)) " upto " (:insert_order (peek rows)))
           (let [transformed (mapv record->message rows)]
             (>!! out transformed))
           (recur)))
       (close! out)
-      (log/info "[deserializer] Stopped deserializer"))
+      (log/debug "[deserializer] Stopped deserializer"))
 
     ;; lazy-seq
     (let [out-seq (fn out-seq []
                     (if-let [events (<!! out)]
                       (concat events (lazy-seq (out-seq)))
-                      (do (log/info "[lazy-seq] Ending lazy-seq from catch-up events")
+                      (do (log/debug "[lazy-seq] Ending lazy-seq from catch-up events")
                           nil)))]
-      (log/info "[lazy-seq] Delivering to lazy-seq")
+      (log/debug "[lazy-seq] Delivering to lazy-seq")
       (out-seq))
     ))
 
-(defrecord PsqlEventStore [spec page-size]
+(defrecord PsqlEventStore [spec page-size lock-id]
   EventStore
   (retrieve-events-since [this stream-id cursor wait-for-seconds]
     (if (and (= stream-id all-events-stream-id)
@@ -138,11 +138,10 @@
                                    (str stream-id)
                                    (nippy/freeze e)])
                                 events)))
-          (sql/with-db-transaction [conn spec]
-            (apply sql/db-do-prepared conn "UPDATE rill_events SET insert_order = nextval('rill_events_insert_order_seq') WHERE stream_id=? AND event_id=?"
-                   (map (fn [e] [(str stream-id)
-                                 (str (message/id e))])
-                        events)))
+          (doseq [r (map (fn [e] [stream-id (message/id e)]))]
+            (sql/with-db-transaction [conn spec]
+              (sql/query conn ["SELECT pg_advisory_xact_lock(?)" lock-id])
+              (sql/db-do-prepared conn false "UPDATE rill_events SET insert_order = nextval('rill_events_insert_order_seq') WHERE stream_id=? AND event_id=?" r)))
           true)
       (when (try (sql/with-db-transaction [conn spec]
                    (apply sql/db-do-prepared conn "INSERT INTO rill_events (event_id, stream_id, stream_order, payload) VALUES (?, ?, ?, ?)"
@@ -159,10 +158,11 @@
                    false))
         (doseq [r (map-indexed (fn [i e] [(str stream-id) (+ 1 i from-version)]) events)]
           (sql/with-db-transaction [conn spec]
-            (sql/db-do-prepared conn "UPDATE rill_events SET insert_order = nextval('rill_events_insert_order_seq') WHERE stream_id=? AND stream_order=?" r)))
+            (sql/query conn ["SELECT pg_advisory_xact_lock(?)" lock-id])
+            (sql/db-do-prepared conn false "UPDATE rill_events SET insert_order = nextval('rill_events_insert_order_seq') WHERE stream_id=? AND stream_order=?" r)))
         true))))
 
 (defn psql-event-store [spec & [{:keys [page-size] :or {page-size 20}}]]
   {:pre [(integer? page-size)]}
-  (let [es (->PsqlEventStore spec page-size)]
+  (let [es (->PsqlEventStore spec page-size (:tableoid (first (sql/query spec "SELECT tableoid FROM rill_events LIMIT 1"))))]
     (assoc es :store es)))
