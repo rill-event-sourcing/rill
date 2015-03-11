@@ -24,7 +24,8 @@
   (when-let [uri (env :psql-event-store-uri)]
     (clear-db! uri)
     (let [store (psql-event-store uri)
-          events (map test-event (range 7))]
+          events (map test-event (range 7))
+          other-events (map test-event (range 3))]
       (is (= (store/retrieve-events store "foo") stream/empty-stream)
           "retrieving a non-existing stream returns the empty stream")
 
@@ -45,9 +46,9 @@
       (let [s (store/retrieve-events store "my-other-stream")]
         (testing "event store handles each stream independently"
           (is (= s stream/empty-stream))
-          (is (store/append-events store "my-other-stream" (+ stream/empty-stream-version (count s)) (drop 3 events)))
+          (is (store/append-events store "my-other-stream" stream/empty-stream-version other-events))
           (is (= (->> (store/retrieve-events store "my-other-stream")
-                      (map #(dissoc % message/number message/cursor))) (drop 3 events)))
+                      (map #(dissoc % message/number message/cursor))) other-events))
           (is (= (->> (store/retrieve-events store "my-stream")
                       (map #(dissoc % message/number message/cursor))) events))))
 
@@ -71,7 +72,7 @@
         (is (= (map :v events)
                (map :v (store/retrieve-events store stream/all-events-stream-id))))))
 
-    (testing "concurrent appends"
+    (testing "concurrent mix of large and small events"
       (clear-db! uri)
       (let [store (psql-event-store uri)
             big-id (new-id)
@@ -81,13 +82,15 @@
                                              (store/append-events store big-id (dec i) [e]))
                                            (map (fn [i]
                                                   (test-event {:big i
-                                                               :blob big-blob})) (range 100)))))
+                                                               :blob big-blob})) (range 100))))
+                       (Thread/sleep 500))
             small-chan (async/thread
                          (dorun (map-indexed (fn [i e]
                                                (store/append-events store small-id (dec i) [e]))
                                              (map (fn [i]
                                                     (test-event {:small i}))
-                                                  (range 1000)))))
+                                                  (range 1000))))
+                         (Thread/sleep 500))
             listener-chan (event-channel store stream/all-events-stream-id -1 0)
             out (loop [channels [big-chan small-chan listener-chan]
                        counts {:big 0
@@ -95,16 +98,48 @@
                   (let [[e c] (async/alts!! channels)]
                     (if e
                       (recur channels (cond (:big (:v e))
-                                            (update-in counts [:big] inc)
+                                            (do (prn (:big (:v e)))
+                                                (update-in counts [:big] inc))
                                             (:small (:v e))
                                             (update-in counts [:small] inc)
                                             :else
                                             counts))
                       (let [new-chans (vec (remove #(= c %) channels))]
+                        (prn ({big-chan :closed-big
+                               small-chan :closed-small
+                               listener-chan :closed-listener} c))
                         (if (= 1 (count new-chans))
                           (do (async/close! listener-chan)
                               counts)
                           (recur new-chans counts))))))]
         (is (= out {:big 100
-                    :small 1000}))))))
+                    :small 1000}))))
 
+    (testing "many concurrent small events"
+      (clear-db! uri)
+      (let [store (psql-event-store uri)
+            stream-ids (map #(str "stream-" %) (range 20))
+            insert-chans (map (fn [stream-id]
+                                (async/thread
+                                  (dorun (map-indexed (fn [i e]
+                                                        (store/append-events store stream-id (dec i) [e]))
+                                                      (map (fn [i]
+                                                             (test-event [stream-id i]))
+                                                           (range 1000))))
+                                  (Thread/sleep 1000)))
+                              stream-ids)
+            listener-chan (event-channel store stream/all-events-stream-id -1 0)
+            out (loop [channels (vec (cons listener-chan insert-chans))
+                       counts (into {} (map #(vector % 0) stream-ids))]
+                  (let [[e c] (async/alts!! channels)]
+                    (if e
+                      (recur channels (if (vector? (:v e))
+                                        (update-in counts [(first (:v e))] inc)
+                                        counts))
+                      (let [new-chans (vec (remove #(= c %) channels))]
+                        (if (= 1 (count new-chans))
+                          (do (async/close! listener-chan)
+                              counts)
+                          (recur new-chans counts))))))]
+        (is (= out (into {} (map #(vector % 1000)
+                                 stream-ids))))))))

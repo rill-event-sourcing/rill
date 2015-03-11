@@ -42,7 +42,7 @@
 (defn select-all-fn
   [spec]
   (fn [cursor page-size]
-    (retrying-query spec ["SELECT payload, stream_order, insert_order FROM rill_events WHERE insert_order > ? ORDER BY insert_order ASC LIMIT ?"
+    (retrying-query spec ["SELECT payload, stream_order, insert_order FROM rill_events WHERE insert_order > ? AND insert_order IS NOT NULL ORDER BY insert_order ASC LIMIT ?"
                           cursor page-size])))
 
 (defn messages
@@ -71,7 +71,7 @@
              row-count :row_count} (first (retrying-query spec ["SELECT MAX(insert_order) as max_insert_order, COUNT(*) as row_count FROM rill_events"]))]
         (log/info "[db] Event-store max :insert_order " watermark " and row-count: " row-count)
         (loop [cursor -1]
-          (let [rows (retrying-query spec ["SELECT payload, stream_order, insert_order FROM rill_events WHERE insert_order > ? ORDER BY insert_order ASC LIMIT ?"
+          (let [rows (retrying-query spec ["SELECT payload, stream_order, insert_order FROM rill_events WHERE insert_order > ? AND insert_order IS NOT NULL ORDER BY insert_order ASC LIMIT ?"
                                            cursor page-size]
                                      :result-set-fn vec)
                 highest-insert-order (:insert_order (peek rows))]
@@ -82,7 +82,7 @@
               (recur highest-insert-order))))
         (log/info "[db] Caught up now, double check the watermarks")
         (let [new-watermark (:max_insert_order (first (retrying-query spec ["SELECT MAX(insert_order) as max_insert_order FROM rill_events"])))]
-          (log/info "[db] new watermark: " new-watermark " number of events since starting catch-up: " (- new-watermark (or watermark 0)))))
+          (log/info "[db] new watermark: " new-watermark " number of events since starting catch-up: " (- (or new-watermark 0) (or watermark 0)))))
       (log/info "[db] Finished catching up from db")
       (close! in))
 
@@ -130,25 +130,37 @@
 
   (append-events [this stream-id from-version events]
     (if (= from-version -2) ;; generate our own stream_order
-      (apply  sql/db-do-prepared spec "INSERT INTO rill_events (event_id, stream_id, stream_order, payload) VALUES (?, ?, (SELECT(COALESCE(MAX(stream_order),-1)+1) FROM rill_events WHERE stream_id=?), ?)"
-              (map-indexed (fn [i e]
-                             [(str (message/id e))
-                              (str stream-id)
-                              (str stream-id)
-                              (nippy/freeze e)])
-                           events))
-      (try (apply sql/db-do-prepared spec "INSERT INTO rill_events (event_id, stream_id, stream_order, payload) VALUES (?, ?, ?, ?)"
-                  (map-indexed (fn [i e]
-                                 [(str (message/id e))
-                                  (str stream-id)
-                                  (+ 1 i from-version)
-                                  (nippy/freeze e)])
-                               events))
-           true
-           (catch java.sql.BatchUpdateException e
-             (when-not (unique-violation? e)
-               (throw e))
-             false))))) ;; conflict - there is already an event with the given stream_order
+      (do (sql/with-db-transaction [conn spec]
+            (apply sql/db-do-prepared conn "INSERT INTO rill_events (event_id, stream_id, stream_order, payload) VALUES (?, ?, (SELECT(COALESCE(MAX(stream_order),-1)+1) FROM rill_events WHERE stream_id=?), ?)"
+                   (map-indexed (fn [i e]
+                                  [(str (message/id e))
+                                   (str stream-id)
+                                   (str stream-id)
+                                   (nippy/freeze e)])
+                                events)))
+          (sql/with-db-transaction [conn spec]
+            (apply sql/db-do-prepared conn "UPDATE rill_events SET insert_order = nextval('rill_events_insert_order_seq') WHERE stream_id=? AND event_id=?"
+                   (map (fn [e] [(str stream-id)
+                                 (str (message/id e))])
+                        events)))
+          true)
+      (when (try (sql/with-db-transaction [conn spec]
+                   (apply sql/db-do-prepared conn "INSERT INTO rill_events (event_id, stream_id, stream_order, payload) VALUES (?, ?, ?, ?)"
+                          (map-indexed (fn [i e]
+                                         [(str (message/id e))
+                                          (str stream-id)
+                                          (+ 1 i from-version)
+                                          (nippy/freeze e)])
+                                       events)))
+                 true
+                 (catch java.sql.BatchUpdateException e  ;; conflict - there is already an event with the given stream_order
+                   (when-not (unique-violation? e)
+                     (throw e))
+                   false))
+        (doseq [r (map-indexed (fn [i e] [(str stream-id) (+ 1 i from-version)]) events)]
+          (sql/with-db-transaction [conn spec]
+            (sql/db-do-prepared conn "UPDATE rill_events SET insert_order = nextval('rill_events_insert_order_seq') WHERE stream_id=? AND stream_order=?" r)))
+        true))))
 
 (defn psql-event-store [spec & [{:keys [page-size] :or {page-size 20}}]]
   {:pre [(integer? page-size)]}
