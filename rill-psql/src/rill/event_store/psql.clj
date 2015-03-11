@@ -47,10 +47,12 @@
 
 (defn messages
   [cursor page-size selector]
-  (let [p (map record->message (selector cursor page-size))]
+  (let [p (mapv record->message (selector cursor page-size))]
     (if (< (count p) page-size)
-      (seq p) ;; make sure we return nil when no messages are found
-      (concat p (lazy-seq (messages (+ page-size cursor) page-size selector))))))
+      (if (= 0 (count p))
+        nil  ;; make sure we return nil when no messages are found
+        p)
+      (concat p (lazy-seq (messages (message/cursor (peek p)) page-size selector))))))
 
 (defn unique-violation?
   "true when the exception was caused by a unique constraint violation"
@@ -80,7 +82,7 @@
               (recur highest-insert-order))))
         (log/info "[db] Caught up now, double check the watermarks")
         (let [new-watermark (:max_insert_order (first (retrying-query spec ["SELECT MAX(insert_order) as max_insert_order FROM rill_events"])))]
-          (log/info "[db] new watermark: " new-watermark " number of events since starting catch-up: " (- new-watermark watermark))))
+          (log/info "[db] new watermark: " new-watermark " number of events since starting catch-up: " (- new-watermark (or watermark 0)))))
       (log/info "[db] Finished catching up from db")
       (close! in))
 
