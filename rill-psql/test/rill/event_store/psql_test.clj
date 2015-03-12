@@ -141,9 +141,9 @@
                                counts))
             update-previous (fn [prev {[stream-id num :as v] :v}]
                               (if (vector? v)
-                                (do (when-not (= (dec num)
-                                                 (prev stream-id))
-                                      (println "Missed event" (dec num) "from" stream-id))
+                                (do (is (= {:stream stream-id :num (dec num)}
+                                           {:stream stream-id :num (prev stream-id)})
+                                        "consecutive events in source stream")
                                     (assoc prev stream-id num))
                                 prev))
             [out previous] (loop [channels (vec (cons listener-chan insert-chans))
@@ -157,7 +157,7 @@
                                      [counts previous]
                                      (recur new-chans counts previous))))))
             _ (println "Inserted all events, waiting for last" (- total-events (:total out)) "events")
-            out (loop [channels [(async/timeout (* 60 1000)) listener-chan]
+            out (loop [channels [(async/timeout (* 10 1000)) listener-chan]
                        counts out
                        previous previous]
                   (let [[e c] (async/alts!! channels)]
