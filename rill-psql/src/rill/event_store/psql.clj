@@ -138,10 +138,10 @@
                                    (str stream-id)
                                    (nippy/freeze e)])
                                 events)))
-          (doseq [r (map (fn [e] [stream-id (message/id e)]))]
+          (doseq [e events]
             (sql/with-db-transaction [conn spec]
               (sql/query conn ["SELECT pg_advisory_xact_lock(?)" lock-id])
-              (sql/db-do-prepared conn false "UPDATE rill_events SET insert_order = nextval('rill_events_insert_order_seq') WHERE stream_id=? AND event_id=?" r)))
+              (sql/db-do-prepared conn false "UPDATE rill_events SET insert_order = nextval('rill_events_insert_order_seq') WHERE stream_id=? AND event_id=?" [(str stream-id) (str (message/id e))])))
           true)
       (when (try (sql/with-db-transaction [conn spec]
                    (apply sql/db-do-prepared conn "INSERT INTO rill_events (event_id, stream_id, stream_order, payload) VALUES (?, ?, ?, ?)"
@@ -152,17 +152,22 @@
                                           (nippy/freeze e)])
                                        events)))
                  true
-                 (catch java.sql.BatchUpdateException e  ;; conflict - there is already an event with the given stream_order
+                 (catch java.sql.BatchUpdateException e ;; conflict - there is already an event with the given stream_order
                    (when-not (unique-violation? e)
                      (throw e))
                    false))
-        (doseq [r (map-indexed (fn [i e] [(str stream-id) (+ 1 i from-version)]) events)]
+        (dotimes [i (count events)]
           (sql/with-db-transaction [conn spec]
             (sql/query conn ["SELECT pg_advisory_xact_lock(?)" lock-id])
-            (sql/db-do-prepared conn false "UPDATE rill_events SET insert_order = nextval('rill_events_insert_order_seq') WHERE stream_id=? AND stream_order=?" r)))
+            (sql/db-do-prepared conn false "UPDATE rill_events SET insert_order = nextval('rill_events_insert_order_seq') WHERE stream_id=? AND stream_order=?" [(str stream-id) (+ 1 i from-version)])))
         true))))
+
+(defn get-lock-id
+  [spec]
+  {:pre [spec] :post [%]}
+  (:oid (first (sql/query spec "SELECT 'rill_events'::regclass::oid"))))
 
 (defn psql-event-store [spec & [{:keys [page-size] :or {page-size 20}}]]
   {:pre [(integer? page-size)]}
-  (let [es (->PsqlEventStore spec page-size (:tableoid (first (sql/query spec "SELECT tableoid FROM rill_events LIMIT 1"))))]
+  (let [es (->PsqlEventStore spec page-size (get-lock-id spec))]
     (assoc es :store es)))

@@ -69,6 +69,7 @@
         (dorun (map (fn [id es]
                       (is (store/append-events store id -1 es)))
                     stream-ids (partition-all 25 events)))
+        (Thread/sleep 1000)
         (is (= (map :v events)
                (map :v (store/retrieve-events store stream/all-events-stream-id))))))
 
@@ -83,14 +84,14 @@
                                            (map (fn [i]
                                                   (test-event {:big i
                                                                :blob big-blob})) (range 100))))
-                       (Thread/sleep 500))
+                       (Thread/sleep 5000))
             small-chan (async/thread
                          (dorun (map-indexed (fn [i e]
                                                (store/append-events store small-id (dec i) [e]))
                                              (map (fn [i]
                                                     (test-event {:small i}))
                                                   (range 1000))))
-                         (Thread/sleep 500))
+                         (Thread/sleep 5000))
             listener-chan (event-channel store stream/all-events-stream-id -1 0)
             out (loop [channels [big-chan small-chan listener-chan]
                        counts {:big 0
@@ -98,19 +99,14 @@
                   (let [[e c] (async/alts!! channels)]
                     (if e
                       (recur channels (cond (:big (:v e))
-                                            (do (prn (:big (:v e)))
-                                                (update-in counts [:big] inc))
+                                            (update-in counts [:big] inc)
                                             (:small (:v e))
                                             (update-in counts [:small] inc)
                                             :else
                                             counts))
                       (let [new-chans (vec (remove #(= c %) channels))]
-                        (prn ({big-chan :closed-big
-                               small-chan :closed-small
-                               listener-chan :closed-listener} c))
                         (if (= 1 (count new-chans))
-                          (do (async/close! listener-chan)
-                              counts)
+                          counts
                           (recur new-chans counts))))))]
         (is (= out {:big 100
                     :small 1000}))))
@@ -126,19 +122,18 @@
                                         (async/thread
                                           (dotimes [i events-per-stream]
                                             (is (store/append-events store stream-id
-                                                                     (dec i)
-                                        ;stream/any-stream-version
+                                                                     (if (even? stream-num) (dec i) stream/any-stream-version)
                                                                      [(test-event [stream-id i])])))))
                                       stream-ids)
             listener-chan (event-channel store stream/all-events-stream-id -1 0)
             _ (println "Sending" (* num-streams events-per-stream) "events...")
             update-counts (fn [counts e]
                             (if (vector? (:v e))
-                               (-> counts
-                                   (update-in [(first (:v e))] inc)
-                                   (assoc (str "last-seen-" (first (:v e))) (second (:v e)))
-                                   (update-in [:total] inc))
-                               counts))
+                              (-> counts
+                                  (update-in [(first (:v e))] inc)
+                                  (assoc (str "last-seen-" (first (:v e))) (second (:v e)))
+                                  (update-in [:total] inc))
+                              counts))
             update-previous (fn [prev {[stream-id num :as v] :v}]
                               (if (vector? v)
                                 (do (is (= {:stream stream-id :num (dec num)}
@@ -157,7 +152,7 @@
                                      [counts previous]
                                      (recur new-chans counts previous))))))
             _ (println "Inserted all events, waiting for last" (- total-events (:total out)) "events")
-            out (loop [channels [(async/timeout (* 10 1000)) listener-chan]
+            out (loop [channels [(async/timeout (* 30 1000)) listener-chan]
                        counts out
                        previous previous]
                   (let [[e c] (async/alts!! channels)]
