@@ -105,10 +105,9 @@
                       (do (log/debug "[lazy-seq] Ending lazy-seq from catch-up events")
                           nil)))]
       (log/debug "[lazy-seq] Delivering to lazy-seq")
-      (out-seq))
-    ))
+      (out-seq))))
 
-(defrecord PsqlEventStore [spec page-size lock-id]
+(defrecord PsqlEventStore [spec page-size]
   EventStore
   (retrieve-events-since [this stream-id cursor wait-for-seconds]
     (if (and (= stream-id all-events-stream-id)
@@ -129,45 +128,33 @@
                 [])))))
 
   (append-events [this stream-id from-version events]
-    (if (= from-version -2) ;; generate our own stream_order
-      (do (sql/with-db-transaction [conn spec]
-            (apply sql/db-do-prepared conn false "INSERT INTO rill_events (event_id, stream_id, stream_order, payload) VALUES (?, ?, (SELECT(COALESCE(MAX(stream_order),-1)+1) FROM rill_events WHERE stream_id=?), ?)"
-                   (map-indexed (fn [i e]
-                                  [(str (message/id e))
-                                   (str stream-id)
-                                   (str stream-id)
-                                   (nippy/freeze e)])
-                                events)))
-          (doseq [e events]
-            (sql/with-db-transaction [conn spec]
-              (sql/query conn ["SELECT pg_advisory_xact_lock(?)" lock-id])
-              (sql/db-do-prepared conn false "UPDATE rill_events SET insert_order = nextval('rill_events_insert_order_seq') WHERE stream_id=? AND event_id=?" [(str stream-id) (str (message/id e))])))
-          true)
-      (when (try (sql/with-db-transaction [conn spec]
-                   (apply sql/db-do-prepared conn "INSERT INTO rill_events (event_id, stream_id, stream_order, payload) VALUES (?, ?, ?, ?)"
-                          (map-indexed (fn [i e]
-                                         [(str (message/id e))
-                                          (str stream-id)
-                                          (+ 1 i from-version)
-                                          (nippy/freeze e)])
-                                       events)))
-                 true
-                 (catch java.sql.BatchUpdateException e ;; conflict - there is already an event with the given stream_order
-                   (when-not (unique-violation? e)
-                     (throw e))
-                   false))
-        (dotimes [i (count events)]
-          (sql/with-db-transaction [conn spec]
-            (sql/query conn ["SELECT pg_advisory_xact_lock(?)" lock-id])
-            (sql/db-do-prepared conn false "UPDATE rill_events SET insert_order = nextval('rill_events_insert_order_seq') WHERE stream_id=? AND stream_order=?" [(str stream-id) (+ 1 i from-version)])))
-        true))))
-
-(defn get-lock-id
-  [spec]
-  {:pre [spec] :post [%]}
-  (:oid (first (sql/query spec "SELECT 'rill_events'::regclass::oid"))))
+    (try (if (= from-version -2) ;; generate our own stream_order
+           (do (sql/with-db-transaction [conn spec]
+                 (apply sql/db-do-prepared conn false "INSERT INTO rill_events (event_id, stream_id, stream_order, payload) VALUES (?, ?, (SELECT(COALESCE(MAX(stream_order),-1)+1) FROM rill_events WHERE stream_id=?), ?)"
+                        (map-indexed (fn [i e]
+                                       [(str (message/id e))
+                                        (str stream-id)
+                                        (str stream-id)
+                                        (nippy/freeze e)])
+                                     events)))
+               true)
+           (try (sql/with-db-transaction [conn spec]
+                  (apply sql/db-do-prepared conn "INSERT INTO rill_events (event_id, stream_id, stream_order, payload) VALUES (?, ?, ?, ?)"
+                         (map-indexed (fn [i e]
+                                        [(str (message/id e))
+                                         (str stream-id)
+                                         (+ 1 i from-version)
+                                         (nippy/freeze e)])
+                                      events)))
+                true
+                (catch java.sql.BatchUpdateException e ;; conflict - there is already an event with the given stream_order
+                  (when-not (unique-violation? e)
+                    (throw e))
+                  false)))
+         (catch Exception e
+           (throw (.getNextException e))))))
 
 (defn psql-event-store [spec & [{:keys [page-size] :or {page-size 20}}]]
   {:pre [(integer? page-size)]}
-  (let [es (->PsqlEventStore spec page-size (get-lock-id spec))]
+  (let [es (->PsqlEventStore spec page-size)]
     (assoc es :store es)))
