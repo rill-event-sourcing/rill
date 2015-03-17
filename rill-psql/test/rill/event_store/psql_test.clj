@@ -165,4 +165,63 @@
         (is (= out (into {:total (* events-per-stream num-streams)}
                          (mapcat #(vector [% events-per-stream]
                                           [(str "last-seen-" %) (dec events-per-stream)])
+                                 stream-ids))))))
+
+    (testing "many concurrent small events in chunks"
+      (clear-db! uri)
+      (let [store (psql-event-store uri)
+            num-streams 20
+            events-per-stream 1000
+            total-events (* num-streams events-per-stream)
+            events-per-chunk 8
+            stream-ids (map #(str "stream-" %) (range num-streams))
+            insert-chans (map-indexed (fn [stream-num stream-id]
+                                        (async/thread
+                                          (dotimes [i (/ events-per-stream events-per-chunk)]
+                                            (is (store/append-events store stream-id
+                                                                     (if (even? stream-num) (dec (* i events-per-chunk)) stream/any-stream-version)
+                                                                     (mapv (fn [chunk-i]
+                                                                             (test-event [stream-id (+ (* events-per-chunk i) chunk-i)]))
+                                                                           (range events-per-chunk)))))))
+                                      stream-ids)
+            listener-chan (event-channel store stream/all-events-stream-id -1 0)
+            _ (println "Sending" (* num-streams events-per-stream) "events...")
+            update-counts (fn [counts e]
+                            (if (vector? (:v e))
+                              (-> counts
+                                  (update-in [(first (:v e))] inc)
+                                  (assoc (str "last-seen-" (first (:v e))) (second (:v e)))
+                                  (update-in [:total] inc))
+                              counts))
+            update-previous (fn [prev {[stream-id num :as v] :v}]
+                              (if (vector? v)
+                                (do (is (= {:stream stream-id :num (dec num)}
+                                           {:stream stream-id :num (prev stream-id)})
+                                        "consecutive events in source stream")
+                                    (assoc prev stream-id num))
+                                prev))
+            [out previous] (loop [channels (vec (cons listener-chan insert-chans))
+                                  counts (into {:total 0} (map #(vector % 0) stream-ids))
+                                  previous (into {} (map #(vector % -1) stream-ids))]
+                             (let [[e c] (async/alts!! channels)]
+                               (if e
+                                 (recur channels (update-counts counts e) (update-previous previous e))
+                                 (let [new-chans (vec (remove #(= c %) channels))]
+                                   (if (= 1 (count new-chans))
+                                     [counts previous]
+                                     (recur new-chans counts previous))))))
+            _ (println "Inserted all events, waiting for last" (- total-events (:total out)) "events")
+            out (loop [channels [(async/timeout (* 30 1000)) listener-chan]
+                       counts out
+                       previous previous]
+                  (let [[e c] (async/alts!! channels)]
+                    (if e
+                      (let [new-counts (update-counts counts e)]
+                        (if (= (:total new-counts) total-events)
+                          new-counts
+                          (recur channels new-counts (update-previous previous e))))
+                      counts)))]
+        (is (= out (into {:total (* events-per-stream num-streams)}
+                         (mapcat #(vector [% events-per-stream]
+                                          [(str "last-seen-" %) (dec events-per-stream)])
                                  stream-ids))))))))
