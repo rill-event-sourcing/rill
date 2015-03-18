@@ -59,6 +59,10 @@ A Clojure foundation for CQRS/Event Sourcing.
 
 * Changelog
 
+  - 0.2.0-RC2
+    - Put rill-specific metadata in separate database columns
+      for rill-psql
+      
   - 0.2.0-RC1
     - Bump version because of breaking schema change
     - Fix concurrency issues with cursors in all-event-stream
