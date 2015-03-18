@@ -7,6 +7,9 @@ ALTER TABLE rill_events
       ADD UNIQUE(insert_order),
       ADD UNIQUE(event_id);
 
+DROP TRIGGER IF EXISTS rill_set_insert_order ON rill_events;
+DROP FUNCTION IF EXISTS rill_set_insert_order();
+
 CREATE FUNCTION rill_set_insert_order() RETURNS trigger AS $$
        DECLARE
         event RECORD;
