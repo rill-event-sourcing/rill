@@ -39,6 +39,7 @@
         (is (= (map #(dissoc % message/number message/cursor) s)
                (take 3 events))
             "returns successfully appended events in chronological order")
+
         (is (store/append-events store "my-stream" (+ stream/empty-stream-version (count s)) (drop 3 events)))
         (is (= (->> (store/retrieve-events store "my-stream")
                     (map #(dissoc % message/number message/cursor))) events)))
@@ -51,6 +52,11 @@
                       (map #(dissoc % message/number message/cursor))) other-events))
           (is (= (->> (store/retrieve-events store "my-stream")
                       (map #(dissoc % message/number message/cursor))) events))))
+
+      (is (= (map message/number (store/retrieve-events store "my-stream"))
+             (map message/cursor (store/retrieve-events store "my-stream"))
+             (range (count events)))
+          "incremental message numbers from 0 ...")
 
       (let [e (nth (store/retrieve-events store "my-stream") 3)]
         (is (= (->> (store/retrieve-events-since store "my-stream" e 0)

@@ -5,16 +5,32 @@
             [clojure.java.jdbc :as sql]
             [rill.message :as message]
             [taoensso.nippy :as nippy]
-            [clojure.tools.logging :as log]))
+            [rill.uuid :refer [uuid]]
+            [clojure.tools.logging :as log])
+  (:import [java.util Date]
+           [java.sql Timestamp]))
+
+(defn record->metadata
+  [r]
+  (let [m (transient {message/number (:stream_order r)
+                      message/cursor (or (:insert_order r)
+                                         (:stream_order r))})
+        typed (if-let [type-str (:event_type r)]
+                (assoc! m message/type (keyword type-str))
+                m)
+        stamped (if-let [timestamp ^Timestamp (:created_at r)]
+                  (assoc! typed message/timestamp (Date. (.getTime timestamp)))
+                  typed)
+        id-d (if-let [id (:event_id r)]
+               (assoc! stamped message/id (uuid id))
+               stamped)]
+    (persistent! id-d)))
+
 
 (defn record->message
   [r]
-  (-> r
-      :payload
-      nippy/thaw
-      (assoc ::message/number (:stream_order r)
-             ::message/cursor (or (:insert_order r)
-                                  (:stream_order r)))))
+  (merge (-> r :payload nippy/thaw)
+         (record->metadata r)))
 
 (defn wrap-auto-retry
   [f pause-seconds]
@@ -35,14 +51,15 @@
 (defn select-stream-fn
   [spec stream-id]
   (fn [cursor page-size]
-    (sql/query spec ["SELECT payload, stream_order FROM rill_events WHERE stream_id = ? AND stream_order > ? ORDER BY stream_order ASC LIMIT ?"
-                     (str stream-id)
-                     cursor page-size])))
+    (mapv #(dissoc % :insert_order)
+          (sql/query spec ["SELECT * FROM rill_events WHERE stream_id = ? AND stream_order > ? ORDER BY stream_order ASC LIMIT ?"
+                           (str stream-id)
+                           cursor page-size]))))
 
 (defn select-all-fn
   [spec]
   (fn [cursor page-size]
-    (retrying-query spec ["SELECT payload, stream_order, insert_order FROM rill_events WHERE insert_order > ? AND insert_order IS NOT NULL ORDER BY insert_order ASC LIMIT ?"
+    (retrying-query spec ["SELECT * FROM rill_events WHERE insert_order > ? AND insert_order IS NOT NULL ORDER BY insert_order ASC LIMIT ?"
                           cursor page-size])))
 
 (defn messages
@@ -71,7 +88,7 @@
              row-count :row_count} (first (retrying-query spec ["SELECT MAX(insert_order) as max_insert_order, COUNT(*) as row_count FROM rill_events"]))]
         (log/debug "[db] Event-store max :insert_order " watermark " and row-count: " row-count)
         (loop [cursor -1]
-          (let [rows (retrying-query spec ["SELECT payload, stream_order, insert_order FROM rill_events WHERE insert_order > ? AND insert_order IS NOT NULL ORDER BY insert_order ASC LIMIT ?"
+          (let [rows (retrying-query spec ["SELECT * FROM rill_events WHERE insert_order > ? AND insert_order IS NOT NULL ORDER BY insert_order ASC LIMIT ?"
                                            cursor page-size]
                                      :result-set-fn vec)
                 highest-insert-order (:insert_order (peek rows))]
@@ -107,6 +124,14 @@
       (log/debug "[lazy-seq] Delivering to lazy-seq")
       (out-seq))))
 
+(defn type->str
+  [k]
+  (subs (str k) 1))
+
+(defn strip-metadata
+  [e]
+  (dissoc e message/type message/id message/number message/timestamp))
+
 (defrecord PsqlEventStore [spec page-size]
   EventStore
   (retrieve-events-since [this stream-id cursor wait-for-seconds]
@@ -130,21 +155,25 @@
   (append-events [this stream-id from-version events]
     (try (if (= from-version -2) ;; generate our own stream_order
            (do (sql/with-db-transaction [conn spec]
-                 (apply sql/db-do-prepared conn false "INSERT INTO rill_events (event_id, stream_id, stream_order, payload) VALUES (?, ?, (SELECT(COALESCE(MAX(stream_order),-1)+1) FROM rill_events WHERE stream_id=?), ?)"
+                 (apply sql/db-do-prepared conn false "INSERT INTO rill_events (event_id, stream_id, stream_order, created_at, event_type, payload) VALUES (?, ?, (SELECT(COALESCE(MAX(stream_order),-1)+1) FROM rill_events WHERE stream_id=?), ?, ?, ?)"
                         (map-indexed (fn [i e]
                                        [(str (message/id e))
                                         (str stream-id)
                                         (str stream-id)
-                                        (nippy/freeze e)])
+                                        (Timestamp. (.getTime (message/timestamp e)))
+                                        (type->str (message/type e))
+                                        (nippy/freeze (strip-metadata e))])
                                      events)))
                true)
            (try (sql/with-db-transaction [conn spec]
-                  (apply sql/db-do-prepared conn "INSERT INTO rill_events (event_id, stream_id, stream_order, payload) VALUES (?, ?, ?, ?)"
+                  (apply sql/db-do-prepared conn "INSERT INTO rill_events (event_id, stream_id, stream_order, created_at, event_type, payload) VALUES (?, ?, ?, ?, ?, ?)"
                          (map-indexed (fn [i e]
                                         [(str (message/id e))
                                          (str stream-id)
                                          (+ 1 i from-version)
-                                         (nippy/freeze e)])
+                                         (Timestamp. (.getTime (message/timestamp e)))
+                                         (type->str (message/type e))
+                                         (nippy/freeze (strip-metadata e))])
                                       events)))
                 true
                 (catch java.sql.BatchUpdateException e ;; conflict - there is already an event with the given stream_order
@@ -152,7 +181,9 @@
                     (throw e))
                   false)))
          (catch Exception e
-           (throw (.getNextException e))))))
+           (if-let [next-exception (.getNextException e)]
+             (throw next-exception)
+             (throw e))))))
 
 (defn psql-event-store [spec & [{:keys [page-size] :or {page-size 20}}]]
   {:pre [(integer? page-size)]}
