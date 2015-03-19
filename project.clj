@@ -1,4 +1,4 @@
-(defproject rill/rill "0.2.0-RC2"
+(defproject rill/rill "0.2.0-RC3"
   :description "An Event Sourcing Toolkit"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
