@@ -23,7 +23,10 @@
                   typed)
         id-d (if-let [id (:event_id r)]
                (assoc! stamped message/id (uuid id))
-               stamped)]
+               stamped)
+        streamed (if-let [stream-id (:stream_id r)]
+                   (assoc! id-d message/stream-id stream-id)
+                   id-d)]
     (persistent! id-d)))
 
 
@@ -130,7 +133,7 @@
 
 (defn strip-metadata
   [e]
-  (dissoc e message/type message/id message/number message/timestamp))
+  (dissoc e message/type message/id message/number message/timestamp message/stream-id))
 
 (defrecord PsqlEventStore [spec page-size]
   EventStore

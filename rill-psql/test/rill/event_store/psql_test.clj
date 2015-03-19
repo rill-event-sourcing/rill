@@ -36,22 +36,22 @@
           "needs the current stream to add events to an existing stream")
 
       (let [s (store/retrieve-events store "my-stream")]
-        (is (= (map #(dissoc % message/number message/cursor) s)
+        (is (= (map #(dissoc % message/number message/cursor message/stream-id) s)
                (take 3 events))
             "returns successfully appended events in chronological order")
 
         (is (store/append-events store "my-stream" (+ stream/empty-stream-version (count s)) (drop 3 events)))
         (is (= (->> (store/retrieve-events store "my-stream")
-                    (map #(dissoc % message/number message/cursor))) events)))
+                    (map #(dissoc % message/number message/cursor message/stream-id))) events)))
 
       (let [s (store/retrieve-events store "my-other-stream")]
         (testing "event store handles each stream independently"
           (is (= s stream/empty-stream))
           (is (store/append-events store "my-other-stream" stream/empty-stream-version other-events))
           (is (= (->> (store/retrieve-events store "my-other-stream")
-                      (map #(dissoc % message/number message/cursor))) other-events))
+                      (map #(dissoc % message/number message/cursor message/stream-id))) other-events))
           (is (= (->> (store/retrieve-events store "my-stream")
-                      (map #(dissoc % message/number message/cursor))) events))))
+                      (map #(dissoc % message/number message/cursor message/stream-id))) events))))
 
       (is (= (map message/number (store/retrieve-events store "my-stream"))
              (map message/cursor (store/retrieve-events store "my-stream"))
@@ -60,7 +60,7 @@
 
       (let [e (nth (store/retrieve-events store "my-stream") 3)]
         (is (= (->> (store/retrieve-events-since store "my-stream" e 0)
-                    (map #(dissoc % message/number message/cursor)))
+                    (map #(dissoc % message/number message/cursor message/stream-id)))
                (drop 4 events)))))))
 
 (def big-blob (repeat 1000 (repeat 1000 "BLOB")))

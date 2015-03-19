@@ -42,7 +42,7 @@
 (defn comparable-message
   "remove message id and number from a message, so it can be compared"
   [message]
-  (dissoc message message/id message/number message/timestamp message/cursor))
+  (dissoc message message/id message/number message/timestamp message/cursor message/stream-id))
 
 (defn message=
   "test messages for equality ignoring rill.message/id or rill.message/number"
