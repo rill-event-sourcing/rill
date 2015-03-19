@@ -59,6 +59,9 @@ A Clojure foundation for CQRS/Event Sourcing.
 
 * Changelog
 
+  - 0.2.0-RC4
+    - Fix exception reporting for non-SQLExceptions
+
   - 0.2.0-RC3
     - Also provide rill's stream-id in the metadata
 

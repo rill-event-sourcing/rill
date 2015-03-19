@@ -8,7 +8,7 @@
             [rill.uuid :refer [uuid]]
             [clojure.tools.logging :as log])
   (:import [java.util Date]
-           [java.sql Timestamp]))
+           [java.sql Timestamp SQLException]))
 
 (defn record->metadata
   [r]
@@ -183,7 +183,7 @@
                   (when-not (unique-violation? e)
                     (throw e))
                   false)))
-         (catch Exception e
+         (catch SQLException e
            (if-let [next-exception (.getNextException e)]
              (throw next-exception)
              (throw e))))))
