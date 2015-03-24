@@ -9,6 +9,7 @@ test:
 
 install:
 	lein install
+	cd rill-psql && lein install
 
 clean:
 	lein clean
