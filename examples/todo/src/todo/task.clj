@@ -1,5 +1,5 @@
 (ns todo.task
-  (:require [clojure.core.async :refer [go-loop <!]]
+  (:require [clojure.core.async :refer [chan go-loop mult put! tap untap <! <!!]]
             [rill.event-channel :refer [event-channel]]
             [rill.event-stream :refer [all-events-stream-id]]
             [rill.handler :refer [try-command]]
@@ -8,18 +8,18 @@
             [todo.commands.task :as task-command])
   (:import [java.util UUID]))
 
-(defonce store (atom nil))
+(defonce store-atom (atom nil))
 
 (defn create! [description]
-  (try-command @store
+  (try-command @store-atom
                (task-command/create! (UUID/randomUUID) description)))
 
 (defn update-description! [uuid description]
-  (try-command @store
+  (try-command @store-atom
                (task-command/update-description! uuid description)))
 
 (defn delete! [uuid]
-  (try-command @store
+  (try-command @store-atom
                (task-command/delete! uuid)))
 
 (defonce by-id-atom (atom {}))
@@ -46,10 +46,30 @@
   [model {:keys [task-id description ::message/number]}]
   (assoc-in model [task-id :description] description))
 
+(defonce out-mult-atom (atom nil))
+
 (defn setup! [event-store]
-  (reset! store event-store)
-  (let [c (event-channel event-store all-events-stream-id -1 false)]
+  (reset! store-atom event-store)
+  (let [in (event-channel event-store all-events-stream-id -1 false)
+        out (chan)]
+    (reset! out-mult-atom (mult out))
     (go-loop []
-      (when-let [event (<! c)]
+      (when-let [event (<! in)]
         (swap! by-id-atom handle-event event)
+        (put! out event)
         (recur)))))
+
+(defn wait-for! [in events]
+  (loop [events (->> events (map ::message/id) set )]
+    (when-let [event (<!! in)]
+      (let [remaining-events (disj (:message/id event))]
+        (when (seq remaining-events)
+          (recur remaining-events))))))
+
+(defn sync-command [command & args]
+  (let [in (chan)]
+    (tap @out-mult-atom in)
+    (let [[status result] (apply command args)]
+      (when (= status :ok) (wait-for! in result))
+      (untap @out-mult-atom in)
+      [status result])))

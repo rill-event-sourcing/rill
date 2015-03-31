@@ -10,4 +10,4 @@
 
 (defn -main []
   (task/setup! store)
-  (run-jetty web/handler {:port 8080 :join? false}))
+  (run-jetty (var web/handler) {:port 8080 :join? false}))

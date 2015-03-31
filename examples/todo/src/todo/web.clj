@@ -45,24 +45,24 @@
        (render-index (task/by-id)))
 
   (POST "/add" [description]
-        (let [[status payload] (task/create! description)]
+        (let [[status result] (task/sync-command task/create! description)]
           (if (= status :ok)
             (redirect-after-post "/")
-            (render-error payload))))
+            (render-error result))))
 
   (POST "/delete" [task-id]
         (let [uuid (UUID/fromString task-id)
-              [status payload] (task/delete! uuid)]
+              [status result] (task/sync-command task/delete! uuid)]
           (if (= status :ok)
             (redirect-after-post "/")
-            (render-error payload))))
+            (render-error result))))
 
   (POST "/update-description" [task-id description]
         (let [uuid (UUID/fromString task-id)
-              [status payload] (task/update-description! uuid description)]
+              [status result] (task/sync-command task/update-description! uuid description)]
           (if (= status :ok)
             (redirect-after-post "/")
-            (render-error payload)))))
+            (render-error result)))))
 
 (def handler
   (-> routes
