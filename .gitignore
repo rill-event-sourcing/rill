@@ -1,5 +1,8 @@
 target
-.lein-*
 lein
 pom.xml
+pom.xml.asc
 *~
+*#
+*.png
+.*
