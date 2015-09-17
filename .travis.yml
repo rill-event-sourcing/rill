@@ -1,1 +1,2 @@
 language: clojure
+sudo: false
