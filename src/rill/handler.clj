@@ -58,6 +58,11 @@
           (message/observers event)))
 
 (defn try-command
+  "Try executing command against the event store and notify any observers of the
+  newly generated events.
+
+  Returns [:ok events new-version triggered-event] or [:out-of-date ...],
+  [:conflict], [:rejected ...]"
   [event-store command]
   (let [[id version & [primary-aggregate & rest-aggregates]] (prepare-aggregates event-store command)]
     (if (and (contains? command :expected-version)
@@ -67,7 +72,7 @@
         (case status
           :ok (if (commit-events event-store id version events)
                 (let [new-primary (update-aggregate primary-aggregate (filter #(= (message/primary-aggregate-id %) id) events))
-                      triggered (mapcat #(notify-observers event-store % new-primary) events)]
+                      triggered (doall (mapcat #(notify-observers event-store % new-primary) events))]
                   [:ok events (+ version (count events)) triggered])
                 [:conflict])
           :rejected response)))))
