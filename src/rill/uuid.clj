@@ -7,6 +7,7 @@
 
 (defn uuid
   [u]
-  (if (string? u)
-    (UUID/fromString u)
-    u))
+  (cond
+    (string? u) (UUID/fromString u)
+    (keyword? u) (UUID/fromString (name u))
+    :else u))
