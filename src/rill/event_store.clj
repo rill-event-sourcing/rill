@@ -21,6 +21,9 @@
     given cursor. If there are no more events at that cursor, wait for
     `wait-for-seconds' to see if anything new shows up.
 
+    `stream-id' may be stringified (using str) for comparison, so stream ids
+    that stringify to the same value are assumed to describe the same stream.
+
     The initial cursor for retrieving a complete event stream is -1. See also
     `rill.event-store/retrieve-events'. Valid cursors for retrieval from a
     specific part of a stream can be achieved by calling `rill.message/cursor'
