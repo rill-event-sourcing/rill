@@ -43,6 +43,8 @@
    "Appends `events' to stream `stream-id' at position `from-version'. Returns
     `true' if successful or `false' for failure.
 
+    Events must be maps of printable/readable clojure data.
+
     EventStore implementations must make it impossible to append events in
     positions that are already taken, and should make it impossible to append
     events in any position except the one immediately following the last taken
