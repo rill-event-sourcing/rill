@@ -1,0 +1,66 @@
+rill psql 500 x 2 events
+
+Checking outlier significance
+Evaluation count : 60 in 60 samples of 1 calls.
+             Execution time mean : 2.190456 sec
+    Execution time std-deviation : 141.305547 ms
+   Execution time lower quantile : 2.063106 sec ( 2.5%)
+   Execution time upper quantile : 2.555179 sec (97.5%)
+                   Overhead used : 1.937670 ns
+
+Found 7 outliers in 60 samples (11.6667 %)
+	low-severe	 6 (10.0000 %)
+	low-mild	 1 (1.6667 %)
+ Variance from outliers : 48.4356 % Variance is moderately inflated by
+	outliers
+
+
+
+
+rill psql 500 x 2 events, without triggers:
+
+Evaluation count : 120 in 60 samples of 2 calls.
+             Execution time mean : 1.158221 sec
+    Execution time std-deviation : 596.485551 ms
+   Execution time lower quantile : 935.911499 ms ( 2.5%)
+   Execution time upper quantile : 2.806501 sec (97.5%)
+                   Overhead used : 1.997563 ns
+
+Found 5 outliers in 60 samples (8.3333 %)
+	low-severe	 1 (1.6667 %)
+	low-mild	 2 (3.3333 %)
+	high-mild	 2 (3.3333 %)
+ Variance from outliers : 98.2384 % Variance is severely inflated by outliers
+nil
+
+
+rill psql 500 x 2 events, with triggers, synchronous_commit off.
+
+Checking outlier significance
+Evaluation count : 60 in 60 samples of 1 calls.
+             Execution time mean : 2.439811 sec
+    Execution time std-deviation : 175.936067 ms
+   Execution time lower quantile : 2.201125 sec ( 2.5%)
+   Execution time upper quantile : 2.857347 sec (97.5%)
+                   Overhead used : 2.166491 ns
+
+Found 3 outliers in 60 samples (5.0000 %)
+	low-severe	 3 (5.0000 %)
+ Variance from outliers : 53.4851 % Variance is severely inflated by
+	outliers
+
+
+rill psql 500 x 2 events, without triggers, synchronous_commit off.
+
+Checking outlier significance
+Evaluation count : 60 in 60 samples of 1 calls.
+             Execution time mean : 2.439811 sec
+    Execution time std-deviation : 175.936067 ms
+   Execution time lower quantile : 2.201125 sec ( 2.5%)
+   Execution time upper quantile : 2.857347 sec (97.5%)
+                   Overhead used : 2.166491 ns
+
+Found 3 outliers in 60 samples (5.0000 %)
+	low-severe	 3 (5.0000 %)
+ Variance from outliers : 53.4851 % Variance is severely inflated by
+	outliers
