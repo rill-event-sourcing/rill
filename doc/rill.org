@@ -1,20 +1,108 @@
 #+TITLE: Rill Event Sourcing Documentation
-* Introduction
-* Event generation using commands
-** Stages
-   - Create/receive command
-   - Prepare aggregates
-     - Fetch primary aggregate
-     - Fetch secondary aggregates
-   - Check primary aggregate version
-   - Handle command
-     - Generates events or rejection
-   - Commit events
-   - Notify observers
-     - Fetch observer
-     - Fetch secondary aggregates
-     - Handle observation
-     - Commit triggered events
-     - Notify observers of triggered events
 
-* Event Sourcing References
+* Generating events
+
+Rill is designed to handle 2 concerns: storing and retrieving events
+(implemented in the EventStore protocol) and generating new events based on
+incoming commands and current system state (system state is represented as
+aggregates generated from the existing events by the Repository protocol).
+
+The below diagram outlines the mechanism when rill.web is used to translate
+command results to ring HTTP responses.
+
+#+BEGIN_SRC dot :file command-flow.svg :cmdline -Kdot -Tsvg -Gdpi=60
+ 
+  digraph CommandFlow {
+    node [shape=ellipse]
+    rankdir = "LR"
+    
+    subgraph cluste1 {
+      label="Ring Handler"
+      rank=same
+      RingHandler [shape=none]
+      Start [shape=circle]
+      HttpRequest [shape=parallelogram]
+      HttpResponse [shape=parallelogram]
+      End [shape=circle]
+    }
+
+    subgraph cluste2 {
+      label="Rill Web Handler"
+      rank=same
+      RillWebHandler [shape=none]
+      PassThrough
+      TranslateToHttp
+      TranslateFromHttp
+      Command [shape=parallelogram]
+    }
+  
+    subgraph cluste3 {
+      label="Command Handler"
+      rank=same
+      CommandHandler [shape=none]
+      Prepare
+      AggregateIds [shape=parallelogram]
+
+      HandleCommand [shape=house]
+      StatusAndEvents [shape=parallelogram]
+ 
+    
+      CheckCommandResult [shape=diamond]
+      CommitCommandResult
+      NewEvents [shape=parallelogram]
+      CheckCommitResult [shape=diamond]
+      RillResult [shape=parallelogram]
+
+    }
+
+    subgraph cluste5 {
+      label="Repository"
+      rank=same
+      Repository [shape=none]
+      RetrieveAggregates
+      HandleEvents [shape=house]
+      Aggregates [shape=parallelogram]
+    }
+  
+    subgraph cluste7 {
+      label="Event Store"
+      rank=same
+      EventStore [shape=none]
+      RetrieveEvents
+      Events [shape=parallelogram]
+      CommitEvents
+    }
+
+  
+  
+    Start -> HttpRequest
+    HttpRequest -> TranslateFromHttp
+    TranslateFromHttp -> PassThrough
+    PassThrough -> Command
+    Command -> Prepare
+    Prepare -> AggregateIds
+    AggregateIds -> RetrieveAggregates
+    RetrieveAggregates -> RetrieveEvents
+    RetrieveEvents -> Events
+    Events -> HandleEvents
+    HandleEvents -> Aggregates
+    Aggregates -> HandleCommand
+    HandleCommand -> StatusAndEvents
+    StatusAndEvents -> CheckCommandResult
+    CheckCommandResult -> CommitCommandResult [label="Result Ok"]
+    CheckCommandResult -> RillResult [label="Rejected"]
+    CommitCommandResult -> NewEvents
+    NewEvents -> CommitEvents
+    NewEvents -> CheckCommitResult 
+    CommitEvents -> CheckCommitResult
+    CheckCommitResult -> RillResult
+    RillResult -> TranslateToHttp
+    TranslateToHttp -> HttpResponse
+    HttpResponse -> End
+  }
+#+END_SRC
+
+#+RESULTS:
+[[file:command-flow.svg]]
+
+This diagram leaves out notification of observers.
