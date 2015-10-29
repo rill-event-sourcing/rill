@@ -43,7 +43,7 @@ command results to ring HTTP responses.
       Prepare
       AggregateIds [shape=parallelogram]
 
-      HandleCommand [shape=house]
+      HandleCommand [shape=house label="rill.aggregate/handle-command"]
       StatusAndEvents [shape=parallelogram]
  
     
@@ -60,7 +60,7 @@ command results to ring HTTP responses.
       rank=same
       Repository [shape=none]
       RetrieveAggregates
-      HandleEvents [shape=house]
+      HandleEvents [shape=house label="rill.aggregate/handle-event"]
       Aggregates [shape=parallelogram]
     }
   
