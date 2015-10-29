@@ -10,7 +10,7 @@ aggregates generated from the existing events by the Repository protocol).
 The below diagram outlines the mechanism when rill.web is used to translate
 command results to ring HTTP responses.
 
-#+BEGIN_SRC dot :file command-flow.svg :cmdline -Kdot -Tsvg -Gdpi=60
+#+BEGIN_SRC dot :file command-flow.svg :cmdline -Kdot -Tsvg -Gdpi=60 :export none
  
   digraph CommandFlow {
     node [shape=ellipse]
@@ -102,7 +102,6 @@ command results to ring HTTP responses.
   }
 #+END_SRC
 
-#+RESULTS:
 [[file:command-flow.svg]]
 
 This diagram leaves out notification of observers.
