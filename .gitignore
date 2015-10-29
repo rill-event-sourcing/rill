@@ -1,0 +1,10 @@
+target
+lein
+pom.xml
+pom.xml.asc
+*~
+*#
+*.png
+.*
+!.travis.yml
+doc/
