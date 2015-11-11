@@ -58,6 +58,9 @@ A Clojure foundation for CQRS/Event Sourcing.
    views on event streams.
 
 * Changelog
+  - 0.3.0-SNAPSHOT
+    - Provide also the old primary aggregate to handler function for
+      observers. Bump version for breaking changes
 
   - 0.2.0-RC4
     - Fix exception reporting for non-SQLExceptions
