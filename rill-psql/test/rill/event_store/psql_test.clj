@@ -4,27 +4,29 @@
             [rill.event-stream :as stream]
             [rill.message :as message :refer [defevent]]
             [rill.uuid :refer [new-id]]
+            [rill.event-store.psql-util :as util]
             [clojure.test :refer :all]
-            [clojure.java.jdbc :as jdbc]
             [clojure.core.async :as async]
             [rill.event-channel :refer [event-channel]]
             [schema.core :as s]))
 
-(def psql-event-store-uri "postgresql://localhost:5432/rill_test")
+(def uri util/*event-store-uri*)
+
+(def store (psql-event-store uri))
 
 (defevent TestEvent
-  :v s/Int)
+          :v s/Int)
 
-(defn clear-db!
-  []
-  (jdbc/db-do-commands psql-event-store-uri "TRUNCATE rill_events")
-  (while (not= 0 (:count (first (jdbc/query psql-event-store-uri "SELECT COUNT(*) AS count FROM rill_events"))))
-    (Thread/sleep 50)))
+(defn init-db! [f]
+  (if-not (util/table-exists? "rill_events")
+    (util/load-schema!)
+    (util/clear-db!))
+  (f))
+
+(use-fixtures :once init-db!)
 
 (deftest test-psql-event-store
-  (clear-db!)
-  (let [store (psql-event-store psql-event-store-uri)
-        events (map test-event (range 7))
+  (let [events (map test-event (range 7))
         other-events (map test-event (range 3))]
     (is (= (store/retrieve-events store "foo") stream/empty-stream)
         "retrieving a non-existing stream returns the empty stream")
@@ -65,11 +67,10 @@
 
 (def big-blob (repeat 1000 (repeat 1000 "BLOB")))
 
-#_(deftest test-all-events-stream
+(deftest test-all-events-stream
   (testing "sequential appends"
-    (clear-db!)
-    (let [store (psql-event-store psql-event-store-uri)
-          stream-ids (repeatedly 4 new-id)
+    (util/clear-db!)
+    (let [stream-ids (repeatedly 4 new-id)
           events (map test-event (range 100))]
       (dorun (map (fn [id es]
                     (is (store/append-events store id -1 es)))
@@ -79,9 +80,8 @@
              (map :v (store/retrieve-events store stream/all-events-stream-id))))))
 
   (testing "concurrent mix of large and small events"
-    (clear-db!)
-    (let [store (psql-event-store psql-event-store-uri)
-          big-id (new-id)
+    (util/clear-db!)
+    (let [big-id (new-id)
           small-id (new-id)
           big-chan (async/thread
                      (dorun (map-indexed (fn [i e]
@@ -117,9 +117,8 @@
                   :small 1000}))))
 
   (testing "many concurrent small events"
-    (clear-db!)
-    (let [store (psql-event-store psql-event-store-uri)
-          num-streams 20
+    (util/clear-db!)
+    (let [num-streams 20
           events-per-stream 1000
           total-events (* num-streams events-per-stream)
           stream-ids (map #(str "stream-" %) (range num-streams))
@@ -173,9 +172,8 @@
                                stream-ids))))))
 
   (testing "many concurrent small events in chunks"
-    (clear-db!)
-    (let [store (psql-event-store psql-event-store-uri)
-          num-streams 20
+    (util/clear-db!)
+    (let [num-streams 20
           events-per-stream 1000
           total-events (* num-streams events-per-stream)
           events-per-chunk 8
