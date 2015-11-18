@@ -10,7 +10,7 @@
             [rill.event-channel :refer [event-channel]]
             [schema.core :as s]))
 
-(def uri util/*event-store-uri*)
+(def uri util/event-store-uri)
 
 (def store (psql-event-store uri))
 
