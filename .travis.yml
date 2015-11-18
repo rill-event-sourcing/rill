@@ -1,2 +1,9 @@
 language: clojure
 sudo: false
+script: make test
+
+services:
+  - postgresql
+
+env:
+  - RILL_POSTGRES_DB=rill_test RILL_POSTGRES_USER=postgres

@@ -5,7 +5,7 @@ default: test
 test:
 	lein test
 	lein install
-	make -C rill-psql test
+	cd rill-psql && lein test
 
 install:
 	lein install
