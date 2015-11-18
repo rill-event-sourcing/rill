@@ -1,2 +1,6 @@
 language: clojure
 sudo: false
+script: make test
+
+services:
+  - postgresql
