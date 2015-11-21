@@ -42,19 +42,19 @@
 (declare notify-observers)
 
 (defn notify-observer
-  [event-store event observer-id handler-fn primary]
+  [event-store event observer-id handler-fn primary old-primary]
   (let [observer (retrieve-aggregate event-store observer-id)
         rest-aggregates (map #(retrieve-aggregate event-store %) (aggregate/aggregate-ids primary event))
-        triggered-events (seq (apply handler-fn observer event primary rest-aggregates))]
+        triggered-events (seq (apply handler-fn observer event primary old-primary rest-aggregates))]
     (when (and triggered-events
                (commit-events event-store observer-id any-stream-version triggered-events))
       (let [new-observer (update-aggregate observer (filter #(= observer-id (message/primary-aggregate-id %)) triggered-events))]
-        (concat triggered-events (mapcat #(notify-observers event-store % new-observer) triggered-events))))))
+        (concat triggered-events (mapcat #(notify-observers event-store % new-observer observer) triggered-events))))))
 
 (defn notify-observers
-  [event-store event primary]
+  [event-store event primary old-primary]
   (mapcat (fn [[observer-id handler-fn]]
-            (notify-observer event-store event observer-id handler-fn primary))
+            (notify-observer event-store event observer-id handler-fn primary old-primary))
           (message/observers event)))
 
 (defn try-command
@@ -72,7 +72,7 @@
         (case status
           :ok (if (commit-events event-store id version events)
                 (let [new-primary (update-aggregate primary-aggregate (filter #(= (message/primary-aggregate-id %) id) events))
-                      triggered (doall (mapcat #(notify-observers event-store % new-primary) events))]
+                      triggered (doall (mapcat #(notify-observers event-store % new-primary primary-aggregate) events))]
                   [:ok events (+ version (count events)) triggered])
                 [:conflict])
           :rejected response)))))
