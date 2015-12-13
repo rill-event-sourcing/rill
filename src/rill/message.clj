@@ -65,37 +65,39 @@ This may differ from message/number if the current stream is the all-event-strea
     id (new-id)
     timestamp (now)))
 
-(defmacro defmessage
-  [name & params]
+(defmacro message
+  [type-keyword & params]
   {:pre [(every? keyword? (take-nth 2 (butlast params)))]}
-  (let [type-keyword (->type-keyword (ns-name *ns*) name)
-        name-str (clojure.core/name name)
-        primary-aggregate-id-fn (if (even? (count params))
+  (let [primary-aggregate-id-fn (if (even? (count params))
                                   (keyword (first params))
                                   (last params))
         params (if (even? (count params))
                  params
-                 (butlast params))]
-    `(do (def ~name ~(into {::id s/Uuid
-                            ::type type-keyword}
-                           (map vec (partition 2 params))))
+                 (butlast params))
+        args (params->args params)
+        ks (map keyword args)]
+    `(do
+       (defmethod primary-aggregate-id
+         ~type-keyword
+         [message#]
+         (~primary-aggregate-id-fn message#))
+       (fn ~(vec args)
+         (make-message ~type-keyword ~(zipmap ks args))))))
 
-         ~(let [args (params->args params)
-                ks (mapv keyword args)]
-            `(defn ~(symbol (lisp-name name-str))
-               ~(str "Create a new " name-str " message from the positional arguments. Automatically generates a new message id.")
-               ~(vec args)
-               (make-message ~type-keyword ~(zipmap ks args))))
+(defmacro defmessage
+  [name & params]
+  (let [type-keyword (->type-keyword (ns-name *ns*) name)
+        name-str (clojure.core/name name)]
+    `(def
+       ~(vary-meta (symbol (lisp-name name-str)) assoc
+                   :doc (str "Create a new " name-str " message from the positional arguments. Automatically generates a new message id."))
+       (message ~type-keyword ~@params))))
 
-         (defmethod primary-aggregate-id
-           ~type-keyword
-           [message#]
-           (~primary-aggregate-id-fn message#)))))
-
+(defmacro command [& args] `(message ~@args))
+(defmacro event [& args] `(message ~@args))
 (defmacro defcommand
   [name & params]
   `(defmessage ~name ~@params))
-
 (defmacro defevent
   [name & params]
   `(defmessage ~name ~@params))
