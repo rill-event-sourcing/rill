@@ -1,4 +1,6 @@
 #+TITLE: Rill Event Sourcing Toolkit
+#+CAPTION: Build status
+[[https://travis-ci.org/rill-event-sourcing/rill.svg]]
 
 A Clojure foundation for CQRS/Event Sourcing.
 
