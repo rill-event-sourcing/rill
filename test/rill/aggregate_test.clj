@@ -41,9 +41,9 @@
   custom-ag-id)
 
 (deftest custom-aggregate-id
-  (let [e (custom-agg-id-event "foo" "bar")]
-    (is (= (custom-ag-id e)
-           (primary-aggregate-id e)))))
+  (let [event (custom-agg-id-event "foo" "bar")]
+    (is (= (custom-ag-id event)
+           (primary-aggregate-id event)))))
 
 (def my-aggregate-id 2798)
 
