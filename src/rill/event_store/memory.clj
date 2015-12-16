@@ -8,12 +8,12 @@
 
 (defn with-cursors
   [c events]
-  (map-indexed #(assoc %2 ::message/cursor (+ c %1)) events))
+  (map-indexed #(assoc %2 :rill.message/cursor (+ c %1)) events))
 
 (deftype MemoryStore [state]
   store/EventStore
   (retrieve-events-since [this stream-id cursor wait-for-seconds]
-    (let [cursor (or (::message/cursor cursor) cursor)]
+    (let [cursor (or (:rill.message/cursor cursor) cursor)]
       (loop [wait wait-for-seconds]
         (let [substream (subvec (get @state stream-id empty-stream) (inc cursor))]
           (if (empty? substream)
