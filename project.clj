@@ -9,4 +9,11 @@
                  [prismatic/schema "0.2.2"]
                  [slingshot "0.10.3"]
                  [environ "0.5.0"]
-                 [identifiers "1.1.0"]])
+                 [identifiers "1.1.0"]
+                 [org.clojure/java.jdbc "0.3.4"]
+                 [postgresql "9.1-901.jdbc4"]
+                 [com.taoensso/nippy "2.6.3"]]
+  :profiles {:dev {:plugins [[lein-repack "0.2.8"]]}}
+  :repack [{:path "src"
+            :levels 2}])
+
