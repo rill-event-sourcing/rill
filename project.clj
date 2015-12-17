@@ -15,5 +15,7 @@
                  [com.taoensso/nippy "2.6.3"]]
   :profiles {:dev {:plugins [[lein-repack "0.2.8"]]}}
   :repack [{:path "src"
+            :type :clojure
             :levels 2}])
+
 
