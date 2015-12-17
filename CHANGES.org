@@ -1,0 +1,54 @@
+* Changelog
+  - 0.2.0
+    - Remove dead CLI code
+    - Remove dead geteventstore.com backend
+    - Use travis CI for testing
+    - Cleanup database schema creation code for testing
+    - Allow converting keywords to uuid
+    - New deployment strategy using lein repack
+  - 0.2.0-RC4
+    - Fix exception reporting for non-SQLExceptions
+
+  - 0.2.0-RC3
+    - Also provide rill's stream-id in the metadata
+
+  - 0.2.0-RC2
+    - Put rill-specific metadata in separate database columns
+      for rill-psql
+
+  - 0.2.0-RC1
+    - Bump version because of breaking schema change
+    - Fix concurrency issues with cursors in all-event-stream
+
+      Run file:rill-psql/resources/rill_psql/migration-0_2_0.sql to
+      upgrade your Postgres event store.
+
+      This will break older versions of rill. You MUST upgrade all
+      clients to 0.2.0 or higher.
+
+  - 0.1.11-SNAPSHOT
+    - rill.aggregate/aggregate-ids multimethod now
+      takes [primary-aggregate command] as arguments.
+
+      this is a breaking change.
+  - 0.1.10
+    - Fix regression in event channels & improve testing
+  - 0.1.9
+    - Fix: ignore cursors when comparing messages in tests
+  - 0.1.8
+    - Make cursors explicit in messages
+  - 0.1.7
+    - Split out durable implementations in their own projects
+    - Fix performance bug when retrieving long event streams
+  - 0.1.6
+    - Generalize process managers into observer/notifications
+  - 0.1.5
+    - Improved command-result= testing function
+  - 0.1.4
+    - Auto-retry queries when streaming all events in psql event store
+  - 0.1.2
+    - Add process managers
+  - 0.1.1
+    - ??
+  - 0.1.0
+    - First beta release
