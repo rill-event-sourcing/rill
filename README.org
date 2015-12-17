@@ -14,11 +14,18 @@ A Clojure foundation for CQRS/Event Sourcing.
 
 * Dependency specification
 
+** Changed group-id and artifact-ids
+
+   Please note that we changed group-id and artifact-ids for the 0.2.0
+   release, where we also split up the old rill/rill artifact into its
+   separate components.
+
    #+BEGIN_SRC clojure
-  [rill-event-sourcing/rill.handler "0.2.0"] ; write side of CQRS
+  [rill-event-sourcing/rill.event_store "0.2.0"] ; if you're talking to the bare event-store
+  [rill-event-sourcing/rill.handler "0.2.0"] ; pulls in the write side of CQRS
   [rill-event-sourcing/rill.event_store.memory "0.2.0"] ; for development
   [rill-event-sourcing/rill.temp_store "0.2.0"] ; for testing
-  [rill-event-sourcing/rill.event_store.psql "0.2.0"] ; to include postgres store
+  [rill-event-sourcing/rill.event_store.psql "0.2.0"] ; to include postgres backend
   [rill-event-sourcing/rill.event_channel "0.2.0"] ; for hooking up asynchronous read side
    #+END_SRC
 
