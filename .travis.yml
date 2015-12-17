@@ -1,6 +1,6 @@
 language: clojure
 sudo: required
-script: make test
+script: lein test
 services:
 - postgresql
 env:
