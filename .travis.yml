@@ -1,5 +1,5 @@
 language: clojure
-sudo: false
+sudo: required
 script: make test
 services:
 - postgresql
