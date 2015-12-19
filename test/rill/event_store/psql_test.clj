@@ -1,21 +1,24 @@
 (ns rill.event-store.psql-test
   (:require [rill.event-store.psql :refer [psql-event-store]]
-            [rill.event-store.psql-util :as util]
+            [rill.event-store.psql.tools :as tools]
             [rill.event-store.generic-test-base :refer [test-store]]
             [clojure.test :refer :all]))
 
-(def uri util/event-store-uri)
+(def config {:user (System/getenv "RILL_POSTGRES_USER")
+             :password (System/getenv "RILL_POSTGRES_PASSWORD")
+             :hostname (System/getenv "RILL_POSTGRES_HOST")
+             :port (System/getenv "RILL_POSTGRES_PORT")
+             :database (System/getenv "RILL_POSTGRES_DATABASE")})
 
-(def store (psql-event-store uri))
-
-(defn get-clean-psql-store! []
-  (if-not (util/table-exists? "rill_events")
-    (util/load-schema!)
-    (util/clear-db!))
-  store)
+(defn get-clean-psql-store! [config]
+  (tools/clear-db! config)
+  (psql-event-store (tools/connection config)))
 
 (deftest test-psql-store
-  (test-store get-clean-psql-store!))
+  (if (System/getenv "RILL_POSTGRES_DATABASE")
+    (do (tools/load-schema! config)
+        (test-store #(get-clean-psql-store! config)))
+    (println "Skipped tests for rill postgres backend. Set at least RILL_POSTGRES_DATABASE environment variable to configure and enable tests")))
 
 
 
