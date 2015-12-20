@@ -1,4 +1,9 @@
 * Changelog
+  - 0.2.1
+    - Add rill.event-store.psql.tools package for database
+      initialization
+    - Use same test code for both event store implementations
+
   - 0.2.0
     - Remove dead CLI code
     - Remove dead geteventstore.com backend
@@ -6,6 +11,7 @@
     - Cleanup database schema creation code for testing
     - Allow converting keywords to uuid
     - New deployment strategy using lein repack
+
   - 0.2.0-RC4
     - Fix exception reporting for non-SQLExceptions
 

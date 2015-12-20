@@ -21,12 +21,12 @@ A Clojure foundation for CQRS/Event Sourcing.
    separate components.
 
    #+BEGIN_SRC clojure
-  [rill-event-sourcing/rill.event_store "0.2.0"] ; if you're talking to the bare event-store
-  [rill-event-sourcing/rill.handler "0.2.0"] ; pulls in the write side of CQRS
-  [rill-event-sourcing/rill.event_store.memory "0.2.0"] ; for development
-  [rill-event-sourcing/rill.temp_store "0.2.0"] ; for testing
-  [rill-event-sourcing/rill.event_store.psql "0.2.0"] ; to include postgres backend
-  [rill-event-sourcing/rill.event_channel "0.2.0"] ; for hooking up asynchronous read side
+  [rill-event-sourcing/rill.event_store "0.2.1"] ; if you're talking to the bare event-store
+  [rill-event-sourcing/rill.handler "0.2.1"] ; pulls in the write side of CQRS
+  [rill-event-sourcing/rill.event_store.memory "0.2.1"] ; for development
+  [rill-event-sourcing/rill.temp_store "0.2.1"] ; for testing
+  [rill-event-sourcing/rill.event_store.psql "0.2.1"] ; to include postgres backend
+  [rill-event-sourcing/rill.event_channel "0.2.1"] ; for hooking up asynchronous read side
    #+END_SRC
 
 * Rill provides protocols and/or implementations for:
