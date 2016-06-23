@@ -1,7 +1,7 @@
 (ns rill.handler-test
   (:require [rill.handler :as handler :refer [try-command]]
             [rill.aggregate :refer [handle-command aggregate-ids handle-event]]
-            [rill.message :as message :refer [defcommand defevent primary-aggregate-id]]
+            [rill.message :as message :refer [defcommand defevent primary-aggregate-id observers]]
             [clojure.test :refer [deftest testing is]]
             [rill.uuid :refer [new-id]]
             [rill.event-store :refer [retrieve-events]]
@@ -51,3 +51,59 @@
                 (retrieve-events store my-aggregate-id)))
       (is (= [::HandlerTestEvent]
              (map message/type (retrieve-events store my-aggregate-id)))))))
+
+(defevent FooEvent
+  :id s/Uuid)
+
+(defevent BarEvent
+  :id s/Uuid)
+
+(defevent BazEvent
+  :id s/Uuid)
+
+(defmethod handle-event ::FooEvent
+  [agg event]
+  agg)
+
+(defmethod handle-event ::BarEvent
+  [agg event]
+  agg)
+
+(defmethod handle-event ::BazEvent
+  [agg event]
+  agg)
+
+(defcommand FooCommand
+  :id s/Uuid)
+
+(defcommand BarCommand
+  :id s/Uuid)
+
+(defmethod handle-command ::FooCommand
+  [agg cmd]
+  [:ok [(foo-event (:id cmd))]])
+
+(defmethod handle-command ::BarCommand
+  [agg cmd]
+  [:ok [(bar-event (:id cmd))]])
+
+(defmethod observers ::FooEvent
+  [_]
+  [[:foo-observer (fn [observer event primary & rest-aggregates]
+                    [(bar-event (new-id))])]])
+
+(defmethod observers ::BarEvent
+  [_]
+  [[:bar-observer (fn [observer event primary & rest-aggregates]
+                    [(baz-event (new-id))])]])
+
+(deftest test-observers
+  (testing "Events triggered by command"
+    (let [[_ _ _ triggered-events] (try-command (given []) (bar-command (new-id)))]
+      ;; BarCommand -> BarEvent -> BarEventObserver -> BazEvent
+      (is (= [::BazEvent] (map message/type triggered-events)))))
+
+  (testing "Events triggered by other triggered events"
+    (let [[_ _ _ triggered-events] (try-command (given []) (foo-command (new-id)))]
+      ;; FooCommand -> FooEvent -> FooEventObserver -> BarEvent -> BarEventObserver -> BazEvent
+      (is (= [::BarEvent ::BazEvent] (map message/type triggered-events))))))
