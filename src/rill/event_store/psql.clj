@@ -133,7 +133,7 @@
 
 (defn strip-metadata
   [e]
-  (dissoc e message/type message/id message/number message/timestamp message/stream-id))
+  (dissoc e message/type message/id message/number message/timestamp message/stream-id message/cursor))
 
 (defrecord PsqlEventStore [spec page-size]
   EventStore
