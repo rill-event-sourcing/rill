@@ -29,8 +29,12 @@
         "returns successfully appended events in chronological order")
     (is (store/append-events store "my-stream" (+ stream/empty-stream-version (count s)) (drop 3 events)))
     (is (messages= (store/retrieve-events store "my-stream")
-                   events)))
-  
+                   events))
+
+    (is (every? (fn [e]
+                  (= "my-stream" (:rill.message/stream-id e)))
+                (store/retrieve-events store stream/all-events-stream-id))))
+
   (let [s (store/retrieve-events store "my-other-stream")]
     (testing "event store handles each stream independently"
       (is (= s stream/empty-stream))

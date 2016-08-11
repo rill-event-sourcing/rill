@@ -38,7 +38,8 @@
                            (if (= (dec (count current-stream)) start-number)
                              (-> old-state
                                  (assoc stream-id (into current-stream events))
-                                 (assoc all-events-stream-id (into all-stream events)))
+                                 (assoc all-events-stream-id
+                                        (into all-stream (map #(assoc % :rill.message/stream-id stream-id)) events)))
                              (throw+ ::out-of-date)))))
           true
           (catch #(= % ::out-of-date) err
