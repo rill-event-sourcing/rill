@@ -1,4 +1,8 @@
 * Changelog
+  - 0.2.2
+    - Fix memory-store: set stream-id for events in all-events-stream
+    - Add test cases
+    - Dissoc separately stored metadata
   - 0.2.1
     - Add rill.event-store.psql.tools package for database
       initialization
