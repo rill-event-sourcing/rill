@@ -3,8 +3,9 @@ sudo: required
 script: lein test
 services:
 - postgresql
+- mysql
 env:
-- RILL_POSTGRES_DB=rill_test RILL_POSTGRES_USER=postgres
+- RILL_POSTGRES_DB=rill_test RILL_POSTGRES_USER=postgres RILL_MYSQL_DB=rill_test RILL_MYSQL_USER=root
 notifications:
   slack:
     secure: UTuoaiCsgYYCBC/ii5xDKnkOEj2njQ0AyHOm3EZfu8MeG1YjpKXCdCXhbRLQIgmkdxHy6jQJU83JOkv15u8q3Y2f6w6X/nUEwccMicot6hDBNDxmj0oJqoscJCemFnINJ7mfUe0diaNHuZ7NiVCRimBLH3iBVctT7w7vjF4v1kA=

@@ -24,12 +24,12 @@
       "needs the current stream to add events to an existing stream")
 
   (let [s (store/retrieve-events store "my-stream")]
-    (is (messages= s
-                   (take 3 events))
+    (is (messages= (take 3 events)
+                   s)
         "returns successfully appended events in chronological order")
     (is (store/append-events store "my-stream" (+ stream/empty-stream-version (count s)) (drop 3 events)))
-    (is (messages= (store/retrieve-events store "my-stream")
-                   events))
+    (is (messages= events
+                   (store/retrieve-events store "my-stream")))
 
     (is (every? (fn [e]
                   (= "my-stream" (:rill.message/stream-id e)))
@@ -37,31 +37,31 @@
 
   (let [s (store/retrieve-events store "my-other-stream")]
     (testing "event store handles each stream independently"
-      (is (= s stream/empty-stream))
+      (is (= stream/empty-stream s))
       (is (store/append-events store "my-other-stream" stream/empty-stream-version other-events))
-      (is (messages= (store/retrieve-events store "my-other-stream")
-                     other-events))
-      (is (messages= (store/retrieve-events store "my-stream")
-                     events))))
+      (is (messages= other-events
+                     (store/retrieve-events store "my-other-stream")))
+      (is (messages= events
+                     (store/retrieve-events store "my-stream")))))
 
-  (is (= (map message/number (store/retrieve-events store "my-stream"))
-         (map message/cursor (store/retrieve-events store "my-stream"))
-         (range (count events)))
+  (is (= (range (count events))
+         (map message/number (store/retrieve-events store "my-stream"))
+         (map message/cursor (store/retrieve-events store "my-stream")))
       "incremental message numbers from 0 ...")
   
   (let [e (nth (store/retrieve-events store "my-stream") 3)]
-    (is (messages= (store/retrieve-events-since store "my-stream" e 0)
-                   (drop 4 events))))
+    (is (messages= (drop 4 events)
+                   (store/retrieve-events-since store "my-stream" e 0))))
 
   (testing "any-version"
     (let [old-events (store/retrieve-events store "my-stream")
           new-events (map test-event (range 1000 1005))]
       (is (store/append-events store "my-stream" stream/any-stream-version new-events))
-      (is (messages= (store/retrieve-events store "my-stream")
-                     (concat old-events new-events))))))
+      (is (messages= (concat old-events new-events)
+                     (store/retrieve-events store "my-stream"))))))
 
 
-(defonce big-blob (repeat 1000 (repeat 1000 "BLOB")))
+(defonce big-blob (repeat 1000 "BLOB"))
 
 (defn sequential-appends [store]
   (testing "sequential appends"
