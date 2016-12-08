@@ -8,7 +8,8 @@
 (defn- select-all
   [spec cursor page-size]
   {:pre [(integer? cursor)]}
-  (jdbc/query spec ["SELECT rill_streams.stream_id AS stream_id, insert_order, stream_order, payload, event_type FROM rill_events JOIN rill_streams ON (rill_events.stream_number=rill_streams.stream_number) WHERE insert_order > ? ORDER BY insert_order LIMIT ?" cursor page-size]))
+  (jdbc/with-db-transaction [tr spec]
+    (jdbc/query tr ["SELECT rill_streams.stream_id AS stream_id, insert_order, stream_order, payload, event_type FROM rill_events JOIN rill_streams ON (rill_events.stream_number=rill_streams.stream_number) WHERE insert_order > ? ORDER BY insert_order ASC LIMIT ?" cursor page-size])))
 
 (defn- all-record->message
   [{:keys [payload insert_order stream_order event_type created_at stream_id]}]
@@ -20,7 +21,8 @@
 
 (defn- select-stream
   [spec stream-id cursor page-size]
-  (jdbc/query spec ["SELECT stream_order, payload, event_type FROM rill_events JOIN rill_streams ON (rill_streams.stream_number = rill_events.stream_number) WHERE rill_streams.stream_id = ? AND stream_order > ? ORDER BY stream_order LIMIT ?" stream-id cursor page-size]))
+  (jdbc/with-db-transaction [tr spec]
+    (jdbc/query tr ["SELECT stream_order, payload, event_type FROM rill_events JOIN rill_streams ON (rill_streams.stream_number = rill_events.stream_number) WHERE rill_streams.stream_id = ? AND stream_order > ? ORDER BY stream_order ASC LIMIT ?" stream-id cursor page-size])))
 
 (defn- stream-record->message-fn
   [stream-id]
@@ -57,14 +59,13 @@
 (defrecord MysqlEventStore [spec page-size]
   EventStore
   (retrieve-events-since [_ stream-id cursor wait-for-seconds]
-    (let [stream-id (str stream-id)
-          cursor    (if (integer? cursor)
-                      cursor
-                      (::message/cursor cursor))]
+    (let [cursor (if (integer? cursor)
+                   cursor
+                   (::message/cursor cursor))]
       (if (= all-events-stream-id stream-id)
         (sequence (map all-record->message)
                   (select-all spec cursor page-size))
-        (sequence (map (stream-record->message-fn stream-id))
+        (sequence (map (stream-record->message-fn (str stream-id)))
                   (select-stream spec stream-id cursor page-size)))))
   (append-events [_ stream-id from-version events]
     (let [stream-id     (str stream-id)
@@ -73,8 +74,7 @@
         (try
           (jdbc/execute! tr ["LOCK TABLES rill_events WRITE"])
           (let [max-version (or (first (jdbc/query tr ["SELECT MAX(stream_order) AS max FROM rill_events WHERE stream_number=?" stream-number]
-                                                   {:row-fn       :max
-                                                    :transaction? false}))
+                                                   {:row-fn :max}))
                                 -1)]
             (when (or (= from-version -2)
                       (= max-version from-version))
@@ -85,8 +85,8 @@
                                                   (+ index 1 max-version)
                                                   (message->payload event)
                                                   (subs (str (::message/type event)) 1)])
-                                               events)
-                                  {:transaction? false})))
+                                               events))
+              true))
           (finally
             (jdbc/execute! tr ["UNLOCK TABLES"])))))))
 

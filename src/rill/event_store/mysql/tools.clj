@@ -43,4 +43,5 @@
 
 (defn clear-db!
   [config]
-  (jdbc/execute! (spec config) [(str "TRUNCATE rill_events")]))
+  (jdbc/execute! (spec config) [(str "TRUNCATE rill_events")])
+  (jdbc/execute! (spec config) [(str "TRUNCATE rill_streams")]))

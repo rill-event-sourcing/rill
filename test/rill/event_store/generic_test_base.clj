@@ -67,10 +67,9 @@
   (testing "sequential appends"
     (let [stream-ids (repeatedly 4 new-id)
           events (map test-event (range 100))]
-      (dorun (map (fn [id es]
-                    (is (store/append-events store id -1 es)))
-                  stream-ids (partition-all 25 events)))
-      (Thread/sleep 1000)
+      (mapv (fn [id es]
+              (is (store/append-events store id -1 es)))
+            stream-ids (partition-all 25 events))
       (is (= (map :v events)
              (map :v (store/retrieve-events store stream/all-events-stream-id)))))))
 
