@@ -9,6 +9,6 @@ CREATE TABLE rill_events (
 ) ENGINE=MyISAM;
 
 CREATE TABLE rill_streams (
-       stream_id VARCHAR(512) UNIQUE NOT NULL,
+       stream_id VARCHAR(300) UNIQUE NOT NULL,
        stream_number BIGINT UNIQUE NOT NULL AUTO_INCREMENT
 ) ENGINE=MyISAM;
