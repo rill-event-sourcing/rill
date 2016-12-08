@@ -93,7 +93,7 @@
         (loop [cursor -1]
           (let [rows (retrying-query spec ["SELECT * FROM rill_events WHERE insert_order > ? AND insert_order IS NOT NULL ORDER BY insert_order ASC LIMIT ?"
                                            cursor page-size]
-                                     :result-set-fn vec)
+                                     {:result-set-fn vec})
                 highest-insert-order (:insert_order (peek rows))]
             (>!! in rows)
             (log/debug "[db] Passed along upto :insert_order" highest-insert-order " cursor: " cursor)
@@ -158,26 +158,26 @@
   (append-events [this stream-id from-version events]
     (try (if (= from-version -2) ;; generate our own stream_order
            (do (sql/with-db-transaction [conn spec]
-                 (apply sql/db-do-prepared conn false "INSERT INTO rill_events (event_id, stream_id, stream_order, created_at, event_type, payload) VALUES (?, ?, (SELECT(COALESCE(MAX(stream_order),-1)+1) FROM rill_events WHERE stream_id=?), ?, ?, ?)"
-                        (map-indexed (fn [i e]
-                                       [(str (message/id e))
-                                        (str stream-id)
-                                        (str stream-id)
-                                        (Timestamp. (.getTime (message/timestamp e)))
-                                        (type->str (message/type e))
-                                        (nippy/freeze (strip-metadata e))])
-                                     events)))
+                 (sql/db-do-prepared conn false (cons "INSERT INTO rill_events (event_id, stream_id, stream_order, created_at, event_type, payload) VALUES (?, ?, (SELECT(COALESCE(MAX(stream_order),-1)+1) FROM rill_events WHERE stream_id=?), ?, ?, ?)"
+                                                      (map-indexed (fn [i e]
+                                                                     [(str (message/id e))
+                                                                      (str stream-id)
+                                                                      (str stream-id)
+                                                                      (Timestamp. (.getTime (message/timestamp e)))
+                                                                      (type->str (message/type e))
+                                                                      (nippy/freeze (strip-metadata e))])
+                                                                   events))))
                true)
            (try (sql/with-db-transaction [conn spec]
-                  (apply sql/db-do-prepared conn "INSERT INTO rill_events (event_id, stream_id, stream_order, created_at, event_type, payload) VALUES (?, ?, ?, ?, ?, ?)"
-                         (map-indexed (fn [i e]
-                                        [(str (message/id e))
-                                         (str stream-id)
-                                         (+ 1 i from-version)
-                                         (Timestamp. (.getTime (message/timestamp e)))
-                                         (type->str (message/type e))
-                                         (nippy/freeze (strip-metadata e))])
-                                      events)))
+                  (sql/db-do-prepared conn (cons "INSERT INTO rill_events (event_id, stream_id, stream_order, created_at, event_type, payload) VALUES (?, ?, ?, ?, ?, ?)"
+                                                 (map-indexed (fn [i e]
+                                                                [(str (message/id e))
+                                                                 (str stream-id)
+                                                                 (+ 1 i from-version)
+                                                                 (Timestamp. (.getTime (message/timestamp e)))
+                                                                 (type->str (message/type e))
+                                                                 (nippy/freeze (strip-metadata e))])
+                                                              events))))
                 true
                 (catch java.sql.BatchUpdateException e ;; conflict - there is already an event with the given stream_order
                   (when-not (unique-violation? e)
