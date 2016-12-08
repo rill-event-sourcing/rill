@@ -33,6 +33,13 @@
                :rill.message/type (keyword event_type)
                :rill.message/stream-id stream-id))))
 
+(defn messages
+  [cursor page-size f]
+  (let [p (vec (f cursor page-size))]
+    (if (< (count p) page-size)
+      p
+      (concat p (lazy-seq (messages (message/cursor (peek p)) page-size f))))))
+
 (defn- strip-metadata
   [e]
   (dissoc e
@@ -63,10 +70,10 @@
                    cursor
                    (:rill.message/cursor cursor))]
       (if (= all-events-stream-id stream-id)
-        (sequence (map all-record->message)
-                  (select-all spec cursor page-size))
-        (sequence (map (stream-record->message-fn (str stream-id)))
-                  (select-stream spec stream-id cursor page-size)))))
+        (messages cursor page-size #(sequence (map all-record->message)
+                                              (select-all spec %1 %2)))
+        (messages cursor page-size #(sequence (map (stream-record->message-fn (str stream-id)))
+                                              (select-stream spec stream-id %1 %2))))))
   (append-events [_ stream-id from-version events]
     (let [stream-id     (str stream-id)
           stream-number (stream-number! spec stream-id)]
@@ -91,5 +98,7 @@
             (jdbc/execute! tr ["UNLOCK TABLES"])))))))
 
 (defn mysql-event-store
-  [db-spec]
-  (->MysqlEventStore db-spec 100))
+  ([db-spec]
+   (mysql-event-store db-spec 10))
+  ([db-spec page-size]
+   (->MysqlEventStore db-spec page-size)))
