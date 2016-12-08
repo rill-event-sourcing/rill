@@ -166,7 +166,8 @@
                                                                       (Timestamp. (.getTime (message/timestamp e)))
                                                                       (type->str (message/type e))
                                                                       (nippy/freeze (strip-metadata e))])
-                                                                   events))))
+                                                                   events))
+                                     {:multi? true}))
                true)
            (try (sql/with-db-transaction [conn spec]
                   (sql/db-do-prepared conn (cons "INSERT INTO rill_events (event_id, stream_id, stream_order, created_at, event_type, payload) VALUES (?, ?, ?, ?, ?, ?)"
@@ -177,7 +178,8 @@
                                                                  (Timestamp. (.getTime (message/timestamp e)))
                                                                  (type->str (message/type e))
                                                                  (nippy/freeze (strip-metadata e))])
-                                                              events))))
+                                                              events))
+                                      {:multi? true}))
                 true
                 (catch java.sql.BatchUpdateException e ;; conflict - there is already an event with the given stream_order
                   (when-not (unique-violation? e)
