@@ -1,4 +1,4 @@
-(defproject rill-event-sourcing/rill "0.2.2"
+(defproject rill-event-sourcing/rill "0.2.3-SNAPSHOT"
   :deploy-repositories [["releases" {:url "https://clojars.org"
                                      :creds :gpg}]]
   :description "An Event Sourcing Toolkit"

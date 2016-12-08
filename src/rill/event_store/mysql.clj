@@ -14,10 +14,10 @@
 (defn- all-record->message
   [{:keys [payload insert_order stream_order event_type created_at stream_id]}]
   (-> (nippy/thaw payload)
-      (assoc ::message/number stream_order
-             ::message/cursor insert_order
-             ::message/type (keyword event_type)
-             ::message/stream-id stream_id)))
+      (assoc :rill.message/number stream_order
+             :rill.message/cursor insert_order
+             :rill.message/type (keyword event_type)
+             :rill.message/stream-id stream_id)))
 
 (defn- select-stream
   [spec stream-id cursor page-size]
@@ -28,18 +28,18 @@
   [stream-id]
   (fn [{:keys [payload stream_order event_type created_at]}]
     (-> (nippy/thaw payload)
-        (assoc ::message/number stream_order
-               ::message/cursor stream_order
-               ::message/type (keyword event_type)
-               ::message/stream-id stream-id))))
+        (assoc :rill.message/number stream_order
+               :rill.message/cursor stream_order
+               :rill.message/type (keyword event_type)
+               :rill.message/stream-id stream-id))))
 
 (defn- strip-metadata
   [e]
   (dissoc e
-          ::message/type
-          ::message/number
-          ::message/stream-id
-          ::message/cursor))
+          :rill.message/type
+          :rill.message/number
+          :rill.message/stream-id
+          :rill.message/cursor))
 
 (defn- message->payload
   [m]
@@ -61,7 +61,7 @@
   (retrieve-events-since [_ stream-id cursor wait-for-seconds]
     (let [cursor (if (integer? cursor)
                    cursor
-                   (::message/cursor cursor))]
+                   (:rill.message/cursor cursor))]
       (if (= all-events-stream-id stream-id)
         (sequence (map all-record->message)
                   (select-all spec cursor page-size))
@@ -84,7 +84,7 @@
                                                  [stream-number
                                                   (+ index 1 max-version)
                                                   (message->payload event)
-                                                  (subs (str (::message/type event)) 1)])
+                                                  (subs (str (:rill.message/type event)) 1)])
                                                events))
               true))
           (finally
