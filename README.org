@@ -14,6 +14,10 @@ A Clojure foundation for CQRS/Event Sourcing.
 
 * Dependency specification
 
+** 0.2.3-RC1 Updates clojure.java.jdbc from 0.3.4 to 0.7.0-alpha1
+   Note that this is a breaking update of clojure.java.jdbc; many
+   functions have slightly different signatures!
+
 ** Changed group-id and artifact-ids
 
    Please note that we changed group-id and artifact-ids for the 0.2.0

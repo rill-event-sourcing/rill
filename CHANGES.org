@@ -1,4 +1,7 @@
 * Changelog
+  - 0.2.3-RC1
+    - Added mysql backed event store
+    - Updated clojure.java.jdbc to 0.7.0-alpha1
   - 0.2.2
     - Fix memory-store: set stream-id for events in all-events-stream
     - Add test cases
