@@ -114,7 +114,7 @@
                                    [counts previous]
                                    (recur new-chans counts previous))))))
           _ (println "Inserted all events, waiting for last" (- total-events (:total out)) "events")
-          out (loop [channels [(async/timeout (* 30 1000)) listener-chan]
+          out (loop [channels [(async/timeout (* 60 1000)) listener-chan]
                      counts out
                      previous previous]
                 (let [[e c] (async/alts!! channels)]
@@ -124,10 +124,11 @@
                         new-counts
                         (recur channels new-counts (update-previous previous e))))
                     counts)))]
-      (is (= out (into {:total (* events-per-stream num-streams)}
+      (is (= (into {:total (* events-per-stream num-streams)}
                        (mapcat #(vector [% events-per-stream]
                                         [(str "last-seen-" %) (dec events-per-stream)])
-                               stream-ids)))))))
+                               stream-ids))
+             out)))))
 
 (defn chunked-appends
   [store]
