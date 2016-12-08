@@ -14,6 +14,10 @@ A Clojure foundation for CQRS/Event Sourcing.
 
 * Dependency specification
 
+** 0.2.3-RC1 Updates clojure.java.jdbc from 0.3.4 to 0.7.0-alpha1
+   Note that this is a breaking update of clojure.java.jdbc; many
+   functions have slightly different signatures!
+
 ** Changed group-id and artifact-ids
 
    Please note that we changed group-id and artifact-ids for the 0.2.0
@@ -21,12 +25,13 @@ A Clojure foundation for CQRS/Event Sourcing.
    separate components.
 
    #+BEGIN_SRC clojure
-  [rill-event-sourcing/rill.event_store "0.2.2"] ; if you're talking to the bare event-store
-  [rill-event-sourcing/rill.handler "0.2.2"] ; pulls in the write side of CQRS
-  [rill-event-sourcing/rill.event_store.memory "0.2.2"] ; for development
-  [rill-event-sourcing/rill.temp_store "0.2.2"] ; for testing
-  [rill-event-sourcing/rill.event_store.psql "0.2.2"] ; to include postgres backend
-  [rill-event-sourcing/rill.event_channel "0.2.2"] ; for hooking up asynchronous read side
+  [rill-event-sourcing/rill.event_store "0.2.3-RC1"] ; if you're talking to the bare event-store
+  [rill-event-sourcing/rill.handler "0.2.3-RC1"] ; pulls in the write side of CQRS
+  [rill-event-sourcing/rill.event_store.memory "0.2.3-RC1"] ; for development
+  [rill-event-sourcing/rill.temp_store "0.2.3-RC1"] ; for testing
+  [rill-event-sourcing/rill.event_store.psql "0.2.3-RC1"] ; to include postgres backend
+  [rill-event-sourcing/rill.event_store.psql "0.2.3-RC1"] ; to include mysql backend
+  [rill-event-sourcing/rill.event_channel "0.2.3-RC1"] ; for hooking up asynchronous read side
    #+END_SRC
 
 * Rill provides protocols and/or implementations for:

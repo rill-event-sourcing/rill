@@ -25,9 +25,9 @@
   (let [s (slurp (io/resource "rill/event_store/psql/psql_schema.sql"))]
     (when (database-exists? config)
       (jdbc/execute! (base-connection config) [(str "DROP DATABASE " (:database config))]
-                     :transaction? false))
+                     {:transaction? false}))
     (jdbc/execute! (base-connection config) [(str "CREATE DATABASE " (:database config))]
-                   :transaction? false)
+                   {:transaction? false})
     (jdbc/execute! (connection config) [s])))
 
 (defn clear-db!

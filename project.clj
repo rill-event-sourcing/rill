@@ -1,4 +1,4 @@
-(defproject rill-event-sourcing/rill "0.2.2"
+(defproject rill-event-sourcing/rill "0.2.3-RC1"
   :deploy-repositories [["releases" {:url "https://clojars.org"
                                      :creds :gpg}]]
   :description "An Event Sourcing Toolkit"
@@ -12,9 +12,11 @@
                  [slingshot "0.10.3"]
                  [environ "0.5.0"]
                  [identifiers "1.1.0"]
-                 [org.clojure/java.jdbc "0.3.4"]
+                 [org.clojure/java.jdbc "0.7.0-alpha1"]
                  [postgresql "9.1-901.jdbc4"]
-                 [com.taoensso/nippy "2.6.3"]]
+                 [com.taoensso/nippy "2.6.3"]
+                 [mysql/mysql-connector-java "5.1.6"]
+                 [clojure.jdbc/clojure.jdbc-c3p0 "0.3.2"]]
   :profiles {:dev {:plugins [[lein-repack "0.2.8"]
                              [lein-set-version "0.4.1"]]}}
   :set-version
