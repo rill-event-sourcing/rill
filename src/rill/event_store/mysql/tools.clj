@@ -1,24 +1,27 @@
 (ns rill.event-store.mysql.tools
   (:require [clojure.java.jdbc :as jdbc]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [clojure.string :as string]))
 
 (defn spec
   "clojure.java.jdbc and jdbc.pool.c3p0 compatible connection spec for
   mysql. `database` name is required. Default connects to
   localhost:3306"
-  [{:keys [port user password host database] :or {port 3306 host "127.0.0.1"}}]
-  {:pre [database host port]}
-  (cond-> {:dbtype "mysql"
-           :subprotocol "mysql"
-           :subname (str "//" host ":" port "/" database)
-           :classname "com.mysql.jdbc.Driver"
-           :dbname database
-           :port port
-           :host host}
-    user
-    (assoc :user user)
-    password
-    (assoc :password password)))
+  [{:keys [port user password host database]}]
+  {:pre [database]}
+  (let [port (or port 3306)
+        host (or host "127.0.0.1")]
+    (cond-> {:dbtype "mysql"
+             :subprotocol "mysql"
+             :subname (str "//" host ":" port "/" database)
+             :classname "com.mysql.jdbc.Driver"
+             :dbname database
+             :port port
+             :host host}
+      user
+      (assoc :user user)
+      password
+      (assoc :password password))))
 
 (defn base-spec
   [config]
@@ -35,7 +38,8 @@
                      {:transaction? false}))
     (jdbc/execute! (base-spec config) [(str "CREATE DATABASE " (:database config))]
                    {:transaction? false})
-    (jdbc/execute! (spec config) [s])))
+    (doseq [statement (remove string/blank? (string/split s #";"))]
+      (jdbc/execute! (spec config) [statement]))))
 
 (defn clear-db!
   [config]
