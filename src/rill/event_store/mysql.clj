@@ -10,7 +10,7 @@
   [spec cursor page-size]
   {:pre [(integer? cursor)]}
   (jdbc/with-db-transaction [tr spec {:read-only? true}]
-    (jdbc/query tr ["SELECT rill_streams.stream_id AS stream_id, insert_order, stream_order, payload, event_type FROM rill_events JOIN rill_streams ON (rill_events.stream_number=rill_streams.stream_number) WHERE insert_order > ? ORDER BY insert_order ASC LIMIT ?" cursor page-size])))
+    (jdbc/query tr ["SELECT rill_streams.stream_id AS stream_id, insert_order, stream_order, payload, event_type, created_at FROM rill_events JOIN rill_streams ON (rill_events.stream_number=rill_streams.stream_number) WHERE insert_order > ? ORDER BY insert_order ASC LIMIT ?" cursor page-size])))
 
 (defn- all-record->message
   [{:keys [payload insert_order stream_order event_type created_at stream_id]}]
@@ -18,12 +18,13 @@
       (assoc :rill.message/number stream_order
              :rill.message/cursor insert_order
              :rill.message/type (keyword event_type)
-             :rill.message/stream-id stream_id)))
+             :rill.message/stream-id stream_id)
+      (update :rill.message/timestamp #(or % created_at))))
 
 (defn- select-stream
   [spec stream-number cursor page-size]
   (jdbc/with-db-transaction [tr spec {:read-only? true}]
-    (jdbc/query tr ["SELECT stream_order, payload, event_type FROM rill_events WHERE stream_number = ? AND stream_order > ? ORDER BY stream_order ASC LIMIT ?" stream-number cursor page-size])))
+    (jdbc/query tr ["SELECT stream_order, payload, event_type, created_at FROM rill_events WHERE stream_number = ? AND stream_order > ? ORDER BY stream_order ASC LIMIT ?" stream-number cursor page-size])))
 
 (defn- stream-record->message-fn
   [stream-id]
@@ -32,7 +33,8 @@
         (assoc :rill.message/number stream_order
                :rill.message/cursor stream_order
                :rill.message/type (keyword event_type)
-               :rill.message/stream-id stream-id))))
+               :rill.message/stream-id stream-id)
+        (update :rill.message/timestamp #(or % created_at)))))
 
 (defn messages
   [cursor page-size f]

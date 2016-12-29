@@ -5,7 +5,9 @@ CREATE TABLE rill_events (
        payload BLOB NOT NULL,
        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
        event_type VARCHAR(512) NOT NULL,
-       UNIQUE (stream_number, stream_order)
+       INDEX stream_number_index (stream_number),
+       INDEX stream_order_index (stream_order),
+       CONSTRAINT UNIQUE stream_order_stream_number_constraint (stream_number, stream_order)
 ) ENGINE=MyISAM;
 
 CREATE TABLE rill_streams (

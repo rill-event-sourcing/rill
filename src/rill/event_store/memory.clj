@@ -4,7 +4,8 @@
             [rill.event-store :as store]
             [rill.event-stream :refer [all-events-stream-id empty-stream-version any-stream-version empty-stream]]
             [rill.message :as message]
-            [slingshot.slingshot :refer [try+ throw+]]))
+            [slingshot.slingshot :refer [try+ throw+]])
+  (:import (java.util Date)))
 
 (defn with-cursors
   [c events]
@@ -25,16 +26,19 @@
 
   (append-events [this stream-id from-version events]
     (try+ (swap! state (fn [old-state]
-                         (let [current-stream (get old-state stream-id empty-stream)
-                               all-stream (get old-state all-events-stream-id empty-stream)
+                         (let [current-stream  (get old-state stream-id empty-stream)
+                               all-stream      (get old-state all-events-stream-id empty-stream)
                                current-version (if (empty? current-stream)
                                                  empty-stream-version
                                                  (message/number (last current-stream)))
-                               start-number (if (= from-version any-stream-version)
-                                              current-version
-                                              from-version)
-                               events (map #(assoc %1 message/number (+ start-number %2))
-                                           events (iterate inc 1))]
+                               start-number    (if (= from-version any-stream-version)
+                                                 current-version
+                                                 from-version)
+                               events          (map (fn [e i]
+                                                      (-> e
+                                                          (assoc message/number (+ start-number i))
+                                                          (update message/timestamp #(or % (Date.)))))
+                                                    events (iterate inc 1))]
                            (if (= (dec (count current-stream)) start-number)
                              (-> old-state
                                  (assoc stream-id (into current-stream events))

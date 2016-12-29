@@ -1,4 +1,7 @@
 * Changelog
+  - 0.2.3-RC2
+    - Ensure event store implementations always return timestamped
+      events
   - 0.2.3-RC1
     - Added mysql backed event store
     - Updated clojure.java.jdbc to 0.7.0-alpha1
