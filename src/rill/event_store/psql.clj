@@ -20,9 +20,11 @@
                 m)
         stamped (if-let [timestamp ^Timestamp (:created_at r)]
                   (assoc! typed message/timestamp (Date. (.getTime timestamp)))
-                  typed)]
-    (persistent! stamped)))
-
+                  typed)
+        streamed (if-let [stream-id (:stream_id r)]
+                  (assoc! stamped message/stream-id stream-id)
+                   stamped)]
+    (persistent! streamed)))
 
 (defn record->message
   [r]
