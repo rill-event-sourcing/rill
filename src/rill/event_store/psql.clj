@@ -21,14 +21,10 @@
         stamped (if-let [timestamp ^Timestamp (:created_at r)]
                   (assoc! typed message/timestamp (Date. (.getTime timestamp)))
                   typed)
-        id-d (if-let [id (:event_id r)]
-               (assoc! stamped message/id (uuid id))
-               stamped)
         streamed (if-let [stream-id (:stream_id r)]
-                   (assoc! id-d message/stream-id stream-id)
-                   id-d)]
-    (persistent! id-d)))
-
+                  (assoc! stamped message/stream-id stream-id)
+                   stamped)]
+    (persistent! streamed)))
 
 (defn record->message
   [r]
@@ -133,7 +129,7 @@
 
 (defn strip-metadata
   [e]
-  (dissoc e message/type message/id message/number message/timestamp message/stream-id message/cursor))
+  (dissoc e message/type message/number message/timestamp message/stream-id message/cursor))
 
 (defrecord PsqlEventStore [spec page-size]
   EventStore
@@ -158,24 +154,20 @@
   (append-events [this stream-id from-version events]
     (try (if (= from-version -2) ;; generate our own stream_order
            (do (sql/with-db-transaction [conn spec]
-                 (sql/db-do-prepared conn false (cons "INSERT INTO rill_events (event_id, stream_id, stream_order, created_at, event_type, payload) VALUES (?, ?, (SELECT(COALESCE(MAX(stream_order),-1)+1) FROM rill_events WHERE stream_id=?), ?, ?, ?)"
+                 (sql/db-do-prepared conn false (cons "INSERT INTO rill_events (stream_id, stream_order, event_type, payload) VALUES ( ?, (SELECT(COALESCE(MAX(stream_order),-1)+1) FROM rill_events WHERE stream_id=?), ?, ?)"
                                                       (map-indexed (fn [i e]
-                                                                     [(str (message/id e))
+                                                                     [(str stream-id)
                                                                       (str stream-id)
-                                                                      (str stream-id)
-                                                                      (Timestamp. (.getTime (message/timestamp e)))
                                                                       (type->str (message/type e))
                                                                       (nippy/freeze (strip-metadata e))])
                                                                    events))
                                      {:multi? true}))
                true)
            (try (sql/with-db-transaction [conn spec]
-                  (sql/db-do-prepared conn (cons "INSERT INTO rill_events (event_id, stream_id, stream_order, created_at, event_type, payload) VALUES (?, ?, ?, ?, ?, ?)"
+                  (sql/db-do-prepared conn (cons "INSERT INTO rill_events (stream_id, stream_order, event_type, payload) VALUES (?, ?, ?, ?)"
                                                  (map-indexed (fn [i e]
-                                                                [(str (message/id e))
-                                                                 (str stream-id)
+                                                                [(str stream-id)
                                                                  (+ 1 i from-version)
-                                                                 (Timestamp. (.getTime (message/timestamp e)))
                                                                  (type->str (message/type e))
                                                                  (nippy/freeze (strip-metadata e))])
                                                               events))
