@@ -4,8 +4,7 @@ ALTER TABLE rill_events
       ALTER COLUMN insert_order TYPE BIGINT,
       ALTER COLUMN insert_order DROP NOT NULL,
       ALTER COLUMN insert_order DROP DEFAULT,
-      ADD UNIQUE(insert_order),
-      ADD UNIQUE(event_id);
+      ADD UNIQUE(insert_order);
 
 DROP TRIGGER IF EXISTS rill_set_insert_order ON rill_events;
 DROP FUNCTION IF EXISTS rill_set_insert_order();
